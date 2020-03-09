@@ -3,18 +3,59 @@
         <base-header class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
                      style="min-height: 50px; background-image: url(img/theme/clients.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
-            <span class="mask bg-gradient-success opacity-8"></span>
+            <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-lg-7 col-md-10">
                         <h1 class="display-2 text-white">Sección de clientes</h1>
                         <p class="text-white mt-0 mb-5">Esta es la sección administrativa de tus clientes, aquí podrás registrar, editar y visualizar todos tus clientes.</p>
-                        <a href="#!" class="btn btn-info">Registrar un cliente</a>
+                        <a @click="modals.modal1 = true"  class="btn btn-info text-white">Registrar un cliente</a>
                     </div>
                 </div>
             </div>
         </base-header>
+        
+
+        <!-- MODAL REGISTRAR -->
+
+        <modal :show.sync="modals.modal1"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-sm">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        Registro de cliente
+                    </div>
+                </template>
+                <template>
+                    <form role="form">
+                        <base-input alternative
+                                    class="mb-3"
+                                    placeholder="Nombre"
+                                    addon-left-icon="ni ni-single-02">
+                        </base-input>
+                        <base-input alternative
+                                    type="password"
+                                    placeholder="Identificación"
+                                    addon-left-icon="ni ni-key-25">
+                        </base-input>
+                        <base-checkbox>
+                            Descuento de nuevo cliente
+                        </base-checkbox>
+                        <div class="text-center">
+                            <base-button type="primary" class="my-4">Sign In</base-button>
+                        </div>
+                    </form>
+                </template>
+            </card>
+        </modal>
+
+        <!-- TABLA DE CLIENTES -->
+
         <vue-bootstrap4-table :rows="rows" :columns="columns" :classes="classes" :config="config">
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
@@ -25,6 +66,9 @@
                 Total Number of rows selected : {{props.selectedItemsCount}}
             </template>
         </vue-bootstrap4-table>
+
+        <!-- END -->
+
     </div> 
 </template>
 
@@ -34,12 +78,19 @@ import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 
+// COMPONENTS
+import Modal from '@/components/Modal';
+
   export default {
     components: {
-        VueBootstrap4Table    
+        VueBootstrap4Table,
+        Modal  
     },
     data() {
       return {
+        modals: {
+            modal1: false
+        },
         rows: [],
         columns: [{
                 label: "Nombre",
@@ -97,7 +148,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
     },
     created(){
 		this.getClients();
-
+        
     },
     methods: {
         getClients(){
@@ -119,7 +170,10 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 				// }
 				// console.log(this.clients)
             })
-		},
+        },
+        relo(){
+            this.modals.modal1 = true
+        }
     }
   };
 </script>
