@@ -25,6 +25,7 @@ import ArgonDashboard from './plugins/argon-dashboard'
 import VueSweetalert2 from 'vue-sweetalert2'
 import VueApexCharts from 'vue-apexcharts'
 import Popper from 'vue-popperjs';
+import VueSingleSelect from "vue-single-select";
 
 /* STYLES */
 
@@ -35,6 +36,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 Vue.config.productionTip = false
 
 /* USES*/
+Vue.component('vue-single-select', VueSingleSelect);
 Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)
