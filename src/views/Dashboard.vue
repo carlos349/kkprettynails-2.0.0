@@ -10,56 +10,53 @@
                                 icon="ni ni-active-40"
                                 class="mb-4 mb-xl-0"
                     >
-
-                        <template slot="footer">
-                            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                            <span class="text-nowrap">Desde el mes pasado <small class="text-muted">( 40 )</small></span>
-                        </template>
+                    <template slot="footer">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span><br>
+                        <span class="text-nowrap">Mes pasado <small class="text-muted">( 40 )</small></span>
+                    </template>
                     </stats-card>
                 </div>
                 <div class="col-xl-3 col-lg-6">
                     <stats-card title="Total local"
                                 type="gradient-orange"
-                                :sub-title="totalLocal + ' $'"
+                                :sub-title="'$ '+totalLocal"
                                 icon="ni ni-shop"
                                 class="mb-4 mb-xl-0"
                     >
-
-                        <template slot="footer">
-                            <span v-if="porcentajeLocal[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{porcentajeLocal[0].toFixed(2)}}%</span>
-                            <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{porcentajeLocal[0].toFixed(2)}}%</span>
-                            <span class="text-nowrap">Desde el mes pasado <small class="text-muted">( {{localAnterior}} $ )</small></span>
-                        </template>
+                    <template slot="footer">
+                        <span v-if="porcentajeLocal[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{porcentajeLocal[0].toFixed(2)}}%</span>
+                        <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{porcentajeLocal[0].toFixed(2)}}%</span><br>
+                        <span class="text-nowrap">Mes pasado <small class="text-muted"> $ {{localAnterior}}</small></span>
+                    </template>
                     </stats-card>
                 </div>
                 <div class="col-xl-3 col-lg-6">
                     <stats-card title="Ganancias"
                                 type="gradient-green"
-                                :sub-title="gananciaNeta + ' $'"
+                                :sub-title="'$ '+gananciaNeta"
                                 icon="ni ni-money-coins"
                                 class="mb-4 mb-xl-0"
                     >
-
-                        <template slot="footer">
-                            <span v-if="porcentajeGanancia[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{porcentajeGanancia[0].toFixed(2)}}%</span>
-                            <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{porcentajeGanancia[0].toFixed(2)}}%</span>
-                            <span class="text-nowrap">Desde el mes pasado</span> <small class="text-muted">( {{netaAnterior}} $ )</small>
-                        </template>
+                    <template slot="footer">
+                        <span v-if="porcentajeGanancia[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{porcentajeGanancia[0].toFixed(2)}}%</span>
+                        <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{porcentajeGanancia[0].toFixed(2)}}%</span><br>
+                        <span class="text-nowrap">Mes pasado</span> <small class="text-muted"> $ {{netaAnterior}}</small>
+                    </template>
                     </stats-card>
 
                 </div>
                 <div class="col-xl-3 col-lg-6">
                     <stats-card title="Total"
                                 type="gradient-info"
-                                :sub-title="gananciaTotal + ' $'"
+                                :sub-title="'$ '+gananciaTotal"
                                 icon="ni ni-chart-bar-32"
                                 class="mb-4 mb-xl-0"
                     >
 
                         <template slot="footer">
                             <span v-if="porcentajeTotal[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{porcentajeTotal[0].toFixed(2)}}%</span>
-                            <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{porcentajeTotal[0].toFixed(2)}}%</span>
-                            <span class="text-nowrap">Desde el mes pasado</span> <small class="text-muted">( {{totalAnterior}} $ )</small>
+                            <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{porcentajeTotal[0].toFixed(2)}}%</span><br>
+                            <span class="text-nowrap">Mes pasado</span> <small class="text-muted"> $ {{totalAnterior}}</small>
                         </template>
                     </stats-card>
                 </div>
@@ -106,7 +103,6 @@
                                 :extra-options="bigLineChart.extraOptions"
                         >
                         </line-chart>
-
                     </card>
                 </div>
 
@@ -118,7 +114,6 @@
                                 <h5 class="h3 mb-0">Total orders</h5>
                             </div>
                         </div>
-
                         <bar-chart
                                 :height="350"
                                 ref="barChart"
@@ -151,6 +146,7 @@
   //Back - End 
   import axios from 'axios'
   import endPoint from '../../config-endpoint/endpoint.js'
+  import router from '../router'
   // Charts
   import * as chartConfigs from '@/components/Charts/config';
   import LineChart from '@/components/Charts/LineChart';
@@ -158,7 +154,6 @@
   // Tables
   import SocialTrafficTable from './Dashboard/SocialTrafficTable';
   import PageVisitsTable from './Dashboard/PageVisitsTable';
-
   export default {
     components: {
       LineChart,
@@ -252,6 +247,9 @@
         localAnterior:0,
         gananciaNeta:0,
         gananciaTotal:0,
+        localAnterior: 0,
+        netaAnterior: 0,
+        totalAnterior: 0,
         porcentajeLocal:[],
         porcentajeGanancia:[],
         porcentajeTotal:[],
@@ -275,8 +273,20 @@
               data: [25, 20, 30, 22, 17, 29]
             }]
           }
-        }
+        },
+        clients:[]
       };
+    },
+    beforeCreate(){
+      if (!localStorage.getItem('userToken') && localStorage.getItem('status') != 1) {
+					this.$swal({ 
+						type: 'error',
+						title: 'URL restringida',
+						showConfirmButton: false,
+						timer: 1500
+					})
+				router.push({name: 'login'})
+			}
     },
     created(){
       this.getClients();
@@ -286,13 +296,10 @@
     },
     methods: {
       getClients(){
-        console.log(localStorage.nombre)
         axios.get(endPoint.endpointTarget+'/clients')
         .then(res => {
-				  
           this.clients = res.data
           for (let i = 0; i < this.clients.length; i++) {
-            // this.clients[i].push({thatId:this.clients[i].identidad}) 
             if (this.clients[i].correoCliente) {
               this.clients[i].identidad = this.clients[i].identidad + '\n / ' + this.clients[i].correoCliente 
             }
@@ -302,16 +309,13 @@
             this.clients[i].fecha = this.formatDate(this.clients[i].fecha)
             this.clients[i].ultimaFecha = this.formatDate(this.clients[i].ultimaFecha)
 				  }
-				  
         })
       },
       getVentas(){
         const config = {headers: {'x-access-token': localStorage.userToken}}
         axios.get(endPoint.endpointTarget+'/ventas', config)
         .then(res => {
-          
           this.ventas = res.data
-          
           let fechaBien = ''
           for (let index = 0; index < this.ventas.length; index++) {
             let fech = new Date(this.ventas[index].fecha)
@@ -323,20 +327,20 @@
             }
             this.ventas[index].servicios = servicio
           }
-        }).catch(err => {
+        })
+        .catch(() => {
           this.$swal({
             type: 'error',
             title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
             showConfirmButton: false,
             timer: 2500
           })
-          router.push({name: 'Login'})
+          router.push({name: 'login'})
         })
       },
       totales(month){
         axios.get(endPoint.endpointTarget+'/ventas/totalSales/'+month)
         .then(res => {
-          
           this.totalLocal = this.formatPrice(res.data.totalLocal)
           this.gananciaNeta = this.formatPrice(res.data.gananciaNeta)
           this.gananciaTotal = this.formatPrice(res.data.gananciaTotal)
@@ -346,7 +350,6 @@
           this.porcentajeLocal.push((parseFloat(this.totalLocal) - parseFloat(this.localAnterior)) / parseFloat(this.totalLocal) * 100)
           this.porcentajeGanancia.push((parseFloat(this.gananciaNeta) - parseFloat(this.netaAnterior)) / parseFloat(this.gananciaNeta) * 100)
           this.porcentajeTotal.push((parseFloat(this.gananciaTotal) - parseFloat(this.totalAnterior)) / parseFloat(this.gananciaTotal) * 100)
-
           if (this.porcentajeLocal[0] < 0) {
             this.porcentajeLocal.push(false)
           }
@@ -364,9 +367,7 @@
           }
           else {
             this.porcentajeTotal.push(true)
-          }
-          
-          
+          } 
         })
       },
     SalesQuantityChartFunc(){
@@ -376,9 +377,6 @@
           const userlist = res.data
           this.chartdata = userlist
           this.loaded = true
-        })
-        .catch(err => {
-          console.error(err)
         })
       },
       initBigChart(index) {
@@ -402,7 +400,6 @@
           let dateFormat = new Date(date)
           return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
       },
-      
     },
     mounted() {
       this.initBigChart(0);
