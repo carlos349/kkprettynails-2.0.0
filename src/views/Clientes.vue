@@ -77,7 +77,6 @@
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
-
 // COMPONENTS
 import Modal from '@/components/Modal';
 

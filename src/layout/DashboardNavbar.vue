@@ -190,7 +190,7 @@
                 <base-dropdown class="nav-link pr-0">
                     <div class="media align-items-center" slot="title">
                 <span class="avatar avatar-sm rounded-circle">
-                  <img alt="Image placeholder" src="https://www.w3schools.com/howto/img_avatar.png">
+                  <img alt="Image placeholder" :src="imgUser">
                 </span>
                         <div style="cursor:pointer" class="media-body ml-2 d-none d-lg-block">
                             <span class="mb-0 text-sm  font-weight-bold">{{nombre}}</span>
@@ -199,26 +199,26 @@
 
                     <template>
                         <div class=" dropdown-header noti-title">
-                            <h6 class="text-overflow m-0">Welcome!</h6>
+                            <h6 class="text-overflow m-0">¡Bienvenido!</h6>
                         </div>
                         <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-single-02"></i>
                             <span>Mi perfil</span>
                         </router-link>
-                        <router-link to="/profile" class="dropdown-item">
+                        <!-- <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-settings-gear-65"></i>
                             <span>Ajustes</span>
-                        </router-link>
+                        </router-link> -->
                         <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-calendar-grid-58"></i>
                             <span>Actividad</span>
                         </router-link>
-                        <router-link to="/profile" class="dropdown-item">
+                        <!-- <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-support-16"></i>
                             <span>Soporte</span>
-                        </router-link>
+                        </router-link> -->
                         <div class="dropdown-divider"></div>
-                        <router-link to="/profile" class="dropdown-item">
+                        <router-link to="/login" class="dropdown-item">
                             <i class="ni ni-user-run"></i>
                             <span>Cerrar sesión</span>
                         </router-link>
