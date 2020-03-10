@@ -105,6 +105,7 @@
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67">Detalles</base-button>
+                    <base-button size="sm" v-on:click="deleteClient(props.row._id)" type="primary" icon="ni ni-align-center">Reporte</base-button>
                     <base-button size="sm" v-on:click="deleteClient(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
                 </b>
             </template>
@@ -209,7 +210,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                 // },
             },
             {
-                label: "Eliminar",
+                label: "Administrar",
                 name: "_id",
                 sort: false,
                 slot_name: "Administrar"
