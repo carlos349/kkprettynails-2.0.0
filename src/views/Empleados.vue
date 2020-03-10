@@ -283,7 +283,8 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                     }
                     setTimeout(() => {
                        this.modals = {
-                         modal2: false,
+                         modal2: false,  
+                         modal1: true,
                          message: "",
                          icon: '',
                          type: ''
