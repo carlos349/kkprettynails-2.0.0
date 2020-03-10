@@ -17,8 +17,8 @@
         <sidebar-item v-if="auth == 1 || auth == 2 || auth == 3" :link="{name: 'Agendamiento', icon: 'ni ni-calendar-grid-58 text-blue', path: '/Agendamiento'}"/>
         <sidebar-item v-if="auth == 1" :link="{name: 'Caja', icon: 'ni ni-archive-2 text-green', path: '/Caja'}"/>
         <sidebar-item v-if="auth == 1" :link="{name: 'Icons', icon: 'ni ni-planet text-blue', path: '/icons'}"/>
-        <sidebar-item v-if="auth == 1" :link="{name: 'Tables', icon: 'ni ni-bullet-list-67 text-red', path: '/tables'}"/>
-        <sidebar-item v-if="auth == 1" :link="{name: 'Login', icon: 'ni ni-key-25 text-info', path: '/login'}"/>
+
+        
        
       </template>
     </side-bar>

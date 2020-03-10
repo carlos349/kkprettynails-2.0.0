@@ -27,7 +27,7 @@ export default new Router({
         },
         {
           path: '/profile',
-          name: 'profile',
+          name: '',
           component: () => import(/* webpackChunkName: "demo" */ './views/UserProfile.vue')
         },
         {
@@ -42,22 +42,22 @@ export default new Router({
         },
         {
           path: '/Empleados',
-          name: 'Empleados',
+          name: '',
           component: () => import(/* webpackChunkName: "demo" */ './views/Empleados.vue')
         },
         {
           path: '/Usuarios',
-          name: 'Usuarios',
+          name: '',
           component: () => import(/* webpackChunkName: "demo" */ './views/Usuarios.vue')
         },
         {
           path: '/Ventas',
-          name: 'Ventas',
+          name: '',
           component: () => import(/* webpackChunkName: "demo" */ './views/Ventas.vue')
         },
         {
           path: '/Servicios',
-          name: 'Servicios',
+          name: '',
           component: () => import(/* webpackChunkName: "demo" */ './views/Servicios.vue')
         },
         {
@@ -67,22 +67,22 @@ export default new Router({
         },
         {
           path: '/Inventario',
-          name: 'Inventario',
+          name: '',
           component: () => import(/* webpackChunkName: "demo" */ './views/Inventario.vue')
         },
         {
           path: '/Gastos',
-          name: 'Gastos',
+          name: '',
           component: () => import(/* webpackChunkName: "demo" */ './views/Gastos.vue')
         },
         {
           path: '/Caja',
-          name: 'Caja',
+          name: '',
           component: () => import(/* webpackChunkName: "demo" */ './views/Caja.vue')
         },
         {
           path: '/Agendamiento',
-          name: 'Agendamiento',
+          name: '',
           component: () => import(/* webpackChunkName: "demo" */ './views/Agendamiento.vue')
         }
       ]

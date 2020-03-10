@@ -32,7 +32,79 @@
                     </div>
                 </template>
                 <template>
-                    <form role="form">
+                    <tabs v-if="registerClient.valid2 == true" fill class="flex-column flex-md-row">
+                        <card shadow>
+                            <tab-pane>
+                                <span v-if="registerClient.valid2 == true" slot="title">
+                                    <i class="ni ni-collection"></i>
+                                    Basicos
+                                </span>
+                                <form role="form">
+                                    <base-input alternative
+                                                class="mb-3"
+                                                placeholder="Nombre"
+                                                v-model="registerClient.name"
+                                                v-on:change="validRegister()"
+                                                addon-left-icon="ni ni-single-02">
+                                    </base-input>
+                                    <base-input alternative
+                                                type="text"
+                                                placeholder="Identificación"
+                                                v-model="registerClient.id"
+                                                v-on:change="validRegister()"
+                                                addon-left-icon="ni ni-key-25">
+                                    </base-input>
+                                    <base-input alternative
+                                                type="text"
+                                                placeholder="Contacto adicional"
+                                                v-model="registerClient.contactOne"
+                                                addon-left-icon="ni ni-collection">
+                                    </base-input>
+                                    <base-input alternative
+                                                type="text"
+                                                placeholder="Contacto adicional"
+                                                v-model="registerClient.contactTwo"
+                                                addon-left-icon="ni ni-collection">
+                                    </base-input>
+                                    <div class="text-center">
+                                        <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
+                                        <base-button type="primary" v-on:click="clientEdit()" v-else class="my-4">{{tipeForm}}</base-button>
+                                    </div>
+                                    
+                                </form>                                
+                            </tab-pane>
+
+                            <tab-pane v-if="registerClient.valid2 == true">
+                                <span slot="title">
+                                    <i class="ni ni-chart-bar-32"></i>
+                                    Avanzados
+                                </span>
+                                <div class="row">
+                                    <base-button class="col-12 mt-1" type="primary">
+                                        <span>Participación</span>
+                                        <badge class="text-default" type="secondary">{{registerClient.participation}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12 mt-1" type="primary">
+                                        <span class="text-left">Recomendaciones</span>
+                                        <badge class="text-default" type="secondary">{{registerClient.recommenders}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12 mt-1" type="primary">
+                                        <span class="text-left">Recomendador</span>
+                                        <badge class="text-default" type="secondary">{{registerClient.recommender}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12 mt-1" type="primary">
+                                        <span>Cliente desde</span>
+                                        <badge class="text-default" type="secondary">{{registerClient.date}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12 mt-1" type="primary">
+                                        <span>Ultima atención</span>
+                                        <badge class="text-default" type="secondary">{{registerClient.lastDate}}</badge>
+                                    </base-button>
+                                </div>
+                            </tab-pane>
+                        </card>
+                    </tabs>
+                    <form v-else role="form">
                         <base-input alternative
                                     class="mb-3"
                                     placeholder="Nombre"
@@ -71,18 +143,22 @@
                             <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
                             <base-button type="primary" v-on:click="registerClients()" v-else class="my-4">{{tipeForm}}</base-button>
                         </div>
+                        
                     </form>
-                </template>
+            </template>
             </card>
         </modal>
+        <base-alert class="positionAlert" type="success" v-if="successRegister">
+            <strong>Registrado!</strong> Has registrado al cliente con exito!
+        </base-alert>
 
         <!-- TABLA DE CLIENTES -->
 
         <vue-bootstrap4-table :rows="rows" :columns="columns" :classes="classes" :config="config">
             <template slot="Administrar" slot-scope="props">
                 <b>
-                    <base-button type="default" @click="modals.modal1 = true , initialState(3)" icon="ni ni-bullet-list-67">Detalles</base-button>
-                    <base-button type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                    <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67">Detalles</base-button>
+                    <base-button size="sm" v-on:click="deleteClient(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
                 </b>
             </template>
             <template slot="pagination-info" slot-scope="props">
@@ -113,6 +189,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
     },
     data() {
       return {
+        successRegister:false,
         clientsNames: [],
         tipeForm: null,
         registerClient: {
@@ -122,7 +199,12 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             discount:false,
             contactTwo:null,
             recommender:null,
-            valid:false
+            valid:false,
+            valid2:false,
+            recommenders:null,
+            lastDate:null,
+            date:null,
+            participation:null
         },
         modals: {
             modal1: false
@@ -234,8 +316,6 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 			}else{
 				ifCheck = 1
 			}
-			
-			if (this.nombreCliente != '' && this.identidadCliente != '') {
 				axios.post(endPoint.endpointTarget+'/clients', {
 					nombre:fullName,
 					identidad:this.registerClient.id,
@@ -246,14 +326,13 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 				})
 				.then(res => {
 					if (res.data.status == 'Registrado') {
-						this.$swal({
-							type: 'success',
-							title: 'Cliente registrado',
-							showConfirmButton: false,
-							timer: 1500
-                        })
-                        this.initialState(1)
-                        this.getClients()
+						this.successRegister = true
+                        setTimeout(() => {
+                            this.successRegister = false
+                            this.initialState(1)
+                            this.getClients()
+                        }, 2500);
+                        
 						// this.getClientsThree()
 						// this.ServicesQuantityChartFunc();
 						// this.emitMethodTwo()
@@ -266,18 +345,13 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 						})
 					}
 				})
-			}else{
-				this.$swal({
-					type: 'error',
-					title: 'Llene los campos requeridos',
-					showConfirmButton: false,
-					timer: 1500
-				})
-			}
         },
         validRegister(){
             if (this.registerClient.name != null && this.registerClient.id != null) {
                 this.registerClient.valid = true
+            }
+            else {
+                this.registerClient.valid = false
             }
         },
         MaysPrimera(string){
@@ -304,7 +378,118 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             if (val == 3) {
                 this.tipeForm = 'Editar'
             }
-        }
+        },
+        pushData(nombre,id,correo,ig,participacion,recomendacion,recomendaciones,ultimaFecha,fecha,_id){
+            this.registerClient= {
+                name:nombre,
+                id:id,
+                contactOne:correo,
+                discount:false,
+                contactTwo:ig,
+                recommender:recomendacion,
+                valid:true,
+                valid2:true,
+                recommenders:recomendaciones,
+                lastDate:this.formatDate(ultimaFecha),
+                date:this.formatDate(fecha),
+                participation:participacion,
+                _id:_id
+            }
+
+        },
+        formatDate(date) {
+            let dateFormat = new Date(date)
+            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+" "+" ("+ dateFormat.getHours()+":"+ dateFormat.getMinutes()+")"
+        },
+        deleteClient(id){
+			this.$swal({
+				title: '¿Está seguro de borrar el cliente?',
+				text: 'No puedes revertir esta acción',
+				type: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Estoy seguro',
+				cancelButtonText: 'No, evitar acción',
+				showCloseButton: true,
+				showLoaderOnConfirm: true
+			}).then((result) => {
+				if(result.value) {
+					axios.put(endPoint.endpointTarget+'/clients/deleteClient/'+id)
+					.then(res => {
+						if (res.data.status == 'ok') {
+							this.$swal({
+								type: 'success',
+								title: 'Borrado con exito',
+								showConfirmButton: false,
+								timer: 1500
+							})
+							this.getClients();
+							// this.getClientsThree()
+							// this.ServicesQuantityChartFunc();
+							// this.emitMethodTwo()
+						}
+					})
+				}
+				else{
+					this.$swal({
+						type: 'info',
+						title: 'Acción cancelada',
+						showConfirmButton: false,
+						timer: 1500
+					})
+				}
+			})
+        },
+        clientEdit(){
+			const name = this.registerClient.name.split(' ')
+			var firstName, lastName, fullName
+			if (name[1]) {
+				firstName = this.MaysPrimera(name[0])
+				lastName = this.MaysPrimera(name[1])
+				fullName = firstName+' '+lastName
+			}else{
+				fullName = this.MaysPrimera(name[0])
+			}
+
+			if (this.registerClient.name != '' &&  this.registerClient.id != '') {
+				axios.put(endPoint.endpointTarget+'/clients/'+this.registerClient._id, {
+					nombreClienteEditar: fullName,
+					identidadClienteEditar: this.registerClient.id,
+					correoClienteEditar: this.registerClient.contactOne,
+					instagramClienteEditar: this.registerClient.contactTwo
+				})
+				.then(res => {
+					console.log(res)
+					if (res.data.status == 'Servicio actualizado') {
+						this.$swal({
+							type: 'success',
+							title: 'Cliente actualizado',
+							showConfirmButton: false,
+							timer: 1500
+						})
+                        this.getClients();
+                        this.initialState(1)
+						// this.arrayUsers();
+						// this.ServicesQuantityChartFunc();
+						// this.emitMethodTwo()
+					}else{
+						this.$swal({
+							type: 'error',
+							title: 'Cliente ya registrado',
+							showConfirmButton: false,
+							timer: 1500
+						})
+					}
+				})
+			}else{
+				this.$swal({
+					type: 'error',
+					title: 'Llene los datos',
+					showConfirmButton: false,
+					timer: 1500
+				})
+			}
+			
+		}
     }
   };
 </script>
@@ -315,4 +500,10 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
     .cursor-pointer{
         cursor: pointer;
     }
+    .positionAlert{
+    position: absolute;
+    top:14%;
+    left: 32%;
+    z-index: 100000;
+}
 </style>
