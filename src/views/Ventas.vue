@@ -284,6 +284,8 @@ export default {
                 }, 1500);
             }
         },
+
+        
         async cancelSale(id){
             const cancelSale = await axios.put(endPoint.endpointTarget+'/ventas/'+id, {
                 employeComision: this.arreglo.EmployeComision
