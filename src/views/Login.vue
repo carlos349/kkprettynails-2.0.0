@@ -57,6 +57,7 @@ import jwtDecode from 'jwt-decode'
         localStorage.removeItem('image')
         localStorage.removeItem('email')
         localStorage.removeItem('imageUser')
+        localStorage.removeItem('status')
     },
     methods: {
         login() {

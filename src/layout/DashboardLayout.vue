@@ -72,10 +72,5 @@
   };
 </script>
 <style lang="scss">
-.positionAlert{
-    position: absolute;
-    top:2%;
-    left: 20%;
-    z-index: 100000;
-}
+
 </style>

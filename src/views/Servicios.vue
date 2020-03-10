@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-lg-12 col-md-12">
-                        <h1 class="display-2 text-white w-100">Sección de servicio</h1>
+                        <h1 class="display-2 text-white w-100">Sección de servicios</h1>
                         <a @click="modals.modal1 = true"  class="btn btn-info text-white">Ingrese un servicio</a>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
                   class="border-0">
                 <template>
                     <div class="text-muted text-center mb-3">
-                        Registro de servicio
+                       <h3>Datos del servicio</h3> 
                     </div>
                 </template>
                 <template>
@@ -37,17 +37,19 @@
                             v-model="serviceRegister">
                         </base-input>
                         <base-input alternative
-                            type="text"
-                            placeholder="Precio"
-                            addon-left-icon="ni ni-time-alarm"
-                            v-model="priceRegister">
-                        </base-input>
-                        <base-input alternative
-                            type="text"
+                            type="number"
+                            max-count="100"
                             placeholder="comision (%)"
                             addon-left-icon="ni ni-money-coins"
                             v-model="comissionRegister">
                         </base-input>
+                        <currency-input
+                            v-model="priceRegister"
+                            locale="de"
+                            placeholder="Costo"
+                            class="form-control mb-3"
+                            style="margin-top:-10px;"
+                        />	
                         <select class="form-control mb-3" v-model="timeRegister">
                             <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
                             <option style="color:black;" value="15">15 Minutos</option>
@@ -65,7 +67,7 @@
                             ¿Aplica descuento?
                         </base-checkbox>
                         <vue-custom-scrollbar class="maxHeight">
-                            <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
+                            <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
                             </vue-bootstrap4-table>
                         </vue-custom-scrollbar >
                         <div class="text-center">
@@ -75,7 +77,74 @@
                 </template>
             </card>
         </modal>
+        <modal :show.sync="modals.modal2"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                       <h3>Datos del servicio</h3> 
+                    </div>
+                </template>
+                <template>
+                    <form role="form">
+                        <base-input alternative
+                            class="mb-3"
+                            placeholder="Nombre"
+                            addon-left-icon="ni ni-single-copy-04"
+                            v-model="serviceEdit">
+                        </base-input>
+                        <base-input alternative
+                            type="text"
+                            placeholder="comision (%)"
+                            addon-left-icon="ni ni-money-coins"
+                            v-model="comissionEdit">
+                        </base-input>
+                        <currency-input
+                            v-model="priceEdit"
+                            locale="de"
+                            addon-left-icon="ni ni-time-alarm"
+                            class="form-control mb-3"
+                            style="margin-top:-10px;"
+                        />	
+                        <select class="form-control mb-3" v-model="timeEdit">
+                            <option style="color:black;" value="15">15 Minutos</option>
+                            <option style="color:black;" value="30">30 Minutos</option>
+                            <option style="color:black;" value="45">45 Minutos</option>
+                            <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+                            <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
+                            <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
+                            <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
+                            <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
+                            <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
+                            <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
+                        </select>
+                        <base-checkbox class="mb-3" v-model="addDiscountEdit">
+                            ¿Aplica descuento?
+                        </base-checkbox>
+                        <vue-custom-scrollbar class="maxHeight">
+                            <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
+                                <template slot="checkbox_rows" slot-scope="props" >
+                                    
+                                </template>
+                            </vue-bootstrap4-table>
+                        </vue-custom-scrollbar >
+                        <div class="text-center">
+                            <base-button type="primary" class="my-4" v-on:click="registerService">Editar</base-button>
+                        </div>
+                    </form>
+                </template>
+            </card>
+        </modal>
         <vue-bootstrap4-table :rows="services" :columns="columns" :classes="classes" :config="config">
+            <template slot="actionButtons" slot-scope="props">
+                <base-button icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio)">Editar</base-button>
+                <base-button v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)">Activo</base-button>
+                <base-button v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)">Inactivo</base-button>
+            </template>
             <template slot="price" slot-scope="props">
                 <p>{{formatPrice(props.row.precio)}}</p>
             </template>
@@ -94,8 +163,13 @@
                 Total Number of rows selected : {{props.selectedItemsCount}}
             </template>
         </vue-bootstrap4-table>
-        <base-alert class="positionAlert" type="success" v-if="successRegister">
-            <strong>Success!</strong> This is a success alert—check it out!
+        <base-alert class="positionAlert" type="success" v-if="successAlert">
+            <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>
+            <strong>¡Bien!</strong> {{messageSuccess}}
+        </base-alert>
+        <base-alert class="positionAlert" type="danger" v-if="errorAlert">
+            <span class="alert-inner--icon"><i class="ni ni-fat-remove"></i></span>
+            <strong>¡Error!</strong> {{messageError}}
         </base-alert>
     </div>
 </template>
@@ -104,6 +178,7 @@
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
+import router from '../router'
 // COMPONENTS
 import Modal from '@/components/Modal'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
@@ -116,10 +191,11 @@ export default {
     data(){
         return {
             modals: {
-                modal1: false
+                modal1: false,
+                modal2: false
             },
             serviceRegister: '',
-            priceRegister: '',
+            priceRegister: 0,
             comissionRegister: '',
             timeRegister: 'Seleccione el tiempo',
             services: [],
@@ -165,6 +241,16 @@ export default {
                 //     type: "simple",
                 //     placeholder: "Enter country"
                 // },
+            },
+            {
+                label: "Acciones",
+                name: "_id",
+                slot_name: "actionButtons",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter first name"
+                // },
+                sort: true,
             }],
             config: {
                 card_title: "Tabla de servicios",
@@ -210,8 +296,29 @@ export default {
             },
             lenders: [],
             lenderSelecteds: [],
-            addDiscount: null,
-            successRegister: false
+            addDiscount: false,
+            successAlert: false,
+            errorAlert: false,
+            messageSuccess:'',
+            messageError:'',
+            idServiceEdit: '',
+            EditlenderSelecteds: [],
+            serviceEdit: '',
+            priceEdit: 0,
+            comissionEdit: 0,
+            timeEdit: '',
+            addDiscountEdit: null
+        }
+    },
+    beforeCreate(){
+      if (!localStorage.getItem('userToken') && localStorage.getItem('status') != 1) {
+            this.$swal({ 
+                type: 'error',
+                title: 'URL restringida',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            router.push({name: 'login'})
         }
     },
     created(){
@@ -237,6 +344,7 @@ export default {
         },
         selected(value){
             this.lenderSelecteds.push(value.selected_item._id)
+            console.log(value.selected_items)
         },
         unSelected(value){
             for (let i = 0; i < this.lenderSelecteds.length; i++) {
@@ -255,19 +363,19 @@ export default {
             this.lenderSelecteds = []
         },
         registerService(){
-            if (this.serviceRegister == '' || this.priceRegister == '' || this.timeRegister == '' || this.comissionRegister == '') {
-                this.successRegister = true
+            if (this.serviceRegister == '' || this.priceRegister == 0 || this.timeRegister == '' || this.comissionRegister == '') {
+                this.messageError = 'Debe rellenar los datos'
+                this.errorAlert = true
                 setTimeout(() => {
-                    this.successRegister = false
+                    this.errorAlert = false
                 }, 1500);
             }else{
                 if (this.lenderSelecteds.length == 0) {
-                    this.$swal({
-                        type: 'error',
-                        title: 'Seleccione almenos un prestador',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
+                    this.messageError = 'Debe seleccionar almenos un prestador'
+                    this.errorAlert = true
+                    setTimeout(() => {
+                        this.errorAlert = false
+                    }, 1500);
                 }else{
                     var ifCheck = this.addDiscount ? false : true
                     axios.post(endPoint.endpointTarget+'/servicios', {
@@ -279,21 +387,89 @@ export default {
                         descuento: ifCheck
                     }).then(res => {
                         if (res.data.status == 'Servicio creado') {
-                            this.successRegister = true
+                            this.messageSuccess = 'El servicio se registro con exito'
+                            this.successAlert = true
                             setTimeout(() => {
-                                this.successRegister = false
+                                this.successAlert = false
                             }, 1500);
+                            this.initialState()
+                            this.getServices()
                         }else{
-                            this.$swal({
-                                type: 'error',
-                                title: 'El servicio ya existe',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
+                            this.messageError = 'El servicio ya existe'
+                            this.errorAlert = true
+                            setTimeout(() => {
+                                this.errorAlert = false
+                            }, 1500);
                         }
                     })
                 }
             }
+        },
+        initialState(){
+            this.serviceRegister = ''
+            this.priceRegister = 0
+            this.comissionRegister = ''
+            this.timeRegister = 'Seleccione el tiempo'
+            this.lenderSelecteds = []
+            this.addDiscount = false
+            this.modals.modal1 = false
+            $('.maxHeight  thead .vbt-checkbox').click()
+            $('.maxHeight  thead .vbt-checkbox').prop('checked', false)
+        },
+        dataEdit(id, lenders, name, time, discount, comission, price){
+            const discountFinal = discount ? false : true
+            this.idServiceEdit = id
+            this.EditlenderSelecteds = lenders
+            this.serviceEdit = name
+            this.priceEdit = price
+            this.comissionEdit = comission
+            this.timeEdit = time
+            this.addDiscountEdit = discountFinal
+            this.modals.modal2 = true
+        },
+        editService(){
+            if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {
+                this.messageError = 'Debe rellenar los datos'
+                this.errorAlert = true
+                setTimeout(() => {
+                    this.errorAlert = false
+                }, 1500);
+            }else{
+                if (this.EditlenderSelecteds.length == 0) {
+                    this.messageError = 'Debe seleccionar almenos un prestador'
+                    this.errorAlert = true
+                    setTimeout(() => {
+                        this.errorAlert = false
+                    }, 1500);
+                }else{
+                    var ifCheck = addDiscountEdit ? false : true
+					const id = this.idServiceEdit
+					axios.put(endPoint.endpointTarget+'/servicios/' + id, {
+						nombreServicio: this.serviceEdit,
+						tiempoServicio: this.timeEdit,
+						precioServicio: this.priceEdit,
+						comisionServicio: this.comissionEdit,
+						prestadores: this.EditlenderSelecteds,
+						descuento: ifCheck
+					}).then(res => {
+
+                    })
+                }
+            }
+        },
+        changeStatus(id){
+            axios.put(endPoint.endpointTarget+'/servicios/changeActive/' + id)
+            .then(res => {
+                this.getServices();
+                // this.emitMethod()
+            })
+            .catch(err => {
+                this.messageError = 'Error con la consulta'
+                this.errorAlert = true
+                setTimeout(() => {
+                    this.errorAlert = false
+                }, 1500);
+            })
         }
     }
 }
@@ -333,8 +509,19 @@ export default {
     .maxHeight .card .card-header{
         display:none ;
     }
+    .table td {
+        padding: 5px;
+        padding-top: 10px;
+        padding-bottom: 0;
+    }
     .maxHeight .table td {
         padding: 5px;
+        padding-bottom: 5px;
     }
-    
+    .positionAlert{
+        position: absolute;
+        top:2%;
+        left: 20%;
+        z-index: 100000;
+    }
 </style>

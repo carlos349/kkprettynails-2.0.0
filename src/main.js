@@ -26,7 +26,7 @@ import VueSweetalert2 from 'vue-sweetalert2'
 import VueApexCharts from 'vue-apexcharts'
 import Popper from 'vue-popperjs';
 import VueSingleSelect from "vue-single-select";
-
+import VueCurrencyInput from 'vue-currency-input'
 /* STYLES */
 
 import 'vue-popperjs/dist/vue-popper.css';
@@ -34,9 +34,10 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 /* I DO NOT KNOW */
 Vue.config.productionTip = false
-
+const pluginOptions = {globalOptions: { currency: {'prefix':'$ '},precision: 2, distractionFree:false, autoDecimalMode:true}}
 /* USES*/
 Vue.component('vue-single-select', VueSingleSelect);
+Vue.use(VueCurrencyInput, pluginOptions)
 Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)

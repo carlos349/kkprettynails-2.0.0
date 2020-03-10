@@ -25,6 +25,7 @@
     "vue-bootstrap4-table": "^1.1.11",
     "vue-chartjs": "3.4.2",
     "vue-clipboard2": "0.3.0",
+    "vue-currency-input": "^1.17.2",
     "vue-custom-scrollbar": "^1.1.0",
     "vue-flatpickr-component": "8.1.2",
     "vue-jwt-decode": "^0.1.0",
