@@ -283,7 +283,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                     setTimeout(() => {
                         this.initialState(1)
                         this.getEmployes()
-                    }, 2000);
+                    }, 1500);
 					
 					// this.emitMethod()
 				}else{
@@ -301,7 +301,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                          icon: '',
                          type: ''
                        } 
-                    }, 2500);
+                    }, 1500);
 				}
 			})
 			

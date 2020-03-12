@@ -27,7 +27,7 @@ export default new Router({
         },
         {
           path: '/profile',
-          name: '',
+          name: 'perfil',
           component: () => import(/* webpackChunkName: "demo" */ './views/UserProfile.vue')
         },
         {
@@ -42,47 +42,47 @@ export default new Router({
         },
         {
           path: '/Empleados',
-          name: '',
+          name: 'empleados',
           component: () => import(/* webpackChunkName: "demo" */ './views/Empleados.vue')
         },
         {
           path: '/Usuarios',
-          name: '',
+          name: 'usuarios',
           component: () => import(/* webpackChunkName: "demo" */ './views/Usuarios.vue')
         },
         {
           path: '/Ventas',
-          name: '',
+          name: 'ventas',
           component: () => import(/* webpackChunkName: "demo" */ './views/Ventas.vue')
         },
         {
           path: '/Servicios',
-          name: '',
+          name: 'servicios',
           component: () => import(/* webpackChunkName: "demo" */ './views/Servicios.vue')
         },
         {
           path: '/Clientes',
-          name: '',
+          name: 'clientes',
           component: () => import(/* webpackChunkName: "demo" */ './views/Clientes.vue')
         },
         {
           path: '/Inventario',
-          name: '',
+          name: 'inventario',
           component: () => import(/* webpackChunkName: "demo" */ './views/Inventario.vue')
         },
         {
           path: '/Gastos',
-          name: '',
+          name: 'gastos',
           component: () => import(/* webpackChunkName: "demo" */ './views/Gastos.vue')
         },
         {
           path: '/Caja',
-          name: '',
+          name: 'caja',
           component: () => import(/* webpackChunkName: "demo" */ './views/Caja.vue')
         },
         {
           path: '/Agendamiento',
-          name: '',
+          name: 'agendamiento',
           component: () => import(/* webpackChunkName: "demo" */ './views/Agendamiento.vue')
         }
       ]
