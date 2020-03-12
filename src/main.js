@@ -17,6 +17,7 @@
 */
 
 /* COMPONENTS */
+
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -32,6 +33,11 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faUserSecret, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 
 /* STYLES */
+import VueFormWizard from 'vue-form-wizard'
+
+/* STYLES */
+
+import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import 'vue-popperjs/dist/vue-popper.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
@@ -49,6 +55,7 @@ Vue.use(Popper)
 library.add(faUserSecret, faCloudUploadAlt)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.use(VueFormWizard)
 Vue.component('apexchart', VueApexCharts)
 
 new Vue({
