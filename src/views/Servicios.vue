@@ -163,14 +163,14 @@
                 Total Number of rows selected : {{props.selectedItemsCount}}
             </template>
         </vue-bootstrap4-table>
-        <base-alert class="positionAlert" type="success" v-if="successAlert">
-            <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>
-            <strong>¡Bien!</strong> {{messageSuccess}}
-        </base-alert>
-        <base-alert class="positionAlert" type="danger" v-if="errorAlert">
-            <span class="alert-inner--icon"><i class="ni ni-fat-remove"></i></span>
-            <strong>¡Error!</strong> {{messageError}}
-        </base-alert>
+        <modal :show.sync="modals.modal3"
+               :gradient="modals.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modals.icon"></i>
+                <h1 class="heading mt-5">{{modals.message}}</h1>
+            </div>
+        </modal>
     </div>
 </template>
 <script>
@@ -192,7 +192,11 @@ export default {
         return {
             modals: {
                 modal1: false,
-                modal2: false
+                modal2: false,
+                modal3: false,
+                message: "",
+                icon: '',
+                type:''
             },
             serviceRegister: '',
             priceRegister: 0,
@@ -297,10 +301,6 @@ export default {
             lenders: [],
             lenderSelecteds: [],
             addDiscount: false,
-            successAlert: false,
-            errorAlert: false,
-            messageSuccess:'',
-            messageError:'',
             idServiceEdit: '',
             EditlenderSelecteds: [],
             serviceEdit: '',
@@ -364,17 +364,35 @@ export default {
         },
         registerService(){
             if (this.serviceRegister == '' || this.priceRegister == 0 || this.timeRegister == '' || this.comissionRegister == '') {
-                this.messageError = 'Debe rellenar los datos'
-                this.errorAlert = true
+                this.modals = {
+                    modal3: true,
+                    message: "Debe rellenar los datos",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
                 setTimeout(() => {
-                    this.errorAlert = false
+                    this.modals = {
+                        modal3: false,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
                 }, 1500);
             }else{
                 if (this.lenderSelecteds.length == 0) {
-                    this.messageError = 'Debe seleccionar almenos un prestador'
-                    this.errorAlert = true
+                    this.modals = {
+                        modal3: true,
+                        message: "Debe seleccionar almenos un prestador",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
                     setTimeout(() => {
-                        this.errorAlert = false
+                        this.modals = {
+                            modal3: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
                     }, 1500);
                 }else{
                     var ifCheck = this.addDiscount ? false : true
@@ -387,18 +405,36 @@ export default {
                         descuento: ifCheck
                     }).then(res => {
                         if (res.data.status == 'Servicio creado') {
-                            this.messageSuccess = 'El servicio se registro con exito'
-                            this.successAlert = true
+                            this.modals = {
+                                modal3: true,
+                                message: "El servicio se registro con exito",
+                                icon: 'ni ni-check-bold ni-5x',
+                                type: 'success'
+                            }
                             setTimeout(() => {
-                                this.successAlert = false
+                                this.modals = {
+                                    modal3: false,
+                                    message: "",
+                                    icon: '',
+                                    type: ''
+                                }
                             }, 1500);
                             this.initialState()
                             this.getServices()
                         }else{
-                            this.messageError = 'El servicio ya existe'
-                            this.errorAlert = true
+                            this.modals = {
+                                modal3: true,
+                                message: "El servicio ya existe",
+                                icon: 'ni ni-fat-remove ni-5x',
+                                type: 'danger'
+                            }
                             setTimeout(() => {
-                                this.errorAlert = false
+                                this.modals = {
+                                    modal3: false,
+                                    message: "",
+                                    icon: '',
+                                    type: ''
+                                }
                             }, 1500);
                         }
                     })
@@ -429,17 +465,35 @@ export default {
         },
         editService(){
             if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {
-                this.messageError = 'Debe rellenar los datos'
-                this.errorAlert = true
+                this.modals = {
+                    modal3: true,
+                    message: "Debe rellenar los datos",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
                 setTimeout(() => {
-                    this.errorAlert = false
+                    this.modals = {
+                        modal3: false,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
                 }, 1500);
             }else{
                 if (this.EditlenderSelecteds.length == 0) {
-                    this.messageError = 'Debe seleccionar almenos un prestador'
-                    this.errorAlert = true
+                    this.modals = {
+                        modal3: true,
+                        message: "Debe seleccionar almenos un prestador",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
                     setTimeout(() => {
-                        this.errorAlert = false
+                        this.modals = {
+                            modal3: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
                     }, 1500);
                 }else{
                     var ifCheck = addDiscountEdit ? false : true
@@ -509,19 +563,8 @@ export default {
     .maxHeight .card .card-header{
         display:none ;
     }
-    .table td {
-        padding: 5px;
-        padding-top: 10px;
-        padding-bottom: 0;
-    }
     .maxHeight .table td {
         padding: 5px;
         padding-bottom: 5px;
-    }
-    .positionAlert{
-        position: absolute;
-        top:2%;
-        left: 20%;
-        z-index: 100000;
     }
 </style>

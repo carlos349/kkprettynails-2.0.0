@@ -91,7 +91,7 @@ import jwtDecode from 'jwt-decode'
                     localStorage.setItem('showNav', true)
                     localStorage.setItem('_id', decoded._id)
                     localStorage.setItem('status', decoded.status)
-                    router.push({name: 'Agendamiento'})
+                    router.push({path: '/Agendamiento'})
                     this.emitMethod(decoded.status)
                 }
             })

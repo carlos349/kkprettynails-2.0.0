@@ -43,13 +43,7 @@
                                     v-on:change="validRegister()"
                                     addon-left-icon="ni ni-single-02">
                         </base-input>
-                        <base-input alternative
-                                    type="file"
-                                    placeholder="Imagen"
-                                    v-model="registerUser.image"
-                                    v-on:change="validRegister()"
-                                    addon-left-icon="ni ni-circle-08">
-                        </base-input>
+                        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
                         <base-input alternative
                                     type="text"
                                     placeholder="Correo"
@@ -65,13 +59,13 @@
                                     >
                         </base-input>
                         <base-input alternative
-                                    type="text"
+                                    type="password"
                                     placeholder="Contraseña"
                                     v-model="registerUser.password"
                                     addon-left-icon="ni ni-lock-circle-open">
                         </base-input>
                         <base-input alternative
-                                    type="text"
+                                    type="password"
                                     :valid="registerUser.p"
                                     v-on:keyup="validFields('p')"
                                     placeholder="Confirmar contraseña"
@@ -87,13 +81,65 @@
             </template>
             </card>
         </modal>
+        <modal :show.sync="modals.modal2"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Vincular prestador</h3>
+                    </div>
+                </template>
+                <template>
+                    <form role="form">
+                        <vue-single-select
+                            v-model="linkLender"
+                            :options="lenderNames"
+                            placeholder="Prestadores"
+                        ></vue-single-select>
+                        <base-button type="default" v-on:click="estatusEdit(idSelect, 3, 'no-prestador')">
+                            Vincular
+                        </base-button>  
+                    </form>
+            </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal3"
+               :gradient="modals.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modals.icon"></i>
+                <h1 class="heading mt-5">{{modals.message}}</h1>
+            </div>
+        </modal>
         <!-- TABLA DE CLIENTES -->
 
         <vue-bootstrap4-table :rows="users" :columns="columns" :classes="classes" :config="config">
+            <template slot="date-format" slot-scope="props">
+                <p>{{formatDate(props.row.LastAccess)}}</p>
+            </template>
+            <template slot="status-format" slot-scope="props">
+                <base-dropdown>
+                    <base-button size="sm" v-if="props.row.status == 1" slot="title" type="primary" class="dropdown-toggle">
+                        Gerente
+                    </base-button>
+                    <base-button size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle">
+                        Personal de caja
+                    </base-button>
+                    <base-button size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle">
+                        Prestadora
+                    </base-button>
+                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 1, 'no-prestador')">Gerencia</a>
+                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 2, 'no-prestador')">Personal de caja</a>
+                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 3, 'prestador')">Prestador</a>
+                </base-dropdown>
+            </template>
             <template slot="Administrar" slot-scope="props">
                 <b>
-                    <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67">Detalles</base-button>
-                    <base-button size="sm" v-on:click="deleteClient(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                    <base-button size="sm" v-on:click="deleteClient(props.row._id, props.row.status)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
                 </b>
             </template>
             <template slot="pagination-info" slot-scope="props">
@@ -110,10 +156,11 @@
 <script>
 //Back - End 
 import axios from 'axios'
+import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
-import VueBootstrap4Table from 'vue-bootstrap4-table'
+import jwtDecode from 'jwt-decode'
 // COMPONENTS
-
+import VueBootstrap4Table from 'vue-bootstrap4-table'
   export default {
     components: {
         VueBootstrap4Table 
@@ -134,8 +181,15 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             c:null,
             p:null
         },
+        linkLender:'',
+        lenderNames: [],
         modals: {
-            modal1: false
+            modal1: false,
+            modal2: false,
+            modal3: false,
+            message: "",
+            icon: '',
+            type:''
         },
         users: [],
         columns: [{
@@ -168,11 +222,13 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             {
                 label: "Ultimo acceso",
                 name: "LastAccess",
+                slot_name:'date-format',
                 sort: true,
             },
             {
                 label: "Estado",
                 name: "status",
+                slot_name:"status-format",
                 sort: true,
                 // filter: {
                 //     type: "simple",
@@ -206,14 +262,59 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
         },
         classes: {
             table: "table-bordered table-striped"
-        }     
+        },
+        idSelect: '',
+        file: '' 
       };
     },
     created(){
 		this.getUsers();
-        
+        this.getLenders()
     },
     methods: {
+        handleFileUpload(){
+			this.file = this.$refs.file.files[0]
+			console.log(this.file)
+        },
+        registerUsers(){
+            let formData = new FormData();
+            formData.append('image', this.file)
+            const configToken = {headers: {'x-access-token': localStorage.userToken}}
+            axios.post(endPoint.endpointTarget+'/users/register',{
+                first_name: this.registerUser.name,
+                last_name: this.registerUser.lastname,
+                email: this.registerUser.correo,
+                password: this.registerUser.password,
+            }, configToken)
+            .then(res => {
+                this.modals = {
+                    modal3: true,
+                    message: '¡Usuario registrado con exito!',
+                    icon: 'ni ni-check-bold ni-5x',
+                    type: 'success'
+                }
+                setTimeout(() => {
+                    console.log(this.modals.modal3)
+                    this.modals = {
+                        modal3: false,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
+                    this.initialState(1)
+                    this.getUsers()
+                    const id = res.data.status
+                    const config = {headers: {'Content-Type': 'multipart/form-data', 'x-access-token': localStorage.userToken}}
+                    axios.post(endPoint.endpointTarget+`/users/registerImage/${id}`, formData, config)
+                    .then(resData => {
+                        console.log(resData)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }, 1500);
+            })
+        },
         getUsers(){
 			const config = {headers: {'x-access-token': localStorage.userToken}}
 			axios.get(endPoint.endpointTarget+'/users', config)
@@ -230,25 +331,26 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 				router.push({name: 'Login'})
 			})
         },
+        getLenders(){
+            axios.get(endPoint.endpointTarget+'/manicuristas')
+            .then(res => {
+                console.log(res.data)
+                for (let index = 0; index < res.data.length; index++) {
+                    this.lenderNames.push(res.data[index].nombre + " / " + res.data[index].documento)
+                }
+            })
+        },
+        validRegister(){
+            this.registerUser.valid = this.registerUser.name != '' && this.registerUser.lastname && this.registerUser.c == true && this.registerUser.p == true ? true : false
+        },
         validFields(field){
-            console.log("y entonces?")
             if (field == 'c') {
-                if (this.registerUser.correo == this.registerUser.correoConfirm) {
-                this.registerUser.c = true
-                console.log("y entonces?")
-                }
-                else{
-                    this.registerUser.c = false
-                }
+                this.registerUser.c = this.registerUser.correo == this.registerUser.correoConfirm ? true : false
+                this.validRegister()
             }
-            
             if (field == 'p') {
-                if (this.registerUser.password == this.registerUser.passwordConfirm) {
-                this.registerUser.p = true
-                }
-                else{
-                    this.registerUser.p = false
-                }
+                this.registerUser.p = this.registerUser.password == this.registerUser.passwordConfirm ? true : false
+                this.validRegister()
             } 
         },
         initialState(val){
@@ -282,7 +384,170 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             let dateFormat = new Date(date)
             return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+" "+" ("+ dateFormat.getHours()+":"+ dateFormat.getMinutes()+")"
         },
-        
+        deleteClient(id, admin){
+			this.$swal({
+				title: '¿Está seguro de borrar usuario?',
+				text: 'No puedes revertir esta acción',
+				type: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Estoy seguro',
+				cancelButtonText: 'No, evitar acción',
+				showCloseButton: true,
+				showLoaderOnConfirm: true
+			}).then((result) => {
+				if(result.value) {
+					if(admin == 1){
+						this.modals = {
+                            modal3: true,
+                            message: "No puede borrar un gerente",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
+                        }
+                        setTimeout(() => {
+                            this.modals = {
+                                modal3: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 1500);
+					}else{
+						const configToken = {headers: {'x-access-token': localStorage.userToken}}
+						axios.delete(endPoint.endpointTarget+'/users/' + id, configToken)
+						.then(res => {
+                            this.modals = {
+                                modal3: true,
+                                message: res.data.first_name+' '+res.data.last_name+' ha sido Borrado',
+                                icon: 'ni ni-check-bold ni-5x',
+                                type: 'success'
+                            }
+                            setTimeout(() => {
+                                this.modals = {
+                                    modal3: false,
+                                    message: "",
+                                    icon: '',
+                                    type: ''
+                                }
+                            }, 1500);
+							this.getUsers()
+						})
+						.catch(err => {
+							this.$swal({
+								type: 'error',
+								title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+								showConfirmButton: false,
+								timer: 2500
+							})
+							router.push({name: 'login'})
+						})
+					}
+				} else {
+					this.modals = {
+                        modal3: true,
+                        message: "Acción cancelada",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal3: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+				}
+			})
+		},
+        estatusEdit(id, status, type){
+			const token = localStorage.userToken
+			const decoded = jwtDecode(token)
+			const idDecoded = decoded._id
+			const ifStatus = decoded.status
+			if (idDecoded == id && ifStatus == 1) {
+				this.$swal({
+					title: '¿Está seguro de cambiarse el estado?',
+					text: '¡Si no hay otro gerente registrado, no podrás regresar tu estado!',
+					type: 'warning',
+					showCancelButton: true,
+					confirmButtonText: 'Estoy seguro',
+					cancelButtonText: 'No, evitar acción',
+					showCloseButton: true,
+					showLoaderOnConfirm: true
+				}).then(result => {
+					if (result.value) {
+						if (type == 'prestador') {
+							this.modals.modal2 = true
+							this.idSelect = id
+						}else{
+							const config = {headers: {'x-access-token': localStorage.userToken}}
+							axios.put(endPoint.endpointTarget+'/users/'+id, {
+								status: status,
+								employe: this.linkLender
+							}, config)
+							.then(res => {
+								// if (idDecoded == id) {
+								// 	EventBus.$emit('change-status', status)
+								// 	localStorage.setItem('logged-in', status)
+								// 	setTimeout(() => {
+								// 		router.push({name: 'Agendamiento'})
+								// 	}, 1000);
+								// }
+								this.getUsers()
+								this.linkLender = ''
+								this.modals.modal2 = false
+							})
+							.catch(err => {
+								this.$swal({
+									type: 'error',
+									title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+									showConfirmButton: false,
+									timer: 2500
+								})
+								router.push({name: 'Login'})
+							})
+						}
+					}else{
+						this.$swal({
+							type: 'info',
+							title: 'Acción cancelada',
+							showConfirmButton: false,
+							timer: 1500
+						})
+					}
+				})
+			}else{
+				if (type == 'prestador') {
+					this.modals.modal2 = true
+					this.idSelect = id
+				}else{
+					const config = {headers: {'x-access-token': localStorage.userToken}}
+					axios.put(endPoint.endpointTarget+'/users/'+id, {
+						status: status,
+						employe: this.linkLender
+					}, config)
+					.then(res => {
+						if (idDecoded == id) {
+							EventBus.$emit('change-status', status)
+							localStorage.setItem('logged-in', status)
+							router.push({name: 'Citas'})
+						}
+						this.getUsers()
+						this.linkLender = ''
+						this.modals.modal2 = false
+					})
+					.catch(err => {
+						this.$swal({
+							type: 'error',
+							title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+							showConfirmButton: false,
+							timer: 2500
+						})
+						router.push({name: 'login'})
+					})
+				}
+			}
+		},
     }
   };
 </script>

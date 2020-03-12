@@ -27,14 +27,18 @@ import VueApexCharts from 'vue-apexcharts'
 import Popper from 'vue-popperjs';
 import VueSingleSelect from "vue-single-select";
 import VueCurrencyInput from 'vue-currency-input'
-/* STYLES */
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faUserSecret, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 
+/* STYLES */
 import 'vue-popperjs/dist/vue-popper.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
 /* I DO NOT KNOW */
 Vue.config.productionTip = false
 const pluginOptions = {globalOptions: { currency: {'prefix':'$ '},precision: 2, distractionFree:false, autoDecimalMode:true}}
+
 /* USES*/
 Vue.component('vue-single-select', VueSingleSelect);
 Vue.use(VueCurrencyInput, pluginOptions)
@@ -42,7 +46,9 @@ Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)
 Vue.use(Popper)
+library.add(faUserSecret, faCloudUploadAlt)
 
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('apexchart', VueApexCharts)
 
 new Vue({

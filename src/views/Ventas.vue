@@ -51,10 +51,10 @@
                                     <h3><strong>N° de Venta: </strong>V-{{arreglo.count}}</h3> 
                                 </div>
                                 <div class="text-muted text-left">
-                                    <h3><strong>Prestador/es: </strong><span v-for="lender of arreglo.EmployeComision" :key="lender">({{lender.employe}} - {{formatPrice(lender.comision)}}) </span></h3> 
+                                    <h3><strong>Prestador/es: <br/></strong><span v-for="lender of arreglo.EmployeComision" :key="lender">({{lender.employe}} - {{formatPrice(lender.comision)}}) <br/></span></h3> 
                                 </div>
                                 <div class="text-muted text-left">
-                                    <h3><strong>Cliente/s: </strong><span v-for="client of arreglo.cliente" :key="client">({{client}}) </span></h3> 
+                                    <h3><strong>Cliente/s: <br/></strong><span v-for="client of arreglo.cliente" :key="client">({{client}}) <br/></span></h3> 
                                 </div>
                                 <hr>
                                 <div class="text-muted mt-2">
@@ -109,14 +109,14 @@
                 <base-button icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataReport(props.row._id)">Detalle</base-button>
             </template>
         </vue-bootstrap4-table>
-        <base-alert class="positionAlert" type="success" v-if="successAlert">
-            <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>
-            <strong>¡Bien!</strong> {{messageSuccess}}
-        </base-alert>
-        <base-alert class="positionAlert" type="danger" v-if="errorAlert">
-            <span class="alert-inner--icon"><i class="ni ni-fat-remove"></i></span>
-            <strong>¡Error!</strong> {{messageError}}
-        </base-alert>
+        <modal :show.sync="modals.modal2"
+               :gradient="modals.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modals.icon"></i>
+                <h1 class="heading mt-5">{{modals.message}}</h1>
+            </div>
+        </modal>
     </div>
 </template>
 <script>
@@ -136,7 +136,11 @@ export default {
     data() {
         return {
             modals: {
-                modal1: false
+                modal1: false,
+                modal2: false,
+                message: "",
+                icon: '',
+                type:''
             },
             dates: {
                 range: new Date()
@@ -144,6 +148,7 @@ export default {
             configDatePicker: {
                 allowInput: true, 
                 mode: 'range',
+                dateFormat: 'm-d-Y',
                 locale: Spanish, // locale for this instance only          
             }, 
             columns: [{
@@ -188,7 +193,7 @@ export default {
                 slot_name: "reportSale",
             }],
             configTable: {
-                card_title: "Tabla de servicios",
+                card_title: "Tabla de ventas",
                 checkbox_rows: false,
                 rows_selectable : true,
                 highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
@@ -231,8 +236,64 @@ export default {
         this.getSales()
     },
     methods: {
-        filterSale(){
-            console.log(this.dates.range)
+        async filterSale(){
+            const splitDate = this.dates.range.split(' a ')
+            console.log(splitDate.length)
+            if (splitDate.length > 1) {
+                const Dates = splitDate[0]+':'+splitDate[1]
+                try {
+                    const sales = await axios.get(endPoint.endpointTarget+'/ventas/findSalesByDate/'+Dates)
+                    if (sales.data.status == 'no Sales') {
+                        this.modals = {
+                            modal2: true,
+                            message: "No hay ventas en las fechas seleccionadas",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
+                        }
+                        setTimeout(() => {
+                            this.modals = {
+                                modal2: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 2000);
+                    }else{
+                        this.sales = sales.data.status
+                    }
+                }catch(error){
+                    console.log(error)
+                }
+            }else{
+                const dateDesde = new Date(this.dates.range)
+                const formatDesde =(dateDesde.getMonth() + 1) + "-" + dateDesde.getDate()+"-"+dateDesde.getFullYear() 
+                dateDesde.setDate(dateDesde.getDate() + 1)
+                const formatHasta = (dateDesde.getMonth() + 1)+"-" + dateDesde.getDate()+"-"+dateDesde.getFullYear()
+                const Dates = formatDesde+':'+formatHasta
+                try {
+                    const sales = await axios.get(endPoint.endpointTarget+'/ventas/findSalesByDay/'+Dates)
+                    if (sales.data.status == 'no Sales') {
+                        this.modals = {
+                            modal2: true,
+                            message: "No hay ventas en la fecha seleccionada",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
+                        }
+                        setTimeout(() => {
+                            this.modals = {
+                                modal2: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 2000);
+                    }else{
+                        this.sales = sales.data.status
+                    }
+                }catch(err){
+                    console.log(err)
+                }
+            }
         },
         getSales(){
             const config = {headers: {'x-access-token': localStorage.userToken}}
@@ -241,13 +302,21 @@ export default {
                 this.sales = res.data
                 
             }).catch(err => {
-                this.$swal({
-                    type: 'error',
-                    title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-                    showConfirmButton: false,
-                    timer: 2500
-                })
-                router.push({name: 'Login'})
+                this.modals = {
+                    modal2: true,
+                    message: "Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal2: false,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
+                }, 2000);
+                router.push({name: 'login'})
             })
         },
         formatDate(date) {
@@ -282,45 +351,63 @@ export default {
                 setTimeout(() => {
                     this.errorAlert = false
                 }, 1500);
+                this.modals = {
+                    modal2: true,
+                    message: "Error técnico",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal2: false,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
+                }, 2000);
             }
         },
-
-        
         async cancelSale(id){
+            console.log(id)
+            console.log(this.arreglo.EmployeComision)
             const cancelSale = await axios.put(endPoint.endpointTarget+'/ventas/'+id, {
                 employeComision: this.arreglo.EmployeComision
             })
             if (cancelSale.data.status == 'ok') {
-                this.messageSuccess = 'Venta anulada'
-                this.successAlert = true
+                this.modals = {
+                    modal2: true,
+                    message: "¡Venta anulada!",
+                    icon: 'ni ni-check-bold ni-5x',
+                    type: 'success'
+                }
                 setTimeout(() => {
-                    this.successAlert = false
-                }, 1500);
+                    this.modals = {
+                        modal2: false,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
+                }, 2000);
                 this.getSales()
                 this.arreglo.status = false
             }
             else{
-                this.messageError = 'error técnico'
-                this.errorAlert = true
+                this.modals = {
+                    modal2: true,
+                    message: "¡Error al anular!",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
                 setTimeout(() => {
-                    this.errorAlert = false
-                }, 1500);
+                    this.modals = {
+                        modal2: false,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
+                }, 2000);
             }
         },
     }
 }
 </script>
-<style>
-.table thead tr th{
-    max-width: 20%;
-}
-.table thead tr th{
-    max-width: 20%;
-}
-.positionAlert{
-    position: absolute;
-    top:2%;
-    left: 20%;
-    z-index: 100000;
-}
-</style>

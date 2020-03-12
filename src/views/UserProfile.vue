@@ -8,9 +8,9 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-lg-7 col-md-10">
-                        <h1 class="display-2 text-white">Hello Jesse</h1>
-                        <p class="text-white mt-0 mb-5">This is your profile page. You can see the progress you've made with your work and manage your projects or assigned tasks</p>
-                        <a href="#!" class="btn btn-info">Edit profile</a>
+                        <h1 class="display-2 text-white">Hola {{model.first_name}}</h1>
+                        <p class="text-white mt-0 mb-5">Este es tu perfil, puedes ver tu progreso trabajando para KKPrettyNails, en las diferentes secciones.Tambien puedes editar tus datos.</p>
+                        <base-button type="info" v-on:click="this.inspector = true">Editar perfil</base-button>
                     </div>
                 </div>
             </div>
@@ -25,53 +25,44 @@
                             <div class="col-lg-3 order-lg-2">
                                 <div class="card-profile-image">
                                     <a href="#">
-                                        <img src="img/theme/team-4-800x800.jpg" class="rounded-circle">
+                                        <img :src="model.image" class="rounded-circle">
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
-                            <div class="d-flex justify-content-between">
-                                <base-button size="sm" type="info" class="mr-4">Connect</base-button>
-                                <base-button size="sm" type="default" class="float-right">Message</base-button>
-                            </div>
-                        </div>
                         <div class="card-body pt-0 pt-md-4">
-                            <div class="row">
+                            <div class="row mt-4">
                                 <div class="col">
                                     <div class="card-profile-stats d-flex justify-content-center mt-md-5">
-                                        <div>
-                                            <span class="heading">22</span>
-                                            <span class="description">Friends</span>
+                                        <div v-if="model.status == 3">
+                                            <span class="heading">{{monthLender}}</span>
+                                            <span class="description">Mi mes</span>
                                         </div>
-                                        <div>
-                                            <span class="heading">10</span>
-                                            <span class="description">Photos</span>
+                                        <div v-else>
+                                            <span class="heading">2</span>
+                                            <span class="description">Ventas del dia</span>
                                         </div>
+                                        
                                         <div>
-                                            <span class="heading">89</span>
-                                            <span class="description">Comments</span>
+                                            <span class="heading">{{formatPrice(gainLender)}}</span>
+                                            <span class="description">Ganancia del mes</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="text-center">
                                 <h3>
-                                    Jessica Jones<span class="font-weight-light">, 27</span>
+                                    {{model.first_name}} {{model.last_name}}
                                 </h3>
-                                <div class="h5 font-weight-300">
-                                    <i class="ni location_pin mr-2"></i>Bucharest, Romania
-                                </div>
-                                <div class="h5 mt-4">
-                                    <i class="ni business_briefcase-24 mr-2"></i>Solution Manager - Creative Tim Officer
-                                </div>
-                                <div>
-                                    <i class="ni education_hat mr-2"></i>University of Computer Science
+                                <div class="h5">
+                                    <p v-if="model.status == 1">Gerente</p>
+                                    <p v-if="model.status == 2">Personal de caja</p><p v-if="model.status == 3">Prestadora</p>
                                 </div>
                                 <hr class="my-4" />
-                                <p>Ryan — the name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records all of his own music.</p>
-                                <a href="#">Show more</a>
+                                <p>{{model.email}}</p>
                             </div>
+                            <hr class="my-4" />
+                            <p>{{model.first_name}} — {{model.about}}</p>
                         </div>
                     </div>
                 </div>
@@ -81,103 +72,79 @@
                         <div slot="header" class="bg-white border-0">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h3 class="mb-0">My account</h3>
-                                </div>
-                                <div class="col-4 text-right">
-                                    <a href="#!" class="btn btn-sm btn-primary">Settings</a>
+                                    <h3 class="mb-0">Mi perfil</h3>
                                 </div>
                             </div>
                         </div>
                         <template>
                             <form @submit.prevent>
-                                <h6 class="heading-small text-muted mb-4">User information</h6>
+                                <h6 class="heading-small text-muted mb-4">Información de usuario</h6>
                                 <div class="pl-lg-4">
                                     <div class="row">
                                         <div class="col-lg-6">
-                                            <base-input alternative=""
-                                                        label="Username"
+                                            <base-input v-if="inspector"
+                                                        alternative=""
+                                                        label="Nombre"
                                                         placeholder="Username"
                                                         input-classes="form-control-alternative"
-                                                        v-model="model.username"
+                                                        v-model="model.first_name"
+                                            />
+                                            <base-input v-else
+                                                        disabled alternative=""
+                                                        label="Nombre"
+                                                        placeholder="Username"
+                                                        input-classes="form-control-alternative"
+                                                        v-model="model.first_name"
                                             />
                                         </div>
                                         <div class="col-lg-6">
-                                            <base-input alternative=""
-                                                        label="Email address"
+                                            <base-input v-if="inspector"
+                                                        alternative=""
+                                                        label="Apellido"
                                                         placeholder="jesse@example.com"
+                                                        input-classes="form-control-alternative"
+                                                        v-model="model.last_name"
+                                            />
+                                            <base-input v-else
+                                                        disabled alternative=""
+                                                        label="Apellido"
+                                                        placeholder="jesse@example.com"
+                                                        input-classes="form-control-alternative"
+                                                        v-model="model.last_name"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <base-input v-if="inspector"
+                                                        alternative=""
+                                                        label="Correo"
+                                                        placeholder="First name"
+                                                        input-classes="form-control-alternative"
+                                                        v-model="model.email"
+                                            />
+                                            <base-input v-else
+                                                        disabled alternative=""
+                                                        label="Correo"
+                                                        placeholder="Last name"
                                                         input-classes="form-control-alternative"
                                                         v-model="model.email"
                                             />
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <base-input alternative=""
-                                                        label="First name"
-                                                        placeholder="First name"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.firstName"
-                                            />
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <base-input alternative=""
-                                                        label="Last name"
-                                                        placeholder="Last name"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.lastName"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr class="my-4" />
-                                <!-- Address -->
-                                <h6 class="heading-small text-muted mb-4">Contact information</h6>
-                                <div class="pl-lg-4">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <base-input alternative=""
-                                                        label="Address"
-                                                        placeholder="Home Address"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.address"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-4">
-                                            <base-input alternative=""
-                                                        label="City"
-                                                        placeholder="City"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.city"
-                                            />
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <base-input alternative=""
-                                                        label="Country"
-                                                        placeholder="Country"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.country"
-                                            />
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <base-input alternative=""
-                                                        label="Postal code"
-                                                        placeholder="Postal code"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.zipCode"
-                                            />
+                                        <div class="col-lg-6 form-group">
+                                            <label><strong>Imagen de perfil</strong></label>
+                                            <input v-if="inspector" type="file" id="file" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
+                                            <input v-else type="file" id="file" ref="file" disabled class="form-control mb-3" >
                                         </div>
                                     </div>
                                 </div>
                                 <hr class="my-4" />
                                 <!-- Description -->
-                                <h6 class="heading-small text-muted mb-4">About me</h6>
+                                <h6 class="heading-small text-muted mb-4">Sobre ti</h6>
                                 <div class="pl-lg-4">
                                     <div class="form-group">
-                                        <base-input alternative=""
-                                                    label="About Me">
-                                            <textarea rows="4" class="form-control form-control-alternative" placeholder="A few words about you ...">A beautiful Dashboard for Bootstrap 4. It is Free and Open Source.</textarea>
+                                        <base-input alternative="" label="Sobre mi - proximamente">
+                                            <textarea disabled v-model="model.about" rows="4" class="form-control form-control-alternative" placeholder="Unas palabras sobre ti..."></textarea>
                                         </base-input>
                                     </div>
                                 </div>
@@ -190,23 +157,96 @@
     </div>
 </template>
 <script>
-  export default {
-    name: 'user-profile',
-    data() {
-      return {
-        model: {
-          username: '',
-          email: '',
-          firstName: '',
-          lastName: '',
-          address: '',
-          city: '',
-          country: '',
-          zipCode: '',
-          about: '',
+    import axios from 'axios'
+    import router from '../router'
+    import endPoint from '../../config-endpoint/endpoint.js'
+    import jwtDecode from 'jwt-decode'
+    export default {
+        name: 'user-profile',
+        data() {
+            const token = localStorage.userToken
+			const decoded = jwtDecode(token)
+            return {
+                id: decoded._id,
+                model: {
+                    first_name: '',
+                    last_name: '',
+                    email: '',
+                    access: '',
+                    image: '',
+                    about: ''
+                },
+                inspector: false,
+                monthLender: 0,
+                gainLender: 0,
+                file: ''
+            }
+        },
+        beforeCreate(){
+            if (!localStorage.getItem('userToken') && localStorage.getItem('status') != 1) {
+                this.$swal({ 
+                    type: 'error',
+                    title: 'URL restringida',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                router.push({name: 'login'})
+            }
+        },
+        created(){
+            this.getData();
+            this.getYourSales();
+        },
+        methods: {
+            async getData() {
+				const config = {headers: {'x-access-token': localStorage.userToken}}
+				try{
+					const data = await axios.get(endPoint.endpointTarget+'/users/data/'+this.id, config)
+					this.model.first_name = data.data.first_name
+					this.model.last_name = data.data.last_name
+					this.model.email = data.data.email
+					this.model.status = data.data.status
+                    this.model.access = data.data.LastAccess
+                    this.model.about = data.data.about
+					this.model.image = endPoint.imgEndpoint+data.data.userImage
+				}catch(err) {
+					this.$swal({
+						type: 'error',
+						title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+						showConfirmButton: false,
+						timer: 2500
+					})
+					router.push({name: 'login'})	
+				}
+				
+            },
+            async getYourSales(){
+				const ident = localStorage.userToken
+				const decoded = jwtDecode(ident)
+				const link = decoded.linkLender
+                this.link = decoded.linkLender
+                console.log('here')
+				if (link != '') {
+					const split = link.split(" / ")
+                    const sales = await axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+split[0]+":"+split[1])
+                    console.log(sales)
+                    this.monthLender = sales.data.length
+                    for (let index = 0; index < sales.data.length; index++) {
+                        for (let indexTwo = 0; indexTwo < sales.data[index].EmployeComision.length; indexTwo++) {
+                            this.gainLender = sales.data[index].EmployeComision[indexTwo].employe == split[0] ? this.gainLender + sales.data[index].EmployeComision[indexTwo].comision : this.gainLender + 0
+                        }
+                    }
+				}
+            },
+            formatPrice(value) {
+                let val = (value/1).toFixed(2).replace('.', ',')
+                return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+            },
+            handleFileUpload(){
+                this.file = this.$refs.file.files[0]
+                console.log(this.file)
+            },
         }
-      }
-    },
-  };
+    };
 </script>
 <style></style>
