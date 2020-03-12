@@ -17,6 +17,7 @@
 */
 
 /* COMPONENTS */
+
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -27,8 +28,11 @@ import VueApexCharts from 'vue-apexcharts'
 import Popper from 'vue-popperjs';
 import VueSingleSelect from "vue-single-select";
 import VueCurrencyInput from 'vue-currency-input'
+import VueFormWizard from 'vue-form-wizard'
+
 /* STYLES */
 
+import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import 'vue-popperjs/dist/vue-popper.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
@@ -42,7 +46,7 @@ Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)
 Vue.use(Popper)
-
+Vue.use(VueFormWizard)
 Vue.component('apexchart', VueApexCharts)
 
 new Vue({

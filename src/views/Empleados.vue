@@ -83,8 +83,8 @@
                             <option style="color:black;" value="6">Sabado</option>
                         </select>
                         <div class="text-center">
-                            <base-button type="primary" v-if="registerEmploye.valid == false" disabled class="my-4">Registrar</base-button>
-                            <base-button type="primary" v-on:click="registerEmployes()" v-else class="my-4">Registrar</base-button>
+                            <base-button type="primary" v-if="registerEmploye.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
+                            <base-button type="primary" v-on:click="proccess()" v-else class="my-4">{{tipeForm}}</base-button>
                         </div>
                         
                     </form>
@@ -104,9 +104,9 @@
         <vue-bootstrap4-table :rows="employes" :columns="columns" :classes="classes" :config="config">
             <template slot="Administrar" slot-scope="props">
                 <b>
-                    <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67">Detalles</base-button>
+                    <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.documento, props.row.restTime, props.row.restDay, props.row._id,props.row.comision)" icon="ni ni-bullet-list-67">Detalles</base-button>
                     <base-button size="sm" v-on:click="deleteClient(props.row._id)" type="primary" icon="ni ni-align-center">Reporte</base-button>
-                    <base-button size="sm" v-on:click="deleteClient(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                    <base-button size="sm" v-on:click="deleteEmploye(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
                 </b>
             </template>
             <template slot="total" slot-scope="props">
@@ -148,12 +148,15 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
     },
     data() {
       return {
+        tipeForm:null,
         registerEmploye: {
             name:null,
             id:null,
             timeRestOne:"Seleccione el tiempo",
             timeRestTwo:"Seleccione el tiempo",
             dayFree:"Seleccione el día",
+            _id:null,
+            comision:null,
             valid:false,
             valid2:false,
         },
@@ -251,6 +254,14 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                 
 			})
         },
+        proccess(){
+            if (this.tipeForm == "Registrar") {
+                this.registerEmployes()
+            }
+            else{
+                this.updateEmploye()
+            }
+        },
         registerEmployes(){
 			const nombre = this.registerEmploye.name.replace(/\s*$/,"");
 			const documento = this.registerEmploye.id.replace(/\s*$/,"");
@@ -294,7 +305,92 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 				}
 			})
 			
+        },
+        updateEmploye(){
+			const nombre = this.registerEmploye.name.replace(/\s*$/,"");
+			const documento = this.registerEmploye.id.replace(/\s*$/,"");
+			const restTime = this.registerEmploye.timeRestOne+"/"+this.registerEmploye.timeRestTwo	
+				axios.put(endPoint.endpointTarget+'/manicuristas/' + this.registerEmploye._id, {
+					nombre: nombre,
+					documento: documento,
+					restTime: restTime,
+					restDay: this.registerEmploye.dayFree,
+					comision: this.registerEmploye.comision
+				})
+				.then(res => {
+					if(res.data.status == "Manicurista Editada"){
+						this.modals = {
+                            modal2: true,
+                            message: "¡Emplado editado con exito!",
+                            icon: 'ni ni-check-bold ni-5x',
+                            type: 'success'
+                        }
+                        setTimeout(() => {
+                            this.initialState(1)
+                            this.getEmployes()
+                        }, 2000);
+						// this.emitMethod()
+					}else{
+						this.$swal({
+							type: 'error',
+							title: 'Prestador ya existe',
+							showConfirmButton: false,
+							timer: 1500
+						})
+					}
+				})
 		},
+        deleteEmploye(id){
+		    this.$swal({
+                title: '¿Seguro que desea eliminar?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
+            })
+            .then(result => {
+                if (result.value) {
+                    axios.delete(endPoint.endpointTarget+'/manicuristas/' + id)
+                    .then(res => {
+                        if(res.data.status = 'Prestador borrado'){
+                            this.modals = {
+                                modal2: true,
+                                message: "¡Emplado eliminado!",
+                                icon: 'ni ni-check-bold ni-5x',
+                                type: 'success'
+                            }
+                            setTimeout(() => {
+                                this.initialState(1)
+                                this.getEmployes()
+                            }, 2000);
+                            // this.emitMethod()
+                        }
+                    })
+                    .catch(err => {
+                        this.$swal({
+                            type: 'error',
+                            title: 'Hubo un problema',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    })
+                }
+            })	
+		},
+        pushData(nombre,id,restTime,restDay,_id,comision){
+            var sp = restTime.split("/")
+            this.registerEmploye= {
+                name:nombre,
+                id:id,
+                timeRestOne:sp[0],
+                timeRestTwo:sp[1],
+                dayFree:restDay,
+                _id:_id,
+                comision:comision
+            }
+        },
         validFields(field){
             console.log("y entonces?")
             if (field == 'c') {
@@ -323,6 +419,8 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                 timeRestOne:"Seleccione el tiempo",
                 timeRestTwo:"Seleccione el tiempo",
                 dayFree:"Seleccione el día",
+                _id:null,
+                comision:null,
                 valid:false,
                 valid2:false,
             }
