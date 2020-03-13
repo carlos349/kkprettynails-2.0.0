@@ -10,7 +10,7 @@
                     <div class="col-lg-7 col-md-10">
                         <h1 class="display-2 text-white">Hola {{model.first_name}}</h1>
                         <p class="text-white mt-0 mb-5">Este es tu perfil, puedes ver tu progreso trabajando para KKPrettyNails, en las diferentes secciones.Tambien puedes editar tus datos.</p>
-                        <base-button type="info" v-on:click="this.inspector = true">Editar perfil</base-button>
+                        <base-button type="info" v-on:click="inspector = true">Editar perfil</base-button>
                     </div>
                 </div>
             </div>
@@ -19,7 +19,6 @@
         <div class="container-fluid mt--7">
             <div class="row">
                 <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
-
                     <div class="card card-profile shadow">
                         <div class="row justify-content-center">
                             <div class="col-lg-3 order-lg-2">
@@ -38,12 +37,8 @@
                                             <span class="heading">{{monthLender}}</span>
                                             <span class="description">Mi mes</span>
                                         </div>
-                                        <div v-else>
-                                            <span class="heading">2</span>
-                                            <span class="description">Ventas del dia</span>
-                                        </div>
                                         
-                                        <div>
+                                        <div v-if="model.status == 3">
                                             <span class="heading">{{formatPrice(gainLender)}}</span>
                                             <span class="description">Ganancia del mes</span>
                                         </div>
@@ -144,16 +139,75 @@
                                 <div class="pl-lg-4">
                                     <div class="form-group">
                                         <base-input alternative="" label="Sobre mi - proximamente">
-                                            <textarea disabled v-model="model.about" rows="4" class="form-control form-control-alternative" placeholder="Unas palabras sobre ti..."></textarea>
+                                            <textarea v-if="inspector" v-model="model.about" rows="4" class="form-control form-control-alternative" placeholder="Unas palabras sobre ti..."></textarea>
+                                            <textarea v-else disabled v-model="model.about" rows="4" class="form-control form-control-alternative" placeholder="Unas palabras sobre ti..."></textarea>
                                         </base-input>
                                     </div>
                                 </div>
+                                <base-button class="float-right" v-if="inspector" type="info" v-on:click="editProfile">Editar</base-button>
+                                <base-button v-if="inspector" type="info" v-on:click="modals.modal2 = true">Cambiar contraseña</base-button>
                             </form>
                         </template>
                     </card>
                 </div>
             </div>
         </div>
+        <modal :show.sync="modals.modal1"
+               :gradient="modals.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modals.icon"></i>
+                <h1 class="heading mt-5">{{modals.message}}</h1>
+            </div>
+        </modal>
+        <modal :show.sync="modals.modal2"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Cambie su contraseña</h3>
+                    </div>
+                </template>
+                <template>
+                    <form role="form">
+                        <base-input alternative
+                                    class="mb-3"
+                                    placeholder="Antigua contraseña"
+                                    v-on:change="validRegister()"
+                                    v-model="pass.lastPass"
+                                    type="password"
+                                    addon-left-icon="ni ni-key-25">
+                        </base-input>
+                        <base-input alternative
+                                    class="mb-3"
+                                    placeholder="Nuevo contraseña"
+                                    v-model="pass.newPass"
+                                    type="password"
+                                    addon-left-icon="ni ni-key-25">
+                        </base-input>
+                        <base-input alternative
+                                    class="mb-3"
+                                    placeholder="Repita la contraseña"
+                                    v-model="pass.newPassVerify"
+                                    :valid="pass.valid"
+                                    type="password"
+                                    v-on:keyup="validFields"                                    
+                                    >
+                        </base-input>
+                        <base-button v-if="!pass.validAll" type="default" disabled>
+                            Cambiar
+                        </base-button>  
+                        <base-button v-else type="default" v-on:click="EditPass">
+                            Cambiar
+                        </base-button> 
+                    </form>
+            </template>
+            </card>
+        </modal>
     </div>
 </template>
 <script>
@@ -161,6 +215,8 @@
     import router from '../router'
     import endPoint from '../../config-endpoint/endpoint.js'
     import jwtDecode from 'jwt-decode'
+
+    import EventBus from '../components/EventBus'
     export default {
         name: 'user-profile',
         data() {
@@ -176,10 +232,24 @@
                     image: '',
                     about: ''
                 },
+                modals: {
+                    modal1: false,
+                    modal2: false,
+                    message: "",
+                    icon: '',
+                    type:''
+                },
                 inspector: false,
                 monthLender: 0,
                 gainLender: 0,
-                file: ''
+                file: '',
+                pass: {
+                    newPass: '',
+                    lastPass: '',
+                    newPassVerify: '',
+                    valid: null,
+                    validAll: null
+                }
             }
         },
         beforeCreate(){
@@ -198,6 +268,13 @@
             this.getYourSales();
         },
         methods: {
+            validFields(){
+                this.pass.valid = this.pass.newPass == this.pass.newPassVerify ? true : false
+                this.validRegister()
+            },
+            validRegister(){
+                this.pass.validAll = this.pass.lastPass && this.pass.valid == true ? true : false
+            },
             async getData() {
 				const config = {headers: {'x-access-token': localStorage.userToken}}
 				try{
@@ -219,17 +296,82 @@
 					router.push({name: 'login'})	
 				}
 				
-            },
+            },async EditPass(){
+				if (this.pass.newPassVerify == this.pass.newPass) {
+					const config = {headers: {'x-access-token': localStorage.userToken}}
+					try{
+						const pass = await axios.put(endPoint.endpointTarget+'/users/changePass/'+this.id, {
+							newPass:this.pass.newPass,
+							lastPass: this.pass.lastPass
+						}, config)
+						if (pass.data.status == 'ok') {
+							this.modals = {
+                                modal2:false,
+                                modal1: true,
+                                message: '¡Contraseña cambiada con exito!',
+                                icon: 'ni ni-check-bold ni-5x',
+                                type: 'success'
+                            }
+                            setTimeout(() => {
+                                this.modals = {
+                                    modal1: false,
+                                    message: "",
+                                    icon: '',
+                                    type: ''
+                                }
+                            }, 1500);
+							this.pass.newPass = ''
+							this.pass.lastPass = ''
+                            this.pass.newPassVerify = ''
+                            this.inspector = false
+						}else{
+							this.modals = {
+                                modal2:false,
+                                modal1: true,
+                                message: 'Contraseña incorrecta',
+                                icon: 'ni ni-fat-remove ni-5x',
+                                type: 'danger'
+                            }
+                            setTimeout(() => {
+                                this.modals = {
+                                    modal1: false,
+                                    message: "",
+                                    icon: '',
+                                    type: ''
+                                }
+                            }, 1500);
+							this.pass.newPass = ''
+							this.pass.lastPass = ''
+						}
+					}catch(err)  {
+                        console.log(err)
+						// $('#ModalEditPass').modal('hide')
+						// this.$swal({
+						// 	type: 'error',
+						// 	title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+						// 	showConfirmButton: false,
+						// 	timer: 2500
+						// })
+						// router.push({name: 'login'})
+					}
+				}else{
+						this.$swal({
+							type: 'error',
+							title: 'Las contraseñas deben conincidir',
+							showConfirmButton: false,
+							timer: 2500
+						})
+				}
+				
+			},
             async getYourSales(){
 				const ident = localStorage.userToken
 				const decoded = jwtDecode(ident)
 				const link = decoded.linkLender
                 this.link = decoded.linkLender
-                console.log('here')
 				if (link != '') {
 					const split = link.split(" / ")
                     const sales = await axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+split[0]+":"+split[1])
-                    console.log(sales)
                     this.monthLender = sales.data.length
                     for (let index = 0; index < sales.data.length; index++) {
                         for (let indexTwo = 0; indexTwo < sales.data[index].EmployeComision.length; indexTwo++) {
@@ -246,6 +388,61 @@
                 this.file = this.$refs.file.files[0]
                 console.log(this.file)
             },
+            async editProfile(){
+				let formData = new FormData();
+				formData.append('image', this.file)
+				formData.append('first_name', this.model.first_name)
+				formData.append('last_name', this.model.last_name)
+                formData.append('email', this.model.email)
+                formData.append('about', this.model.about)
+				var dataChange = {
+					nombre: this.model.first_name,
+                    apellido: this.model.last_name,
+                    image: ''
+				}
+				try {
+					const image = await axios.post(endPoint.endpointTarget+'/users/editData/'+this.id, formData, {
+						headers: {
+							'Content-Type': 'multipart/form-data',
+							'x-access-token': localStorage.userToken
+						}
+                    })
+                    console.log(image)
+					this.modals = {
+                        modal1: true,
+                        message: '¡Usuario editado con exito!',
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                    this.inspector = false
+					// this.emitMethod(image.data.status)
+					localStorage.setItem('nombre', dataChange.nombre)
+                    localStorage.setItem('apellido', dataChange.apellido)
+                    if (image.data.image != '') {
+                        localStorage.setItem('imageUser', image.data.image)
+                        dataChange.image = image.data.image
+                    }
+					EventBus.$emit('dataChange', dataChange)
+					this.getData()
+				} catch(err)  {
+                    console.log(err)
+					// this.$swal({
+					// 	type: 'error',
+					// 	title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					// 	showConfirmButton: false,
+					// 	timer: 2500
+					// })
+					// router.push({name: 'login'})
+				}
+			}, 
         }
     };
 </script>
