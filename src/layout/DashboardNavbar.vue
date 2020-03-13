@@ -232,6 +232,7 @@
   //Back - End 
   import axios from 'axios'
   import endPoint from '../../config-endpoint/endpoint.js'
+  import EventBus from '../components/EventBus'
   export default {
     data() {
       return {
@@ -258,6 +259,16 @@
       ShowConsole(){
         console.log(localStorage)
       }
+    },
+    mounted() {
+      EventBus.$on('dataChange', status => {
+        console.log(status)
+        this.nombre = status.nombre + ' ' + status.apellido
+        if (status.image != "") {
+          this.imgUser = endPoint.imgEndpoint + status.image
+        }
+        console.log(this.imgUser)
+      })
     }
   };
 </script>

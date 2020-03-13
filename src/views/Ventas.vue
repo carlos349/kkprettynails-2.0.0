@@ -321,7 +321,7 @@ export default {
         },
         formatDate(date) {
             let dateFormat = new Date(date)
-			return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+' ('+dateFormat.getHours()+":"+ dateFormat.getMinutes()+')'
+			return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+' ('+dateFormat.getHours()+":"+('0'+dateFormat.getMinutes()).slice(-2)+")"
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')

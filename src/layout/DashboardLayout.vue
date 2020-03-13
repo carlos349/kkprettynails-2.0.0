@@ -40,6 +40,7 @@
   import ContentFooter from './ContentFooter.vue';
   import { FadeTransition } from 'vue2-transitions';
   import Vue from 'vue'
+  const EventBus = new Vue()
   // import EventBus from '../components/EventBus'
   export default {
     components: {
@@ -64,8 +65,8 @@
       }
     },
     mounted() {
-      const EventBus = new Vue()
       EventBus.$on('logged-in', status => {
+        console.log(status)
         this.auth = status
       })
     }
