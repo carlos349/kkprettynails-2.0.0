@@ -98,4 +98,10 @@
   }
 }
 
+@media (max-width: 692px){
+  .modal-lg {
+      max-width: 400px !important;
+  }
+}
+
 </style>
