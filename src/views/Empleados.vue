@@ -453,6 +453,18 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
+        formatRut(value) {
+			let around = value.length - 2
+			let concat = ''
+			for (let index = 0; index < value.length; index++) {
+				concat = concat + value[index]
+				if (around == index) {
+					concat = concat + '.'
+				}
+			} 
+			let val = concat.replace('.', '-')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+		},
     }
   };
 </script>

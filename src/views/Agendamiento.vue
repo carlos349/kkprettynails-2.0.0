@@ -10,9 +10,28 @@
                     <div class="col-lg-12 col-md-12">
                         <h1 class="display-2 text-white w-100">Sección de Agenda</h1>
                         <p class="text-white mt-0 mb-5">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
-                        <a @click="modals.modal1 = true"  class="btn btn-success text-white">Agendar</a>
-                        <a @click="modals.modal2 = true"  class="btn btn-info text-white">Ventas por procesar</a>
-                        <a   class="btn btn-info text-white">Filtrar por empleado</a>
+                        <a @click="modals.modal1 = true , initialState()"  class="btn btn-success text-white cursor-pointer">Agendar</a>
+                        <a @click="modals.modal2 = true"  class="btn btn-warning text-white cursor-pointer">Ventas por procesar</a>
+                        <div class="row mt-3">
+                            <base-dropdown class="col-6 mt-1">
+                                <base-button slot="title" type="default" class="dropdown-toggle col-12">
+                                        {{employeByDate}}
+                                </base-button>
+                                <li v-on:click="getCitasByEmploye('Todos')">
+                                    <base-button class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+                                    </base-button>
+                                </li>
+                                <li v-for="data in employes"  v-on:click="getCitasByEmploye(data.nombre)">
+                                    <base-button class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.nombre}}</h4>
+                                    </base-button>
+                                </li>
+                            </base-dropdown>
+                            <div v-if="filter == true" class="ml-2">
+                                <img class="avatar rounded-circle" src="https://www.w3schools.com/howto/img_avatar.png" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -29,9 +48,9 @@
                 </modal>
                   <!-- WIZARD -->
 
-                <form-wizard color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Regresar" next-button-text="Siguiente" finish-button-text="¡Agendar!">
+                <form-wizard ref="wizard" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Regresar" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
-                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento {{registerDate.duration }}</h2>
+                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
 
                     <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateWizardOne">
@@ -84,7 +103,7 @@
                                     <flat-picker slot-scope="{focus, blur}"
                                                 @on-open="focus"
                                                 @on-close="blur"
-                                                :config="{allowInput: true}"
+                                                :config="configDatePicker"
                                                 class="form-control datepicker"
                                                 v-model="registerDate.date"
                                                 placeholder="Seleccione una fecha">
@@ -150,7 +169,7 @@
                                 <base-button  type="default" v-on:click="clientEdit" v-if="dateClient.valid && dateClient.valid2" class="col-12" icon="fas fa-edit">Editar cliente</base-button>
                                 <base-button  type="default"  v-if="dateClient.valid && dateClient.valid2 != true" disabled class="col-12" icon="fas fa-edit">Editar cliente</base-button>
                                 <base-button type="success" disabled v-if="dateClient.valid != true && dateClient.valid2 != true" class="col-12" icon="fas fa-user-plus">Registrar cliente</base-button>
-                                <base-button type="success" v-if="dateClient.valid != true && dateClient.valid2" class="col-12" icon="fas fa-user-plus">Registrar cliente</base-button>
+                                <base-button type="success" v-on:click="newClient()" v-if="dateClient.valid != true && dateClient.valid2" class="col-12" icon="fas fa-user-plus">Registrar cliente</base-button>
                             </div>
                             
                         </div>
@@ -243,14 +262,6 @@
                                     <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{registerDate.end}}</badge>
                                 </base-button>
                             </div>
-                            <div class="col-6"></div>
-                            <div class="col-6"></div>
-                            <div class="col-6"></div>
-                            <div class="col-6"></div>
-                            <div class="col-6"></div>
-                            <div class="col-6"></div>
-                            <div class="col-6"></div>
-                            <div class="col-6"></div>
                         </div>
                     </tab-content>
                 </form-wizard>
@@ -259,7 +270,19 @@
 
             </card>
         </modal>
-        <vue-cal style="height: 250px" />
+        <vue-cal
+            class=""
+             :locale="locale"
+             :events="events"
+             :time-from="600 "
+             :time-to="1275"
+             :timeStep="15"
+             default-view="month"
+             :disable-views="['years', 'year', 'week']" 
+             events-count-on-month-view
+             
+             :overlapsPerTimeStep="true">
+          </vue-cal>
         
     </div>
 </template>
@@ -271,6 +294,7 @@
   import VueBootstrap4Table from 'vue-bootstrap4-table'
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
+  import {Spanish} from 'flatpickr/dist/l10n/es.js';
   import vueCustomScrollbar from 'vue-custom-scrollbar'
   //Back - End 
   import axios from 'axios'
@@ -350,10 +374,19 @@
             valid:false,
             valid2:false
          },
+         configDatePicker: {
+            allowInput: true,
+            dateFormat: 'm-d-Y',
+            locale: Spanish, // locale for this instance only
+            minDate: new Date()          
+         },
+         employeByDate: 'Filtrar por empleado', 
          clients:[],
          services:[],
          locale: 'es',
+         filter: false,
          events: [],
+         lender:'',
          modals: {
              modal1:false,
              modal2: false,
@@ -379,49 +412,49 @@
       this.getClients()
       this.getServices()
       this.getEmployes()
+      this.getDates()
     },
     methods: {
-        getCitas() {
+        getDates() {
             if (this.lender != '') {
             this.events = []
             axios.get(endPoint.endpointTarget+'/citas/' + this.lender)
             .then(res => {
-                
+                console.log(res.data)
                 for (let index = 0; index < res.data.length; index++) {
-                let dateNow = new Date(res.data[index].date)
-                let formatDate = ''
-                let formatDateTwo = ''
-                if (dateNow.getMonth() == 9 || dateNow.getMonth() == 10 || dateNow.getMonth() == 11) {
-                    if (dateNow.getDate() < 10) {
-                    formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                    formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
+                    let dateNow = new Date(res.data[index].date)
+                    let formatDate = ''
+                    let formatDateTwo = ''
+                    if (dateNow.getMonth() == 9 || dateNow.getMonth() == 10 || dateNow.getMonth() == 11) {
+                        if (dateNow.getDate() < 10) {
+                        formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
+                        formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
+                        }else{
+                        formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
+                        formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
+                        }
+                        
                     }else{
-                    formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                    formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
+                        if (dateNow.getDate() < 10) {
+                        formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
+                        formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
+                        }else{
+                        formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
+                        formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
+                        }  
                     }
-                    
-                }else{
-                    if (dateNow.getDate() < 10) {
-                    formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                    formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
-                    }else{
-                    formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                    formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
-                    }  
-                }
-                let arrayEvents = {
-                    start: formatDate,
-                    end: formatDateTwo,
-                    title: res.data[index].services[0].servicio+" - "+res.data[index].employe,
-                    content: res.data[index].client,
-                    class: res.data[index].class,
-                    cliente: res.data[index].client,
-                    services: res.data[index].services,
-                    empleada: res.data[index].employe,
-                    id:res.data[index]._id,
-                    process: res.data[index].process
-                }
-                this.events.push(arrayEvents)
+                    let arrayEvents = {
+                        start: formatDate,
+                        end: formatDateTwo,
+                        title: res.data[index].services[0].servicio+" - "+res.data[index].employe,
+                        content: res.data[index].client,
+                        class: res.data[index].class,
+                        cliente: res.data[index].client,
+                        services: res.data[index].services,
+                        empleada: res.data[index].employe,
+                        id:res.data[index]._id,
+                        process: res.data[index].process
+                    }
                 }
             })
             }else{
@@ -462,10 +495,12 @@
                     id:res.data[index]._id,
                     process: res.data[index].process
                 }
+                
                 this.events.push(arrayEvents)
                 }
             })
             }
+            
         },
         getEmployes(){
   			axios.get(endPoint.endpointTarget+'/manicuristas')
@@ -481,7 +516,7 @@
                     this.countServices.push({count:0})
                     
                 }
-                console.log(this.countServices)
+                
             })
         },
         getClients(){
@@ -514,7 +549,7 @@
 					instagramClienteEditar: this.dateClient.infoTwo
 				})
 				.then(res => {
-					console.log(res)
+					
 					if (res.data.status == 'Servicio actualizado') {
 						this.modals = {
                             modal1:true,
@@ -595,7 +630,7 @@
             }
             this.registerDate.duration = parseFloat(this.registerDate.duration) + parseFloat(tiempo)
             this.countServices[count].count++  
-            console.log(this.registerDate)  
+            
         },
         validateWizardOne(){
             if (this.registerDate.services != '') { 
@@ -635,7 +670,7 @@
                } 
         },
         validateWizardThree(){
-               if (this.registerDate.services != '') { 
+               if (this.registerDate.employeSelect != 'Seleccione un empleado' && this.registerDate.start != null) { 
                    this.registerDate.valid = true
                    return true
                }
@@ -645,12 +680,13 @@
                } 
         },
         initialState(){
+            this.$refs.wizard.reset()
             this.registerDate = {
                 services:[],
                 servicesShow:[],
                 employePerService:[],
                 employe:[],
-                employeSelect:null,
+                employeSelect:"Seleccione un empleado",
                 employeClass:null,
                 employeResTime:null,
                 client:null,
@@ -663,6 +699,22 @@
                 valid2:true,
                 valid3:false
             }
+            this.dateClient = {
+                name:'',
+                id:'',
+                infoOne:null,
+                infoTwo:null,
+                partipation:null,
+                recommender:null,
+                recommenders:null,
+                lastDate:null,
+                discount:null,
+                date:null,
+                _id:null,
+                valid:false,
+                valid2:false
+            }
+            this.blockHour = []
             for (let index = 0; index < this.countServices.length; index++) {
                 this.countServices[index].count = 0
             }
@@ -759,7 +811,7 @@
             .then(res => {
                 
                 for (let index = 0 ; index <= this.registerDate.duration /15; index++) {
-                console.log(this.registerDate.duration)
+                
                 res.data[i].validator = 'select'
                 this.registerDate.end = res.data[i].Horario
                 i++
@@ -784,13 +836,28 @@
             })
             .then(res => {
             if(res.data.status == 'cita creada'){
-                this.$swal({
-                type: 'success',
-                title: 'Cita creada',
-                showConfirmButton: false,
-                timer: 1500
-                })
-                this.reloadDate()
+                this.modals = {
+                    modal1:true,
+                    modal2: true,
+                    message: "¡Agendamiento exitoso!",
+                    icon: 'ni ni-check-bold ni-5x',
+                    type: 'success'
+                }
+                this.getDates()
+                if (this.employeByDate != 'Filtrar por empleado') {
+                    this.getCitasByEmploye()
+                }
+                setTimeout(() => {
+                    this.initialState()
+                    this.modals = {
+                        modal1:true,  
+                        modal2: false,
+                        message: '',
+                        icon: '',
+                        type: ''
+                    }
+                    
+                }, 1500);
             }else if(res.data.status == 'cita ocupada'){
                 this.$swal({
                 type: 'error',
@@ -803,6 +870,117 @@
             }
             })
         },
+        newClient(){
+            console.log(this.dateClient.recommender)
+            const name = this.dateClient.name.split(' ')
+            var firstName, lastName, fullName, ifCheck
+            if (name[1]) {
+                firstName = this.MaysPrimera(name[0])
+                lastName = this.MaysPrimera(name[1])
+                fullName = firstName+' '+lastName
+            }
+            else {
+                fullName = this.MaysPrimera(name[0])
+            }
+            if (this.dateClient.discount) {
+                ifCheck = 0
+            }
+            else{
+                ifCheck = 1
+            }
+            axios.post(endPoint.endpointTarget+'/clients', {
+                nombre:fullName,
+                identidad:this.dateClient.id,
+                recomendador:this.dateClient.recommender,
+                correoCliente:this.dateClient.infoOne,
+                instagramCliente:this.dateClient.infoTwo,
+                ifCheck: ifCheck
+            })
+            .then(res => {
+                if (res.data.status == 'Registrado') {
+                        this.modals = {
+                        modal1:true,
+                        modal2: true,
+                        message: "¡Cliente registrado!",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    this.getClients()
+                    
+                    setTimeout(() => {
+                            this.registerDate.client = fullName + ' / ' + this.dateClient.id
+                            this.selectClient()
+                        this.modals = {
+                            modal1:true,  
+                            modal2: false,
+                            message: '',
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                }
+                else {
+                    this.$swal({
+                        type: 'error',
+                        title: 'El cliente ya existe',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+				}
+			})
+        },
+        getCitasByEmploye(name){
+            if (name == "Todos") {
+                this.getDates()
+                this.filter = false
+                this.employeByDate = "Filtrar por empleado"
+            }
+            else{
+                this.events = []
+                axios.get(endPoint.endpointTarget+'/citas/' + name)
+                .then(res => {
+                    for (let index = 0; index < res.data.length; index++) {
+                        let dateNow = new Date(res.data[index].date)
+                        let formatDate = ''
+                        let formatDateTwo = ''
+                        if (dateNow.getMonth() == 9 || dateNow.getMonth() == 10 || dateNow.getMonth() == 11) {
+                            if (dateNow.getDate() < 10) {
+                                formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
+                                formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
+                            }
+                            else{
+                                formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
+                                formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
+                            }
+                        }
+                        else{
+                            if (dateNow.getDate() < 10) {
+                                formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
+                                formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
+                            }
+                            else{
+                                formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
+                                formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
+                            }  
+                        }
+                        let arrayEvents = {
+                            start: formatDate,
+                            end: formatDateTwo,
+                            title: res.data[index].services[0].servicio+" - "+res.data[index].employe,
+                            content: res.data[index].client,
+                            class: res.data[index].class,
+                            cliente: res.data[index].client,
+                            services: res.data[index].services,
+                            empleada: res.data[index].employe,
+                            id:res.data[index]._id
+                        }
+                        this.events.push(arrayEvents)
+                    }
+                    this.employeByDate = name
+                    this.filter = true
+                })
+            }
+      },
     },
     mounted() {
       
@@ -816,6 +994,221 @@
         overflow:hidden;
         overflow-x: hidden;
         overflow-y:scroll;
+    }
+    .vuecal__flex .vuecal__menu{
+        color: #0a0a0a !important
+    }
+    .vuecal__arrow {
+        color: white;
+    }
+    .vuecal__menu {background-color:transparent;border: none !important;border-radius: 5px 5px 0 0; }
+    .vuecal__menu button{background-color:rgba(7, 7, 7, 0.116);outline: none}
+    .vuecal__menu li {border-bottom-color: #fff;color: #fff;}
+    .vuecal__menu li.active {background-color: rgba(255, 255, 255, 0.15);}
+    .vuecal__title-bar {background-color: #172b4d;color: #fff !important}
+    .vuecal__title button{
+        color: white !important
+    }
+    .vuecal__body{
+        background-color:white;
+    }
+    .vuecal__time-column .vuecal__time-cell{color:white;height:1vh;}
+    .vuecal__event{color:#fff;font-weight:bold;cursor:pointer;}
+    .vuecal__event:hover{
+        opacity: .8;
+    }
+    /* Dot indicator */
+    .vuecal__cell-events-count {
+    width: 40px;
+    min-width: 0;
+    height: 30px;
+    padding: 5px;
+    padding-top: 10px;
+    font-size: 16px;
+    background-color: #172b4d; 
+    }
+    .vuecal__cell-content {
+        height: 100px;
+    }
+    .vuecal__header{background-color: rgba(238, 238, 238, 0.623);border-radius: 5px 5px 0 0;}
+    .vuecal__cell.today div .vuecal__cell-events-count, .vuecal__cell.current {background-color: #353535 !important;}
+    .vuecal:not(.vuecal--day-view) .vuecal__cell.selected {background-color: rgba(235, 255, 245, 0.4);}
+    .vuecal__cell.selected:before {border-color: rgba(66, 185, 131, 0.5);}
+    .vuecal__cell-date{color:#000;font-family: 'Raleway', sans-serif;
+    font-weight:600;}
+    .vuecal__heading span{color:#000;font-family: 'Raleway', sans-serif;
+    font-weight:600;}
+    .vuecal--rounded-theme.vuecal--green-theme:not(.vuecal--day-view) .vuecal__cell-content {
+        background-color: #1F5673;
+        height: 10vh !important;
+    }
+    .vuecal__cell-split {
+        background-color: #1F5673;
+        height: 10vh !important;
+    }
+    .vuecal--green-theme .vuecal__title-bar {
+        background-color: #1F5673;
+    }
+    .vuecal__time-column .vuecal__time-cell{
+        color: #0F2027
+    }
+    .class1 {
+    background:#BCBCBC;
+    border: 1px solid #BCBCBC;
+    color: #343633;
+    }
+    .class2 {
+    background:#BCD1FF;
+    border: 1px solid #BCD1FF;
+    color: #343633;
+    }
+    .class3 {
+    background:#DDEFBD;
+    border: 1px solid #DDEFBD;
+    color: #343633;
+    }
+    .class4 {
+    background:#CDF2E2;
+    border: 1px solid #CDF2E2;
+    color: #343633;
+    }
+    .class5 {
+    background:#B7E8CD;
+    border: 1px solid #B7E8CD;
+    color: #343633;
+    }
+    .class6 {
+    background:#C0E5DD;
+    border: 1px solid #C0E5DD;
+    color: #343633;
+    }
+    .class7 {
+    background:#F2E6E6;
+    border: 1px solid #F2E6E6;
+    color: #343633;
+    }
+    .class8 {
+    background:#FFD6D6;
+    border: 1px solid #FFD6D6;
+    color: #343633;
+    }
+    .class9 {
+    background:#FFD1BA;
+    border: 1px solid #FFD1BA;
+    color: #343633;
+    }
+    .class10 {
+    background:#FFF3B5;
+    border: 1px solid #FFF3B5;
+    color: #343633;
+    }
+    .class11 {
+    background:#EFEBD0;
+    border: 1px solid #EFEBD0;
+    color: #343633;
+    }
+    .class12 {
+    background:#FFE5E5;
+    border: 1px solid #FFE5E5;
+    color: #343633;
+    }
+    .class13 {
+    background:#A2CEA1;
+    border: 1px solid #A2CEA1;
+    color: #343633;
+    }
+    .class14 {
+    background:#9EC189;
+    border: 1px solid #9EC189;
+    color: #343633;
+    }
+    .class15 {
+    background:#ADC9D8;
+    border: 1px solid #ADC9D8;
+    color: black;
+    }
+    .class16 {
+    background:#B0E098;
+    border: 1px solid #B0E098;
+    color: #343633;
+    }
+    .class17 {
+    background:#E8FCCF;
+    border: 1px solid #E8FCCF;
+    color: #343633;
+    }
+    .class18 {
+    background:#BBCCEA;
+    border: 1px solid #BBCCEA;
+    color: #343633;
+    }
+    .class19 {
+    background:#A2BFF2;
+    border: 1px solid #A2BFF2;
+    color: #343633;
+    }
+    .class20 {
+    background:#D6FFDF;
+    border: 1px solid #D6FFDF;
+    color: #343633;
+    }
+    .class21 {
+    background:#C2C8E8;
+    border: 1px solid #C2C8E8;
+    color: #343633;
+    }
+    .class22 {
+    background:#EBD4CB;
+    border: 1px solid #EBD4CB;
+    color: #343633;
+    }
+    .class23 {
+    background:#EAC5BE;
+    border: 1px solid #EAC5BE;
+    color: #343633;
+    }
+    .class24 {
+    background:#A4D6CA;
+    border: 1px solid #A4D6CA;
+    color: #343633;
+    }
+    .class25 {
+    background:#CAF7E2;
+    border: 1px solid #CAF7E2;
+    color: #343633;
+    }
+    .class26 {
+    background:#CAF7E2;
+    border: 1px solid #CAF7E2;
+    color: #343633;
+    }
+    .class27 {
+    background:#6EA08B;
+    border: 1px solid #6EA08B;
+    color: #343633;
+    }
+    .class28 {
+    background:#EBD8D0;
+    border: 1px solid #EBD8D0;
+    color: #343633;
+    }
+    .class28 {
+    background:#EAC9C1;
+    border: 1px solid #EAC9C1;
+    color: #343633;
+    }
+    .class29 {
+    background:#D3AB9E;
+    border: 1px solid #D3AB9E;
+    color: #343633;
+    }
+    .class30 {
+    background:#CAF7E2;
+    border: 1px solid #CAF7E2;
+    color: #343633;
+    }
+    .cursor-pointer{
+        cursor: pointer;
     }
 </style>
  

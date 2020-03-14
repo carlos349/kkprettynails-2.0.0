@@ -244,7 +244,6 @@
       };
     },
     created() {
-      this.ShowConsole()
     },
     methods: {
       toggleSidebar() {
@@ -256,9 +255,6 @@
       toggleMenu() {
         this.showMenu = !this.showMenu;
       },
-      ShowConsole(){
-        console.log(localStorage)
-      }
     },
     mounted() {
       EventBus.$on('dataChange', status => {

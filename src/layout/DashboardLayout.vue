@@ -55,7 +55,7 @@
       };
     },
     created(){
-      console.log(localStorage.status)
+      
     },
     methods: {
       toggleSidebar() {
