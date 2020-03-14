@@ -30,20 +30,19 @@ import VueSingleSelect from "vue-single-select";
 import VueCurrencyInput from 'vue-currency-input'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd } from '@fortawesome/free-solid-svg-icons'
+import { faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo} from '@fortawesome/free-solid-svg-icons'
 
 /* STYLES */
 import VueFormWizard from 'vue-form-wizard'
 
 /* STYLES */
-
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import 'vue-popperjs/dist/vue-popper.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
 /* I DO NOT KNOW */
 Vue.config.productionTip = false
-const pluginOptions = {globalOptions: { currency: {'prefix':'$ '},precision: 2, distractionFree:false, autoDecimalMode:true}}
+const pluginOptions = {globalOptions: { currency: {'prefix':'$ '},precision: 0, distractionFree:false, autoDecimalMode:false}}
 
 /* USES*/
 Vue.component('vue-single-select', VueSingleSelect);
@@ -52,7 +51,7 @@ Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)
 Vue.use(Popper)
-library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd)
+library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueFormWizard)

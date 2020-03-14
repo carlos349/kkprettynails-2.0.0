@@ -23,16 +23,9 @@
                 <thead>
                     <tr>
                         <th style="border-radius:15px !important;border:none">
-                            <base-input alternative
-                                type="text"
-                                placeholder="Filtrar servicios"
-                                addon-left-icon="ni ni-zoom-split-in"
-                                v-on:keyup="myFunction()"
-                                id="myInput"
-                                class="w-75"
-                            ></base-input>
+                            <input class="w-75 inputFilter" id="myInput" v-on:keyup="myFunction()" type="text" placeholder="Filtre servicios">
                         </th>
-                        <th style="color:white;border:none" class="text-left pl-5 pb-3">
+                        <th style="color:white;border:none" class="text-center pb-2">
                             Precio 
                         </th>
                     </tr>
@@ -51,7 +44,7 @@
                                     <font-awesome-icon icon="times"/>
                                 </base-button>
                             </td>
-                            <td style="border:none" v-if="servicio.active" class=" font-weight-bold text-center">
+                            <td style="border:none" v-if="servicio.active" class="font-weight-bold text-center">
                                 {{formatPrice(servicio.precio)}}
                             </td>
                         </tr>
@@ -63,6 +56,7 @@
                 <div class="col-sm-5">
                     <div class="input-group">
                         <base-input alternative
+                            title="Sub Total"
                             type="text"
                             class="align"
                             placeholder=""
@@ -75,6 +69,7 @@
                 <div class="col-sm-3">
                     <div class="input-group">
                         <base-input alternative
+                            title="Descuento"
                             type="text"
                             class="align"
                             placeholder="Descuento"
@@ -86,6 +81,7 @@
                 </div>
                 <div class="col-sm-4">
                     <currency-input
+                        title="Diseño"
                         v-model="design"
                         placeholder="Diseño"
                         locale="de"
@@ -93,7 +89,9 @@
                         v-on:keyup="addDesign()"/>
                 </div>
             </div>
-            <span class="spanInputs w-100 font-weight-bold text-center text-white input-group-text text-center mb-2" style="background-color: #172b4d !important; color:white !important; border:none !important;padding-top:10px;border-radius:10px !important;" ><h5 class="text-center w-100 text-white" style="margin-bottom:0;">Medios de pago</h5> </span>
+            <div class="text-muted text-center mb-1" style="margin-top:-15px;">
+                Medios de pago
+            </div>
             <div class="row">
                 <div class="col-4">
                     <div class="input-group mb-2">
@@ -196,6 +194,197 @@
                 <h1 class="heading mt-5">{{modals.message}}</h1>
             </div>
         </modal>
+        <modal :show.sync="modals.modal2"
+              body-classes="p-0"
+              modal-classes="modal-dialog-centered modal-md">
+          <card type="secondary" shadow
+                header-classes="bg-white pb-5"
+                body-classes="px-lg-5"
+                class="border-0">
+              <template>
+                  <div class="text-muted text-center mb-3">
+                      <h1>Nuevo cliente</h1> 
+                  </div>
+              </template>
+              <template>
+                  <form role="form">
+                        <base-input alternative
+                                    class="mb-3"
+                                    placeholder="Nombre"
+                                    v-model="registerClient.name"
+                                    v-on:change="validRegister(2)"
+                                    addon-left-icon="ni ni-single-02">
+                        </base-input>
+                        <base-input alternative
+                                    type="text"
+                                    placeholder="Identificación"
+                                    v-model="registerClient.id"
+                                    v-on:change="validRegister(2)"
+                                    addon-left-icon="ni ni-key-25">
+                        </base-input>
+                        <base-input alternative
+                                    type="text"
+                                    placeholder="Contacto adicional"
+                                    v-model="registerClient.contactOne"
+                                    addon-left-icon="ni ni-collection">
+                        </base-input>
+                        <base-input alternative
+                                    type="text"
+                                    placeholder="Contacto adicional"
+                                    v-model="registerClient.contactTwo"
+                                    addon-left-icon="ni ni-collection">
+                        </base-input>
+                        <base-checkbox v-model="registerClient.discount" class="mb-3">
+                            Descuento de nuevo cliente
+                        </base-checkbox>
+                        <vue-single-select
+                            v-model="registerClient.recommender"
+                            :options="clientNames"
+                            placeholder="Recomendador"
+                        ></vue-single-select>
+                        <div class="text-center">
+                            <base-button type="default" v-if="!registerClient.valid" disabled class="my-4">Registrar</base-button>
+                            <base-button type="default" v-on:click="registerClients()" v-else class="my-4">Registrar</base-button>
+                        </div> 
+                    </form>
+              </template>
+          </card>
+        </modal>
+        <modal :show.sync="modals.modal3"
+              body-classes="p-0"
+              modal-classes="modal-dialog-centered modal-md">
+          <card type="secondary" shadow
+                header-classes="bg-white pb-5"
+                body-classes="px-lg-5"
+                class="border-0">
+              <template>
+                  <div class="text-muted text-center mb-3">
+                      <h1>Nuevo servicio</h1> 
+                  </div>
+              </template>
+              <template>
+                    <form role="form">
+                        <base-input alternative
+                            v-on:change="validRegister(1)"
+                            class="mb-3"
+                            placeholder="Nombre"
+                            addon-left-icon="ni ni-single-copy-04"
+                            v-model="registerService.serviceRegister">
+                        </base-input>
+                        <base-input alternative
+                            v-on:change="validRegister(1)"
+                            type="number"
+                            max-count="100"
+                            placeholder="comision (%)"
+                            addon-left-icon="ni ni-money-coins"
+                            v-model="registerService.comissionRegister">
+                        </base-input>
+                        <currency-input
+                            v-on:change="validRegister(1)"
+                            v-model="registerService.priceRegister"
+                            locale="de"
+                            placeholder="Costo"
+                            class="form-control mb-3"
+                            style="margin-top:-10px;"
+                        />	
+                        <select class="form-control mb-3" v-on:change="validRegister(1)" v-model="registerService.timeRegister">
+                            <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
+                            <option style="color:black;" value="15">15 Minutos</option>
+                            <option style="color:black;" value="30">30 Minutos</option>
+                            <option style="color:black;" value="45">45 Minutos</option>
+                            <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+                            <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
+                            <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
+                            <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
+                            <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
+                            <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
+                            <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
+                        </select>
+                        <base-checkbox class="mb-3" v-on:click="validRegister(1)" v-model="registerService.addDiscount">
+                            ¿Aplica descuento?
+                        </base-checkbox>
+                        <vue-custom-scrollbar class="maxHeight">
+                            <vue-bootstrap4-table :rows="registerService.lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
+                            </vue-bootstrap4-table>
+                        </vue-custom-scrollbar >
+                        <div class="text-center">
+                            <base-button v-if="!registerService.valid" type="default" class="my-4" v-on:click="registerServiceProcess()" disabled>Registrar</base-button>
+                            <base-button v-else type="default" class="my-4" v-on:click="registerServiceProcess()" >Registrar</base-button>
+                        </div>
+                    </form>
+              </template>
+          </card>
+        </modal>
+        <modal :show.sync="modals.modal4"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Registrar monto de apertura</h3>
+                    </div>
+                </template>
+                <template>
+                    <form role="form">
+                        <base-input 
+                            alternative
+                            class="mb-3"
+                            placeholder="Nombre el cajero"
+                            v-on:keyup="validRegister(3)"
+                            v-model="cashFunds.cashName"
+                            addon-left-icon="ni ni-circle-08">
+                        </base-input>
+                        <currency-input
+                            v-model="cashFunds.cashAmount"
+                            v-on:keyup="validRegister(3)"
+                            locale="de"
+                            addon-left-icon="ni ni-money-coins"
+                            class="form-control mb-3"
+                            style="margin-top:-10px;"
+                        />	
+                        <base-button v-if="!cashFunds.valid" type="default" disabled>
+                            Ingresar fondo
+                        </base-button>
+                        <base-button v-else type="default" v-on:click="registerFund">
+                            Ingresar fondo
+                        </base-button> 
+                    </form>
+            </template>
+            </card>
+        </modal>
+        <div v-bind:style="{  'height': '7vh', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
+			<div class="row">
+				<div class="col-2 pt-1">
+					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="user-plus" />
+				</div>
+				<div v-if="newClient.valid" class="col-10 pl-4 pt-1">
+					<b style="font-size:14px;">{{newClient.text}}</b>	
+				</div>
+			</div>	
+        </div>
+		<div v-bind:style="{  'height': '7vh', 'z-index' : '1000' }" v-on:click="modals.modal3 = true" class="p-2 menuVerServi navSServi" v-on:mouseenter="mouseOverVenta(newService)" v-on:mouseleave="mouseLeaveVenta(newService)">
+			<div class="row">
+				<div class="col-2 pt-1">
+					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="folder-plus" />
+				</div>
+				<div v-if="newService.valid" class="col-10 pl-4 pt-1">
+					<b style="font-size:14px;">{{newService.text}}</b>	
+				</div>
+			</div>
+        </div>
+		<div v-bind:style="{  'height': '7vh', 'z-index' : '1000' }" v-on:click="initialState()" class="p-2 menuVerRedo navSRedo" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
+			<div class="row">
+				<div class="col-2 pt-1">
+					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
+				</div>
+				<div v-if="reloadSales.valid" class="col-10 pl-4 pt-1">
+					<b style="font-size:14px;">{{reloadSales.text}}</b>	
+				</div>
+			</div>
+        </div>
     </div>
 </template>
 <script>
@@ -206,17 +395,79 @@ import jwtDecode from 'jwt-decode'
 
 import EventBus from './EventBus'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
+import VueBootstrap4Table from 'vue-bootstrap4-table'
 export default {
     components: {
-        vueCustomScrollbar
+        vueCustomScrollbar,
+        VueBootstrap4Table
     },
     data(){
         return {
             modals: {
                 modal1: false,
+                modal2: false,
+                modal3: false,
+                modal4: false,
                 message: "",
                 icon: '',
                 type:''
+            },
+            registerClient: {
+                name: '',
+                id: '',
+                contactOne: '',
+                contactTwo: '',
+                discount: false,
+                recommender: '',
+                valid: false,
+            },
+            cashFunds: {
+                cashName: '',
+                cashAmount: 0,
+                valid: false,
+            },
+            registerService: {
+                serviceRegister: '',
+                comissionRegister: '',
+                priceRegister: 0,
+                timeRegister: 'Seleccione el tiempo',
+                addDiscount: false,
+                lenderSelecteds: [],
+                lenders: [],
+                valid:false
+            },
+            columnsLender: [{
+                label: "Nombre",
+                name: "nombre",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: true,
+            }],
+            configLender: {
+                checkbox_rows: true,
+                rows_selectable : true,
+                highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+                rows_selectable: true,
+                per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+                show_refresh_button: false,
+                show_reset_button: false,  
+                selected_rows_info: false,
+                preservePageOnDataChange : true,
+                pagination_info : false,
+                pagination: false,
+                global_search: {
+                    placeholder: "Busque el prestador",
+                    visibility: true,
+                    case_sensitive: false,
+                    showClearButton: true,
+                    searchOnPressEnter: false,
+                    searchDebounceRate: 200,                      
+                },
+            },
+            classes: {
+                table: "table-bordered table-striped"
             },
             clientNames: [],
             clientSelect: '',
@@ -240,19 +491,224 @@ export default {
             resto: 0,
             dateSale:'fecha',
             idProcess: '',
-            docLender: ''
+            docLender: '',
+            newClient: {
+                valid: false,
+                text: 'Nuevo cliente'
+            },
+            newService: {
+                valid: false,
+                text: 'Nuevo servicio'
+            },
+            reloadSales: {
+                valid: false,
+                text: 'Reiniciar datos'
+            },
         }
     },
     created(){
         this.getClient()
         this.getLenders()
         this.getServices()
+        this.getLenders()
     }, 
     methods: {
+        selected(value){
+            this.registerService.lenderSelecteds.push(value.selected_item._id)
+            this.validRegister(1)
+        },
+        unSelected(value){
+            for (let i = 0; i < this.registerService.lenderSelecteds.length; i++) {
+                if (this.registerService.lenderSelecteds[i] == value.unselected_item._id) {
+                    this.registerService.lenderSelecteds.splice(i, 1)
+                    break
+                }
+            }
+            this.validRegister(1)
+        },
+        selectedAll(value){
+            for (let index = 0; index < value.selected_items.length; index++) {
+                this.registerService.lenderSelecteds.push(value.selected_items[index]._id)
+            }
+            this.validRegister(1)
+        },
+        unSelectedAll(value){
+            this.registerService.lenderSelecteds = []
+            this.validRegister(1)
+        },
+        validRegister(valid){
+            if (valid == 1) {
+                this.registerService.valid = this.registerService.lenderSelecteds.length > 0 && this.registerService.serviceRegister != '' && this.registerService.priceRegister > 0 && this.registerService.timeRegister != 'Seleccione el tiempo' && this.registerService.comissionRegister != '' ? true : false
+            }else if (valid == 2) {
+                this.registerClient.valid = this.registerClient.name != '' && this.registerClient.id != '' ? true : false
+            }else{
+                this.cashFunds.valid = this.cashFunds.cashName != '' && this.cashFunds.cashAmount > 0 ? true : false
+            }
+        },
+        registerFund(){
+			axios.post(endPoint.endpointTarget+'/ventas/registerFund', {
+				userRegister: this.cashFunds.cashName,
+				amount: this.cashFunds.cashAmount
+			}).then(res => {
+				if (res.data.status == 'ok') {
+					this.modals = {
+                        modal1: true,
+                        message: "Cliente registrado",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                    this.cashFunds.cashName = ''
+                    this.cashFunds.cashAmount = ''
+                    this.cashFunds.valid = false
+				}
+			})
+		},
+        registerClients(){
+            var ifCheck = this.registerClient.discount ? 0 : 1
+            axios.post(endPoint.endpointTarget+'/clients', {
+                nombre:this.registerClient.name,
+                identidad:this.registerClient.id,
+                recomendador:this.registerClient.recommender,
+                correoCliente:this.registerClient.contactOne,
+                instagramCliente:this.registerClient.contactTwo,
+                ifCheck: ifCheck
+            })
+            .then(res => {
+                if (res.data.status == 'Registrado') {
+                    this.modals = {
+                        modal1: true,
+                        message: "Cliente registrado",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                    registerClient = {
+                        name: '',
+                        id: '',
+                        contactOne: '',
+                        contactTwo: '',
+                        discount: false,
+                        recommender: '',
+                        valid: false,
+                    }
+                    this.getClient()
+                }else{
+                    this.modals = {
+                        modal1: true,
+                        message: "El cliente ya existe",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                }
+            })
+        },
+        mouseOverVenta(objectType){
+            objectType.valid = true 
+		},
+		mouseLeaveVenta(objectType){
+            objectType.valid = false
+		},
+        registerServiceProcess(){
+            var ifCheck = this.registerService.addDiscount ? false : true
+            axios.post(endPoint.endpointTarget+'/servicios', {
+                nombreServicio: this.registerService.serviceRegister,
+                precioServicio: this.registerService.priceRegister,
+                comisionServicio: this.registerService.comissionRegister,
+                tiempoServicio: this.registerService.timeRegister,
+                prestadores: this.registerService.lenderSelecteds,
+                descuento: ifCheck
+
+            })
+            .then(res => {
+                if(res.data.status == 'Servicio creado'){
+                    this.modals = {
+                        modal1: true,
+                        message: "Servicio registrado",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                    this.registerService = {
+                        serviceRegister: '',
+                        comissionRegister: '',
+                        priceRegister: 0,
+                        timeRegister: 'Seleccione el tiempo',
+                        addDiscount: false,
+                        lenderSelecteds: [],
+                        lenders: [],
+                        valid:false
+                    }
+                    this.getServices();
+                    
+                }else{
+                    this.modals = {
+                        modal1: true,
+                        message: "El servicio ya existe",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                }
+            })
+		},
         getClient(){
             axios.get(endPoint.endpointTarget+'/clients')
             .then(res => {
+                this.clientNames = []
                 for (let index = 0; index < res.data.length; index++) {
+                    
                     this.clientNames.push(res.data[index].nombre+ ' / ' +res.data[index].identidad)
                 }
             })
@@ -260,6 +716,7 @@ export default {
         getLenders(){
             axios.get(endPoint.endpointTarget+'/manicuristas')
             .then(res => {
+                this.registerService.lenders = res.data
                 for (let index = 0; index < res.data.length; index++) {
                     this.lenderNames.push(res.data[index].nombre)
                 }
@@ -279,10 +736,9 @@ export default {
             const descuento = parseFloat(this.discount) / 100
 			const porcentaje = 1 - parseFloat(descuento)
 			const precioTotal = parseFloat(this.subTotal) + parseFloat(precio)  
-			console.log(parseFloat(this.price))
 			this.price = this.formatPrice(precioTotal)
 			this.subTotal = precioTotal
-			this.totalSinFormato = precioTotal + this.design
+			this.totalSinFormato = precioTotal
 			
 			if(this.discount === ''){
 				this.total = this.formatPrice(precioTotal+ this.design)
@@ -291,17 +747,13 @@ export default {
 				for (let index = 0; index < this.serviciosSelecionados.length; index++) {
 					if (!this.serviciosSelecionados[index].descuento) {
 						const precioConDescuento = parseFloat(this.subTotal) * parseFloat(porcentaje) 
-						this.total = this.formatPrice(precioConDescuento)
-						this.totalSinFormato = precioConDescuento 
+						this.total = this.formatPrice(precioConDescuento + this.design)
+						this.totalSinFormato = precioConDescuento
 					}
 				}
 			}
-            
-
-            
 			const servicios = {'servicio': nombre, 'comision': comision, 'precio': precio, 'descuento': discount}
 			this.serviciosSelecionados.push(servicios)
-			
 			axios.put(endPoint.endpointTarget+'/ventas/updateServicesMonth/' + nombre)
 			.catch(err => {
 				this.$swal({
@@ -311,7 +763,6 @@ export default {
 					timer: 1500
 				})
 			})
-			console.log(this.serviciosSelecionados)
 			axios.put(endPoint.endpointTarget+'/ventas/updateProviderMonth/' + this.lenderSelect)
 			.catch(err => {
 				console.log(err)
@@ -319,19 +770,17 @@ export default {
         },
         borrarServicio(nombre, index, _id, precio, descuento){
             for (var i = 0; i < this.serviciosSelecionados.length; i++) {
-				console.log(i)
 				if (this.serviciosSelecionados[i].servicio == nombre ) {
 					this.serviciosSelecionados.splice(i, 1)
 					break
 				}
             }
-            console.log(this.countServices[index].count)
 			if (this.countServices[index].count != 0) {
                 this.countServices[index].count--
 				const subTotal = parseFloat(this.subTotal) - parseFloat(precio) 
 				this.price = this.formatPrice(subTotal)
 				this.subTotal = subTotal
-                this.totalSinFormato = subTotal+ this.design
+                this.totalSinFormato = subTotal
                 this.total = this.formatPrice(subTotal+ this.design)
 				if(this.discount == ""){
 					// this.total = this.formatPrice(subTotal+ this.design)
@@ -372,15 +821,15 @@ export default {
 						const precioConDescuento = parseFloat(this.subTotal) * parseFloat(porcentaje)  
 						
 						this.total = this.formatPrice(precioConDescuento+ this.design)
-						this.totalSinFormato = precioConDescuento+ this.design
+						this.totalSinFormato = precioConDescuento
 					}
 					if(this.discount == '' || this.discount == 0){
 						if (this.design == '') {
-							this.totalSinFormato = this.subTotal+ this.design
+							this.totalSinFormato = this.subTotal
 							this.total = this.formatPrice(this.subTotal+ this.design)
 						}
 						else{
-							this.totalSinFormato = this.subTotal + this.design
+							this.totalSinFormato = this.subTotal
 							this.total = this.formatPrice(this.totalSinFormato+ this.design)
 						}
 					}
@@ -395,7 +844,6 @@ export default {
 					showConfirmButton: false,
 					timer: 1500
 				})
-
 			}
         },
         formatClass(value){
@@ -566,6 +1014,9 @@ export default {
                             setTimeout(() => {
                                 this.modals = {
                                     modal1: false,
+                                    modal2: false,
+                                    modal3: false,
+                                    modal4: false,
                                     message: "",
                                     icon: '',
                                     type: ''
@@ -585,6 +1036,9 @@ export default {
                             setTimeout(() => {
                                 this.modals = {
                                     modal1: false,
+                                    modal2: false,
+                                    modal3: false,
+                                    modal4: true,
                                     message: "",
                                     icon: '',
                                     type: ''
@@ -609,6 +1063,9 @@ export default {
                     setTimeout(() => {
                         this.modals = {
                             modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
                             message: "",
                             icon: '',
                             type: ''
@@ -640,6 +1097,9 @@ export default {
                 setTimeout(() => {
                     this.modals = {
                         modal1: false,
+                        modal2: false,
+                        modal3: false,
+                        modal4: false,
                         message: "",
                         icon: '',
                         type: ''
@@ -652,6 +1112,15 @@ export default {
 }
 </script>
 <style >
+    .inputFilter{
+        padding: 5px;
+        border:1px solid #cad1d7;
+        border-radius:0.375rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #8898aa;
+        font-size: 0.675rem;
+    }
     .table thead tr th{
         padding-bottom: 5px;
         padding-top: 5px;
@@ -663,8 +1132,8 @@ export default {
     .ListaProcesar{
 		overflow-x: hidden;
 		overflow-y:scroll;
-		max-height: 190px;
-		height:110px;
+		max-height: 220px;
+		height:170px;
     }
     .align .form-control{
         text-align:center;
@@ -683,4 +1152,96 @@ export default {
         color: white !important;
         border-radius: 5px;
     }
+    .maxHeight{
+        max-height: 200px;
+        overflow: scroll;
+    }
+    .vbt-table-tools th{
+        padding: 5px !important;
+        max-height: 20px !important;
+        overflow: hidden !important;
+    }
+    .vbt-table-tools th div .col-md-8{
+        display:none !important;
+    }
+    .vbt-table-tools th div .col-md-4{
+        flex: 0 0 100%; 
+        max-width: 100%;
+    }
+    .vbt-table-tools th div .col-md-4 .no-gutters .col-md-6{
+        display:none;
+    }
+    .vbt-table-tools th div .col-md-4 .no-gutters .vbt-global-search{
+        display:block !important;
+        flex: 0 0 100%; 
+        max-width: 100%;
+    }
+    .vbt-table-tools th div .col-md-4 .no-gutters .vbt-global-search .form-group{
+        margin-bottom: 2px !important;
+    }
+    .vbt-table-tools th div .col-md-4 .no-gutters .vbt-global-search .form-group input{
+       border-left: 1px solid #cad1d7;
+       padding-left: 5px;
+    }
+    .maxHeight .card .card-header{
+        display:none ;
+    }
+    .maxHeight .table td {
+        padding: 5px;
+        padding-bottom: 5px;
+    } 
+    .menuVerVentas{
+	transition: all 0.5s ease-out;
+	overflow: hidden;
+}
+.navSVenta{
+	cursor: pointer;
+	width:7%;
+	top:3.5%;
+	right:-7%;
+	background-color: white;
+	position: absolute;
+	border-radius: 0 5px 5px 0;
+}
+.menuVerServi{
+	transition: all 0.5s ease-out;
+	overflow: hidden;
+}
+.navSServi{
+	cursor: pointer;
+	width:7%;
+	top:9.5%;
+	right:-7%;
+	background-color: white;
+	position: absolute;
+	border-radius: 0 5px 5px 0;
+}
+.menuVerRedo{
+	transition: all 0.5s ease-out;
+	overflow: hidden;
+}
+.navSRedo{
+	cursor: pointer;
+	width:7%;
+	top:15.5%;
+	right:-7%;
+	background-color: white;
+	position: absolute;
+	border-radius: 0 5px 5px 0;
+}
+.menuVerVentas:hover{
+	width: 30%;
+	right:-30%;
+	z-index:2;
+}
+.menuVerServi:hover{
+	width: 30%;
+	right:-30%;
+	z-index:2;
+}
+.menuVerRedo:hover{
+	width: 30%;
+	right:-30%;
+	z-index:2;
+}
 </style>

@@ -93,8 +93,14 @@
 </script>
 <style lang="scss">
 @media (min-width: 992px){
-  .modal-lg, .modal-xl {
+  .modal-lg {
       max-width: 600px !important;
+  }
+}
+
+@media (max-width: 692px){
+  .modal-lg {
+      max-width: 400px !important;
   }
 }
 

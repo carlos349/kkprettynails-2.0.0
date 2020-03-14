@@ -63,13 +63,13 @@
                             alternative
                             class="mb-3"
                             placeholder="Nombre el cajero"
-                            v-on:change="validRegister(3)"
+                            v-on:keyup="validRegister(3)"
                             v-model="cashFunds.cashName"
                             addon-left-icon="ni ni-circle-08">
                         </base-input>
                         <currency-input
                             v-model="cashFunds.cashAmount"
-                            v-on:change="validRegister(3)"
+                            v-on:keyup="validRegister(3)"
                             locale="de"
                             addon-left-icon="ni ni-money-coins"
                             class="form-control mb-3"
@@ -105,13 +105,13 @@
                             addon-left-icon="ni ni-money-coins"
                             class="form-control mb-3"
                             style="margin-top:-10px;"
-                            v-on:change="validRegister(1)"
+                            v-on:keyup="validRegister(1)"
                         />	
                         <base-input 
                             alternative
                             class="mb-3"
                             placeholder="Nombre el cajero"
-                            v-on:change="validRegister(1)"
+                            v-on:keyup="validRegister(1)"
                             v-model="closeIdentification"
                             addon-left-icon="ni ni-circle-08">
                         </base-input>
@@ -144,7 +144,7 @@
                                 class="form-control mb-3"
                                 style="margin-top:-10px;"
                                 readonly
-                                v-on:change="validRegister(2)"
+                                v-on:keyup="validRegister(2)"
                             />	
                         </div>
                         <div class="col-6">
@@ -155,7 +155,7 @@
                                 addon-left-icon="ni ni-money-coins"
                                 class="form-control mb-3"
                                 style="margin-top:-10px;"
-                                v-on:change="validRegister(2)"
+                                v-on:keyup="validRegister(2)"
                             />
                         </div>
                         <div class="col-6">
@@ -167,7 +167,7 @@
                                 addon-left-icon="ni ni-money-coins"
                                 class="form-control mb-3"
                                 style="margin-top:-10px;"
-                                v-on:change="validRegister(2)"
+                                v-on:keyup="validRegister(2)"
                             />
                         </div>
                         <div class="col-6">
@@ -178,7 +178,7 @@
                                 addon-left-icon="ni ni-money-coins"
                                 class="form-control mb-3"
                                 style="margin-top:-10px;"
-                                v-on:change="validRegister(2)"
+                                v-on:keyup="validRegister(2)"
                             />
                         </div>
                         <div class="col-6">
@@ -190,7 +190,7 @@
                                 addon-left-icon="ni ni-money-coins"
                                 class="form-control mb-3"
                                 style="margin-top:-10px;"
-                                v-on:change="validRegister(2)"
+                                v-on:keyup="validRegister(2)"
                             />
                         </div>
                         <div class="col-6">
@@ -202,7 +202,7 @@
                                 addon-left-icon="ni ni-money-coins"
                                 class="form-control mb-3"
                                 style="margin-top:-10px;"
-                                v-on:change="validRegister(2)"
+                                v-on:keyup="validRegister(2)"
                             /> 
                         </div>
                         <base-button v-if="!validFinally" type="default" class="float-right" disabled>Finalizar cierre</base-button>
@@ -359,19 +359,34 @@ export default {
 				amount: this.cashFunds.cashAmount
 			}).then(res => {
 				if (res.data.status == 'ok') {
-					this.$swal({
-						type: 'success',
-						title: '¡Ya puede ingresar ventas!',
-						showConfirmButton: false,
-						timer: 1500
-					})
+					this.modals = {
+                        modal1: true,
+                        message: 'Ya puedes ingresar ventas',
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false, 
+                            modal4: false,
+                            message: "",
+                            icon: '',
+                            type:''
+                        }
+                    }, 1500);
                     this.cashFunds.cashName = ''
                     this.cashFunds.cashAmount= ''
                     this.getFunds()
                     this.cashFunds.inspector = false
 				}
 			})
-		},
+        },
+        dataReport(id){
+            localStorage.setItem('reportID', id)
+            router.push({path: '/reporteCierre'})
+        },
         getFunds(){
             axios.get(endPoint.endpointTarget+'/ventas/getFund')
             .then(res => {
@@ -402,9 +417,12 @@ export default {
                         setTimeout(() => {
                             this.modals = {
                                 modal1: false,
+                                modal2: false,
+                                modal3: false, 
+                                modal4: false,
                                 message: "",
                                 icon: '',
-                                type: ''
+                                type:''
                             }
                         }, 1500);
                     }else{
@@ -452,183 +470,23 @@ export default {
                         icon: 'ni ni-check-bold ni-5x',
                         type: 'success'
                     }
+                    this.getClosing()
                     setTimeout(() => {
                         this.modals = {
                             modal1: false,
+                            modal2: false,
+                            modal3: false, 
+                            modal4: false,
                             message: "",
                             icon: '',
-                            type: ''
+                            type:''
                         }
                     }, 1500);
                 }else{
                     console.log(res)
                 }
             })
-        },
-        daySaleClosexx(){
-            axios.get('ventas/getFund')
-            .then(res => {
-            const fondo = res.data[0].amount
-            const egresoSistema = res.data[0].amount
-            axios.get('ventas/getClosingDay')
-            .then(res => {
-                if (res.data.status === 'bad') {
-                    this.$swal({
-                        type: 'error',
-                        title: 'Sin ventas el dia no se puede cerrar',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }else{
-                const efectivo = res.data.efectivo
-                const redCompraDebito = res.data.redCompraDebito
-                const redCompraCredito = res.data.redCompraCredito
-                const transferencia = res.data.transferencia
-                const otros = res.data.otros
-                const total = res.data.total
-                this.$swal({
-                    title: 'Por favor, registre el monto egresado de la caja',
-                    input: 'number',
-                    inputPlaceholder: 'Monto egreso',
-                    showCloseButton: true,
-                })
-                .then(result => {
-                    const egresoManual = result.value 
-                    
-                    this.$swal({
-                    title: 'Verificación de ventas',
-                    html: `
-                        <form>
-                        <div class="row">
-                            <div class="form-group col-6" style="width:100%;">
-                            <label style="float:left;">Fondo de la caja</label>
-                            <input type="number" class="form-control classFondo" value="${fondo}" readonly requerid>
-                            </div>
-                            <div class="form-group col-6" style="width:100%;">
-                            <label style="float:left;">Efectivo</label>
-                            <input type="number" class="form-control classEfectivo" placeholder="$ 0" requerid>
-                            </div>
-                            <div class="form-group col-6" style="width:100%;">
-                            <label style="float:left;">Débito</label>
-                            <input type="number" class="form-control classRedcompreD" placeholder="$ 0" requerid>
-                            </div>
-                            <div class="form-group col-6" style="width:100%;">
-                            <label style="float:left;">Crédito</label>
-                            <input type="number" class="form-control classRedcompreC" placeholder="$ 0" requerid>
-                            </div>
-                            <div class="form-group col-6" style="width:100%;">
-                            <label style="float:left;">Transferencias</label>
-                            <input type="number" class="form-control classTransferencia" placeholder="$ 0" requerid>
-                            </div>
-                            <div class="form-group col-6" style="width:100%;">
-                            <label style="float:left;">Otros</label>
-                            <input type="number" class="form-control classOtros" placeholder="$ 0" requerid>
-                            </div>
-                        </div>
-                        </form>
-                    `,
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Confirmar',
-                    cancelButtonText: 'Cerrar',
-                    showCloseButton: true,
-                    showLoaderOnConfirm: true
-                    })
-                    .then((result) => {
-                        if(result.value) {
-                        const fondoManual = $('.classFondo').val()
-                        const efectivoManual = $('.classEfectivo').val()
-                        const redCompreDManual = $('.classRedcompreD').val()
-                        const redCompreCManual = $('.classRedcompreC').val()
-                        const transferenciaManual = $('.classTransferencia').val()
-                        const otrosManual = $('.classOtros').val()
-                        const totalManual = parseFloat(efectivoManual) + parseFloat(redCompreDManual) + parseFloat(redCompreCManual) + parseFloat(transferenciaManual) + parseFloat(otrosManual)
-                        
-                        if (fondoManual == '' || efectivoManual == '' || redCompreDManual == '' || redCompreCManual == '' || otrosManual == '' || totalManual == '' || transferenciaManual == '') {
-                            this.$swal({
-                            type: 'error',
-                            title: 'Complete todos los campos',
-                            showConfirmButton: false,
-                            timer: 1500
-                            })
-                        }else{
-                            this.$swal({
-                            title: 'Por favor, escriba su nombre ^^',
-                            input: 'text',
-                            inputPlaceholder: 'Escriba su nombre aquí',
-                            showCloseButton: true,
-                            })
-                            .then(result => {
-                            if (result.value == '') {
-                                this.$swal({
-                                type: 'error',
-                                title: 'Debe escribir su nombre',
-                                showConfirmButton: false,
-                                timer: 1500
-                                })
-                            }else if(result.dismiss){
-                                this.$swal({
-                                type: 'info',
-                                title: 'Aborto cierre',
-                                showConfirmButton: false,
-                                timer: 1500
-                                })
-                            }else{
-                                var totalEfectivoSistema = parseFloat(fondo) + parseFloat(efectivo) - parseFloat(egresoManual)
-                                var totalEfectivoManual = parseFloat(fondoManual) + parseFloat(efectivoManual) - parseFloat(egresoManual)
-                        
-                                const identificacionCierre = result.value
-                                axios.post('ventas/closeDay/'+identificacionCierre, {
-                                efectivoSistema: parseFloat(efectivo),
-                                redCompraDebitoSistema: parseFloat(redCompraDebito),
-                                redCompraCreditoSistema: parseFloat(redCompraCredito),
-                                transferenciaSistema: parseFloat(transferencia),
-                                otrosSistema: parseFloat(otros),
-                                totalSistema: parseFloat(total),
-                                fondoSistema: parseFloat(fondo),
-                                egresoSistema: parseFloat(egresoManual),
-                                totalEfectivoSistema: parseFloat(totalEfectivoSistema),
-                                
-                                totalEfectivoManual: parseFloat(totalEfectivoManual),
-                                fondoManual: parseFloat(fondoManual),
-                                egresoManual: parseFloat(egresoManual),
-                                efectivoManual: parseFloat(efectivoManual),
-                                redCompreDManual: parseFloat(redCompreDManual),
-                                redCompreCManual: parseFloat(redCompreCManual),
-                                transferenciaManual: parseFloat(transferenciaManual),
-                                otrosManual: parseFloat(otrosManual),
-                                totalManual: parseFloat(totalManual)
-                                })
-                                .then(res => {
-                                if (res.data.status == 'ok') {
-                                    this.$swal({
-                                        type: 'success',
-                                        title: 'Cierre hecho correctamente',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                }
-                                })
-                                .catch(err => {
-                                console.log(err)
-                                })
-                            }
-                            })
-                        }
-                        }else{
-                        this.$swal({
-                            type: 'info',
-                            title: 'Aborto cierre',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        }
-                    })
-                })
-                }
-            })
-            })
-        },
+        }
     }
 }
 </script>
