@@ -10,26 +10,31 @@
                     <div class="col-lg-12 col-md-12">
                         <h1 class="display-2 text-white w-100">Sección de Agenda</h1>
                         <p class="text-white mt-0 mb-5">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
-                        <a @click="modals.modal1 = true , initialState()"  class="btn btn-success text-white cursor-pointer">Agendar</a>
-                        <a @click="modals.modal2 = true"  class="btn btn-warning text-white cursor-pointer">Ventas por procesar</a>
-                        <div class="row mt-3">
-                            <base-dropdown class="col-6 mt-1">
-                                <base-button slot="title" type="default" class="dropdown-toggle col-12">
-                                        {{employeByDate}}
-                                </base-button>
-                                <li v-on:click="getCitasByEmploye('Todos')">
-                                    <base-button class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+                        <div class="col-12">
+                            <div class="row">
+                                <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
+                                <a @click="modals.modal2 = true"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
+                                <base-dropdown class="mt-1 p-0 col-5">
+                                    <base-button slot="title" type="default" class="dropdown-toggle col-12">
+                                            {{employeByDate}}
                                     </base-button>
-                                </li>
-                                <li v-for="data in employes"  v-on:click="getCitasByEmploye(data.nombre)">
-                                    <base-button class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.nombre}}</h4>
-                                    </base-button>
-                                </li>
-                            </base-dropdown>
-                            <div v-if="filter == true" class="ml-2">
-                                <img class="avatar rounded-circle" src="https://www.w3schools.com/howto/img_avatar.png" />
+                                    <li v-on:click="getCitasByEmploye('Todos')">
+                                        <base-button class="dropdown-item" href="#">
+                                            <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+                                        </base-button>
+                                    </li>
+                                    <li v-for="data in employeShow"  v-on:click="getCitasByEmploye(data.name,data.img)">
+                                        <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                                            <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                        </base-button>
+                                        <base-button v-else class="dropdown-item" href="#">
+                                            <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                        </base-button>
+                                    </li>
+                                </base-dropdown>
+                                <div v-if="filter == true" class="ml-2">
+                                    <img class="avatar rounded-circle" :src="img2" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -39,7 +44,7 @@
         <modal :show.sync="modals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-xl">
-            <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5" class="border-0">
+            <card type="secondary" shadow header-classes="bg-white" body-classes="" class="border-0">
                 <modal :show.sync="modals.modal2" :gradient="modals.type" modal-classes="modal-danger modal-dialog-centered">
                     <div class="py-3 text-center">
                         <i :class="modals.icon"></i>
@@ -48,18 +53,18 @@
                 </modal>
                   <!-- WIZARD -->
 
-                <form-wizard ref="wizard" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Regresar" next-button-text="Siguiente" finish-button-text="¡Agendar!">
+                <form-wizard ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Regresar" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
-                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento </h2>
+                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento</h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
 
                     <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateWizardOne">
                         <template>
-                            <div class="text-muted text-center mt-1">
+                            <div class="text-muted text-center p-0">
                                 Seleccione los servicios
                             </div>
                         </template>
-                        <div class="col-12 mb-1">
+                        <div class="col-12">
                                 <center>
                                     <base-button v-if="registerDate.valid2 == true" disabled type="secondary" class="text-default">
                                         <font-awesome-icon class="mx-auto"  icon="redo-alt" />
@@ -74,16 +79,19 @@
                             <div v-for="(name, index) in services" class="col-6 pl-1 mt-2">
                                 <base-button v-on:click="pushService(name.prestadores,name.nombre,name.tiempo, name.comision, name.precio,name.descuento,index)" class="col-12 "  type="default">
                                     <badge class="float-left text-white" pill type="default">
-                                        <i class="ni ni-single-02"></i>{{name.prestadores.length}}
+                                        <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
+                                        <i class="far fa-clock ml-1"></i> {{name.tiempo}}Min
                                     </badge>
                                     <span class="float-left">{{name.nombre}}</span>
                                     <badge class="text-default float-right" type="white">{{countServices[index].count}}</badge>
                                 </base-button>
                             </div>
                         </vue-custom-scrollbar>
-                           <base-checkbox v-model="registerDate.design"  class="mt-5">
-                                <h3>¿Se realizara un diseño?</h3> 
-                            </base-checkbox>
+                        <div class="row mx-auto mt-2">
+                            <h3>¿Se realizara un diseño?</h3> 
+                            <base-radio name="si" value="true" inline class="mb-3 ml-5" v-model="registerDate.design">Si</base-radio>
+                            <base-radio name="no" value="false" inline class="mb-3 ml-5" v-model="registerDate.design">No</base-radio> 
+                        </div>
                     </tab-content>
 
                     <tab-content style="height:35vh" icon="ni ni-collection" title="Información" :before-change="validateWizardTwo">
@@ -175,7 +183,7 @@
                         </div>
                     </tab-content>
 
-                    <tab-content style="height:35vh" icon="ni ni-watch-time" title="Disponibilidad" :before-change="validateWizardThree">
+                    <tab-content style="height:35vh" icon="fas fa-user-clock" title="Disponibilidad" :before-change="validateWizardThree">
                         <div class="row">
                             <div class="text-muted text-center mt-2 col-4">
                                 Seleccione un empleado y disponibilidad
@@ -184,14 +192,17 @@
                                 <base-button slot="title" type="default" class="dropdown-toggle col-12">
                                      {{registerDate.employeSelect}}
                                 </base-button>
-                                <li v-for="data in registerDate.employe" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmploye(data.nombre, data.class, data.restTime)">
-                                    <base-button class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.nombre}}</h4>
+                                <li v-for="data in employeShow" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmploye(data.name, data.class, data.restTime, data.img)">
+                                    <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                    </base-button>
+                                    <base-button v-else class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
                                     </base-button>
                                 </li>
                             </base-dropdown>
                             <div class="col-2">
-                                <img class="avatar rounded-circle" src="https://www.w3schools.com/howto/img_avatar.png" />
+                                <img v-if="img1 != ''" class="avatar rounded-circle" :src="img1" />
                             </div>
                         </div>
                         <div class="text-muted text-center mt-1">
@@ -272,18 +283,55 @@
         </modal>
         <vue-cal
             class=""
-             :locale="locale"
-             :events="events"
-             :time-from="600 "
-             :time-to="1275"
-             :timeStep="15"
-             default-view="month"
-             :disable-views="['years', 'year', 'week']" 
-             events-count-on-month-view
-             
-             :overlapsPerTimeStep="true">
-          </vue-cal>
-        
+            :locale="locale"
+            :events="events"
+            :time-from="600 "
+            :time-to="1275"
+            :timeStep="15"
+            default-view="month"
+            :disable-views="['years', 'year', 'week']" 
+            events-count-on-month-view
+            :on-event-click="onEventClick"
+            :overlapsPerTimeStep="true">
+        </vue-cal>
+        <modal :show.sync="dateModals.modal1"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-sm">
+            <h5 slot="header" class="modal-title" id="modal-title-notification">{{dateSplit(selectedEvent.start)}}</h5>   
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <small>Sign in with</small>
+                    </div>
+                </template>
+                <template>
+                    <div class="text-center text-muted mb-4">
+                        <small>Or sign in with credentials</small>
+                    </div>
+                    <form role="form">
+                        <base-input alternative
+                                    class="mb-3"
+                                    placeholder="Email"
+                                    addon-left-icon="ni ni-email-83">
+                        </base-input>
+                        <base-input alternative
+                                    type="password"
+                                    placeholder="Password"
+                                    addon-left-icon="ni ni-lock-circle-open">
+                        </base-input>
+                        <base-checkbox>
+                            Remember me
+                        </base-checkbox>
+                        <div class="text-center">
+                            <base-button type="primary" class="my-4">Sign In</base-button>
+                        </div>
+                    </form>
+                </template>
+            </card>
+        </modal>  
     </div>
 </template>
 <script>
@@ -348,7 +396,7 @@
             employeResTime:null,
             client:null,
             duration:0,
-            design:false,
+            design:null,
             block:null,
             start:null,
             end:null,
@@ -380,19 +428,36 @@
             locale: Spanish, // locale for this instance only
             minDate: new Date()          
          },
+         dateData: {
+            history:[],
+            discount:false
+         },
          employeByDate: 'Filtrar por empleado', 
          clients:[],
+         employeShow:[],
          services:[],
          locale: 'es',
          filter: false,
          events: [],
          lender:'',
+         users:[],
+         img1:'',
+         img2:'',
+         selectedEvent:[],
          modals: {
+            modal1:false,
+            modal2: false,
+            message: "",
+            icon: '',
+            type:''
+         },
+         dateModals: {
              modal1:false,
-             modal2: false,
-             message: "",
-             icon: '',
-             type:''
+             modal2:false,
+         },
+         radio: {
+           radio1: "radio1",
+           radio2: "radio3"
          },
          clientsNames:[]
       };
@@ -411,6 +476,7 @@
     created(){
       this.getClients()
       this.getServices()
+      this.getUsers()
       this.getEmployes()
       this.getDates()
     },
@@ -505,7 +571,25 @@
         getEmployes(){
   			axios.get(endPoint.endpointTarget+'/manicuristas')
   			.then(res => {
-  				this.employes = res.data
+                this.employes = res.data
+                var insp = false
+                for (let index = 0; index < this.employes.length; index++) {
+                    for (let i = 0; i < this.users.length; i++) {
+                        if (this.employes[index].nombre + "/" + this.employes[index].documento == this.users[i].linkLender) {
+                            this.employeShow.push({name:this.employes[index].nombre,img:endPoint.imgEndpoint+this.users[i].userImage,restDay:this.employes[index].restDay, restTime:this.employes[index].res,class:this.employes[index].class})
+                            insp = false
+                            break
+                        }
+                        else {
+                            insp = true
+                        }
+                        
+                    }
+                    if (insp == true) {
+                        this.employeShow.push({name:this.employes[index].nombre,img:'no'})
+                    }
+                }
+                console.log(this.employeShow)
   			})
   		},
         getServices() {
@@ -633,7 +717,7 @@
             
         },
         validateWizardOne(){
-            if (this.registerDate.services != '') { 
+            if (this.registerDate.services != '' && this.registerDate.design != false) { 
                 this.registerDate.valid = true
                 for (let i = 0; i < this.registerDate.employePerService.length; i++) {
                     for (let c = 0; c < this.employes.length; c++) {
@@ -644,30 +728,68 @@
                         }               
                     }
                 }
-                if (this.registerDate.design == true && this.registerDate.valid3 == false) {
+                if (this.registerDate.design == 'si' && this.registerDate.valid3 == false) {
                     this.registerDate.duration = parseFloat(this.registerDate.duration) + 15
                     this.registerDate.valid3 = true
                 }
-                if (this.registerDate.design == false && this.registerDate.valid3 ==true) {
+                if (this.registerDate.design == 'no' && this.registerDate.valid3 ==true) {
                     this.registerDate.duration = parseFloat(this.registerDate.duration) - 15
                     this.registerDate.valid3 = false
                 }
+                this.blockHour = []
+                this.registerDate.employeSelect = 'Seleccione un empleado'
+                this.img1 = ''
                 return true
             }
             else{
-                this.registerDate.valid = false 
+                this.registerDate.valid = false
+                this.modals = {
+                    modal1:true,
+                    modal2: true,
+                    message: "¡Debe completar todos los datos!",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1:true,  
+                        modal2: false,
+                        message: '',
+                        icon: '',
+                        type: ''
+                    }
+                }, 1500); 
                 return false
             } 
         },
         validateWizardTwo(){
-               if (this.registerDate.client != null && this.registerDate.date != null) { 
-                   this.registerDate.valid = true
-                   return true
-               }
-               else{
-                   this.registerDate.valid = false 
-                   return false
-               } 
+            if (this.registerDate.client != null && this.registerDate.date != null) { 
+                this.registerDate.valid = true
+                this.blockHour = []
+                this.registerDate.employeSelect = 'Seleccione un empleado'
+                this.img1 = ''
+                return true
+            }
+            else{
+                this.registerDate.valid = false
+                this.modals = {
+                    modal1:true,
+                    modal2: true,
+                    message: "¡Debe completar todos los datos!",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1:true,  
+                        modal2: false,
+                        message: '',
+                        icon: '',
+                        type: ''
+                    }
+                }, 1500); 
+                return false
+            } 
         },
         validateWizardThree(){
                if (this.registerDate.employeSelect != 'Seleccione un empleado' && this.registerDate.start != null) { 
@@ -675,7 +797,23 @@
                    return true
                }
                else{
-                   this.registerDate.valid = false 
+                   this.registerDate.valid = false
+                   this.modals = {
+                        modal1:true,
+                        modal2: true,
+                        message: "¡Debe completar todos los datos!",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1:true,  
+                            modal2: false,
+                            message: '',
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500); 
                    return false
                } 
         },
@@ -714,6 +852,7 @@
                 valid:false,
                 valid2:false
             }
+            this.img1 = ''
             this.blockHour = []
             for (let index = 0; index < this.countServices.length; index++) {
                 this.countServices[index].count = 0
@@ -780,10 +919,16 @@
         MaysPrimera(string){
 			return string.charAt(0).toUpperCase() + string.slice(1);
         },
-        selectEmploye(nombre,clase,restTime){
+        selectEmploye(nombre,clase,restTime,img){
             this.registerDate.employeSelect = nombre
             this.registerDate.employeClass = clase
             this.registerDate.employeResTime = restTime
+            if (img != 'no') {
+                this.img1 = img
+            }
+            else {
+                this.img1 = "https://www.w3schools.com/howto/img_avatar.png"
+            }
             this.insertDate()
         },
         insertDate(){
@@ -929,7 +1074,7 @@
 				}
 			})
         },
-        getCitasByEmploye(name){
+        getCitasByEmploye(name,img){
             if (name == "Todos") {
                 this.getDates()
                 this.filter = false
@@ -937,6 +1082,12 @@
             }
             else{
                 this.events = []
+                if (img != 'no') {
+                    this.img2 = img
+                }
+                else {
+                    this.img2 = "https://www.w3schools.com/howto/img_avatar.png"
+                }
                 axios.get(endPoint.endpointTarget+'/citas/' + name)
                 .then(res => {
                     for (let index = 0; index < res.data.length; index++) {
@@ -980,7 +1131,70 @@
                     this.filter = true
                 })
             }
-      },
+        },
+        getUsers(){
+			const config = {headers: {'x-access-token': localStorage.userToken}}
+			axios.get(endPoint.endpointTarget+'/users', config)
+			.then(res => {
+                this.users = res.data
+                console.log(this.users)
+			})
+			.catch(err => {
+				this.$swal({
+					type: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'Login'})
+			})
+        },
+        onEventClick(event, e){
+            this.selectedEvent = event
+        
+            this.dateModals.modal1 = true
+            const split = event.cliente.split('/')
+            const splitTwo = split[1].split(' ')
+            const splitThree = split[0].split(' ')
+            axios.get(endPoint.endpointTarget+'/clients/dataDiscount/'+splitTwo[1])
+            .then(res => {
+            if (res.data[0].participacion == 0) {
+                            this.dateData.discount = true
+                        }else{
+                this.dateData.discount = false
+            }
+            this.dateData.history = []
+            this.dateData.history = res.data[0].historical
+            
+            })
+            e.stopPropagation()
+        },
+        dateSplit(value){
+            if (value) {
+            const split = value.split(' ')
+            return split[0]
+            }
+        },
+        dateSplitHours(value){
+            if (value) {
+            const split = value.split(' ')
+            return split[1]
+            }
+        },
+        formatName(name){
+            if (name) {
+            var sp = name.split("-")
+            return sp[0]
+            }
+            
+        },
+        formatContact(contact){
+            if (contact) {
+            var sp = contact.split(" / ")
+            return sp[1]
+            }
+            
+        },
     },
     mounted() {
       

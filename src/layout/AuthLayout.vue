@@ -4,10 +4,6 @@
         <base-nav class="navbar-top navbar-horizontal navbar-dark"
                   containerClasses="px-4 container"
                   expand>
-            <router-link slot="brand" class="navbar-brand" to="/">
-                <img style="height:12vh" src="img/brand/syswaLogo.png"/>
-            </router-link>
-
             <template v-slot="{closeMenu}">
                 <!-- Collapse header -->
                 <div class="navbar-collapse-header d-md-none">

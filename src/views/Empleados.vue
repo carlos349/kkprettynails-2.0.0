@@ -40,7 +40,7 @@
                                     class="mb-3"
                                     placeholder="Documento"
                                     v-model="registerEmploye.id"
-                                    v-on:change="validRegister()"
+                                    v-on:change="validRegister(),registerEmploye.id = formatRut(registerEmploye.id)"
                                     addon-left-icon="ni ni-key-25">
                         </base-input>
                         <template>
