@@ -78,6 +78,11 @@ export default new Router({
           component: () => import('./views/Caja.vue')
         },
         {
+          path: '/reporteEmpleado',
+          name: 'reportEmploye',
+          component: () => import('./views/reportEmploye.vue')
+        },
+        {
           path: '/Agendamiento',
           name: 'agendamiento',
           component: () => import('./views/Agendamiento.vue')

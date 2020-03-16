@@ -2,7 +2,9 @@
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
     <side-bar  :background-color="sidebarBackground" short-title="Syswa" title="Syswa">
       <template slot="links">
-        <base-button size="sm" v-if="auth == 1 || auth == 2" type="default" icon="ni ni-tag" v-on:click="modals.modal1 = true">Procesar</base-button>
+        <base-button style="margin-left: -50px;" size="sm" v-if="auth == 1 || auth == 2" type="default" icon="ni ni-tag" v-on:click="modals.modal1 = true">
+        <span style="margin-left:15px;">Procesar</span> 
+        </base-button>
         <sidebar-item v-if="auth == 1" :link="{name: 'Metricas', icon: 'ni ni-chart-bar-32 text-primary', path: '/dashboard'}"/>
         <sidebar-item v-if="auth == 1" :link="{name: 'Usuarios', icon: 'ni ni-key-25 text-red', path: '/Usuarios'}"/>
         <sidebar-item v-if="auth == 1" :link="{name: 'Ventas', icon: 'ni ni-money-coins text-green', path: '/Ventas'}"/>
@@ -13,10 +15,6 @@
         <sidebar-item v-if="auth == 1" :link="{name: 'Gastos', icon: 'ni ni-tag text-green', path: '/Gastos'}"/>
         <sidebar-item v-if="auth == 1 || auth == 2 || auth == 3" :link="{name: 'Agendamiento', icon: 'ni ni-calendar-grid-58 text-blue', path: '/Agendamiento'}"/>
         <sidebar-item v-if="auth == 1" :link="{name: 'Caja', icon: 'ni ni-archive-2 text-green', path: '/Caja'}"/>
-        <sidebar-item v-if="auth == 1" :link="{name: 'Icons', icon: 'ni ni-planet text-blue', path: '/icons'}"/>
-
-        
-       
       </template>
     </side-bar>
     <div class="main-content" :data="sidebarBackground">

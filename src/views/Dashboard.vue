@@ -66,46 +66,44 @@
         <!--Charts-->
         <div class="container-fluid mt--7">
             <div class="row">
-                <div class="col-xl-8 mb-5 mb-xl-0">
-                    <card type="secondary" header-classes="bg-transparent">
+                <div class="col-12" >
+                    <card header-classes="bg-transparent">
                         <div slot="header" class="row align-items-center">
-                            <div class="col">
-                                <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
-                                <h5 class="h3 text-white mb-0">Sales value</h5>
+                            <div class="col-8">
+                                <h5 class="h3 mb-0">Comparación de ventas</h5>
                             </div>
-                            <div class="col">
-                                <ul class="nav nav-pills justify-content-end">
-                                    <li class="nav-item mr-2 mr-md-0">
-                                        <a class="nav-link py-2 px-3"
-                                           href="#"
-                                           :class="{active: bigLineChart.activeIndex === 0}"
-                                           @click.prevent="initBigChart(0)">
-                                            <span class="d-none d-md-block">Mensual</span>
-                                            <span class="d-md-none">M</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link py-2 px-3"
-                                           href="#"
-                                           :class="{active: bigLineChart.activeIndex === 1}"
-                                           @click.prevent="initBigChart(1)">
-                                            <span class="d-none d-md-block">Semanal</span>
-                                            <span class="d-md-none">S</span>
-                                        </a>
-                                    </li>
-                                </ul>
+                            <div class="col-4">    
+                              <h5>Filtre por mes y año</h5>                       
+                              <base-input
+                              class="mb-1 mt-1" 
+                              addon-left-icon="ni ni-calendar-grid-58">
+                                  <flat-picker slot-scope="{focus, blur}"
+                                              @on-open="focus"
+                                              @on-close="blur"
+                                              :config="configDatePicker"
+                                              class="form-control datepicker"
+                                              v-model="dates.simple">
+                                  </flat-picker>
+                              </base-input> 
+                              <base-button class="float-right" type="primary" size="sm" v-on:click="SalesQuantityChartFunc()">Filtrar</base-button>
                             </div>
                         </div>
-                        <apexchart type="line" :options="chartOptions" :series="series"></apexchart>
+                        <apexchart :height="350" v-if="loaded" type="line" :options="chartOptions" :series="series"></apexchart>
                     </card>
                 </div>
+            </div>
+            <!-- End charts-->
 
-                <div class="col-xl-4">
+            <!--Tables-->
+            <div class="row mt-5">
+                <div class="col-xl-7 mb-5 mb-xl-0">
+                    <page-visits-table></page-visits-table>
+                </div>
+                <div class="col-xl-5">
                     <card header-classes="bg-transparent">
                         <div slot="header" class="row align-items-center">
                             <div class="col">
-                                <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                                <h5 class="h3 mb-0">Total orders</h5>
+                                <h5 class="h3 mb-0">Top 10 clientes</h5>
                             </div>
                         </div>
                         <bar-chart
@@ -117,21 +115,7 @@
                     </card>
                 </div>
             </div>
-            <!-- End charts-->
-
-            <!--Tables-->
-            <div class="row mt-5">
-                <div class="col-xl-8 mb-5 mb-xl-0">
-                    <page-visits-table></page-visits-table>
-                </div>
-                <div class="col-xl-4">
-                    <social-traffic-table></social-traffic-table>
-                </div>
-            </div>
             <!--End tables-->
-        </div>
-        <div>
-          <apexchart type="line" height="600" :options="chartOptions" :series="series"></apexchart>
         </div>
 
     </div>
@@ -148,93 +132,33 @@
   // Tables
   import SocialTrafficTable from './Dashboard/SocialTrafficTable';
   import PageVisitsTable from './Dashboard/PageVisitsTable';
+  //components
+  import flatPicker from "vue-flatpickr-component";
+  import "flatpickr/dist/flatpickr.css";
+  import {Spanish} from 'flatpickr/dist/l10n/es.js';
   export default {
     components: {
       LineChart,
       BarChart,
       PageVisitsTable,
       SocialTrafficTable,
+      flatPicker
     },
     data() {
       return {
-        series: [{
-              name: "Session Duration",
-              data: [45, 52, 38, 24, 33, 26, 21, 20, 6, 8, 15, 10]
-            },
-            {
-              name: "Page Views",
-              data: [35, 41, 62, 42, 13, 18, 29, 37, 36, 51, 32, 35]
-            },
-            {
-              name: 'Total Visits',
-              data: [87, 57, 74, 99, 75, 38, 62, 47, 82, 56, 45, 47]
-            }
-          ],
-          chartOptions: {
-            chart: {
-              height: 350,
-              type: 'line',
-              zoom: {
-                enabled: false
-              },
-            },
-            dataLabels: {
-              enabled: false
-            },
-            stroke: {
-              width: [5, 7, 5],
-              curve: 'straight',
-              dashArray: [0, 8, 5]
-            },
-            title: {
-              text: 'Page Statistics',
-              align: 'left'
-            },
-            legend: {
-              tooltipHoverFormatter: function(val, opts) {
-                return val + ' - ' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + ''
-              }
-            },
-            markers: {
-              size: 0,
-              hover: {
-                sizeOffset: 6
-              }
-            },
-            xaxis: {
-              categories: ['01 Jan', '02 Jan', '03 Jan', '04 Jan', '05 Jan', '06 Jan', '07 Jan', '08 Jan', '09 Jan',
-                '10 Jan', '11 Jan', '12 Jan'
-              ],
-            },
-            tooltip: {
-              y: [
-                {
-                  title: {
-                    formatter: function (val) {
-                      return val + " (mins)"
-                    }
-                  }
-                },
-                {
-                  title: {
-                    formatter: function (val) {
-                      return val + " per session"
-                    }
-                  }
-                },
-                {
-                  title: {
-                    formatter: function (val) {
-                      return val;
-                    }
-                  }
-                }
-              ]
-            },
-            grid: {
-              borderColor: '#f1f1f1',
-            }
-          },
+        loaded:false,
+        series: [],
+        chartOptions: {
+          
+        },
+        configDatePicker: {
+            allowInput: true, 
+            dateFormat: 'm-d-Y',
+            locale: Spanish, // locale for this instance only          
+        }, 
+        dates: {
+          simple: new Date()
+        },
         variable:10,
         ventas:[],
         totalLocal:0,
@@ -247,26 +171,20 @@
         porcentajeLocal:[],
         porcentajeGanancia:[],
         porcentajeTotal:[],
-        bigLineChart: {
-          allData: [
-            [0, 20, 10, 30, 15, 40, 20, 60, 60],
-            [0, 20, 5, 25, 10, 30, 15, 40, 40]
-          ],
-          activeIndex: 0,
-          chartData: {
-            datasets: [],
-            labels: [],
-          },
-          extraOptions: chartConfigs.blueChartOptions,
-        },
+        // bigLineChart: {
+        //   allData: [
+        //     [0, 20, 10, 30, 15, 40, 20, 60, 60],
+        //     [0, 20, 5, 25, 10, 30, 15, 40, 40]
+        //   ],
+        //   activeIndex: 0,
+        //   chartData: {
+        //     datasets: [],
+        //     labels: [],
+        //   },
+        //   extraOptions: chartConfigs.blueChartOptions,
+        // },
         redBarChart: {
-          chartData: {
-            labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-              label: 'Sales',
-              data: [25, 20, 30, 22, 17, 29]
-            }]
-          }
+          chartData: {}
         },
         clients:[]
       };
@@ -364,27 +282,96 @@
           } 
         })
       },
-    SalesQuantityChartFunc(){
-      this.loaded = false
+      SalesQuantityChartFunc(){
+        this.loaded = false
         axios.get(endPoint.endpointTarget+'/ventas/GetSalesPerMonth')
         .then(res => {	
           const userlist = res.data
-          this.chartdata = userlist
+          this.series = userlist.series
+          this.chartOptions = {
+            chart: {
+              height: 350,
+              type: 'line',
+              zoom: {
+                enabled: true
+              },
+            },
+            dataLabels: {
+              enabled: false
+            },
+            stroke: {
+              width: [5, 7, 5],
+              curve: 'straight',
+              dashArray: [0, 8, 5]
+            },
+            title: {
+              text: 'Estadisticas',
+              align: 'left'
+            },
+            legend: {
+              tooltipHoverFormatter: function(val, opts) {
+                return val + ' - ' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + ''
+              }
+            },
+            markers: {
+              size: 0,
+              hover: {
+                sizeOffset: 6
+              }
+            },
+            xaxis: {
+              categories: userlist.categories,
+            },
+            tooltip: {
+              y: [
+                {
+                  title: {
+                    formatter: function (val) {
+                      return 'Ventas de '+val 
+                    }
+                  }
+                },
+                {
+                  title: {
+                    formatter: function (val) {
+                      return 'Ventas de '+val
+                    }
+                  }
+                },
+              ]
+            },
+            grid: {
+              borderColor: '#f1f1f1',
+            }
+          }
+          console.log(this.chartOptions.xaxis)
+          console.log(this.series)
           this.loaded = true
+        })
+        .catch(err => {
+          console.error(err)
         })
       },
       initBigChart(index) {
-        let chartData = {
-          datasets: [
-            {
-              label: 'Performance',
-              data: this.bigLineChart.allData[index]
-            }
-          ],
-          labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        };
-        this.bigLineChart.chartData = chartData;
-        this.bigLineChart.activeIndex = index;
+        axios.get(endPoint.endpointTarget+'/metrics/top')
+        .then(res => {
+          console.log(res.data)
+          var chartData = {
+            labels: [],
+            datasets: [{
+              label: 'Atenciones',
+              data: []
+            }]
+          }
+          for (let index = 0; index < res.data.length; index++) {
+            const element = res.data[index];
+            chartData.labels.push(element.nombre)
+            chartData.datasets[0].data.push(element.participacion)
+          }
+          this.redBarChart.chartData = chartData
+          console.log(this.redBarChart.chartData)
+        })
+        
       },
       formatPrice(value) {
         let val = (value/1).toFixed(2).replace('.', ',')

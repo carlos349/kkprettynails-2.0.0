@@ -1,15 +1,15 @@
 <template>
     <div>
-        <base-header class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
+        <base-header class="header pb-6 pt-5 pt-lg-8 d-flex align-items-center"
                      style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
-                    <div class="col-lg-7 col-md-10">
+                    <div class="col-12">
                         <h1 class="display-2 text-white">Sección de caja</h1>
-                        <p class="text-white mt-0 mb-5">Esta es la sección administrativa de tus caja, aquí podrás registrar, editar y visualizar todos los cierres de caja.</p>
+                        <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus caja, aquí podrás registrar, editar y visualizar todos los cierres de caja.</p>
                         <a class="btn btn-success text-white cursor-pointer" v-if="cashFunds.inspector" v-on:click="modals.modal2 = true">Registrar fondo de caja</a>
                         <a class="btn btn-success text-white cursor-pointer" v-else v-on:click="daySalesClose">Hacer cierre</a>
                     </div>
