@@ -1,0 +1,433 @@
+<template>
+    <div>
+        <base-header class="header pb-5 pt-5 pt-lg-8 d-flex align-items-center"
+                        style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
+            <!-- Mask -->
+            <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
+            <!-- Header container -->
+            <div class="container-fluid d-flex align-items-center">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="display-2 text-white">Reporte del empleado</h1>
+                        <a class="btn btn-success text-white cursor-pointer" v-on:click="modals.modal2 = true">Datos avanzados</a>
+                    </div>
+                </div>
+            </div>
+        </base-header>
+        <modal :show.sync="modals.modal1"
+               :gradient="modals.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modals.icon"></i>
+                <h1 class="heading mt-5">{{modals.message}}</h1>
+            </div>
+        </modal>
+        <modal :show.sync="modals.modal2"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 "
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        Datos del mes
+                    </div>
+                </template>
+                <template>
+                    <tabs fill class="flex-column flex-md-row">
+                        <card shadow>
+                            <tab-pane>
+                                <span slot="title">
+                                    <i class="ni ni-cloud-upload-96"></i>
+                                    Datos
+                                </span>
+                                <div class="description">
+                                    <base-button type="default" class="w-100 mb-1">
+                                        <span class="float-left">Fecha</span>
+                                        <badge style="font-size:.9em" class="float-right" type="primary">{{fecha}}</badge>
+                                    </base-button>
+                                    <base-button type="default" class="w-100 mb-1">
+                                        <span class="float-left">Nombre</span>
+                                        <badge style="font-size:.9em" class="float-right" type="primary">{{nameLender}}</badge>
+                                    </base-button>
+                                    <base-button type="default" class="w-100 mb-1">
+                                        <span  class="float-left">Adelantos</span>
+                                        <badge  style="font-size:.9em" class="float-right" type="primary">{{formatPrice(advancement)}}</badge>
+                                    </base-button>
+                                    <base-button type="default" class="w-100 mb-1">
+                                        <span class="float-left">Comisión total</span>
+                                        <badge style="font-size:.9em" class="float-right" type="primary">{{formatPrice(totalComission)}}</badge>
+                                    </base-button>
+                                    <base-button type="default" class="w-100 mb-1">
+                                        <span class="float-left">Total de ventas</span>
+                                        <badge style="font-size:.9em" class="float-right" type="primary">{{formatPrice(totalSale)}}</badge>
+                                    </base-button>
+                                </div>
+                            </tab-pane>
+                            <tab-pane title="Profile">
+                                <span slot="title">
+                                    <i class="ni ni-bell-55 mr-2"></i>
+                                    Adelantos o bonos
+                                </span>
+                                <form role="form">
+                                    <base-checkbox class="mb-3" v-model="bonus">
+                                        ¿Esta registrando un bono?
+                                    </base-checkbox>
+                                    <base-input alternative
+                                        class="mb-3"
+                                        placeholder="Razón"
+                                        v-on:keyup="validRegister()"
+                                        addon-left-icon="ni ni-single-copy-04"
+                                        v-model="dataExpense.reason">
+                                    </base-input>
+                                    <currency-input
+                                        v-model="dataExpense.amount"
+                                        locale="de"
+                                        v-on:keyup="validRegister()"
+                                        addon-left-icon="ni ni-time-alarm"
+                                        class="form-control mb-3"
+                                        style="margin-top:-10px;"
+                                    />	
+                                    <base-input addon-left-icon="ni ni-calendar-grid-58">
+                                        <flat-picker 
+                                                slot-scope="{focus, blur}"
+                                                @on-open="focus"
+                                                @on-close="blur"
+                                                :config="configDate"
+                                                class="form-control datepicker"
+                                                aria-placeholder="Seleccione una fecha"
+                                                v-model="dates.simple">
+                                        </flat-picker>
+                                    </base-input>
+                                    <div class="text-center">
+                                        <base-button type="primary" v-if="!dataExpense.valid" disabled>Editar</base-button>
+                                        <base-button type="primary" v-else v-on:click="registerExpense">Editar</base-button>
+                                    </div>
+                                </form>    
+                            </tab-pane>
+                        </card>
+                    </tabs>
+                    <vue-custom-scrollbar class="maxHeight">
+                        <vue-bootstrap4-table :rows="lendeAdvancements" :columns="columnsLender" :classes="classes" :config="configLender" >
+                            <template slot="format-total" slot-scope="props">
+                                <span>{{formatPrice(props.row.total)}}</span>
+                            </template>
+                            <template slot="format-date" slot-scope="props">
+                                <span>{{formatDate(props.row.date)}}</span>
+                            </template>
+                        </vue-bootstrap4-table>
+                    </vue-custom-scrollbar >
+                </template>
+            </card>
+        </modal>
+        <vue-bootstrap4-table :rows="sales" :columns="columns" :classes="classes" :config="config">
+            <template slot="format-total" slot-scope="props">
+                <span>{{formatPrice(props.row.total)}}</span>
+            </template>
+            <template slot="format-comission" slot-scope="props">
+                <span>{{formatPrice(props.row.comision)}}</span>
+            </template>
+            <template slot="format-date" slot-scope="props">
+                <span>{{formatDate(props.row.fecha)}}</span>
+            </template>
+            <template slot="pagination-info" slot-scope="props">
+                Actuales {{props.currentPageRowsLength}} | 
+                Filtrados {{props.filteredRowsLength}} | 
+                Registros totales {{props.originalRowsLength}}
+            </template>
+            <template slot="selected-rows-info" slot-scope="props">
+                Total Number of rows selected : {{props.selectedItemsCount}}
+            </template>
+        </vue-bootstrap4-table>
+    </div>
+</template>
+<script>
+//Back - End 
+import axios from 'axios'
+import router from '../router'
+import endPoint from '../../config-endpoint/endpoint.js'
+import jwtDecode from 'jwt-decode'
+// COMPONENTS
+import VueBootstrap4Table from 'vue-bootstrap4-table'
+import vueCustomScrollbar from 'vue-custom-scrollbar'
+import flatPicker from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
+export default {
+    components: {
+        VueBootstrap4Table,
+        vueCustomScrollbar,
+        flatPicker
+    },
+    data(){
+        return {
+            id: localStorage.getItem('idReportEmploye'),
+            sales: [],
+            fecha: '',
+            code: '',
+            nameLender: '',
+            totalComission: 0,
+            advancement: '',
+            totalSale: 0,
+            modals: {
+                modal1: false,
+                modal2: false,
+                message: "",
+                icon: '',
+                type:''
+            },
+            configDate: {
+                allowInput: true, 
+                minDate: new Date(),
+            },
+            dates: {
+                simple: new Date()
+            },
+            dataExpense: {
+                reason: '',
+                amount: 0,
+                valid: false
+            },
+            bonus: false,
+            lendeAdvancements: [],
+            columnsLender: [
+                {
+                    label: "Razón",
+                    name: "reason",
+                    // filter: {
+                    //     type: "simple",
+                    //     placeholder: "id"
+                    // },
+                    sort: true,
+                },
+                {
+                    label: "Total",
+                    name: "total",
+                    slot_name: "format-total",
+                    sort: false,
+                },
+                {
+                    label: "Fecha",
+                    name: "date",
+                    slot_name: "format-date",
+                    sort: false,
+                },
+
+            ],
+            configLender: {
+                checkbox_rows: false,
+                rows_selectable : false,
+                highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+                per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+                show_refresh_button: false,
+                show_reset_button: false,  
+                selected_rows_info: false,
+                preservePageOnDataChange : true,
+                pagination_info : false,
+                pagination: false,
+                global_search: {
+                    placeholder: "Busque el prestador",
+                    visibility: false,
+                    case_sensitive: false,
+                    showClearButton: true,
+                    searchOnPressEnter: false,
+                    searchDebounceRate: 200,                      
+                },
+            },
+            columns: [
+                {
+                    label: "Fecha",
+                    name: "fecha",
+                    slot_name:"format-date",
+                    // filter: {
+                    //     type: "simple",
+                    //     placeholder: "id"
+                    // },
+                    sort: true,
+                },
+                {
+                    label: "Cliente",
+                    name: "cliente",
+                    // filter: {
+                    //     type: "simple",
+                    //     placeholder: "Enter first name"
+                    // },
+                    sort: true,
+                },
+                {
+                    label: "Comisión",
+                    name: "comision",
+                    slot_name:"format-comission",
+                    sort: true,
+                },
+                {
+                    label: "Total",
+                    name: "total",
+                    slot_name:"format-total",
+                    // filter: {
+                    //     type: "simple",
+                    //     placeholder: "Enter country"
+                    // },
+                }
+            ],
+            config: {
+                card_title: "Tabla de ventas",
+                checkbox_rows: false,
+                rows_selectable : true,
+                highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+                rows_selectable: true,
+                per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+                global_search: {
+                    placeholder: "Enter custom Search text",
+                    visibility: false,
+                    case_sensitive: false
+                },
+                show_refresh_button: false,
+                show_reset_button: false,  
+                selected_rows_info: true,
+                preservePageOnDataChange : true,
+                pagination_info : true
+            },
+            classes: {
+                table: "table-bordered table-striped"
+            },
+        }
+    },
+    created(){
+        this.getData()
+        this.getAdvancements()
+    },
+    methods: {
+        getAdvancements(){
+            axios.get(endPoint.endpointTarget+'/manicuristas/advancements/'+this.id)
+            .then(res => {	
+                console.log(res.data)
+                this.lendeAdvancements = []
+                this.lendeAdvancements = res.data
+            })
+            .catch(err => {
+                console.error(err)
+            })
+        },
+        validRegister(){
+            this.dataExpense.valid = this.dataExpense.reason != '' && this.dataExpense.amount > 0 ? true : false
+        },
+        registerExpense(){
+            axios.post(endPoint.endpointTarget+'/manicuristas/registerAdvancement', {
+                reason: this.dataExpense.reason,
+                name: this.nameLender,
+                prest: this.code,
+                total: this.dataExpense.amount,
+                check: this.bonus,
+                date: this.dates.simple
+            })
+            .then(res => {
+                if (res.data.status == 'bonus') {
+                    this.modals = {
+                        modal1: true,
+                        message: "Se registro el bono con exito",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: true,
+                            message: "",
+                            icon: '',
+                            type:''
+                        }
+                    }, 1500);
+                    this.bonus = false
+                    this.dataExpense.reason = ''
+                    this.dataExpense.amount = 0
+                    this.dataExpense.valid = false
+                    this.getAdvancements();
+                    this.getData()
+                }else{
+                    this.modals = {
+                        modal1: true,
+                        message: "Se registro el avance con exito",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: true,
+                            message: "",
+                            icon: '',
+                            type:''
+                        }
+                    }, 1500);
+                    this.getAdvancements();
+                    this.getData()
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        formatDate(date) {
+            let dateFormat = new Date(date)
+            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
+        },
+        formatPrice(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        getData(){
+            axios.get(endPoint.endpointTarget+'/manicuristas/justOneById/'+this.id)
+            .then(resData => {
+                const date = new Date()
+                this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
+                this.code = resData.data._id
+                this.nameLender = resData.data.nombre
+                this.totalComission = resData.data.comision
+                this.advancement = resData.data.advancement
+                const identification = resData.data.nombre+':'+resData.data.documento
+                axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+identification)
+                .then(res => {
+                    this.sales = res.data
+                    let totals = 0
+                    for (let index = 0; index < res.data.length; index++) {
+                        totals = parseFloat(res.data[index].total) + parseFloat(totals)
+                    }
+                    this.totalSale = totals
+                    console.log(this.fecha)
+                    console.log(this.code)
+                    console.log(this.nameLender)
+                    console.log(this.totalComission)
+                    console.log(this.advancement)
+                    console.log(this.totalSale)
+                    // axios.get('/manicuristas/GetSalesPerMonth/'+identificacion)
+                    // .then(res => {	
+                    //     const userlist = res.data
+                    //     this.chartdata = userlist
+                    //     this.loaded = true
+                    // })
+                    // .catch(err => {
+                    //     console.error(err)
+                    // })
+                })
+            })
+            .catch(err => {
+                console.log(err )
+            })
+        },
+        formatPrice(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+    }
+}
+</script>
+<style>
+    .maxHeight{
+        max-height: 200px;
+        overflow-y: scroll;
+    }
+    .maxHeight .card-footer{
+        display:none;
+    }
+</style>
