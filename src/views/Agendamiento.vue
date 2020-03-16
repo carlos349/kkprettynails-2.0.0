@@ -232,7 +232,7 @@
                             </div>
                         </vue-custom-scrollbar>
                     </tab-content>
-                    <tab-content style="height:35vh" icon="ni ni-check-bold" title="Finalizar">
+                    <tab-content icon="ni ni-check-bold" title="Finalizar">
                         <div class="row">
                             <div class="col-6" >
                                 <dt>Servicios</dt>
