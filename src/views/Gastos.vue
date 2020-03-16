@@ -17,10 +17,10 @@
         </base-header>
         <vue-bootstrap4-table :rows="expenses" :columns="columns" :classes="classes" :config="config">
             <template slot="date-format" slot-scope="props">
-                <p>{{formatDate(props.row.date)}}</p>
+                {{formatDate(props.row.date)}}
             </template>
             <template slot="figure-format" slot-scope="props">
-                <p>{{formatPrice(props.row.figure)}}</p>
+                {{formatPrice(props.row.figure)}}
             </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 

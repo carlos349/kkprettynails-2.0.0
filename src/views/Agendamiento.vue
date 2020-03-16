@@ -340,17 +340,17 @@
                                 <div v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-6 mt-2">
                                    <base-button icon="fa fa-edit" class="mx-auto col-12" type="default">Editar</base-button> 
                                 </div>
-                                <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-6 mt-2">
+                                <div v-if="selectedEvent.process == true && status == 1 || selectedEvent.process == true && status == 2" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-6 mt-2">
                                    <base-button icon="fa fa-check-square" class="mx-auto col-12" type="default">Finalizar</base-button> 
                                 </div>
-                                <div v-if="selectedEvent.process == true && status == 2 || selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-6 mt-2">
+                                <div v-if="selectedEvent.process == true && status == 1 || selectedEvent.process == true && status == 2" v-on:click="closeDate(selectedEvent.id)" class="col-6 mt-2">
                                    <base-button icon="fa fa-times" class=" col-12 mx-auto" type="danger">Cerrar</base-button> 
                                 </div>
                                 <div v-on:click="deleteDate(selectedEvent.id)" class="col-6 mt-2">
                                    <base-button icon="fa fa-trash-alt" class=" col-12 mx-auto" type="danger">Borrar</base-button> 
                                 </div>
-                                <div v-if="selectedEvent.process == true && status == 1 || selectedEvent.process == true" class="col-12 text-center mt-2">
-                                   <base-button icon="fa fa-calendar-check" class=" col-12 mx-auto" type="success">Procesar</base-button> 
+                                <div v-if="selectedEvent.process == true && status == 1 || selectedEvent.process == true && status == 2" class="col-12 text-center mt-2">
+                                   <base-button icon="fa fa-calendar-check" class=" col-12 mx-auto" type="success" v-on:click="processDate(selectedEvent.id, 'process')">Procesar</base-button> 
                                 </div>
                             </div>
                             
@@ -520,50 +520,16 @@
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
-                <vue-custom-scrollbar class="ListaProcesar maxHeightEdit w-100">
-                    <table class="table table-light table-borderless table-striped" id="myTableServEdit">
-                    <thead>
-                        <tr>
-                        <th >
-                            Fecha
-                        </th>
-                        <th >
-                            Cliente
-                        </th>	
-                        <th >
-                            Prestador
-                        </th>	
-                        <th >
-                            Total
-                        </th>
-                        <th class="text-center">
-                            Selección
-                        </th>					
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(closed, index) of closedDates" >
-                        <td class="font-weight-bold">
-                            {{formatDate(closed.date)}}
-                        </td>
-                        <td class="font-weight-bold">
-                            {{closed.client}}
-                        </td>
-                        <td class="font-weight-bold">
-                            {{closed.employe}}
-                        </td>
-                        <td class="font-weight-bold">
-                            {{formatPrice(closed.total)}} $
-                        </td>
-                        <td class="font-weight-bold text-center">
-                            <label class="conCheck mb-3 col-sm-2">
-                            <input :id="closed._id" class="desMarc" v-on:click="pressDate(closed._id,closed.services,closed.client,closed.employe,closed.design,closed.comision,closed.totalLocal,closed.total,closed.descuento,closed.date,index)" type="checkbox">
-                            <span class="checkmark"></span>
-                            </label>
-                        </td>
-                        </tr>
-                    </tbody>
-                    </table>
+                <vue-custom-scrollbar class="listDatesEnd maxHeightEdit w-100">
+                    <vue-bootstrap4-table :rows="closedDates" :columns="columnsDatesClosed" :classes="classes" :config="configDatesClosed" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
+                        <template slot="format-date" slot-scope="props">
+                            {{formatDate(props.row.date)}}
+                        </template>
+                        <template slot="format-total" slot-scope="props">
+                            {{formatPrice(props.row.total)}}
+                        </template>
+                    </vue-bootstrap4-table> 
+                    <!-- pressDate -->
                 </vue-custom-scrollbar>
                 <div class="text-center mt-2">
                     <base-button icon="fa fa-calendar-check" v-on:click="ProccessSelectedDates()" class="col-4 mx-auto" type="success">Procesar</base-button> 
@@ -707,6 +673,7 @@
   import "flatpickr/dist/flatpickr.css";
   import {Spanish} from 'flatpickr/dist/l10n/es.js';
   import vueCustomScrollbar from 'vue-custom-scrollbar'
+  import EventBus from '../components/EventBus'
   //Back - End 
   import axios from 'axios'
   import endPoint from '../../config-endpoint/endpoint.js'
@@ -746,74 +713,121 @@
     },
     data() {
       return {
-         countServices:[],
-         employes:[],
-         blockHour:[],
-         blockHourEdit:[],
-         registerDate: {
-            services:[],
-            servicesShow:[],
-            employePerService:[],
-            employe:[],
-            employeSelect:"Seleccione un empleado",
-            employeClass:null,
-            employeResTime:null,
-            client:null,
-            duration:0,
-            design:null,
-            block:null,
-            start:null,
-            end:null,
-            sort:null,
-            date:null,
-            valid:true,
-            valid2:true,
-            valid3:false
-         },
-
-         dateClient: {
-            name:'',
-            id:'',
-            infoOne:null,
-            infoTwo:null,
-            partipation:null,
-            recommender:null,
-            recommenders:null,
-            lastDate:null,
-            discount:null,
-            date:null,
-            _id:null,
-            valid:false,
-            valid2:false
-         },
-         configDatePicker: {
-            allowInput: true,
-            dateFormat: 'm-d-Y',
-            locale: Spanish, // locale for this instance only
-            minDate: new Date(),         
-         },
-         dateData: {
-            history:[],
-            discount:false,
-            clientEdit: null,
-            fechaEdit: null,
-            startEdit: null,
-            endEdit: null,
-            lenderEdit: null,
-            classFinalEdit: null,
-            duracionEdit: null,
-            dateEditId: null,
-            resTimeFinalEdit:null,
-            fechaEditPick:null
-         },
-         selectedDates:{
+        status: localStorage.getItem('status'),
+        countServices:[],
+        employes:[],
+        blockHour:[],
+        blockHourEdit:[],
+        registerDate: {
+        services:[],
+        servicesShow:[],
+        employePerService:[],
+        employe:[],
+        employeSelect:"Seleccione un empleado",
+        employeClass:null,
+        employeResTime:null,
+        client:null,
+        duration:0,
+        design:null,
+        block:null,
+        start:null,
+        end:null,
+        sort:null,
+        date:null,
+        valid:true,
+        valid2:true,
+        valid3:false
+        },
+        columnsDatesClosed: [{
+                label: "Fecha",
+                name: "date",
+                slot_name: "format-date",
+                sort: true,
+            },
+            {
+                label: "Cliente",
+                name: "client",
+                sort: false,
+            },
+            {
+                label: "Prestador",
+                name: "employe",
+                sort: false,
+            },
+            {
+                label: "Total",
+                name: "total",
+                slot_name: "format-total",
+            },
+        ],
+        configDatesClosed: {
+            card_title: "Tabla de finalizadas",
+            checkbox_rows: true,
+            rows_selectable : true,
+            highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+            rows_selectable: true,
+            per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+            show_refresh_button: false,
+            show_reset_button: false,  
+            selected_rows_info: false,
+            preservePageOnDataChange : true,
+            pagination_info : false,
+            pagination: false,
+            global_search: {
+                placeholder: "Busque el prestador",
+                visibility: false,
+                case_sensitive: false,
+                showClearButton: true,
+                searchOnPressEnter: false,
+                searchDebounceRate: 200,                      
+            },
+        },
+        classes: {
+            table: "table-bordered table-striped"
+        },
+        dateClient: {
+        name:'',
+        id:'',
+        infoOne:null,
+        infoTwo:null,
+        partipation:null,
+        recommender:null,
+        recommenders:null,
+        lastDate:null,
+        discount:null,
+        date:null,
+        _id:null,
+        valid:false,
+        valid2:false
+        },
+        configDatePicker: {
+        allowInput: true,
+        dateFormat: 'm-d-Y',
+        locale: Spanish, // locale for this instance only
+        minDate: new Date(),         
+        },
+        dateData: {
+        history:[],
+        discount:false,
+        clientEdit: null,
+        fechaEdit: null,
+        startEdit: null,
+        endEdit: null,
+        lenderEdit: null,
+        classFinalEdit: null,
+        duracionEdit: null,
+        dateEditId: null,
+        resTimeFinalEdit:null,
+        fechaEditPick:null
+        },
+        selectedDates:{
             client:'',
             closedArray:[],
             services:[],
             clientSplit:'',
             employes:'',
             design:0,
-            comision:'',
+            comision:0,
             totaLocal:0,
             total:0,
             discount:0,
@@ -821,55 +835,55 @@
             employeDiscount:[],
             endDatesId:[],
             clientIds:[]
-         },
-         employeByDate: 'Filtrar por empleado', 
-         clients:[],
-         closedDates:[],
-         employeShow:[],
-         services:[],
-         locale: 'es',
-         filter: false,
-         events: [],
-         lender:'',
-         users:[],
-         img1:'',
-         img2:'',
-         design:'',
-         selectedEvent:[],
-         payCash:0,
-         payTransfer:0,
-         payOthers:0,
-         payDebit:0,
-         payCredit:0,
-         servicesFinish:[],
-         modals: {
+        },
+        employeByDate: 'Filtrar por empleado', 
+        clients:[],
+        closedDates:[],
+        employeShow:[],
+        services:[],
+        locale: 'es',
+        filter: false,
+        events: [],
+        lender:'',
+        users:[],
+        img1:'',
+        img2:'',
+        design:'',
+        selectedEvent:[],
+        payCash:0,
+        payTransfer:0,
+        payOthers:0,
+        payDebit:0,
+        payCredit:0,
+        servicesFinish:[],
+        modals: {
+        modal1:false,
+        modal2: false,
+        message: "",
+        icon: '',
+        type:''
+        },
+        dateModals: {
             modal1:false,
-            modal2: false,
-            message: "",
-            icon: '',
-            type:''
-         },
-         dateModals: {
-             modal1:false,
-             modal2:false,
-             modal3:false,
-             modal4:false,
-             modal5:false
-         },
-         radio: {
-           radio1: "radio1",
-           radio2: "radio3"
-         },
-         endId:'',
-         endServices:[],
-         endClient: '',
-         endEmploye: '',
-         endId:'',
-         serviciosSelecionadosDates:[],
-         endClient:[],
-         endEmploye:[],
-         designEndDate:0,
-         clientsNames:[]
+            modal2:false,
+            modal3:false,
+            modal4:false,
+            modal5:false
+        },
+        radio: {
+        radio1: "radio1",
+        radio2: "radio3"
+        },
+        endId:'',
+        endServices:[],
+        endClient: '',
+        endEmploye: '',
+        endId:'',
+        serviciosSelecionadosDates:[],
+        endClient:[],
+        endEmploye:[],
+        designEndDate:0,
+        clientsNames:[]
       };
     },
     beforeCreate(){
@@ -884,11 +898,12 @@
 		}
     },
     created(){
-      this.getClients()
-      this.getServices()
-      this.getUsers()
-      this.getDates()
-      this.getClosed()
+        console.log(this.status)
+        this.getClients()
+        this.getServices()
+        this.getUsers()
+        this.getDates()
+        this.getClosed()
     },
     methods: {
         getDates() {
@@ -1330,7 +1345,7 @@
         },
         formatDate(date) {
             let dateFormat = new Date(date)
-            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+" "+" ("+ dateFormat.getHours()+":"+ dateFormat.getMinutes()+")"
+			return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+' ('+dateFormat.getHours()+":"+('0'+dateFormat.getMinutes()).slice(-2)+")"
         },
         MaysPrimera(string){
 			return string.charAt(0).toUpperCase() + string.slice(1);
@@ -1791,7 +1806,7 @@
                     clientSplit:'',
                     employes:'',
                     design:0,
-                    comision:'',
+                    comision:0,
                     totaLocal:0,
                     total:0,
                     discount:0,
@@ -1814,7 +1829,7 @@
                     clientSplit:'',
                     employes:'',
                     design:0,
-                    comision:'',
+                    comision:0,
                     totaLocal:0,
                     total:0,
                     discount:0,
@@ -1910,22 +1925,9 @@
             }
             })
         },
-        pressDate(id,services,client,employe,design,comision,totalLocal,total,descuento,date){
-            if ($('#'+id).prop('checked')) {
-             this.selectedDates.closedArray.push({id,services,client,employe,design,comision,totalLocal,total,descuento,date})
-            }
-            else{
-                for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
-                    if (this.selectedDates.closedArray[i].id == id ) {
-                        this.selectedDates.closedArray.splice(i, 1)
-                        break
-                    }
-                }
-            }
-            console.log(this.selectedDates.closedArray)
-        },
         ProccessSelectedDates(){    
             this.dateModals.modal4 = false 
+            
             for (let index = 0; index < this.selectedDates.closedArray.length; index++) {
                 const position = this.selectedDates.closedArray[index]
                 for (let indexTwo = 0; indexTwo < position.services.length; indexTwo++) {
@@ -1945,6 +1947,7 @@
                 this.selectedDates.endDatesId.push(position.id)
                 this.selectedDates.clientIds.push(position.client.split(' / ')[1])
             }
+            console.log(this.selectedDates)
             this.dateModals.modal5 = true
         },
         hundredPorcent(tipo){
@@ -2119,9 +2122,64 @@
                 }
             })
         },
+        selected(value){
+            const selectArray = {
+                id: value.selected_item._id,
+                services: value.selected_item.services,
+                client: value.selected_item.client,
+                employe: value.selected_item.employe,
+                design: value.selected_item.design,
+                comision: value.selected_item.comision,
+                totalLocal: value.selected_item.totalLocal,
+                total: value.selected_item.total,
+                descuento: value.selected_item.descuento,
+                date: value.selected_item.date,
+            }
+            this.selectedDates.closedArray.push(selectArray)
+        },
+        unSelected(value){
+        
+            for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
+                if (this.selectedDates.closedArray[i].id == value.unselected_item._id) {
+                    this.selectedDates.closedArray.splice(i, 1)
+                    break
+                }
+            }
+        },
+        selectedAll(value){
+            console.log(value.selected_items)
+            var selectArray = {}
+            for (let index = 0; index < value.selected_items.length; index++) {
+                selectArray = {
+                    id: value.selected_items[index]._id,
+                    services: value.selected_items[index].services,
+                    client: value.selected_items[index].client,
+                    employe: value.selected_items[index].employe,
+                    design: value.selected_items[index].design,
+                    comision: value.selected_items[index].comision,
+                    totalLocal: value.selected_items[index].totalLocal,
+                    total: value.selected_items[index].total,
+                    descuento: value.selected_items[index].descuento,
+                    date: value.selected_items[index].date,
+                }
+                this.selectedDates.closedArray.push(selectArray)
+            }
+        },
+        unSelectedAll(value){
+            this.selectedDates.closedArray = []
+        },
+        processDate(id, type){
+            EventBus.$emit('processDate', id)
+            this.dateModals.modal1 = false
+            setTimeout(() => {
+                $('#processButton').click()
+            }, 500);
+        },
     },
-    mounted() {
-      
+    mounted (){
+        EventBus.$on('reloadDates', status => {
+            this.getDates()
+        })
     }
   };
 </script>
@@ -2355,6 +2413,10 @@
     }
     .nav-pills .nav-link.active{
         background-color:#2dce89 ;
+    }
+    .listDatesEnd{
+        max-height: 60vh;
+        height: auto;
     }
 </style>
  

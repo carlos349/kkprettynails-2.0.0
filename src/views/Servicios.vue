@@ -147,13 +147,13 @@
                 <base-button v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)">Inactivo</base-button>
             </template>
             <template slot="price" slot-scope="props">
-                <p>{{formatPrice(props.row.precio)}}</p>
+                {{formatPrice(props.row.precio)}}
             </template>
             <template slot="time" slot-scope="props">
-                <p>{{props.row.tiempo}}Min</p>
+                {{props.row.tiempo}}Min
             </template>
             <template slot="comission" slot-scope="props">
-                <p>{{props.row.comision}}%</p>
+                {{props.row.comision}}%
             </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
@@ -180,6 +180,7 @@ import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import router from '../router'
+import EventBus from '../components/EventBus'
 // COMPONENTS
 import Modal from '@/components/Modal'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
@@ -426,6 +427,7 @@ export default {
                             }, 1500);
                             this.initialState()
                             this.getServices()
+                            EventBus.$emit('reloadServices', 'reload')
                         }else{
                             this.modals = {
                                 modal3: true,
@@ -522,7 +524,7 @@ export default {
 						prestadores: this.EditlenderSelecteds,
 						descuento: ifCheck
 					}).then(res => {
-
+                        EventBus.$emit('reloadServices', 'reload')
                     })
                 }
             }

@@ -141,6 +141,7 @@ import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
+import EventBus from '../components/EventBus'
 // COMPONENTS
 
   export default {
@@ -288,6 +289,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                     setTimeout(() => {
                         this.initialState(1)
                         this.getEmployes()
+                        EventBus.$emit('reloadLenders', 'reload')
                     }, 1500);
 					
 					// this.emitMethod()
@@ -333,6 +335,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                         setTimeout(() => {
                             this.initialState(1)
                             this.getEmployes()
+                            EventBus.$emit('reloadLenders', 'reload')
                         }, 2000);
 						// this.emitMethod()
 					}else{
@@ -369,6 +372,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                             setTimeout(() => {
                                 this.initialState(1)
                                 this.getEmployes()
+                                EventBus.$emit('reloadLenders', 'reload')
                             }, 2000);
                             // this.emitMethod()
                         }

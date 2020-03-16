@@ -38,7 +38,7 @@
                             <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
                                 <base-button size="sm"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento), countServices[index].count++">
                                     <span class="float-left">{{servicio.nombre}}</span>
-                                    <badge type="primary" class="float-right">{{countServices[index].count}}</badge>
+                                    <badge class="badgeClass float-right" type="primary" :id="servicio._id">{{countServices[index].count}}</badge>
                                 </base-button>
                                 <base-button size="sm" type="default" v-on:click="borrarServicio(servicio.nombre,index,servicio._id,servicio.precio, servicio.descuento)">
                                     <font-awesome-icon icon="times"/>
@@ -510,7 +510,6 @@ export default {
         this.getClient()
         this.getLenders()
         this.getServices()
-        this.getLenders()
     }, 
     methods: {
         selected(value){
@@ -602,6 +601,7 @@ export default {
                             icon: '',
                             type: ''
                         }
+                        this.getClient()
                     }, 1500);
                     registerClient = {
                         name: '',
@@ -612,7 +612,7 @@ export default {
                         recommender: '',
                         valid: false,
                     }
-                    this.getClient()
+                    
                 }else{
                     this.modals = {
                         modal1: true,
@@ -940,6 +940,55 @@ export default {
 				console.log(err)
 			})
         },
+        getDataToDate(id){
+			this.servicesProcess = []
+			this.serviciosSelecionados = []
+			this.idProcess = id
+			axios.get(endPoint.endpointTarget+'/citas/getDataToDate/'+id)
+			.then(res => {
+				this.clientSelect = res.data.client
+				this.lenderSelect = res.data.employe
+				this.servicesProcess = res.data.services
+				this.chooseLender()
+				const split = res.data.client.split('/')
+				const splitTwo = split[1].split(' ')
+				axios.get(endPoint.endpointTarget+'/clients/dataDiscount/'+splitTwo[1])
+				.then(res => {
+					if (res.data[0].participacion == 0) {
+						this.discount = 10
+					}else{
+						this.discount = ''
+					}
+					axios.get(endPoint.endpointTarget+'/servicios')
+					.then(res => {
+						var subTotal = 0
+						var desc = 0
+						for (let index = 0; index < this.servicesProcess.length; index++) {
+							this.serviciosSelecionados.push({servicio: this.servicesProcess[index].servicio, comision: this.servicesProcess[index].comision, precio: this.servicesProcess[index].precio, descuento: this.servicesProcess[index].descuento})
+							let valSpan = ''
+							let sumaVal = 0
+							for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
+								if (this.servicesProcess[index].servicio == res.data[indexTwo].nombre) {
+									subTotal = subTotal + parseFloat(res.data[indexTwo].precio)
+									let valSpan = $(`#${res.data[indexTwo]._id}`).text()
+									let sumaVal = parseFloat(valSpan) + 1
+									$(`#${res.data[indexTwo]._id}`).text(sumaVal)
+								}
+							}
+						}
+						this.price = this.formatPrice(subTotal)
+						if (this.discount == 10) {
+							desc = subTotal * 0.90
+						}else{
+							desc = subTotal
+						}
+						this.total = this.formatPrice(desc)
+						this.totalSinFormato = desc
+						this.subTotal = subTotal
+					})
+				})
+			})
+		},
         initialState(){
             this.getServices()
 			this.price = '0';
@@ -947,12 +996,12 @@ export default {
 			this.discount = "";
 			this.total = 0;
 			this.totalSinFormato = 0;
-			this.design = ''
-			this.payCash = ''
-			this.payOthers = ''
-			this.payDebit = ''
-			this.payCredit = ''
-			this.payTransfer = ''
+			this.design = 0
+			this.payCash = 0
+			this.payOthers = 0
+			this.payDebit = 0
+			this.payCredit = 0
+			this.payTransfer = 0
 			this.lenderSelect = ''
 			this.clientSelect = ''
 			this.resto  = 0
@@ -1024,8 +1073,8 @@ export default {
                             }, 1500);
 							this.servicios =''
 							this.initialState()
-							EventBus.$emit('reloadCitas', 'process')
-							EventBus.$emit('reloadVenta', 'process')
+							EventBus.$emit('reloadDates', 'process')
+							EventBus.$emit('reloadSales', 'process')
 						}else if(res.data.status == "no-cash"){
 							this.modals = {
                                 modal1: true,
@@ -1106,8 +1155,23 @@ export default {
                     }
                 }, 1500);
 			}
-			
-		},
+        },
+    },
+    mounted (){
+        EventBus.$on('reloadServices', status => {
+            this.getServices()
+        })
+        EventBus.$on('reloadLenders', status => {
+            this.getLenders()
+        })
+        EventBus.$on('reloadClients', status => {
+            this.getClient()
+        })
+        EventBus.$on('processDate', status => {
+            this.initialState()
+            this.getDataToDate(status)
+        })
+        
     }
 }
 </script>

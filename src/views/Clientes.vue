@@ -148,6 +148,14 @@
             </template>
             </card>
         </modal>
+        <modal :show.sync="modals.modal2"
+               :gradient="modals.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modals.icon"></i>
+                <h1 class="heading mt-5">{{modals.message}}</h1>
+            </div>
+        </modal>
         <base-alert class="positionAlert" type="success" v-if="successRegister">
             <strong>Registrado!</strong> Has registrado al cliente con exito!
         </base-alert>
@@ -181,6 +189,7 @@
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
+import EventBus from '../components/EventBus'
 // COMPONENTS
 
   export default {
@@ -207,7 +216,11 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             participation:null
         },
         modals: {
-            modal1: false
+            modal1: false,
+            modal2: false,
+            message: "",
+            icon: '',
+            type:''
         },
         rows: [],
         columns: [{
@@ -302,49 +315,54 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             })
         },
         registerClients(){
-			const name = this.registerClient.name.split(' ')
-			var firstName, lastName, fullName, ifCheck
-			if (name[1]) {
-				firstName = this.MaysPrimera(name[0])
-				lastName = this.MaysPrimera(name[1])
-				fullName = firstName+' '+lastName
-			}else{
-				fullName = this.MaysPrimera(name[0])
-			}
-			if (this.registerClient.discount == true) {
-				ifCheck = 0
-			}else{
-				ifCheck = 1
-			}
-				axios.post(endPoint.endpointTarget+'/clients', {
-					nombre:fullName,
-					identidad:this.registerClient.id,
-					recomendador:this.registerClient.recommender,
-					correoCliente:this.registerClient.contactOne,
-					instagramCliente:this.registerClient.contactTwo,
-					ifCheck: ifCheck
-				})
-				.then(res => {
-					if (res.data.status == 'Registrado') {
-						this.successRegister = true
-                        setTimeout(() => {
-                            this.successRegister = false
-                            this.initialState(1)
-                            this.getClients()
-                        }, 2500);
-                        
-						// this.getClientsThree()
-						// this.ServicesQuantityChartFunc();
-						// this.emitMethodTwo()
-					}else{
-						this.$swal({
-							type: 'error',
-							title: 'El cliente ya existe',
-							showConfirmButton: false,
-							timer: 1500
-						})
-					}
-				})
+            var ifCheck = this.registerClient.discount ? 0 : 1
+            axios.post(endPoint.endpointTarget+'/clients', {
+                nombre:this.registerClient.name,
+                identidad:this.registerClient.id,
+                recomendador:this.registerClient.recommender,
+                correoCliente:this.registerClient.contactOne,
+                instagramCliente:this.registerClient.contactTwo,
+                ifCheck: ifCheck
+            })
+            .then(res => {
+                if (res.data.status == 'Registrado') {
+                    this.modals = {
+                        modal2: true,
+                        message: "Se registro el cliente con exito",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            message: "",
+                            icon: '',
+                            type:''
+                        }
+                        this.initialState(1)
+                        this.getClients()
+                        EventBus.$emit('reloadClients', 'reload')
+                    }, 1500);
+                    
+                }else{
+                    this.modals = {
+                        modal2: true,
+                        message: "El cliente ya existe",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                }
+            })
         },
         validRegister(){
             if (this.registerClient.name != null && this.registerClient.id != null) {
@@ -415,14 +433,24 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 				if(result.value) {
 					axios.put(endPoint.endpointTarget+'/clients/deleteClient/'+id)
 					.then(res => {
-						if (res.data.status == 'ok') {
-							this.$swal({
-								type: 'success',
-								title: 'Borrado con exito',
-								showConfirmButton: false,
-								timer: 1500
-							})
-							this.getClients();
+                        if (res.data.status == 'ok') {
+                            this.modals = {
+                                modal2: true,
+                                message: "Cliente borrado con exito",
+                                icon: 'ni ni-check-bold ni-5x',
+                                type: 'success'
+                            }
+                            setTimeout(() => {
+                                this.modals = {
+                                    modal1: false,
+                                    modal2: false,
+                                    message: "",
+                                    icon: '',
+                                    type:''
+                                }
+                                this.getClients()
+                                EventBus.$emit('reloadClients', 'reload')
+                            }, 1500);
 							// this.getClientsThree()
 							// this.ServicesQuantityChartFunc();
 							// this.emitMethodTwo()
@@ -430,65 +458,70 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 					})
 				}
 				else{
-					this.$swal({
-						type: 'info',
-						title: 'Acción cancelada',
-						showConfirmButton: false,
-						timer: 1500
-					})
+					this.modals = {
+                        modal2: true,
+                        message: "Acción cancelada",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            message: "",
+                            icon: '',
+                            type:''
+                        }
+                    }, 1500);
 				}
 			})
         },
         clientEdit(){
-			const name = this.registerClient.name.split(' ')
-			var firstName, lastName, fullName
-			if (name[1]) {
-				firstName = this.MaysPrimera(name[0])
-				lastName = this.MaysPrimera(name[1])
-				fullName = firstName+' '+lastName
-			}else{
-				fullName = this.MaysPrimera(name[0])
-			}
-
-			if (this.registerClient.name != '' &&  this.registerClient.id != '') {
-				axios.put(endPoint.endpointTarget+'/clients/'+this.registerClient._id, {
-					nombreClienteEditar: fullName,
-					identidadClienteEditar: this.registerClient.id,
-					correoClienteEditar: this.registerClient.contactOne,
-					instagramClienteEditar: this.registerClient.contactTwo
-				})
-				.then(res => {
-					console.log(res)
-					if (res.data.status == 'Servicio actualizado') {
-						this.$swal({
-							type: 'success',
-							title: 'Cliente actualizado',
-							showConfirmButton: false,
-							timer: 1500
-						})
+            axios.put(endPoint.endpointTarget+'/clients/'+this.registerClient._id, {
+                nombreClienteEditar: this.registerClient.name,
+                identidadClienteEditar: this.registerClient.id,
+                correoClienteEditar: this.registerClient.contactOne,
+                instagramClienteEditar: this.registerClient.contactTwo,
+            })
+            .then(res => {
+                console.log(res)
+                if (res.data.status == 'Servicio actualizado') {
+                    this.modals = {
+                        modal2: true,
+                        message: "el cliente editó con exito",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            message: "",
+                            icon: '',
+                            type:''
+                        }
                         this.getClients();
                         this.initialState(1)
-						// this.arrayUsers();
-						// this.ServicesQuantityChartFunc();
-						// this.emitMethodTwo()
-					}else{
-						this.$swal({
-							type: 'error',
-							title: 'Cliente ya registrado',
-							showConfirmButton: false,
-							timer: 1500
-						})
-					}
-				})
-			}else{
-				this.$swal({
-					type: 'error',
-					title: 'Llene los datos',
-					showConfirmButton: false,
-					timer: 1500
-				})
-			}
-			
+                        EventBus.$emit('reloadClients', 'reload')
+                    }, 1500);
+                }else{
+                    this.modals = {
+                        modal2: true,
+                        message: "El cliente ya existe",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                }
+            })
 		}
     }
   };

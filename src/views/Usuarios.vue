@@ -127,7 +127,7 @@
                         Gerente
                     </base-button>
                     <base-button size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle">
-                        Personal de caja
+                        Cajera
                     </base-button>
                     <base-button size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle">
                         Prestadora
@@ -382,7 +382,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
         },
         formatDate(date) {
             let dateFormat = new Date(date)
-            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+" "+" ("+ dateFormat.getHours()+":"+ dateFormat.getMinutes()+")"
+			return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+' ('+dateFormat.getHours()+":"+('0'+dateFormat.getMinutes()).slice(-2)+")"
         },
         deleteClient(id, admin){
 			this.$swal({

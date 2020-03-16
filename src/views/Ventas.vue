@@ -123,7 +123,7 @@
 import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
-
+import EventBus from '../components/EventBus'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
@@ -252,6 +252,7 @@ export default {
                         }
                         setTimeout(() => {
                             this.modals = {
+                                modal1: false,
                                 modal2: false,
                                 message: "",
                                 icon: '',
@@ -281,6 +282,7 @@ export default {
                         }
                         setTimeout(() => {
                             this.modals = {
+                                modal1: false,
                                 modal2: false,
                                 message: "",
                                 icon: '',
@@ -310,6 +312,7 @@ export default {
                 }
                 setTimeout(() => {
                     this.modals = {
+                        modal1: false,
                         modal2: false,
                         message: "",
                         icon: '',
@@ -359,6 +362,7 @@ export default {
                 }
                 setTimeout(() => {
                     this.modals = {
+                        modal1: false,
                         modal2: false,
                         message: "",
                         icon: '',
@@ -382,6 +386,7 @@ export default {
                 }
                 setTimeout(() => {
                     this.modals = {
+                        modal1: true,
                         modal2: false,
                         message: "",
                         icon: '',
@@ -400,6 +405,7 @@ export default {
                 }
                 setTimeout(() => {
                     this.modals = {
+                        modal1: true,
                         modal2: false,
                         message: "",
                         icon: '',
@@ -408,6 +414,11 @@ export default {
                 }, 2000);
             }
         },
+    },
+    mounted (){
+        EventBus.$on('reloadSales', status => {
+            this.getSales()
+        })
     }
 }
 </script>
