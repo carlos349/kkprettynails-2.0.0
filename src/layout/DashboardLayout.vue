@@ -2,7 +2,7 @@
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
     <side-bar  :background-color="sidebarBackground" short-title="Syswa" title="Syswa">
       <template slot="links">
-        <base-button style="margin-left: -50px;" size="sm" v-if="auth == 1 || auth == 2" type="default" icon="ni ni-tag" v-on:click="modals.modal1 = true">
+        <base-button id="processButton" style="margin-left: -50px;" size="sm" v-if="auth == 1 || auth == 2" type="default" icon="ni ni-tag" v-on:click="modals.modal1 = true">
         <span style="margin-left:15px;">Procesar</span> 
         </base-button>
         <sidebar-item v-if="auth == 1" :link="{name: 'Metricas', icon: 'ni ni-chart-bar-32 text-primary', path: '/dashboard'}"/>
