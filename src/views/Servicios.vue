@@ -126,7 +126,7 @@
                         <base-checkbox class="mb-3" v-model="addDiscountEdit">
                             ¿Aplica descuento?
                         </base-checkbox>
-                        <vue-custom-scrollbar class="maxHeight">
+                        <vue-custom-scrollbar ref="table" class="maxHeight">
                             <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
                                 <template slot="checkbox_rows" slot-scope="props" >
                                     
@@ -328,6 +328,7 @@ export default {
     },
     methods: {
         getServices(){
+            
             axios.get(endPoint.endpointTarget+'/servicios')
             .then(res => {
 				this.services = res.data
@@ -344,8 +345,10 @@ export default {
             })
         },
         selected(value){
+            console.log(this.$refs.table.$children[0].$data)
+   
             this.lenderSelecteds.push(value.selected_item._id)
-            console.log(value.selected_items)
+            console.log(value)
         },
         unSelected(value){
             for (let i = 0; i < this.lenderSelecteds.length; i++) {
@@ -355,6 +358,7 @@ export default {
                 }
             }
         },
+        
         selectedAll(value){
             for (let index = 0; index < value.selected_items.length; index++) {
                 this.lenderSelecteds.push(value.selected_items[index]._id)
@@ -463,6 +467,17 @@ export default {
             this.timeEdit = time
             this.addDiscountEdit = discountFinal
             this.modals.modal2 = true
+            let data = this.$refs.table.$children[0].$data.vbt_rows
+            let selected = this.$refs.table.$children[0].$data.selected_items
+            for (let index = 0; index < data.length; index++) {
+                for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
+                    if (this.EditlenderSelecteds[i] == data[index]._id ) {
+                        selected.push(data[index])
+                    }
+                    
+                }
+                
+            }
         },
         editService(){
             if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {
