@@ -202,18 +202,18 @@ import EventBus from '../components/EventBus'
         clientsNames: [],
         tipeForm: null,
         registerClient: {
-            name:null,
-            id:null,
-            contactOne:null,
+            name:'',
+            id:'',
+            contactOne:'',
             discount:false,
-            contactTwo:null,
-            recommender:null,
+            contactTwo:'',
+            recommender:'',
             valid:false,
             valid2:false,
-            recommenders:null,
-            lastDate:null,
-            date:null,
-            participation:null
+            recommenders:0,
+            lastDate:'',
+            date:'',
+            participation:0
         },
         modals: {
             modal1: false,
