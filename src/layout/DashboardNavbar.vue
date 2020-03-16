@@ -134,7 +134,7 @@
                 <a href="#!" class="dropdown-item text-center text-primary font-weight-bold py-3">View all</a>
               </div>
             </li>
-            <li class="nav-item dropdown">
+            <!-- <li class="nav-item dropdown">
               <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="ni ni-ungroup"></i>
               </a>
@@ -178,7 +178,7 @@
                   </a>
                 </div>
               </div>
-            </li>
+            </li> -->
           </ul>
         <ul class="navbar-nav align-items-center d-none d-md-flex">
             <li class="nav-item dropdown">
@@ -204,10 +204,10 @@
                             <i class="ni ni-settings-gear-65"></i>
                             <span>Ajustes</span>
                         </router-link> -->
-                        <router-link to="/profile" class="dropdown-item">
+                        <!-- <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-calendar-grid-58"></i>
                             <span>Actividad</span>
-                        </router-link>
+                        </router-link> -->
                         <!-- <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-support-16"></i>
                             <span>Soporte</span>
