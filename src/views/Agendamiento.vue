@@ -75,7 +75,7 @@
                                 </center>
                                 
                         </div>
-                        <vue-custom-scrollbar class="row" style="height:35vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
+                        <vue-custom-scrollbar class="row" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
                             <div v-for="(name, index) in services" class="col-6 pl-1 mt-2">
                                 <base-button v-on:click="pushService(name.prestadores,name.nombre,name.tiempo, name.comision, name.precio,name.descuento,index)" class="col-12 "  type="default">
                                     <badge class="float-left text-white" pill type="default">
@@ -94,7 +94,7 @@
                         </div>
                     </tab-content>
 
-                    <tab-content style="height:35vh" icon="ni ni-collection" title="Información" :before-change="validateWizardTwo">
+                    <tab-content icon="ni ni-collection" title="Información" :before-change="validateWizardTwo">
                         <div class="row">
                             <div class="col-6" v-on:keyup.enter="selectClient()" @click="selectClient()">
                                <vue-single-select
@@ -183,7 +183,7 @@
                         </div>
                     </tab-content>
 
-                    <tab-content style="height:35vh" icon="fas fa-user-clock" title="Disponibilidad" :before-change="validateWizardThree">
+                    <tab-content icon="fas fa-user-clock" title="Disponibilidad" :before-change="validateWizardThree">
                         <div class="row">
                             <div class="text-muted text-center mt-2 col-4">
                                 Seleccione un empleado y disponibilidad
@@ -208,7 +208,7 @@
                         <div class="text-muted text-center mt-1">
                                 Horario disponible
                             </div>
-                        <vue-custom-scrollbar style="height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
+                        <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
                             <div class="col-12" v-for="(block , index) of blockHour">
                                 <base-button v-if="block.validator == true" v-on:click="selectBloq(block.Horario, index)" size="sm" class="col-12" type="success">
                                     <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
@@ -887,7 +887,6 @@
       this.getClients()
       this.getServices()
       this.getUsers()
-      this.getEmployes()
       this.getDates()
       this.getClosed()
     },
@@ -1556,6 +1555,7 @@
 			.then(res => {
                 this.users = res.data
                 console.log(this.users)
+                this.getEmployes()
 			})
 			.catch(err => {
 				this.$swal({
