@@ -13,7 +13,7 @@
                         <div class="col-12">
                             <div class="row">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
-                                <a @click="modals.modal2 = true"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
+                                <a @click="dateModals.modal4 = true, initialDate(1)"  class="btn mt-1 btn-warning text-white cursor-pointer">Agendas por procesar</a>
                                 <base-dropdown class="mt-1 p-0 col-5">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-12">
                                             {{employeByDate}}
@@ -55,7 +55,7 @@
 
                 <form-wizard ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Regresar" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
-                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento</h2>
+                    <h2 v-if="registerDate.valid == true" slot="title" v-on:click="maldito()">Datos de agendamiento {{registerDate.date}}</h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
 
                     <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateWizardOne">
@@ -194,7 +194,7 @@
                                 </base-button>
                                 <li v-for="data in employeShow" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmploye(data.name, data.class, data.restTime, data.img)">
                                     <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}} {{data.restTime}}</h4>
                                     </base-button>
                                     <base-button v-else class="dropdown-item" href="#">
                                         <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
@@ -231,9 +231,6 @@
                                 </base-button>
                             </div>
                         </vue-custom-scrollbar>
-                            
-                       
-                        
                     </tab-content>
                     <tab-content style="height:35vh" icon="ni ni-check-bold" title="Finalizar">
                         <div class="row">
@@ -296,42 +293,408 @@
         </vue-cal>
         <modal :show.sync="dateModals.modal1"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-sm">
+               modal-classes="modal-dialog-centered modal-md">
             <h5 slot="header" class="modal-title" id="modal-title-notification">{{dateSplit(selectedEvent.start)}}</h5>   
+            <card type="secondary" shadow
+                  header-classes="bg-white"
+                  body-classes=""
+                  class="border-0 pt-0">
+                <div class="text-center">
+                    <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}}</base-button>
+                </div>
+                <tabs fill class="flex-column flex-md-row">
+                    <card shadow>
+                        <tab-pane>
+                            <span slot="title">
+                                <i class="ni ni-collection"></i>
+                                Basicos
+                            </span>
+                            <dt class="text-center">Detalles de la cita</dt>
+                            <base-button class="mt-2 col-12" size="sm" type="secondary">
+                                <span >Cliente:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.cliente)}}</badge>
+                            </base-button>
+                            <base-button class="mt-1 col-12" size="sm" type="secondary">
+                                <span >Contacto:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatContact(selectedEvent.cliente)}}</badge>
+                            </base-button>
+                            <base-button class="mt-1 col-12" size="sm" type="secondary">
+                                <span >Empleado(s):</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.empleada)}}</badge>
+                            </base-button>
+                            <base-button class="mt-1 col-12" size="sm" type="secondary">
+                                <span >Entrada:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
+                                <span >Salida:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.end)}}</badge>
+                            </base-button>
+                            <dt class="mt-3 text-center">Servicios</dt>
+                            <badge v-for="service of selectedEvent.services" class="mt-1 ml-1 text-default" type="primary">{{service.servicio}}</badge>
+                        </tab-pane>
+                        <tab-pane>
+                            <span class="text-default" slot="title">
+                                <i class="ni ni-chart-bar-32"></i>
+                                Avazandos
+                            </span>
+                            <div class="row">
+                                <div v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-6 mt-2">
+                                   <base-button icon="fa fa-edit" class="mx-auto col-12" type="default">Editar</base-button> 
+                                </div>
+                                <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-6 mt-2">
+                                   <base-button icon="fa fa-check-square" class="mx-auto col-12" type="default">Finalizar</base-button> 
+                                </div>
+                                <div v-if="selectedEvent.process == true && status == 2 || selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-6 mt-2">
+                                   <base-button icon="fa fa-times" class=" col-12 mx-auto" type="danger">Cerrar</base-button> 
+                                </div>
+                                <div v-on:click="deleteDate(selectedEvent.id)" class="col-6 mt-2">
+                                   <base-button icon="fa fa-trash-alt" class=" col-12 mx-auto" type="danger">Borrar</base-button> 
+                                </div>
+                                <div v-if="selectedEvent.process == true && status == 1 || selectedEvent.process == true" class="col-12 text-center mt-2">
+                                   <base-button icon="fa fa-calendar-check" class=" col-12 mx-auto" type="success">Procesar</base-button> 
+                                </div>
+                            </div>
+                            
+                            <dt class="mt-4 text-center">Histórico de cliente </dt>
+                            <vue-custom-scrollbar class="maxHeightHistorical">
+                                <table class="table table-light table-borderless table-striped ">
+                                    <thead >
+                                        <tr>
+                                            <th>
+                                                Fecha
+                                            </th>
+                                            <th>
+                                                Servicios
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="text-left" v-for="historical of dateData.history">
+                                            <td class="text-left">
+                                                {{formatDate(historical.fecha)}}
+                                            </td>
+                                            <td>
+                                                <p v-for="(servicios, index) of historical.servicios"  style="margin-bottom:-6px;">
+                                                    <strong >{{(index + 1)+ ') ' +servicios.servicio}} </strong>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </vue-custom-scrollbar>
+                        </tab-pane>
+                    </card>
+                </tabs>
+            </card>
+        </modal>
+        <modal :show.sync="dateModals.modal2"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
-                <template>
-                    <div class="text-muted text-center mb-3">
-                        <small>Sign in with</small>
+                <div class="text-center">
+                    <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}} <br> <i class="fa fa-clock"></i> {{dateData.startEdit}} / {{dateData.endEdit}}</base-button>
+                </div>
+                <div class="col-12" v-on:keyup.enter="selectClient()" @click="selectClient()">
+                    <vue-single-select
+                        v-model="dateData.clientEdit"
+                        :options="clientsNames"
+                        placeholder="Seleccione un cliente"
+                        class="mx-auto mt-1"
+                    ></vue-single-select> 
+                </div>
+                <dd v-if="dateData.fechaEditPick == ''" class="text-danger text-center">Fecha caducada</dd>
+                <div class="col-12 mx-auto">
+                    <base-input addon-left-icon="ni ni-calendar-grid-58">
+                        <flat-picker  slot-scope="{focus, blur}"
+                                    @on-open="focus"
+                                    @on-close="blur"
+                                    :config="configDatePicker"
+                                    class="form-control datepicker"
+                                    v-model="dateData.fechaEditPick"
+                                    placeholder="Seleccione una fecha">
+                        </flat-picker>
+                    </base-input>
+                </div>
+               
+                <base-dropdown class="col-12 mt-1 mb-2 p-0">
+                    <base-button slot="title" type="default" class="dropdown-toggle col-12">
+                            {{dateData.lenderEdit}}
+                    </base-button>
+                    <li v-for="data in employeShow" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmployeEdit(data.name)">
+                        <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                            <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                        </base-button>
+                        <base-button v-else class="dropdown-item" href="#">
+                            <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                        </base-button>
+                    </li>
+                </base-dropdown>
+                <vue-custom-scrollbar style="height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
+                    <div class="col-12" v-for="(block , index) of blockHourEdit">
+                        <base-button v-if="block.validator == true" v-on:click="selectBloqEdit(block.Horario, index)" size="sm" class="col-12" type="success">
+                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                            <span>Disponible</span>
+                        </base-button>
+
+                        <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                            <span>Ocupado</span>
+                        </base-button>
+
+                        <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                            <span>Seleccionado</span>
+                        </base-button>
+
+                        <base-button v-else size="sm" disabled class="col-12" type="secondary">
+                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                            <span>No disponible</span>
+                        </base-button>
                     </div>
-                </template>
-                <template>
-                    <div class="text-center text-muted mb-4">
-                        <small>Or sign in with credentials</small>
-                    </div>
-                    <form role="form">
-                        <base-input alternative
-                                    class="mb-3"
-                                    placeholder="Email"
-                                    addon-left-icon="ni ni-email-83">
-                        </base-input>
-                        <base-input alternative
-                                    type="password"
-                                    placeholder="Password"
-                                    addon-left-icon="ni ni-lock-circle-open">
-                        </base-input>
-                        <base-checkbox>
-                            Remember me
-                        </base-checkbox>
-                        <div class="text-center">
-                            <base-button type="primary" class="my-4">Sign In</base-button>
-                        </div>
-                    </form>
-                </template>
+                </vue-custom-scrollbar>
+                <div class="text-center">
+                    <base-button v-on:click="editDate()" class="mt-3" type="default">Editar</base-button>
+                </div>
             </card>
-        </modal>  
+        </modal>
+        <modal :show.sync="dateModals.modal3"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <h5 slot="header" class="modal-title" id="modal-title-notification">Finalizar cita - {{dateSplit(selectedEvent.start)}}</h5>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes=""
+                  class="border-0">
+                <currency-input
+                title="Monto de diseño"
+                v-model="designEndDate"
+                placeholder="Monto de diseño"
+                locale="de"
+                class="form-control mb-3"
+                />
+                <table class="table" v-bind:style="{ 'background-color': '#6BB2E5', 'border-radius' : '15px', 'border':'none !important'}" >
+                    <thead>
+                        <tr>
+                        <th style="border-radius:15px !important;border:none" class="text-left pl-4 text-white">
+                            
+                            <input autocomplete="off" style="outline:none !important;background-color:white !important" type="text" id="myInputDate" v-on:keyup="myFunctionDate()" class="form-control buscar inputsVenta w-75 text-white" placeholder="Filtrar servicios"/>
+                        </th>
+                        <th style="color:white;border:none" class="text-center pl-5 pb-3">
+                            Precio 
+                        </th>
+                        </tr>
+                    </thead>
+                </table>
+                <vue-custom-scrollbar class="ListaProcesar">
+                    <table class="table tableBg" id="myTableDate">
+                        <tbody>
+                        <tr v-for="(servicio, index) in services" >
+                            <td style="border:none" v-if="servicio.active" class="font-weight-bold">
+                            <button type="button" class="w-75 btn procesar text-left" v-on:click="conteoServicioDate(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, index)">
+                                {{servicio.nombre}} <span class="badge badge-light conteoServ mt-1 float-right" :class="servicio._id" v-bind:id="index+servicio._id">0</span>
+                            </button>
+                            <button type="button" class="w-20 btn btn-back  text-left" >
+                                <font-awesome-icon icon="times"/>
+                            </button>
+                            
+                            </td>
+                            <td style="border:none" v-if="servicio.active" class=" font-weight-bold  text-center">
+                            $ {{formatPrice(servicio.precio)}}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </vue-custom-scrollbar>
+                <div class="text-center">
+                    <base-button v-on:click="endingDate()" class="mt-3" type="default">Finalizar</base-button>
+                </div>
+            </card>
+        </modal>
+        <modal :show.sync="dateModals.modal4"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-xl">
+            <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar</h5>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <vue-custom-scrollbar class="ListaProcesar maxHeightEdit w-100">
+                    <table class="table table-light table-borderless table-striped" id="myTableServEdit">
+                    <thead>
+                        <tr>
+                        <th >
+                            Fecha
+                        </th>
+                        <th >
+                            Cliente
+                        </th>	
+                        <th >
+                            Prestador
+                        </th>	
+                        <th >
+                            Total
+                        </th>
+                        <th class="text-center">
+                            Selección
+                        </th>					
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(closed, index) of closedDates" >
+                        <td class="font-weight-bold">
+                            {{formatDate(closed.date)}}
+                        </td>
+                        <td class="font-weight-bold">
+                            {{closed.client}}
+                        </td>
+                        <td class="font-weight-bold">
+                            {{closed.employe}}
+                        </td>
+                        <td class="font-weight-bold">
+                            {{formatPrice(closed.total)}} $
+                        </td>
+                        <td class="font-weight-bold text-center">
+                            <label class="conCheck mb-3 col-sm-2">
+                            <input :id="closed._id" class="desMarc" v-on:click="pressDate(closed._id,closed.services,closed.client,closed.employe,closed.design,closed.comision,closed.totalLocal,closed.total,closed.descuento,closed.date,index)" type="checkbox">
+                            <span class="checkmark"></span>
+                            </label>
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </vue-custom-scrollbar>
+                <div class="text-center mt-2">
+                    <base-button icon="fa fa-calendar-check" v-on:click="ProccessSelectedDates()" class="col-4 mx-auto" type="success">Procesar</base-button> 
+                </div>
+            </card>
+        </modal>
+        <modal :show.sync="dateModals.modal5"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-lg">
+            <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar por procesar</h5>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes=""
+                  class="border-0">
+                <div class="row">
+                    <div class="col-6 text-center">
+                        <dt>Clientes</dt>
+                        <base-button v-for="client of selectedDates.clientSplit" size="sm" type="secondary">{{client}}</base-button>
+                    </div>
+                    <div class="col-6 text-center">
+                        <dt>Empleado</dt>
+                        <base-button v-for="employe of selectedDates.discountSplit" size="sm" type="secondary">{{employe}}</base-button>
+                    </div>
+                    <div class="col-12">
+                        <dt class="mt-3 text-center">Servicios</dt>
+                        <badge v-for="servicesClosedDate of selectedDates.services" class="mt-1 ml-1 text-default" type="primary">{{servicesClosedDate.servicio}}</badge>
+                    </div>
+                    <div class="col-6 mt-2">
+                        <base-button type="secondary" class="col-12">
+                            <span class="float-left">Total</span>
+                            <badge style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.total)}} $</badge>
+                        </base-button>
+                    </div>
+                    <div class="col-6 mt-2">
+                        <base-button type="secondary" class="col-12">
+                            <span class="float-left">Diseño</span>
+                            <badge style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.design)}} $</badge>
+                        </base-button>
+                    </div>
+                </div>
+                <div class="text-muted text-center mb-1 mt-2">
+                    Medios de pago
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="input-group mb-2">
+                            <div title="Efectivo" v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
+                                <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
+                                </span>
+                                
+                            </div>
+                            <currency-input
+                                v-model="payCash"
+                                locale="de"
+                                placeholder="Efectivo"
+                                class="form-control"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div title="Transferencia" class="input-group mb-2">
+                            <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
+                                <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
+                                </span>
+                            </div>
+                            <currency-input
+                                v-model="payTransfer"
+                                locale="de"
+                                placeholder="Transferencia"
+                                class="form-control"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div title="Otros" class="input-group mb-2">
+                            <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="others" style="font-size:0.6em;display:none">100%</b>
+                                <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
+                                </span>
+                            </div>
+                            <currency-input
+                                v-model="payOthers"
+                                locale="de"
+                                placeholder="Otros"
+                                class="form-control"
+                            />
+                        </div>
+                    </div>
+                    <div title="Débito" class="col-6">
+                        <div class="input-group mb-2">
+                            <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="debit" style="font-size:0.6em;display:none">100%</b>
+                                    <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
+                                </span>
+                            </div>
+                            <currency-input
+                                v-model="payDebit"
+                                locale="de"
+                                placeholder="Débito"
+                                class="form-control"
+                            />
+                        </div>
+                    </div>
+                    <div title="Crédito" class="col-6">
+                        <div class="input-group mb-2">
+                            <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="credit" style="font-size:0.6em;display:none">100%</b>
+                                    <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
+                                </span>
+                            </div>
+                            <currency-input
+                                v-model="payCredit"
+                                locale="de"
+                                placeholder="Crédito"
+                                class="form-control"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-2">
+                    <base-button icon="fa fa-calendar-check" v-on:click="processSelected" class="col-4 mx-auto" type="success">Procesar</base-button> 
+                </div>
+            </card>
+        </modal>    
     </div>
 </template>
 <script>
@@ -386,6 +749,7 @@
          countServices:[],
          employes:[],
          blockHour:[],
+         blockHourEdit:[],
          registerDate: {
             services:[],
             servicesShow:[],
@@ -405,8 +769,8 @@
             valid:true,
             valid2:true,
             valid3:false
-
          },
+
          dateClient: {
             name:'',
             id:'',
@@ -426,14 +790,41 @@
             allowInput: true,
             dateFormat: 'm-d-Y',
             locale: Spanish, // locale for this instance only
-            minDate: new Date()          
+            minDate: new Date(),         
          },
          dateData: {
             history:[],
-            discount:false
+            discount:false,
+            clientEdit: null,
+            fechaEdit: null,
+            startEdit: null,
+            endEdit: null,
+            lenderEdit: null,
+            classFinalEdit: null,
+            duracionEdit: null,
+            dateEditId: null,
+            resTimeFinalEdit:null,
+            fechaEditPick:null
+         },
+         selectedDates:{
+            client:'',
+            closedArray:[],
+            services:[],
+            clientSplit:'',
+            employes:'',
+            design:0,
+            comision:'',
+            totaLocal:0,
+            total:0,
+            discount:0,
+            discountSplit:[],
+            employeDiscount:[],
+            endDatesId:[],
+            clientIds:[]
          },
          employeByDate: 'Filtrar por empleado', 
          clients:[],
+         closedDates:[],
          employeShow:[],
          services:[],
          locale: 'es',
@@ -443,7 +834,14 @@
          users:[],
          img1:'',
          img2:'',
+         design:'',
          selectedEvent:[],
+         payCash:0,
+         payTransfer:0,
+         payOthers:0,
+         payDebit:0,
+         payCredit:0,
+         servicesFinish:[],
          modals: {
             modal1:false,
             modal2: false,
@@ -454,11 +852,23 @@
          dateModals: {
              modal1:false,
              modal2:false,
+             modal3:false,
+             modal4:false,
+             modal5:false
          },
          radio: {
            radio1: "radio1",
            radio2: "radio3"
          },
+         endId:'',
+         endServices:[],
+         endClient: '',
+         endEmploye: '',
+         endId:'',
+         serviciosSelecionadosDates:[],
+         endClient:[],
+         endEmploye:[],
+         designEndDate:0,
          clientsNames:[]
       };
     },
@@ -479,6 +889,7 @@
       this.getUsers()
       this.getEmployes()
       this.getDates()
+      this.getClosed()
     },
     methods: {
         getDates() {
@@ -568,6 +979,12 @@
             }
             
         },
+        getClosed() {
+            axios.get(endPoint.endpointTarget+'/citas/endingdates')
+            .then( res => {
+            this.closedDates = res.data
+            })
+        },
         getEmployes(){
   			axios.get(endPoint.endpointTarget+'/manicuristas')
   			.then(res => {
@@ -576,7 +993,7 @@
                 for (let index = 0; index < this.employes.length; index++) {
                     for (let i = 0; i < this.users.length; i++) {
                         if (this.employes[index].nombre + "/" + this.employes[index].documento == this.users[i].linkLender) {
-                            this.employeShow.push({name:this.employes[index].nombre,img:endPoint.imgEndpoint+this.users[i].userImage,restDay:this.employes[index].restDay, restTime:this.employes[index].res,class:this.employes[index].class})
+                            this.employeShow.push({name:this.employes[index].nombre,img:endPoint.imgEndpoint+this.users[i].userImage,restDay:this.employes[index].restDay, restTime:this.employes[index].restTime,class:this.employes[index].class})
                             insp = false
                             break
                         }
@@ -586,10 +1003,10 @@
                         
                     }
                     if (insp == true) {
-                        this.employeShow.push({name:this.employes[index].nombre,img:'no'})
+                        this.employeShow.push({name:this.employes[index].nombre,img:'no',restDay:this.employes[index].restDay, restTime:this.employes[index].restTime,class:this.employes[index].class})
                     }
                 }
-                console.log(this.employeShow)
+                
   			})
   		},
         getServices() {
@@ -933,6 +1350,7 @@
         },
         insertDate(){
             this.blockHour = []
+            console.log(this.registerDate.restTime)
             axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
                 employe: this.registerDate.employeSelect,
                 date: this.registerDate.date,
@@ -1183,7 +1601,7 @@
         },
         formatName(name){
             if (name) {
-            var sp = name.split("-")
+            var sp = name.split(" / ")
             return sp[0]
             }
             
@@ -1194,6 +1612,512 @@
             return sp[1]
             }
             
+        },
+        formatPrice(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        formatDateTwo(date) {
+            let dateFormat = new Date(date+' 10:00')
+            return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
+        },
+        dataEdit(id, start, end, services, cliente, empleada, classDate){
+            
+            this.dateModals.modal2 = true
+            const Datedate = this.dateSplit(start)
+            this.changeDateEdit = false
+            const startDate = this.dateSplitHours(start)
+            const endDate = this.dateSplitHours(end)
+            const separStart = startDate.split(':')
+            const separEnd = endDate.split(':')
+            
+            const SumHours  = ((parseFloat(separEnd[0]) - parseFloat(separStart[0])) * 60)
+            const SumMinutes = parseFloat(separEnd[1]) - parseFloat(separStart[1])
+            const TotalMinutes = SumHours + SumMinutes
+            
+            this.dateData.clientEdit = cliente
+            this.dateData.fechaEdit = this.formatDateTwo(Datedate)
+            this.dateData.fechaEditPick = this.formatDateTwo(Datedate)
+            this.dateData.startEdit = startDate
+            this.dateData.endEdit = endDate
+            this.dateData.lenderEdit = empleada
+            this.dateData.classFinalEdit = classDate
+            this.dateData.duracionEdit = TotalMinutes
+            this.dateData.dateEditId = id
+            this.selectEmployeEdit(empleada)
+        },
+        selectEmployeEdit(name){
+            for (let index = 0; index < this.employes.length; index++) {
+                console.log(this.employes[index].nombre + this.dateData.lenderEdit)
+            if (this.employes[index].nombre == name) {
+                
+                this.dateData.lenderEdit = this.employes[index].nombre
+                this.dateData.classFinalEdit = this.employes[index].class
+                this.dateData.resTimeFinalEdit = this.employes[index].restTime
+                this.insertDateTwo()
+                break
+            }
+            
+            }
+              
+        },
+        insertDateTwo(){
+            if (this.dateData.fechaEditPick != null) {
+                this.blockHourEdit = []
+                axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
+                    employe: this.dateData.lenderEdit,
+                    date: this.dateData.fechaEditPick,
+                    time: this.dateData.duracionEdit,
+                    resTime:this.dateData.resTimeFinalEdit
+                })
+                .then(res => {
+                    this.blockHourEdit = res.data
+                })
+                .catch(err => {
+                console.log(err)
+                })
+            }
+            else {
+                this.blockHourEdit = []
+                axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
+                    employe: this.dateData.lenderEdit,
+                    date: this.dateData.fechaEdit ,
+                    time: this.dateData.duracionEdit,
+                    resTime:this.dateData.resTimeFinalEdit
+                })
+                .then(res => {
+                    this.blockHourEdit = res.data
+                })
+                .catch(err => {
+                console.log(err)
+                })
+            }
+        },
+        editDate(){
+            if (this.dateData.startEdit && this.dateData.endEdit != '') {
+            
+            const split = this.dateData.startEdit.split(':')
+            const sort = split[0]+split[1]
+            let dateEdit = ''
+
+            if (this.dateData.fechaEditPick != '') {
+                dateEdit =  this.dateData.fechaEdit
+            }
+            else {
+                dateEdit =  this.dateData.fechaEditPick
+            }
+            axios.put(endPoint.endpointTarget+'/citas/editDate/'+this.dateData.dateEditId, {
+            entrada: this.dateData.startEdit,
+            salida: this.dateData.endEdit,
+            sort: sort,
+            fecha: dateEdit,
+            cliente: this.dateData.clientEdit,
+            class: this.dateData.classFinalEdit,
+            manicuristas: this.dateData.lenderEdit
+            })
+            .then(res => {
+            if (res.data.status == 'ok') {
+                this.$swal({
+                type: 'success',
+                title: 'Cita editada',
+                showConfirmButton: false,
+                timer: 1500
+                })
+                this.blockHourEdit = []
+                this.getDates();
+                setTimeout(() => {
+                // if (this.employeByDate != 'Manicuristas') {
+                //     this.getDatesb()
+                // }
+                }, 500);
+                
+            }else{
+                this.$swal({
+                type: 'error',
+                title: 'error al editar',
+                showConfirmButton: false,
+                timer: 1500
+                })
+            }
+            })
+            }
+            else{
+            this.$swal({
+                type: 'error',
+                title: '¡Debes elegir un horario!',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            }
+        },
+        selectBloqEdit(hora, i){
+            this.dateData.startEdit =this.blockHourEdit[i].Horario
+            var sortSp = this.dateData.startEdit.split(":") 
+            this.sort = sortSp[0]+sortSp[1]
+            let dateEdit = ''
+
+            if (this.dateData.fechaEditPick != null) {
+                dateEdit =  this.dateData.fechaEdit
+            }
+            else {
+                dateEdit =  this.dateData.fechaEditPick
+            }
+
+            axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
+                employe: this.dateData.lenderEdit,
+                date: dateEdit,
+                time: this.dateData.duracionEdit,
+                resTime:this.dateData.resTimeFinalEdit
+            })
+            .then(res => {
+                for (let index = 0 ; index <= this.dateData.duracionEdit / 15; index++) {
+                    res.data[i].validator = 'select'
+                    this.dateData.endEdit = res.data[i].Horario
+                    i++
+                }
+                this.blockHourEdit = res.data
+            })
+            .catch(err => {
+            console.log(err)
+            })
+        },
+        initialDate(val){
+            $('.desMarc').prop('checked' , false)
+            if (val == 1) {
+                this.selectedDates = {
+                    client:'',
+                    closedArray:[],
+                    services:[],
+                    clientSplit:'',
+                    employes:'',
+                    design:0,
+                    comision:'',
+                    totaLocal:0,
+                    total:0,
+                    discount:0,
+                    discountSplit:[],
+                    employeDiscount:[],
+                    endDatesId:[],
+                    clientIds:[]
+                }
+                this.payCash = 0
+                this.payTransfer = 0
+                this.payOthers = 0
+                this.payDebit = 0
+                this.payCredit = 0
+            }
+            else {
+               this.selectedDates = {
+                    client:'',
+                    closedArray:[],
+                    services:[],
+                    clientSplit:'',
+                    employes:'',
+                    design:0,
+                    comision:'',
+                    totaLocal:0,
+                    total:0,
+                    discount:0,
+                    discountSplit:[],
+                    employeDiscount:[],
+                    endDatesId:[],
+                    clientIds:[]
+                }
+                this.closedDates = []
+                this.payCash = 0
+                this.payTransfer = 0
+                this.payOthers = 0
+                this.payDebit = 0
+                this.payCredit = 0 
+            }
+            
+        },
+        endDate(id, client, employe, services){
+            this.endId = ''
+            this.endServices = []
+            this.endClient = ''
+            this.endEmploye = ''
+            this.dateModals.modal3 = true
+            this.endId = id
+            this.serviciosSelecionadosDates = services
+            this.endClient = client
+            this.endEmploye = employe
+            console.log(services)
+            axios.get(endPoint.endpointTarget+'/servicios')
+            .then(res => {
+            for (let index = 0; index < services.length; index++) {
+                
+                for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
+                console.log(services[index].servicio == res.data[indexTwo].nombre)
+                if (services[index].servicio == res.data[indexTwo].nombre) {
+                    let valSpan = $(`.${res.data[indexTwo]._id}`).text()
+                    let sumaVal = parseFloat(valSpan) + 1
+                    $(`.${res.data[indexTwo]._id}`).text(sumaVal)
+                }
+                } 
+            }
+            })
+            // for (let index = 0; index < services.length; index++) {
+            //   if (services[index].) {
+                
+            //   }
+            
+            // }
+        },
+        deleteDate(id){
+            this.$swal({
+                title: '¿Está seguro de borrar la cita?',
+                text: 'No puedes revertir esta acción',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Estoy seguro',
+                cancelButtonText: 'No, evitar acción',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
+            })
+            .then((result) => {
+                if(result.value) {
+                    axios.delete(endPoint.endpointTarget+'/citas/' + id)
+                    .then(res => {
+                        if(res.data.status == 'Cita Eliminada'){
+                        this.$swal({
+                            type: 'success',
+                            title: 'Cita eliminada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.events = []
+                        this.dateModals.modal1 = false
+                        this.getDates();
+                        }
+                    })
+                }
+                else{
+                    this.$swal({
+                        type: 'info',
+                        title: 'Acción cancelada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            }) 
+        },
+        closeDate(id){
+            axios.put(endPoint.endpointTarget+'/citas/closeDate/'+id)
+            .then(res => {
+            if (res.data.status == 'ok') {
+                this.selectedEvent.process = false
+            }
+            })
+        },
+        pressDate(id,services,client,employe,design,comision,totalLocal,total,descuento,date){
+            if ($('#'+id).prop('checked')) {
+             this.selectedDates.closedArray.push({id,services,client,employe,design,comision,totalLocal,total,descuento,date})
+            }
+            else{
+                for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
+                    if (this.selectedDates.closedArray[i].id == id ) {
+                        this.selectedDates.closedArray.splice(i, 1)
+                        break
+                    }
+                }
+            }
+            console.log(this.selectedDates.closedArray)
+        },
+        ProccessSelectedDates(){    
+            this.dateModals.modal4 = false 
+            for (let index = 0; index < this.selectedDates.closedArray.length; index++) {
+                const position = this.selectedDates.closedArray[index]
+                for (let indexTwo = 0; indexTwo < position.services.length; indexTwo++) {
+                    const positionTwo = position.services[indexTwo];
+                    this.selectedDates.services.push(positionTwo)
+                }
+                this.selectedDates.client = index == 0 ? position.client : this.selectedDates.client + ' - ' + position.client
+                this.selectedDates.clientSplit = this.selectedDates.client.split('-')
+                this.selectedDates.employes = index == 0 ? position.employe : this.selectedDates.employes + ' / ' + position.employe
+                this.selectedDates.design = parseFloat(this.selectedDates.design) + parseFloat(position.design)
+                this.selectedDates.comision = parseFloat(this.selectedDates.comision) + parseFloat(position.comision)
+                this.selectedDates.totaLocal = parseFloat(this.selectedDates.totaLocal) + parseFloat(position.totalLocal)
+                this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(position.total)
+                this.selectedDates.discount = index == 0 ? position.employe + ' / ' + position.descuento+'%' : this.selectedDates.discount + ' - ' +position.employe + ' / ' + position.descuento+'%'
+                this.selectedDates.discountSplit = this.selectedDates.discount.split('-')
+                this.selectedDates.employeDiscount.push({employe: position.employe, comision: position.comision})
+                this.selectedDates.endDatesId.push(position.id)
+                this.selectedDates.clientIds.push(position.client.split(' / ')[1])
+            }
+            this.dateModals.modal5 = true
+        },
+        hundredPorcent(tipo){
+        
+            if (tipo == "efectivo") {
+                this.payCash = 0
+                this.payTransfer = 0
+                this.payOthers = 0
+                this.payCredit = 0
+                this.payDebit = 0
+                this.payCash = this.selectedDates.total
+            }
+            if (tipo == "trasnferencia") {
+                this.payCash = 0
+                this.payTransfer = 0
+                this.payOthers = 0
+                this.payCredit = 0
+                this.payDebit = 0
+                this.payTransfer = this.selectedDates.total
+            }
+            if (tipo == "others") {
+                this.payCash = 0
+                this.payTransfer = 0
+                this.payOthers = 0
+                this.payCredit = 0
+                this.payDebit = 0
+                this.payOthers = this.selectedDates.total
+            }
+            if (tipo == "credit") {
+                this.payCash = 0
+                this.payTransfer = 0
+                this.payOthers = 0
+                this.payCredit = 0
+                this.payDebit = 0
+                this.payCredit = this.selectedDates.total
+            }
+            if (tipo == "debit") {
+                this.payCash = 0
+                this.payTransfer = 0
+                this.payOthers = 0
+                this.payCredit = 0
+                this.payDebit = 0
+                this.payDebit = this.selectedDates.total
+            }
+        },
+        hundredMouseOver(tipo){
+			$("."+tipo).toggle()
+		},
+		hundredMouseNonOver(tipo){
+			$("."+tipo).toggle()
+        },
+        processSelected(){
+            if (this.payCash == '') {
+				this.payCash = 0
+			}
+			if (this.payOthers == '') {
+				this.payOthers = 0
+			}
+			if (this.payTransfer == '') {
+				this.payTransfer = 0
+			}
+			if (this.payDebit == '') {
+				this.payDebit = 0
+			}
+			if (this.payCredit == '') {
+				this.payCredit = 0
+			}
+            if (this.selectedDates.discount == '') {
+            this.selectedDates.discount = 0
+            }
+            if (this.selectedDates.design == '') {
+            this.selectedDates.design = 0
+            }
+            const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
+
+            if (this.selectedDates.total == totalFormadePago) {
+                axios.post(endPoint.endpointTarget+'/ventas/processEndDates', {
+                    servicesClosedDates: this.selectedDates.services,
+                    clientClosedDates: this.selectedDates.client,
+                    employeClosedDates: this.selectedDates.employes,
+                    designClosedDates: this.selectedDates.design,
+                    comisionClosedDates: this.selectedDates.comision,
+                    totalLocalClosedDates: this.selectedDates.totaLocal,
+                    totalClosedDates: this.selectedDates.total,
+                    descuentoClosedDates: this.selectedDates.discount,
+                    employeClosedDatesWithDiscount: this.selectedDates.employeDiscount,
+                    datesClientIdentification: this.selectedDates.clientIds,
+                    pagoEfectivo: this.payCash,
+                    pagoOtros: this.payOthers,
+                    pagoRedCDebito: this.payDebit,
+                    pagoRedCCredito: this.payCredit,
+                    pagoTransf: this.payTransfer,
+                    endDatesId: this.selectedDates.endDatesId
+                })
+                .then(res => {
+                    if (res.data.status == "Venta registrada") {
+                        this.$swal({
+                            type: 'success',
+                            title: 'Venta procesada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.initialDate()
+                    }
+                })
+            }
+            else{
+                this.$swal({
+                    type: 'error',
+                    title: 'Total no coincide, con los montos en medios de pago',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+                if (this.payCash == 0) {
+                    this.payCash = ''
+                }
+                if (this.payTransfer == 0) {
+                    this.payTransfer = ''
+                }
+                if (this.payOthers == 0) {
+                    this.payOthers = ''
+                }
+                if (this.payDebit == 0) {
+                    this.payDebit = ''
+                }
+                if (this.payCredit == 0) {
+                    this.payCredit = ''
+                }
+            }
+        },
+        conteoServicioDate(esto, servicio, precio, comision, discount, index){
+            console.log(esto)
+            const conteo = $("#"+index+esto).text()
+            const conteoTotal = parseFloat(conteo) + 1
+            $("#"+index+esto).text(conteoTotal)
+            const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'descuento': discount}
+            this.servicesFinish.push(servicios)
+            console.log(this.servicesFinish)
+        },
+        endingDate(){
+            const id = this.endId
+            axios.post(endPoint.endpointTarget+'/citas/endDate/'+id, {
+                services:this.serviciosSelecionadosDates,
+                client:this.endClient,
+                employe:this.endEmploye,
+                design: this.designEndDate
+            })
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    
+                    this.getDates();
+                    setTimeout(() => {
+                    if (this.employeByDate != 'Filtrar por empleado') {
+                        this.getCitasByEmploye()
+                    }
+                    }, 500);
+                    this.getClosed()
+                    this.$swal({
+                    type: 'success',
+                    title: 'Cita finalizada con exito',
+                    showConfirmButton: false,
+                    timer: 1500
+                    })
+                    this.dateModals.modal1 = false
+                    this.dateModals.modal3 = false
+                    this.designEndDate = ''
+                    this.serviciosSelecionadosDates = []
+                    this.endClient = ''
+                    this.endEmploye = ''
+                    this.designEndDate = ''
+                    $('.conteoServ').text('0')
+                }
+            })
         },
     },
     mounted() {
@@ -1423,6 +2347,14 @@
     }
     .cursor-pointer{
         cursor: pointer;
+    }
+    .maxHeightHistorical{
+    max-height: 150px;
+    overflow: hidden;
+    overflow-y: scroll;
+    }
+    .nav-pills .nav-link.active{
+        background-color:#2dce89 ;
     }
 </style>
  
