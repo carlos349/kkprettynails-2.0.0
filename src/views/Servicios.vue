@@ -10,7 +10,7 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white w-100">Sección de servicios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
-                        <a @click="modals.modal1 = true"  class="btn btn-info text-white">Ingrese un servicio</a>
+                        <a @click="modals.modal1 = true"  class="btn btn-success text-white">Ingrese un servicio</a>
                     </div>
                 </div>
             </div>
@@ -134,7 +134,8 @@
                             </vue-bootstrap4-table>
                         </vue-custom-scrollbar >
                         <div class="text-center">
-                            <base-button type="primary" class="my-4" v-on:click="registerService">Editar</base-button>
+                            
+                            <base-button type="primary" class="my-4" v-on:click="editService">Editar</base-button>
                         </div>
                     </form>
                 </template>
@@ -285,7 +286,7 @@ export default {
                 show_refresh_button: false,
                 show_reset_button: false,  
                 selected_rows_info: false,
-                preservePageOnDataChange : true,
+                preservePageOnDataChange : false,
                 pagination_info : false,
                 pagination: false,
                 global_search: {
@@ -309,7 +310,7 @@ export default {
             priceEdit: 0,
             comissionEdit: 0,
             timeEdit: '',
-            addDiscountEdit: null
+            addDiscountEdit: ''
         }
     },
     beforeCreate(){
@@ -349,6 +350,7 @@ export default {
             console.log(this.$refs.table.$children[0].$data)
    
             this.lenderSelecteds.push(value.selected_item._id)
+            this.EditlenderSelecteds.push(value.selected_item._id)
             console.log(value)
         },
         unSelected(value){
@@ -358,15 +360,23 @@ export default {
                     break
                 }
             }
+            for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
+                if (this.EditlenderSelecteds[i] == value.unselected_item._id) {
+                    this.EditlenderSelecteds.splice(i, 1)
+                    break
+                }
+            }
         },
         
         selectedAll(value){
             for (let index = 0; index < value.selected_items.length; index++) {
                 this.lenderSelecteds.push(value.selected_items[index]._id)
+                this.EditlenderSelecteds.push(value.selected_items[index]._id)
             }
         },
         unSelectedAll(value){
             this.lenderSelecteds = []
+            this.EditlenderSelecteds = []
         },
         registerService(){
             if (this.serviceRegister == '' || this.priceRegister == 0 || this.timeRegister == '' || this.comissionRegister == '') {
@@ -378,6 +388,8 @@ export default {
                 }
                 setTimeout(() => {
                     this.modals = {
+                        modal1:false,
+                        modal2:false,
                         modal3: false,
                         message: "",
                         icon: '',
@@ -394,6 +406,8 @@ export default {
                     }
                     setTimeout(() => {
                         this.modals = {
+                            modal1:false,
+                            modal2:false,
                             modal3: false,
                             message: "",
                             icon: '',
@@ -419,6 +433,8 @@ export default {
                             }
                             setTimeout(() => {
                                 this.modals = {
+                                    modal1:false,
+                                    modal2:false,
                                     modal3: false,
                                     message: "",
                                     icon: '',
@@ -437,6 +453,8 @@ export default {
                             }
                             setTimeout(() => {
                                 this.modals = {
+                                    modal1:false,
+                                    modal2:false,
                                     modal3: false,
                                     message: "",
                                     icon: '',
@@ -460,6 +478,7 @@ export default {
             $('.maxHeight  thead .vbt-checkbox').prop('checked', false)
         },
         dataEdit(id, lenders, name, time, discount, comission, price){
+            this.EditlenderSelecteds = []
             const discountFinal = discount ? false : true
             this.idServiceEdit = id
             this.EditlenderSelecteds = lenders
@@ -471,15 +490,29 @@ export default {
             this.modals.modal2 = true
             let data = this.$refs.table.$children[0].$data.vbt_rows
             let selected = this.$refs.table.$children[0].$data.selected_items
-            for (let index = 0; index < data.length; index++) {
-                for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
-                    if (this.EditlenderSelecteds[i] == data[index]._id ) {
-                        selected.push(data[index])
-                    }
-                    
-                }
+            for (let c = 0; c <= selected.length; c++) {
+                selected.shift()
                 
             }
+            setTimeout(() => {
+                for (let index = 0; index < data.length; index++) {
+                    for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
+                        if (this.EditlenderSelecteds[i] == data[index]._id ) {
+                            console.log(this.EditlenderSelecteds[i] + "--" + data[index]._id)
+                            selected.push(data[index])
+                        }
+                    }
+                }
+            }, 500);
+        },
+        clean(){
+            let selected = this.$refs.table.$children[0].$data.selected_items
+            
+            for (let c = 0; c <= selected.length; c++) {
+                selected.shift()
+                console.log(selected.length)
+            }
+            
         },
         editService(){
             if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {
@@ -491,6 +524,8 @@ export default {
                 }
                 setTimeout(() => {
                     this.modals = {
+                        modal1:false,
+                        modal2:false,
                         modal3: false,
                         message: "",
                         icon: '',
@@ -507,6 +542,8 @@ export default {
                     }
                     setTimeout(() => {
                         this.modals = {
+                            modal1:false,
+                            modal2:false,
                             modal3: false,
                             message: "",
                             icon: '',
@@ -514,7 +551,7 @@ export default {
                         }
                     }, 1500);
                 }else{
-                    var ifCheck = addDiscountEdit ? false : true
+                    var ifCheck = this.addDiscountEdit ? false : true
 					const id = this.idServiceEdit
 					axios.put(endPoint.endpointTarget+'/servicios/' + id, {
 						nombreServicio: this.serviceEdit,
@@ -524,6 +561,23 @@ export default {
 						prestadores: this.EditlenderSelecteds,
 						descuento: ifCheck
 					}).then(res => {
+                        this.modals = {
+                            modal3: true,
+                            message: "¡Servicio actualizado!",
+                            icon: 'ni ni-check-bold ni-5x',
+                            type: 'success'
+                        }
+                        setTimeout(() => {
+                            this.getServices();
+                            this.modals = {
+                                modal1:false,
+                                modal2:false,
+                                modal3: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 1500);
                         EventBus.$emit('reloadServices', 'reload')
                     })
                 }
@@ -584,5 +638,8 @@ export default {
     .maxHeight .table td {
         padding: 5px;
         padding-bottom: 5px;
+    }
+    .card-header{
+        font-size: 2.5vw;
     }
 </style>
