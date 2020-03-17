@@ -101,8 +101,8 @@
                                         </flat-picker>
                                     </base-input>
                                     <div class="text-center">
-                                        <base-button type="primary" v-if="!dataExpense.valid" disabled>Editar</base-button>
-                                        <base-button type="primary" v-else v-on:click="registerExpense">Editar</base-button>
+                                        <base-button type="primary" v-if="!dataExpense.valid" disabled>Registrar</base-button>
+                                        <base-button type="primary" v-else v-on:click="registerExpense">Registrar</base-button>
                                     </div>
                                 </form>    
                             </tab-pane>
