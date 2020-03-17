@@ -13,7 +13,7 @@
                         <div class="col-12">
                             <div class="row">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
-                                <a @click="dateModals.modal4 = true, initialDate(1)"  class="btn mt-1 btn-warning text-white cursor-pointer">Agendas por procesar</a>
+                                <a @click="dateModals.modal4 = true, initialDate(1)"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
                                 <base-dropdown class="mt-1 p-0 col-lg-4 col-md-9 col-xs-6 w-100">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-12">
                                             {{employeByDate}}
@@ -132,10 +132,10 @@
                                 <base-input v-on:keyup="validRegister()" placeholder="Identidad" v-model="dateClient.id" addon-left-icon="ni ni-key-25"></base-input>
                             </div>
                             <div class="col-md-6">
-                                <base-input placeholder="Contacto adicional" v-model="dateClient.infoOne" addon-left-icon="ni ni-fat-add"></base-input>
+                                <base-input placeholder="Correo" v-model="dateClient.infoOne" addon-left-icon="ni ni-fat-add"></base-input>
                             </div>
                             <div class="col-md-6">
-                                <base-input placeholder="Contacto adicional" v-model="dateClient.infoTwo" addon-left-icon="ni ni-fat-add"></base-input>
+                                <base-input placeholder="Instagram" v-model="dateClient.infoTwo" addon-left-icon="ni ni-fat-add"></base-input>
                             </div>
                             <div class="col-6">
                                 <base-checkbox v-model="dateClient.discount" class="mt-2">

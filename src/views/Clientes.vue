@@ -270,8 +270,8 @@ import EventBus from '../components/EventBus'
             rows_selectable: true,
             per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
             global_search: {
-                placeholder: "Enter custom Search text",
-                visibility: false,
+                placeholder: "Filtre sus clientes",
+                visibility: true,
                 case_sensitive: false
             },
             show_refresh_button: false,

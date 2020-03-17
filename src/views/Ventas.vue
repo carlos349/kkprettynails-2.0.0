@@ -7,19 +7,27 @@
             <!-- Header container -->
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
-                    <div class="col-lg-12 col-md-12">
+                    <div class="col-lg-12 col-md-12" style="display:inline-block">
                         <h1 class="display-2 text-white w-100">Sección de ventas</h1>
                         <label class="text-white">Filtra tus ventas</label>
-                        <base-input addon-left-icon="ni ni-calendar-grid-58">
-                            <flat-picker slot-scope="{focus, blur}"
+                        <div class="row">
+                            <div class="col-7">
+                                <base-input addon-left-icon="ni ni-calendar-grid-58">
+                                    <flat-picker slot-scope="{focus, blur}"
                                         @on-open="focus"
                                         @on-close="blur"
                                         :config="configDatePicker"
                                         class="form-control datepicker"
                                         v-model="dates.range">
-                            </flat-picker>
-                        </base-input>
-                        <base-button type="default" v-on:click="filterSale">Filtrar</base-button>
+                                    </flat-picker>
+                                </base-input>
+                            </div>
+                            <div class="col-5">
+                                <base-button  type="default" v-on:click="filterSale">Filtrar</base-button>
+
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -106,7 +114,8 @@
                 {{formatPrice(props.row.total)}}
             </template>
             <template slot="reportSale" slot-scope="props">
-                <base-button icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataReport(props.row._id)">Detalle</base-button>
+                <base-button v-if="props.row.status" icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataReport(props.row._id)">Detalle</base-button>
+                <base-button v-else icon="ni ni-fat-add" size="sm" type="danger" v-on:click="dataReport(props.row._id)">Detalle</base-button>
             </template>
         </vue-bootstrap4-table>
         <modal :show.sync="modals.modal2"

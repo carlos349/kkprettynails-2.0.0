@@ -232,20 +232,20 @@
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Identificación"
+                                    placeholder="Contacto principal"
                                     v-model="registerClient.id"
                                     v-on:change="validRegister(2)"
                                     addon-left-icon="ni ni-key-25">
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto adicional"
+                                    placeholder="Correo"
                                     v-model="registerClient.contactOne"
                                     addon-left-icon="ni ni-collection">
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto adicional"
+                                    placeholder="Instagram"
                                     v-model="registerClient.contactTwo"
                                     addon-left-icon="ni ni-collection">
                         </base-input>
