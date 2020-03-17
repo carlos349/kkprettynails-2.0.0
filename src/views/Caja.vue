@@ -159,7 +159,7 @@
                             />
                         </div>
                         <div class="col-6">
-                            <label class="form-group">Efectivo</label>
+                            <label class="form-group">Débito</label>
                             <currency-input
                                 label="Débito"
                                 v-model="debitManual"

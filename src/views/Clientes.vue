@@ -49,22 +49,22 @@
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
-                                                placeholder="Identificación"
+                                                placeholder="Contacto principal"
                                                 v-model="registerClient.id"
                                                 v-on:change="validRegister()"
-                                                addon-left-icon="ni ni-key-25">
+                                                addon-left-icon="fa fa-address-card">
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
-                                                placeholder="Contacto adicional"
+                                                placeholder="Correo"
                                                 v-model="registerClient.contactOne"
-                                                addon-left-icon="ni ni-collection">
+                                                addon-left-icon="fa fa-envelope">
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
-                                                placeholder="Contacto adicional"
+                                                placeholder="Instagram"
                                                 v-model="registerClient.contactTwo"
-                                                addon-left-icon="ni ni-collection">
+                                                addon-left-icon="fab fa-instagram">
                                     </base-input>
                                     <div class="text-center">
                                         <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
@@ -114,22 +114,22 @@
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Identificación"
+                                    placeholder="Contacto principal"
                                     v-model="registerClient.id"
                                     v-on:change="validRegister()"
-                                    addon-left-icon="ni ni-key-25">
+                                    addon-left-icon="fa fa-address-card">
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto adicional"
+                                    placeholder="Correo"
                                     v-model="registerClient.contactOne"
-                                    addon-left-icon="ni ni-collection">
+                                    addon-left-icon="fa fa-envelope">
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto adicional"
+                                    placeholder="Instagram"
                                     v-model="registerClient.contactTwo"
-                                    addon-left-icon="ni ni-collection">
+                                    addon-left-icon="fab fa-instagram">
                         </base-input>
                         <base-checkbox v-model="registerClient.discount" class="mb-3">
                             Descuento de nuevo cliente
