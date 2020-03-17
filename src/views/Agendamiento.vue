@@ -75,7 +75,7 @@
                                 </center>
                                 
                         </div>
-                        <vue-custom-scrollbar class="row" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
+                        <vue-custom-scrollbar class="row p-2" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                             <div v-for="(name, index) in services" class="col-6 pl-1 mt-2">
                                 <base-button v-on:click="pushService(name.prestadores,name.nombre,name.tiempo, name.comision, name.precio,name.descuento,index)" class="col-12 "  type="default">
                                     <badge class="float-left text-white" pill type="default">
@@ -208,7 +208,7 @@
                         <div class="text-muted text-center mt-1">
                                 Horario disponible
                             </div>
-                        <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
+                        <vue-custom-scrollbar class="p-2" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                             <div class="col-12" v-for="(block , index) of blockHour">
                                 <base-button v-if="block.validator == true" v-on:click="selectBloq(block.Horario, index)" size="sm" class="col-12" type="success">
                                     <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
@@ -2418,5 +2418,13 @@
         max-height: 60vh;
         height: auto;
     }
+    .ps__rail-y {
+    display: block !important;
+    background-color: transparent !important;
+	height: 191px !important;
+	}
+	.ps__thumb-y{
+		height: 72px !important;
+	}
 </style>
  
