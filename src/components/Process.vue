@@ -174,6 +174,21 @@
                         />
                     </div>
                 </div>
+                <div class="col-6">
+                    <div v-on:change="changeDate">
+                        <base-input addon-left-icon="ni ni-calendar-grid-58">
+                            <flat-picker 
+                                    slot-scope="{focus, blur}"
+                                    @on-open="focus"
+                                    @on-close="blur"
+                                    :config="{allowInput: true}"
+                                    class="form-control datepicker"
+                                    aria-placeholder="Seleccione una fecha"
+                                    v-model="dates.dateSale">
+                            </flat-picker>
+                        </base-input>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col-6">
@@ -396,10 +411,13 @@ import jwtDecode from 'jwt-decode'
 import EventBus from './EventBus'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
+import flatPicker from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
 export default {
     components: {
         vueCustomScrollbar,
-        VueBootstrap4Table
+        VueBootstrap4Table,
+        flatPicker
     },
     data(){
         return {
@@ -489,7 +507,9 @@ export default {
             totalSinFormato:0,           
             serviciosSelecionados:[],
             resto: 0,
-            dateSale:'fecha',
+            dates: {
+                dateSale: new Date()
+            },
             idProcess: '',
             docLender: '',
             newClient: {
@@ -504,6 +524,7 @@ export default {
                 valid: false,
                 text: 'Reiniciar datos'
             },
+            inspectorDate: false
         }
     },
     created(){
@@ -512,6 +533,9 @@ export default {
         this.getServices()
     }, 
     methods: {
+        changeDate(){
+            this.inspectorDate = true
+        },
         selected(value){
             this.registerService.lenderSelecteds.push(value.selected_item._id)
             this.validRegister(1)
@@ -1029,7 +1053,8 @@ export default {
 			}
 			if (this.design == '') {
 				this.design = 0
-			}
+            }
+            
 			const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
             console.log(totalFormadePago)
 			if (this.clientSelect != '' && this.lenderSelect != '') {
@@ -1043,8 +1068,9 @@ export default {
 						pagoRedCDebito:this.payDebit,
 						pagoRedCCredito:this.payCredit,
 						pagoTransf:this.payTransfer,
-						descuento:this.discount,
-						fecha:this.dateSale,
+                        descuento:this.discount,
+                        processDate: this.inspectorDate,
+						fecha:this.dates.dateSale,
 						total: this.totalSinFormato,
 						ifProcess: this.idProcess,
 						diseno: this.design,

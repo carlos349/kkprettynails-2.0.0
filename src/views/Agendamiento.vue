@@ -1,7 +1,7 @@
 <template>
     <div>
-        <base-header class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
-            style="min-height: 50px; background-image: url(img/theme/agenda.jpg); background-size: cover; background-position: center top;height:45vh;">
+        <base-header class="header pb-4 pt-2 pt-lg-6 d-flex align-items-center"
+            style="min-height: 50px; background-image: url(img/theme/agenda.jpg); background-size: cover; background-position: center top">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
@@ -14,7 +14,7 @@
                             <div class="row">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
                                 <a @click="dateModals.modal4 = true, initialDate(1)"  class="btn mt-1 btn-warning text-white cursor-pointer">Agendas por procesar</a>
-                                <base-dropdown class="mt-1 p-0 col-5">
+                                <base-dropdown class="mt-1 p-0 col-lg-4 col-md-9 col-xs-6 w-100">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-12">
                                             {{employeByDate}}
                                     </base-button>

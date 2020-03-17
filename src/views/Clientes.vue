@@ -200,20 +200,20 @@ import EventBus from '../components/EventBus'
       return {
         successRegister:false,
         clientsNames: [],
-        tipeForm: null,
+        tipeForm: '',
         registerClient: {
-            name:null,
-            id:null,
-            contactOne:null,
+            name:'',
+            id:'',
+            contactOne:'',
+            contactTwo:'',
+            recommender:'',
             discount:false,
-            contactTwo:null,
-            recommender:null,
             valid:false,
             valid2:false,
-            recommenders:null,
-            lastDate:null,
-            date:null,
-            participation:null
+            recommenders:'',
+            lastDate:'',
+            date:'',
+            participation:0
         },
         modals: {
             modal1: false,
@@ -315,6 +315,7 @@ import EventBus from '../components/EventBus'
             })
         },
         registerClients(){
+            console.log(this.registerClient.recommender)
             var ifCheck = this.registerClient.discount ? 0 : 1
             axios.post(endPoint.endpointTarget+'/clients', {
                 nombre:this.registerClient.name,
@@ -365,7 +366,7 @@ import EventBus from '../components/EventBus'
             })
         },
         validRegister(){
-            if (this.registerClient.name != null && this.registerClient.id != null) {
+            if (this.registerClient.name != '' && this.registerClient.id != '') {
                 this.registerClient.valid = true
             }
             else {
@@ -377,12 +378,12 @@ import EventBus from '../components/EventBus'
         },
         initialState(val){
             this.registerClient= {
-                name:null,
-                id:null,
-                contactOne:null,
+                name:'',
+                id:'',
+                contactOne:'',
                 discount:false,
-                contactTwo:null,
-                recommender:null,
+                contactTwo:'',
+                recommender:0,
                 valid:false
             }
             if (val == 1) {
