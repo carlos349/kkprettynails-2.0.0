@@ -1,6 +1,6 @@
 <template>
     <div>
-        <base-header class="header pb-6 pt-5 pt-lg-8 d-flex align-items-center"
+        <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
                      style="min-height: 50px; background-image: url(img/theme/clients.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
@@ -57,15 +57,15 @@
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
-                                                placeholder="Correo"
+                                                placeholder="Contacto adicional"
                                                 v-model="registerClient.contactOne"
-                                                addon-left-icon="fa fa-envelope">
+                                                addon-left-icon="fa fa-address-card">
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
-                                                placeholder="Instagram"
+                                                placeholder="Contacto adicional"
                                                 v-model="registerClient.contactTwo"
-                                                addon-left-icon="fab fa-instagram">
+                                                addon-left-icon="fa fa-address-card">
                                     </base-input>
                                     <div class="text-center">
                                         <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
@@ -122,15 +122,15 @@
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Correo"
+                                    placeholder="Contacto adicional"
                                     v-model="registerClient.contactOne"
-                                    addon-left-icon="fa fa-envelope">
+                                    addon-left-icon="fa fa-address-card">
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Instagram"
+                                    placeholder="Contacto adicional"
                                     v-model="registerClient.contactTwo"
-                                    addon-left-icon="fab fa-instagram">
+                                    addon-left-icon="fa fa-address-card">
                         </base-input>
                         <base-checkbox v-model="registerClient.discount" class="mb-3">
                             Descuento de nuevo cliente
@@ -234,7 +234,7 @@ import EventBus from '../components/EventBus'
                 sort: true,
             },
             {
-                label: "Identidad",
+                label: "Contacto principal",
                 name: "identidad",
                 // filter: {
                 //     type: "simple",
@@ -243,12 +243,12 @@ import EventBus from '../components/EventBus'
                 sort: true,
             },
             {
-                label: "Correo",
+                label: "Contacto adicional",
                 name: "correoCliente",
                 sort: true,
             },
             {
-                label: "Instagram",
+                label: "Contacto adicional",
                 name: "instagramCliente",
                 sort: true,
                 // filter: {

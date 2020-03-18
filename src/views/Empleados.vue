@@ -1,6 +1,6 @@
 <template>
     <div>
-        <base-header class="header pb-6 pt-5 pt-lg-8 d-flex align-items-center"
+        <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
                      style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>

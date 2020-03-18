@@ -14,77 +14,77 @@ export default new Router({
       children: [
         {
           path: '/dashboard',
-          name: 'Metricas',
+          name: '',
           component: () => import('./views/Dashboard.vue')
         },
         {
           path: '/icons',
-          name: 'iconos',
+          name: '',
           component: () => import('./views/Icons.vue')
         },
         {
           path: '/profile',
-          name: 'perfil',
+          name: '',
           component: () => import('./views/UserProfile.vue')
         },
         {
           path: '/reporteCierre',
-          name: 'reporteCierre',
+          name: '',
           component: () => import('./views/reporteCierre.vue')
         },
         {
           path: '/tables',
-          name: 'tables',
+          name: '',
           component: () => import('./views/Tables.vue')
         },
         {
           path: '/Empleados',
-          name: 'empleados',
+          name: '',
           component: () => import('./views/Empleados.vue')
         },
         {
           path: '/Usuarios',
-          name: 'usuarios',
+          name: '',
           component: () => import('./views/Usuarios.vue')
         },
         {
           path: '/Ventas',
-          name: 'ventas',
+          name: '',
           component: () => import('./views/Ventas.vue')
         },
         {
           path: '/Servicios',
-          name: 'servicios',
+          name: '',
           component: () => import('./views/Servicios.vue')
         },
         {
           path: '/Clientes',
-          name: 'clientes',
+          name: '',
           component: () => import('./views/Clientes.vue')
         },
         {
           path: '/Inventario',
-          name: 'inventario',
+          name: '',
           component: () => import('./views/Inventario.vue')
         },
         {
           path: '/Gastos',
-          name: 'gastos',
+          name: '',
           component: () => import('./views/Gastos.vue')
         },
         {
           path: '/Caja',
-          name: 'caja',
+          name: '',
           component: () => import('./views/Caja.vue')
         },
         {
           path: '/reporteEmpleado',
-          name: 'reportEmploye',
+          name: '',
           component: () => import('./views/reportEmploye.vue')
         },
         {
           path: '/Agendamiento',
-          name: 'agendamiento',
+          name: '',
           component: () => import('./views/Agendamiento.vue')
         }
       ]
