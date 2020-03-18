@@ -327,17 +327,24 @@
                 {
                   title: {
                     formatter: function (val) {
-                      return 'Ventas de '+val 
+                      return val 
                     }
                   }
                 },
                 {
                   title: {
                     formatter: function (val) {
-                      return 'Ventas de '+val
+                      return val
                     }
                   }
                 },
+                {
+                  title: {
+                    formatter: function (val) {
+                      return val
+                    }
+                  }
+                }
               ]
             },
             grid: {
