@@ -11,7 +11,7 @@
                         <h1 class="display-2 text-white">Sección de clientes</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus clientes, aquí podrás registrar, editar y visualizar todos tus clientes.</p>
                         <a @click="modals.modal1 = true , initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un cliente</a>
-                        <a @click="showFilter" class="btn btn-success text-white cursor-pointer">Filtrar</a>
+                        <a @click="showFilter" class="btn btn-primary text-white cursor-pointer">Filtrar</a>
                     </div>
                 </div>
             </div>

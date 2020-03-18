@@ -387,17 +387,19 @@ export default {
                 this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
                 this.code = resData.data._id
                 this.nameLender = resData.data.nombre
-                this.totalComission = resData.data.comision
                 this.advancement = resData.data.advancement
                 const identification = resData.data.nombre+':'+resData.data.documento
                 axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+identification)
                 .then(res => {
                     this.sales = res.data
                     let totals = 0
+                    let comissions = 0
                     for (let index = 0; index < res.data.length; index++) {
                         totals = parseFloat(res.data[index].total) + parseFloat(totals)
+                        comissions = parseFloat(res.data[index].comision) + parseFloat(comissions)
                     }
                     this.totalSale = totals
+                    this.totalComission = comissions
                     console.log(this.fecha)
                     console.log(this.code)
                     console.log(this.nameLender)

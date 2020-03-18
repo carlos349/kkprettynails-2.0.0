@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="col-6">
-            <div>
+            <div v-on:click="chooseLender"> 
                 <vue-single-select
                 v-model="lenderSelect"
                 :options="lenderNames"
@@ -1056,7 +1056,7 @@ export default {
             }
             
 			const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
-            console.log(totalFormadePago)
+            console.log(this.docLender)
 			if (this.clientSelect != '' && this.lenderSelect != '') {
 				if (this.totalSinFormato == totalFormadePago ) {
 					axios.post(endPoint.endpointTarget+'/ventas/procesar', {
