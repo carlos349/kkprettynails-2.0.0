@@ -14,8 +14,8 @@
                             <div class="row">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
                                 <a @click="dateModals.modal4 = true, initialDate(1)"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
-                                <base-dropdown class="mt-1 p-0 col-lg-4 col-md-9 col-xs-6 w-100">
-                                    <base-button slot="title" type="default" class="dropdown-toggle col-12">
+                                <base-dropdown class="mt-1 p-0 col-lg-4 col-sm-2 col-md-9 col-xs-2 w-100">
+                                    <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
                                     </base-button>
                                     <li v-on:click="getCitasByEmploye('Todos')">
@@ -53,7 +53,7 @@
                 </modal>
                   <!-- WIZARD -->
 
-                <form-wizard ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Regresar" next-button-text="Siguiente" finish-button-text="¡Agendar!">
+                <form-wizard ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
                     <h2 v-if="registerDate.valid == true" slot="title" v-on:click="maldito()">Datos de agendamiento {{registerDate.date}}</h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
@@ -76,14 +76,14 @@
                                 
                         </div>
                         <vue-custom-scrollbar class="row p-2" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                            <div v-for="(name, index) in services" class="col-6 pl-1 mt-2">
+                            <div v-for="(name, index) in services" class="col-md-6 col-sm-12 pl-1 mt-2">
                                 <base-button v-on:click="pushService(name.prestadores,name.nombre,name.tiempo, name.comision, name.precio,name.descuento,index)" class="col-12 "  type="default">
-                                    <badge class="float-left text-white" pill type="default">
+                                    <badge class="float-left text-white col-md-2 col-sm-12" pill type="default">
                                         <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
                                         <i class="far fa-clock ml-1"></i> {{name.tiempo}}Min
                                     </badge>
                                     <span class="float-left">{{name.nombre}}</span>
-                                    <badge class="text-default float-right" type="white">{{countServices[index].count}}</badge>
+                                    <badge class="text-default float-right col-md-1 col-sm-12" type="white">{{countServices[index].count}}</badge>
                                 </base-button>
                             </div>
                         </vue-custom-scrollbar>
@@ -96,7 +96,7 @@
 
                     <tab-content icon="ni ni-collection" title="Información" :before-change="validateWizardTwo">
                         <div class="row">
-                            <div class="col-6" v-on:keyup.enter="selectClient()" @click="selectClient()">
+                            <div class="col-md-6 p-0 col-sm-12" v-on:keyup.enter="selectClient()" @click="selectClient()">
                                <vue-single-select
                                     v-model="registerDate.client"
                                     :options="clientsNames"
@@ -106,7 +106,7 @@
                                 ></vue-single-select> 
                             </div>
                             
-                            <div class="col-6 mx-auto">
+                            <div class="col-md-6 col-sm-12 mx-auto">
                                 <base-input addon-left-icon="ni ni-calendar-grid-58">
                                     <flat-picker slot-scope="{focus, blur}"
                                                 @on-open="focus"
@@ -137,43 +137,43 @@
                             <div class="col-md-6">
                                 <base-input placeholder="Instagram" v-model="dateClient.infoTwo" addon-left-icon="ni ni-fat-add"></base-input>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12">
                                 <base-checkbox v-model="dateClient.discount" class="mt-2">
                                     Descuento de nuevo cliente
                                 </base-checkbox>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12">
                                 <vue-single-select
                                     v-model="dateClient.recommender"
                                     :options="clientsNames"
                                     placeholder="Recomendador"
                                 ></vue-single-select>
                             </div>
-                            <div v-if="dateClient.valid" class="col-3">
+                            <div v-if="dateClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Participación</span>
                                     <badge type="default">{{dateClient.partipation}}</badge>
                                 </base-button>
                             </div>
-                            <div v-if="dateClient.valid" class="col-3">
+                            <div v-if="dateClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Recomendaciones</span>
                                     <badge type="default">{{dateClient.recommenders}}</badge>
                                 </base-button>
                             </div>
-                            <div v-if="dateClient.valid" class="col-3">
+                            <div v-if="dateClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Ultima atención</span>
                                     <badge type="default">{{formatDate(dateClient.lastDate)}}</badge>
                                 </base-button>
                             </div>
-                            <div v-if="dateClient.valid" class="col-3">
+                            <div v-if="dateClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Cliente desde</span>
                                     <badge type="default">{{formatDate(dateClient.date)}}</badge>
                                 </base-button>
                             </div>
-                            <div class="col-5 mx-auto mt-4">
+                            <div class="col-auto mx-auto mt-4">
                                 <base-button  type="default" v-on:click="clientEdit" v-if="dateClient.valid && dateClient.valid2" class="col-12" icon="fas fa-edit">Editar cliente</base-button>
                                 <base-button  type="default"  v-if="dateClient.valid && dateClient.valid2 != true" disabled class="col-12" icon="fas fa-edit">Editar cliente</base-button>
                                 <base-button type="success" disabled v-if="dateClient.valid != true && dateClient.valid2 != true" class="col-12" icon="fas fa-user-plus">Registrar cliente</base-button>
@@ -185,10 +185,10 @@
 
                     <tab-content icon="fas fa-user-clock" title="Disponibilidad" :before-change="validateWizardThree">
                         <div class="row">
-                            <div class="text-muted text-center mt-2 col-4">
+                            <div class="text-muted text-center mt-2 col-md-4 col-sm-12">
                                 Seleccione un empleado y disponibilidad
                             </div>
-                            <base-dropdown class="col-6 mt-1 p-0">
+                            <base-dropdown class="col-md-6 col-sm-12 mt-1 p-0">
                                 <base-button slot="title" type="default" class="dropdown-toggle col-12">
                                      {{registerDate.employeSelect}}
                                 </base-button>
@@ -234,7 +234,7 @@
                     </tab-content>
                     <tab-content icon="ni ni-check-bold" title="Finalizar">
                         <div class="row">
-                            <div class="col-6" >
+                            <div class="col-md-6 col-sm-12" >
                                 <dt>Servicios</dt>
                                 <vue-custom-scrollbar class="col-12" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
                                     <base-button v-for="data in registerDate.servicesShow" class="col-10 mt-1" type="secondary">
@@ -243,29 +243,29 @@
                                     </base-button>
                                 </vue-custom-scrollbar>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12">
                                 <dt>Información de agenda</dt>
-                                <base-button class="col-10 mt-1" type="secondary">
+                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
                                     <span class="float-left"> Cliente: </span>
                                     <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{dateClient.name}}</badge>
                                 </base-button>
-                                <base-button class="col-10 mt-1" type="secondary">
+                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
                                     <span class="float-left"> Identidad: </span>
                                     <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{dateClient.id}}</badge>
                                 </base-button>
-                                <base-button class="col-10 mt-1" type="secondary">
+                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
                                     <span class="float-left"> Empleado: </span>
                                     <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{registerDate.employeSelect}}</badge>
                                 </base-button>
-                                <base-button class="col-10 mt-1" type="secondary">
+                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
                                     <span class="float-left"> Fecha: </span>
                                     <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{registerDate.date}}</badge>
                                 </base-button>
-                                <base-button class="col-10 mt-1" type="secondary">
+                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
                                     <span class="float-left"> Hora de inicio: </span>
                                     <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{registerDate.start}}</badge>
                                 </base-button>
-                                <base-button class="col-10 mt-1" type="secondary">
+                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
                                     <span class="float-left"> Hora de salida: </span>
                                     <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{registerDate.end}}</badge>
                                 </base-button>
@@ -532,7 +532,7 @@
                     <!-- pressDate -->
                 </vue-custom-scrollbar>
                 <div class="text-center mt-2">
-                    <base-button icon="fa fa-calendar-check" v-on:click="ProccessSelectedDates()" class="col-4 mx-auto" type="success">Procesar</base-button> 
+                    <base-button icon="fa fa-calendar-check" v-on:click="ProccessSelectedDates()" class="col-auto mx-auto" type="success">Procesar</base-button> 
                 </div>
             </card>
         </modal>
@@ -2426,5 +2426,8 @@
 	.ps__thumb-y{
 		height: 72px !important;
 	}
+    .vue-form-wizard .wizard-btn{
+        min-width: 130px !important;
+    }
 </style>
  
