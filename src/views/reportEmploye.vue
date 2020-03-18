@@ -10,6 +10,7 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white">Reporte del empleado</h1>
                         <a class="btn btn-success text-white cursor-pointer" v-on:click="modals.modal2 = true">Datos avanzados</a>
+                        <a v-on:click="back" class="btn btn-primary text-white cursor-pointer">Regresar</a>
                     </div>
                 </div>
             </div>
@@ -298,6 +299,9 @@ export default {
         this.getAdvancements()
     },
     methods: {
+        back(){
+            window.history.go(-1);
+        },
         getAdvancements(){
             axios.get(endPoint.endpointTarget+'/manicuristas/advancements/'+this.id)
             .then(res => {	

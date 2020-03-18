@@ -11,6 +11,7 @@
                         <h1 class="display-2 text-white">Sección de clientes</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus clientes, aquí podrás registrar, editar y visualizar todos tus clientes.</p>
                         <a @click="modals.modal1 = true , initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un cliente</a>
+                        <a @click="showFilter" class="btn btn-success text-white cursor-pointer">Filtrar</a>
                     </div>
                 </div>
             </div>
@@ -162,7 +163,7 @@
 
         <!-- TABLA DE CLIENTES -->
 
-        <vue-bootstrap4-table :rows="rows" :columns="columns" :classes="classes" :config="config">
+        <vue-bootstrap4-table class="tableClient" :rows="rows" :columns="columns" :classes="classes" :config="config">
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67">Detalles</base-button>
@@ -523,7 +524,10 @@ import EventBus from '../components/EventBus'
                     }, 1500);
                 }
             })
-		}
+        },
+        showFilter(){
+            $('.tableClient .vbt-table-tools').toggle()
+        }
     }
   };
 </script>
@@ -535,9 +539,15 @@ import EventBus from '../components/EventBus'
         cursor: pointer;
     }
     .positionAlert{
-    position: absolute;
-    top:14%;
-    left: 32%;
-    z-index: 100000;
-}
+        position: absolute;
+        top:14%;
+        left: 32%;
+        z-index: 100000;
+    }
+    .tableClient .vbt-table-tools{
+        display:none;
+    }
+    .tableClient .vbt-table-tools .vbt-global-search .form-group{
+        width: 30%;
+    }
 </style>
