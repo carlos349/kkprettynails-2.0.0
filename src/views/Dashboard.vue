@@ -128,10 +128,10 @@
                             </div>
                         </div>
                         <div id="wrapper">
-                          <div id="chart-line">
+                          <div id="seriesWeekTotal">
                             <apexchart type="line" height="160" :options="chartOptionsWeekTotal" :series="seriesWeekTotal"></apexchart>
                           </div>
-                          <div id="chart-line2">
+                          <div id="seriesWeekServices">
                             <apexchart type="line" height="160" :options="chartOptionsWeekServices" :series="seriesWeekServices"></apexchart>
                           </div>
                         </div>

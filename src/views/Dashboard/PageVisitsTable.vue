@@ -10,28 +10,29 @@
         </div>
       </div>
     </div>
-    <vue-custom-scrollbar class="maxHeight">
+    
       <div class="table-responsive">
-        <base-table thead-classes="thead-light" :data="attentions">
-          <template slot="columns">
-            <th>Nombre</th>
-            <th>Contacto</th>
-            <th>Atenciones</th>
-          </template>
-          <template slot-scope="{row}">
-            <th scope="row">
-              {{row.name}}
-            </th>
-            <th scope="row">
-              {{row.contact}}
-            </th>
-            <th scope="row">
-              {{row.attention}}
-            </th>
-          </template>
-        </base-table>
+        <vue-custom-scrollbar class="maxHeight">
+          <base-table thead-classes="thead-light" :data="attentions">
+            <template slot="columns">
+              <th>Nombre</th>
+              <th>Contacto</th>
+              <th>Atenciones</th>
+            </template>
+            <template slot-scope="{row}">
+              <th scope="row">
+                {{row.name}}
+              </th>
+              <th scope="row">
+                {{row.contact}}
+              </th>
+              <th scope="row">
+                {{row.attention}}
+              </th>
+            </template>
+          </base-table>
+        </vue-custom-scrollbar >
       </div>
-    </vue-custom-scrollbar >
   </div>
 </template>
 <script>

@@ -122,6 +122,26 @@
                 </template>
             </card>
         </modal>
+        <modal :show.sync="modals.modal3"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-sm">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                       <h3>Servicios</h3> 
+                    </div>
+                </template>
+                <template>
+                    <div class="m-2 w-100">
+                        <badge class="w-100" type="primary" v-for="data in dataDetail" :key="data.servicio">{{data.servicio}}</badge>
+                    </div>
+                </template>
+            </card>
+        </modal>
         <vue-bootstrap4-table :rows="sales" :columns="columns" :classes="classes" :config="config">
             <template slot="format-total" slot-scope="props">
                 <span>{{formatPrice(props.row.total)}}</span>
@@ -131,6 +151,9 @@
             </template>
             <template slot="format-date" slot-scope="props">
                 <span>{{formatDate(props.row.fecha)}}</span>
+            </template>
+            <template slot="reportSale" slot-scope="props">
+                <base-button icon="ni ni-bullet-list-67" size="sm" type="primary" v-on:click="servicesSale(props.row.servicios)">Servicios</base-button>
             </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
@@ -166,6 +189,7 @@ export default {
             sales: [],
             fecha: '',
             code: '',
+            dataDetail: [],
             nameLender: '',
             totalComission: 0,
             advancement: '',
@@ -173,6 +197,7 @@ export default {
             modals: {
                 modal1: false,
                 modal2: false,
+                modal3: false,
                 message: "",
                 icon: '',
                 type:''
@@ -269,6 +294,15 @@ export default {
                     //     type: "simple",
                     //     placeholder: "Enter country"
                     // },
+                },
+                {
+                    label: "Detalle",
+                    name: "_id",
+                    slot_name:"reportSale",
+                    // filter: {
+                    //     type: "simple",
+                    //     placeholder: "Enter country"
+                    // },
                 }
             ],
             config: {
@@ -301,6 +335,11 @@ export default {
     methods: {
         back(){
             window.history.go(-1);
+        },
+        servicesSale(Data){
+            this.dataDetail = Data
+            this.modals.modal3 = true
+            console.log(Data)
         },
         getAdvancements(){
             axios.get(endPoint.endpointTarget+'/manicuristas/advancements/'+this.id)
@@ -337,6 +376,7 @@ export default {
                         this.modals = {
                             modal1: false,
                             modal2: true,
+                            modal3: true,
                             message: "",
                             icon: '',
                             type:''
@@ -359,6 +399,7 @@ export default {
                         this.modals = {
                             modal1: false,
                             modal2: true,
+                            modal3: true,
                             message: "",
                             icon: '',
                             type:''
