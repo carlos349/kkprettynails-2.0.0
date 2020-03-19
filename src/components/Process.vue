@@ -31,7 +31,7 @@
                     </tr>
                 </thead>
             </table>
-            <vue-custom-scrollbar class="ListaProcesar">
+            <vue-custom-scrollbar ref="scroll" class="ps-container ListaProcesar p-2 ps ps--active-y">
                 <table class="table tableBg" id="myTable">
                     <tbody>
                         <tr v-for="(servicio, index) in services" v-bind:key="servicio._id">
@@ -212,6 +212,7 @@
         <modal :show.sync="modals.modal2"
               body-classes="p-0"
               modal-classes="modal-dialog-centered modal-md">
+              <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
           <card type="secondary" shadow
                 header-classes="bg-white pb-5"
                 body-classes="px-lg-5"
@@ -268,6 +269,7 @@
         <modal :show.sync="modals.modal3"
               body-classes="p-0"
               modal-classes="modal-dialog-centered modal-md">
+              <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
           <card type="secondary" shadow
                 header-classes="bg-white pb-5"
                 body-classes="px-lg-5"
@@ -333,6 +335,7 @@
         <modal :show.sync="modals.modal4"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
@@ -531,6 +534,7 @@ export default {
         this.getClient()
         this.getLenders()
         this.getServices()
+        
     }, 
     methods: {
         changeDate(){
@@ -1220,8 +1224,9 @@ export default {
         margin-bottom: 0;
     }
     .ListaProcesar{
+        overflow:hidden;
 		overflow-x: hidden;
-		overflow-y:scroll;
+		overflow-y:hidden;
 		max-height: 220px;
 		height:170px;
     }
@@ -1242,10 +1247,7 @@ export default {
         color: white !important;
         border-radius: 5px;
     }
-    .maxHeight{
-        max-height: 200px;
-        overflow: scroll;
-    }
+    
     .vbt-table-tools th{
         padding: 5px !important;
         max-height: 20px !important;
@@ -1334,4 +1336,6 @@ export default {
 	right:-30%;
 	z-index:2;
 }
+ 
+
 </style>

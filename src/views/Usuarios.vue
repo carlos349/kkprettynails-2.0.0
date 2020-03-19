@@ -18,12 +18,13 @@
         <modal :show.sync="modals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
                         Datos del usuario
                     </div>
                 </template>
@@ -117,19 +118,19 @@
         </modal>
         <!-- TABLA DE CLIENTES -->
 
-        <vue-bootstrap4-table :rows="users" :columns="columns" :classes="classes" :config="config">
-            <template slot="date-format" slot-scope="props">
+        <vue-bootstrap4-table class="text-left" :rows="users" :columns="columns" :classes="classes" :config="config">
+            <template slot="date-format" class="text-left" slot-scope="props">
                 <p>{{formatDate(props.row.LastAccess)}}</p>
             </template>
             <template slot="status-format" slot-scope="props">
-                <base-dropdown>
-                    <base-button size="sm" v-if="props.row.status == 1" slot="title" type="primary" class="dropdown-toggle">
+                <base-dropdown class="w-100">
+                    <base-button size="sm" v-if="props.row.status == 1" slot="title" type="primary" class="dropdown-toggle w-100">
                         Gerente
                     </base-button>
-                    <base-button size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle">
+                    <base-button size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle w-100">
                         Cajera
                     </base-button>
-                    <base-button size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle">
+                    <base-button size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle w-100">
                         Prestadora
                     </base-button>
                     <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 1, 'no-prestador')">Gerencia</a>

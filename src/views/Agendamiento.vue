@@ -9,12 +9,12 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12">
                         <h1 class="display-2 text-white w-100">Sección de Agenda</h1>
-                        <p class="text-white mt-0 mb-5">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
+                        <p class="text-white mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         <div class="col-12">
                             <div class="row">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
-                                <a @click="dateModals.modal4 = true, initialDate(1)"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
-                                <base-dropdown class="mt-1 p-0 col-lg-4 col-sm-2 col-md-9 col-xs-2 w-100">
+                                <a @click="dateModals.modal4 = true, initialDate(1)" v-if="status != 3"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
+                                <base-dropdown v-if="status != 3" class="mt-1 p-0 col-lg-6  w-75 mt-1 p-0">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
                                     </base-button>
@@ -32,7 +32,7 @@
                                         </base-button>
                                     </li>
                                 </base-dropdown>
-                                <div v-if="filter == true" class="ml-2">
+                                <div v-if="filter == true && status != 3" class="ml-2">
                                     <img class="avatar rounded-circle" :src="img2" />
                                 </div>
                             </div>
@@ -41,9 +41,8 @@
                 </div>
             </div>
         </base-header>
-        <modal :show.sync="modals.modal1"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-xl">
+        <modal :show.sync="modals.modal1" body-classes="p-0" modal-classes=" modal-xl">
+            <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow header-classes="bg-white" body-classes="" class="border-0">
                 <modal :show.sync="modals.modal2" :gradient="modals.type" modal-classes="modal-danger modal-dialog-centered">
                     <div class="py-3 text-center">
@@ -52,10 +51,10 @@
                     </div>
                 </modal>
                   <!-- WIZARD -->
+                
+                <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
-                <form-wizard ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
-
-                    <h2 v-if="registerDate.valid == true" slot="title" v-on:click="maldito()">Datos de agendamiento {{registerDate.date}}</h2>
+                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento {{registerDate.date}}</h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
 
                     <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateWizardOne">
@@ -334,7 +333,7 @@
                         <tab-pane>
                             <span class="text-default" slot="title">
                                 <i class="ni ni-chart-bar-32"></i>
-                                Avazandos
+                                Avanzados
                             </span>
                             <div class="row">
                                 <div v-if="status != 3" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-6 mt-2">
@@ -389,11 +388,12 @@
         <modal :show.sync="dateModals.modal2"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
-                <div class="text-center">
+                <div style="margin-top:-10% !important" class="text-center">
                     <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}} <br> <i class="fa fa-clock"></i> {{dateData.startEdit}} / {{dateData.endEdit}}</base-button>
                 </div>
                 <div class="col-12" v-on:keyup.enter="selectClient()" @click="selectClient()">
@@ -675,6 +675,7 @@
   import vueCustomScrollbar from 'vue-custom-scrollbar'
   import EventBus from '../components/EventBus'
   //Back - End 
+  import jwtDecode from 'jwt-decode'
   import axios from 'axios'
   import endPoint from '../../config-endpoint/endpoint.js'
   import router from '../router'
@@ -844,7 +845,8 @@
         locale: 'es',
         filter: false,
         events: [],
-        lender:'',
+        lender:"",
+        imgLender:endPoint.imgEndpoint+localStorage.imageUser,
         users:[],
         img1:'',
         img2:'',
@@ -898,7 +900,7 @@
 		}
     },
     created(){
-        console.log(this.status)
+        this.validatorLender()
         this.getClients()
         this.getServices()
         this.getUsers()
@@ -906,7 +908,17 @@
         this.getClosed()
     },
     methods: {
+        validatorLender(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)
+            const split = decoded.linkLender.split("/")
+            this.lender = split[0]
+            this.status = decoded.status
+            
+            console.log(this.lender)
+        },
         getDates() {
+            
             if (this.lender != '') {
             this.events = []
             axios.get(endPoint.endpointTarget+'/citas/' + this.lender)
@@ -946,6 +958,7 @@
                         id:res.data[index]._id,
                         process: res.data[index].process
                     }
+                    this.events.push(arrayEvents)
                 }
             })
             }else{
@@ -1364,7 +1377,7 @@
         },
         insertDate(){
             this.blockHour = []
-            console.log(this.registerDate.restTime)
+            
             axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
                 employe: this.registerDate.employeSelect,
                 date: this.registerDate.date,
@@ -1448,7 +1461,6 @@
             })
         },
         newClient(){
-            console.log(this.dateClient.recommender)
             const name = this.dateClient.name.split(' ')
             var firstName, lastName, fullName, ifCheck
             if (name[1]) {
@@ -1569,7 +1581,7 @@
 			axios.get(endPoint.endpointTarget+'/users', config)
 			.then(res => {
                 this.users = res.data
-                console.log(this.users)
+                
                 this.getEmployes()
 			})
 			.catch(err => {
@@ -1663,7 +1675,7 @@
         },
         selectEmployeEdit(name){
             for (let index = 0; index < this.employes.length; index++) {
-                console.log(this.employes[index].nombre + this.dateData.lenderEdit)
+                
             if (this.employes[index].nombre == name) {
                 
                 this.dateData.lenderEdit = this.employes[index].nombre
@@ -1857,13 +1869,13 @@
             this.serviciosSelecionadosDates = services
             this.endClient = client
             this.endEmploye = employe
-            console.log(services)
+            
             axios.get(endPoint.endpointTarget+'/servicios')
             .then(res => {
             for (let index = 0; index < services.length; index++) {
                 
                 for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
-                console.log(services[index].servicio == res.data[indexTwo].nombre)
+                
                 if (services[index].servicio == res.data[indexTwo].nombre) {
                     let valSpan = $(`.${res.data[indexTwo]._id}`).text()
                     let sumaVal = parseFloat(valSpan) + 1
@@ -1947,7 +1959,7 @@
                 this.selectedDates.endDatesId.push(position.id)
                 this.selectedDates.clientIds.push(position.client.split(' / ')[1])
             }
-            console.log(this.selectedDates)
+            
             this.dateModals.modal5 = true
         },
         hundredPorcent(tipo){
@@ -2079,13 +2091,12 @@
             }
         },
         conteoServicioDate(esto, servicio, precio, comision, discount, index){
-            console.log(esto)
+            
             const conteo = $("#"+index+esto).text()
             const conteoTotal = parseFloat(conteo) + 1
             $("#"+index+esto).text(conteoTotal)
             const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'descuento': discount}
             this.servicesFinish.push(servicios)
-            console.log(this.servicesFinish)
         },
         endingDate(){
             const id = this.endId
@@ -2147,7 +2158,7 @@
             }
         },
         selectedAll(value){
-            console.log(value.selected_items)
+            
             var selectArray = {}
             for (let index = 0; index < value.selected_items.length; index++) {
                 selectArray = {
@@ -2418,14 +2429,7 @@
         max-height: 60vh;
         height: auto;
     }
-    .ps__rail-y {
-    display: block !important;
-    background-color: transparent !important;
-	height: 191px !important;
-	}
-	.ps__thumb-y{
-		height: 72px !important;
-	}
+   
     .vue-form-wizard .wizard-btn{
         min-width: 130px !important;
     }
