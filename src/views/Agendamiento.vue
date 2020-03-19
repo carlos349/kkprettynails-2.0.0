@@ -1,5 +1,6 @@
-<template>
-    <div>
+<template >
+    <div ref="aggend" class="agendd">
+        
         <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
             style="min-height: 50px; background-image: url(img/theme/agenda.jpg); background-size: cover; background-position: center top">
             <!-- Mask -->
@@ -900,6 +901,7 @@
 		}
     },
     created(){
+        window.addEventListener('scroll', this.handleScroll);
         this.validatorLender()
         this.getClients()
         this.getServices()
@@ -916,6 +918,9 @@
             this.status = decoded.status
             
             console.log(this.lender)
+        },
+        handleScroll(event){
+            console.log(event)
         },
         getDates() {
             
@@ -2186,6 +2191,12 @@
                 $('#processButton').click()
             }, 500);
         },
+    },
+    computed: {
+        ifSticky: () => {
+            console.log(this.$refs.aggend)
+            return this.$refs.aggend
+        }
     },
     mounted (){
         EventBus.$on('reloadDates', status => {
