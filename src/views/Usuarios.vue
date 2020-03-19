@@ -117,19 +117,19 @@
         </modal>
         <!-- TABLA DE CLIENTES -->
 
-        <vue-bootstrap4-table :rows="users" :columns="columns" :classes="classes" :config="config">
-            <template slot="date-format" slot-scope="props">
+        <vue-bootstrap4-table class="text-left" :rows="users" :columns="columns" :classes="classes" :config="config">
+            <template slot="date-format" class="text-left" slot-scope="props">
                 <p>{{formatDate(props.row.LastAccess)}}</p>
             </template>
             <template slot="status-format" slot-scope="props">
-                <base-dropdown>
-                    <base-button size="sm" v-if="props.row.status == 1" slot="title" type="primary" class="dropdown-toggle">
+                <base-dropdown class="w-100">
+                    <base-button size="sm" v-if="props.row.status == 1" slot="title" type="primary" class="dropdown-toggle w-100">
                         Gerente
                     </base-button>
-                    <base-button size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle">
+                    <base-button size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle w-100">
                         Cajera
                     </base-button>
-                    <base-button size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle">
+                    <base-button size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle w-100">
                         Prestadora
                     </base-button>
                     <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 1, 'no-prestador')">Gerencia</a>

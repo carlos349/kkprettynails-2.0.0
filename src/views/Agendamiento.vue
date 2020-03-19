@@ -9,12 +9,12 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12">
                         <h1 class="display-2 text-white w-100">Sección de Agenda</h1>
-                        <p class="text-white mt-0 mb-5">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
+                        <p class="text-white mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         <div class="col-12">
                             <div class="row">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
                                 <a @click="dateModals.modal4 = true, initialDate(1)"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
-                                <base-dropdown class="mt-1 p-0 col-lg-4 col-sm-2 col-md-9 col-xs-2 w-100">
+                                <base-dropdown class="mt-1 p-0 col-lg-6  w-75 mt-1 p-0">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
                                     </base-button>
@@ -334,7 +334,7 @@
                         <tab-pane>
                             <span class="text-default" slot="title">
                                 <i class="ni ni-chart-bar-32"></i>
-                                Avazandos
+                                Avanzados
                             </span>
                             <div class="row">
                                 <div v-if="status != 3" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-6 mt-2">
@@ -2418,14 +2418,7 @@
         max-height: 60vh;
         height: auto;
     }
-    .ps__rail-y {
-    display: block !important;
-    background-color: transparent !important;
-	height: 191px !important;
-	}
-	.ps__thumb-y{
-		height: 72px !important;
-	}
+   
     .vue-form-wizard .wizard-btn{
         min-width: 130px !important;
     }

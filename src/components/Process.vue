@@ -31,7 +31,7 @@
                     </tr>
                 </thead>
             </table>
-            <vue-custom-scrollbar class="ListaProcesar">
+            <vue-custom-scrollbar ref="scroll" :settings="settings" class="ps-container ListaProcesar p-2 ps ps--active-y">
                 <table class="table tableBg" id="myTable">
                     <tbody>
                         <tr v-for="(servicio, index) in services" v-bind:key="servicio._id">
@@ -421,6 +421,10 @@ export default {
     },
     data(){
         return {
+            settings: {
+                maxScrollbarLength: 60,
+                swicher:true
+            },
             modals: {
                 modal1: false,
                 modal2: false,
@@ -531,6 +535,7 @@ export default {
         this.getClient()
         this.getLenders()
         this.getServices()
+        this.$refs.scroll.ps-scroll-up()
     }, 
     methods: {
         changeDate(){
@@ -1220,8 +1225,9 @@ export default {
         margin-bottom: 0;
     }
     .ListaProcesar{
+        overflow:hidden;
 		overflow-x: hidden;
-		overflow-y:scroll;
+		overflow-y:hidden;
 		max-height: 220px;
 		height:170px;
     }
@@ -1242,10 +1248,7 @@ export default {
         color: white !important;
         border-radius: 5px;
     }
-    .maxHeight{
-        max-height: 200px;
-        overflow: scroll;
-    }
+    
     .vbt-table-tools th{
         padding: 5px !important;
         max-height: 20px !important;
@@ -1334,4 +1337,7 @@ export default {
 	right:-30%;
 	z-index:2;
 }
+ 
+
+
 </style>
