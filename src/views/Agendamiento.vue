@@ -188,8 +188,8 @@
                             <div class="text-muted text-center mt-2 col-md-4 col-sm-12">
                                 Seleccione un empleado y disponibilidad
                             </div>
-                            <base-dropdown class="col-md-6 col-sm-12 mt-1 p-0">
-                                <base-button slot="title" type="default" class="dropdown-toggle col-12">
+                            <base-dropdown class="col-lg-6  w-75 mt-1 p-0">
+                                <base-button slot="title" type="default" class="dropdown-toggle col-12 col-sm-12">
                                      {{registerDate.employeSelect}}
                                 </base-button>
                                 <li v-for="data in employeShow" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmploye(data.name, data.class, data.restTime, data.img)">
@@ -201,7 +201,7 @@
                                     </base-button>
                                 </li>
                             </base-dropdown>
-                            <div class="col-2">
+                            <div class="col-1">
                                 <img v-if="img1 != ''" class="avatar rounded-circle" :src="img1" />
                             </div>
                         </div>
@@ -337,19 +337,19 @@
                                 Avazandos
                             </span>
                             <div class="row">
-                                <div v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-6 mt-2">
+                                <div v-if="status != 3" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-6 mt-2">
                                    <base-button icon="fa fa-edit" class="mx-auto col-12" type="default">Editar</base-button> 
                                 </div>
-                                <div v-if="selectedEvent.process == true && status == 1 || selectedEvent.process == true && status == 2" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-6 mt-2">
+                                <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-6 mt-2">
                                    <base-button icon="fa fa-check-square" class="mx-auto col-12" type="default">Finalizar</base-button> 
                                 </div>
-                                <div v-if="selectedEvent.process == true && status == 1 || selectedEvent.process == true && status == 2" v-on:click="closeDate(selectedEvent.id)" class="col-6 mt-2">
+                                <div v-if="selectedEvent.process == true && status != 3" v-on:click="closeDate(selectedEvent.id)" class="col-6 mt-2">
                                    <base-button icon="fa fa-times" class=" col-12 mx-auto" type="danger">Cerrar</base-button> 
                                 </div>
-                                <div v-on:click="deleteDate(selectedEvent.id)" class="col-6 mt-2">
+                                <div v-if="status != 3" v-on:click="deleteDate(selectedEvent.id)" class="col-6 mt-2">
                                    <base-button icon="fa fa-trash-alt" class=" col-12 mx-auto" type="danger">Borrar</base-button> 
                                 </div>
-                                <div v-if="selectedEvent.process == true && status == 1 || selectedEvent.process == true && status == 2" class="col-12 text-center mt-2">
+                                <div v-if="selectedEvent.process == true && status != 3" class="col-12 text-center mt-2">
                                    <base-button icon="fa fa-calendar-check" class=" col-12 mx-auto" type="success" v-on:click="processDate(selectedEvent.id, 'process')">Procesar</base-button> 
                                 </div>
                             </div>
