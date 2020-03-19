@@ -12,10 +12,10 @@
                         <h1 class="display-2 text-white w-100">Sección de Agenda</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         <div class="col-12">
-                            <div class="row">
+                            <div class="row buttons">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
                                 <a @click="dateModals.modal4 = true, initialDate(1)" v-if="status != 3"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
-                                <base-dropdown v-if="status != 3" class="mt-1 p-0 col-lg-6  w-75 mt-1 p-0">
+                                <base-dropdown v-if="status != 3" class="mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
                                     </base-button>
@@ -920,7 +920,12 @@
             console.log(this.lender)
         },
         handleScroll(event){
-            console.log(event)
+            if (event.target.documentElement.scrollTop > 140){
+                $(".buttons").addClass("fixed-top")
+            }
+            else {
+                $(".buttons").removeClass("fixed-top")
+            }
         },
         getDates() {
             
@@ -2447,5 +2452,18 @@
     .vue-form-wizard .wizard-btn{
         min-width: 130px !important;
     }
+    .fixed-top{
+        margin-left:30%;
+    }
+    .fixed-top .drop{
+        flex: 0 0 30% !important;
+    }
 </style>
- 
+scrollTop: 705
+scrollLeft: 0
+scrollWidth: 1378
+scrollHeight: 2197
+clientTop: 0
+clientLeft: 0
+clientWidth: 1378
+clientHeight: 937
