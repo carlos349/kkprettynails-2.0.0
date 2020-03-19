@@ -117,7 +117,28 @@
             </div>
             <!--End tables-->
         </div>
-
+         <!--Charts-->
+        <div class="container-fluid mt-4">
+            <div class="row">
+                <div class="col-12" >
+                    <card header-classes="bg-transparent">
+                        <div slot="header" class="row align-items-center">
+                            <div class="col-8">
+                                <h5 class="h3 mb-0">Promedio de la semana</h5>
+                            </div>
+                        </div>
+                        <div id="wrapper">
+                          <div id="chart-line">
+                            <apexchart type="line" height="160" :options="chartOptionsWeekTotal" :series="seriesWeekTotal"></apexchart>
+                          </div>
+                          <div id="chart-line2">
+                            <apexchart type="line" height="160" :options="chartOptionsWeekServices" :series="seriesWeekServices"></apexchart>
+                          </div>
+                        </div>
+                    </card>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -148,7 +169,15 @@
       return {
         loaded:false,
         series: [],
+        seriesWeekTotal: [],
+        seriesWeekServices: [],
         chartOptions: {
+          
+        },
+        chartOptionsWeekTotal: {
+          
+        },
+        chartOptionsWeekServices: {
           
         },
         configDatePicker: {
@@ -205,6 +234,7 @@
       this.getVentas();
       this.totales(0);
       this.SalesQuantityChartFunc();
+      this.SalesQuantityChartWeekFunc();
     },
     methods: {
       getClients(){
@@ -280,6 +310,53 @@
           else {
             this.porcentajeTotal.push(true)
           } 
+        })
+      },
+      SalesQuantityChartWeekFunc(){
+        this.loaded = false
+        axios.get(endPoint.endpointTarget+'/ventas/weekMetrics')
+        .then(res => {	
+          const userlist = res.data
+          this.seriesWeekTotal = userlist.seriesTotal
+          this.seriesWeekServices = userlist.seriesServices
+          this.chartOptionsWeekTotal = {
+            chart: {
+              id: 'tw',
+              group: 'social',
+              type: 'line',
+              height: 160
+            },
+            colors: ['#546E7A'],
+            yaxis: {
+              labels: {
+                minWidth: 40
+              }
+            },
+            xaxis: {
+              categories: userlist.categories,
+            },
+          }
+          this.chartOptionsWeekServices = {
+            chart: {
+              id: 'fb',
+              group: 'social',
+              type: 'line',
+              height: 160
+            },
+            colors: ['#008FFB'],
+            yaxis: {
+              labels: {
+                minWidth: 40
+              }
+            },
+            xaxis: {
+              categories: userlist.categories,
+            }
+          }
+          this.loaded = true
+        })
+        .catch(err => {
+          console.error(err)
         })
       },
       SalesQuantityChartFunc(){
