@@ -130,12 +130,13 @@
         <modal :show.sync="modals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-sm">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes=""
                   class="border-0">
                 <template>
-                    <div class="text-center text-muted mb-2">
+                    <div style="margin-top:-20% !important" class="text-center text-muted mb-2">
                         <small>Ingresos manuales</small>
                     </div>
                     <div class="text-left text-muted">

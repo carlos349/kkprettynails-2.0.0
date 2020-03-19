@@ -212,6 +212,7 @@
         <modal :show.sync="modals.modal2"
               body-classes="p-0"
               modal-classes="modal-dialog-centered modal-md">
+              <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
           <card type="secondary" shadow
                 header-classes="bg-white pb-5"
                 body-classes="px-lg-5"
@@ -268,6 +269,7 @@
         <modal :show.sync="modals.modal3"
               body-classes="p-0"
               modal-classes="modal-dialog-centered modal-md">
+              <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
           <card type="secondary" shadow
                 header-classes="bg-white pb-5"
                 body-classes="px-lg-5"
@@ -333,6 +335,7 @@
         <modal :show.sync="modals.modal4"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"

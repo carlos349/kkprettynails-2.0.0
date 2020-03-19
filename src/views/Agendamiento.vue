@@ -41,9 +41,8 @@
                 </div>
             </div>
         </base-header>
-        <modal :show.sync="modals.modal1"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-xl">
+        <modal :show.sync="modals.modal1" body-classes="p-0" modal-classes=" modal-xl">
+            <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow header-classes="bg-white" body-classes="" class="border-0">
                 <modal :show.sync="modals.modal2" :gradient="modals.type" modal-classes="modal-danger modal-dialog-centered">
                     <div class="py-3 text-center">
@@ -52,10 +51,10 @@
                     </div>
                 </modal>
                   <!-- WIZARD -->
+                
+                <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
-                <form-wizard ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
-
-                    <h2 v-if="registerDate.valid == true" slot="title" v-on:click="maldito()">Datos de agendamiento {{registerDate.date}}</h2>
+                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento {{registerDate.date}}</h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
 
                     <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateWizardOne">
@@ -389,11 +388,12 @@
         <modal :show.sync="dateModals.modal2"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
-                <div class="text-center">
+                <div style="margin-top:-10% !important" class="text-center">
                     <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}} <br> <i class="fa fa-clock"></i> {{dateData.startEdit}} / {{dateData.endEdit}}</base-button>
                 </div>
                 <div class="col-12" v-on:keyup.enter="selectClient()" @click="selectClient()">

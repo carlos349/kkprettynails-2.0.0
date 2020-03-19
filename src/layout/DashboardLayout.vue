@@ -31,12 +31,13 @@
      <modal :show.sync="modals.modal1"
               body-classes="p-0"
               modal-classes="modal-dialog-centered modal-lg">
+              <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
           <card type="secondary" shadow
-                header-classes="bg-white pb-5"
-                body-classes="px-lg-5"
+                header-classes="bg-white "
+                body-classes=""
                 class="border-0">
               <template>
-                  <div class="text-muted text-center mb-3">
+                  <div style="margin-top:-10% !important" class="text-muted text-center mb-3">
                       <h1>KKPrettyNails</h1> 
                   </div>
               </template>

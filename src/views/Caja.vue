@@ -48,12 +48,13 @@
         <modal :show.sync="modals.modal2"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
                         <h3>Registrar monto de apertura</h3>
                     </div>
                 </template>
@@ -88,12 +89,13 @@
         <modal :show.sync="modals.modal3"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
                         <h3>Monto de egreso de la caja</h3>
                     </div>
                 </template>
@@ -124,12 +126,13 @@
         <modal :show.sync="modals.modal4"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
                         <h3>Ingrese los montos de las ventas del dia</h3>
                     </div>
                 </template>

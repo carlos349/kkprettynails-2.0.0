@@ -35,12 +35,13 @@
         <modal :show.sync="modals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
                        <h3>Detalle de la venta</h3> 
                     </div>
                 </template>
