@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-on:scroll="scroll()">
         <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
             style="min-height: 50px; background-image: url(img/theme/agenda.jpg); background-size: cover; background-position: center top">
             <!-- Mask -->
@@ -74,7 +74,7 @@
                                 </center>
                                 
                         </div>
-                        <vue-custom-scrollbar class="row p-2" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                        <vue-custom-scrollbar v-on:scroll="scroll()" class="row p-2" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                             <div v-for="(name, index) in services" class="col-md-6 col-sm-12 pl-1 mt-2">
                                 <base-button v-on:click="pushService(name.prestadores,name.nombre,name.tiempo, name.comision, name.precio,name.descuento,index)" class="col-12 "  type="default">
                                     <badge class="float-left text-white col-md-2 col-sm-12" pill type="default">
@@ -900,6 +900,7 @@
 		}
     },
     created(){
+        
         this.validatorLender()
         this.getClients()
         this.getServices()
@@ -2186,6 +2187,9 @@
                 $('#processButton').click()
             }, 500);
         },
+        scroll(){
+            console.log("qloq chiamo")
+        }
     },
     mounted (){
         EventBus.$on('reloadDates', status => {

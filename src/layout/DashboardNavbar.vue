@@ -1,5 +1,5 @@
 <template>
-    <base-nav class="navbar-top navbar-dark"
+    <base-nav class="navbar-top sticky-top navbar-dark"
               id="navbar-main"
               :show-toggle-button="false"
               expand>
