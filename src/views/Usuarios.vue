@@ -387,7 +387,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
         },
         deleteClient(id, admin){
 			this.$swal({
-				title: '¿Está seguro de borrar usuario?',
+				title: '\n¿Está seguro de borrar usuario?',
 				text: 'No puedes revertir esta acción',
 				type: 'warning',
 				showCancelButton: true,

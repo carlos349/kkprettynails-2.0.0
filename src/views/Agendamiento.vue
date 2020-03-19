@@ -909,6 +909,9 @@
         this.getDates()
         this.getClosed()
     },
+    destroyed () {
+        window.removeEventListener('scroll', this.handleScroll);
+    },
     methods: {
         validatorLender(){
             const token = localStorage.userToken

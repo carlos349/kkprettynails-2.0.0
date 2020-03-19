@@ -11,7 +11,7 @@
         <sidebar-item v-if="auth == 1" :link="{name: 'Servicios', icon: 'ni ni-bullet-list-67 text-orange', path: '/Servicios'}"/>
         <sidebar-item v-if="auth == 1" :link="{name: 'Empleados', icon: 'ni ni-badge text-info', path: '/Empleados'}"/>
         <sidebar-item v-if="auth == 1" :link="{name: 'Clientes', icon: 'ni ni-circle-08 text-default', path: '/Clientes'}"/>
-        <sidebar-item v-if="auth == 1" :link="{name: 'Inventario', icon: 'ni ni-box-2 text-orange', path: '/Inventario'}"/>
+        <!-- <sidebar-item v-if="auth == 1" :link="{name: 'Inventario', icon: 'ni ni-box-2 text-orange', path: '/Inventario'}"/> -->
         <sidebar-item v-if="auth == 1" :link="{name: 'Gastos', icon: 'ni ni-tag text-green', path: '/Gastos'}"/>
         <sidebar-item v-if="auth == 1 || auth == 2 || auth == 3" :link="{name: 'Agendamiento', icon: 'ni ni-calendar-grid-58 text-blue', path: '/Agendamiento'}"/>
         <sidebar-item v-if="auth == 1" :link="{name: 'Caja', icon: 'ni ni-archive-2 text-green', path: '/Caja'}"/>
