@@ -226,7 +226,7 @@
 
                                 <base-button v-else size="sm" disabled class="col-12" type="secondary">
                                     <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                    <span>No disponible</span>
+                                    <span>No seleccionable</span>
                                 </base-button>
                             </div>
                         </vue-custom-scrollbar>
