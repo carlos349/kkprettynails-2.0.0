@@ -193,7 +193,7 @@
                                 </base-button>
                                 <li v-for="data in employeShow" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmploye(data.name, data.class, data.restTime, data.img)">
                                     <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}} {{data.restTime}}</h4>
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
                                     </base-button>
                                     <base-button v-else class="dropdown-item" href="#">
                                         <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
@@ -324,6 +324,19 @@
                                 <span >Empleado(s):</span>
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.empleada)}}</badge>
                             </base-button>
+
+                            <base-button class="mt-1 col-12" size="sm" type="secondary">
+                                <span class="text-success" v-if="dateData.discount == true" >
+                                    Lleva descuento 
+                                    <i class="text-success p-1 ni ni-check-bold ni-1x aling-center"> </i>
+                                </span>
+                                <span class="text-danger" v-else >
+                                    No lleva descuento 
+                                    <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
+                                </span>
+                                
+                            </base-button>
+
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span >Entrada:</span>
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
