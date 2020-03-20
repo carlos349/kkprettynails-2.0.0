@@ -277,19 +277,22 @@
 
             </card>
         </modal>
-        <vue-cal
-            class=""
-            :locale="locale"
-            :events="events"
-            :time-from="600 "
-            :time-to="1275"
-            :timeStep="15"
-            default-view="month"
-            :disable-views="['years', 'year', 'week']" 
-            events-count-on-month-view
-            :on-event-click="onEventClick"
-            :overlapsPerTimeStep="true">
-        </vue-cal>
+        <vue-custom-scrollbar class="calen" style="height:60vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
+            <vue-cal
+                class="calen"
+                :locale="locale"
+                :events="events"
+                :time-from="600 "
+                :time-to="1275"
+                :timeStep="15"
+                default-view="month"
+                :disable-views="['years', 'year', 'week']" 
+                events-count-on-month-view
+                :on-event-click="onEventClick"
+                :overlapsPerTimeStep="true">
+            </vue-cal>
+        </vue-custom-scrollbar>
+        
         <modal :show.sync="dateModals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
@@ -2460,12 +2463,9 @@
     .fixed-top .drop{
         flex: 0 0 30% !important;
     }
+    .calen::-webkit-scrollbar {
+        width: 8px !important;     /* Tamaño del scroll en vertical */
+        height: 8px !important;    /* Tamaño del scroll en horizontal */
+        display: none !important;  /* Ocultar scroll */
+    }
 </style>
-scrollTop: 705
-scrollLeft: 0
-scrollWidth: 1378
-scrollHeight: 2197
-clientTop: 0
-clientLeft: 0
-clientWidth: 1378
-clientHeight: 937
