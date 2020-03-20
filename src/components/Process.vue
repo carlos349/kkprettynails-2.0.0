@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-6">
-            <div>
+            <div v-on:click="chooseClient">
               <vue-single-select
                 v-model="clientSelect"
                 :options="clientNames"
@@ -250,17 +250,19 @@
                                     v-model="registerClient.contactTwo"
                                     addon-left-icon="fa fa-address-card">
                         </base-input>
-                        <base-checkbox v-model="registerClient.discount" class="mb-3">
+                        <base-checkbox v-if="!ifEdit" v-model="registerClient.discount" class="mb-3">
                             Descuento de nuevo cliente
                         </base-checkbox>
-                        <vue-single-select
+                        <vue-single-select 
+                            v-if="!ifEdit"
                             v-model="registerClient.recommender"
                             :options="clientNames"
                             placeholder="Recomendador"
                         ></vue-single-select>
                         <div class="text-center">
                             <base-button type="default" v-if="!registerClient.valid" disabled class="my-4">Registrar</base-button>
-                            <base-button type="default" v-on:click="registerClients()" v-else class="my-4">Registrar</base-button>
+                            <base-button type="default" v-on:click="registerClients()" v-if="registerClient.valid && !ifEdit" class="my-4">Registrar</base-button>
+                            <base-button type="default" v-on:click="editClient()" v-if="registerClient.valid && ifEdit" class="my-4">Editar</base-button>
                         </div> 
                     </form>
               </template>
@@ -373,17 +375,18 @@
             </template>
             </card>
         </modal>
-        <div v-bind:style="{  'height': '7vh', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
+        <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
 			<div class="row">
 				<div class="col-2 pt-1">
-					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="user-plus" />
+                    <font-awesome-icon v-if="ifEdit" class="icons" style="color:#172b4d;font-size:1em" icon="user-edit" />
+					<font-awesome-icon v-else class="icons" style="color:#172b4d;font-size:1em" icon="user-plus" />
 				</div>
 				<div v-if="newClient.valid" class="col-10 pl-4 pt-1">
 					<b style="font-size:14px;">{{newClient.text}}</b>	
 				</div>
 			</div>	
         </div>
-		<div v-bind:style="{  'height': '7vh', 'z-index' : '1000' }" v-on:click="modals.modal3 = true" class="p-2 menuVerServi navSServi" v-on:mouseenter="mouseOverVenta(newService)" v-on:mouseleave="mouseLeaveVenta(newService)">
+		<div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal3 = true" class="p-2 menuVerServi navSServi" v-on:mouseenter="mouseOverVenta(newService)" v-on:mouseleave="mouseLeaveVenta(newService)">
 			<div class="row">
 				<div class="col-2 pt-1">
 					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="folder-plus" />
@@ -393,7 +396,7 @@
 				</div>
 			</div>
         </div>
-		<div v-bind:style="{  'height': '7vh', 'z-index' : '1000' }" v-on:click="initialState()" class="p-2 menuVerRedo navSRedo" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
+		<div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="initialState()" class="p-2 menuVerRedo navSRedo" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
 			<div class="row">
 				<div class="col-2 pt-1">
 					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
@@ -527,14 +530,15 @@ export default {
                 valid: false,
                 text: 'Reiniciar datos'
             },
-            inspectorDate: false
+            ifEdit: false, 
+            inspectorDate: false,
+            editClientId: ''
         }
     },
     created(){
         this.getClient()
         this.getLenders()
         this.getServices()
-        
     }, 
     methods: {
         changeDate(){
@@ -600,7 +604,63 @@ export default {
                     this.cashFunds.valid = false
 				}
 			})
-		},
+        },
+        editClient(){
+            axios.put(endPoint.endpointTarget+'/clients/'+this.editClientId, {
+                nombreClienteEditar: this.registerClient.name,
+                identidadClienteEditar: this.registerClient.id,
+                correoClienteEditar: this.registerClient.contactOne,
+                instagramClienteEditar: this.registerClient.contactTwo,
+            })
+            .then(res => {
+                console.log(res)
+                if (res.data.status == 'Servicio actualizado') {
+                    this.modals = {
+                        modal1: true,
+                        message: "el cliente editó con exito",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
+                            message: "",
+                            icon: '',
+                            type:''
+                        }
+                        this.clientSelect = this.registerClient.name+ ' / '+this.registerClient.id
+                        this.registerClient.name = ''
+                        this.registerClient.id = ''
+                        this.registerClient.contactOne = ''
+                        this.registerClient.contactTwo = ''
+                        this.ifEdit = false
+                        this.newClient.text = "Nuevo cliente"
+                        this.getClient()
+                    }, 1500);
+                }else{
+                    this.modals = {
+                        modal1: true,
+                        message: "El cliente ya existe",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                }
+            })
+        },
         registerClients(){
             var ifCheck = this.registerClient.discount ? 0 : 1
             axios.post(endPoint.endpointTarget+'/clients', {
@@ -958,15 +1018,47 @@ export default {
 			
         },
         chooseLender(){
-			axios.get(endPoint.endpointTarget+'/manicuristas/justone/' + this.lenderSelect)
-			.then(res => {
-				this.docLender = res.data.documento
-				this.nombreManicurista = this.lenderSelect
-				console.log(this.docLender)
-			})
-			.catch(err => {
-				console.log(err)
-			})
+            if (this.lenderSelect != '') {
+                axios.get(endPoint.endpointTarget+'/manicuristas/justone/' + this.lenderSelect)
+                .then(res => {
+                    this.docLender = res.data.documento
+                    this.nombreManicurista = this.lenderSelect
+                    
+                    console.log(res.data)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }
+        },
+        chooseClient(){
+            if (this.clientSelect) {
+                const split = this.clientSelect.split(' / ')
+                axios.get(endPoint.endpointTarget+'/clients/dataDiscount/' + split[1])
+                .then(res => {
+                    this.newClient.text = "Editar cliente"
+                    this.ifEdit = true
+                    console.log(res.data)
+                    this.editClientId = res.data[0]._id
+                    this.registerClient.name = res.data[0].nombre
+                    this.registerClient.id = res.data[0].identidad
+                    this.registerClient.contactOne = res.data[0].correoCliente
+                    this.registerClient.contactTwo = res.data[0].instagramCliente
+                    this.validRegister(2)
+                    
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                this.newClient.text = "Nuevo cliente"
+                this.ifEdit = false
+                this.registerClient.name = ""
+                this.registerClient.id = ""
+                this.registerClient.contactOne = ""
+                this.registerClient.contactTwo = ""
+                this.validRegister(2)
+            }
         },
         getDataToDate(id){
 			this.servicesProcess = []
@@ -1031,7 +1123,7 @@ export default {
 			this.payCredit = 0
 			this.payTransfer = 0
 			this.lenderSelect = ''
-			this.clientSelect = ''
+			this.clientSelect = null
 			this.resto  = 0
 			this.subTotal = 0
 			this.inspector = false
@@ -1061,7 +1153,7 @@ export default {
             
 			const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
             console.log(this.docLender)
-			if (this.clientSelect != '' && this.lenderSelect != '') {
+			if (this.clientSelect && this.lenderSelect != '') {
 				if (this.totalSinFormato == totalFormadePago ) {
 					axios.post(endPoint.endpointTarget+'/ventas/procesar', {
 						cliente: this.clientSelect,
@@ -1283,7 +1375,7 @@ export default {
         padding-bottom: 5px;
     } 
     .menuVerVentas{
-	transition: all 0.5s ease-out;
+	transition: all 0.3s ease-out;
 	overflow: hidden;
 }
 .navSVenta{
@@ -1296,7 +1388,7 @@ export default {
 	border-radius: 0 5px 5px 0;
 }
 .menuVerServi{
-	transition: all 0.5s ease-out;
+	transition: all 0.3s ease-out;
 	overflow: hidden;
 }
 .navSServi{
@@ -1309,7 +1401,7 @@ export default {
 	border-radius: 0 5px 5px 0;
 }
 .menuVerRedo{
-	transition: all 0.5s ease-out;
+	transition: all 0.3s ease-out;
 	overflow: hidden;
 }
 .navSRedo{

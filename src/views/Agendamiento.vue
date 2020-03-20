@@ -1,6 +1,5 @@
 <template >
-    <div ref="aggend" class="agendd">
-        
+    <div>
         <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
             style="min-height: 50px; background-image: url(img/theme/agenda.jpg); background-size: cover; background-position: center top">
             <!-- Mask -->
