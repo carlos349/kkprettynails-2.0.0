@@ -185,7 +185,7 @@
                 <base-dropdown class="nav-link pr-0">
                     <div class="media align-items-center" slot="title">
                 <span class="avatar avatar-sm rounded-circle">
-                  <img alt="Image placeholder" :src="imgUser">
+                  <img alt="Image placeholder" style="width:30px;height:30px;" :src="imgUser">
                 </span>
                         <div style="cursor:pointer" class="media-body ml-2 d-none d-lg-block">
                             <span class="mb-0 text-sm  font-weight-bold">{{nombre}}</span>
