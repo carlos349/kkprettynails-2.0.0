@@ -25,7 +25,10 @@
             </template>
             <template slot="Administrar" slot-scope="props">
                 <b>
-                    <base-button size="sm" type="default" icon="ni ni-fat-remove" v-on:click="dataReport(props.row._id)">Reporte</base-button>
+                    <center>
+                       <base-button size="sm" type="default" icon="ni ni-fat-remove" v-on:click="dataReport(props.row._id)">Reporte</base-button> 
+                    </center>
+                    
                 </b>
             </template>
             <template slot="pagination-info" slot-scope="props">

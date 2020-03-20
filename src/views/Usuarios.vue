@@ -140,7 +140,10 @@
             </template>
             <template slot="Administrar" slot-scope="props">
                 <b>
-                    <base-button size="sm" v-on:click="deleteClient(props.row._id, props.row.status)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                    <center>
+                        <base-button size="sm" v-on:click="deleteClient(props.row._id, props.row.status)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                    </center>
+                    
                 </b>
             </template>
             <template slot="pagination-info" slot-scope="props">

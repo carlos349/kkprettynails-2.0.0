@@ -115,8 +115,11 @@
                 {{formatPrice(props.row.total)}}
             </template>
             <template slot="reportSale" slot-scope="props">
-                <base-button v-if="props.row.status" icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataReport(props.row._id)">Detalle</base-button>
-                <base-button v-else icon="ni ni-fat-add" size="sm" type="danger" v-on:click="dataReport(props.row._id)">Detalle</base-button>
+                <center>
+                    <base-button v-if="props.row.status" icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataReport(props.row._id)">Detalle</base-button>
+                    <base-button v-else icon="ni ni-fat-add" size="sm" type="danger" v-on:click="dataReport(props.row._id)">Detalle</base-button>
+                </center>
+               
             </template>
         </vue-bootstrap4-table>
         <modal :show.sync="modals.modal2"

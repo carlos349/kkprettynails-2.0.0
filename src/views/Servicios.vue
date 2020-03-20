@@ -66,7 +66,7 @@
                             <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
                         </select>
                         <div class="row mx-auto mt-2">
-                            <h3 class="w-100 text-center">¿Se realizara un diseño?</h3>
+                            <h3 class="w-100 text-center">¿Aplica descuento?</h3>
                             <base-radio name="true" value="true" inline class="mb-3 mx-auto" v-model="addDiscount"> <b>Si</b> </base-radio>
                             <base-radio name="false" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
                         </div>
@@ -128,7 +128,7 @@
                             <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
                         </select>
                         <div class="row mx-auto mt-2">
-                            <h3 class="w-100 text-center">¿Se realizara un diseño?</h3>
+                            <h3 class="w-100 text-center">¿Aplica descuento?</h3>
                             <base-radio name="true" value="true" inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
                             <base-radio name="false" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>No</b> </base-radio> 
                         </div>
@@ -148,10 +148,13 @@
             </card>
         </modal>
         <vue-bootstrap4-table :rows="services" :columns="columns" :classes="classes" :config="config">
-            <template slot="actionButtons" slot-scope="props">
-                <base-button icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio)">Editar</base-button>
-                <base-button v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)">Activo</base-button>
-                <base-button v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)">Inactivo</base-button>
+            <template slot="actionButtons" class="mx-auto" slot-scope="props">
+                <center>
+                   <base-button icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio)">Editar</base-button>
+                    <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)">Activo</base-button>
+                    <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)">Inactivo</base-button> 
+                </center>
+                
             </template>
             <template slot="price" slot-scope="props">
                 {{formatPrice(props.row.precio)}}

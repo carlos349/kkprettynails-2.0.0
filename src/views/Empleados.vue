@@ -105,9 +105,12 @@
         <vue-bootstrap4-table :rows="employes" :columns="columns" :classes="classes" :config="config">
             <template slot="Administrar" slot-scope="props">
                 <b>
-                    <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.documento, props.row.restTime, props.row.restDay, props.row._id,props.row.comision)" icon="ni ni-bullet-list-67">Detalles</base-button>
-                    <base-button size="sm" v-on:click="reportEmploye(props.row._id)" type="primary" icon="ni ni-align-center">Reporte</base-button>
-                    <base-button size="sm" v-on:click="deleteEmploye(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                    <center>
+                        <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.documento, props.row.restTime, props.row.restDay, props.row._id,props.row.comision)" icon="ni ni-bullet-list-67">Detalles</base-button>
+                        <base-button size="sm" v-on:click="reportEmploye(props.row._id)" type="primary" icon="ni ni-align-center">Reporte</base-button>
+                        <base-button size="sm" v-on:click="deleteEmploye(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                    </center>
+                    
                 </b>
             </template>
             <template slot="total" slot-scope="props">
