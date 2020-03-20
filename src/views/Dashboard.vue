@@ -31,9 +31,9 @@
                     </stats-card>
                 </div>
                 <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Ganancias"
+                    <stats-card title="Total de comisiones"
                                 type="gradient-green"
-                                :sub-title="'$ '+gananciaNeta"
+                                :sub-title="'$ '+comisionTotal"
                                 icon="ni ni-money-coins"
                                 class="mb-4 mb-xl-0"
                     >
@@ -215,7 +215,8 @@
         redBarChart: {
           chartData: {}
         },
-        clients:[]
+        clients:[],
+        comisionTotal:0
       };
     },
     beforeCreate(){
@@ -464,6 +465,14 @@
       formatDate(date) {
           let dateFormat = new Date(date)
           return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
+      },
+      getEmployes(){
+        axios.get(endPoint.endpointTarget+'/manicuristas')
+        .then(res => {
+          for (let i = 0; i < res.data.length; i++) {
+            this.comisionTotal = this.comisionTotal + res.data[i].comision 
+          }      
+        })
       },
     },
     mounted() {
