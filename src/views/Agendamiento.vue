@@ -54,7 +54,7 @@
                 
                 <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
-                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento {{registerDate.date}}</h2>
+                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
 
                     <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateWizardOne">
@@ -88,8 +88,8 @@
                         </vue-custom-scrollbar>
                         <div class="row mx-auto mt-2">
                             <h3>¿Se realizara un diseño?</h3> 
-                            <base-radio name="si" value="true" inline class="mb-3 ml-5" v-model="registerDate.design">Si</base-radio>
-                            <base-radio name="no" value="false" inline class="mb-3 ml-5" v-model="registerDate.design">No</base-radio> 
+                            <base-radio name="si" value="true" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>Si</b> </base-radio>
+                            <base-radio name="no" value="false" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>No</b> </base-radio> 
                         </div>
                     </tab-content>
 
@@ -123,9 +123,9 @@
                                 Datos del cliente
                             </div>
                         </template>
-                         <div class="row">
-                            <div class="col-md-6">
-                                <base-input v-on:keyup="validRegister()" placeholder="Nombre del cliente" v-model="dateClient.name" addon-left-icon="ni ni-circle-08"></base-input>
+                         <div  class="row">
+                            <div style="color:black !important" class="col-md-6">
+                                <base-input v-on:keyup="validRegister()" class="text-white" placeholder="Nombre del cliente" v-model="dateClient.name" addon-left-icon="ni ni-circle-08"></base-input>
                             </div>
                             <div class="col-md-6">
                                 <base-input v-on:keyup="validRegister()" placeholder="Identidad" v-model="dateClient.id" addon-left-icon="ni ni-key-25"></base-input>
@@ -238,7 +238,7 @@
                                 <vue-custom-scrollbar class="col-12" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
                                     <base-button v-for="data in registerDate.servicesShow" class="col-10 mt-1" type="secondary">
                                         <span class="float-left">{{data}}</span>
-                                        <badge class="text-default float-right" type="success">4</badge>
+                                        <!-- <badge class="text-default float-right" type="success">4</badge> -->
                                     </base-button>
                                 </vue-custom-scrollbar>
                             </div>
@@ -277,7 +277,7 @@
 
             </card>
         </modal>
-        <vue-custom-scrollbar class="calen" style="height:60vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
+        <vue-custom-scrollbar class="calen" style="height:63vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
             <vue-cal
                 class="calen"
                 :locale="locale"
@@ -2467,5 +2467,8 @@
         width: 8px !important;     /* Tamaño del scroll en vertical */
         height: 8px !important;    /* Tamaño del scroll en horizontal */
         display: none !important;  /* Ocultar scroll */
+    }
+    .form-control{
+        color: #2F2F2F !important;
     }
 </style>
