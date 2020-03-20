@@ -1126,7 +1126,9 @@ export default {
 			this.clientSelect = null
 			this.resto  = 0
 			this.subTotal = 0
-			this.inspector = false
+            this.inspector = false
+            this.ifEdit = false
+            this.newClient.text = "Nuevo cliente"
 		},
         processSale() {
 			if (this.payCash == '') {
