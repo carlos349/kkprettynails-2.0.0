@@ -2471,4 +2471,5 @@
     .form-control{
         color: #2F2F2F !important;
     }
+    
 </style>

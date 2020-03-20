@@ -559,4 +559,5 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
     .cursor-pointer{
         cursor: pointer;
     }
+   
 </style>

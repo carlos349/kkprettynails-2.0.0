@@ -102,5 +102,8 @@
       max-width: 400px !important;
   }
 }
+ table  .text-center{
+        text-align: left !important;
+    }
 
 </style>
