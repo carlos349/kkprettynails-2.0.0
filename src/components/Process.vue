@@ -375,7 +375,7 @@
             </template>
             </card>
         </modal>
-        <div v-bind:style="{  'height': '7vh', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
+        <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
 			<div class="row">
 				<div class="col-2 pt-1">
                     <font-awesome-icon v-if="ifEdit" class="icons" style="color:#172b4d;font-size:1em" icon="user-edit" />
@@ -386,7 +386,7 @@
 				</div>
 			</div>	
         </div>
-		<div v-bind:style="{  'height': '7vh', 'z-index' : '1000' }" v-on:click="modals.modal3 = true" class="p-2 menuVerServi navSServi" v-on:mouseenter="mouseOverVenta(newService)" v-on:mouseleave="mouseLeaveVenta(newService)">
+		<div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal3 = true" class="p-2 menuVerServi navSServi" v-on:mouseenter="mouseOverVenta(newService)" v-on:mouseleave="mouseLeaveVenta(newService)">
 			<div class="row">
 				<div class="col-2 pt-1">
 					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="folder-plus" />
@@ -396,7 +396,7 @@
 				</div>
 			</div>
         </div>
-		<div v-bind:style="{  'height': '7vh', 'z-index' : '1000' }" v-on:click="initialState()" class="p-2 menuVerRedo navSRedo" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
+		<div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="initialState()" class="p-2 menuVerRedo navSRedo" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
 			<div class="row">
 				<div class="col-2 pt-1">
 					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
@@ -1375,7 +1375,7 @@ export default {
         padding-bottom: 5px;
     } 
     .menuVerVentas{
-	transition: all 0.5s ease-out;
+	transition: all 0.3s ease-out;
 	overflow: hidden;
 }
 .navSVenta{
@@ -1388,7 +1388,7 @@ export default {
 	border-radius: 0 5px 5px 0;
 }
 .menuVerServi{
-	transition: all 0.5s ease-out;
+	transition: all 0.3s ease-out;
 	overflow: hidden;
 }
 .navSServi{
@@ -1401,7 +1401,7 @@ export default {
 	border-radius: 0 5px 5px 0;
 }
 .menuVerRedo{
-	transition: all 0.5s ease-out;
+	transition: all 0.3s ease-out;
 	overflow: hidden;
 }
 .navSRedo{
