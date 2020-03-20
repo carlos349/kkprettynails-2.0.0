@@ -219,7 +219,7 @@
                 class="border-0">
               <template>
                   <div class="text-muted text-center mb-3">
-                      <h1>Nuevo cliente</h1> 
+                      <h1>Datos del cliente</h1> 
                   </div>
               </template>
               <template>
@@ -1126,7 +1126,12 @@ export default {
 			this.clientSelect = null
 			this.resto  = 0
 			this.subTotal = 0
-			this.inspector = false
+            this.inspector = false
+            this.ifEdit = false
+            this.newClient.text = "Nuevo cliente"
+            this.registerClient.name = ''
+            this.registerClient.id = ''
+            this.validRegister()
 		},
         processSale() {
 			if (this.payCash == '') {
