@@ -105,5 +105,8 @@
  table  .text-center{
         text-align: left !important;
     }
+    .form-control{
+        color: #2F2F2F !important;
+    }
 
 </style>
