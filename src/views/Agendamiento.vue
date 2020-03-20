@@ -900,7 +900,7 @@
 		}
     },
     created(){
-        window.addEventListener('scroll', this.handleScroll);
+        
         this.validatorLender()
         this.getClients()
         this.getServices()
