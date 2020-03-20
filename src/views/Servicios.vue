@@ -65,9 +65,11 @@
                             <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
                             <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
                         </select>
-                        <base-checkbox class="mb-3" v-model="addDiscount">
-                            ¿Aplica descuento?
-                        </base-checkbox>
+                        <div class="row mx-auto mt-2">
+                            <h3 class="w-100 text-center">¿Se realizara un diseño?</h3>
+                            <base-radio name="true" value="true" inline class="mb-3 mx-auto" v-model="addDiscount"> <b>Si</b> </base-radio>
+                            <base-radio name="false" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
+                        </div>
                         <vue-custom-scrollbar class="maxHeight">
                             <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
                             </vue-bootstrap4-table>
@@ -125,9 +127,11 @@
                             <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
                             <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
                         </select>
-                        <base-checkbox class="mb-3" v-model="addDiscountEdit">
-                            ¿Aplica descuento?
-                        </base-checkbox>
+                        <div class="row mx-auto mt-2">
+                            <h3 class="w-100 text-center">¿Se realizara un diseño?</h3>
+                            <base-radio name="true" value="true" inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
+                            <base-radio name="false" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>No</b> </base-radio> 
+                        </div>
                         <vue-custom-scrollbar ref="table" class="maxHeight">
                             <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
                                 <template slot="checkbox_rows" slot-scope="props" >
