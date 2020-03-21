@@ -115,12 +115,17 @@
             </template>
             <template slot="total" slot-scope="props">
                 <b>
-                   {{formatPrice(props.row.comision - props.row.advancement)}}
+                   {{formatPrice(props.row.comision - props.row.advancement + props.row.bonus)}}
                 </b>
             </template>
             <template slot="comision" slot-scope="props">
                 <b>
                    {{formatPrice(props.row.comision)}}
+                </b>
+            </template>
+            <template slot="bono" slot-scope="props">
+                <b>
+                   {{formatPrice(props.row.bonus)}}
                 </b>
             </template>
             <template slot="advancement" slot-scope="props">
@@ -203,6 +208,16 @@ import EventBus from '../components/EventBus'
                 slot_name : "comision"
             },
             {
+                label: "Bonos",
+                name: "bonus",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter first name"
+                // },
+                sort: true,
+                slot_name : "bono"
+            },
+            {
                 label: "Avances",
                 name: "advancement",
                 sort: true,
@@ -280,7 +295,7 @@ import EventBus from '../components/EventBus'
 				nombreManicurista: nombre,
 				documentoManicurista:documento,
 				restTime: restTime,
-				restDay: this.registerEmploye.dayFree
+                restDay: this.registerEmploye.dayFree
 			})
 			.then(res => {
 				if(res.data.status == 'Manicurista ingresada'){

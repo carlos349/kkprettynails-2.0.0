@@ -614,7 +614,6 @@ export default {
                 instagramClienteEditar: this.registerClient.contactTwo,
             })
             .then(res => {
-                console.log(res)
                 if (res.data.status == 'Servicio actualizado') {
                     this.modals = {
                         modal1: true,
@@ -1024,8 +1023,6 @@ export default {
                 .then(res => {
                     this.docLender = res.data.documento
                     this.nombreManicurista = this.lenderSelect
-                    
-                    console.log(res.data)
                 })
                 .catch(err => {
                     console.log(err)
@@ -1046,7 +1043,6 @@ export default {
                 .then(res => {
                     this.newClient.text = "Editar cliente"
                     this.ifEdit = true
-                    console.log(res.data)
                     this.editClientId = res.data[0]._id
                     this.registerClient.name = res.data[0].nombre
                     this.registerClient.id = res.data[0].identidad
@@ -1067,12 +1063,10 @@ export default {
                 this.registerClient.contactTwo = ""
                 this.validRegister(2)
             }
-            console.log(this.clientSelect)
             if (this.clientSelect != null && this.lenderSelect != null) {
                 this.validator = false
             }
             else{
-                console.log("no")
                 this.validator = true
             }
         },
@@ -1173,7 +1167,6 @@ export default {
             }
             
 			const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
-            console.log(this.docLender)
 			if (this.clientSelect && this.lenderSelect != '') {
 				if (this.totalSinFormato == totalFormadePago ) {
 					axios.post(endPoint.endpointTarget+'/ventas/procesar', {
