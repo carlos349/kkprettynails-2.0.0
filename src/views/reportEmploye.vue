@@ -59,12 +59,16 @@
                                         <badge  style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(advancement)}}</badge>
                                     </base-button>
                                     <base-button type="secondary" class="w-100 mb-1">
+                                        <span  class="float-left">Bonos</span>
+                                        <badge  style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(lenderBonus)}}</badge>
+                                    </base-button>
+                                    <base-button type="secondary" class="w-100 mb-1">
                                         <span class="float-left">Comisión total</span>
                                         <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalComission)}}</badge>
                                     </base-button>
                                     <base-button type="secondary" class="w-100 mb-1">
-                                        <span class="float-left">Total de ventas</span>
-                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalSale)}}</badge>
+                                        <span class="float-left">Total</span>
+                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalComission + lenderBonus - advancement)}}</badge>
                                     </base-button>
                                 </div>
                             </tab-pane>
@@ -194,6 +198,7 @@ export default {
             dataDetail: [],
             nameLender: '',
             totalComission: 0,
+            lenderBonus:0,
             advancement: '',
             totalSale: 0,
             modals: {
@@ -430,6 +435,8 @@ export default {
                 this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
                 this.code = resData.data._id
                 this.nameLender = resData.data.nombre
+                this.totalComission = resData.data.comision
+                this.lenderBonus = resData.data.bonus
                 this.advancement = resData.data.advancement
                 const identification = resData.data.nombre+':'+resData.data.documento
                 axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+identification)
@@ -442,7 +449,7 @@ export default {
                         comissions = parseFloat(res.data[index].comision) + parseFloat(comissions)
                     }
                     this.totalSale = totals
-                    this.totalComission = comissions
+                    
                     console.log(this.fecha)
                     console.log(this.code)
                     console.log(this.nameLender)
