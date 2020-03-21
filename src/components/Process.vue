@@ -36,7 +36,7 @@
                     <tbody>
                         <tr v-for="(servicio, index) in services" v-bind:key="servicio._id">
                             <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
-                                <base-button size="sm"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento), countServices[index].count++">
+                                <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento), countServices[index].count++">
                                     <span class="float-left">{{servicio.nombre}}</span>
                                     <badge class="badgeClass float-right" type="primary" :id="servicio._id">{{countServices[index].count}}</badge>
                                 </base-button>
@@ -195,7 +195,7 @@
                     <h1 class="pt-2">Total: {{total}}</h1>
                 </div>
                 <div class="col-6">
-                    <base-button size="lg" class="float-right w-75" type="success" v-on:click="processSale">
+                    <base-button size="lg" :disabled="validator" class="float-right w-75" type="success" v-on:click="processSale">
                         Procesar
                     </base-button>
                 </div>
@@ -427,6 +427,7 @@ export default {
     },
     data(){
         return {
+            validator:true,
             modals: {
                 modal1: false,
                 modal2: false,
@@ -494,9 +495,9 @@ export default {
                 table: "table-bordered table-striped"
             },
             clientNames: [],
-            clientSelect: '',
+            clientSelect: null,
             lenderNames: [],
-            lenderSelect: '',
+            lenderSelect: null,
             services: [],
             inspector: false,
             countServices: [],
@@ -1030,6 +1031,13 @@ export default {
                     console.log(err)
                 })
             }
+            if (this.clientSelect != null && this.lenderSelect != null) {
+                this.validator = false
+            }
+            else{
+                this.validator = true
+
+            }
         },
         chooseClient(){
             if (this.clientSelect) {
@@ -1058,6 +1066,14 @@ export default {
                 this.registerClient.contactOne = ""
                 this.registerClient.contactTwo = ""
                 this.validRegister(2)
+            }
+            console.log(this.clientSelect)
+            if (this.clientSelect != null && this.lenderSelect != null) {
+                this.validator = false
+            }
+            else{
+                console.log("no")
+                this.validator = true
             }
         },
         getDataToDate(id){
@@ -1122,7 +1138,7 @@ export default {
 			this.payDebit = 0
 			this.payCredit = 0
 			this.payTransfer = 0
-			this.lenderSelect = ''
+			this.lenderSelect = null
 			this.clientSelect = null
 			this.resto  = 0
 			this.subTotal = 0
