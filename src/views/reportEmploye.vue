@@ -376,8 +376,8 @@ export default {
                     setTimeout(() => {
                         this.modals = {
                             modal1: false,
-                            modal2: true,
-                            modal3: true,
+                            modal2: false,
+                            modal3: false,
                             message: "",
                             icon: '',
                             type:''
@@ -399,8 +399,8 @@ export default {
                     setTimeout(() => {
                         this.modals = {
                             modal1: false,
-                            modal2: true,
-                            modal3: true,
+                            modal2: false,
+                            modal3: false,
                             message: "",
                             icon: '',
                             type:''
