@@ -6,7 +6,7 @@
                 <div class="col-xl-3 col-lg-6">
                     <stats-card title="Total ventas"
                                 type="gradient-red"
-                                :sub-title="parseInt(ventas.length)"
+                                :sub-title="formatString(ventas.length)"
                                 icon="ni ni-active-40"
                                 class="mb-4 mb-xl-0"
                     >
@@ -24,8 +24,8 @@
                                 class="mb-4 mb-xl-0"
                     >
                     <template slot="footer">
-                        <span v-if="porcentajeLocal[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{porcentajeLocal[0].toFixed(2)}}%</span>
-                        <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{porcentajeLocal[0].toFixed(2)}}%</span><br>
+                        <span v-if="porcentajeLocal[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{formatFixed(porcentajeLocal[0])}}%</span>
+                        <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{formatFixed(porcentajeLocal[0])}}%</span><br>
                         <span class="text-nowrap">Mes pasado <small class="text-muted"> $ {{localAnterior}}</small></span>
                     </template>
                     </stats-card>
@@ -33,14 +33,14 @@
                 <div class="col-xl-3 col-lg-6">
                     <stats-card title="Total de comisiones"
                                 type="gradient-green"
-                                :sub-title="'$ '+comisionTotal"
+                                :sub-title="'$ '+comision"
                                 icon="ni ni-money-coins"
                                 class="mb-4 mb-xl-0"
                     >
                     <template slot="footer">
-                        <span v-if="porcentajeGanancia[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{porcentajeGanancia[0].toFixed(2)}}%</span>
-                        <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{porcentajeGanancia[0].toFixed(2)}}%</span><br>
-                        <span class="text-nowrap">Mes pasado</span> <small class="text-muted"> $ {{netaAnterior}}</small>
+                        <span v-if="porcentajeGanancia[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{formatFixed(porcentajeGanancia[0])}}%</span>
+                        <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{formatFixed(porcentajeGanancia[0])}}%</span><br>
+                        <span class="text-nowrap">Mes pasado</span> <small class="text-muted"> $ {{comisionAnterior}}</small>
                     </template>
                     </stats-card>
 
@@ -54,8 +54,8 @@
                     >
 
                         <template slot="footer">
-                            <span v-if="porcentajeTotal[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{porcentajeTotal[0].toFixed(2)}}%</span>
-                            <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{porcentajeTotal[0].toFixed(2)}}%</span><br>
+                            <span v-if="porcentajeTotal[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{formatFixed(porcentajeTotal[0])}}%</span>
+                            <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{formatFixed(porcentajeTotal[0])}}%</span><br>
                             <span class="text-nowrap">Mes pasado</span> <small class="text-muted"> $ {{totalAnterior}}</small>
                         </template>
                     </stats-card>
@@ -197,6 +197,8 @@
         localAnterior: 0,
         netaAnterior: 0,
         totalAnterior: 0,
+        comision:0,
+        comisionAnterior:0,
         porcentajeLocal:[],
         porcentajeGanancia:[],
         porcentajeTotal:[],
@@ -216,7 +218,6 @@
           chartData: {}
         },
         clients:[],
-        comisionTotal:0
       };
     },
     beforeCreate(){
@@ -236,6 +237,7 @@
       this.totales(0);
       this.SalesQuantityChartFunc();
       this.SalesQuantityChartWeekFunc();
+      
     },
     methods: {
       getClients(){
@@ -284,14 +286,17 @@
       totales(month){
         axios.get(endPoint.endpointTarget+'/ventas/totalSales/'+month)
         .then(res => {
+          console.log(res.data)
           this.totalLocal = this.formatPrice(res.data.totalLocal)
           this.gananciaNeta = this.formatPrice(res.data.gananciaNeta)
           this.gananciaTotal = this.formatPrice(res.data.gananciaTotal)
           this.localAnterior = this.formatPrice(res.data.localAnterior)
           this.netaAnterior = this.formatPrice(res.data.netaAnterior)
           this.totalAnterior = this.formatPrice(res.data.totalAnterior)
+          this.comision = this.formatPrice(res.data.comision)
+          this.comisionAnterior = this.formatPrice(res.data.comisionAnterior)
           this.porcentajeLocal.push((parseFloat(this.totalLocal) - parseFloat(this.localAnterior)) / parseFloat(this.totalLocal) * 100)
-          this.porcentajeGanancia.push((parseFloat(this.gananciaNeta) - parseFloat(this.netaAnterior)) / parseFloat(this.gananciaNeta) * 100)
+          this.porcentajeGanancia.push((parseFloat(this.comision) - parseFloat(this.comisionAnterior)) / parseFloat(this.comision) * 100)
           this.porcentajeTotal.push((parseFloat(this.gananciaTotal) - parseFloat(this.totalAnterior)) / parseFloat(this.gananciaTotal) * 100)
           if (this.porcentajeLocal[0] < 0) {
             this.porcentajeLocal.push(false)
@@ -429,8 +434,7 @@
               borderColor: '#f1f1f1',
             }
           }
-          console.log(this.chartOptions.xaxis)
-          console.log(this.series)
+          
           this.loaded = true
         })
         .catch(err => {
@@ -440,7 +444,7 @@
       initBigChart(index) {
         axios.get(endPoint.endpointTarget+'/metrics/top')
         .then(res => {
-          console.log(res.data)
+          
           var chartData = {
             labels: [],
             datasets: [{
@@ -454,7 +458,7 @@
             chartData.datasets[0].data.push(element.participacion)
           }
           this.redBarChart.chartData = chartData
-          console.log(this.redBarChart.chartData)
+          
         })
         
       },
@@ -466,14 +470,13 @@
           let dateFormat = new Date(date)
           return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
       },
-      getEmployes(){
-        axios.get(endPoint.endpointTarget+'/manicuristas')
-        .then(res => {
-          for (let i = 0; i < res.data.length; i++) {
-            this.comisionTotal = this.comisionTotal + res.data[i].comision 
-          }      
-        })
+      
+      formatString(val){
+        return val.toString()
       },
+      formatFixed(val){
+        return val.toFixed(2)
+      }
     },
     mounted() {
       this.initBigChart(0);
