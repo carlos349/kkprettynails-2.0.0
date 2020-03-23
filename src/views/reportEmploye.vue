@@ -1,15 +1,16 @@
 <template>
     <div>
         <base-header class="header pb-5 pt-5 pt-lg-8 d-flex align-items-center"
-                        style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
+                        style="min-height: 50px; background-image: url(img/theme/reportes.jpg); background-size: cover; background-position: center;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white">Reporte del empleado</h1>
+                        <h1 class="display-2 text-white">Reporte de {{nameLender}}</h1>
                         <a class="btn btn-success text-white cursor-pointer" v-on:click="modals.modal2 = true">Datos avanzados</a>
+                        <a class="btn btn-danger text-white cursor-pointer" v-on:click="printReport">Cerrar ventas</a>
                         <a v-on:click="back" class="btn btn-primary text-white cursor-pointer">Regresar</a>
                     </div>
                 </div>
@@ -45,25 +46,29 @@
                                     Datos
                                 </span>
                                 <div class="description">
-                                    <base-button type="default" class="w-100 mb-1">
+                                    <base-button type="secondary" class="w-100 mb-1">
                                         <span class="float-left">Fecha</span>
-                                        <badge style="font-size:.9em" class="float-right" type="primary">{{fecha}}</badge>
+                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{fecha}}</badge>
                                     </base-button>
-                                    <base-button type="default" class="w-100 mb-1">
+                                    <base-button type="secondary" class="w-100 mb-1">
                                         <span class="float-left">Nombre</span>
-                                        <badge style="font-size:.9em" class="float-right" type="primary">{{nameLender}}</badge>
+                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{nameLender}}</badge>
                                     </base-button>
-                                    <base-button type="default" class="w-100 mb-1">
+                                    <base-button type="secondary" class="w-100 mb-1">
                                         <span  class="float-left">Adelantos</span>
-                                        <badge  style="font-size:.9em" class="float-right" type="primary">{{formatPrice(advancement)}}</badge>
+                                        <badge  style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(advancement)}}</badge>
                                     </base-button>
-                                    <base-button type="default" class="w-100 mb-1">
+                                    <base-button type="secondary" class="w-100 mb-1">
+                                        <span  class="float-left">Bonos</span>
+                                        <badge  style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(lenderBonus)}}</badge>
+                                    </base-button>
+                                    <base-button type="secondary" class="w-100 mb-1">
                                         <span class="float-left">Comisión total</span>
-                                        <badge style="font-size:.9em" class="float-right" type="primary">{{formatPrice(totalComission)}}</badge>
+                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalComission)}}</badge>
                                     </base-button>
-                                    <base-button type="default" class="w-100 mb-1">
-                                        <span class="float-left">Total de ventas</span>
-                                        <badge style="font-size:.9em" class="float-right" type="primary">{{formatPrice(totalSale)}}</badge>
+                                    <base-button type="secondary" class="w-100 mb-1">
+                                        <span class="float-left">Total</span>
+                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalComission + lenderBonus - advancement)}}</badge>
                                     </base-button>
                                 </div>
                             </tab-pane>
@@ -132,13 +137,13 @@
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div style="margin-top:-25%" class="text-muted text-center mb-3">
                        <h3>Servicios</h3> 
                     </div>
                 </template>
                 <template>
                     <div class="m-2 w-100">
-                        <badge class="w-100" type="primary" v-for="data in dataDetail" :key="data.servicio">{{data.servicio}}</badge>
+                        <badge class="w-100 text-default" type="primary" v-for="data in dataDetail" :key="data.servicio">{{data.servicio}}</badge>
                     </div>
                 </template>
             </card>
@@ -193,6 +198,7 @@ export default {
             dataDetail: [],
             nameLender: '',
             totalComission: 0,
+            lenderBonus:0,
             advancement: '',
             totalSale: 0,
             modals: {
@@ -429,6 +435,8 @@ export default {
                 this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
                 this.code = resData.data._id
                 this.nameLender = resData.data.nombre
+                this.totalComission = resData.data.comision
+                this.lenderBonus = resData.data.bonus
                 this.advancement = resData.data.advancement
                 const identification = resData.data.nombre+':'+resData.data.documento
                 axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+identification)
@@ -441,7 +449,7 @@ export default {
                         comissions = parseFloat(res.data[index].comision) + parseFloat(comissions)
                     }
                     this.totalSale = totals
-                    this.totalComission = comissions
+                    
                     console.log(this.fecha)
                     console.log(this.code)
                     console.log(this.nameLender)
@@ -466,6 +474,36 @@ export default {
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        printReport(){
+            this.$swal({
+                title: '¿Estás seguro de hacer el Cierre?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si hacer Cierre',
+                cancelButtonText: 'No hacer Cierre',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
+            })
+            .then(result => {
+                if (result.value) {
+                    axios.put(endPoint.endpointTarget+'/manicuristas/ClosePrest/'+this.code)
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            setTimeout(()=> {
+                                router.push({path:'/Empleados'})
+                            }, 1000) 
+                        }else{
+                            this.$swal('Error en el cierre', 'Hubo un error', 'error')
+                        }
+                    }) 
+                    .catch(err => {
+                        console.log(err)
+                    })                   
+                }else{
+                    this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
+                }
+            })
         },
     }
 }

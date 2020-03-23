@@ -36,7 +36,7 @@
                     <tbody>
                         <tr v-for="(servicio, index) in services" v-bind:key="servicio._id">
                             <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
-                                <base-button size="sm"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento), countServices[index].count++">
+                                <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento), countServices[index].count++">
                                     <span class="float-left">{{servicio.nombre}}</span>
                                     <badge class="badgeClass float-right" type="primary" :id="servicio._id">{{countServices[index].count}}</badge>
                                 </base-button>
@@ -195,7 +195,7 @@
                     <h1 class="pt-2">Total: {{total}}</h1>
                 </div>
                 <div class="col-6">
-                    <base-button size="lg" class="float-right w-75" type="success" v-on:click="processSale">
+                    <base-button size="lg" :disabled="validator" class="float-right w-75" type="success" v-on:click="processSale">
                         Procesar
                     </base-button>
                 </div>
@@ -277,7 +277,7 @@
                 body-classes="px-lg-5"
                 class="border-0">
               <template>
-                  <div class="text-muted text-center mb-3">
+                  <div style="margin-top:-15%" class="text-muted text-center mb-3">
                       <h1>Nuevo servicio</h1> 
                   </div>
               </template>
@@ -319,9 +319,11 @@
                             <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
                             <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
                         </select>
-                        <base-checkbox class="mb-3" v-on:click="validRegister(1)" v-model="registerService.addDiscount">
-                            ¿Aplica descuento?
-                        </base-checkbox>
+                        <div  class="row mx-auto mt-2">
+                            <h3 class="w-100 text-center">¿Aplica descuento?</h3>
+                            <base-radio name="false" inline class="mb-3 mx-auto" v-model="registerService.addDiscount"> <b>Si</b> </base-radio>
+                            <base-radio name="true" inline class="mb-3 mx-auto" v-model="registerService.addDiscount"> <b>No</b> </base-radio> 
+                        </div>
                         <vue-custom-scrollbar class="maxHeight">
                             <vue-bootstrap4-table :rows="registerService.lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
                             </vue-bootstrap4-table>
@@ -427,6 +429,7 @@ export default {
     },
     data(){
         return {
+            validator:true,
             modals: {
                 modal1: false,
                 modal2: false,
@@ -494,9 +497,9 @@ export default {
                 table: "table-bordered table-striped"
             },
             clientNames: [],
-            clientSelect: '',
+            clientSelect: null,
             lenderNames: [],
-            lenderSelect: '',
+            lenderSelect: null,
             services: [],
             inspector: false,
             countServices: [],
@@ -613,7 +616,6 @@ export default {
                 instagramClienteEditar: this.registerClient.contactTwo,
             })
             .then(res => {
-                console.log(res)
                 if (res.data.status == 'Servicio actualizado') {
                     this.modals = {
                         modal1: true,
@@ -1023,12 +1025,17 @@ export default {
                 .then(res => {
                     this.docLender = res.data.documento
                     this.nombreManicurista = this.lenderSelect
-                    
-                    console.log(res.data)
                 })
                 .catch(err => {
                     console.log(err)
                 })
+            }
+            if (this.clientSelect != null && this.lenderSelect != null) {
+                this.validator = false
+            }
+            else{
+                this.validator = true
+
             }
         },
         chooseClient(){
@@ -1038,7 +1045,6 @@ export default {
                 .then(res => {
                     this.newClient.text = "Editar cliente"
                     this.ifEdit = true
-                    console.log(res.data)
                     this.editClientId = res.data[0]._id
                     this.registerClient.name = res.data[0].nombre
                     this.registerClient.id = res.data[0].identidad
@@ -1058,6 +1064,12 @@ export default {
                 this.registerClient.contactOne = ""
                 this.registerClient.contactTwo = ""
                 this.validRegister(2)
+            }
+            if (this.clientSelect != null && this.lenderSelect != null) {
+                this.validator = false
+            }
+            else{
+                this.validator = true
             }
         },
         getDataToDate(id){
@@ -1122,7 +1134,7 @@ export default {
 			this.payDebit = 0
 			this.payCredit = 0
 			this.payTransfer = 0
-			this.lenderSelect = ''
+			this.lenderSelect = null
 			this.clientSelect = null
 			this.resto  = 0
 			this.subTotal = 0
@@ -1157,7 +1169,6 @@ export default {
             }
             
 			const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
-            console.log(this.docLender)
 			if (this.clientSelect && this.lenderSelect != '') {
 				if (this.totalSinFormato == totalFormadePago ) {
 					axios.post(endPoint.endpointTarget+'/ventas/procesar', {

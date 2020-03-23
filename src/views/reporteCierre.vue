@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white">Reporte del cierre</h1>
+                        <h1 class="display-2 text-white">Reporte del cierre ({{closedInfo.date}})</h1>
                         <a @click="modals.modal1 = true" class="btn btn-success text-white cursor-pointer">Editar montos manuales</a> <br>
                         <a v-on:click="back" class="btn btn-primary text-white cursor-pointer mt-1">Regresar</a>
                     </div>
@@ -258,7 +258,7 @@ export default {
                 systemEgress:0,
                 closeId:0,
                 code:0,
-                date:0
+                date:'maldito'
             },
             modals: {
                 modal1:false,
@@ -279,6 +279,7 @@ export default {
             axios.get(endPoint.endpointTarget+'/ventas/getClosing/'+id)
             .then(res => {
                 const date = new Date(res.data.fecha)    
+                console.log(date)
                 this.closedInfo = {
                     manual:res.data.manual.ingresoFondo,
                     manualCash:res.data.manual.efectivo,
@@ -302,6 +303,7 @@ export default {
                     code:res.data._id,
                     date:date.getDate()+"-"+(date.getMonth() + 1)+"-"+date.getFullYear()
                 } 
+                console.log(this.closedInfo.date)
             })
         },
         formatPrice(value) {
@@ -312,6 +314,7 @@ export default {
             this.closedInfo.totalManualCash = this.closedInfo.manual + this.closedInfo.manualCash - this.closedInfo.manualEgress
         },
         editEntry(){
+            console.log(this.closedInfo.date)
             axios.put(endPoint.endpointTarget+'/ventas/editarIngManual/'+this.closedInfo.code, {
                 fondo:this.closedInfo.manual,
                 efectivo:this.closedInfo.manualCash,

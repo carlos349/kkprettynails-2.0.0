@@ -495,7 +495,7 @@
                         <tr>
                         <th style="border-radius:15px !important;border:none" class="text-left pl-4 text-white">
                             
-                            <input autocomplete="off" style="outline:none !important;background-color:white !important" type="text" id="myInputDate" v-on:keyup="myFunctionDate()" class="form-control buscar inputsVenta w-75 text-white" placeholder="Filtrar servicios"/>
+                            <input autocomplete="off" style="outline:none !important;background-color:white !important" type="text" id="myInput" v-on:keyup="myFunction()" class="form-control buscar inputsVenta w-75 text-white" placeholder="Filtrar servicios"/>
                         </th>
                         <th style="color:white;border:none" class="text-center pl-5 pb-3">
                             Precio 
@@ -504,7 +504,7 @@
                     </thead>
                 </table>
                 <vue-custom-scrollbar class="ListaProcesar">
-                    <table class="table tableBg" id="myTableDate">
+                    <table class="table tableBg" id="myTable">
                         <tbody>
                         <tr v-for="(servicio, index) in services" >
                             <td style="border:none" v-if="servicio.active" class="font-weight-bold">
@@ -563,11 +563,11 @@
                 <div class="row">
                     <div class="col-6 text-center">
                         <dt>Clientes</dt>
-                        <base-button v-for="client of selectedDates.clientSplit" size="sm" type="secondary">{{client}}</base-button>
+                        <base-button class="mt-1" v-for="client of selectedDates.clientSplit" size="sm" type="secondary">{{client}}</base-button>
                     </div>
                     <div class="col-6 text-center">
                         <dt>Empleado</dt>
-                        <base-button v-for="employe of selectedDates.discountSplit" size="sm" type="secondary">{{employe}}</base-button>
+                        <base-button class="mt-1" v-for="employe of selectedDates.discountSplit" size="sm" type="secondary">{{employe}}</base-button>
                     </div>
                     <div class="col-12">
                         <dt class="mt-3 text-center">Servicios</dt>
@@ -2216,7 +2216,25 @@
         },
         scroll(){
             console.log("qloq chiamo")
-        }
+        },
+        myFunction() {
+			var input, filter, table, tr, td, i, txtValue;
+			input = document.getElementById("myInput");
+			filter = input.value.toUpperCase();
+			table = document.getElementById("myTable");
+			tr = table.getElementsByTagName("tr");
+			for (i = 0; i < tr.length; i++) {
+			td = tr[i].getElementsByTagName("td")[0];
+			if (td) {
+				txtValue = td.textContent || td.innerText;
+				if (txtValue.toUpperCase().indexOf(filter) > -1) {
+				tr[i].style.display = "";
+				} else {
+				tr[i].style.display = "none";
+				}
+			}
+			}
+        },
     },
     computed: {
         ifSticky: () => {

@@ -57,12 +57,12 @@
       getParticipacion() {
         axios.get(endPoint.endpointTarget+'/metrics/top')
         .then(res => {
-          console.log(res.data)
+          
           for (let index = 0; index < res.data.length; index++) {
             const element = res.data[index];
             this.attentions.push({name: element.nombre, contact: element.identidad, attention: element.participacion})
           }
-          console.log(this.attentions)
+          
         })
       },
     }

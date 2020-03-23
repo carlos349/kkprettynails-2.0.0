@@ -35,21 +35,24 @@
                                     placeholder="Nombre"
                                     v-model="registerUser.name"
                                     v-on:change="validRegister()"
-                                    addon-left-icon="ni ni-single-02">
+                                    addon-left-icon="ni ni-single-02"
+                                    addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
                         <base-input alternative
                                     class="mb-3"
                                     placeholder="Apellido"
                                     v-model="registerUser.lastname"
                                     v-on:change="validRegister()"
-                                    addon-left-icon="ni ni-single-02">
+                                    addon-left-icon="ni ni-single-02"
+                                    addon-right-icon="fa fa-asterisk text-danger"   >
                         </base-input>
-                        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
+                        <base-input type="file" id="file" ref="file" v-on:change="handleFileUpload()" addon-right-icon="fa fa-asterisk text-danger" class=" mb-3"></base-input>
                         <base-input alternative
                                     type="text"
                                     placeholder="Correo"
                                     v-model="registerUser.correo"
-                                    addon-left-icon="ni ni-email-83">
+                                    addon-left-icon="ni ni-email-83"
+                                    addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
                         <base-input alternative
                                     type="text"
@@ -57,13 +60,15 @@
                                     v-on:keyup="validFields('c')"
                                     placeholder="Confirmar correo"
                                     v-model="registerUser.correoConfirm"
+                                    addon-right-icon="fa fa-asterisk text-danger"
                                     >
                         </base-input>
                         <base-input alternative
                                     type="password"
                                     placeholder="Contraseña"
                                     v-model="registerUser.password"
-                                    addon-left-icon="ni ni-lock-circle-open">
+                                    addon-left-icon="ni ni-lock-circle-open"
+                                    addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
                         <base-input alternative
                                     type="password"
@@ -71,6 +76,7 @@
                                     v-on:keyup="validFields('p')"
                                     placeholder="Confirmar contraseña"
                                     v-model="registerUser.passwordConfirm"
+                                    addon-right-icon="fa fa-asterisk text-danger"
                                     >
                         </base-input>
                         <div class="text-center">
