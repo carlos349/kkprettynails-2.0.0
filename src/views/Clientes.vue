@@ -47,26 +47,30 @@
                                                 placeholder="Nombre"
                                                 v-model="registerClient.name"
                                                 v-on:change="validRegister()"
-                                                addon-left-icon="ni ni-single-02">
+                                                addon-left-icon="ni ni-single-02"
+                                                addon-right-icon="fa fa-asterisk text-danger">
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
                                                 placeholder="Contacto principal"
                                                 v-model="registerClient.id"
                                                 v-on:change="validRegister()"
-                                                addon-left-icon="fa fa-address-card">
+                                                addon-left-icon="fa fa-address-card"
+                                                addon-right-icon="fa fa-asterisk text-danger">
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
                                                 placeholder="Contacto adicional"
                                                 v-model="registerClient.contactOne"
-                                                addon-left-icon="fa fa-address-card">
+                                                addon-left-icon="fa fa-address-card"
+                                                addon-right-icon="fas fa-plus text-default">
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
                                                 placeholder="Contacto adicional"
                                                 v-model="registerClient.contactTwo"
-                                                addon-left-icon="fa fa-address-card">
+                                                addon-left-icon="fa fa-address-card"
+                                                addon-right-icon="fas fa-plus text-default">
                                     </base-input>
                                     <div class="text-center">
                                         <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
@@ -112,26 +116,31 @@
                                     placeholder="Nombre"
                                     v-model="registerClient.name"
                                     v-on:change="validRegister()"
-                                    addon-left-icon="ni ni-single-02">
+                                    addon-left-icon="ni ni-single-02"
+                                    addon-right-icon="fa fa-asterisk text-danger"
+                                    >
                         </base-input>
                         <base-input alternative
                                     type="text"
                                     placeholder="Contacto principal"
                                     v-model="registerClient.id"
                                     v-on:change="validRegister()"
-                                    addon-left-icon="fa fa-address-card">
+                                    addon-left-icon="fa fa-address-card"
+                                    addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
                         <base-input alternative
                                     type="text"
                                     placeholder="Contacto adicional"
                                     v-model="registerClient.contactOne"
-                                    addon-left-icon="fa fa-address-card">
+                                    addon-left-icon="fa fa-address-card"
+                                    addon-right-icon="fas fa-plus text-default">
                         </base-input>
                         <base-input alternative
                                     type="text"
                                     placeholder="Contacto adicional"
                                     v-model="registerClient.contactTwo"
-                                    addon-left-icon="fa fa-address-card">
+                                    addon-left-icon="fa fa-address-card"
+                                    addon-right-icon="fas fa-plus text-default">
                         </base-input>
                         <base-checkbox v-model="registerClient.discount" class="mb-3">
                             Descuento de nuevo cliente

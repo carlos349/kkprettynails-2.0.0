@@ -46,7 +46,7 @@
                                     addon-left-icon="ni ni-single-02"
                                     addon-right-icon="fa fa-asterisk text-danger"   >
                         </base-input>
-                        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
+                        <base-input type="file" id="file" ref="file" v-on:change="handleFileUpload()" addon-right-icon="fa fa-asterisk text-danger" class=" mb-3"></base-input>
                         <base-input alternative
                                     type="text"
                                     placeholder="Correo"

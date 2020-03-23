@@ -36,14 +36,16 @@
                             class="mb-3"
                             placeholder="Nombre"
                             addon-left-icon="ni ni-single-copy-04"
-                            v-model="serviceRegister">
+                            v-model="serviceRegister"
+                            addon-right-icon="fa fa-asterisk text-danger" >
                         </base-input>
                         <base-input alternative
                             type="number"
                             max-count="100"
                             placeholder="comision (%)"
                             addon-left-icon="ni ni-money-coins"
-                            v-model="comissionRegister">
+                            v-model="comissionRegister"
+                            addon-right-icon="fa fa-asterisk text-danger" >
                         </base-input>
                         <currency-input
                             v-model="priceRegister"

@@ -59,7 +59,8 @@
                             placeholder="Razón"
                             v-model="dataExpense.reason"
                             v-on:keyup="validRegister()"
-                            addon-left-icon="ni ni-single-02">
+                            addon-left-icon="ni ni-single-02"
+                            addon-right-icon="fa fa-asterisk text-danger" >
                         </base-input>
                         <currency-input
                             v-model="dataExpense.amount"
