@@ -100,13 +100,15 @@
                             class="mb-3"
                             placeholder="Nombre"
                             addon-left-icon="ni ni-single-copy-04"
-                            v-model="serviceEdit">
+                            v-model="serviceEdit"
+                            addon-right-icon="fa fa-asterisk text-danger" >
                         </base-input>
                         <base-input alternative
                             type="text"
                             placeholder="comision (%)"
                             addon-left-icon="ni ni-money-coins"
-                            v-model="comissionEdit">
+                            v-model="comissionEdit"
+                            addon-right-icon="fa fa-asterisk text-danger" >
                         </base-input>
                         <currency-input
                             v-model="priceEdit"
@@ -114,6 +116,7 @@
                             addon-left-icon="ni ni-time-alarm"
                             class="form-control mb-3"
                             style="margin-top:-10px;"
+                            addon-right-icon="fa fa-asterisk text-danger" 
                         />	
                         <select class="form-control mb-3" v-model="timeEdit">
                             <option style="color:black;" value="15">15 Minutos</option>
@@ -129,8 +132,8 @@
                         </select>
                         <div class="row mx-auto mt-2">
                             <h3 class="w-100 text-center">¿Aplica descuento?</h3>
-                            <base-radio name="true" value="true" inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
-                            <base-radio name="false" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>No</b> </base-radio> 
+                            <base-radio name="true"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
+                            <base-radio name="false"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>No</b> </base-radio> 
                         </div>
                         <vue-custom-scrollbar ref="table" class="maxHeight">
                             <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
@@ -319,7 +322,8 @@ export default {
             priceEdit: 0,
             comissionEdit: 0,
             timeEdit: '',
-            addDiscountEdit: ''
+            addDiscountEdit: '',
+            prueba:'false'
         }
     },
     beforeCreate(){
@@ -495,7 +499,7 @@ export default {
             this.priceEdit = price
             this.comissionEdit = comission
             this.timeEdit = time
-            this.addDiscountEdit = discountFinal
+            this.addDiscountEdit = discount
             this.modals.modal2 = true
             let data = this.$refs.table.$children[0].$data.vbt_rows
             let selected = this.$refs.table.$children[0].$data.selected_items
@@ -560,6 +564,7 @@ export default {
                         }
                     }, 1500);
                 }else{
+                    console.log(this.addDiscountEdit)
                     var ifCheck = this.addDiscountEdit ? false : true
 					const id = this.idServiceEdit
 					axios.put(endPoint.endpointTarget+'/servicios/' + id, {
@@ -568,7 +573,7 @@ export default {
 						precioServicio: this.priceEdit,
 						comisionServicio: this.comissionEdit,
 						prestadores: this.EditlenderSelecteds,
-						descuento: ifCheck
+						descuento: this.addDiscountEdit
 					}).then(res => {
                         this.modals = {
                             modal3: true,

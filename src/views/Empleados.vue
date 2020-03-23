@@ -34,25 +34,27 @@
                                     class="mb-3"
                                     placeholder="Nombre del empleado"
                                     v-model="registerEmploye.name"
-                                    v-on:change="validRegister()"
-                                    addon-left-icon="ni ni-single-02">
+                                    v-on:keyup="validRegister()"
+                                    addon-left-icon="ni ni-single-02"
+                                    addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
                         <base-input alternative
                                     class="mb-3"
                                     placeholder="Documento"
                                     v-model="registerEmploye.id"
-                                    v-on:change="validRegister(),registerEmploye.id = formatRut(registerEmploye.id)"
-                                    addon-left-icon="ni ni-key-25">
+                                    v-on:keyup="validRegister(),registerEmploye.id = formatRut(registerEmploye.id)"
+                                    addon-left-icon="ni ni-key-25"
+                                     addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
                         <template>
                             <div class="text-muted text-center mb-3">Horario libre</div>
                         </template>
                         <div class="row">
                             <template>
-                                <div class="text-muted col-6 text-center mb-3">Desde</div>
-                                <div class="text-muted col-6 text-center mb-3">Hasta</div>
+                                <div class="text-muted col-6 text-center">Desde <i style="font-size:.5em;color:#f5365c;position:absolute;top:18%;left:65%" class="fa fa-asterisk"></i> </div>
+                                <div class="text-muted col-6 text-center mb-3">Hasta<i style="font-size:.5em;color:#f5365c;position:absolute;top:30%;left:64%" class="fa fa-asterisk"></i></div>
                             </template >
-                            <select class="form-control mb-3 mx-auto col-5" v-model="registerEmploye.timeRestOne">
+                            <select v-on:change="validRegister()" class="form-control mb-3 mx-auto col-5" v-model="registerEmploye.timeRestOne">
                                 <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
                                 <option style="color:black;" value="12:00">12:00</option>
                                 <option style="color:black;" value="12:30">12:30</option>
@@ -60,7 +62,7 @@
                                 <option style="color:black;" value="13:30">13:30</option>
                                 <option style="color:black;" value="14:00">14:00</option>
                             </select>
-                            <select class="form-control mb-3 mx-auto col-5" v-model="registerEmploye.timeRestTwo">
+                            <select v-on:change="validRegister()" class="form-control mb-3 mx-auto col-5" v-model="registerEmploye.timeRestTwo">
                                 <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
                                 <option style="color:black;" value="12:30">12:30</option>
                                 <option style="color:black;" value="13:00">13:00</option>
@@ -71,10 +73,10 @@
                         </div>
                         <template>
                             <div class="text-muted text-center mb-3">
-                                Día libre
+                                Día libre <i style="font-size:.5em;color:#f5365c;position:absolute;left:58%;bottom:43%" class="fa fa-asterisk"></i>
                             </div>
                         </template>
-                        <select class="form-control mb-3 mx-auto" v-model="registerEmploye.dayFree">
+                        <select v-on:change="validRegister()" class="form-control mb-3 mx-auto" v-model="registerEmploye.dayFree">
                             <option style="color:black;" selected value="Seleccione el día">Seleccione el día</option>
                             <option style="color:black;" value="1">Lunes</option>
                             <option style="color:black;" value="2">Martes</option>
@@ -159,15 +161,15 @@ import EventBus from '../components/EventBus'
     },
     data() {
       return {
-        tipeForm:null,
+        tipeForm:'',
         registerEmploye: {
-            name:null,
-            id:null,
+            name:'',
+            id:'',
             timeRestOne:"Seleccione el tiempo",
             timeRestTwo:"Seleccione el tiempo",
             dayFree:"Seleccione el día",
-            _id:null,
-            comision:null,
+            _id:'',
+            comision:'',
             valid:false,
             valid2:false,
         },
@@ -442,13 +444,13 @@ import EventBus from '../components/EventBus'
         },
         initialState(val){
             this.registerEmploye = {
-                name:null,
-                id:null,
+                name:'',
+                id:'',
                 timeRestOne:"Seleccione el tiempo",
                 timeRestTwo:"Seleccione el tiempo",
                 dayFree:"Seleccione el día",
-                _id:null,
-                comision:null,
+                _id:'',
+                comision:'',
                 valid:false,
                 valid2:false,
             }
@@ -469,8 +471,11 @@ import EventBus from '../components/EventBus'
             }
         },
         validRegister(){
-            if (this.registerEmploye.name != null && this.registerEmploye.id != null) {
+            if (this.registerEmploye.name != '' && this.registerEmploye.id != '' && this.registerEmploye.timeRestOne != "Seleccione el tiempo" &&  this.registerEmploye.timeRestTwo != "Seleccione el tiempo" &&  this.registerEmploye.dayFree != "Seleccione el día") {
                 this.registerEmploye.valid = true
+            }
+            else{
+                this.registerEmploye.valid = false
             }
         },
         formatDate(date) {

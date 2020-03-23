@@ -103,10 +103,15 @@
   }
 }
  table  .text-center{
-        text-align: left !important;
-    }
-    .form-control{
-        color: #2F2F2F !important;
-    }
-
+      text-align: left !important;
+  }
+  .form-control{
+      color: #2F2F2F !important;
+  }
+  form .text-danger{
+    font-size: .5em;
+  }
+  form .text-default{
+    font-size: .5em;
+  }
 </style>
