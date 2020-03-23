@@ -277,7 +277,7 @@
                 body-classes="px-lg-5"
                 class="border-0">
               <template>
-                  <div class="text-muted text-center mb-3">
+                  <div style="margin-top:-15%" class="text-muted text-center mb-3">
                       <h1>Nuevo servicio</h1> 
                   </div>
               </template>
@@ -319,9 +319,11 @@
                             <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
                             <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
                         </select>
-                        <base-checkbox class="mb-3" v-on:click="validRegister(1)" v-model="registerService.addDiscount">
-                            ¿Aplica descuento?
-                        </base-checkbox>
+                        <div  class="row mx-auto mt-2">
+                            <h3 class="w-100 text-center">¿Aplica descuento?</h3>
+                            <base-radio name="true" inline class="mb-3 mx-auto" v-model="registerService.addDiscount"> <b>Si</b> </base-radio>
+                            <base-radio name="false" inline class="mb-3 mx-auto" v-model="registerService.addDiscount"> <b>No</b> </base-radio> 
+                        </div>
                         <vue-custom-scrollbar class="maxHeight">
                             <vue-bootstrap4-table :rows="registerService.lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
                             </vue-bootstrap4-table>
