@@ -220,7 +220,7 @@ import EventBus from '../components/EventBus'
             id:'',
             contactOne:'',
             contactTwo:'',
-            recommender:'',
+            recommender:null,
             discount:false,
             valid:false,
             valid2:false,
@@ -397,7 +397,7 @@ import EventBus from '../components/EventBus'
                 contactOne:'',
                 discount:false,
                 contactTwo:'',
-                recommender:0,
+                recommender:null,
                 valid:false
             }
             if (val == 1) {
