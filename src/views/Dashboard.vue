@@ -112,7 +112,7 @@
                               <base-button v-else disabled class="float-right" v-on:click="runGraph" type="default">Graficar</base-button>
                             </div>
                         </div>
-                        <apexchart :height="350" v-if="loaded" type="line" :options="chartOptions" :series="series"></apexchart>
+                        <apexchart ref="chartApis" :height="350" v-if="loaded" :options="chartOptions" :series="series"></apexchart>
                     </card>
                 </div>
             </div>
@@ -140,28 +140,6 @@
                 </div>
             </div>
             <!--End tables-->
-        </div>
-         <!--Charts-->
-        <div class="container-fluid mt-4">
-            <div class="row">
-                <div class="col-12" >
-                    <card header-classes="bg-transparent">
-                        <div slot="header" class="row align-items-center">
-                            <div class="col-8">
-                                <h5 class="h3 mb-0">Promedio de la semana</h5>
-                            </div>
-                        </div>
-                        <div id="wrapper">
-                          <div id="seriesWeekTotal">
-                            <apexchart type="line" height="160" :options="chartOptionsWeekTotal" :series="seriesWeekTotal"></apexchart>
-                          </div>
-                          <div id="seriesWeekServices">
-                            <apexchart type="line" height="160" :options="chartOptionsWeekServices" :series="seriesWeekServices"></apexchart>
-                          </div>
-                        </div>
-                    </card>
-                </div>
-            </div>
         </div>
     </div>
 </template>
@@ -193,15 +171,7 @@
       return {
         loaded:false,
         series: [],
-        seriesWeekTotal: [],
-        seriesWeekServices: [],
         chartOptions: {
-          
-        },
-        chartOptionsWeekTotal: {
-          
-        },
-        chartOptionsWeekServices: {
           
         },
         configDatePicker: {
@@ -266,7 +236,7 @@
       this.getVentas();
       this.totales(0);
       this.SalesQuantityChartFunc();
-      this.SalesQuantityChartWeekFunc();
+      // this.SalesQuantityChartWeekFunc();
       
     },
     methods: {
@@ -281,6 +251,7 @@
         axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+split[0]+':'+split[1])
         .then(res => {
           this.series = res.data.series
+          console.log(this.$refs.chartApis)
           this.chartOptions = {
             chart: {
               type: 'area',
@@ -310,8 +281,10 @@
                 opacityTo: 0.9,
                 stops: [0, 100]
               }
-            },
+            }
           }
+          this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
+          console.log(this.chartOptions)
         })
       },
       getVentas(){
@@ -365,15 +338,20 @@
         })
       },
       SalesQuantityChartFunc(){
+        const dateNow = new Date()
+        console.log(dateNow)
+        const dateFormat = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-1'
+        const dateFormatTwo = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-30'
         this.loaded = false
-        axios.get(endPoint.endpointTarget+'/ventas/GetSalesPerMonth')
+        axios.get(endPoint.endpointTarget+'/metrics/dailyExpenseGainTotal/'+dateFormat+':'+dateFormatTwo)
         .then(res => {	
           const userlist = res.data
           this.series = userlist.series
+          
           this.chartOptions = {
             chart: {
               height: 350,
-              type: 'line',
+              type: 'area',
               zoom: {
                 enabled: true
               },
@@ -402,28 +380,28 @@
               }
             },
             xaxis: {
-              categories: userlist.categories,
+              type: 'datetime',
             },
             tooltip: {
               y: [
                 {
                   title: {
                     formatter: function (val) {
-                      return val 
+                      return val+' $'
                     }
                   }
                 },
                 {
                   title: {
                     formatter: function (val) {
-                      return val
+                      return val+' $'
                     }
                   }
                 },
                 {
                   title: {
                     formatter: function (val) {
-                      return val
+                      return val+' $'
                     }
                   }
                 }
