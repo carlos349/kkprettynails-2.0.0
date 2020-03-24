@@ -823,24 +823,24 @@ export default {
             })
         },
         conteoServicio(_id, nombre, precio, comision, discount){
+            console.log(discount)
             const descuento = parseFloat(this.discount) / 100
 			const porcentaje = 1 - parseFloat(descuento)
-			const precioTotal = parseFloat(this.subTotal) + parseFloat(precio)  
+            const precioTotal = parseFloat(this.subTotal) + parseFloat(precio)
+            const totalWithoutFormat = parseFloat(this.totalSinFormato) + parseFloat(precio)
 			this.price = this.formatPrice(precioTotal)
 			this.subTotal = precioTotal
-			this.totalSinFormato = precioTotal
 			
-			if(this.discount === ''){
-				this.total = this.formatPrice(precioTotal+ this.design)
-			}else{
-				this.total = this.formatPrice(precioTotal)
-				for (let index = 0; index < this.serviciosSelecionados.length; index++) {
-					if (!this.serviciosSelecionados[index].descuento) {
-						const precioConDescuento = parseFloat(this.subTotal) * parseFloat(porcentaje) 
-						this.total = this.formatPrice(precioConDescuento + this.design)
-						this.totalSinFormato = precioConDescuento
-					}
-				}
+			
+			if(this.discount == '' || discount == true){
+                this.total = this.formatPrice(totalWithoutFormat+ this.design)
+                this.totalSinFormato = totalWithoutFormat+ this.design
+            }
+            else{
+                const precioConDescuento = parseFloat(precio) * parseFloat(porcentaje)
+                const totalConDescuento = parseFloat(this.totalSinFormato) + parseFloat(precioConDescuento) 
+                this.total =  this.formatPrice(totalConDescuento + this.design)
+                this.totalSinFormato = totalConDescuento + this.design
 			}
 			const servicios = {'servicio': nombre, 'comision': comision, 'precio': precio, 'descuento': discount}
 			this.serviciosSelecionados.push(servicios)
@@ -856,7 +856,8 @@ export default {
 			axios.put(endPoint.endpointTarget+'/ventas/updateProviderMonth/' + this.lenderSelect)
 			.catch(err => {
 				console.log(err)
-			})
+            })
+            console.log(this.serviciosSelecionados)
         },
         borrarServicio(nombre, index, _id, precio, descuento){
             for (var i = 0; i < this.serviciosSelecionados.length; i++) {
@@ -869,22 +870,25 @@ export default {
                 this.countServices[index].count--
 				const subTotal = parseFloat(this.subTotal) - parseFloat(precio) 
 				this.price = this.formatPrice(subTotal)
-				this.subTotal = subTotal
-                this.totalSinFormato = subTotal
-                this.total = this.formatPrice(subTotal+ this.design)
-				if(this.discount == ""){
-					// this.total = this.formatPrice(subTotal+ this.design)
-				}else{
-					this.descuentoFunc(false)
-				}
+                this.subTotal = subTotal
+                if (descuento == true || this.discount == '') {
+                    this.totalSinFormato = this.totalSinFormato - precio
+                    this.total = this.formatPrice(this.totalSinFormato)
+                    console.log("si entro aqui")
+                }
+                else{
+                    console.log("no debo entrar aqui")
+                    const descuento = parseFloat(this.discount) / 100
+                    const porcentaje = 1 - parseFloat(descuento)
+                    const precioConDescuento = precio * porcentaje
+                    this.totalSinFormato = this.totalSinFormato - precioConDescuento
+                    this.total = this.formatPrice(this.totalSinFormato)
+                }
+                
 				axios.put(endPoint.endpointTarget+'/ventas/updateServicesMonthDiscount/' + nombre)
 				.catch(err => {
 					console.log(err)
 				})
-				axios.put(endPoint.endpointTarget+'/ventas/updateProviderMonthDiscount/' + this.lenderSelect)
-				.catch(err => {
-					console.log(err)
-                })
 			}
         },
         addDesign(){
@@ -901,40 +905,26 @@ export default {
             }
         },
         descuentoFunc(deletee){
-            var discount = true 
-			for (let index = 0; index < this.serviciosSelecionados.length; index++) {
-				if (!this.serviciosSelecionados[index].descuento) {
-					discount = false
-					if(this.discount > 0){
-						const descuento = parseFloat(this.discount) / 100
-						const porcentaje = 1 - parseFloat(descuento)
-						const precioConDescuento = parseFloat(this.subTotal) * parseFloat(porcentaje)  
-						
-						this.total = this.formatPrice(precioConDescuento+ this.design)
-						this.totalSinFormato = precioConDescuento
-					}
-					if(this.discount == '' || this.discount == 0){
-						if (this.design == '') {
-							this.totalSinFormato = this.subTotal
-							this.total = this.formatPrice(this.subTotal+ this.design)
-						}
-						else{
-							this.totalSinFormato = this.subTotal
-							this.total = this.formatPrice(this.totalSinFormato+ this.design)
-						}
-					}
-					break
-				}
-			}
-			if(discount && deletee){
-				this.design = ''
-				this.$swal({
-					type: 'info',
-					title: 'No se puede agregar a dichos servicios',
-					showConfirmButton: false,
-					timer: 1500
-				})
-			}
+            if (this.discount > 0) {
+                this.totalSinFormato = this.design
+                this.total = this.design
+                for (let index = 0; index < this.serviciosSelecionados.length; index++) {
+                    if (!this.serviciosSelecionados[index].descuento) {
+                            const descuento = parseFloat(this.discount) / 100
+                            const porcentaje = 1 - parseFloat(descuento)
+                            const precioConDescuento = parseFloat(this.serviciosSelecionados[index].precio) * parseFloat(porcentaje)  
+                            const totalConDescuento = parseFloat(this.totalSinFormato) + parseFloat(precioConDescuento)
+                            this.total = this.formatPrice(totalConDescuento)
+                            this.totalSinFormato = totalConDescuento 
+                    }
+                    else{ 
+                        this.total = this.formatPrice(parseFloat(this.totalSinFormato) + parseFloat(this.serviciosSelecionados[index].precio))
+                        this.totalSinFormato = parseFloat(this.totalSinFormato) + parseFloat(this.serviciosSelecionados[index].precio)
+                    }
+                }
+                
+            }
+			
         },
         formatClass(value){
 			if (value) {
@@ -1123,6 +1113,7 @@ export default {
 		},
         initialState(){
             this.getServices()
+            this.validator = true
 			this.price = '0';
 			this.serviciosSelecionados = [];
 			this.discount = "";
