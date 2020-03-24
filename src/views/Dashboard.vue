@@ -6,9 +6,9 @@
                 <div class="col-xl-3 col-lg-6">
                     <stats-card title="Total ventas"
                                 type="gradient-red"
-                                :sub-title="formatString(ventas.length)"
+                                :sub-title="totalSales"
                                 icon="ni ni-active-40"
-                                class="mb-4 mb-xl-0"
+                                class="mb-1 mb-xl-0"
                     >
                     <template slot="footer">
                         <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span><br>
@@ -21,7 +21,7 @@
                                 type="gradient-orange"
                                 :sub-title="'$ '+totalLocal"
                                 icon="ni ni-shop"
-                                class="mb-4 mb-xl-0"
+                                class="mb-1 mb-xl-0"
                     >
                     <template slot="footer">
                         <span v-if="porcentajeLocal[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{formatFixed(porcentajeLocal[0])}}%</span>
@@ -31,11 +31,11 @@
                     </stats-card>
                 </div>
                 <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Total de comisiones"
+                    <stats-card title="Total comisiones"
                                 type="gradient-green"
                                 :sub-title="'$ '+comision"
                                 icon="ni ni-money-coins"
-                                class="mb-4 mb-xl-0"
+                                class="mb-1 mb-xl-0"
                     >
                     <template slot="footer">
                         <span v-if="porcentajeGanancia[1] == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{formatFixed(porcentajeGanancia[0])}}%</span>
@@ -50,7 +50,7 @@
                                 type="gradient-info"
                                 :sub-title="'$ '+gananciaTotal"
                                 icon="ni ni-chart-bar-32"
-                                class="mb-4 mb-xl-0"
+                                class="mb-1 mb-xl-0"
                     >
 
                         <template slot="footer">
@@ -69,23 +69,47 @@
                 <div class="col-12" >
                     <card header-classes="bg-transparent">
                         <div slot="header" class="row align-items-center">
-                            <div class="col-8">
-                                <h5 class="h3 mb-0">Comparación de ventas</h5>
-                            </div>
                             <div class="col-4">    
-                              <h5>Filtre por mes y año</h5>                       
+                              <h5>Filtre por fecha</h5>                       
                               <base-input
-                              class="mb-1 mt-1" 
+                              class="mb-1 mt-2" 
                               addon-left-icon="ni ni-calendar-grid-58">
                                   <flat-picker slot-scope="{focus, blur}"
                                               @on-open="focus"
                                               @on-close="blur"
                                               :config="configDatePicker"
                                               class="form-control datepicker"
-                                              v-model="dates.simple">
+                                              v-model="dates.range">
                                   </flat-picker>
-                              </base-input> 
-                              <base-button class="float-right" type="primary" size="sm" v-on:click="SalesQuantityChartFunc()">Filtrar</base-button>
+                              </base-input>
+                              
+                            </div>
+                            <div class="col-4">
+                              <h5>¿Que datos desea?</h5>
+                              <base-dropdown>
+                                <base-button slot="title" type="default" class="dropdown-toggle">
+                                    {{textCategories}}
+                                </base-button>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validate('Producción por Día', 'dailyProduction')">
+                                        Producción por Día
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validate('Servicios por Día', 'asdasd')">
+                                        Servicios por Día
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validate('Produccíon por prestador', 'sadas')">
+                                        Produccíon por prestador
+                                      </a>
+                                  </li>
+                              </base-dropdown>
+                            </div>
+                            <div class="col-4">
+                              <base-button v-if="inspector" class="float-right" v-on:click="runGraph" type="default">Graficar</base-button>
+                              <base-button v-else disabled class="float-right" v-on:click="runGraph" type="default">Graficar</base-button>
                             </div>
                         </div>
                         <apexchart :height="350" v-if="loaded" type="line" :options="chartOptions" :series="series"></apexchart>
@@ -183,10 +207,11 @@
         configDatePicker: {
             allowInput: true, 
             dateFormat: 'm-d-Y',
+            mode: 'range',
             locale: Spanish, // locale for this instance only          
         }, 
         dates: {
-          simple: new Date()
+          range: new Date()
         },
         variable:10,
         ventas:[],
@@ -218,6 +243,11 @@
           chartData: {}
         },
         clients:[],
+        comisionTotal:0,
+        totalSales: 0,
+        textCategories: 'Categorias de gráficas',
+        inspector:  false,
+        apiGraph: ''
       };
     },
     beforeCreate(){
@@ -232,7 +262,7 @@
 			}
     },
     created(){
-      this.getClients();
+      // this.getClients();
       this.getVentas();
       this.totales(0);
       this.SalesQuantityChartFunc();
@@ -240,38 +270,54 @@
       
     },
     methods: {
-      getClients(){
-        axios.get(endPoint.endpointTarget+'/clients')
+      validate(text, api){
+        this.textCategories = text
+        this.apiGraph = api
+        this.inspector = true
+      },
+      runGraph(){
+        console.log(this.dates.range)
+        const split = this.dates.range.split(' a ')
+        axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+split[0]+':'+split[1])
         .then(res => {
-          this.clients = res.data
-          for (let i = 0; i < this.clients.length; i++) {
-            if (this.clients[i].correoCliente) {
-              this.clients[i].identidad = this.clients[i].identidad + '\n / ' + this.clients[i].correoCliente 
-            }
-            if (this.clients[i].instagramCliente) {
-              this.clients[i].identidad = this.clients[i].identidad + '\n / ' + this.clients[i].instagramCliente
-            }
-            this.clients[i].fecha = this.formatDate(this.clients[i].fecha)
-            this.clients[i].ultimaFecha = this.formatDate(this.clients[i].ultimaFecha)
-				  }
+          this.series = res.data.series
+          this.chartOptions = {
+            chart: {
+              type: 'area',
+              height: 350
+            },
+            dataLabels: {
+              enabled: false
+            },
+            markers: {
+              size: 0,
+              style: 'hollow',
+            },
+            xaxis: {
+              type: 'datetime'
+            },
+            tooltip: {
+              x: {
+                type:'datetime',
+                format: 'dd MMM yyyy'
+              }
+            },
+            fill: {
+              type: 'gradient',
+              gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 100]
+              }
+            },
+          }
         })
       },
       getVentas(){
-        const config = {headers: {'x-access-token': localStorage.userToken}}
-        axios.get(endPoint.endpointTarget+'/ventas', config)
+        axios.get(endPoint.endpointTarget+'/metrics/total')
         .then(res => {
-          this.ventas = res.data
-          let fechaBien = ''
-          for (let index = 0; index < this.ventas.length; index++) {
-            let fech = new Date(this.ventas[index].fecha)
-            fechaBien = fech.getDate() +"/"+ (fech.getMonth() + 1) +"/"+fech.getFullYear() +" "+" ("+ fech.getHours()+":"+ ('0'+fech.getMinutes()).slice(-2)+")"
-            this.ventas[index].fecha = fechaBien
-            let servicio = ''
-            for (let indexTwo = 0; indexTwo < this.ventas[index].servicios.length; indexTwo++) {
-              servicio = servicio +'\n'+ this.ventas[index].servicios[indexTwo].servicio
-            }
-            this.ventas[index].servicios = servicio
-          }
+         this.totalSales = res.data.status
         })
         .catch(() => {
           this.$swal({
@@ -316,53 +362,6 @@
           else {
             this.porcentajeTotal.push(true)
           } 
-        })
-      },
-      SalesQuantityChartWeekFunc(){
-        this.loaded = false
-        axios.get(endPoint.endpointTarget+'/ventas/weekMetrics')
-        .then(res => {	
-          const userlist = res.data
-          this.seriesWeekTotal = userlist.seriesTotal
-          this.seriesWeekServices = userlist.seriesServices
-          this.chartOptionsWeekTotal = {
-            chart: {
-              id: 'tw',
-              group: 'social',
-              type: 'line',
-              height: 160
-            },
-            colors: ['#546E7A'],
-            yaxis: {
-              labels: {
-                minWidth: 40
-              }
-            },
-            xaxis: {
-              categories: userlist.categories,
-            },
-          }
-          this.chartOptionsWeekServices = {
-            chart: {
-              id: 'fb',
-              group: 'social',
-              type: 'line',
-              height: 160
-            },
-            colors: ['#008FFB'],
-            yaxis: {
-              labels: {
-                minWidth: 40
-              }
-            },
-            xaxis: {
-              categories: userlist.categories,
-            }
-          }
-          this.loaded = true
-        })
-        .catch(err => {
-          console.error(err)
         })
       },
       SalesQuantityChartFunc(){
