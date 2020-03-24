@@ -856,7 +856,8 @@ export default {
 			axios.put(endPoint.endpointTarget+'/ventas/updateProviderMonth/' + this.lenderSelect)
 			.catch(err => {
 				console.log(err)
-			})
+            })
+            console.log(this.serviciosSelecionados)
         },
         borrarServicio(nombre, index, _id, precio, descuento){
             for (var i = 0; i < this.serviciosSelecionados.length; i++) {
@@ -869,22 +870,25 @@ export default {
                 this.countServices[index].count--
 				const subTotal = parseFloat(this.subTotal) - parseFloat(precio) 
 				this.price = this.formatPrice(subTotal)
-				this.subTotal = subTotal
-                this.totalSinFormato = subTotal
-                this.total = this.formatPrice(subTotal+ this.design)
-				if(this.discount == ""){
-					// this.total = this.formatPrice(subTotal+ this.design)
-				}else{
-					this.descuentoFunc(false)
-				}
+                this.subTotal = subTotal
+                if (descuento == true || this.discount == '') {
+                    this.totalSinFormato = this.totalSinFormato - precio
+                    this.total = this.formatPrice(this.totalSinFormato)
+                    console.log("si entro aqui")
+                }
+                else{
+                    console.log("no debo entrar aqui")
+                    const descuento = parseFloat(this.discount) / 100
+                    const porcentaje = 1 - parseFloat(descuento)
+                    const precioConDescuento = precio * porcentaje
+                    this.totalSinFormato = this.totalSinFormato - precioConDescuento
+                    this.total = this.formatPrice(this.totalSinFormato)
+                }
+                
 				axios.put(endPoint.endpointTarget+'/ventas/updateServicesMonthDiscount/' + nombre)
 				.catch(err => {
 					console.log(err)
 				})
-				axios.put(endPoint.endpointTarget+'/ventas/updateProviderMonthDiscount/' + this.lenderSelect)
-				.catch(err => {
-					console.log(err)
-                })
 			}
         },
         addDesign(){
@@ -904,24 +908,17 @@ export default {
             if (this.discount > 0) {
                 this.totalSinFormato = this.design
                 this.total = this.design
-                console.log("es mayor que 0")
                 for (let index = 0; index < this.serviciosSelecionados.length; index++) {
-                    console.log("entro en el for")
                     if (!this.serviciosSelecionados[index].descuento) {
-                        console.log("la validacion fue" + this.serviciosSelecionados[index].descuento)
-                        if(this.discount > 0){
-                            console.log("es mayor que 0")
                             const descuento = parseFloat(this.discount) / 100
                             const porcentaje = 1 - parseFloat(descuento)
                             const precioConDescuento = parseFloat(this.serviciosSelecionados[index].precio) * parseFloat(porcentaje)  
                             const totalConDescuento = parseFloat(this.totalSinFormato) + parseFloat(precioConDescuento)
                             this.total = this.formatPrice(totalConDescuento)
                             this.totalSinFormato = totalConDescuento 
-                        }
-                        
                     }
-                    else{
-                        this.total = this.formatPrice(this.total +this.serviciosSelecionados[index].precio)
+                    else{ 
+                        this.total = this.formatPrice(parseFloat(this.totalSinFormato) + parseFloat(this.serviciosSelecionados[index].precio))
                         this.totalSinFormato = parseFloat(this.totalSinFormato) + parseFloat(this.serviciosSelecionados[index].precio)
                     }
                 }
