@@ -72,10 +72,31 @@
                             <base-radio name="false" value="true" inline class="mb-3 mx-auto" v-model="addDiscount"> <b>Si</b> </base-radio>
                             <base-radio name="true" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
                         </div>
-                        <vue-custom-scrollbar class="maxHeight">
-                            <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
-                            </vue-bootstrap4-table>
-                        </vue-custom-scrollbar >
+                        <tabs fill class="flex-column flex-md-row">
+                            <tab-pane>
+                                <span slot="title">
+                                    <i class="fa fa-user-check">
+                                        Empleados
+                                    </i>
+                                </span>
+                                <vue-custom-scrollbar class="maxHeight">
+                                    <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
+                                    </vue-bootstrap4-table>
+                                </vue-custom-scrollbar >
+                            </tab-pane>
+
+                            <tab-pane title="Profile">
+                                <span slot="title">
+                                    <i class="fa fa-box-open">
+                                        Productos
+                                    </i>
+                                </span>
+                                <vue-custom-scrollbar class="maxHeight">
+                                    <vue-bootstrap4-table :rows="rowsItems" :columns="columnsItem" :classes="classes" :config="configLender" v-on:on-select-row="selectedItem" v-on:on-all-select-rows="selectedAllItem" v-on:on-unselect-row="unSelectedItem" v-on:on-all-unselect-rows="unSelectedAllItem" >
+                                    </vue-bootstrap4-table>
+                                </vue-custom-scrollbar >
+                            </tab-pane>
+                        </tabs>
                         <div class="text-center">
                             <base-button type="primary" class="my-4" v-on:click="registerService">Registrar</base-button>
                         </div>
@@ -137,13 +158,31 @@
                             <base-radio name="false"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
                             <base-radio name="true"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>No</b> </base-radio> 
                         </div>
-                        <vue-custom-scrollbar ref="table" class="maxHeight">
-                            <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
-                                <template slot="checkbox_rows" slot-scope="props" >
-                                    
-                                </template>
-                            </vue-bootstrap4-table>
-                        </vue-custom-scrollbar >
+                        <tabs fill class="flex-column flex-md-row">
+                            <tab-pane>
+                                <span slot="title">
+                                    <i class="fa fa-user-check">
+                                        Empleados
+                                    </i>
+                                </span>
+                                <vue-custom-scrollbar ref="table" class="maxHeight">
+                                    <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
+                                    </vue-bootstrap4-table>
+                                </vue-custom-scrollbar >
+                            </tab-pane>
+
+                            <tab-pane title="Profile">
+                                <span slot="title">
+                                    <i class="fa fa-box-open">
+                                        Productos
+                                    </i>
+                                </span>
+                                <vue-custom-scrollbar ref="tableItem" class="maxHeight">
+                                    <vue-bootstrap4-table :rows="rowsItems" :columns="columnsItem" :classes="classes" :config="configLender" v-on:on-select-row="selectedItem" v-on:on-all-select-rows="selectedAllItem" v-on:on-unselect-row="unSelectedItem" v-on:on-all-unselect-rows="unSelectedAllItem" >
+                                    </vue-bootstrap4-table>
+                                </vue-custom-scrollbar >
+                            </tab-pane>
+                        </tabs>
                         <div class="text-center">
                             
                             <base-button type="primary" class="my-4" v-on:click="editService">Editar</base-button>
@@ -155,7 +194,7 @@
         <vue-bootstrap4-table :rows="services" :columns="columns" :classes="classes" :config="config">
             <template slot="actionButtons" class="mx-auto" slot-scope="props">
                 <center>
-                   <base-button icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio)">Editar</base-button>
+                   <base-button icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos)">Editar</base-button>
                     <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)">Activo</base-button>
                     <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)">Inactivo</base-button> 
                 </center>
@@ -223,6 +262,15 @@ export default {
             columnsLender: [{
                 label: "Nombre",
                 name: "nombre",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: true,
+            }],
+            columnsItem: [{
+                label: "Nombre",
+                name: "producto",
                 // filter: {
                 //     type: "simple",
                 //     placeholder: "id"
@@ -325,7 +373,10 @@ export default {
             comissionEdit: 0,
             timeEdit: '',
             addDiscountEdit: '',
-            prueba:'false'
+            prueba:'false',
+            rowsItems:[],
+            itemSelected:[],
+            EdititemSelected:[]
         }
     },
     beforeCreate(){
@@ -342,6 +393,7 @@ export default {
     created(){
         this.getServices();
         this.getLenders()
+        this.getProducts()
     },
     methods: {
         getServices(){
@@ -349,6 +401,12 @@ export default {
             axios.get(endPoint.endpointTarget+'/servicios')
             .then(res => {
 				this.services = res.data
+            })
+        },
+        getProducts() {
+            axios.get(endPoint.endpointTarget+'/inventario')
+            .then(res => {
+            this.rowsItems = res.data 
             })
         },
         formatPrice(value) {
@@ -363,7 +421,6 @@ export default {
         },
         selected(value){
             console.log(this.$refs.table.$children[0].$data)
-   
             this.lenderSelecteds.push(value.selected_item._id)
             this.EditlenderSelecteds.push(value.selected_item._id)
             console.log(value)
@@ -392,6 +449,38 @@ export default {
         unSelectedAll(value){
             this.lenderSelecteds = []
             this.EditlenderSelecteds = []
+        },
+        selectedItem(value){
+            console.log(this.$refs.tableItem.$children[0].$data)
+   
+            this.itemSelected.push(value.selected_item._id)
+            this.EdititemSelected.push(value.selected_item._id)
+            console.log(value)
+        },
+        unSelectedItem(value){
+            for (let i = 0; i < this.itemSelected.length; i++) {
+                if (this.itemSelected[i] == value.unselected_item._id) {
+                    this.itemSelected.splice(i, 1)
+                    break
+                }
+            }
+            for (let i = 0; i < this.EdititemSelected.length; i++) {
+                if (this.EdititemSelected[i] == value.unselected_item._id) {
+                    this.EdititemSelected.splice(i, 1)
+                    break
+                }
+            }
+        },
+        
+        selectedAllItem(value){
+            for (let index = 0; index < value.selected_items.length; index++) {
+                this.itemSelected.push(value.selected_items[index]._id)
+                this.EdititemSelected.push(value.selected_items[index]._id)
+            }
+        },
+        unSelectedAllItem(value){
+            this.itemSelected = []
+            this.EdititemSelected = []
         },
         registerService(){
             if (this.serviceRegister == '' || this.priceRegister == 0 || this.timeRegister == '' || this.comissionRegister == '') {
@@ -437,6 +526,7 @@ export default {
                         comisionServicio: this.comissionRegister,
                         tiempoServicio: this.timeRegister,
                         prestadores: this.lenderSelecteds,
+                        productos:this.itemSelected,
                         descuento: ifCheck
                     }).then(res => {
                         if (res.data.status == 'Servicio creado') {
@@ -492,11 +582,13 @@ export default {
             $('.maxHeight  thead .vbt-checkbox').click()
             $('.maxHeight  thead .vbt-checkbox').prop('checked', false)
         },
-        dataEdit(id, lenders, name, time, discount, comission, price){
+        dataEdit(id, lenders, name, time, discount, comission, price,items){
             this.EditlenderSelecteds = []
+            this.EdititemSelected = []
             const discountFinal = discount ? false : true
             this.idServiceEdit = id
             this.EditlenderSelecteds = lenders
+            this.EdititemSelected = items
             this.serviceEdit = name
             this.priceEdit = price
             this.comissionEdit = comission
@@ -504,30 +596,38 @@ export default {
             this.addDiscountEdit = discount
             this.modals.modal2 = true
             let data = this.$refs.table.$children[0].$data.vbt_rows
+            let dataItem = this.$refs.tableItem.$children[0].$data.vbt_rows
             let selected = this.$refs.table.$children[0].$data.selected_items
+            let selectedItem = this.$refs.tableItem.$children[0].$data.selected_items
             for (let c = 0; c <= selected.length; c++) {
                 selected.shift()
-                
+            }
+            for (let cc = 0; cc <= selectedItem.length; cc++) {
+                selectedItem.shift()
             }
             setTimeout(() => {
                 for (let index = 0; index < data.length; index++) {
                     for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
                         if (this.EditlenderSelecteds[i] == data[index]._id ) {
-                            console.log(this.EditlenderSelecteds[i] + "--" + data[index]._id)
                             selected.push(data[index])
                         }
                     }
                 }
-            }, 500);
+                for (let indexx = 0; indexx < dataItem.length; indexx++) {
+                    for (let i = 0; i < this.EdititemSelected.length; i++) {
+                        if (this.EdititemSelected[i] == dataItem[indexx]._id ) {
+                            selectedItem.push(dataItem[indexx])
+                        }
+                    }
+                }
+            }, 100);
         },
         clean(){
             let selected = this.$refs.table.$children[0].$data.selected_items
-            
             for (let c = 0; c <= selected.length; c++) {
                 selected.shift()
                 console.log(selected.length)
-            }
-            
+            } 
         },
         editService(){
             if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {
@@ -566,7 +666,7 @@ export default {
                         }
                     }, 1500);
                 }else{
-                    console.log(this.addDiscountEdit)
+                    console.log(this.EdititemSelected)
                     var ifCheck = this.addDiscountEdit ? false : true
 					const id = this.idServiceEdit
 					axios.put(endPoint.endpointTarget+'/servicios/' + id, {
@@ -574,7 +674,8 @@ export default {
 						tiempoServicio: this.timeEdit,
 						precioServicio: this.priceEdit,
 						comisionServicio: this.comissionEdit,
-						prestadores: this.EditlenderSelecteds,
+                        prestadores: this.EditlenderSelecteds,
+                        productos: this.EdititemSelected,
 						descuento: this.addDiscountEdit
 					}).then(res => {
                         this.modals = {
