@@ -530,29 +530,6 @@
                 </div>
             </div>
             <!-- End charts-->
-
-            <!--Tables-->
-            <div class="row mt-5">
-                <div class="col-xl-7 mb-5 mb-xl-0">
-                    <page-visits-table></page-visits-table>
-                </div>
-                <div class="col-xl-5">
-                    <card header-classes="bg-transparent">
-                        <div slot="header" class="row align-items-center">
-                            <div class="col">
-                                <h5 class="h3 mb-0">Top 10 clientes</h5>
-                            </div>
-                        </div>
-                        <bar-chart
-                                :height="350"
-                                ref="barChart"
-                                :chart-data="redBarChart.chartData"
-                        >
-                        </bar-chart>
-                    </card>
-                </div>
-            </div>
-            <!--End tables-->
         </div>
     </div>
 </template>
