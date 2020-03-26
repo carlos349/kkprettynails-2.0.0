@@ -299,23 +299,27 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div v-if="tables.ninethTable" class="table-responsive col-md-4">
+                          <div v-if="tables.eighthTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
                                   <th>Fecha</th>
-                                  <th>Servicio/a</th>
-                                  <th>Cantidad</th>
+                                  <th>Producción</th>
+                                  <th>Comisión</th>
+                                  <th>Servicios</th>
                                 </template>
                                 <template slot-scope="{row}">
                                   <th scope="row">
                                     {{row.Fecha}}
                                   </th>
                                   <th scope="row">
-                                    {{row.Servicio}}
+                                    {{row.totalProduction}}
                                   </th>
                                   <th scope="row">
-                                    {{row.Cantidad}}
+                                    {{row.totalComision}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.totalServices}}
                                   </th>
                                 </template>
                               </base-table>
@@ -345,10 +349,28 @@
                           </div>
                           <div class="col-md-8">
                             <apexchart ref="chartApis" :height="350" v-if="loaded" :options="chartOptions" :series="series"></apexchart>
+                            <!-- <base-dropdown class="w-100">
+                                <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                    {{TypeChartOptions}}
+                                </base-button>.
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="typeChart('Columnas','bar')">
+                                        Columnas
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="typeChart('Radar','radar')">
+                                        Radar
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="typeChart('Torta','pie')">
+                                        Torta
+                                      </a>
+                                  </li>
+                              </base-dropdown> -->
                           </div>
                         </div>
-                        
-                        
                     </card>
                 </div>
             </div>
@@ -410,7 +432,7 @@
                             </div>
                         </div>
                         <div class="row">
-                          <div v-if="tablesDaily.firstTable" class="table-responsive col-md-4">
+                          <div v-if="tablesDaily.firstTable" class="table-responsive col-md-6">
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="firstDataTableDaily">
                                 <template slot="columns">
@@ -432,7 +454,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div v-if="tablesDaily.secondTable" class="table-responsive col-md-4">
+                          <div v-if="tablesDaily.secondTable" class="table-responsive col-md-6">
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -454,7 +476,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div v-if="tablesDaily.thirdTable" class="table-responsive col-md-4">
+                          <div v-if="tablesDaily.thirdTable" class="table-responsive col-md-6">
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -476,7 +498,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div v-if="tablesDaily.fourthTable" class="table-responsive col-md-4">
+                          <div v-if="tablesDaily.fourthTable" class="table-responsive col-md-6">
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -498,7 +520,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div v-if="tablesDaily.fivethTable" class="table-responsive col-md-4">
+                          <div v-if="tablesDaily.fivethTable" class="table-responsive col-md-6">
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -520,7 +542,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div class="col-md-8">
+                          <div class="col-md-6">
                             <apexchart ref="chartApisDaily" :height="350" v-if="loadedDaily" :options="chartDaily" :series="seriesDaily"></apexchart>
                           </div>
                         </div>
@@ -561,6 +583,7 @@
     },
     data() {
       return {
+        TypeChartOptions: 'Escoja el tipo de gráfica',
         loaded:false,
         series: [],
         chartOptions: {
@@ -621,7 +644,7 @@
           fifthTable:false,
           sixthTable:false,
           seventhTable:false,
-          eighth: false,
+          eighthTable: false,
           nineth: false,
           tenthTable:false
         },
@@ -666,6 +689,47 @@
       this.SalesQuantityChartFuncDaily()
     },
     methods: {
+      typeChart(text, type){
+        this.TypeChartOptions = text
+        if (type == 'radar') {
+          this.chartDaily = {
+            chart: {
+              height: 350,
+              type: 'radar',
+              dropShadow: {
+                enabled: true,
+                blur: 1,
+                left: 1,
+                top: 1
+              }
+            },
+          }
+          this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+        }else if (type == 'pie') {
+          this.chartDaily = {
+            chart: {
+              width: 380,
+              type: 'pie',
+            }
+          }
+          this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+        }else{
+          this.chartDaily = {
+            chart: {
+              type: 'bar',
+              height: 350
+            },
+            plotOptions: {
+              bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                endingShape: 'rounded'
+              },
+            }
+          }
+          this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+        }
+      },
       selectEmploye(name){
         this.employeSelect = name
       },
@@ -845,7 +909,7 @@
               fifthTable:false,
               sixthTable:false,
               seventhTable:false,
-              eighth: false,
+              eighthTable: false,
               nineth: false,
               tenthTable:false
             }
@@ -859,7 +923,7 @@
               fifthTable:false,
               sixthTable:false,
               seventhTable:false,
-              eighth: false,
+              eighthTable: false,
               nineth: false,
               tenthTable:false
             }
@@ -873,7 +937,7 @@
               fifthTable:false,
               sixthTable:false,
               seventhTable:false,
-              eighth: false,
+              eighthTable: false,
               nineth: false,
               tenthTable:false
             }
@@ -887,7 +951,7 @@
               fifthTable:true,
               sixthTable:false,
               seventhTable:false,
-              eighth: false,
+              eighthTable: false,
               nineth: false,
               tenthTable:false
             }
@@ -901,7 +965,7 @@
               fifthTable:false,
               sixthTable:true,
               seventhTable:false,
-              eighth: false,
+              eighthTable: false,
               nineth: false,
               tenthTable:false
             }
@@ -915,11 +979,10 @@
               fifthTable:false,
               sixthTable:false,
               seventhTable:true,
-              eighth: false,
-              nineth: false,
-              tenthTable:false
+              eighthTable: false,
+              nineth: false
             }
-          }else if (this.apiGraph == 'quantityServicesPerLender') {
+          }else if (this.apiGraph == 'detailPerLender') {
             this.chartOptions = typeDatetime
             this.tables = {
               firstTable: false,
@@ -929,23 +992,7 @@
               fifthTable:false,
               sixthTable:false,
               seventhTable:false,
-              eighth: true,
-              nineth: false,
-              tenthTable:false
-            }
-          }else if (this.apiGraph == 'quantityServicesPerService') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable:false, 
-              quarterTable:false,
-              fifthTable:false,
-              sixthTable:false,
-              seventhTable:false,
-              eighth: false,
-              nineth: true,
-              tenthTable:false
+              eighthTable: true,
             }
           }
           this.dataTable = []
@@ -1105,7 +1152,7 @@
             fifthTable:false,
             sixthTable:false,
             seventhTable:false,
-            eighth: false,
+            eighthTable: false,
             nineth: false,
             tenthTable:false
           }
