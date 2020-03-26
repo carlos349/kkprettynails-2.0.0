@@ -11,7 +11,7 @@
                         <h1 class="display-2 text-white w-100">Sección de ventas</h1>
                         <label class="text-white">Filtra tus ventas</label>
                         <div class="row">
-                            <div class="col-7">
+                            <div class="col-md-8">
                                 <base-input addon-left-icon="ni ni-calendar-grid-58">
                                     <flat-picker slot-scope="{focus, blur}"
                                         @on-open="focus"
@@ -22,9 +22,13 @@
                                     </flat-picker>
                                 </base-input>
                             </div>
-                            <div class="col-5">
+                            <div class="col-md-2">
                                 <base-button  type="default" v-on:click="filterSale">Filtrar</base-button>
-
+                            </div>
+                            <div class="col-md-2">
+                                <base-button v-if="inspectorFilter"  type="secondary" v-on:click="getSales">
+                                    <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
+                                </base-button>
                             </div>
                         </div>
                         
@@ -232,6 +236,7 @@ export default {
             errorAlert: false,
             messageSuccess: '',
             messageError: '',
+            inspectorFilter: false
         }
     },
     beforeCreate(){
@@ -250,6 +255,7 @@ export default {
     },
     methods: {
         async filterSale(){
+            this.inspectorFilter = true
             const splitDate = this.dates.range.split(' a ')
             console.log(splitDate.length)
             if (splitDate.length > 1) {
@@ -311,6 +317,7 @@ export default {
             }
         },
         getSales(){
+            this.inspectorFilter = false
             const config = {headers: {'x-access-token': localStorage.userToken}}
             axios.get(endPoint.endpointTarget+'/ventas', config)
             .then(res => {
