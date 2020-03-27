@@ -121,8 +121,8 @@
                                       </a>
                                   </li>
                                   <li>
-                                      <a class="dropdown-item" v-on:click="validate('Total en diseños por día', 'dailyDesign')">
-                                        Total en diseños por día
+                                      <a class="dropdown-item" v-on:click="validate('Diseños por prestador', 'dailyDesign')">
+                                        Diseños por prestador
                                       </a>
                                   </li>
                                   <li>
@@ -344,14 +344,18 @@
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
                                   <th>Fecha</th>
+                                  <th>Prestador</th>
                                   <th>Monto</th>
                                 </template>
                                 <template slot-scope="{row}">
                                   <th scope="row">
-                                    {{row.fecha}}
+                                    {{row.Fecha}}
                                   </th>
                                   <th scope="row">
-                                   $ {{formatPrice(row.total)}}
+                                    {{row.Prestadora}}
+                                  </th>
+                                  <th scope="row">
+                                   $ {{formatPrice(row.Monto)}}
                                   </th>
                                 </template>
                               </base-table>
@@ -460,7 +464,7 @@
                             </div>
                         </div>
                         <div class="row">
-                          <div v-if="tablesDaily.firstTable" class="table-responsive col-md-6">
+                          <div v-if="tablesDaily.firstTable" class="table-responsive col-md-5">
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="firstDataTableDaily">
                                 <template slot="columns">
@@ -482,7 +486,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div v-if="tablesDaily.secondTable" class="table-responsive col-md-6">
+                          <div v-if="tablesDaily.secondTable" class="table-responsive col-md-5">
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -504,7 +508,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div v-if="tablesDaily.thirdTable" class="table-responsive col-md-6">
+                          <div v-if="tablesDaily.thirdTable" class="table-responsive col-md-5">
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -526,7 +530,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div v-if="tablesDaily.fourthTable" class="table-responsive col-md-6">
+                          <div v-if="tablesDaily.fourthTable" class="table-responsive col-md-5">
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -548,7 +552,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div v-if="tablesDaily.fivethTable" class="table-responsive col-md-6">
+                          <div v-if="tablesDaily.fivethTable" class="table-responsive col-md-5">
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -570,7 +574,7 @@
                               </base-table>
                             </vue-custom-scrollbar >
                           </div>
-                          <div class="col-md-6">
+                          <div class="col-md-7">
                             <apexchart ref="chartApisDaily" :height="400" v-if="loadedDaily" :options="chartDaily" :series="seriesDaily"></apexchart>
                           </div>
                         </div>
