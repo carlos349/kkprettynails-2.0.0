@@ -126,7 +126,7 @@
 
         <vue-bootstrap4-table class="text-left" :rows="users" :columns="columns" :classes="classes" :config="config">
             <template slot="date-format" class="text-left" slot-scope="props">
-                <p>{{formatDate(props.row.LastAccess)}}</p>
+                {{formatDate(props.row.LastAccess)}}
             </template>
             <template slot="status-format" slot-scope="props">
                 <base-dropdown class="w-100">

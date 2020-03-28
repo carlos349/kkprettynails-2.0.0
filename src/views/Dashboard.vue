@@ -69,8 +69,9 @@
                 <div class="col-12" >
                     <card header-classes="bg-transparent">
                         <div slot="header" class="row align-items-center">
-                            <div class="col-4">    
-                              <h5>Filtre por fecha</h5>                       
+                            <div class="col-md-3">    
+                              <h5 v-if="!inspectorFilter">Filtre por fecha</h5> 
+                              <h5 v-else><strong>FILTRE PRIMERO</strong></h5>                       
                               <base-input
                               class="mb-1 mt-2" 
                               addon-left-icon="ni ni-calendar-grid-58">
@@ -84,10 +85,9 @@
                               </base-input>
                               
                             </div>
-                            <div class="col-4">
-                              <h5>¿Que datos desea?</h5>
-                              <base-dropdown>
-                                <base-button slot="title" type="default" class="dropdown-toggle">
+                            <div class="col-md-4 mt-3">
+                              <base-dropdown class="w-100">
+                                <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                     {{textCategories}}
                                 </base-button>
                                   <li>
@@ -96,50 +96,492 @@
                                       </a>
                                   </li>
                                   <li>
-                                      <a class="dropdown-item" v-on:click="validate('Servicios por Día', 'asdasd')">
+                                      <a class="dropdown-item" v-on:click="validate('Servicios por Día', 'dailyServices')">
                                         Servicios por Día
                                       </a>
                                   </li>
                                   <li>
-                                      <a class="dropdown-item" v-on:click="validate('Produccíon por prestador', 'sadas')">
+                                      <a class="dropdown-item" v-on:click="validate('Produccíon por prestador', 'quantityProductionPerLender')">
                                         Produccíon por prestador
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validate('Gastos, ganancias, ventas por Día', 'dailyExpenseGainTotal')">
+                                        Gastos, ganancias, ventas por Día
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validate('Comisión por prestador', 'quantityComissionPerLender')">
+                                        Comisión por prestador
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validate('Servicios por manicurista', 'quantityServicesPerLender')">
+                                        Servicios por manicurista
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validate('Diseños por prestador', 'dailyDesign')">
+                                        Diseños por prestador
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validate('Detalle de prestador', 'no-detailPerLender')">
+                                        Detalle de prestador
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validate('Detalle por servicio', 'no-detailPerService')">
+                                        Detalle por servicio
                                       </a>
                                   </li>
                               </base-dropdown>
                             </div>
-                            <div class="col-4">
-                              <base-button v-if="inspector" class="float-right" v-on:click="runGraph" type="default">Graficar</base-button>
-                              <base-button v-else disabled class="float-right" v-on:click="runGraph" type="default">Graficar</base-button>
+                            <div v-if="inspectorLender" class="col-md-3 mt-3">
+                              <base-dropdown class="w-100">
+                                  <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                          {{employeSelect}}
+                                  </base-button>
+                                  <li v-for="data in employes" :key="data.nombre"  v-on:click="selectEmploye(data.nombre)">
+                                      <a class="dropdown-item" v-on:click="validate('Detalle de prestador', 'detailPerLender')">
+                                        {{data.nombre}}
+                                      </a>
+                                  </li>
+                              </base-dropdown>
+                            </div>
+                            <div v-if="inspectorService" class="col-md-3 mt-3">
+                              <base-dropdown class="w-100">
+                                  <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                          {{serviceSelect}}
+                                  </base-button>
+                                  <li v-for="data in Services" :key="data.nombre"  v-on:click="selectService(data.nombre)">
+                                      <a class="dropdown-item" v-on:click="validate('Detalle por servicio', 'detailPerService')">
+                                        {{data.nombre}}
+                                      </a>
+                                  </li>
+                              </base-dropdown>
+                            </div>
+                            <div class="col-md-2">
+                              <base-button v-if="inspector" class="float-right mt-3" v-on:click="runGraph" type="default">Graficar</base-button>
+                              <base-button v-else disabled class="float-right mt-3" v-on:click="runGraph" type="default">Graficar</base-button>
                             </div>
                         </div>
-                        <apexchart ref="chartApis" :height="350" v-if="loaded" :options="chartOptions" :series="series"></apexchart>
+                        <div class="row">
+                          <div v-if="tables.firstTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="firstDataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Tipo</th>
+                                  <th>Monto</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Fecha}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Tipo}}
+                                  </th>
+                                  <th scope="row">
+                                    $ {{formatPrice(row.Monto)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tables.secondTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="dataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Monto</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.fecha}}
+                                  </th>
+                                  <th scope="row">
+                                    $ {{formatPrice(row.total)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tables.thirdTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="dataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Cantidad</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Fecha}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Cantidad}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tables.quarterTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="dataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Prestador/a</th>
+                                  <th>Monto</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Fecha}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Prestadora}}
+                                  </th>
+                                  <th scope="row">
+                                    $ {{formatPrice(row.Monto)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tables.fifthTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="dataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Tipo</th>
+                                  <th>Monto</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Fecha}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Tipo}}
+                                  </th>
+                                  <th scope="row">
+                                    $ {{formatPrice(row.Monto)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tables.sixthTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="dataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Prestador/a</th>
+                                  <th>Monto</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Fecha}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Prestadora}}
+                                  </th>
+                                  <th scope="row">
+                                    $ {{formatPrice(row.Monto)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tables.seventhTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="dataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Prestador/a</th>
+                                  <th>Cantidad</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Fecha}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Prestadora}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Monto}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tables.eighthTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="dataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Producción</th>
+                                  <th>Comisión</th>
+                                  <th>Servicios</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Fecha}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.totalProduction}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.totalComision}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.totalServices}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tables.ninethTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="dataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Prestador</th>
+                                  <th>Monto</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Fecha}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Prestadora}}
+                                  </th>
+                                  <th scope="row">
+                                   $ {{formatPrice(row.Monto)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tables.tenthTable" class="table-responsive col-md-4">
+                            <vue-custom-scrollbar class="maxHeight">
+                              <base-table thead-classes="thead-light" :data="dataTable">
+                                <template slot="columns">
+                                  <th>Fecha</th>
+                                  <th>Monto</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Fecha}}
+                                  </th>
+                                  <th scope="row">
+                                   $ {{formatPrice(row.total)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div class="col-md-8">
+                            <apexchart ref="chartApis" :height="350" v-if="loaded" :options="chartOptions" :series="series"></apexchart>
+                            <!-- <base-dropdown class="w-100">
+                                <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                    {{TypeChartOptions}}
+                                </base-button>.
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="typeChart('Columnas','bar')">
+                                        Columnas
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="typeChart('Radar','radar')">
+                                        Radar
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="typeChart('Torta','pie')">
+                                        Torta
+                                      </a>
+                                  </li>
+                              </base-dropdown> -->
+                          </div>
+                        </div>
                     </card>
                 </div>
             </div>
             <!-- End charts-->
 
-            <!--Tables-->
+            <!--Charts-->
             <div class="row mt-5">
-                <div class="col-xl-7 mb-5 mb-xl-0">
-                    <page-visits-table></page-visits-table>
-                </div>
-                <div class="col-xl-5">
+              <h1>Gráficas específicas</h1>
+                <div class="col-12" >
                     <card header-classes="bg-transparent">
                         <div slot="header" class="row align-items-center">
-                            <div class="col">
-                                <h5 class="h3 mb-0">Top 10 clientes</h5>
+                            <div class="col-md-3">    
+                              <h5 v-if="!inspectorFilterDaily">Filtre por fecha</h5> 
+                              <h5 v-else><strong>FILTRE PRIMERO</strong></h5>                       
+                              <base-input
+                              class="mb-1 mt-2" 
+                              addon-left-icon="ni ni-calendar-grid-58">
+                                  <flat-picker slot-scope="{focus, blur}"
+                                              @on-open="focus"
+                                              @on-close="blur"
+                                              :config="configDatePicker"
+                                              class="form-control datepicker"
+                                              v-model="dates.rangeDaily">
+                                  </flat-picker>
+                              </base-input>
+                              
+                            </div>
+                            <div class="col-md-4 mt-3">
+                              <base-dropdown class="w-100">
+                                <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                    {{textCategoriesDaily}}
+                                </base-button>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validateDaily('Totales diarios', 'dailyQuantityPerDay')">
+                                        Totales diarios
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validateDaily('Promedios diarios', 'dailyAveragePerDay')">
+                                        Promedios diarios
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validateDaily('Top 10 Clientes con más atenciones', 'getTopTenBestClients')">
+                                        Top 10 Clientes atenciones
+                                      </a>
+                                  </li>
+                                  <li>
+                                      <a class="dropdown-item" v-on:click="validateDaily('Top 10 Clientes con más recomendaciones', 'getTopTenBestClientsRecommendations')">
+                                        Top 10 Clientes recomendaciones
+                                      </a>
+                                  </li>
+                              </base-dropdown>
+                            </div>
+                            <div class="col-md-3 mt-3"></div>
+                            <div class="col-md-2">
+                              <base-button v-if="inspectorDaily" class="float-right mt-3" v-on:click="runGraphDaily" type="default">Graficar</base-button>
+                              <base-button v-else disabled class="float-right mt-3" v-on:click="runGraphDaily" type="default">Graficar</base-button>
                             </div>
                         </div>
-                        <bar-chart
-                                :height="350"
-                                ref="barChart"
-                                :chart-data="redBarChart.chartData"
-                        >
-                        </bar-chart>
+                        <div class="row">
+                          <div v-if="tablesDaily.firstTable" class="table-responsive col-md-5">
+                            <vue-custom-scrollbar class="maxHeightEspecific">
+                              <base-table thead-classes="thead-light" :data="firstDataTableDaily">
+                                <template slot="columns">
+                                  <th>Día</th>
+                                  <th>Servicios</th>
+                                  <th>Producción</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Dia}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Servicios}}
+                                  </th>
+                                  <th scope="row">
+                                    $ {{formatPrice(row.Produccion)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tablesDaily.secondTable" class="table-responsive col-md-5">
+                            <vue-custom-scrollbar class="maxHeightEspecific">
+                              <base-table thead-classes="thead-light" :data="dataTableDaily">
+                                <template slot="columns">
+                                  <th>Día</th>
+                                  <th>Servicios</th>
+                                  <th>Producción</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Dia}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Servicios}}
+                                  </th>
+                                  <th scope="row">
+                                    $ {{formatPrice(row.Produccion)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tablesDaily.thirdTable" class="table-responsive col-md-5">
+                            <vue-custom-scrollbar class="maxHeightEspecific">
+                              <base-table thead-classes="thead-light" :data="dataTableDaily">
+                                <template slot="columns">
+                                  <th>Día</th>
+                                  <th>Servicios</th>
+                                  <th>Producción</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Dia}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.Servicios}}
+                                  </th>
+                                  <th scope="row">
+                                    $ {{formatPrice(row.Produccion)}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tablesDaily.fourthTable" class="table-responsive col-md-5">
+                            <vue-custom-scrollbar class="maxHeightEspecific">
+                              <base-table thead-classes="thead-light" :data="dataTableDaily">
+                                <template slot="columns">
+                                  <th>Cliente</th>
+                                  <th>Contacto</th>
+                                  <th>Atenciones</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Cliente}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.contacto}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.atencion}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div v-if="tablesDaily.fivethTable" class="table-responsive col-md-5">
+                            <vue-custom-scrollbar class="maxHeightEspecific">
+                              <base-table thead-classes="thead-light" :data="dataTableDaily">
+                                <template slot="columns">
+                                  <th>Cliente</th>
+                                  <th>Contacto</th>
+                                  <th>Recomendaciones</th>
+                                </template>
+                                <template slot-scope="{row}">
+                                  <th scope="row">
+                                    {{row.Cliente}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.contacto}}
+                                  </th>
+                                  <th scope="row">
+                                    {{row.recomendaciones}}
+                                  </th>
+                                </template>
+                              </base-table>
+                            </vue-custom-scrollbar >
+                          </div>
+                          <div class="col-md-7">
+                            <apexchart ref="chartApisDaily" :height="400" v-if="loadedDaily" :options="chartDaily" :series="seriesDaily"></apexchart>
+                          </div>
+                        </div>
                     </card>
                 </div>
             </div>
-            <!--End tables-->
+            <!-- End charts-->
         </div>
     </div>
 </template>
@@ -159,16 +601,19 @@
   import flatPicker from "vue-flatpickr-component";
   import "flatpickr/dist/flatpickr.css";
   import {Spanish} from 'flatpickr/dist/l10n/es.js';
+  import vueCustomScrollbar from 'vue-custom-scrollbar'
   export default {
     components: {
       LineChart,
       BarChart,
       PageVisitsTable,
       SocialTrafficTable,
-      flatPicker
+      flatPicker,
+      vueCustomScrollbar
     },
     data() {
       return {
+        TypeChartOptions: 'Escoja el tipo de gráfica',
         loaded:false,
         series: [],
         chartOptions: {
@@ -181,7 +626,8 @@
             locale: Spanish, // locale for this instance only          
         }, 
         dates: {
-          range: new Date()
+          range: new Date(),
+          rangeDaily: new Date()
         },
         variable:10,
         ventas:[],
@@ -217,7 +663,42 @@
         totalSales: 0,
         textCategories: 'Categorias de gráficas',
         inspector:  false,
-        apiGraph: ''
+        apiGraph: '',
+        attentions:[],
+        dataTable: [],
+        tables: {
+          firstTable: false,
+          secondTable: false,
+          thirdTable:false,
+          quarterTable:false,
+          fifthTable:false,
+          sixthTable:false,
+          seventhTable:false,
+          eighthTable: false,
+          ninethTable: false,
+          tenthTable: false
+        },
+        firstDataTable: [],
+        inspectorLender: false,
+        inspectorService: false,
+        employes: [],
+        employeSelect: 'Seleccione el prestador',
+        inspectorFilter: false,
+        tablesDaily: {
+          firstTable: false,
+          secondTable: false,
+          thirdTable:false, 
+          fourthTable: false
+        },
+        firstDataTableDaily: [],
+        textCategoriesDaily: 'Categorias de gráficas',
+        inspectorFilterDaily: false,
+        loadedDaily: false,
+        apiGraphDaily: '',
+        inspectorDaily: false,
+        Services: [],
+        serviceSelect:'Seleccione un servicio',
+        ifServices: false
       };
     },
     beforeCreate(){
@@ -232,33 +713,222 @@
 			}
     },
     created(){
-      // this.getClients();
+      this.getServices();
       this.getVentas();
       this.totales(0);
       this.SalesQuantityChartFunc();
       // this.SalesQuantityChartWeekFunc();
-      
+      this.getParticipacion()
+      this.getEmployes()
+      this.SalesQuantityChartFuncDaily()
     },
     methods: {
+      getServices(){  
+        axios.get(endPoint.endpointTarget+'/servicios')
+        .then(res => {
+          this.Services = res.data
+        })
+      },
+      selectService(name){
+        this.serviceSelect = name
+      },
+      typeChart(text, type){
+        this.TypeChartOptions = text
+        if (type == 'radar') {
+          this.chartDaily = {
+            chart: {
+              height: 350,
+              type: 'radar',
+              dropShadow: {
+                enabled: true,
+                blur: 1,
+                left: 1,
+                top: 1
+              }
+            },
+          }
+          this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+        }else if (type == 'pie') {
+          this.chartDaily = {
+            chart: {
+              width: 380,
+              type: 'pie',
+            }
+          }
+          this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+        }else{
+          this.chartDaily = {
+            chart: {
+              type: 'bar',
+              height: 350
+            },
+            plotOptions: {
+              bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                endingShape: 'rounded'
+              },
+            }
+          }
+          this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+        }
+      },
+      selectEmploye(name){
+        this.employeSelect = name
+      },
+      getEmployes(){
+  			axios.get(endPoint.endpointTarget+'/manicuristas')
+  			.then(res => {
+          this.employes = res.data
+          console.log(this.employes)     
+  			})
+  		},
+      getParticipacion() {
+        axios.get(endPoint.endpointTarget+'/metrics/top')
+        .then(res => {
+          
+          for (let index = 0; index < res.data.length; index++) {
+            const element = res.data[index];
+            this.attentions.push({name: element.nombre, contact: element.identidad, attention: element.participacion})
+          }
+          
+        })
+      },
       validate(text, api){
-        this.textCategories = text
-        this.apiGraph = api
-        this.inspector = true
+        if (this.dates.range.length > 12) {
+          if (api == 'no-detailPerLender') {
+            this.inspectorLender = true
+            this.inspectorService = false
+            this.textCategories = text
+          }else if(api == 'no-detailPerService'){
+            this.inspectorService = true
+            this.inspectorLender = false
+            this.textCategories = text
+          }else{
+            this.textCategories = text
+            this.apiGraph = api
+            this.inspector = true
+            if (this.apiGraph != 'detailPerLender') {
+              this.inspectorLender = false
+            }
+            if (this.apiGraph != 'detailPerService') {
+              this.inspectorService = false
+            }
+          }
+        }else{
+          this.inspectorFilter = true
+        }
+      },
+      validateDaily(text, api){
+        if (this.dates.rangeDaily.length > 12) {
+          this.textCategoriesDaily = text
+          this.apiGraphDaily = api
+          this.inspectorDaily = true
+        }else{
+          this.inspectorFilterDaily = true
+        }
+      },
+      runGraphDaily(){
+        const split = this.dates.rangeDaily.split(' a ')
+        var tooltip = {
+          y: [
+            {
+              title: {
+                formatter: function (val) {
+                  return val+' $'
+                }
+              }
+            },
+            {
+              title: {
+                formatter: function (val) {
+                  return val
+                }
+              }
+            }
+          ]
+        }
+        if (this.apiGraphDaily == 'getTopTenBestClients' || this.apiGraphDaily == 'getTopTenBestClientsRecommendations') {
+          tooltip = {
+          y: [
+              {
+                title: {
+                  formatter: function (val) {
+                    return val+' $'
+                  }
+                }
+              },
+            ]
+          }
+        }
+        var typeAPI = axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraphDaily+'/'+split[0]+':'+split[1])
+        if (this.apiGraphDaily == 'getTopTenBestClients' || this.apiGraphDaily == 'getTopTenBestClientsRecommendations') {
+          typeAPI = axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraphDaily)
+        }
+        typeAPI.then(res => {
+          if (this.apiGraphDaily == 'dailyQuantityPerDay') {
+            this.tablesDaily = {
+              firstTable: false,
+              secondTable: true,
+              thirdTable: false,
+              fourthTable: false, 
+              fivethTable: false
+            }
+          }else if (this.apiGraphDaily == 'dailyAveragePerDay') {
+            this.tablesDaily = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable: true,
+              fourthTable: false, 
+              fivethTable: false
+            }
+          }else if (this.apiGraphDaily == 'getTopTenBestClients') {
+            this.tablesDaily = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable: false, 
+              fourthTable: true,
+              fivethTable: false
+            }
+          }else if (this.apiGraphDaily == 'getTopTenBestClientsRecommendations') {
+            this.tablesDaily = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable: false, 
+              fourthTable: false, 
+              fivethTable: true
+            }
+          }
+          this.chartDaily = {
+            title: {
+              text: this.textCategoriesDaily,
+              align: 'left'
+            },
+            xaxis: {
+              categories: res.data.categories
+            },
+            tooltip: tooltip
+          }
+          this.dataTableDaily = []
+          this.dataTableDaily = res.data.dataTable
+          this.seriesDaily = res.data.series
+          this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+        })
       },
       runGraph(){
-        console.log(this.dates.range)
         const split = this.dates.range.split(' a ')
-        axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+split[0]+':'+split[1])
-        .then(res => {
-          this.series = res.data.series
-          console.log(this.$refs.chartApis)
-          this.chartOptions = {
+        var typeAPI = axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+split[0]+':'+split[1])
+        var typeDatetime = {
             chart: {
-              type: 'area',
+              type: 'line',
               height: 350
             },
             dataLabels: {
               enabled: false
+            },
+            title: {
+              text: this.textCategories,
+              align: 'left'
             },
             markers: {
               size: 0,
@@ -273,16 +943,148 @@
                 format: 'dd MMM yyyy'
               }
             },
-            fill: {
-              type: 'gradient',
-              gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.7,
-                opacityTo: 0.9,
-                stops: [0, 100]
-              }
+        }
+        if (this.apiGraph == 'detailPerLender') {
+          typeAPI = axios.post(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+split[0]+':'+split[1], {
+            lender: this.employeSelect
+          })
+        }else if(this.apiGraph == 'detailPerService'){
+          typeAPI = axios.post(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+split[0]+':'+split[1], {
+            service: this.serviceSelect
+          })
+        }
+        typeAPI.then(res => {
+          if (this.apiGraph == 'dailyProduction') {
+            this.chartOptions = typeDatetime
+            this.tables = {
+              firstTable: false,
+              secondTable: true,
+              thirdTable:false,
+              quarterTable:false,
+              fifthTable:false,
+              sixthTable:false,
+              seventhTable:false,
+              eighthTable: false,
+              ninethTable: false,
+              tenthTable: false
+            }
+          }else if (this.apiGraph == 'dailyServices') {
+            this.chartOptions = typeDatetime
+            this.tables = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable:true,
+              quarterTable:false,
+              fifthTable:false,
+              sixthTable:false,
+              seventhTable:false,
+              eighthTable: false,
+              ninethTable: false,
+              tenthTable: false
+            }
+          }else if (this.apiGraph == 'quantityProductionPerLender') {
+            this.chartOptions = typeDatetime
+            this.tables = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable:false, 
+              quarterTable:true,
+              fifthTable:false,
+              sixthTable:false,
+              seventhTable:false,
+              eighthTable: false,
+              ninethTable: false,
+              tenthTable: false
+            }
+          }else if (this.apiGraph == 'dailyExpenseGainTotal') {
+            this.chartOptions = typeDatetime
+            this.tables = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable:false, 
+              quarterTable:false,
+              fifthTable:true,
+              sixthTable:false,
+              seventhTable:false,
+              eighthTable: false,
+              ninethTable: false,
+              tenthTable: false
+            }
+          }else if (this.apiGraph == 'quantityComissionPerLender') {
+            this.chartOptions = typeDatetime
+            this.tables = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable:false, 
+              quarterTable:false,
+              fifthTable:false,
+              sixthTable:true,
+              seventhTable:false,
+              eighthTable: false,
+              ninethTable: false,
+              tenthTable: false
+            }
+          }else if (this.apiGraph == 'quantityServicesPerLender') {
+            this.chartOptions = typeDatetime
+            this.tables = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable:false, 
+              quarterTable:false,
+              fifthTable:false,
+              sixthTable:false,
+              seventhTable:true,
+              ninethTable: false,
+              nineth: false,
+              tenthTable: false
+            }
+          }else if (this.apiGraph == 'detailPerLender') {
+            this.chartOptions = typeDatetime
+            this.tables = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable:false, 
+              quarterTable:false,
+              fifthTable:false,
+              sixthTable:false,
+              seventhTable:false,
+              eighthTable: true,
+              ninethTable: false,
+              tenthTable: false
+            }
+          }else if (this.apiGraph == 'dailyDesign') {
+            this.chartOptions = typeDatetime
+            this.tables = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable:false, 
+              quarterTable:false,
+              fifthTable:false,
+              sixthTable:false,
+              seventhTable:false,
+              eighthTable: false,
+              ninethTable: true,
+              tenthTable: false
+            }
+          }else if (this.apiGraph == 'detailPerService') {
+            this.chartOptions = typeDatetime
+            this.tables = {
+              firstTable: false,
+              secondTable: false,
+              thirdTable:false, 
+              quarterTable:false,
+              fifthTable:false,
+              sixthTable:false,
+              seventhTable:false,
+              eighthTable: false,
+              ninethTable: false,
+              tenthTable: true
             }
           }
+          this.dataTable = []
+          this.dataTable = res.data.dataTable
+          this.series = res.data.series
+          console.log(this.$refs.chartApis)
           this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
           console.log(this.chartOptions)
         })
@@ -337,18 +1139,23 @@
           } 
         })
       },
-      SalesQuantityChartFunc(){
+      SalesQuantityChartFuncDaily(){
         const dateNow = new Date()
-        console.log(dateNow)
         const dateFormat = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-1'
         const dateFormatTwo = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-30'
         this.loaded = false
-        axios.get(endPoint.endpointTarget+'/metrics/dailyExpenseGainTotal/'+dateFormat+':'+dateFormatTwo)
+        axios.get(endPoint.endpointTarget+'/metrics/dailyQuantityPerDay/'+dateFormat+':'+dateFormatTwo)
         .then(res => {	
           const userlist = res.data
-          this.series = userlist.series
-          
-          this.chartOptions = {
+          this.firstDataTableDaily = res.data.dataTable
+          this.tablesDaily = {
+            firstTable: true,
+            secondTable: false,
+            thirdTable:false, 
+            fourthTable: false
+          }
+          this.seriesDaily = userlist.series
+          this.chartDaily = {
             chart: {
               height: 350,
               type: 'area',
@@ -370,7 +1177,95 @@
             },
             legend: {
               tooltipHoverFormatter: function(val, opts) {
-                return val + ' - ' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + ''
+                return val 
+              }
+            },
+            markers: {
+              size: 0,
+              hover: {
+                sizeOffset: 6
+              }
+            },
+            xaxis: {
+              type: 'category',
+              categories: res.data.categories
+            },
+            tooltip: {
+              y: [
+                {
+                  title: {
+                    formatter: function (val) {
+                      return val+' $'
+                    }
+                  }
+                },
+                {
+                  title: {
+                    formatter: function (val) {
+                      return val
+                    }
+                  }
+                }
+              ]
+            },
+            grid: {
+              borderColor: '#f1f1f1',
+            }
+          }
+          
+          this.loadedDaily = true
+        })
+        .catch(err => {
+          console.error(err)
+        })
+      },
+      SalesQuantityChartFunc(){
+        const dateNow = new Date()
+        console.log(dateNow)
+        const dateFormat = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-1'
+        const dateFormatTwo = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-30'
+        this.loaded = false
+        axios.get(endPoint.endpointTarget+'/metrics/dailyExpenseGainTotal/'+dateFormat+':'+dateFormatTwo)
+        .then(res => {	
+          const userlist = res.data
+          this.firstDataTable = res.data.dataTable
+          this.tables.firstTable = true
+          this.tables = {
+            firstTable: true,
+            secondTable: false,
+            thirdTable:false,
+            quarterTable:false,
+            fifthTable:false,
+            sixthTable:false,
+            seventhTable:false,
+            eighthTable: false,
+            ninethTable: false,
+            tenthTable:false
+          }
+          this.series = userlist.series
+          this.chartOptions = {
+            chart: {
+              height: 350,
+              type: 'line',
+              zoom: {
+                enabled: true
+              },
+            },
+            dataLabels: {
+              enabled: false
+            },
+            stroke: {
+              width: [5, 7, 5],
+              curve: 'straight',
+              dashArray: [0, 8, 5]
+            },
+            title: {
+              text: 'Estadisticas',
+              align: 'left'
+            },
+            legend: {
+              tooltipHoverFormatter: function(val, opts) {
+                return val 
               }
             },
             markers: {
@@ -439,9 +1334,13 @@
         })
         
       },
+      // formatPrice(value) {
+      //   let val = (value/1).toFixed(2).replace('.', ',')
+      //   return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      // },
       formatPrice(value) {
-        let val = (value/1).toFixed(2).replace('.', ',')
-        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        let val = (value/1).toFixed(2)
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       },
       formatDate(date) {
           let dateFormat = new Date(date)
@@ -460,4 +1359,13 @@
     }
   };
 </script>
-<style></style>
+<style>
+.maxHeight{
+  max-height: 325px;
+  overflow: scroll;
+}
+.maxHeightEspecific{
+  max-height: 455px;
+  overflow: scroll;
+}
+</style>
