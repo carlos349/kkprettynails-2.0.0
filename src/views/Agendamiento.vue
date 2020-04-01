@@ -13,7 +13,10 @@
                         <div class="col-12">
                             <div class="row buttons">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
-                                <a @click="dateModals.modal4 = true, initialDate(1)" v-if="status != 3"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
+                                <base-button class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" v-if="status != 3" type="warning">
+                                    <span>Ventas por procesar</span>
+                                    <badge type="default">{{lengthClosedDates}}</badge>
+                                </base-button>
                                 <base-dropdown v-if="status != 3" class="mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
@@ -901,7 +904,8 @@
         endClient:[],
         endEmploye:[],
         designEndDate:0,
-        clientsNames:[]
+        clientsNames:[],
+        lengthClosedDates:0
       };
     },
     beforeCreate(){
@@ -1037,7 +1041,8 @@
         getClosed() {
             axios.get(endPoint.endpointTarget+'/citas/endingdates')
             .then( res => {
-            this.closedDates = res.data
+                this.closedDates = res.data
+                this.lengthClosedDates = res.data.length
             })
         },
         getEmployes(){
@@ -2143,7 +2148,7 @@
                         this.getCitasByEmploye()
                     }
                     }, 500);
-                    this.getClosed()
+                    // this.getClosed()
                     this.$swal({
                     type: 'success',
                     title: 'Cita finalizada con exito',
@@ -2158,6 +2163,7 @@
                     this.endEmploye = ''
                     this.designEndDate = ''
                     $('.conteoServ').text('0')
+                    this.$socket.emit('FinalyDate', {Finalizo: 'si lo hizo'})
                 }
             })
         },
@@ -2240,6 +2246,17 @@
         ifSticky: () => {
             console.log(this.$refs.aggend)
             return this.$refs.aggend
+        }
+    },
+    sockets: {
+        connect() {
+            console.log('socket connected')
+        },
+        ItsLogued(data) {
+            console.log(data)
+        },
+        getFinalyDates(data){
+            this.lengthClosedDates = this.lengthClosedDates + 1
         }
     },
     mounted (){

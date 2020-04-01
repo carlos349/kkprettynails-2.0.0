@@ -1,4 +1,4 @@
-const server = 'localhost'
+const server = '192.168.0.110'
 const portClient = '3389'
 const endpointTarget = `http://${server}:4200`
 const imgEndpoint = `${endpointTarget}/static/users/`

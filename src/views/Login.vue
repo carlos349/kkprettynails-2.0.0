@@ -93,6 +93,7 @@ import jwtDecode from 'jwt-decode'
                     localStorage.setItem('status', decoded.status)
                     router.push({path: '/Agendamiento'})
                     this.emitMethod(decoded.status)
+                    
                 }
             })
         },
