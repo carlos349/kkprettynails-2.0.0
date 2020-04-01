@@ -10,6 +10,7 @@
                     <h1 class="display-2 text-white">Sección de inventario</h1>
                     <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tu inventario, aquí podrás registrar, editar y visualizar todos tus productos.</p>
                     <a @click="modals.modal1 = true ,validForm = 1, initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un producto</a>
+                    <a @click="modals.modal4 = true" class="btn btn-danger text-white cursor-pointer">Cerrar inventario</a>
                 </div>
             </div>
         </div>
@@ -19,12 +20,12 @@
             <b>
               <center>
                   <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
-                  <base-button size="sm" type="success" @click="modals.modal1 = true,dataProduct.id = props.row._id,dataProduct.entry = ''" icon="fa fa-plus">Agregar mas</base-button>
+                  <base-button size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type,initialState(1,props.row._id)" icon="fa fa-plus">Agregar mas</base-button>
                   <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Eliminar</base-button>
               </center>
             </b>
         </template>
-        <template slot="total" slot-scope="props">
+        <template slot="totalIdeal" slot-scope="props">
           {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
         </template>
         <template slot="price" slot-scope="props">
@@ -58,40 +59,92 @@
                     <small>Anexa mas productos</small>
                 </div>
                 <form role="form">
-                    <base-input v-if="validForm == 3" alternative
-                                placeholder="Cantidad para anexar"
+                    <base-input v-on:keyup="valid" v-if="validForm == 3" alternative
+                                :placeholder="'Anexar cantidad ( '+unit+' )'"
                                 v-model="dataProduct.entry"
                                 addon-left-icon="fa fa-box-open">
                     </base-input>
+                    <base-input v-on:change="valid" v-if="validForm == 3" addon-left-icon="ni ni-calendar-grid-58">
+                        <flat-picker slot-scope="{focus, blur}"
+                                    @on-open="focus"
+                                    @on-close="blur"
+                                    :config="configDatePicker"
+                                    class="form-control datepicker"
+                                    v-model="dateAdd"
+                                    placeholder="Seleccione una fecha de compra">
+                        </flat-picker>
+                    </base-input>
+                    
                     <base-input v-if="validForm != 3" alternative
                                 class="mb-3"
                                 placeholder="Nombre"
                                 v-model="dataProduct.name"
                                 addon-left-icon="fa fa-edit">
                     </base-input>
+                    <select v-if="validForm != 3" class="form-control mb-3"  v-model="unit">
+                      <option style="color:black;" selected value="">Seleccione el tipo de medida</option>
+                      <option style="color:black;" value="Gramo(s)">Gramo(s)</option>
+                      <option style="color:black;" value="Kilogramo(s)">Kilogramo(s)</option>
+                      <option style="color:black;" value="Litro(s)">Litro(s)</option>
+                      <option style="color:black;" value="Mililitro(s)">Mililitro(s)</option>
+                      <option style="color:black;" value="Contable">Contable</option>
+                    </select>
                     <base-input v-if="validForm != 3" alternative
                                 placeholder="Cantidad"
                                 v-model="dataProduct.initial"
                                 addon-left-icon="fa fa-box-open">
                     </base-input>
-                    <currency-input 
-                        v-if="validForm != 3"
-                        v-on:keyup="validRegister(3)"
+                    <currency-input
+                        v-on:keyup="valid"
                         locale="de"
-                        placeholder="Precio"
+                        placeholder="Precio por unidad"
                         addon-left-icon="ni ni-money-coins"
                         v-model="dataProduct.price"
                         class="form-control mb-3"
                         style="margin-top:-10px;"
                     />	
+                    <base-button icon="fa fa-plus" @click="modals.modal3 = true" v-if="validForm == 3" class="mb-2" size="sm" type="success">Registrar provedor</base-button>
+                    <div v-on:click="valid" v-on:keyup="valid">
+                      <vue-single-select
+                        v-if="validForm == 3"
+                        v-model="provider"
+                        :options="providers"
+                      placeholder="Provedor"
+                      ></vue-single-select>
+                    </div>
                     
                     <div class="text-center">
                         <base-button v-on:click="addProduct()" v-if="validForm == 1" type="default">Registrar</base-button>
                         <base-button v-on:click="updateProducts()" v-if="validForm == 2" type="default">Editar</base-button>
-                        <base-button v-on:click="addMore()" v-if="validForm == 3" type="success">Agregar</base-button>
+                        <base-button  v-on:click="addMore(dataProduct.id)" v-if="validForm == 3" type="success">Agregar</base-button>
                     </div>
                 </form>
             </template>
+        </card>
+    </modal>
+    <modal :show.sync="modals.modal3"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-sm">
+        <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+        <card type="secondary" shadow
+              header-classes="bg-white pb-5"
+              body-classes="px-lg-5 py-lg-5"
+              class="border-0">
+            <template>
+                <div style="margin-top:-30%" class="text-center text-muted mb-4">
+                    <small>Registro de provedor</small>
+                </div>
+                <form role="form">
+                    <base-input  alternative
+                                placeholder="Nombre del provedor"
+                                v-model="provider"
+                                addon-left-icon="fa fa-box-open">
+                    </base-input>
+                </form>
+            </template>
+            <div class="text-center">
+              <base-button v-on:click="addProvider" type="default">Registrar</base-button>
+            </div>
         </card>
     </modal>
     <modal :show.sync="modals.modal2"
@@ -102,6 +155,22 @@
             <h1 class="heading mt-5">{{modals.message}}</h1>
         </div>
     </modal>
+    <modal :show.sync="modals.modal4">
+      <h6 slot="header" class="modal-title" id="modal-title-default">Cierre de inventario</h6>
+      <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;"> 
+        <div v-for="data in rows" class="row p-2 m-2">
+          <dt class="col-7 mt-2">{{data.producto}}</dt>
+          <base-input class="col-5" placeholder="Ingrese cantidad"></base-input>
+        </div>
+      </vue-custom-scrollbar> 
+      
+      
+      <template slot="footer">
+          <base-button type="default">Cerrar inventario</base-button>
+          <base-button type="link" class="ml-auto" @click="modals.modal4 = false">Salir
+          </base-button>
+      </template>
+    </modal>
   </div>
 </template>
 <script>
@@ -109,19 +178,39 @@
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
+import vueCustomScrollbar from 'vue-custom-scrollbar'
 import EventBus from '../components/EventBus'
+import flatPicker from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
+import {Spanish} from 'flatpickr/dist/l10n/es.js';
 // COMPONENTS
 
   export default {
     components: {
-        VueBootstrap4Table 
+        VueBootstrap4Table,
+        flatPicker,
+        vueCustomScrollbar
     },
     data() {
       return {
+        myId:null,
         validForm:0,
+        provider:'',
+        providers:[],
+        unit:"",
+        dateAdd:'',
+        addValid:true,
+        configDatePicker: {
+          allowInput: true,
+          dateFormat: 'm-d-Y',
+          locale: Spanish, // locale for this instance only
+          minDate: new Date(),         
+        },
         modals: {
           modal1: false,
           modal2: false,
+          modal3: false,
+          modal4: false,
           message: "",
           icon: '',
           type:''
@@ -131,7 +220,7 @@ import EventBus from '../components/EventBus'
           price:'',
           initial:'',
           entry:'',
-          id:''
+          id:null
         },
         rows: [],
         columns: [
@@ -145,6 +234,11 @@ import EventBus from '../components/EventBus'
             name: "monto",
             slot_name: "price",
             sort: true
+          },
+          {
+            label: "Tipo de medida",
+            name: "type",
+            sort: true,
           },
           {
             label: "Cantidad inicial",
@@ -165,9 +259,14 @@ import EventBus from '../components/EventBus'
           },
           {
             label: "Total",
+            name: "total",
+            sort: false,
+          },
+          {
+            label: "Total ideal",
             name: "",
             sort: false,
-            slot_name: "total"
+            slot_name: "totalIdeal"
           },
           {
             label: "Administrar",
@@ -200,7 +299,8 @@ import EventBus from '../components/EventBus'
       };
     },
     created(){
-		  this.getProducts();
+      this.getProducts();
+      this.getProviders()
     },
     methods: {
       getProducts() {
@@ -209,9 +309,18 @@ import EventBus from '../components/EventBus'
           this.rows = res.data 
         })
       },
+      getProviders() {
+        axios.get(endPoint.endpointTarget+'/inventario/getProvider')
+        .then(res => {
+          for (let i = 0; i < res.data.length; i++) {
+            this.providers.push(res.data[i].nombre)
+          }
+        })
+      },
       addProduct(){
         axios.post(endPoint.endpointTarget+'/inventario', {
           product: this.dataProduct.name,
+          type: this.unit,
           quantity: this.dataProduct.initial,
           price: this.dataProduct.price
         })
@@ -243,7 +352,47 @@ import EventBus from '../components/EventBus'
           console.log(err)
         })
       },
-      initialState(){
+      addProvider(){
+        axios.post(endPoint.endpointTarget+'/inventario/addProvider', {
+          name: this.provider
+        })
+        .then(res => {
+          if (res.data.status === 'ok') {
+            this.$swal({
+              type: 'success',
+              title: 'Provedor registrado',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            this.getProducts();
+            this.getProviders();
+          }else{
+            this.$swal({
+              type: 'error',
+              title: 'Provedor existe',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+        })
+        .catch(err => {
+          this.$swal({
+            type: 'error',
+            title: 'Problemas con el servidor',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          console.log(err)
+        })
+      },
+      initialState(tipe,id){
+        if (tipe == 1) {
+          this.myId = id
+          this.provider = ''
+          this.dateAdd = ''
+          this.dataProduct.price = ''
+          console.log(this.myId)
+        }
         this.dataProduct = {
           name:'',
           price:'',
@@ -254,6 +403,7 @@ import EventBus from '../components/EventBus'
       },
       pushData(name,cantidad,precio,id){
         this.validForm = 2
+        this.unit = ''
         this.dataProduct = {
           name:name,
           price:precio,
@@ -272,6 +422,7 @@ import EventBus from '../components/EventBus'
       updateProducts(){
         axios.put(endPoint.endpointTarget+'/inventario/'+this.dataProduct.id, {
           product:this.dataProduct.name,
+          type: this.unit,
           cantidad:this.dataProduct.initial,
           monto:this.dataProduct.price,
         })
@@ -294,8 +445,10 @@ import EventBus from '../components/EventBus'
         })
       },
       addMore(){
-        axios.put(endPoint.endpointTarget+'/inventario/addMore/'+this.dataProduct.id, {
-          entry:this.dataProduct.entry
+        
+        axios.put(endPoint.endpointTarget+'/inventario/add/'+this.myId, {
+          entry:this.dataProduct.entry,
+          history:{fecha:this.dateAdd,precio:this.dataProduct.price,provedor:this.provider}
         })
         .then(res => {
           this.$swal({
@@ -314,6 +467,14 @@ import EventBus from '../components/EventBus'
               timer: 1500
             })
         })
+      },
+      valid(){
+        if (this.unit != '' && this.dateAdd != '' && this.dataProduct.price != '' && this.provider != '') {
+          this.addValid = false
+        }
+        else{
+          this.addValid = true
+        }
       },
       deleteItem(id){
         this.$swal({
