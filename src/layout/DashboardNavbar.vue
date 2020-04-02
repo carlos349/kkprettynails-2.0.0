@@ -24,114 +24,39 @@
               </div>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a v-on:click="getNotifications" v-if="!activeNotifications" class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="ni ni-bell-55"></i>
               </a>
-              <div class="dropdown-menu dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
-                <!-- Dropdown header -->
-                <div class="px-3 py-3">
-                  <h6 class="text-sm text-muted m-0">You have <strong class="text-primary">13</strong> notifications.</h6>
-                </div>
+              <a v-on:click="getNotifications" v-else class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i style="color:#f5365c" class="ni ni-bell-55"></i>
+              </a>
+              <div style="z-index:10000" class="dropdown-menu dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
+               
                 <!-- List group -->
                 <div class="list-group list-group-flush">
-                  <a href="#!" class="list-group-item list-group-item-action">
+                  <a v-for="notification in notifications" href="#!" class="list-group-item list-group-item-action">
                     <div class="row align-items-center">
                       <div class="col-auto">
                         <!-- Avatar -->
-                        <img alt="Image placeholder" src="https://www.w3schools.com/howto/img_avatar.png" class="avatar rounded-circle">
+                        <img alt="Image placeholder" :src="imgEndpoint+notification.userImage" class="avatar rounded-circle">
                       </div>
                       <div class="col ml--2">
                         <div class="d-flex justify-content-between align-items-center">
                           <div>
-                            <h4 class="mb-0 text-sm">John Snow</h4>
+                            <h4 class="mb-0 text-sm">{{notification.userName}}</h4>
                           </div>
                           <div class="text-right text-muted">
-                            <small>2 hrs ago</small>
+                            <small>{{momentTime(notification.date)}}</small>
                           </div>
                         </div>
-                        <p class="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p>
+                        <p class="text-sm mb-0">{{notification.detail}}</p>
                       </div>
                     </div>
                   </a>
-                  <a href="#!" class="list-group-item list-group-item-action">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <!-- Avatar -->
-                        <img alt="Image placeholder" src="https://www.w3schools.com/howto/img_avatar.png" class="avatar rounded-circle">
-                      </div>
-                      <div class="col ml--2">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h4 class="mb-0 text-sm">John Snow</h4>
-                          </div>
-                          <div class="text-right text-muted">
-                            <small>3 hrs ago</small>
-                          </div>
-                        </div>
-                        <p class="text-sm mb-0">A new issue has been reported for Argon.</p>
-                      </div>
-                    </div>
-                  </a>
-                  <a href="#!" class="list-group-item list-group-item-action">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <!-- Avatar -->
-                        <img alt="Image placeholder" src="https://www.w3schools.com/howto/img_avatar.png" class="avatar rounded-circle">
-                      </div>
-                      <div class="col ml--2">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h4 class="mb-0 text-sm">John Snow</h4>
-                          </div>
-                          <div class="text-right text-muted">
-                            <small>5 hrs ago</small>
-                          </div>
-                        </div>
-                        <p class="text-sm mb-0">Your posts have been liked a lot.</p>
-                      </div>
-                    </div>
-                  </a>
-                  <a href="#!" class="list-group-item list-group-item-action">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <!-- Avatar -->
-                        <img alt="Image placeholder" src="https://www.w3schools.com/howto/img_avatar.png" class="avatar rounded-circle">
-                      </div>
-                      <div class="col ml--2">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h4 class="mb-0 text-sm">John Snow</h4>
-                          </div>
-                          <div class="text-right text-muted">
-                            <small>2 hrs ago</small>
-                          </div>
-                        </div>
-                        <p class="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p>
-                      </div>
-                    </div>
-                  </a>
-                  <a href="#!" class="list-group-item list-group-item-action">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <!-- Avatar -->
-                        <img alt="Image placeholder" src="https://www.w3schools.com/howto/img_avatar.png" class="avatar rounded-circle">
-                      </div>
-                      <div class="col ml--2">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h4 class="mb-0 text-sm">John Snow</h4>
-                          </div>
-                          <div class="text-right text-muted">
-                            <small>3 hrs ago</small>
-                          </div>
-                        </div>
-                        <p class="text-sm mb-0">A new issue has been reported for Argon.</p>
-                      </div>
-                    </div>
-                  </a>
+                  
                 </div>
                 <!-- View all -->
-                <a href="#!" class="dropdown-item text-center text-primary font-weight-bold py-3">View all</a>
+                <a href="#!" class="dropdown-item text-center text-primary font-weight-bold py-3">Ver todas</a>
               </div>
             </li>
             <!-- <li class="nav-item dropdown">
@@ -228,14 +153,21 @@
   import axios from 'axios'
   import endPoint from '../../config-endpoint/endpoint.js'
   import EventBus from '../components/EventBus'
+  import io from 'socket.io-client';
+  import * as moment from 'moment';
+  import 'moment/locale/es';
+  moment.locale('es');
   export default {
     data() {
       return {
+        socket : io(endPoint.endpointTarget),
         activeNotifications: false,
         showMenu: false,
         searchQuery: '',
         nombre: localStorage.nombre + ' ' + localStorage.apellido,
-        imgUser: endPoint.imgEndpoint + localStorage.imageUser
+        imgUser: endPoint.imgEndpoint + localStorage.imageUser,
+        imgEndpoint: endPoint.imgEndpoint,
+        notifications: []
       };
     },
     created() {
@@ -246,10 +178,24 @@
       },
       hideSidebar() {
         this.$sidebar.displaySidebar(false);
+        
       },
       toggleMenu() {
         this.showMenu = !this.showMenu;
+        console.log('cerro')
       },
+      getNotifications(){
+        this.activeNotifications = false
+        axios.get(endPoint.endpointTarget+'/notifications/onlyFive') 
+        .then(res => {
+          this.notifications = res.data
+        })
+      },
+      momentTime(value) {
+        const dateNoti = new Date(value)
+        return moment(dateNoti, "YYYYMMDD").fromNow();
+      }
+
     },
     mounted() {
       EventBus.$on('dataChange', status => {
@@ -260,6 +206,11 @@
         }
         console.log(this.imgUser)
       })
+      this.socket.on('notify', (data) => {
+        this.notifications.push(data)
+        this.activeNotifications = true
+        console.log(this.activeNotifications )
+      });
     }
   };
 </script>

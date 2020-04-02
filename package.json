@@ -21,6 +21,7 @@
     "core-js": "2.6.5",
     "flatpickr": "4.5.7",
     "jwt-decode": "^2.2.0",
+    "moment": "^2.24.0",
     "nouislider": "13.1.4",
     "register-service-worker": "1.6.2",
     "socket.io": "^2.3.0",

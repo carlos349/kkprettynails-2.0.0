@@ -13,11 +13,11 @@
                         <div class="col-12">
                             <div class="row buttons">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
-                                <base-button class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" v-if="status != 3" type="warning">
+                                <base-button class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" v-if="status != 3" type="primary">
                                     <span>Ventas por procesar</span>
-                                    <badge type="default">{{lengthClosedDates}}</badge>
+                                    <badge type="primary">{{lengthClosedDates}}</badge>
                                 </base-button>
-                                <base-dropdown v-if="status != 3" class="mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
+                                <base-dropdown v-if="status != 3" class="maxheightDropDown mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
                                     </base-button>
@@ -693,6 +693,7 @@
   import {Spanish} from 'flatpickr/dist/l10n/es.js';
   import vueCustomScrollbar from 'vue-custom-scrollbar'
   import EventBus from '../components/EventBus'
+  import io from 'socket.io-client';
   //Back - End 
   import jwtDecode from 'jwt-decode'
   import axios from 'axios'
@@ -733,6 +734,7 @@
     },
     data() {
       return {
+        socket : io(endPoint.endpointTarget),
         status: localStorage.getItem('status'),
         countServices:[],
         employes:[],
@@ -920,7 +922,7 @@
 		}
     },
     created(){
-        
+        console.log(localStorage)
         this.validatorLender()
         this.getClients()
         this.getServices()
@@ -2148,7 +2150,7 @@
                         this.getCitasByEmploye()
                     }
                     }, 500);
-                    // this.getClosed()
+                    this.getClosed()
                     this.$swal({
                     type: 'success',
                     title: 'Cita finalizada con exito',
@@ -2163,7 +2165,15 @@
                     this.endEmploye = ''
                     this.designEndDate = ''
                     $('.conteoServ').text('0')
-                    this.$socket.emit('FinalyDate', {Finalizo: 'si lo hizo'})
+                    axios.post(endPoint.endpointTarget+'/notifications', {
+                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                        userImage:localStorage.getItem('imageUser'),
+                        detail:'Finalizó una cita',
+                        link: 'agendamiento'
+                    })
+                    .then(res => {
+                        this.socket.emit('sendNotification', res.data)
+                    })   
                 }
             })
         },
@@ -2248,26 +2258,18 @@
             return this.$refs.aggend
         }
     },
-    sockets: {
-        connect() {
-            console.log('socket connected')
-        },
-        ItsLogued(data) {
-            console.log(data)
-        },
-        getFinalyDates(data){
-            this.lengthClosedDates = this.lengthClosedDates + 1
-        }
-    },
     mounted (){
         EventBus.$on('reloadDates', status => {
             this.getDates()
         })
+        this.socket.on('notify', (data) => {
+            this.getClosed()
+        });
     }
   };
 </script>
 <style>
-    .dropdown-menu{
+    .maxheightDropDown .dropdown-menu{
         width: 100%;
         max-height: 30vh;
         overflow:hidden;
