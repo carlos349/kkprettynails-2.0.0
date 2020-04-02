@@ -44,6 +44,14 @@
                 </div>
             </div>
         </base-header>
+        <modal :show.sync="modalsDialog.modal2"
+               :gradient="modalsDialog.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modalsDialog.icon"></i>
+                <h1 class="heading mt-5">{{modalsDialog.message}}</h1>
+            </div>
+        </modal>
         <modal :show.sync="modals.modal1" body-classes="p-0" modal-classes=" modal-xl">
             <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow header-classes="bg-white" body-classes="" class="border-0">
@@ -558,7 +566,7 @@
         <modal :show.sync="dateModals.modal5"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
-            <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar por procesar</h5>
+            <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar</h5>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes=""
@@ -807,6 +815,12 @@
         classes: {
             table: "table-bordered table-striped"
         },
+        modalsDialog: {
+            modal2: false,
+            type: '',
+            icon: '',
+            message: '', 
+        },
         dateClient: {
         name:'',
         id:'',
@@ -880,11 +894,11 @@
         payCredit:0,
         servicesFinish:[],
         modals: {
-        modal1:false,
-        modal2: false,
-        message: "",
-        icon: '',
-        type:''
+            modal1:false,
+            modal2: false,
+            message: "",
+            icon: '',
+            type:''
         },
         dateModals: {
             modal1:false,
@@ -2091,13 +2105,23 @@
                 })
                 .then(res => {
                     if (res.data.status == "Venta registrada") {
-                        this.$swal({
-                            type: 'success',
-                            title: 'Venta procesada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
                         this.initialDate()
+                        this.dateModals.modal5 = false
+                        this.modalsDialog = {
+                            modal2: true,
+                            message: "¡Venta procesada!",
+                            icon: 'ni ni-check-bold ni-5x',
+                            type: 'success'
+                        }
+                        this.getClosed()
+                        setTimeout(() => {
+                            this.modalsDialog = {
+                                modal2: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 1500);
                     }
                 })
             }
@@ -2152,10 +2176,10 @@
                     }, 500);
                     this.getClosed()
                     this.$swal({
-                    type: 'success',
-                    title: 'Cita finalizada con exito',
-                    showConfirmButton: false,
-                    timer: 1500
+                        type: 'success',
+                        title: 'Cita finalizada con exito',
+                        showConfirmButton: false,
+                        timer: 1500
                     })
                     this.dateModals.modal1 = false
                     this.dateModals.modal3 = false
