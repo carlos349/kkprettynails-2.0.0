@@ -225,6 +225,7 @@ import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import jwtDecode from 'jwt-decode'
+import io from 'socket.io-client';
 // COMPONENTS
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 export default {
@@ -233,6 +234,7 @@ export default {
     },
     data(){
         return {
+            socket: io(endPoint.endpointTarget),
             modals: {
                 modal1: false,
                 modal2: false,
@@ -386,6 +388,15 @@ export default {
                     this.cashFunds.cashAmount= ''
                     this.getFunds()
                     this.cashFunds.inspector = false
+                    axios.post(endPoint.endpointTarget+'/notifications', {
+                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                        userImage:localStorage.getItem('imageUser'),
+                        detail:'Registro un fondo de caja',
+                        link: 'agendamiento'
+                    })
+                    .then(res => {
+                        this.socket.emit('sendNotification', res.data)
+                    }) 
 				}
 			})
         },
@@ -477,6 +488,7 @@ export default {
                         type: 'success'
                     }
                     this.getClosing()
+                    this.cashFunds.inspector = true
                     setTimeout(() => {
                         this.modals = {
                             modal1: false,
@@ -488,6 +500,15 @@ export default {
                             type:''
                         }
                     }, 1500);
+                    axios.post(endPoint.endpointTarget+'/notifications', {
+                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                        userImage:localStorage.getItem('imageUser'),
+                        detail:'Hizo un cierre de caja',
+                        link: 'agendamiento'
+                    })
+                    .then(res => {
+                        this.socket.emit('sendNotification', res.data)
+                    })
                 }else{
                     console.log(res)
                 }

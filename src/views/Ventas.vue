@@ -145,6 +145,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
+import io from 'socket.io-client';
 export default {
     components: {
         flatPicker,
@@ -152,6 +153,7 @@ export default {
     },
     data() {
         return {
+            socket: io(endPoint.endpointTarget),
             modals: {
                 modal1: false,
                 modal2: false,
@@ -415,6 +417,16 @@ export default {
                 }, 2000);
                 this.getSales()
                 this.arreglo.status = false
+                const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
+                    userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                    userImage:localStorage.getItem('imageUser'),
+                    detail:'Anuló una venta del día '+this.formatDate(this.arreglo.fecha),
+                    link: 'agendamiento'
+                })
+                console.log(notify)
+                if (notify) {
+                    this.socket.emit('sendNotification', notify.data)
+                }   
             }
             else{
                 this.modals = {

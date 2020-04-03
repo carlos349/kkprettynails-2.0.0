@@ -13,8 +13,11 @@
                         <div class="col-12">
                             <div class="row buttons">
                                 <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
-                                <a @click="dateModals.modal4 = true, initialDate(1)" v-if="status != 3"  class="btn mt-1 btn-warning text-white cursor-pointer">Ventas por procesar</a>
-                                <base-dropdown v-if="status != 3" class="mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
+                                <base-button class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" v-if="status != 3" type="primary">
+                                    <span>Ventas por procesar</span>
+                                    <badge type="primary">{{lengthClosedDates}}</badge>
+                                </base-button>
+                                <base-dropdown v-if="status != 3" class="maxheightDropDown mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
                                     </base-button>
@@ -41,6 +44,14 @@
                 </div>
             </div>
         </base-header>
+        <modal :show.sync="modalsDialog.modal2"
+               :gradient="modalsDialog.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modalsDialog.icon"></i>
+                <h1 class="heading mt-5">{{modalsDialog.message}}</h1>
+            </div>
+        </modal>
         <modal :show.sync="modals.modal1" body-classes="p-0" modal-classes=" modal-xl">
             <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow header-classes="bg-white" body-classes="" class="border-0">
@@ -490,12 +501,12 @@
                 locale="de"
                 class="form-control mb-3"
                 />
-                <table class="table" v-bind:style="{ 'background-color': '#6BB2E5', 'border-radius' : '15px', 'border':'none !important'}" >
+                <table class="table" v-bind:style="{ 'background-color': '#6BB2E5', 'border-radius' : '5px', 'border':'none !important'}" >
                     <thead>
                         <tr>
-                        <th style="border-radius:15px !important;border:none" class="text-left pl-4 text-white">
+                        <th style="border-radius:5px !important;border:none" class="text-left pl-4 text-white">
                             
-                            <input autocomplete="off" style="outline:none !important;background-color:white !important" type="text" id="myInput" v-on:keyup="myFunction()" class="form-control buscar inputsVenta w-75 text-white" placeholder="Filtrar servicios"/>
+                            <input autocomplete="off" style="outline:none !important;background-color:white !important" type="text" id="myInput" v-on:keyup="myFunction()" class="inputFind" placeholder="Filtrar servicios"/>
                         </th>
                         <th style="color:white;border:none" class="text-center pl-5 pb-3">
                             Precio 
@@ -508,16 +519,16 @@
                         <tbody>
                         <tr v-for="(servicio, index) in services" >
                             <td style="border:none" v-if="servicio.active" class="font-weight-bold">
-                            <button type="button" class="w-75 btn procesar text-left" v-on:click="conteoServicioDate(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, index)">
-                                {{servicio.nombre}} <span class="badge badge-light conteoServ mt-1 float-right" :class="servicio._id" v-bind:id="index+servicio._id">0</span>
-                            </button>
-                            <button type="button" class="w-20 btn btn-back  text-left" >
+                            <base-button outline  size="sm" type="default" class="w-75 btn procesar text-left" v-on:click="conteoServicioDate(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, index)">
+                                {{servicio.nombre}} <span class="badge badge-dark conteoServ mt-1 float-right" :class="servicio._id" v-bind:id="index+servicio._id">0</span>
+                            </base-button>
+                            <base-button v-on:click="discountServiceDate(servicio._id, index, servicio.nombre)" outline size="sm" type="default" class="w-20 btn btn-back  text-left" >
                                 <font-awesome-icon icon="times"/>
-                            </button>
+                            </base-button>
                             
                             </td>
-                            <td style="border:none" v-if="servicio.active" class=" font-weight-bold  text-center">
-                            $ {{formatPrice(servicio.precio)}}
+                            <td style="border:none" v-if="servicio.active" class="font-weight-bold  ">
+                                <b>$ {{formatPrice(servicio.precio)}}</b>
                             </td>
                         </tr>
                         </tbody>
@@ -555,7 +566,7 @@
         <modal :show.sync="dateModals.modal5"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
-            <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar por procesar</h5>
+            <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar</h5>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes=""
@@ -690,6 +701,7 @@
   import {Spanish} from 'flatpickr/dist/l10n/es.js';
   import vueCustomScrollbar from 'vue-custom-scrollbar'
   import EventBus from '../components/EventBus'
+  import io from 'socket.io-client';
   //Back - End 
   import jwtDecode from 'jwt-decode'
   import axios from 'axios'
@@ -730,6 +742,7 @@
     },
     data() {
       return {
+        socket : io(endPoint.endpointTarget),
         status: localStorage.getItem('status'),
         countServices:[],
         employes:[],
@@ -801,6 +814,12 @@
         },
         classes: {
             table: "table-bordered table-striped"
+        },
+        modalsDialog: {
+            modal2: false,
+            type: '',
+            icon: '',
+            message: '', 
         },
         dateClient: {
         name:'',
@@ -875,11 +894,11 @@
         payCredit:0,
         servicesFinish:[],
         modals: {
-        modal1:false,
-        modal2: false,
-        message: "",
-        icon: '',
-        type:''
+            modal1:false,
+            modal2: false,
+            message: "",
+            icon: '',
+            type:''
         },
         dateModals: {
             modal1:false,
@@ -901,7 +920,8 @@
         endClient:[],
         endEmploye:[],
         designEndDate:0,
-        clientsNames:[]
+        clientsNames:[],
+        lengthClosedDates:0
       };
     },
     beforeCreate(){
@@ -916,7 +936,7 @@
 		}
     },
     created(){
-        
+        console.log(localStorage)
         this.validatorLender()
         this.getClients()
         this.getServices()
@@ -1037,7 +1057,8 @@
         getClosed() {
             axios.get(endPoint.endpointTarget+'/citas/endingdates')
             .then( res => {
-            this.closedDates = res.data
+                this.closedDates = res.data
+                this.lengthClosedDates = res.data.length
             })
         },
         getEmployes(){
@@ -1897,7 +1918,8 @@
             this.serviciosSelecionadosDates = services
             this.endClient = client
             this.endEmploye = employe
-            
+            $('.inputFind').val('')
+            this.myFunction()
             axios.get(endPoint.endpointTarget+'/servicios')
             .then(res => {
             for (let index = 0; index < services.length; index++) {
@@ -2084,13 +2106,23 @@
                 })
                 .then(res => {
                     if (res.data.status == "Venta registrada") {
-                        this.$swal({
-                            type: 'success',
-                            title: 'Venta procesada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
                         this.initialDate()
+                        this.dateModals.modal5 = false
+                        this.modalsDialog = {
+                            modal2: true,
+                            message: "¡Venta procesada!",
+                            icon: 'ni ni-check-bold ni-5x',
+                            type: 'success'
+                        }
+                        this.getClosed()
+                        setTimeout(() => {
+                            this.modalsDialog = {
+                                modal2: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 1500);
                     }
                 })
             }
@@ -2119,12 +2151,24 @@
             }
         },
         conteoServicioDate(esto, servicio, precio, comision, discount, index){
-            
             const conteo = $("#"+index+esto).text()
             const conteoTotal = parseFloat(conteo) + 1
             $("#"+index+esto).text(conteoTotal)
             const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'descuento': discount}
-            this.servicesFinish.push(servicios)
+            this.serviciosSelecionadosDates.push(servicios)
+        },
+        discountServiceDate(esto, index, nombre){
+            const conteo = $("#"+index+esto).text()
+            if (parseFloat(conteo) > 0) {
+                const conteoTotal = parseFloat(conteo) - 1
+                $("#"+index+esto).text(conteoTotal)
+                for (let index = 0; index < this.serviciosSelecionadosDates.length; index++) {
+                    if (this.serviciosSelecionadosDates[index].servicio == nombre) {
+                        this.serviciosSelecionadosDates.splice(index, 1)
+                        break
+                    }
+                }
+            }
         },
         endingDate(){
             const id = this.endId
@@ -2145,10 +2189,10 @@
                     }, 500);
                     this.getClosed()
                     this.$swal({
-                    type: 'success',
-                    title: 'Cita finalizada con exito',
-                    showConfirmButton: false,
-                    timer: 1500
+                        type: 'success',
+                        title: 'Cita finalizada con exito',
+                        showConfirmButton: false,
+                        timer: 1500
                     })
                     this.dateModals.modal1 = false
                     this.dateModals.modal3 = false
@@ -2158,6 +2202,15 @@
                     this.endEmploye = ''
                     this.designEndDate = ''
                     $('.conteoServ').text('0')
+                    axios.post(endPoint.endpointTarget+'/notifications', {
+                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                        userImage:localStorage.getItem('imageUser'),
+                        detail:'Finalizó una cita',
+                        link: 'agendamiento'
+                    })
+                    .then(res => {
+                        this.socket.emit('sendNotification', res.data)
+                    })   
                 }
             })
         },
@@ -2246,11 +2299,14 @@
         EventBus.$on('reloadDates', status => {
             this.getDates()
         })
+        this.socket.on('notify', (data) => {
+            this.getClosed()
+        });
     }
   };
 </script>
 <style>
-    .dropdown-menu{
+    .maxheightDropDown .dropdown-menu{
         width: 100%;
         max-height: 30vh;
         overflow:hidden;
@@ -2502,5 +2558,11 @@
     .form-control{
         color: #2F2F2F !important;
     }
-    
+    .inputFind{
+        padding: 2px 10px;
+        border:none;
+        border-radius: 5px;
+        margin-top:-5px;
+        font-size: .8rem;
+    }
 </style>

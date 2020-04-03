@@ -134,7 +134,7 @@
                         Gerente
                     </base-button>
                     <base-button size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle w-100">
-                        Cajera
+                        Cajero (a)
                     </base-button>
                     <base-button size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle w-100">
                         Prestadora

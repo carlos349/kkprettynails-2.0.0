@@ -31,6 +31,9 @@ import VueCurrencyInput from 'vue-currency-input'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit} from '@fortawesome/free-solid-svg-icons'
+import endPoint from '../config-endpoint/endpoint.js'
+import VueSocketIO from 'vue-socket.io'
+import SocketIO from "socket.io-client"
 
 /* STYLES */
 import VueFormWizard from 'vue-form-wizard'
@@ -51,11 +54,17 @@ Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)
 Vue.use(Popper)
-library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit)
-
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueFormWizard)
 Vue.component('apexchart', VueApexCharts)
+Vue.use(new VueSocketIO({
+    debug: true,
+    connection: SocketIO(endPoint.endpointTarget),
+  })
+);
+
+/* FONTS LIBRARY */
+library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit)
 
 new Vue({
   router,
