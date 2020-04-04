@@ -392,7 +392,7 @@ export default {
                         userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
                         userImage:localStorage.getItem('imageUser'),
                         detail:'Registro un fondo de caja',
-                        link: 'agendamiento'
+                        link: 'Caja'
                     })
                     .then(res => {
                         this.socket.emit('sendNotification', res.data)
@@ -504,7 +504,7 @@ export default {
                         userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
                         userImage:localStorage.getItem('imageUser'),
                         detail:'Hizo un cierre de caja',
-                        link: 'agendamiento'
+                        link: 'Caja'
                     })
                     .then(res => {
                         this.socket.emit('sendNotification', res.data)
