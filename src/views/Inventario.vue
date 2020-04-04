@@ -10,37 +10,151 @@
                     <h1 class="display-2 text-white">Sección de inventario</h1>
                     <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tu inventario, aquí podrás registrar, editar y visualizar todos tus productos.</p>
                     <a @click="modals.modal1 = true ,validForm = 1, initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un producto</a>
+                    <a @click="modals.modal3 = true ,validForm = 1, initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un provedor</a>
                     <a @click="modals.modal4 = true" class="btn btn-danger text-white cursor-pointer">Cerrar inventario</a>
                 </div>
             </div>
         </div>
     </base-header>
-    <vue-bootstrap4-table class="tableClient" :rows="rows" :columns="columns" :classes="classes" :config="config">
-        <template slot="edit" slot-scope="props">
-            <b>
-              <center>
-                  <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
-                  <base-button size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type,initialState(1,props.row._id)" icon="fa fa-plus">Agregar mas</base-button>
-                  <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Eliminar</base-button>
-              </center>
-            </b>
-        </template>
-        <template slot="totalIdeal" slot-scope="props">
-          {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
-        </template>
-        <template slot="price" slot-scope="props">
-          $ {{formatPrice(props.row.monto)}}
-        </template>
-        
-        <template slot="pagination-info" slot-scope="props">
-            Actuales {{props.currentPageRowsLength}} | 
-              Filtrados {{props.filteredRowsLength}} | 
-            Registros totales {{props.originalRowsLength}}
-        </template>
-        <template slot="selected-rows-info" slot-scope="props">
-            Total Number of rows selected : {{props.selectedItemsCount}}
-        </template>
-    </vue-bootstrap4-table>
+    <tabs fill class="flex-column flex-md-row inventory">
+        <card shadow>
+            <tab-pane>
+                <span slot="title">
+                    <i class="fa fa-box-open"></i>
+                    Tabla de productos
+                </span>
+                <vue-bootstrap4-table class="tableClient" card_title="Hola" :rows="rows" :columns="columns" :classes="classes" :config="config">
+                  <template slot="edit" slot-scope="props">
+                      <b>
+                        <center>
+                            <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
+                            <base-button size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type,initialState(1,props.row._id)" icon="fa fa-plus">Agregar mas</base-button>
+                            <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Eliminar</base-button>
+                        </center>
+                      </b>
+                  </template>
+                  <template slot="totalIdeal" slot-scope="props">
+                    {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
+                  </template>
+                  <template slot="price" slot-scope="props">
+                    $ {{formatPrice(props.row.monto)}}
+                  </template>
+                  
+                  <template slot="pagination-info" slot-scope="props">
+                      Actuales {{props.currentPageRowsLength}} | 
+                        Filtrados {{props.filteredRowsLength}} | 
+                      Registros totales {{props.originalRowsLength}}
+                  </template>
+                  <template slot="selected-rows-info" slot-scope="props">
+                      Total Number of rows selected : {{props.selectedItemsCount}}
+                  </template>
+              </vue-bootstrap4-table>
+            </tab-pane>
+
+            <tab-pane title="Profile">
+                <span slot="title">
+                    <i class="fa fa-user-tie"></i>
+                    Tabla de provedores
+                </span>
+                <vue-bootstrap4-table class="tableClient" :rows="providerTable" :columns="columProvider" :classes="classes" :config="config">
+                  <template slot="edit" slot-scope="props">
+                      <b>
+                        <center>
+                            <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
+                            <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Eliminar</base-button>
+                        </center>
+                      </b>
+                  </template>
+                  <template slot="totalIdeal" slot-scope="props">
+                    {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
+                  </template>
+                  <template slot="price" slot-scope="props">
+                    $ {{formatPrice(props.row.monto)}}
+                  </template>
+                  
+                  <template slot="pagination-info" slot-scope="props">
+                      Actuales {{props.currentPageRowsLength}} | 
+                        Filtrados {{props.filteredRowsLength}} | 
+                      Registros totales {{props.originalRowsLength}}
+                  </template>
+                  <template slot="selected-rows-info" slot-scope="props">
+                      Total Number of rows selected : {{props.selectedItemsCount}}
+                  </template>
+              </vue-bootstrap4-table>
+            </tab-pane>
+
+            <tab-pane>
+                <span slot="title">
+                  <i class="ni ni-calendar-grid-58"></i>
+                  Historial
+                </span>
+                <tabs fill class="flex-column flex-md-row">
+                    <card shadow>
+                        <tab-pane>
+                            <span slot="title">
+                                <i class="fa fa-money-check-alt"></i>
+                                Historial de compras
+                            </span>
+                            <vue-bootstrap4-table class="tableClient" card_title="Hola" :rows="history" :columns="columHistory" :classes="classes" :config="config">
+                              <template slot="edit" slot-scope="props">
+                                  <b>
+                                    <center>
+                                        <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
+                                        <!-- <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Anular</base-button> -->
+                                    </center>
+                                  </b>
+                              </template>
+                              <template slot="totalIdeal" slot-scope="props">
+                                {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
+                              </template>
+                              <template slot="costo" slot-scope="props">
+                                $ {{formatPrice(props.row.precio)}}
+                              </template>
+                              
+                              <template slot="pagination-info" slot-scope="props">
+                                  Actuales {{props.currentPageRowsLength}} | 
+                                    Filtrados {{props.filteredRowsLength}} | 
+                                  Registros totales {{props.originalRowsLength}}
+                              </template>
+                              <template slot="selected-rows-info" slot-scope="props">
+                                  Total Number of rows selected : {{props.selectedItemsCount}}
+                              </template>
+                          </vue-bootstrap4-table>
+                        </tab-pane>
+
+                        <tab-pane title="Profile">
+                            <span slot="title">
+                                <i class="fa fa-file-contract"></i>
+                                Historial de cierres
+                            </span>
+                            <vue-bootstrap4-table class="tableClient" :rows="historyClosed" :columns="columHistoryClosed" :classes="classes" :config="config">
+                              <template slot="edit" slot-scope="props">
+                                  <b>
+                                    <center>
+                                        <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
+                                        <!-- <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Anular</base-button> -->
+                                    </center>
+                                  </b>
+                              </template>
+                              <template slot="date" slot-scope="props">
+                                {{formatDate(props.row.fecha)}}
+                              </template>
+                              
+                              <template slot="pagination-info" slot-scope="props">
+                                  Actuales {{props.currentPageRowsLength}} | 
+                                    Filtrados {{props.filteredRowsLength}} | 
+                                  Registros totales {{props.originalRowsLength}}
+                              </template>
+                              <template slot="selected-rows-info" slot-scope="props">
+                                  Total Number of rows selected : {{props.selectedItemsCount}}
+                              </template>
+                          </vue-bootstrap4-table>
+                        </tab-pane>
+                    </card>
+                </tabs>
+            </tab-pane>
+        </card>
+    </tabs>
     <modal :show.sync="modals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-sm">
@@ -87,7 +201,7 @@
                       <option style="color:black;" value="Kilogramo(s)">Kilogramo(s)</option>
                       <option style="color:black;" value="Litro(s)">Litro(s)</option>
                       <option style="color:black;" value="Mililitro(s)">Mililitro(s)</option>
-                      <option style="color:black;" value="Contable">Contable</option>
+                      <option style="color:black;" value="Unidad">Unidad</option>
                     </select>
                     <base-input v-if="validForm != 3" alternative
                                 placeholder="Cantidad"
@@ -136,9 +250,29 @@
                 </div>
                 <form role="form">
                     <base-input  alternative
-                                placeholder="Nombre del provedor"
-                                v-model="provider"
-                                addon-left-icon="fa fa-box-open">
+                                placeholder="Nombre de la empresa"
+                                v-model="provider.name"
+                                addon-left-icon="fa fa-user-tie">
+                    </base-input>
+                    <base-input  alternative
+                                placeholder="RUT de la empresa"
+                                v-model="provider.rut"
+                                addon-left-icon="fa fa-key">
+                    </base-input>
+                    <base-input  alternative
+                                placeholder="Contacto de la empresa"
+                                v-model="provider.contact"
+                                addon-left-icon="fa fa-address-book">
+                    </base-input>
+                    <base-input  alternative
+                                placeholder="Contacto adicional"
+                                v-model="provider.contactPlus"
+                                addon-left-icon="fa fa-address-book">
+                    </base-input>
+                    <base-input  alternative
+                                placeholder="Dirección de la empresa"
+                                v-model="provider.direction"
+                                addon-left-icon="fas fa-route">
                     </base-input>
                 </form>
             </template>
@@ -158,15 +292,15 @@
     <modal :show.sync="modals.modal4">
       <h6 slot="header" class="modal-title" id="modal-title-default">Cierre de inventario</h6>
       <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;"> 
-        <div v-for="data in rows" class="row p-2 m-2">
+        <div v-for="(data, index) in rows" class="row p-2 m-2">
           <dt class="col-7 mt-2">{{data.producto}}</dt>
-          <base-input class="col-5" placeholder="Ingrese cantidad"></base-input>
+          <base-input class="col-5" v-model="countProduct[index].count" placeholder="Ingrese cantidad"></base-input>
         </div>
       </vue-custom-scrollbar> 
       
       
       <template slot="footer">
-          <base-button type="default">Cerrar inventario</base-button>
+          <base-button v-on:click="closeInventory" type="default">Cerrar inventario</base-button>
           <base-button type="link" class="ml-auto" @click="modals.modal4 = false">Salir
           </base-button>
       </template>
@@ -193,10 +327,20 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
     },
     data() {
       return {
+        countProduct:[],
         myId:null,
+        historyClosed:[],
         validForm:0,
-        provider:'',
+        history:[],
+        provider:{
+          name:'',
+          rut:'',
+          contact:'',
+          contactPlus:'',
+          direction:''
+        },
         providers:[],
+        providerTable:[],
         unit:"",
         dateAdd:'',
         addValid:true,
@@ -275,8 +419,99 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
             slot_name: "edit"
           },
         ],
+        columProvider:[
+          {
+            label: "Nombre de la empresa",
+            name: "nombre",
+            sort: true
+          },
+          {
+            label: "RUT",
+            name: "rut",
+            sort: true
+          },
+          {
+            label: "Contacto",
+            name: "contacto",
+            sort: true
+          },
+          {
+            label: "Contacto adicional",
+            name: "contactoAdicional",
+            sort: true
+          },
+          {
+            label: "Ubicación",
+            name: "ubicacion",
+            sort: true
+          },
+          {
+            label: "Administrar",
+            name: "_id",
+            sort: false,
+            slot_name: "edit"
+          },
+        ],
+        columHistory:[
+          {
+            label: "Fecha",
+            name: "fecha",
+            sort: true
+          },
+          {
+            label: "Costo",
+            name: "precio",
+            sort: true,
+            slot_name: "costo"
+          },
+          {
+            label: "Provedor",
+            name: "provedor",
+            sort: true
+          },
+          {
+            label: "Administrar",
+            name: "_id",
+            sort: false,
+            slot_name: "edit"
+          },
+        ],
+        columHistoryClosed:[
+          {
+            label: "Fecha",
+            name: "fecha",
+            sort: true,
+            slot_name: "date"
+          },
+          {
+            label: "Medida",
+            name: "medida",
+            sort: true,
+            slot_name: "costo"
+          },
+          {
+            label: "Total ideal",
+            name: "totalIdeal",
+            sort: true
+          },
+          {
+            label: "Total real",
+            name: "totalReal",
+            sort: true
+          },
+          {
+            label: "Diferencia",
+            name: "diferencia",
+            sort: true
+          },
+          {
+            label: "Administrar",
+            name: "_id",
+            sort: false,
+            slot_name: "edit"
+          },
+        ],
         config: {
-          card_title: "Tabla de productos",
           checkbox_rows: false,
           rows_selectable : true,
           highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
@@ -300,21 +535,38 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
     },
     created(){
       this.getProducts();
-      this.getProviders()
+      this.getProviders();
+      this.getHistoryClosed();
     },
     methods: {
       getProducts() {
         axios.get(endPoint.endpointTarget+'/inventario')
         .then(res => {
-          this.rows = res.data 
+          this.rows = res.data
+          for (let i = 0; i < res.data.length; i++) {
+            for (let e = 0; e < res.data[i].history.length; e++) {
+              this.history.push(res.data[i].history[e])
+            }
+          }
+          for (let index = 0; index < this.rows.length; index++) {
+              var ideal = (this.rows[index].cantidad + this.rows[index].entry) - this.rows[index].consume
+              this.countProduct.push({id:this.rows[index]._id,count:'',ideal:ideal,medida:this.rows[index].type})
+          } 
         })
       },
       getProviders() {
         axios.get(endPoint.endpointTarget+'/inventario/getProvider')
         .then(res => {
+          this.providerTable = res.data
           for (let i = 0; i < res.data.length; i++) {
             this.providers.push(res.data[i].nombre)
           }
+        })
+      },
+      getHistoryClosed() {
+        axios.get(endPoint.endpointTarget+'/inventario/getHistory')
+        .then(res => {
+          this.historyClosed = res.data
         })
       },
       addProduct(){
@@ -354,7 +606,11 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
       },
       addProvider(){
         axios.post(endPoint.endpointTarget+'/inventario/addProvider', {
-          name: this.provider
+          name: this.provider.name,
+          rut:this.provider.rut,
+          contacto:this.provider.contact,
+          contactoPlus:this.provider.contactPlus,
+          direccion:this.provider.direction
         })
         .then(res => {
           if (res.data.status === 'ok') {
@@ -413,7 +669,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
       },
       formatDate(date) {
         let dateFormat = new Date(date)
-        return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+" "+" ("+ dateFormat.getHours()+":"+ dateFormat.getMinutes()+")"
+        return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
       },
       formatPrice(value) {
           let val = (value/1).toFixed(2).replace('.', ',')
@@ -528,6 +784,39 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
             }, 1500);
           }
         })
+      },
+      closeInventory(){
+        axios.post(endPoint.endpointTarget+'/inventario/closeInventory', {
+          array:this.countProduct
+        })
+        .then(res => {
+          if (res.data.status === 'ok') {
+            this.$swal({
+              type: 'success',
+              title: 'Cierre realizado',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            this.getProducts();
+            this.getHistoryClosed()
+          }
+          else{
+            this.$swal({
+              type: 'success',
+              title: 'Ya se hizo un cierre este mes',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+        })
+        .catch(err => {
+          this.$swal({
+              type: 'error',
+              title: 'Cierre NO realizado',
+              showConfirmButton: false,
+              timer: 1500
+            })
+        })
       }
     }
   };
@@ -538,5 +827,15 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
   }
   .cursor-pointer{
     cursor: pointer;
+  }
+  .inventory .nav-item .active{
+    background-color:#172b4d !important;
+    color: white !important;
+  }
+  .inventory .nav-link {
+    color: #172b4d !important;
+  }
+  .inventory .card-header{
+    display:none;
   }
 </style>
