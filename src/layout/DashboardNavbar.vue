@@ -35,23 +35,25 @@
                 <!-- List group -->
                 <div class="list-group list-group-flush">
                   <a v-for="notification in notifications" href="#!" class="list-group-item list-group-item-action">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <!-- Avatar -->
-                        <img alt="Image placeholder" :src="imgEndpoint+notification.userImage" class="avatar rounded-circle">
-                      </div>
-                      <div class="col ml--2">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h4 class="mb-0 text-sm">{{notification.userName}}</h4>
-                          </div>
-                          <div class="text-right text-muted">
-                            <small>{{momentTime(notification.date)}}</small>
-                          </div>
+                    <router-link :to="notification.link">
+                      <div class="row align-items-center">
+                        <div class="col-auto">
+                          <!-- Avatar -->
+                          <img alt="Image placeholder" :src="imgEndpoint+notification.userImage" class="avatar rounded-circle">
                         </div>
-                        <p class="text-sm mb-0">{{notification.detail}}</p>
+                        <div class="col ml--2">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                              <h4 class="mb-0 text-sm">{{notification.userName}}</h4>
+                            </div>
+                            <div class="text-right text-muted">
+                              <small>{{momentTime(notification.date)}}</small>
+                            </div>
+                          </div>
+                          <p class="text-sm mb-0">{{notification.detail}}</p>
+                        </div>
                       </div>
-                    </div>
+                    </router-link>
                   </a>
                   
                 </div>

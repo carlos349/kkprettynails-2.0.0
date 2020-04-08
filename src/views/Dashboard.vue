@@ -85,7 +85,7 @@
                               </base-input>
                               
                             </div>
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-3 mt-3">
                               <base-dropdown class="w-100">
                                 <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                     {{textCategories}}

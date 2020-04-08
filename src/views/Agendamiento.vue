@@ -1486,6 +1486,15 @@
                 if (this.employeByDate != 'Filtrar por empleado') {
                     this.getCitasByEmploye()
                 }
+                axios.post(endPoint.endpointTarget+'/notifications', {
+                    userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                    userImage:localStorage.getItem('imageUser'),
+                    detail:'Creo una cita',
+                    link: 'agendamiento'
+                })
+                .then(res => {
+                    this.socket.emit('sendNotification', res.data)
+                })
                 setTimeout(() => {
                     this.initialState()
                     this.modals = {
@@ -2115,6 +2124,15 @@
                             type: 'success'
                         }
                         this.getClosed()
+                        axios.post(endPoint.endpointTarget+'/notifications', {
+                            userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                            userImage:localStorage.getItem('imageUser'),
+                            detail:'Procesó citas finalizadas',
+                            link: 'agendamiento'
+                        })
+                        .then(res => {
+                            this.socket.emit('sendNotification', res.data)
+                        })
                         setTimeout(() => {
                             this.modalsDialog = {
                                 modal2: false,

@@ -421,7 +421,7 @@ export default {
                     userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
                     userImage:localStorage.getItem('imageUser'),
                     detail:'Anuló una venta del día '+this.formatDate(this.arreglo.fecha),
-                    link: 'agendamiento'
+                    link: 'Ventas'
                 })
                 console.log(notify)
                 if (notify) {
