@@ -68,13 +68,22 @@
                 </div>
                 <div class="col-sm-3">
                     <div class="input-group">
-                        <base-input alternative
+                        <base-input v-if="validRoute('procesar', 'descuento')" alternative
                             title="Descuento"
                             type="text"
                             class="align"
                             placeholder="Descuento"
                             addon-left-icon="ni ni-tag"
                             v-on:change="descuentoFunc(true)"
+                            v-model="discount"
+                        ></base-input>
+                        <base-input v-else disabled 
+                            alternative
+                            title="Descuento deshabilitado"
+                            type="text"
+                            class="align"
+                            placeholder="Descuento"
+                            addon-left-icon="ni ni-tag"
                             v-model="discount"
                         ></base-input>
                     </div>
@@ -377,7 +386,7 @@
             </template>
             </card>
         </modal>
-        <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
+        <div v-if="validRoute('procesar', 'nuevo_cliente')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
 			<div class="row">
 				<div class="col-2 pt-1">
                     <font-awesome-icon v-if="ifEdit" class="icons" style="color:#172b4d;font-size:1em" icon="user-edit" />
@@ -388,10 +397,31 @@
 				</div>
 			</div>	
         </div>
-		<div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal3 = true" class="p-2 menuVerServi navSServi" v-on:mouseenter="mouseOverVenta(newService)" v-on:mouseleave="mouseLeaveVenta(newService)">
+        <div v-else v-bind:style="{  'height': '45px', 'z-index' : '1000' }" class="p-2 navSVenta">
+			<div class="row">
+				<div class="col-2 pt-1">
+                    <font-awesome-icon v-if="ifEdit" class="icons" style="color:#f5365c;font-size:1em" icon="user-edit" />
+					<font-awesome-icon v-else class="icons" style="color:#f5365c;font-size:1em" icon="user-plus" />
+				</div>
+				<div v-if="newClient.valid" class="col-10 pl-4 pt-1">
+					<b style="font-size:14px;">{{newClient.text}}</b>	
+				</div>
+			</div>	
+        </div>
+		<div v-if="validRoute('procesar', 'nuevo_servicio')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal3 = true" class="p-2 menuVerServi navSServi" v-on:mouseenter="mouseOverVenta(newService)" v-on:mouseleave="mouseLeaveVenta(newService)">
 			<div class="row">
 				<div class="col-2 pt-1">
 					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="folder-plus" />
+				</div>
+				<div v-if="newService.valid" class="col-10 pl-4 pt-1">
+					<b style="font-size:14px;">{{newService.text}}</b>	
+				</div>
+			</div>
+        </div>
+        <div v-else v-bind:style="{  'height': '45px', 'z-index' : '1000' }" class="p-2 navSServi">
+			<div class="row">
+				<div class="col-2 pt-1">
+					<font-awesome-icon class="icons" style="color:#f5365c;font-size:1em" icon="folder-plus" />
 				</div>
 				<div v-if="newService.valid" class="col-10 pl-4 pt-1">
 					<b style="font-size:14px;">{{newService.text}}</b>	
@@ -415,7 +445,8 @@ import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import jwtDecode from 'jwt-decode'
-
+const token = localStorage.userToken
+const decoded = jwtDecode(token)
 import EventBus from './EventBus'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
@@ -429,6 +460,7 @@ export default {
     },
     data(){
         return {
+            auth: decoded.access,
             validator:true,
             modals: {
                 modal1: false,
@@ -1284,6 +1316,18 @@ export default {
                     }
                 }, 1500);
 			}
+        },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
         },
     },
     mounted (){

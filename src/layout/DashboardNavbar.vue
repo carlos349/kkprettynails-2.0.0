@@ -24,10 +24,10 @@
               </div>
             </li>
             <li class="nav-item dropdown">
-              <a v-on:click="getNotifications" v-if="!activeNotifications" class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a v-on:click="getNotifications" v-if="!activeNotifications" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="ni ni-bell-55"></i>
               </a>
-              <a v-on:click="getNotifications" v-else class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a v-on:click="getNotifications" v-else class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i style="color:#f5365c" class="ni ni-bell-55"></i>
               </a>
               <div style="z-index:10000" class="dropdown-menu dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
@@ -187,6 +187,7 @@
         console.log('cerro')
       },
       getNotifications(){
+        console.log('hpla')
         this.activeNotifications = false
         axios.get(endPoint.endpointTarget+'/notifications/onlyFive') 
         .then(res => {

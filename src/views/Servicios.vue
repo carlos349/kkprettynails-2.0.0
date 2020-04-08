@@ -10,7 +10,8 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white w-100">Sección de servicios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
-                        <a @click="modals.modal1 = true"  class="btn btn-success text-white">Ingrese un servicio</a>
+                        <base-button v-if="validRoute('servicios', 'registrar')" @click="modals.modal1 = true"  type="success">Ingrese un servicio</base-button>
+                        <base-button v-else disabled  type="success">Ingrese un servicio</base-button>
                     </div>
                 </div>
             </div>
@@ -194,11 +195,17 @@
         <vue-bootstrap4-table :rows="services" :columns="columns" :classes="classes" :config="config">
             <template slot="actionButtons" class="mx-auto" slot-scope="props">
                 <center>
-                   <base-button icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos)">Editar</base-button>
-                    <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)">Activo</base-button>
-                    <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)">Inactivo</base-button> 
+                   <base-button v-if="validRoute('servicios', 'editar')" icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos)">Editar</base-button>
+                    <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" >Editar</base-button>
+                    <template v-if="validRoute('servicios', 'activaciones')">
+                        <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)">Activo</base-button>
+                        <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)">Inactivo</base-button> 
+                    </template>
+                    <template v-else>
+                        <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" disabled>Activo</base-button>
+                        <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled>Inactivo</base-button> 
+                    </template>
                 </center>
-                
             </template>
             <template slot="price" slot-scope="props">
                 {{formatPrice(props.row.precio)}}
@@ -235,6 +242,7 @@ import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import router from '../router'
 import EventBus from '../components/EventBus'
+import jwtDecode from 'jwt-decode'
 // COMPONENTS
 import Modal from '@/components/Modal'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
@@ -246,6 +254,7 @@ export default {
     },
     data(){
         return {
+            auth: [],
             modals: {
                 modal1: false,
                 modal2: false,
@@ -394,8 +403,14 @@ export default {
         this.getServices();
         this.getLenders()
         this.getProducts()
+        this.getToken()
     },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
         getServices(){
             
             axios.get(endPoint.endpointTarget+'/servicios')
@@ -713,6 +728,18 @@ export default {
                     this.errorAlert = false
                 }, 1500);
             })
+        },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
         }
     }
 }

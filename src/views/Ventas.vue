@@ -23,7 +23,8 @@
                                 </base-input>
                             </div>
                             <div class="col-md-2">
-                                <base-button  type="default" v-on:click="filterSale">Filtrar</base-button>
+                                <base-button v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="filterSale">Filtrar</base-button>
+                                <base-button v-else  type="default" disabled>Filtrar</base-button>
                             </div>
                             <div class="col-md-2">
                                 <base-button v-if="inspectorFilter"  type="secondary" v-on:click="getSales">
@@ -98,7 +99,13 @@
                             </tab-pane>
                         </card>
                     </tabs>
-                    <base-button block class="mt-2" v-if="arreglo.status" type="default" v-on:click="cancelSale(arreglo._id)">Anular venta</base-button>
+                    <template v-if="validRoute('ventas', 'filtrar')">
+                        <base-button block class="mt-2" v-if="arreglo.status" type="default" v-on:click="cancelSale(arreglo._id)">Anular venta</base-button>
+                    </template>
+                    <template v-else>
+                        <base-button disabled block class="mt-2" v-if="arreglo.status" type="default">Anular venta</base-button>
+                    </template>
+                    
                 </template>
             </card>
         </modal>
@@ -119,9 +126,13 @@
                 {{formatPrice(props.row.total)}}
             </template>
             <template slot="reportSale" slot-scope="props">
-                <center>
+                <center v-if="validRoute('ventas', 'detalle')" >
                     <base-button v-if="props.row.status" icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataReport(props.row._id)">Detalle</base-button>
                     <base-button v-else icon="ni ni-fat-add" size="sm" type="danger" v-on:click="dataReport(props.row._id)">Detalle</base-button>
+                </center>
+                <center v-else >
+                    <base-button v-if="props.row.status" icon="ni ni-fat-add" disabled size="sm" type="default" v-on:click="dataReport(props.row._id)">Detalle</base-button>
+                    <base-button v-else icon="ni ni-fat-add" disabled size="sm" type="danger" v-on:click="dataReport(props.row._id)">Detalle</base-button>
                 </center>
                
             </template>
@@ -146,6 +157,7 @@ import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import io from 'socket.io-client';
+import jwtDecode from 'jwt-decode'
 export default {
     components: {
         flatPicker,
@@ -153,6 +165,7 @@ export default {
     },
     data() {
         return {
+            auth: [],
             socket: io(endPoint.endpointTarget),
             modals: {
                 modal1: false,
@@ -254,8 +267,15 @@ export default {
     },
     created(){
         this.getSales()
+        this.getToken()
+        console.log(this.auth)
     },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
         async filterSale(){
             this.inspectorFilter = true
             const splitDate = this.dates.range.split(' a ')
@@ -446,6 +466,18 @@ export default {
                 }, 2000);
             }
         },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
+        }
     },
     mounted (){
         EventBus.$on('reloadSales', status => {

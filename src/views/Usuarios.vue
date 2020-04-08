@@ -10,7 +10,8 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white">Sección de usuarios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus usuarios, aquí podrás registrar, editar y visualizar todos tus usuarios.</p>
-                        <a @click="modals.modal1 = true , initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un usuario</a>
+                        <base-button v-if="validRoute('usuarios', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un usuario</base-button>
+                        <base-button v-else disabled type="success">Registrar un usuario</base-button>
                     </div>
                 </div>
             </div>
@@ -122,14 +123,69 @@
                 <h1 class="heading mt-5">{{modals.message}}</h1>
             </div>
         </modal>
+        <modal :show.sync="modals.modal4"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Administre las rutas de acceso</h3>
+                    </div>
+                </template>
+                <template>
+                    <vue-custom-scrollbar ref="tableItem" class="maxHeightRoutes">
+                        <vue-bootstrap4-table class="text-left" :rows="routes" :columns="columnsRoutes" :classes="classes" :config="configRoutes" v-on:on-select-row="selectedItem" v-on:on-all-select-rows="selectedAllItem" v-on:on-unselect-row="unSelectedItem" v-on:on-all-unselect-rows="unSelectedAllItem">
+                            <template slot="name" slot-scope="props">
+                                <b class="text-uppercase">{{props.row.route}}</b>
+                            </template>
+                        </vue-bootstrap4-table>
+                    </vue-custom-scrollbar>
+                    <center>
+                        <base-button class="mt-2" type="default" v-on:click="editRoutesAccess()">
+                            Enviar
+                        </base-button>
+                    </center>
+                </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal5"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Habilite las funciones de la ruta</h3>
+                    </div>
+                </template>
+                <template>
+                    <vue-custom-scrollbar class="maxHeightRoutes">
+                        <vue-bootstrap4-table class="text-left" :rows="functions" :columns="columnsFunctions" :classes="classes" :config="configFunctions" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
+                            <!-- <template slot="name" slot-scope="props">
+                                <b class="text-uppercase">{{props.row.route}}</b>
+                            </template> -->
+                        </vue-bootstrap4-table>
+                    </vue-custom-scrollbar>
+                    <center>
+                        <base-button class="mt-2" type="default" v-on:click="modals.modal5 = false">
+                            Finalizar
+                        </base-button>
+                    </center>
+                </template>
+            </card>
+        </modal>
         <!-- TABLA DE CLIENTES -->
-
         <vue-bootstrap4-table class="text-left" :rows="users" :columns="columns" :classes="classes" :config="config">
             <template slot="date-format" class="text-left" slot-scope="props">
                 {{formatDate(props.row.LastAccess)}}
             </template>
             <template slot="status-format" slot-scope="props">
-                <base-dropdown class="w-100">
+                <base-dropdown class="w-100" v-if="validRoute('usuarios', 'editar')">
                     <base-button size="sm" v-if="props.row.status == 1" slot="title" type="primary" class="dropdown-toggle w-100">
                         Gerente
                     </base-button>
@@ -143,14 +199,34 @@
                     <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 2, 'no-prestador')">Personal de caja</a>
                     <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 3, 'prestador')">Prestador</a>
                 </base-dropdown>
+                <base-dropdown v-else class="w-100" >
+                    <base-button disabled size="sm" v-if="props.row.status == 1" slot="title" type="primary" class="dropdown-toggle w-100">
+                        Gerente
+                    </base-button>
+                    <base-button disabled size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle w-100">
+                        Cajero (a)
+                    </base-button>
+                    <base-button disabled size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle w-100">
+                        Prestadora
+                    </base-button>
+                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 1, 'no-prestador')">Gerencia</a>
+                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 2, 'no-prestador')">Personal de caja</a>
+                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 3, 'prestador')">Prestador</a>
+                </base-dropdown>
+            </template>
+            <template slot="access" class="text-left" slot-scope="props" >
+                <base-button v-if="validRoute('usuarios', 'editar')" v-on:click="dataEdit(props.row.access, props.row._id, props.row.email)" size="sm" slot="title" type="success" class="w-100">
+                    Agregar accesos
+                </base-button>
+                <base-button v-else size="sm" slot="title" type="success" disabled class="w-100">
+                    Agregar accesos
+                </base-button>
             </template>
             <template slot="Administrar" slot-scope="props">
-                <b>
-                    <center>
-                        <base-button size="sm" v-on:click="deleteClient(props.row._id, props.row.status)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
-                    </center>
-                    
-                </b>
+                <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteClient(props.row._id, props.row.status)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>     
+                <base-button v-else size="sm" slot="title" type="warning" icon="ni ni-fat-remove" disabled class="w-100">
+                    Eliminar
+                </base-button> 
             </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
@@ -169,14 +245,18 @@ import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import jwtDecode from 'jwt-decode'
+import EventBus from '../components/EventBus'
 // COMPONENTS
 import VueBootstrap4Table from 'vue-bootstrap4-table'
+import vueCustomScrollbar from 'vue-custom-scrollbar'
   export default {
     components: {
-        VueBootstrap4Table 
+        VueBootstrap4Table,
+        vueCustomScrollbar
     },
     data() {
       return {
+        auth: [],
         registerUser: {
             name:null,
             lastname:null,
@@ -191,12 +271,28 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             c:null,
             p:null
         },
+        routes: [
+            {route: 'procesar', valid: false},
+            {route: 'metricas', valid: false},
+            {route: 'usuarios', valid: false},
+            {route: 'ventas', valid: false},
+            {route: 'servicios', valid: false},
+            {route: 'empleados', valid: false},
+            {route: 'clientes', valid: false},
+            {route: 'inventario', valid: false},
+            {route: 'gastos', valid: false},
+            {route: 'agendamiento', valid: false},
+            {route: 'caja', valid: false}
+        ],
+        functions: [],
         linkLender:'',
         lenderNames: [],
         modals: {
             modal1: false,
             modal2: false,
             modal3: false,
+            modal4: false,
+            modal5: false,
             message: "",
             icon: '',
             type:''
@@ -239,7 +335,17 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                 label: "Estado",
                 name: "status",
                 slot_name:"status-format",
-                sort: true,
+                sort: false,
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter country"
+                // },
+            },
+            {
+                label: "Accesos",
+                name: "Accesos",
+                slot_name:"access",
+                sort: false,
                 // filter: {
                 //     type: "simple",
                 //     placeholder: "Enter country"
@@ -251,7 +357,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                 sort: false,
                 slot_name: "Administrar"
             },
-            ],
+        ],
         config: {
             card_title: "Tabla de usuarios",
             checkbox_rows: false,
@@ -270,21 +376,337 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             preservePageOnDataChange : true,
             pagination_info : true
         },
+        columnsFunctions: [
+            {
+                label: "functions",
+                name: "name",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: false
+            }
+        ],
+        columnsRoutes: [
+            {
+                label: "Rutas",
+                name: "route",
+                slot_name:"name",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: false,
+            }
+        ],
+        configRoutes: {
+            card_title: "Tabla de rutas",
+            checkbox_rows: true,
+            rows_selectable : true,
+            highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+            global_search: {
+                placeholder: "Filtre por nombre",
+                visibility: true,
+                case_sensitive: false
+            },
+            show_refresh_button: false,
+            show_reset_button: false,  
+            selected_rows_info: false,
+            preservePageOnDataChange : false,
+            pagination_info : false,
+            pagination:false
+        },
+        configFunctions: {
+            card_title: "Tabla de funciones",
+            checkbox_rows: true,
+            rows_selectable : true,
+            highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+            global_search: {
+                placeholder: "Filtre por nombre",
+                visibility: true,
+                case_sensitive: false
+            },
+            show_refresh_button: false,
+            show_reset_button: false,  
+            selected_rows_info: false,
+            preservePageOnDataChange : false,
+            pagination_info : false,
+            pagination:false
+        },
         classes: {
             table: "table-bordered table-striped"
         },
         idSelect: '',
-        file: '' 
+        file: '',
+        routesSelecteds: [],
+        position:0,
+        mail: ''
       };
     },
     created(){
 		this.getUsers();
         this.getLenders()
+        this.getToken()
+        console.log(this.auth)
     },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
+        dataEdit(access, id, mail){ 
+            this.mail = mail 
+            this.idAccess = id
+            this.routesSelecteds = []
+            for (let index = 0; index < access.length; index++) {
+                const element = access[index];
+                this.routesSelecteds.push(element)
+            }
+            if (this.routesSelecteds.length > 0) {
+                $('th .custom-checkbox').parent().css('display', 'block')
+            }else{
+                $('th .custom-checkbox').parent().css('display', 'none')
+            }
+            this.modals = {
+                modal1: false,
+                modal2: false,
+                modal3: false,
+                modal4: true,
+                modal5: false,
+                message: "",
+                icon: '',
+                type:''
+            }
+            let data = this.$refs.tableItem.$children[0].$data.vbt_rows
+            let selected = this.$refs.tableItem.$children[0].$data.selected_items
+            for (let c = 0; c <= selected.length; c++) {
+                selected.shift()
+            }
+            setTimeout(() => {
+                for (let index = 0; index < data.length; index++) {
+                    for (let i = 0; i < this.routesSelecteds.length; i++) {
+                        if (this.routesSelecteds[i].ruta == data[index].route) {
+                            selected.push(data[index])
+                        }
+                    }
+                }
+            }, 100);
+        },
+        selectedItem(value){
+            $('th .custom-checkbox').parent().css('display', 'block')
+            this.routesSelecteds.push({ruta: value.selected_item.route, validaciones:[]})
+            this.position = this.routesSelecteds.length - 1
+            this.modals = {
+                modal1: false,
+                modal2: false,
+                modal3: false,
+                modal4: true,
+                modal5: true,
+                message: "",
+                icon: '',
+                type:''
+            }
+            if (value.selected_item.route == 'metricas') {
+                this.functions = [
+                    {function: 'filtrar', name:'Filtrar'}
+                ]
+            }else if (value.selected_item.route == 'usuarios') {
+                this.functions = [
+                    {function: 'registrar', name:'Registar'},
+                    {function: 'editar', name:'Editar'},
+                    {function: 'eliminar', name:'Eliminar'}
+                ]
+            }else if (value.selected_item.route == 'ventas') {
+                this.functions = [
+                    {function: 'filtrar', name:'Filtrar'},
+                    {function: 'anular', name:'Anular'},
+                    {function: 'detalle', name:'Ver detalle'},
+                ]
+            }else if (value.selected_item.route == 'servicios') {
+                this.functions = [
+                    {function: 'ingresar', name:'Registrar'},
+                    {function: 'editar', name:'Editar'},
+                    {function: 'activaciones', name:'Activar o Desactivar'},
+                ]
+            }else if (value.selected_item.route == 'empleados') {
+                this.functions = [
+                    {function: 'registrar', name:'Registrar'},
+                    {function: 'detalle', name:'Ver detalle'},
+                    {function: 'editar', name:'Editar'},
+                    {function: 'reportes', name:'Ver reporte'},
+                    {function: 'cerrar ventas', name:'Cerrar ventas'},
+                    {function: 'eliminar', name: 'Eliminar'},
+                    {function: 'adelantos', name: 'Adelantos o Bonos'},
+                    {function: 'correos', name: 'Envio de correos'},
+                ]
+            }else if (value.selected_item.route == 'clientes') {
+                this.functions = [
+                    {function: 'filtrar', name:'Filtrar'},
+                    {function: 'registrar', name:'Registrar'},
+                    {function: 'editar', name:'Editar'},
+                    {function: 'detalle', name:'Ver detalle'},
+                    {function: 'eliminar', name:'Eliminar'}
+                ]
+            }else if (value.selected_item.route == 'inventario') {
+                this.functions = [
+                    {function: 'filtrar', name:'Filtrar'},
+                    {function: 'registrar', name:'Registrar'},
+                    {function: 'editar', name:'Editar'},
+                    {function: 'detalle', name:'Ver detalle'},
+                    {function: 'eliminar', name:'Eliminar'}
+                ]
+            }else if (value.selected_item.route == 'gastos') {
+                this.functions = [
+                    {function: 'registrar', name:'Registrar'},
+                ]
+            }else if (value.selected_item.route == 'agendamiento') {
+                this.functions = [
+                    {function: 'filtrar', name:'Filtrar'},
+                    {function: 'agendar', name:'Agendar'},
+                    {function: 'todas', name:'Ver todas las agendas'},
+                    {function: 'editar', name:'Editar cita'},
+                    {function: 'eliminar', name:'Eliminar cita'},
+                    {function: 'cerrar', name:'Cerrar cita'},
+                    {function: 'finalizar', name:'Finalizar cita'},
+                ]
+            }else if (value.selected_item.route == 'caja') {
+                this.functions = [
+                    {function: 'visualizar', name:'Ver cierres'},
+                    {function: 'filtrar', name:'Filtrar'},
+                    {function: 'cerrar', name:'hacer cierre'},
+                    {function: 'fondo', name:'Ingresar fondos'},
+                    {function: 'reporte', name:'Ver reporte del cierre'},
+                    {function: 'editar', name:'Editar cierre'},
+                ]
+            }else if (value.selected_item.route == 'procesar') {
+                this.functions = [
+                    {function: 'editar', name:'Editar cliente'},
+                    {function: 'nuevo_cliente', name:'Registrar cliente'},
+                    {function: 'nuevo_servicio', name:'Registrar servicio'},
+                    {function: 'descuento', name:'Ingresar descuento'},
+                ]
+            }
+        },
+        selected(value){
+            const type = value.selected_item.function
+            this.routesSelecteds[this.position].validaciones.push(type)
+        },
+        selectedAll(value){
+            for (let index = 0; index < value.selected_items.length; index++) {
+                const element = value.selected_items[index];
+                this.routesSelecteds[this.position].validaciones.push(value.selected_items[index].function)
+            }
+        },
+        unSelected(value){
+            for (let i = 0; i < this.routesSelecteds[this.position].validaciones.length; i++) {
+                if (this.routesSelecteds[this.position].validaciones[i] == value.unselected_item.function) {
+                    this.routesSelecteds[this.position].validaciones.splice(i, 1)
+                    break
+                }
+            }
+        },
+        unSelectedAll(){
+            this.routesSelecteds[this.position].validaciones = []
+        },
+        unSelectedItem(value){
+            $('th .custom-checkbox').parent().css('display', 'block')
+            for (let i = 0; i < this.routesSelecteds.length; i++) {
+                if (this.routesSelecteds[i].ruta == value.unselected_item.route) {
+                    this.routesSelecteds.splice(i, 1)
+                    break
+                }
+            }
+            if (this.routesSelecteds.length == 0) {
+                $('th .custom-checkbox').parent().css('display', 'none')
+            }
+        },
+        selectedAllItem(value){
+            for (let index = 0; index < value.selected_items.length; index++) {
+                // this.itemSelected.push(value.selected_items[index]._id)
+                this.routesSelecteds.push({ruta: value.selected_items[index].route, validaciones: []})
+            }
+            console.log(this.routesSelecteds)
+        },
+        unSelectedAllItem(value){
+            $('th .custom-checkbox').parent().css('display', 'none')
+            this.routesSelecteds = []
+            // this.EdititemSelected = []
+        },
         handleFileUpload(){
 			this.file = this.$refs.file.files[0]
 			console.log(this.file)
+        },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
+        },
+        editRoutesAccess(){
+            const configToken = {headers: {'x-access-token': localStorage.userToken}}
+            axios.put(endPoint.endpointTarget+'/users/editAccess/'+this.idAccess,{
+                access: this.routesSelecteds
+            }, configToken)
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    this.modals = {
+                        modal1: false,
+                        modal2: false,
+                        modal3: true,
+                        modal4: false,
+                        modal5: false,
+                        message: "Accesos actualizados con exito",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
+                            modal5: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 2000);
+                    if (this.mail == decoded.email) {
+                        EventBus.$emit('loggedin-user', this.routesSelecteds)
+                    }
+                    this.routesSelecteds = []
+                }else{
+                    this.modals = {
+                        modal1: false,
+                        modal2: false,
+                        modal3: true,
+                        modal4: false,
+                        modal5: false,
+                        message: "No se pudo relizar la acción",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            modal4: false,
+                            modal5: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 2000);
+                }
+            })
         },
         registerUsers(){
             let formData = new FormData();
@@ -298,7 +720,11 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
             }, configToken)
             .then(res => {
                 this.modals = {
+                    modal1: false,
+                    modal2: false,
                     modal3: true,
+                    modal4: false,
+                    modal5: false,
                     message: '¡Usuario registrado con exito!',
                     icon: 'ni ni-check-bold ni-5x',
                     type: 'success'
@@ -306,7 +732,11 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
                 setTimeout(() => {
                     console.log(this.modals.modal3)
                     this.modals = {
+                        modal1: false,
+                        modal2: false,
                         modal3: false,
+                        modal4: false,
+                        modal5: false,
                         message: "",
                         icon: '',
                         type: ''
@@ -329,7 +759,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 			const config = {headers: {'x-access-token': localStorage.userToken}}
 			axios.get(endPoint.endpointTarget+'/users', config)
 			.then(res => {
-			this.users = res.data
+			    this.users = res.data
 			})
 			.catch(err => {
 				this.$swal({
@@ -408,14 +838,22 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 				if(result.value) {
 					if(admin == 1){
 						this.modals = {
+                            modal1: false,
+                            modal2: false,
                             modal3: true,
+                            modal4: false,
+                            modal5: false,
                             message: "No puede borrar un gerente",
                             icon: 'ni ni-fat-remove ni-5x',
                             type: 'danger'
                         }
                         setTimeout(() => {
                             this.modals = {
+                                modal1: false,
+                                modal2: false,
                                 modal3: false,
+                                modal4: false,
+                                modal5: false,
                                 message: "",
                                 icon: '',
                                 type: ''
@@ -426,14 +864,22 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 						axios.delete(endPoint.endpointTarget+'/users/' + id, configToken)
 						.then(res => {
                             this.modals = {
+                                modal1: false,
+                                modal2: false,
                                 modal3: true,
+                                modal4: false,
+                                modal5: false,
                                 message: res.data.first_name+' '+res.data.last_name+' ha sido Borrado',
                                 icon: 'ni ni-check-bold ni-5x',
                                 type: 'success'
                             }
                             setTimeout(() => {
                                 this.modals = {
+                                    modal1: false,
+                                    modal2: false,
                                     modal3: false,
+                                    modal4: false,
+                                    modal5: false,
                                     message: "",
                                     icon: '',
                                     type: ''
@@ -453,14 +899,22 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 					}
 				} else {
 					this.modals = {
+                        modal1: false,
+                        modal2: false,
                         modal3: true,
+                        modal4: false,
+                        modal5: false,
                         message: "Acción cancelada",
                         icon: 'ni ni-check-bold ni-5x',
                         type: 'success'
                     }
                     setTimeout(() => {
                         this.modals = {
+                            modal1: false,
+                            modal2: false,
                             modal3: false,
+                            modal4: false,
+                            modal5: false,
                             message: "",
                             icon: '',
                             type: ''
@@ -568,5 +1022,11 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
     .cursor-pointer{
         cursor: pointer;
     }
-   
+    .maxHeightRoutes{
+        max-height: 400px;
+        overflow: scroll;
+    }
+    // .maxHeightRoutes th .custom-checkbox{
+    //     display: none;
+    // }
 </style>

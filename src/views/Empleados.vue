@@ -10,7 +10,8 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white">Sección de empleados</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus empleados, aquí podrás registrar, editar y visualizar todos tus empleados.</p>
-                        <a @click="modals.modal1 = true , initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un empleado</a>
+                        <base-button v-if="validRoute('empleados', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un empleado</base-button>
+                        <base-button v-else disabled type="success">Registrar un empleado</base-button>
                     </div>
                 </div>
             </div>
@@ -108,9 +109,12 @@
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <center>
-                        <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.documento, props.row.restTime, props.row.restDay, props.row._id,props.row.comision)" icon="ni ni-bullet-list-67">Detalles</base-button>
-                        <base-button size="sm" v-on:click="reportEmploye(props.row._id)" type="primary" icon="ni ni-align-center">Reporte</base-button>
-                        <base-button size="sm" v-on:click="deleteEmploye(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                        <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.documento, props.row.restTime, props.row.restDay, props.row._id,props.row.comision)" icon="ni ni-bullet-list-67">Detalles</base-button>
+                        <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67">Detalles</base-button>
+                        <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(props.row._id)" type="primary" icon="ni ni-align-center">Reporte</base-button>
+                        <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center">Reporte</base-button>
+                        <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                        <base-button v-else size="sm" disabled type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
                     </center>
                     
                 </b>
@@ -153,6 +157,8 @@ import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import EventBus from '../components/EventBus'
+import jwtDecode from 'jwt-decode'
+
 // COMPONENTS
 
   export default {
@@ -161,6 +167,7 @@ import EventBus from '../components/EventBus'
     },
     data() {
       return {
+        auth: [],
         tipeForm:'',
         registerEmploye: {
             name:'',
@@ -266,8 +273,9 @@ import EventBus from '../components/EventBus'
       };
     },
     created(){
-		this.getEmployes();
-        
+        this.getEmployes();
+        this.getToken()
+        console.log(this.auth)
     },
     methods: {
         getEmployes(){
@@ -276,6 +284,11 @@ import EventBus from '../components/EventBus'
                 this.employes = res.data
                 
 			})
+        },
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
         },
         reportEmploye(id){
             localStorage.setItem('idReportEmploye', id)
@@ -497,7 +510,19 @@ import EventBus from '../components/EventBus'
 			} 
 			let val = concat.replace('.', '-')
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-		},
+        },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
+        }
     }
   };
 </script>
