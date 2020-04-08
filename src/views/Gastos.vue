@@ -10,7 +10,7 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white">Sección de gastos</h1>
                         <p class="text-white  mb-2">Esta es la sección de gastos del negocio, aquí podrás registrar, y visualizar todos tus gastos.</p>
-                        <a class="btn btn-success text-white cursor-pointer" v-on:click="modals.modal2 = true">Registrar gasto</a>
+                        <base-button v-if="validRoute('gastos', 'registrar')" type="success" v-on:click="modals.modal2 = true">Registrar gasto</base-button>
                     </div>
                 </div>
             </div>
@@ -112,6 +112,7 @@ export default {
     },
     data(){
         return {
+            auth:[],
             dataExpense: {
                 reason: '',
                 amount: 0,
@@ -192,8 +193,14 @@ export default {
     },
     created(){
         this.getExpenses()
-    }, 
+        this.getToken()
+    },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
         registerExpense(){
             axios.post(endPoint.endpointTarget+'/expenses', {
                 reason: this.dataExpense.reason,
@@ -256,6 +263,18 @@ export default {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
+        }
     }
 }
 </script>

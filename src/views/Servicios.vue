@@ -10,8 +10,7 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white w-100">Sección de servicios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
-                        <base-button v-if="validRoute('servicios', 'registrar')" @click="modals.modal1 = true"  type="success">Ingrese un servicio</base-button>
-                        <base-button v-else disabled  type="success">Ingrese un servicio</base-button>
+                        <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true"  type="success">Ingrese un servicio</base-button>
                     </div>
                 </div>
             </div>

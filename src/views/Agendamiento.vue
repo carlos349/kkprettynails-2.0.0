@@ -12,12 +12,12 @@
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         <div class="col-12">
                             <div class="row buttons">
-                                <a @click="modals.modal1 = true , initialState()"  class="btn mt-1 btn-success text-white cursor-pointer">Agendar</a>
-                                <base-button class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" v-if="status != 3" type="primary">
+                                <base-button v-if="validRoute('agendamiento', 'agendar')" @click="modals.modal1 = true , initialState()"  type="success">Agendar</base-button>
+                                <base-button v-if="validRoute('agendamiento', 'procesar')" class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" type="primary">
                                     <span>Ventas por procesar</span>
                                     <badge type="primary">{{lengthClosedDates}}</badge>
                                 </base-button>
-                                <base-dropdown v-if="status != 3" class="maxheightDropDown mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
+                                <base-dropdown v-if="validRoute('agendamiento', 'filtrar')" class="maxheightDropDown mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
                                     </base-button>
@@ -35,7 +35,7 @@
                                         </base-button>
                                     </li>
                                 </base-dropdown>
-                                <div v-if="filter == true && status != 3" class="ml-2">
+                                <div v-if="filter == true && validRoute('agendamiento', 'filtrar') == true" class="ml-2">
                                     <img class="avatar rounded-circle" :src="img2" />
                                 </div>
                             </div>
@@ -363,21 +363,29 @@
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="status != 3" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-6 mt-2">
+                                <div v-if="validRoute('agendamiento', 'editar')" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-6 mt-2">
                                    <base-button icon="fa fa-edit" class="mx-auto col-12" type="default">Editar</base-button> 
                                 </div>
-                                <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-6 mt-2">
-                                   <base-button icon="fa fa-check-square" class="mx-auto col-12" type="default">Finalizar</base-button> 
-                                </div>
-                                <div v-if="selectedEvent.process == true && status != 3" v-on:click="closeDate(selectedEvent.id)" class="col-6 mt-2">
-                                   <base-button icon="fa fa-times" class=" col-12 mx-auto" type="danger">Cerrar</base-button> 
-                                </div>
-                                <div v-if="status != 3" v-on:click="deleteDate(selectedEvent.id)" class="col-6 mt-2">
+                                <template v-if="validRoute('agendamiento', 'finalizar')">
+                                    <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-6 mt-2">
+                                        <base-button icon="fa fa-check-square" class="mx-auto col-12" type="default">Finalizar</base-button> 
+                                    </div>
+                                </template>
+                                <template v-if="validRoute('agendamiento', 'cerrar')">
+                                    <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-6 mt-2">
+                                        <base-button icon="fa fa-times" class=" col-12 mx-auto" type="danger">Cerrar</base-button> 
+                                    </div>
+                                </template>
+                                
+                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent.id)" class="col-6 mt-2">
                                    <base-button icon="fa fa-trash-alt" class=" col-12 mx-auto" type="danger">Borrar</base-button> 
                                 </div>
-                                <div v-if="selectedEvent.process == true && status != 3" class="col-12 text-center mt-2">
-                                   <base-button icon="fa fa-calendar-check" class=" col-12 mx-auto" type="success" v-on:click="processDate(selectedEvent.id, 'process')">Procesar</base-button> 
-                                </div>
+                                <template v-if="validRoute('agendamiento', 'procesar')">
+                                    <div v-if="selectedEvent.process == true" class="col-12 text-center mt-2">
+                                        <base-button icon="fa fa-calendar-check" class=" col-12 mx-auto" type="success" v-on:click="processDate(selectedEvent.id, 'process')">Procesar</base-button> 
+                                    </div>
+                                </template>
+                                
                             </div>
                             
                             <dt class="mt-4 text-center">Histórico de cliente </dt>
@@ -742,6 +750,7 @@
     },
     data() {
       return {
+        auth:[],
         socket : io(endPoint.endpointTarget),
         status: localStorage.getItem('status'),
         countServices:[],
@@ -936,18 +945,25 @@
 		}
     },
     created(){
-        console.log(localStorage)
+        this.getToken()
+        console.log(this.auth)
         this.validatorLender()
         this.getClients()
         this.getServices()
         this.getUsers()
         this.getDates()
         this.getClosed()
+        
     },
     destroyed () {
         window.removeEventListener('scroll', this.handleScroll);
     },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
         validatorLender(){
             const token = localStorage.userToken
             const decoded = jwtDecode(token)
@@ -965,14 +981,67 @@
                 $(".buttons").removeClass("fixed-top")
             }
         },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
+        },
         getDates() {
-            
+            // this.validRoute('agendamiento', 'todas')
             if (this.lender != '') {
-            this.events = []
-            axios.get(endPoint.endpointTarget+'/citas/' + this.lender)
-            .then(res => {
-                console.log(res.data)
-                for (let index = 0; index < res.data.length; index++) {
+                this.events = []
+                axios.get(endPoint.endpointTarget+'/citas/' + this.lender)
+                .then(res => {
+                    console.log(res.data)
+                    for (let index = 0; index < res.data.length; index++) {
+                        let dateNow = new Date(res.data[index].date)
+                        let formatDate = ''
+                        let formatDateTwo = ''
+                        if (dateNow.getMonth() == 9 || dateNow.getMonth() == 10 || dateNow.getMonth() == 11) {
+                            if (dateNow.getDate() < 10) {
+                            formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
+                            formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
+                            }else{
+                            formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
+                            formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
+                            }
+                            
+                        }else{
+                            if (dateNow.getDate() < 10) {
+                            formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
+                            formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
+                            }else{
+                            formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
+                            formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
+                            }  
+                        }
+                        let arrayEvents = {
+                            start: formatDate,
+                            end: formatDateTwo,
+                            title: res.data[index].services[0].servicio+" - "+res.data[index].employe,
+                            content: res.data[index].client,
+                            class: res.data[index].class,
+                            cliente: res.data[index].client,
+                            services: res.data[index].services,
+                            empleada: res.data[index].employe,
+                            id:res.data[index]._id,
+                            process: res.data[index].process
+                        }
+                        this.events.push(arrayEvents)
+                    }
+                })
+            }else{
+                this.events = []
+                axios.get(endPoint.endpointTarget+'/citas')
+                .then(res => {
+                    for (let index = 0; index < res.data.length; index++) {
                     let dateNow = new Date(res.data[index].date)
                     let formatDate = ''
                     let formatDateTwo = ''
@@ -999,58 +1068,17 @@
                         end: formatDateTwo,
                         title: res.data[index].services[0].servicio+" - "+res.data[index].employe,
                         content: res.data[index].client,
-                        class: res.data[index].class,
+                        class:res.data[index].class,
                         cliente: res.data[index].client,
                         services: res.data[index].services,
                         empleada: res.data[index].employe,
                         id:res.data[index]._id,
                         process: res.data[index].process
                     }
-                    this.events.push(arrayEvents)
-                }
-            })
-            }else{
-            this.events = []
-            axios.get(endPoint.endpointTarget+'/citas')
-            .then(res => {
-                for (let index = 0; index < res.data.length; index++) {
-                let dateNow = new Date(res.data[index].date)
-                let formatDate = ''
-                let formatDateTwo = ''
-                if (dateNow.getMonth() == 9 || dateNow.getMonth() == 10 || dateNow.getMonth() == 11) {
-                    if (dateNow.getDate() < 10) {
-                    formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                    formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
-                    }else{
-                    formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                    formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
-                    }
                     
-                }else{
-                    if (dateNow.getDate() < 10) {
-                    formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                    formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
-                    }else{
-                    formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                    formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
-                    }  
-                }
-                let arrayEvents = {
-                    start: formatDate,
-                    end: formatDateTwo,
-                    title: res.data[index].services[0].servicio+" - "+res.data[index].employe,
-                    content: res.data[index].client,
-                    class:res.data[index].class,
-                    cliente: res.data[index].client,
-                    services: res.data[index].services,
-                    empleada: res.data[index].employe,
-                    id:res.data[index]._id,
-                    process: res.data[index].process
-                }
-                
-                this.events.push(arrayEvents)
-                }
-            })
+                    this.events.push(arrayEvents)
+                    }
+                })
             }
             
         },

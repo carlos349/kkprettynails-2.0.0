@@ -11,7 +11,6 @@
                         <h1 class="display-2 text-white">Sección de usuarios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus usuarios, aquí podrás registrar, editar y visualizar todos tus usuarios.</p>
                         <base-button v-if="validRoute('usuarios', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un usuario</base-button>
-                        <base-button v-else disabled type="success">Registrar un usuario</base-button>
                     </div>
                 </div>
             </div>
@@ -678,6 +677,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                             type: ''
                         }
                     }, 2000);
+                    const token = localStorage.userToken
+                    const decoded = jwtDecode(token)
                     if (this.mail == decoded.email) {
                         EventBus.$emit('loggedin-user', this.routesSelecteds)
                     }

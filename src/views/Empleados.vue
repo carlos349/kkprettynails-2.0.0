@@ -11,7 +11,6 @@
                         <h1 class="display-2 text-white">Sección de empleados</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus empleados, aquí podrás registrar, editar y visualizar todos tus empleados.</p>
                         <base-button v-if="validRoute('empleados', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un empleado</base-button>
-                        <base-button v-else disabled type="success">Registrar un empleado</base-button>
                     </div>
                 </div>
             </div>

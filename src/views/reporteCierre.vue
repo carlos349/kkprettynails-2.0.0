@@ -9,7 +9,7 @@
                 <div class="row">
                     <div class="col-12">
                         <h1 class="display-2 text-white">Reporte del cierre ({{closedInfo.date}})</h1>
-                        <a @click="modals.modal1 = true" class="btn btn-success text-white cursor-pointer">Editar montos manuales</a> <br>
+                        <base-button v-if="validRoute('caja', 'editar')" @click="modals.modal1 = true" type="success">Editar montos manuales</base-button> <br>
                         <a v-on:click="back" class="btn btn-primary text-white cursor-pointer mt-1">Regresar</a>
                     </div>
                 </div>
@@ -236,6 +236,7 @@ export default {
     },
     data(){
         return {
+            auth:[],
             id: localStorage.getItem('reportID'),
             closedInfo:{
                 manual:0,
@@ -267,10 +268,16 @@ export default {
         }
     },
     created(){
-        console.log(this.id)
         this.getClosing()
+        this.getToken()
+        console.log(this.auth)
     },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
         back(){
             window.history.go(-1);
         },
@@ -337,6 +344,19 @@ export default {
                 }
             })
         },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            console.log(true)
+                            return true
+                        } 
+                    }
+                }
+            }
+        }
     }
 }
 </script>

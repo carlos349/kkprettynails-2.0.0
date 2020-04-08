@@ -10,8 +10,8 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white">Sección de clientes</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus clientes, aquí podrás registrar, editar y visualizar todos tus clientes.</p>
-                        <a @click="modals.modal1 = true , initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un cliente</a>
-                        <a @click="showFilter" class="btn btn-primary text-white cursor-pointer">Filtrar</a>
+                        <base-button v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un cliente</base-button>
+                        <base-button v-if="validRoute('clientes', 'filtrar')" @click="showFilter" type="default">Filtrar</base-button>
                     </div>
                 </div>
             </div>
@@ -177,8 +177,10 @@
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <center>
-                        <base-button size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67">Detalles</base-button>
-                        <base-button size="sm" v-on:click="deleteClient(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                        <base-button v-if="validRoute('clientes', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67">Detalles</base-button>
+                        <base-button disabled v-else size="sm" type="default" icon="ni ni-bullet-list-67">Detalles</base-button>
+                        <base-button v-if="validRoute('clientes', 'eliminar')" size="sm" v-on:click="deleteClient(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                        <base-button disabled v-else size="sm" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
                     </center>
                     
                 </b>
@@ -204,6 +206,7 @@ import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import EventBus from '../components/EventBus'
+import jwtDecode from 'jwt-decode'
 // COMPONENTS
 
   export default {
@@ -212,6 +215,7 @@ import EventBus from '../components/EventBus'
     },
     data() {
       return {
+        auth: [],
         successRegister:false,
         clientsNames: [],
         tipeForm: '',
@@ -301,9 +305,14 @@ import EventBus from '../components/EventBus'
     },
     created(){
 		this.getClients();
-        
+        this.getToken()
     },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
         getClients(){
             axios.get(endPoint.endpointTarget+'/clients')
             .then(res => {
@@ -540,6 +549,18 @@ import EventBus from '../components/EventBus'
         },
         showFilter(){
             $('.tableClient .vbt-table-tools').toggle()
+        },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
         }
     }
   };
