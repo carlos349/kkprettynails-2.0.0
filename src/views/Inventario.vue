@@ -10,7 +10,7 @@
                     <h1 class="display-2 text-white">Sección de inventario</h1>
                     <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tu inventario, aquí podrás registrar, editar y visualizar todos tus productos.</p>
                     <a @click="modals.modal1 = true ,validForm = 1, initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un producto</a>
-                    <a @click="modals.modal3 = true ,validForm = 1, initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un provedor</a>
+                    <a @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un provedor</a>
                     <a @click="modals.modal4 = true" class="btn btn-danger text-white cursor-pointer">Cerrar inventario</a>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                       <b>
                         <center>
                             <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
-                            <base-button size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type,initialState(1,props.row._id)" icon="fa fa-plus">Agregar mas</base-button>
+                            <base-button size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type,initialState(1,props.row._id), dataProduct.name = props.row.producto" icon="fa fa-plus">Compras</base-button>
                             <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Eliminar</base-button>
                         </center>
                       </b>
@@ -60,8 +60,8 @@
                   <template slot="edit" slot-scope="props">
                       <b>
                         <center>
-                            <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
-                            <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Eliminar</base-button>
+                            <base-button size="sm" type="default" @click="modals.modal3 = true, providerSup.typeProvider = 'Editar', pushDataProvider(props.row.nombre, props.row.rut, props.row.contacto,props.row.contactoAdicional,props.row.ubicacion,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
+                            <base-button size="sm" type="danger" @click="deleteProvider(props.row._id)" icon="fa fa-trash">Eliminar</base-button>
                         </center>
                       </b>
                   </template>
@@ -96,14 +96,13 @@
                                 Historial de compras
                             </span>
                             <vue-bootstrap4-table class="tableClient" card_title="Hola" :rows="history" :columns="columHistory" :classes="classes" :config="config">
-                              <template slot="edit" slot-scope="props">
+                              <!-- <template slot="edit" slot-scope="props">
                                   <b>
                                     <center>
-                                        <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
-                                        <!-- <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Anular</base-button> -->
+                                        <base-button size="sm" type="default" @click="deleteSale(props.row.id,props.row.entry)" icon="fa fa-ban">Anular</base-button>
                                     </center>
                                   </b>
-                              </template>
+                              </template> -->
                               <template slot="totalIdeal" slot-scope="props">
                                 {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
                               </template>
@@ -131,7 +130,7 @@
                               <template slot="edit" slot-scope="props">
                                   <b>
                                     <center>
-                                        <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
+                                        <base-button size="sm" type="default" @click="modals.modal5 = true ,validForm = 2, reports = props.row.array" icon="ni ni-bullet-list-67">Ver informe</base-button>
                                         <!-- <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Anular</base-button> -->
                                     </center>
                                   </b>
@@ -173,11 +172,19 @@
                     <small>Anexa mas productos</small>
                 </div>
                 <form role="form">
-                    <base-input v-on:keyup="valid" v-if="validForm == 3" alternative
-                                :placeholder="'Anexar cantidad ( '+unit+' )'"
+                   <div class="row">
+                     <div class="col-7">
+                        <base-input v-on:keyup="valid" v-if="validForm == 3" alternative
+                                placeholder="Cantidad"
                                 v-model="dataProduct.entry"
                                 addon-left-icon="fa fa-box-open">
-                    </base-input>
+                        </base-input>
+                      </div>
+                      <div class="col-5 mt-2">
+                        {{unit}}
+                      </div>
+                   </div>
+                    
                     <base-input v-on:change="valid" v-if="validForm == 3" addon-left-icon="ni ni-calendar-grid-58">
                         <flat-picker slot-scope="{focus, blur}"
                                     @on-open="focus"
@@ -246,38 +253,47 @@
               class="border-0">
             <template>
                 <div style="margin-top:-30%" class="text-center text-muted mb-4">
-                    <small>Registro de provedor</small>
+                    <small>Datos del provedor</small>
                 </div>
                 <form role="form">
                     <base-input  alternative
                                 placeholder="Nombre de la empresa"
                                 v-model="provider.name"
-                                addon-left-icon="fa fa-user-tie">
+                                v-on:keyup="validProviders()"
+                                addon-left-icon="fa fa-user-tie"
+                                addon-right-icon="fa fa-asterisk text-danger">
                     </base-input>
                     <base-input  alternative
                                 placeholder="RUT de la empresa"
                                 v-model="provider.rut"
-                                addon-left-icon="fa fa-key">
+                                addon-left-icon="fa fa-key"
+                                addon-right-icon="fas fa-plus text-default">
                     </base-input>
                     <base-input  alternative
                                 placeholder="Contacto de la empresa"
                                 v-model="provider.contact"
-                                addon-left-icon="fa fa-address-book">
+                                v-on:keyup="validProviders()"
+                                addon-left-icon="fa fa-address-book"
+                                addon-right-icon="fa fa-asterisk text-danger"
+                                >
                     </base-input>
                     <base-input  alternative
                                 placeholder="Contacto adicional"
                                 v-model="provider.contactPlus"
-                                addon-left-icon="fa fa-address-book">
+                                addon-left-icon="fa fa-address-book"
+                                addon-right-icon="fas fa-plus text-default">
                     </base-input>
                     <base-input  alternative
                                 placeholder="Dirección de la empresa"
                                 v-model="provider.direction"
-                                addon-left-icon="fas fa-route">
+                                v-on:keyup="validProviders()"
+                                addon-left-icon="fas fa-route"
+                                addon-right-icon="fa fa-asterisk text-danger">
                     </base-input>
                 </form>
             </template>
             <div class="text-center">
-              <base-button v-on:click="addProvider" type="default">Registrar</base-button>
+              <base-button v-on:click="providerFunction()"  :disabled="providerSup.validProvider" type="default">{{providerSup.typeProvider}}</base-button>
             </div>
         </card>
     </modal>
@@ -305,6 +321,26 @@
           </base-button>
       </template>
     </modal>
+    <modal  modal-classes="modal-dialog-centered modal-xl" :show.sync="modals.modal5">
+        <h6 slot="header" class="modal-title" id="modal-title-default">Informe de cierre</h6>
+
+        <vue-bootstrap4-table class="tableClient" :rows="reports" :columns="columHistoryReport" :classes="classes" :config="config">
+            <template slot="pagination-info" slot-scope="props">
+                Actuales {{props.currentPageRowsLength}} | 
+                  Filtrados {{props.filteredRowsLength}} | 
+                Registros totales {{props.originalRowsLength}}
+            </template>
+            <template slot="selected-rows-info" slot-scope="props">
+                Total Number of rows selected : {{props.selectedItemsCount}}
+            </template>
+        </vue-bootstrap4-table>
+
+        <template slot="footer">
+            
+            <base-button type="link" class="ml-auto" @click="modals.modal1 = false">Cerrar
+            </base-button>
+        </template>
+    </modal>
   </div>
 </template>
 <script>
@@ -328,16 +364,22 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
     data() {
       return {
         countProduct:[],
+        reports:[],
+        usuario: localStorage.nombre + ' ' + localStorage.apellido,
         myId:null,
         historyClosed:[],
         validForm:0,
+        providerSup:{
+          validProvider:false,
+          typeProvider:'',
+        }, 
         history:[],
         provider:{
           name:'',
           rut:'',
           contact:'',
           contactPlus:'',
-          direction:''
+          direction:'',
         },
         providers:[],
         providerTable:[],
@@ -355,6 +397,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           modal2: false,
           modal3: false,
           modal4: false,
+          modal5: false,
           message: "",
           icon: '',
           type:''
@@ -400,11 +443,6 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
             name: "consume",
             sort: false,
             
-          },
-          {
-            label: "Total",
-            name: "total",
-            sort: false,
           },
           {
             label: "Total ideal",
@@ -459,6 +497,21 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
             sort: true
           },
           {
+            label: "Producto",
+            name: "producto",
+            sort: true
+          },
+          {
+            label: "Anexado",
+            name: "entry",
+            sort: true
+          },
+          {
+            label: "Medida",
+            name: "unit",
+            sort: true
+          },
+          {
             label: "Costo",
             name: "precio",
             sort: true,
@@ -469,6 +522,31 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
             name: "provedor",
             sort: true
           },
+          // {
+          //   label: "Administrar",
+          //   name: "_id",
+          //   sort: false,
+          //   slot_name: "edit"
+          // },
+        ],
+        columHistoryClosed:[
+          {
+            label: "Fecha",
+            name: "fecha",
+            sort: true,
+            slot_name: "date"
+          },
+          {
+            label: "Encargado del cierre",
+            name: "user",
+            sort: true,
+            slot_name: "costo"
+          },
+          {
+            label: "Productos totales",
+            name: "totalProduct",
+            sort: true
+          },
           {
             label: "Administrar",
             name: "_id",
@@ -476,10 +554,10 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
             slot_name: "edit"
           },
         ],
-        columHistoryClosed:[
+        columHistoryReport:[
           {
-            label: "Fecha",
-            name: "fecha",
+            label: "Producto",
+            name: "name",
             sort: true,
             slot_name: "date"
           },
@@ -491,24 +569,18 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           },
           {
             label: "Total ideal",
-            name: "totalIdeal",
+            name: "ideal",
             sort: true
           },
           {
             label: "Total real",
-            name: "totalReal",
+            name: "count",
             sort: true
           },
           {
             label: "Diferencia",
             name: "diferencia",
             sort: true
-          },
-          {
-            label: "Administrar",
-            name: "_id",
-            sort: false,
-            slot_name: "edit"
           },
         ],
         config: {
@@ -543,14 +615,16 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         axios.get(endPoint.endpointTarget+'/inventario')
         .then(res => {
           this.rows = res.data
+          this.history = []
           for (let i = 0; i < res.data.length; i++) {
             for (let e = 0; e < res.data[i].history.length; e++) {
+              
               this.history.push(res.data[i].history[e])
             }
           }
           for (let index = 0; index < this.rows.length; index++) {
               var ideal = (this.rows[index].cantidad + this.rows[index].entry) - this.rows[index].consume
-              this.countProduct.push({id:this.rows[index]._id,count:'',ideal:ideal,medida:this.rows[index].type})
+              this.countProduct.push({id:this.rows[index]._id,count:'',ideal:ideal,medida:this.rows[index].type,name:this.rows[index].producto,diferencia:''})
           } 
         })
       },
@@ -649,6 +723,16 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           this.dataProduct.price = ''
           console.log(this.myId)
         }
+        if (tipe == 2) {
+          this.provider = {
+            name:'',
+            rut:'',
+            contact:'',
+            contactPlus:'',
+            direction:'',
+          }
+          this.providerSup.validProvider = true
+        }
         this.dataProduct = {
           name:'',
           price:'',
@@ -700,11 +784,37 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
             })
         })
       },
+      updateProvider(){
+        axios.put(endPoint.endpointTarget+'/inventario/updateProvider/'+this.provider.id, {
+          name:this.provider.name,
+          rut: this.provider.rut,
+          contact:this.provider.contact,
+          contactoPlus:this.provider.contactPlus,
+          ubicacion:this.provider.direction
+        })
+        .then(res => {
+          this.$swal({
+              type: 'success',
+              title: 'Provedor Actualizado',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            this.getProviders();
+        })
+        .catch(err => {
+          this.$swal({
+              type: 'error',
+              title: 'El provedor no fue actualizado',
+              showConfirmButton: false,
+              timer: 1500
+            })
+        })
+      },
       addMore(){
         
         axios.put(endPoint.endpointTarget+'/inventario/add/'+this.myId, {
           entry:this.dataProduct.entry,
-          history:{fecha:this.dateAdd,precio:this.dataProduct.price,provedor:this.provider}
+          history:{id:this.myId,fecha:this.dateAdd,producto:this.dataProduct.name,entry:this.dataProduct.entry,unit:this.unit,precio:this.dataProduct.price,provedor:this.provider, status:true}
         })
         .then(res => {
           this.$swal({
@@ -731,6 +841,59 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         else{
           this.addValid = true
         }
+      },
+      deleteProvider(id){
+        this.$swal({
+          title: '¿Está seguro de borrar el provedor?',
+          text: 'No puedes revertir esta acción',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Estoy seguro',
+          cancelButtonText: 'No, evitar acción',
+          showCloseButton: true,
+          showLoaderOnConfirm: true
+        }).then((result) => {
+          if(result.value) {
+            axios.delete(endPoint.endpointTarget+'/inventario/deleteProvider/'+id)
+            .then(res => {
+              if (res.data.status == 'ok') {
+                this.modals = {
+                    modal2: true,
+                    message: "Provedor borrado con exito",
+                    icon: 'ni ni-check-bold ni-5x',
+                    type: 'success'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1: false,
+                        modal2: false,
+                        message: "",
+                        icon: '',
+                        type:''
+                    }
+                    this.getProviders()
+                }, 1500);
+              }
+            })
+          }
+          else{
+            this.modals = {
+                modal2: true,
+                message: "Acción cancelada",
+                icon: 'ni ni-check-bold ni-5x',
+                type: 'success'
+            }
+            setTimeout(() => {
+                this.modals = {
+                    modal1: false,
+                    modal2: false,
+                    message: "",
+                    icon: '',
+                    type:''
+                }
+            }, 1500);
+          }
+        })
       },
       deleteItem(id){
         this.$swal({
@@ -787,6 +950,67 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
       },
       closeInventory(){
         axios.post(endPoint.endpointTarget+'/inventario/closeInventory', {
+          user:this.usuario,
+          array:this.countProduct
+        })
+        .then(res => {
+          if (res.data.status === 'ok') {
+            this.$swal({
+              type: 'success',
+              title: 'Cierre realizado',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            this.getProducts();
+            this.getHistoryClosed()
+          }
+          else{
+            this.$swal({
+              type: 'success',
+              title: 'Ya se hizo un cierre este mes',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+        })
+        .catch(err => {
+          this.$swal({
+              type: 'error',
+              title: 'Cierre NO realizado',
+              showConfirmButton: false,
+              timer: 1500
+            })
+        })
+      },
+      validProviders(){
+        if (this.provider.name == '' || this.provider.contact == '' || this.provider.direction == '') {
+          this.providerSup.validProvider = true
+        }
+        else{
+          this.providerSup.validProvider = false
+        }
+      },
+      pushDataProvider(name,rut,contact,contactPlus,direccion,id){
+        this.provider = {
+          name:name,
+          rut:rut,  
+          contact:contact,
+          contactPlus:contactPlus,
+          direction:direccion,
+          id:id
+        }
+      },
+      providerFunction(){
+        if (this.providerSup.typeProvider == 'Registrar') {
+          this.addProvider()
+        }
+        else{
+          this.updateProvider()
+        }
+      },
+      deleteSale(id,entry){
+        axios.post(endPoint.endpointTarget+'/inventario/deleteSale/'+id, {
+          user:this.usuario,
           array:this.countProduct
         })
         .then(res => {
