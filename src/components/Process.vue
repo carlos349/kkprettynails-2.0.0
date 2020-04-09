@@ -445,8 +445,7 @@ import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import jwtDecode from 'jwt-decode'
-const token = localStorage.userToken
-const decoded = jwtDecode(token)
+
 import EventBus from './EventBus'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
@@ -460,7 +459,7 @@ export default {
     },
     data(){
         return {
-            auth: decoded.access,
+            auth: [],
             validator:true,
             modals: {
                 modal1: false,
@@ -574,8 +573,14 @@ export default {
         this.getClient()
         this.getLenders()
         this.getServices()
-    }, 
+        this.getToken()
+    },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
         changeDate(){
             this.inspectorDate = true
         },
