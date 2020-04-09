@@ -78,7 +78,7 @@
     },
     methods: {
       getToken(){
-        const token = localStorage.uscvbcerToken
+        const token = localStorage.userToken
         if (token) {
           const decoded = jwtDecode(token)
           this.auth = decoded.access
