@@ -346,8 +346,10 @@ export default {
     methods: {
         getToken(){
             const token = localStorage.userToken
-            const decoded = jwtDecode(token)  
-            this.auth = decoded.access
+            if (token.length > 0) {
+                const decoded = jwtDecode(token)  
+                this.auth = decoded.access
+            }
         },
         getClosing(){
             axios.get(endPoint.endpointTarget+'/ventas/Closing')
