@@ -79,10 +79,9 @@
     methods: {
       getToken(){
         const token = localStorage.userToken
-        if (token) {
+        if (token.length > 0) {
           const decoded = jwtDecode(token)
           this.auth = decoded.access
-          console.log(this.auth)
         }
       },
       changeAccess(status){
