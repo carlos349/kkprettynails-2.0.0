@@ -445,7 +445,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
             
           },
           {
-            label: "Total ideal",
+            label: "Total",
             name: "",
             sort: false,
             slot_name: "totalIdeal"

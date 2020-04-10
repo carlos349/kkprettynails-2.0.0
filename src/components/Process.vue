@@ -36,7 +36,7 @@
                     <tbody>
                         <tr v-for="(servicio, index) in services" v-bind:key="servicio._id">
                             <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
-                                <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento), countServices[index].count++">
+                                <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, servicio.productos), countServices[index].count++">
                                     <span class="float-left">{{servicio.nombre}}</span>
                                     <badge class="badgeClass float-right" type="primary" :id="servicio._id">{{countServices[index].count}}</badge>
                                 </base-button>
@@ -854,7 +854,7 @@ export default {
                 }
             })
         },
-        conteoServicio(_id, nombre, precio, comision, discount){
+        conteoServicio(_id, nombre, precio, comision, discount, items){
             console.log(discount)
             const descuento = parseFloat(this.discount) / 100
 			const porcentaje = 1 - parseFloat(descuento)
@@ -874,7 +874,7 @@ export default {
                 this.total =  this.formatPrice(totalConDescuento + this.design)
                 this.totalSinFormato = totalConDescuento + this.design
 			}
-			const servicios = {'servicio': nombre, 'comision': comision, 'precio': precio, 'descuento': discount}
+			const servicios = {'servicio': nombre, 'comision': comision, 'precio': precio, 'descuento': discount, productos:items}
 			this.serviciosSelecionados.push(servicios)
 			axios.put(endPoint.endpointTarget+'/ventas/updateServicesMonth/' + nombre)
 			.catch(err => {
@@ -1194,6 +1194,16 @@ export default {
 			const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
 			if (this.clientSelect && this.lenderSelect != '') {
 				if (this.totalSinFormato == totalFormadePago ) {
+                    const itemList = []
+                    for (let index = 0; index < this.serviciosSelecionados.length; index++) {
+                        for (let i = 0; i < this.serviciosSelecionados[index].productos.length; i++) {
+                            itemList.push(this.serviciosSelecionados[index].productos[i])
+                        }
+                    }
+                    axios.post(endPoint.endpointTarget+'/inventario/procesarVenta',{
+                        array:itemList
+                    })
+                    .then(res => {})
 					axios.post(endPoint.endpointTarget+'/ventas/procesar', {
 						cliente: this.clientSelect,
 						manicurista: this.lenderSelect,

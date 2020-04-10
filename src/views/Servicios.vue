@@ -10,7 +10,7 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white w-100">Sección de servicios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
-                        <base-button v-if="validRoute('servicios', 'registrar')" @click="modals.modal1 = true"  type="success">Ingrese un servicio</base-button>
+                        <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true"  type="success">Ingrese un servicio</base-button>
                         <base-button v-else disabled  type="success">Ingrese un servicio</base-button>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
 
         <modal :show.sync="modals.modal1"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
+               modal-classes="modal-dialog-centered modal-lg">
                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
@@ -93,9 +93,19 @@
                                     </i>
                                 </span>
                                 <vue-custom-scrollbar class="maxHeight">
-                                    <vue-bootstrap4-table :rows="rowsItems" :columns="columnsItem" :classes="classes" :config="configLender" v-on:on-select-row="selectedItem" v-on:on-all-select-rows="selectedAllItem" v-on:on-unselect-row="unSelectedItem" v-on:on-all-unselect-rows="unSelectedAllItem" >
-                                    </vue-bootstrap4-table>
-                                </vue-custom-scrollbar >
+                                    <div class="p-4">
+                                        <base-button v-for="(data , index) in rowsItems" v-on:click="elegirCantidad(index,1)" class="col-12 mb-1" type="secondary">
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.producto}}</base-checkbox>
+                                                </div>
+                                                <div class="col-4">
+                                                    <badge v-if="itemsBox[index].count != ''" style="font-size:.8em !important" class="float-right text-default" type="success">{{itemsBox[index].count}} {{data.type}}</badge>
+                                                </div>
+                                            </div>
+                                        </base-button>
+                                    </div>
+                                </vue-custom-scrollbar>
                             </tab-pane>
                         </tabs>
                         <div class="text-center">
@@ -107,7 +117,7 @@
         </modal>
         <modal :show.sync="modals.modal2"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
+               modal-classes="modal-dialog-centered modal-lg">
                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
@@ -178,10 +188,23 @@
                                         Productos
                                     </i>
                                 </span>
-                                <vue-custom-scrollbar ref="tableItem" class="maxHeight">
-                                    <vue-bootstrap4-table :rows="rowsItems" :columns="columnsItem" :classes="classes" :config="configLender" v-on:on-select-row="selectedItem" v-on:on-all-select-rows="selectedAllItem" v-on:on-unselect-row="unSelectedItem" v-on:on-all-unselect-rows="unSelectedAllItem" >
-                                    </vue-bootstrap4-table>
-                                </vue-custom-scrollbar >
+
+                                <vue-custom-scrollbar class="maxHeight">
+                                    <div class="p-4">
+                                        <base-button v-for="(data , index) in rowsItems" v-on:click="elegirCantidad(index,2)" class="col-12 mb-1" type="secondary">
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.producto}}</base-checkbox>
+                                                </div>
+                                                <div class="col-4">
+                                                    <badge v-if="itemsBox[index].count != ''" style="font-size:.8em !important" class="float-right text-default" type="success">{{itemsBox[index].count}} {{data.type}}</badge>
+                                                </div>
+                                            </div>
+                                        </base-button>
+                                    </div>
+                                    <!-- <vue-bootstrap4-table :rows="rowsItems" :columns="columnsItem" :classes="classes" :config="configLender" v-on:on-select-row="selectedItem" v-on:on-all-select-rows="selectedAllItem" v-on:on-unselect-row="unSelectedItem" v-on:on-all-unselect-rows="unSelectedAllItem" >
+                                    </vue-bootstrap4-table> -->
+                                </vue-custom-scrollbar > 
                             </tab-pane>
                         </tabs>
                         <div class="text-center">
@@ -233,6 +256,38 @@
                 <h1 class="heading mt-5">{{modals.message}}</h1>
             </div>
         </modal>
+        <modal :show.sync="modals.modal4"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-lg">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <small>Cantidad</small>
+                    </div>
+                </template>
+                <template>
+                    <div class="row mx-auto">
+                     <div class="col-7">
+                        <base-input  alternative
+                                placeholder="Cantidad por uso"
+                                v-model="countModal"
+                                addon-left-icon="fa fa-list-ol">
+                        </base-input>
+                      </div>
+                      <div class="col-5 text-center mt-2">
+                        {{unitPerItem}}
+                      </div>
+                   </div>
+                        <div class="text-center">
+                            <base-button type="primary" v-on:click="selectedItem" class="my-4">Registrar</base-button>
+                            
+                        </div>
+                </template>
+            </card>
+        </modal>
     </div>
 </template>
 <script>
@@ -255,10 +310,15 @@ export default {
     data(){
         return {
             auth: [],
+            unitPerItem: '',
+            countModal:'',
+            typeItemModal:'',
+            itemUses:'',
             modals: {
                 modal1: false,
                 modal2: false,
                 modal3: false,
+                modal4: false,
                 message: "",
                 icon: '',
                 type:''
@@ -385,10 +445,13 @@ export default {
             prueba:'false',
             rowsItems:[],
             itemSelected:[],
-            EdititemSelected:[]
+            EdititemSelected:[],
+            itemsBox:[],
+            itemIndex:''
         }
     },
     beforeCreate(){
+        
       if (!localStorage.getItem('userToken') && localStorage.getItem('status') != 1) {
             this.$swal({ 
                 type: 'error',
@@ -419,10 +482,17 @@ export default {
             })
         },
         getProducts() {
+            
             axios.get(endPoint.endpointTarget+'/inventario')
             .then(res => {
-            this.rowsItems = res.data 
+                this.rowsItems = res.data 
+                for (let index = 0; index < this.rowsItems.length; index++) {
+                    this.itemsBox.push({check:false,count:''})
+                    
+                }
             })
+            
+            console.log(this.itemsBox)
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
@@ -466,11 +536,47 @@ export default {
             this.EditlenderSelecteds = []
         },
         selectedItem(value){
-            console.log(this.$refs.tableItem.$children[0].$data)
-   
-            this.itemSelected.push(value.selected_item._id)
-            this.EdititemSelected.push(value.selected_item._id)
-            console.log(value)
+            if (this.countModal != '') {
+                this.itemsBox[this.itemIndex].check = true
+                this.itemsBox[this.itemIndex].count = this.countModal
+                if (this.typeItemModal == 1) {
+                    this.itemSelected.push({id:this.rowsItems[this.itemIndex]._id,count:this.itemsBox[this.itemIndex].count})
+                }
+                if (this.typeItemModal == 2) {
+                    this.EdititemSelected.push({id:this.rowsItems[this.itemIndex]._id,count:this.itemsBox[this.itemIndex].count})
+                }
+                
+                    this.modals.modal4 =false
+                    this.modals.modal3 = true
+                    this.modals.message = "Registro existoso"
+                    this.modals.icon = 'ni ni-check-bold ni-5x'
+                    this.modals.type = 'success'
+                setTimeout(() => {
+                        this.modals.modal3 = false
+                        this.modals.message = ""
+                        this.modals.icon = ''
+                        this.modals.type = ''
+                }, 1500);
+            }
+            else{
+                this.modals = {
+                    modal3: true,
+                    message: "Debe rellenar los datos",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1:false,
+                        modal2:false,
+                        modal3: false,
+                        modal4:false,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
+                }, 1500);
+            }
         },
         unSelectedItem(value){
             for (let i = 0; i < this.itemSelected.length; i++) {
@@ -510,6 +616,7 @@ export default {
                         modal1:false,
                         modal2:false,
                         modal3: false,
+                        modal4: false,
                         message: "",
                         icon: '',
                         type: ''
@@ -528,6 +635,7 @@ export default {
                             modal1:false,
                             modal2:false,
                             modal3: false,
+                            modal4: false,
                             message: "",
                             icon: '',
                             type: ''
@@ -556,6 +664,7 @@ export default {
                                     modal1:false,
                                     modal2:false,
                                     modal3: false,
+                                    modal4: false,
                                     message: "",
                                     icon: '',
                                     type: ''
@@ -576,6 +685,7 @@ export default {
                                     modal1:false,
                                     modal2:false,
                                     modal3: false,
+                                    modal4: false,
                                     message: "",
                                     icon: '',
                                     type: ''
@@ -598,6 +708,11 @@ export default {
             $('.maxHeight  thead .vbt-checkbox').prop('checked', false)
         },
         dataEdit(id, lenders, name, time, discount, comission, price,items){
+            console.log(items)
+            this.itemsBox = []
+            for (let index = 0; index < this.rowsItems.length; index++) {
+                this.itemsBox.push({check:false,count:''})
+            }
             this.EditlenderSelecteds = []
             this.EdititemSelected = []
             const discountFinal = discount ? false : true
@@ -611,15 +726,11 @@ export default {
             this.addDiscountEdit = discount
             this.modals.modal2 = true
             let data = this.$refs.table.$children[0].$data.vbt_rows
-            let dataItem = this.$refs.tableItem.$children[0].$data.vbt_rows
             let selected = this.$refs.table.$children[0].$data.selected_items
-            let selectedItem = this.$refs.tableItem.$children[0].$data.selected_items
             for (let c = 0; c <= selected.length; c++) {
                 selected.shift()
             }
-            for (let cc = 0; cc <= selectedItem.length; cc++) {
-                selectedItem.shift()
-            }
+
             setTimeout(() => {
                 for (let index = 0; index < data.length; index++) {
                     for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
@@ -628,10 +739,11 @@ export default {
                         }
                     }
                 }
-                for (let indexx = 0; indexx < dataItem.length; indexx++) {
+                for (let indexx = 0; indexx < this.rowsItems.length; indexx++) {
                     for (let i = 0; i < this.EdititemSelected.length; i++) {
-                        if (this.EdititemSelected[i] == dataItem[indexx]._id ) {
-                            selectedItem.push(dataItem[indexx])
+                        if (this.EdititemSelected[i].id == this.rowsItems[indexx]._id ) {
+                            this.itemsBox[indexx].check = true
+                            this.itemsBox[indexx].count = this.EdititemSelected[i].count
                         }
                     }
                 }
@@ -657,6 +769,7 @@ export default {
                         modal1:false,
                         modal2:false,
                         modal3: false,
+                        modal4: false,
                         message: "",
                         icon: '',
                         type: ''
@@ -675,6 +788,7 @@ export default {
                             modal1:false,
                             modal2:false,
                             modal3: false,
+                            modal4: false,
                             message: "",
                             icon: '',
                             type: ''
@@ -705,6 +819,7 @@ export default {
                                 modal1:false,
                                 modal2:false,
                                 modal3: false,
+                                modal4: false,
                                 message: "",
                                 icon: '',
                                 type: ''
@@ -739,6 +854,33 @@ export default {
                         } 
                     }
                 }
+            }
+        },
+        elegirCantidad(i,e){
+            if (this.itemsBox[i].count == '') {
+                this.typeItemModal = e
+                this.countModal = ''
+                this.modals.modal4 = true
+                this.itemsBox[i].check = false
+                this.itemIndex = i
+                this.unitPerItem = this.rowsItems[i].type
+            }
+            else{
+                this.itemsBox[i].count = ''
+                this.itemsBox[i].check = false
+                for (let e = 0; e < this.itemSelected.length;e++) {
+                    if (this.itemSelected[e].id == this.rowsItems[i]._id) {
+                        this.itemSelected.splice(e, 1)
+                        break
+                    }
+                }
+                for (let e = 0; e < this.EdititemSelected.length; e++) {
+                    if (this.EdititemSelected[e].id == this.rowsItems[i]._id) {
+                        this.EdititemSelected.splice(e, 1)
+                        break
+                    }
+                }
+                console.log(this.EdititemSelected)
             }
         }
     }
