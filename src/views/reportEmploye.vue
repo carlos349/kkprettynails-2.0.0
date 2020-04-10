@@ -9,9 +9,11 @@
                 <div class="row">
                     <div class="col-12">
                         <h1 class="display-2 text-white">Reporte de {{nameLender}}</h1>
-                        <a class="btn btn-success text-white cursor-pointer" v-on:click="modals.modal2 = true">Datos avanzados</a>
-                        <a class="btn btn-danger text-white cursor-pointer" v-on:click="printReport">Cerrar ventas</a>
-                        <a v-on:click="back" class="btn btn-primary text-white cursor-pointer">Regresar</a>
+                        <base-button v-if="validRoute('empleados', 'detalle')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
+                        <base-button v-else disabled type="success">Datos avanzados</base-button>
+                        <base-button v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
+                        <base-button v-else disabled type="danger">Cerrar ventas</base-button>
+                        <base-button v-on:click="back" class="btn btn-primary text-white cursor-pointer">Regresar</base-button>
                     </div>
                 </div>
             </div>
@@ -72,8 +74,8 @@
                                     </base-button>
                                 </div>
                             </tab-pane>
-                            <tab-pane title="Profile">
-                                <span slot="title">
+                            <tab-pane title="Profile" v-if="validRoute('empleados', 'cerrar ventas')">
+                                <span slot="title" >
                                     <i class="ni ni-bell-55 mr-2"></i>
                                     Adelantos o bonos
                                 </span>
@@ -191,6 +193,7 @@ export default {
     },
     data(){
         return {
+            auth: [],
             id: localStorage.getItem('idReportEmploye'),
             sales: [],
             fecha: '',
@@ -338,8 +341,15 @@ export default {
     created(){
         this.getData()
         this.getAdvancements()
+        this.getToken()
+        console.log(this.auth)
     },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
         back(){
             window.history.go(-1);
         },
@@ -449,22 +459,6 @@ export default {
                         comissions = parseFloat(res.data[index].comision) + parseFloat(comissions)
                     }
                     this.totalSale = totals
-                    
-                    console.log(this.fecha)
-                    console.log(this.code)
-                    console.log(this.nameLender)
-                    console.log(this.totalComission)
-                    console.log(this.advancement)
-                    console.log(this.totalSale)
-                    // axios.get('/manicuristas/GetSalesPerMonth/'+identificacion)
-                    // .then(res => {	
-                    //     const userlist = res.data
-                    //     this.chartdata = userlist
-                    //     this.loaded = true
-                    // })
-                    // .catch(err => {
-                    //     console.error(err)
-                    // })
                 })
             })
             .catch(err => {
@@ -505,6 +499,18 @@ export default {
                 }
             })
         },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
+        }
     }
 }
 </script>

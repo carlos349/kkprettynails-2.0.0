@@ -10,13 +10,17 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white">Sección de caja</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus caja, aquí podrás registrar, editar y visualizar todos los cierres de caja.</p>
-                        <a class="btn btn-success text-white cursor-pointer" v-if="cashFunds.inspector" v-on:click="modals.modal2 = true">Registrar fondo de caja</a>
-                        <a class="btn btn-success text-white cursor-pointer" v-else v-on:click="daySalesClose">Hacer cierre</a>
+                        <template v-if="cashFunds.inspector">
+                            <base-button v-if="validRoute('caja', 'fondo')" type="success"  v-on:click="modals.modal2 = true">Registrar fondo de caja</base-button>
+                        </template>
+                        <template v-else>
+                            <base-button v-if="validRoute('caja', 'cerrar')" type="success" v-on:click="daySalesClose">Hacer cierre</base-button>
+                        </template>
                     </div>
                 </div>
             </div>
         </base-header>
-        <vue-bootstrap4-table :rows="closing" :columns="columns" :classes="classes" :config="config">
+        <vue-bootstrap4-table v-if="validRoute('caja', 'visualizar')" :rows="closing" :columns="columns" :classes="classes" :config="config">
             <template slot="format-date" slot-scope="props">
                 {{formatDate(props.row.fecha)}}
             </template>
@@ -26,7 +30,8 @@
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <center>
-                       <base-button size="sm" type="default" icon="ni ni-fat-remove" v-on:click="dataReport(props.row._id)">Reporte</base-button> 
+                       <base-button v-if="validRoute('caja', 'reporte')" size="sm" type="default" icon="ni ni-fat-remove" v-on:click="dataReport(props.row._id)">Reporte</base-button> 
+                       <base-button v-else size="sm" type="default" icon="ni ni-fat-remove" disabled>Reporte</base-button> 
                     </center>
                     
                 </b>
@@ -40,6 +45,7 @@
                 Total Number of rows selected : {{props.selectedItemsCount}}
             </template>
         </vue-bootstrap4-table>
+        <h1 class="text-center pt-9 pb-9" v-else>Usted no tiene los permisos para visualizar los cierres</h1>
         <modal :show.sync="modals.modal1"
                :gradient="modals.type"
                modal-classes="modal-danger modal-dialog-centered">
@@ -234,6 +240,7 @@ export default {
     },
     data(){
         return {
+            auth:[],
             socket: io(endPoint.endpointTarget),
             modals: {
                 modal1: false,
@@ -334,8 +341,16 @@ export default {
     created(){
         this.getClosing()
         this.getFunds()
+        this.getToken()
     },
     methods: {
+        getToken(){
+            const token = localStorage.userToken
+            if (token.length > 0) {
+                const decoded = jwtDecode(token)  
+                this.auth = decoded.access
+            }
+        },
         getClosing(){
             axios.get(endPoint.endpointTarget+'/ventas/Closing')
             .then(res => {
@@ -513,6 +528,18 @@ export default {
                     console.log(res)
                 }
             })
+        },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
         }
     }
 }

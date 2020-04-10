@@ -69,6 +69,7 @@
                 <div class="col-12" >
                     <card header-classes="bg-transparent">
                         <div slot="header" class="row align-items-center">
+                          <template v-if="validRoute('metricas', 'filtrar')">
                             <div class="col-md-3">    
                               <h5 v-if="!inspectorFilter">Filtre por fecha</h5> 
                               <h5 v-else><strong>FILTRE PRIMERO</strong></h5>                       
@@ -165,6 +166,7 @@
                               <base-button v-if="inspector" class="float-right mt-3" v-on:click="runGraph" type="default">Graficar</base-button>
                               <base-button v-else disabled class="float-right mt-3" v-on:click="runGraph" type="default">Graficar</base-button>
                             </div>
+                          </template>
                         </div>
                         <div class="row">
                           <div v-if="tables.firstTable" class="table-responsive col-md-4">
@@ -414,6 +416,7 @@
                 <div class="col-12" >
                     <card header-classes="bg-transparent">
                         <div slot="header" class="row align-items-center">
+                          <template v-if="validRoute('metricas', 'filtrar')">
                             <div class="col-md-3">    
                               <h5 v-if="!inspectorFilterDaily">Filtre por fecha</h5> 
                               <h5 v-else><strong>FILTRE PRIMERO</strong></h5>                       
@@ -462,6 +465,7 @@
                               <base-button v-if="inspectorDaily" class="float-right mt-3" v-on:click="runGraphDaily" type="default">Graficar</base-button>
                               <base-button v-else disabled class="float-right mt-3" v-on:click="runGraphDaily" type="default">Graficar</base-button>
                             </div>
+                          </template>
                         </div>
                         <div class="row">
                           <div v-if="tablesDaily.firstTable" class="table-responsive col-md-5">
@@ -590,6 +594,7 @@
   import axios from 'axios'
   import endPoint from '../../config-endpoint/endpoint.js'
   import router from '../router'
+  import jwtDecode from 'jwt-decode'
   // Charts
   import * as chartConfigs from '@/components/Charts/config';
   import LineChart from '@/components/Charts/LineChart';
@@ -613,6 +618,7 @@
     },
     data() {
       return {
+        auth: [],
         TypeChartOptions: 'Escoja el tipo de gráfica',
         loaded:false,
         series: [],
@@ -721,8 +727,15 @@
       this.getParticipacion()
       this.getEmployes()
       this.SalesQuantityChartFuncDaily()
+      this.getToken()
+        console.log(this.auth)
     },
     methods: {
+      getToken(){
+          const token = localStorage.userToken
+          const decoded = jwtDecode(token)  
+          this.auth = decoded.access
+      },
       getServices(){  
         axios.get(endPoint.endpointTarget+'/servicios')
         .then(res => {
@@ -1352,7 +1365,19 @@
       },
       formatFixed(val){
         return val.toFixed(2)
-      }
+      },
+      validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
+        },
     },
     mounted() {
       this.initBigChart(0);

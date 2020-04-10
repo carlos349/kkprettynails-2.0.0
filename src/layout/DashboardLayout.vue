@@ -82,7 +82,6 @@
         if (token) {
           const decoded = jwtDecode(token)
           this.auth = decoded.access
-          console.log(this.auth)
         }
       },
       changeAccess(status){

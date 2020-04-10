@@ -9,10 +9,10 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12" style="display:inline-block">
                         <h1 class="display-2 text-white w-100">Sección de ventas</h1>
-                        <label class="text-white">Filtra tus ventas</label>
+                        <label class="text-white" v-if="validRoute('ventas', 'filtrar')">Filtra tus ventas</label>
                         <div class="row">
                             <div class="col-md-8">
-                                <base-input addon-left-icon="ni ni-calendar-grid-58">
+                                <base-input v-if="validRoute('ventas', 'filtrar')" addon-left-icon="ni ni-calendar-grid-58">
                                     <flat-picker slot-scope="{focus, blur}"
                                         @on-open="focus"
                                         @on-close="blur"
@@ -24,7 +24,6 @@
                             </div>
                             <div class="col-md-2">
                                 <base-button v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="filterSale">Filtrar</base-button>
-                                <base-button v-else  type="default" disabled>Filtrar</base-button>
                             </div>
                             <div class="col-md-2">
                                 <base-button v-if="inspectorFilter"  type="secondary" v-on:click="getSales">
