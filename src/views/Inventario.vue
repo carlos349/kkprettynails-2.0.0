@@ -27,9 +27,9 @@
                   <template slot="edit" slot-scope="props">
                       <b>
                         <center>
-                            <base-button size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
-                            <base-button size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type,initialState(1,props.row._id), dataProduct.name = props.row.producto" icon="fa fa-plus">Compras</base-button>
-                            <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Eliminar</base-button>
+                            <base-button v-b-tooltip.hover.top title="Editar" size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id,props.row.type)" icon="ni ni-bullet-list-67"></base-button>
+                            <base-button v-b-tooltip.hover.top title="Compras" size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type,initialState(1,props.row._id), dataProduct.name = props.row.producto" icon="fa fa-plus"></base-button>
+                            <base-button v-b-tooltip.hover.top title="Eliminar" size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash"></base-button>
                         </center>
                       </b>
                   </template>
@@ -172,9 +172,9 @@
                     <small>Anexa mas productos</small>
                 </div>
                 <form role="form">
-                   <div class="row">
+                   <div class="row" v-if="validForm == 3">
                      <div class="col-7">
-                        <base-input v-on:keyup="valid" v-if="validForm == 3" alternative
+                        <base-input v-on:keyup="valid"  alternative
                                 placeholder="Cantidad"
                                 v-model="dataProduct.entry"
                                 addon-left-icon="fa fa-box-open">
@@ -337,7 +337,7 @@
 
         <template slot="footer">
             
-            <base-button type="link" class="ml-auto" @click="modals.modal1 = false">Cerrar
+            <base-button type="link" class="ml-auto" @click="modals.modal4 = false">Cerrar
             </base-button>
         </template>
     </modal>
@@ -663,20 +663,45 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         })
         .then(res => {
           if (res.data.status === 'ok') {
-            this.$swal({
-              type: 'success',
-              title: 'Producto registrado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-            this.getProducts();
+            this.modals = {
+                    modal2: true,
+                    message: "¡Producto registrado con exito!",
+                    icon: 'ni ni-check-bold ni-5x',
+                    type: 'success'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1: false,
+                        modal2: false,
+                        modal3: false,
+                        modal4: false,
+                        message: "",
+                        icon: '',
+                        type:''
+                    }
+                    this.getProducts();
+                    this.initialState(2)
+                }, 1500);
+            
           }else{
-            this.$swal({
-              type: 'error',
-              title: 'El producto ya existe',
-              showConfirmButton: false,
-              timer: 1500
-            })
+            this.modals = {
+                modal2: true,
+                message: "¡Producto ya existe!",
+                icon: 'ni ni-fat-remove ni-5x',
+                type: 'danger'
+            }
+            setTimeout(() => {
+                this.modals = {
+                    modal1: true,
+                    modal2: false,
+                    modal3: false,
+                    modal4: false,
+                    message: "",
+                    icon: '',
+                    type:''
+                }
+                this.getProducts();
+            }, 1500);
           }
         })
         .catch(err => {
@@ -751,8 +776,9 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           add:'',
           id:''
         }
+        this.unit = ''
       },
-      pushData(name,cantidad,precio,id){
+      pushData(name,cantidad,precio,id,type){
         this.validForm = 2
         this.unit = ''
         this.dataProduct = {
@@ -761,6 +787,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           initial:cantidad,
           id:id
         }
+        this.unit = type
       },
       formatDate(date) {
         let dateFormat = new Date(date)
@@ -778,21 +805,44 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           monto:this.dataProduct.price,
         })
         .then(res => {
-          this.$swal({
-              type: 'success',
-              title: 'Producto Actualizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-            this.getProducts();
+          this.modals = {
+                    modal2: true,
+                    message: "¡Producto actualizado con exito!",
+                    icon: 'ni ni-check-bold ni-5x',
+                    type: 'success'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1: false,
+                        modal2: false,
+                        modal3: false,
+                        modal4: false,
+                        message: "",
+                        icon: '',
+                        type:''
+                    }
+                    this.getProducts();
+                    this.initialState(2)
+                }, 1500);
         })
         .catch(err => {
-          this.$swal({
-              type: 'error',
-              title: 'El producto no fue actualizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
+          this.modals = {
+              modal2: true,
+              message: "¡Error al actualizar el producto!",
+              icon: 'ni ni-fat-remove ni-5x',
+              type: 'danger'
+          }
+          setTimeout(() => {
+              this.modals = {
+                  modal1: true,
+                  modal2: false,
+                  modal3: false,
+                  modal4: false,
+                  message: "",
+                  icon: '',
+                  type:''
+              }
+          }, 1500);
         })
       },
       updateProvider(){
