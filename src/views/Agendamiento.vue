@@ -934,7 +934,7 @@
       };
     },
     beforeCreate(){
-        if (!localStorage.getItem('userToken') && localStorage.getItem('status') != 1) {
+        if (!localStorage.getItem('userToken')) {
             this.$swal({ 
                 type: 'error',
                 title: 'URL restringida',
@@ -946,7 +946,6 @@
     },
     created(){
         this.getToken()
-        console.log(this.auth)
         this.validatorLender()
         this.getClients()
         this.getServices()
@@ -991,15 +990,13 @@
                         } 
                     }
                 }
-            }
+            } 
         },
         getDates() {
-            // this.validRoute('agendamiento', 'todas')
-            if (this.lender != '') {
+            if (this.lender != '' && this.validRoute('agendamiento', 'todas') != true) {
                 this.events = []
                 axios.get(endPoint.endpointTarget+'/citas/' + this.lender)
                 .then(res => {
-                    console.log(res.data)
                     for (let index = 0; index < res.data.length; index++) {
                         let dateNow = new Date(res.data[index].date)
                         let formatDate = ''

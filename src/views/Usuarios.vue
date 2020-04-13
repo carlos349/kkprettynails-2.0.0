@@ -442,11 +442,21 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         mail: ''
       };
     },
+    beforeCreate(){
+        if (!localStorage.getItem('userToken')) {
+          this.$swal({ 
+              type: 'error',
+              title: 'URL restringida',
+              showConfirmButton: false,
+              timer: 1500
+          })
+            router.push({name: 'login'})
+		}
+    },
     created(){
 		this.getUsers();
         this.getLenders()
         this.getToken()
-        console.log(this.auth)
     },
     methods: {
         getToken(){
@@ -568,6 +578,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                     {function: 'eliminar', name:'Eliminar cita'},
                     {function: 'cerrar', name:'Cerrar cita'},
                     {function: 'finalizar', name:'Finalizar cita'},
+                    {function: 'procesar', name:'Procesar'}
                 ]
             }else if (value.selected_item.route == 'caja') {
                 this.functions = [

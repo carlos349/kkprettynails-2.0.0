@@ -1134,7 +1134,7 @@ export default {
 									$(`#${res.data[indexTwo]._id}`).text(sumaVal)
 								}
 							}
-						}
+                        }
 						this.price = this.formatPrice(subTotal)
 						if (this.discount == 10) {
 							desc = subTotal * 0.90
