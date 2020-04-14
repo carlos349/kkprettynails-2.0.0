@@ -141,13 +141,18 @@
                                 <b class="text-uppercase">{{props.row.route}}</b>
                             </template>
                             <template slot="validation" slot-scope="props">
-                                <base-button class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid" v-on:click="selectedItem(props.row.route, props.row.valid, props.row.vbt_id)"></base-button>
-                                <base-button class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else v-on:click="selectedItem(props.row.route, props.row.valid, props.row.vbt_id)"></base-button>
+                                <base-button class="w-100" size="sm" type="success" v-if="props.row.valid" v-on:click="selectedItem(props.row.route, props.row.valid, props.row.vbt_id)">Editar</base-button>
+                                <base-button class="w-100" disabled size="sm" type="danger" v-else v-on:click="selectedItem(props.row.route, props.row.valid, props.row.vbt_id)">Editar</base-button>
+                            </template>
+                            <template slot="active" slot-scope="props">
+                                <base-button v-on:click="addRoute(props.row.vbt_id, props.row.route, props.row.valid)" class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
+                                </base-button>
+                                <base-button v-on:click="addRoute(props.row.vbt_id, props.row.route, props.row.valid)" class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
                             </template>
                         </vue-bootstrap4-table>
                     </vue-custom-scrollbar>
                     <center>
-                        <base-button class="mt-2" type="default" v-on:click="editRoutesAccess()">
+                        <base-button class="mt-4" type="default" v-on:click="editRoutesAccess()">
                             Realizar cambios
                         </base-button>
                     </center>
@@ -166,19 +171,12 @@
                         <h3>Habilite las funciones de la ruta</h3>
                     </div>
                 </template>
-                <div  class="row mx-auto mt-2">
-                    <base-radio class="mb-3 mx-auto" inline name="true" v-model="radio.radio1">
-                        Ruta activa
-                    </base-radio> 
-                    <base-radio class="mb-3 mx-auto" inline name="false" v-model="radio.radio1">
-                        Ruta inactiva
-                    </base-radio>
-                </div>
                 <template>
                     <vue-custom-scrollbar class="maxHeightRoutes">
                         <vue-bootstrap4-table class="text-left" :rows="functions" :columns="columnsFunctions" :classes="classes" :config="configFunctions">
                             <template slot="validation" slot-scope="props">
-                                <base-button class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid" v-on:click="selected(props.row.vbt_id, props.row.valid, props.row.function)"></base-button>
+                                <base-button class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid" v-on:click="selected(props.row.vbt_id, props.row.valid, props.row.function)">
+                                </base-button>
                                 <base-button class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else v-on:click="selected(props.row.vbt_id,props.row.valid, props.row.function)"></base-button>
                             </template>
                         </vue-bootstrap4-table>
@@ -426,6 +424,16 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             {
                 label: "",
                 name: "valid",
+                slot_name:"active",
+                // filter: {
+                    //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: false,
+            },
+            {
+                label: "",
+                name: "valid",
                 slot_name:"validation",
                 // filter: {
                 //     type: "simple",
@@ -527,7 +535,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                 }
                 this.routesSelecteds.push(element)
             }
-            console.log(this.routes)
+            console.log(this.routesSelecteds)
              this.modals = {
                 modal1: false,
                 modal2: false,
@@ -540,14 +548,6 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             }
         },
         selectedItem(route, valid, index){
-            $('th .custom-checkbox').parent().css('display', 'block')
-            // this.routesSelecteds.push({ruta: route, validaciones:[]})
-            if (valid) {
-                this.radio.radio1 = true
-            }else{
-                this.radio.radio1 = false
-            }
-            this.position = 'no hay'
             for (let i = 0; i < this.routesSelecteds.length; i++) {
                 const element = this.routesSelecteds[i];
                 if (route == element.ruta) {
@@ -645,66 +645,55 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                     {function: 'descuento', name:'Ingresar descuento', valid: false},
                 ]
             }
-            
-            if (this.position != 'no hay') {
-                for (let index = 0; index < this.functions.length; index++) {
-                    const element = this.functions[index];
-                    for (let indexTwo = 0; indexTwo < this.routesSelecteds[this.position].validaciones.length; indexTwo++) {
-                        const elementTwo = this.routesSelecteds[this.position].validaciones[indexTwo];
-                        if (element.function == elementTwo) {
-                            element.valid = true
+            for (let index = 0; index < this.functions.length; index++) {
+                const element = this.functions[index];
+                for (let indexTwo = 0; indexTwo < this.routesSelecteds[this.position].validaciones.length; indexTwo++) {
+                    const elementTwo = this.routesSelecteds[this.position].validaciones[indexTwo];
+                    if (element.function == elementTwo) {
+                        element.valid = true
+                    }
+                }
+            }
+        },
+        addRoute(index, route, valid){
+            const position = index - 1
+            if (valid == true) {
+                console.log(position)
+                this.routes[position].valid = false
+                for (let index = 0; index < this.routes.length; index++) {
+                    const element = this.routes[index];
+                    for (let indexTwo = 0; indexTwo < this.routesSelecteds.length; indexTwo++) {
+                        const elementTwo = this.routesSelecteds[indexTwo];
+                        if (route == elementTwo.ruta) {
+                            this.routesSelecteds.splice(indexTwo, 1)
                         }
                     }
                 }
+
             }else{
-                this.routesSelecteds.push({ruta: route, validaciones:[]})
-                this.radio.radio1 = true
+                this.routes[position].valid = true
+                this.routesSelecteds.push({ruta: route, validaciones: []})
             }
-            
         },
         finalyFunctions(){
-            var positionLast
-            if (this.position == 'no hay') {
-                positionLast = this.routesSelecteds.length - 1
-            }else{
-                positionLast = this.position
-            }
-            this.modals.modal5 = false
-            if (this.radio.radio1 == 'false' || this.radio.radio1 == false) {
-                this.routesSelecteds.splice(positionLast, 1)
-            }
-            console.log(this.routesSelecteds)
+            this.modals.modal5 = false  
         },
         selected(vbt_id, valid, func){
-            var positionLast
-            if (this.position == 'no hay') {
-                positionLast = this.routesSelecteds.length - 1
-            }else{
-                positionLast = this.position
-            }
-            
             if (valid) {
-                if (this.radio.radio1 == 'false') {
-                    this.radio.radio1 = true
-                }
                 this.functions[vbt_id - 1].valid = false
-                for (let index = 0; index < this.routesSelecteds[positionLast].validaciones.length; index++) {
-                    const element = this.routesSelecteds[positionLast].validaciones[index];
+                for (let index = 0; index < this.routesSelecteds[this.position].validaciones.length; index++) {
+                    const element = this.routesSelecteds[this.position].validaciones[index];
                     if (element == func) {
-                        this.routesSelecteds[positionLast].validaciones.splice(index, 1)
+                        this.routesSelecteds[this.position].validaciones.splice(index, 1)
                     }
                 }
             }else{
-                if (this.radio.radio1 == 'false') {
-                    this.radio.radio1 = true
-                }
                 this.functions[vbt_id - 1].valid = true
-                this.routesSelecteds[positionLast].validaciones.push(func)
+                this.routesSelecteds[this.position].validaciones.push(func)
             }
         },
         handleFileUpload(){
 			this.file = this.$refs.file.files[0]
-			console.log(this.file)
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
@@ -1095,10 +1084,16 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         cursor: pointer;
     }
     .maxHeightRoutes{
-        max-height: 400px;
+        max-height: 450px;
         overflow: scroll;
     }
     // .maxHeightRoutes th .custom-checkbox{
     //     display: none;
     // }
+    .maxHeightRoutes .card-header{
+        display:none;
+    }
+    .maxHeightRoutes .card-footer{
+        display:none;
+    }
 </style>
