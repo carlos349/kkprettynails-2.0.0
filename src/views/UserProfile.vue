@@ -253,13 +253,13 @@
             }
         },
         beforeCreate(){
-            if (!localStorage.getItem('userToken') && localStorage.getItem('status') != 1) {
-                this.$swal({ 
-                    type: 'error',
-                    title: 'URL restringida',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+            if (!localStorage.getItem('userToken')) {
+            this.$swal({ 
+                type: 'error',
+                title: 'URL restringida',
+                showConfirmButton: false,
+                timer: 1500
+            })
                 router.push({name: 'login'})
             }
         },

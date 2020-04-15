@@ -451,8 +451,7 @@ export default {
         }
     },
     beforeCreate(){
-        
-      if (!localStorage.getItem('userToken') && localStorage.getItem('status') != 1) {
+        if (!localStorage.getItem('userToken')) {
             this.$swal({ 
                 type: 'error',
                 title: 'URL restringida',
@@ -460,7 +459,7 @@ export default {
                 timer: 1500
             })
             router.push({name: 'login'})
-        }
+		}
     },
     created(){
         this.getServices();

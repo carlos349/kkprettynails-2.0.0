@@ -338,6 +338,17 @@ export default {
             validEgress:false
         }
     },
+    beforeCreate(){
+        if (!localStorage.getItem('userToken')) {
+            this.$swal({ 
+                type: 'error',
+                title: 'URL restringida',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            router.push({name: 'login'})
+		}
+    },
     created(){
         this.getClosing()
         this.getFunds()

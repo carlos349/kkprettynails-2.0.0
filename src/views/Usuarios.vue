@@ -136,15 +136,24 @@
                 </template>
                 <template>
                     <vue-custom-scrollbar ref="tableItem" class="maxHeightRoutes">
-                        <vue-bootstrap4-table class="text-left" :rows="routes" :columns="columnsRoutes" :classes="classes" :config="configRoutes" v-on:on-select-row="selectedItem" v-on:on-all-select-rows="selectedAllItem" v-on:on-unselect-row="unSelectedItem" v-on:on-all-unselect-rows="unSelectedAllItem">
+                        <vue-bootstrap4-table class="text-left" :rows="routes" :columns="columnsRoutes" :classes="classes" :config="configRoutes">
                             <template slot="name" slot-scope="props">
                                 <b class="text-uppercase">{{props.row.route}}</b>
+                            </template>
+                            <template slot="validation" slot-scope="props">
+                                <base-button class="w-100" size="sm" type="success" v-if="props.row.valid" v-on:click="selectedItem(props.row.route, props.row.valid, props.row.vbt_id)">Editar</base-button>
+                                <base-button class="w-100" disabled size="sm" type="danger" v-else v-on:click="selectedItem(props.row.route, props.row.valid, props.row.vbt_id)">Editar</base-button>
+                            </template>
+                            <template slot="active" slot-scope="props">
+                                <base-button v-on:click="addRoute(props.row.vbt_id, props.row.route, props.row.valid)" class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
+                                </base-button>
+                                <base-button v-on:click="addRoute(props.row.vbt_id, props.row.route, props.row.valid)" class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
                             </template>
                         </vue-bootstrap4-table>
                     </vue-custom-scrollbar>
                     <center>
-                        <base-button class="mt-2" type="default" v-on:click="editRoutesAccess()">
-                            Enviar
+                        <base-button class="mt-4" type="default" v-on:click="editRoutesAccess()">
+                            Realizar cambios
                         </base-button>
                     </center>
                 </template>
@@ -164,14 +173,16 @@
                 </template>
                 <template>
                     <vue-custom-scrollbar class="maxHeightRoutes">
-                        <vue-bootstrap4-table class="text-left" :rows="functions" :columns="columnsFunctions" :classes="classes" :config="configFunctions" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
-                            <!-- <template slot="name" slot-scope="props">
-                                <b class="text-uppercase">{{props.row.route}}</b>
-                            </template> -->
+                        <vue-bootstrap4-table class="text-left" :rows="functions" :columns="columnsFunctions" :classes="classes" :config="configFunctions">
+                            <template slot="validation" slot-scope="props">
+                                <base-button class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid" v-on:click="selected(props.row.vbt_id, props.row.valid, props.row.function)">
+                                </base-button>
+                                <base-button class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else v-on:click="selected(props.row.vbt_id,props.row.valid, props.row.function)"></base-button>
+                            </template>
                         </vue-bootstrap4-table>
                     </vue-custom-scrollbar>
                     <center>
-                        <base-button class="mt-2" type="default" v-on:click="modals.modal5 = false">
+                        <base-button class="mt-2" type="default" v-on:click="finalyFunctions(modals.modal5 = false)">
                             Finalizar
                         </base-button>
                     </center>
@@ -255,6 +266,9 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
     },
     data() {
       return {
+        radio: {
+            radio1: false
+        },
         auth: [],
         registerUser: {
             name:null,
@@ -384,6 +398,16 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                 //     placeholder: "id"
                 // },
                 sort: false
+            },
+            {
+                label: "",
+                name: "valid",
+                slot_name: "validation",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: false
             }
         ],
         columnsRoutes: [
@@ -391,6 +415,26 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                 label: "Rutas",
                 name: "route",
                 slot_name:"name",
+                // filter: {
+                    //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: false,
+            },
+            {
+                label: "",
+                name: "valid",
+                slot_name:"active",
+                // filter: {
+                    //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: false,
+            },
+            {
+                label: "",
+                name: "valid",
+                slot_name:"validation",
                 // filter: {
                 //     type: "simple",
                 //     placeholder: "id"
@@ -400,8 +444,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         ],
         configRoutes: {
             card_title: "Tabla de rutas",
-            checkbox_rows: true,
-            rows_selectable : true,
+            checkbox_rows: false,
+            rows_selectable : false,
             highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
             global_search: {
                 placeholder: "Filtre por nombre",
@@ -417,8 +461,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         },
         configFunctions: {
             card_title: "Tabla de funciones",
-            checkbox_rows: true,
-            rows_selectable : true,
+            checkbox_rows: false,
+            rows_selectable : false,
             highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
             global_search: {
                 placeholder: "Filtre por nombre",
@@ -442,11 +486,21 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         mail: ''
       };
     },
+    beforeCreate(){
+        if (!localStorage.getItem('userToken')) {
+          this.$swal({ 
+              type: 'error',
+              title: 'URL restringida',
+              showConfirmButton: false,
+              timer: 1500
+          })
+            router.push({name: 'login'})
+		}
+    },
     created(){
 		this.getUsers();
         this.getLenders()
         this.getToken()
-        console.log(this.auth)
     },
     methods: {
         getToken(){
@@ -455,19 +509,34 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             this.auth = decoded.access
         },
         dataEdit(access, id, mail){ 
+            this.routes = [
+                {route: 'procesar', valid: false},
+                {route: 'metricas', valid: false},
+                {route: 'usuarios', valid: false},
+                {route: 'ventas', valid: false},
+                {route: 'servicios', valid: false},
+                {route: 'empleados', valid: false},
+                {route: 'clientes', valid: false},
+                {route: 'inventario', valid: false},
+                {route: 'gastos', valid: false},
+                {route: 'agendamiento', valid: false},
+                {route: 'caja', valid: false}
+            ]
             this.mail = mail 
             this.idAccess = id
             this.routesSelecteds = []
             for (let index = 0; index < access.length; index++) {
                 const element = access[index];
+                for (let indexTwo = 0; indexTwo < this.routes.length; indexTwo++) {
+                    const elementTwo = this.routes[indexTwo];
+                    if (elementTwo.route == element.ruta) {
+                        elementTwo.valid = true
+                    }
+                }
                 this.routesSelecteds.push(element)
             }
-            if (this.routesSelecteds.length > 0) {
-                $('th .custom-checkbox').parent().css('display', 'block')
-            }else{
-                $('th .custom-checkbox').parent().css('display', 'none')
-            }
-            this.modals = {
+            console.log(this.routesSelecteds)
+             this.modals = {
                 modal1: false,
                 modal2: false,
                 modal3: false,
@@ -477,25 +546,14 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                 icon: '',
                 type:''
             }
-            let data = this.$refs.tableItem.$children[0].$data.vbt_rows
-            let selected = this.$refs.tableItem.$children[0].$data.selected_items
-            for (let c = 0; c <= selected.length; c++) {
-                selected.shift()
-            }
-            setTimeout(() => {
-                for (let index = 0; index < data.length; index++) {
-                    for (let i = 0; i < this.routesSelecteds.length; i++) {
-                        if (this.routesSelecteds[i].ruta == data[index].route) {
-                            selected.push(data[index])
-                        }
-                    }
-                }
-            }, 100);
         },
-        selectedItem(value){
-            $('th .custom-checkbox').parent().css('display', 'block')
-            this.routesSelecteds.push({ruta: value.selected_item.route, validaciones:[]})
-            this.position = this.routesSelecteds.length - 1
+        selectedItem(route, valid, index){
+            for (let i = 0; i < this.routesSelecteds.length; i++) {
+                const element = this.routesSelecteds[i];
+                if (route == element.ruta) {
+                    this.position = i
+                }
+            }
             this.modals = {
                 modal1: false,
                 modal2: false,
@@ -506,135 +564,136 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                 icon: '',
                 type:''
             }
-            if (value.selected_item.route == 'metricas') {
+            if (route == 'metricas') {
                 this.functions = [
-                    {function: 'filtrar', name:'Filtrar'}
+                    {function: 'filtrar', name:'Filtrar', valid: false}
                 ]
-            }else if (value.selected_item.route == 'usuarios') {
+            }else if (route == 'usuarios') {
                 this.functions = [
-                    {function: 'registrar', name:'Registar'},
-                    {function: 'editar', name:'Editar'},
-                    {function: 'eliminar', name:'Eliminar'}
+                    {function: 'registrar', name:'Registar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false}
                 ]
-            }else if (value.selected_item.route == 'ventas') {
+            }else if (route == 'ventas') {
                 this.functions = [
-                    {function: 'filtrar', name:'Filtrar'},
-                    {function: 'anular', name:'Anular'},
-                    {function: 'detalle', name:'Ver detalle'},
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'anular', name:'Anular', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
                 ]
-            }else if (value.selected_item.route == 'servicios') {
+            }else if (route == 'servicios') {
                 this.functions = [
-                    {function: 'ingresar', name:'Registrar'},
-                    {function: 'editar', name:'Editar'},
-                    {function: 'activaciones', name:'Activar o Desactivar'},
+                    {function: 'ingresar', name:'Registrar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'activaciones', name:'Activar o Desactivar', valid: false},
                 ]
-            }else if (value.selected_item.route == 'empleados') {
+            }else if (route == 'empleados') {
                 this.functions = [
-                    {function: 'registrar', name:'Registrar'},
-                    {function: 'detalle', name:'Ver detalle'},
-                    {function: 'editar', name:'Editar'},
-                    {function: 'reportes', name:'Ver reporte'},
-                    {function: 'cerrar ventas', name:'Cerrar ventas'},
-                    {function: 'eliminar', name: 'Eliminar'},
-                    {function: 'adelantos', name: 'Adelantos o Bonos'},
-                    {function: 'correos', name: 'Envio de correos'},
+                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'reportes', name:'Ver reporte', valid: false},
+                    {function: 'cerrar ventas', name:'Cerrar ventas', valid: false},
+                    {function: 'eliminar', name: 'Eliminar', valid: false},
+                    {function: 'adelantos', name: 'Adelantos o Bonos', valid: false},
+                    {function: 'correos', name: 'Envio de correos', valid: false},
                 ]
-            }else if (value.selected_item.route == 'clientes') {
+            }else if (route == 'clientes') {
                 this.functions = [
-                    {function: 'filtrar', name:'Filtrar'},
-                    {function: 'registrar', name:'Registrar'},
-                    {function: 'editar', name:'Editar'},
-                    {function: 'detalle', name:'Ver detalle'},
-                    {function: 'eliminar', name:'Eliminar'}
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false}
                 ]
-            }else if (value.selected_item.route == 'inventario') {
+            }else if (route == 'inventario') {
                 this.functions = [
-                    {function: 'filtrar', name:'Filtrar'},
-                    {function: 'registrar', name:'Registrar'},
-                    {function: 'editar', name:'Editar'},
-                    {function: 'detalle', name:'Ver detalle'},
-                    {function: 'eliminar', name:'Eliminar'}
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false}
                 ]
-            }else if (value.selected_item.route == 'gastos') {
+            }else if (route == 'gastos') {
                 this.functions = [
-                    {function: 'registrar', name:'Registrar'},
+                    {function: 'registrar', name:'Registrar', valid: false},
                 ]
-            }else if (value.selected_item.route == 'agendamiento') {
+            }else if (route == 'agendamiento') {
                 this.functions = [
-                    {function: 'filtrar', name:'Filtrar'},
-                    {function: 'agendar', name:'Agendar'},
-                    {function: 'todas', name:'Ver todas las agendas'},
-                    {function: 'editar', name:'Editar cita'},
-                    {function: 'eliminar', name:'Eliminar cita'},
-                    {function: 'cerrar', name:'Cerrar cita'},
-                    {function: 'finalizar', name:'Finalizar cita'},
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'agendar', name:'Agendar', valid: false},
+                    {function: 'todas', name:'Ver todas las agendas', valid: false},
+                    {function: 'editar', name:'Editar cita', valid: false},
+                    {function: 'eliminar', name:'Eliminar cita', valid: false},
+                    {function: 'cerrar', name:'Cerrar cita', valid: false},
+                    {function: 'finalizar', name:'Finalizar cita', valid: false},
+                    {function: 'procesar', name:'Procesar', valid: false}
                 ]
-            }else if (value.selected_item.route == 'caja') {
+            }else if (route == 'caja') {
                 this.functions = [
-                    {function: 'visualizar', name:'Ver cierres'},
-                    {function: 'filtrar', name:'Filtrar'},
-                    {function: 'cerrar', name:'hacer cierre'},
-                    {function: 'fondo', name:'Ingresar fondos'},
-                    {function: 'reporte', name:'Ver reporte del cierre'},
-                    {function: 'editar', name:'Editar cierre'},
+                    {function: 'visualizar', name:'Ver cierres', valid: false},
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'cerrar', name:'hacer cierre', valid: false},
+                    {function: 'fondo', name:'Ingresar fondos', valid: false},
+                    {function: 'reporte', name:'Ver reporte del cierre', valid: false},
+                    {function: 'editar', name:'Editar cierre', valid: false},
                 ]
-            }else if (value.selected_item.route == 'procesar') {
+            }else if (route == 'procesar') {
                 this.functions = [
-                    {function: 'editar', name:'Editar cliente'},
-                    {function: 'nuevo_cliente', name:'Registrar cliente'},
-                    {function: 'nuevo_servicio', name:'Registrar servicio'},
-                    {function: 'descuento', name:'Ingresar descuento'},
+                    {function: 'editar', name:'Editar cliente', valid: false},
+                    {function: 'nuevo_cliente', name:'Registrar cliente', valid: false},
+                    {function: 'nuevo_servicio', name:'Registrar servicio', valid: false},
+                    {function: 'descuento', name:'Ingresar descuento', valid: false},
                 ]
             }
-        },
-        selected(value){
-            const type = value.selected_item.function
-            this.routesSelecteds[this.position].validaciones.push(type)
-        },
-        selectedAll(value){
-            for (let index = 0; index < value.selected_items.length; index++) {
-                const element = value.selected_items[index];
-                this.routesSelecteds[this.position].validaciones.push(value.selected_items[index].function)
-            }
-        },
-        unSelected(value){
-            for (let i = 0; i < this.routesSelecteds[this.position].validaciones.length; i++) {
-                if (this.routesSelecteds[this.position].validaciones[i] == value.unselected_item.function) {
-                    this.routesSelecteds[this.position].validaciones.splice(i, 1)
-                    break
+            for (let index = 0; index < this.functions.length; index++) {
+                const element = this.functions[index];
+                for (let indexTwo = 0; indexTwo < this.routesSelecteds[this.position].validaciones.length; indexTwo++) {
+                    const elementTwo = this.routesSelecteds[this.position].validaciones[indexTwo];
+                    if (element.function == elementTwo) {
+                        element.valid = true
+                    }
                 }
             }
         },
-        unSelectedAll(){
-            this.routesSelecteds[this.position].validaciones = []
-        },
-        unSelectedItem(value){
-            $('th .custom-checkbox').parent().css('display', 'block')
-            for (let i = 0; i < this.routesSelecteds.length; i++) {
-                if (this.routesSelecteds[i].ruta == value.unselected_item.route) {
-                    this.routesSelecteds.splice(i, 1)
-                    break
+        addRoute(index, route, valid){
+            const position = index - 1
+            if (valid == true) {
+                console.log(position)
+                this.routes[position].valid = false
+                for (let index = 0; index < this.routes.length; index++) {
+                    const element = this.routes[index];
+                    for (let indexTwo = 0; indexTwo < this.routesSelecteds.length; indexTwo++) {
+                        const elementTwo = this.routesSelecteds[indexTwo];
+                        if (route == elementTwo.ruta) {
+                            this.routesSelecteds.splice(indexTwo, 1)
+                        }
+                    }
                 }
-            }
-            if (this.routesSelecteds.length == 0) {
-                $('th .custom-checkbox').parent().css('display', 'none')
+
+            }else{
+                this.routes[position].valid = true
+                this.routesSelecteds.push({ruta: route, validaciones: []})
             }
         },
-        selectedAllItem(value){
-            for (let index = 0; index < value.selected_items.length; index++) {
-                // this.itemSelected.push(value.selected_items[index]._id)
-                this.routesSelecteds.push({ruta: value.selected_items[index].route, validaciones: []})
-            }
-            console.log(this.routesSelecteds)
+        finalyFunctions(){
+            this.modals.modal5 = false  
         },
-        unSelectedAllItem(value){
-            $('th .custom-checkbox').parent().css('display', 'none')
-            this.routesSelecteds = []
-            // this.EdititemSelected = []
+        selected(vbt_id, valid, func){
+            if (valid) {
+                this.functions[vbt_id - 1].valid = false
+                for (let index = 0; index < this.routesSelecteds[this.position].validaciones.length; index++) {
+                    const element = this.routesSelecteds[this.position].validaciones[index];
+                    if (element == func) {
+                        this.routesSelecteds[this.position].validaciones.splice(index, 1)
+                    }
+                }
+            }else{
+                this.functions[vbt_id - 1].valid = true
+                this.routesSelecteds[this.position].validaciones.push(func)
+            }
         },
         handleFileUpload(){
 			this.file = this.$refs.file.files[0]
-			console.log(this.file)
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
@@ -655,6 +714,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             }, configToken)
             .then(res => {
                 if (res.data.status == 'ok') {
+                    this.getUsers();
                     this.modals = {
                         modal1: false,
                         modal2: false,
@@ -1024,10 +1084,16 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         cursor: pointer;
     }
     .maxHeightRoutes{
-        max-height: 400px;
+        max-height: 450px;
         overflow: scroll;
     }
     // .maxHeightRoutes th .custom-checkbox{
     //     display: none;
     // }
+    .maxHeightRoutes .card-header{
+        display:none;
+    }
+    .maxHeightRoutes .card-footer{
+        display:none;
+    }
 </style>

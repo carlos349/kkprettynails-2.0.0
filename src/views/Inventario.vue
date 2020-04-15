@@ -605,6 +605,17 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         }     
       };
     },
+    beforeCreate(){
+        if (!localStorage.getItem('userToken')) {
+          this.$swal({ 
+              type: 'error',
+              title: 'URL restringida',
+              showConfirmButton: false,
+              timer: 1500
+          })
+            router.push({name: 'login'})
+		    }
+    },
     created(){
       this.getProducts();
       this.getProviders();
