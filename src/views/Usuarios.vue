@@ -501,12 +501,14 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 		this.getUsers();
         this.getLenders()
         this.getToken()
+        
     },
     methods: {
         getToken(){
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+            this.emailUser = decoded.email
         },
         dataEdit(access, id, mail){ 
             this.routes = [
@@ -710,7 +712,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         editRoutesAccess(){
             const configToken = {headers: {'x-access-token': localStorage.userToken}}
             axios.put(endPoint.endpointTarget+'/users/editAccess/'+this.idAccess,{
-                access: this.routesSelecteds
+                access: this.routesSelecteds,
+                email: this.mail
             }, configToken)
             .then(res => {
                 if (res.data.status == 'ok') {
@@ -742,6 +745,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                     if (this.mail == decoded.email) {
                         EventBus.$emit('loggedin-user', this.routesSelecteds)
                     }
+                    localStorage.setItem('userToken', res.data.token)
                     this.routesSelecteds = []
                 }else{
                     this.modals = {
