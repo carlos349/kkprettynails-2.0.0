@@ -198,15 +198,15 @@
                             <div class="text-muted text-center mt-2 col-md-4 col-sm-12">
                                 Seleccione un empleado y disponibilidad
                             </div>
-                            <base-dropdown class="col-lg-6  w-75 mt-1 p-0">
+                            <base-dropdown class="col-lg-6 dropAgend  w-50 mt-1 p-0">
                                 <base-button slot="title" type="default" class="dropdown-toggle col-12 col-sm-12">
                                      {{registerDate.employeSelect}}
                                 </base-button>
-                                <li v-for="data in employeShow" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmploye(data.name, data.class, data.restTime, data.img)">
+                                <li v-for="data in employeShow" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmploye(data.name, data.class, data.restTime, data.img)" class="w-100">
                                     <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
                                         <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
                                     </base-button>
-                                    <base-button v-else class="dropdown-item" href="#">
+                                    <base-button v-else class="dropdown-item w-100" href="#">
                                         <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
                                     </base-button>
                                 </li>
@@ -2349,7 +2349,7 @@
   };
 </script>
 <style>
-    .maxheightDropDown .dropdown-menu{
+     .dropdown-menu{
         width: 100%;
         max-height: 30vh;
         overflow:hidden;
