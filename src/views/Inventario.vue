@@ -27,7 +27,7 @@
                   <template slot="edit" slot-scope="props">
                       <b>
                         <center>
-                            <base-button v-b-tooltip.hover.top title="Editar" size="sm" type="default" @click="modals.modal1 = true ,validForm = 2, initialState(3), pushData(props.row.producto, props.row.cantidad, props.row.monto,props.row._id,props.row.type)" icon="ni ni-bullet-list-67"></base-button>
+                            
                             <base-button v-b-tooltip.hover.top title="Compras" size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type,initialState(1,props.row._id), dataProduct.name = props.row.producto" icon="fa fa-plus"></base-button>
                             <base-button v-b-tooltip.hover.top title="Eliminar" size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash"></base-button>
                         </center>
