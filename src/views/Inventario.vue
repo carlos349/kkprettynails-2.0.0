@@ -623,6 +623,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
     },
     methods: {
       getProducts() {
+        this.countProduct = []
         axios.get(endPoint.endpointTarget+'/inventario')
         .then(res => {
           this.rows = res.data
@@ -878,13 +879,25 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           history:{id:this.myId,fecha:this.dateAdd,producto:this.dataProduct.name,entry:this.dataProduct.entry,unit:this.unit,precio:this.dataProduct.price,provedor:this.provider, status:true}
         })
         .then(res => {
-          this.$swal({
-              type: 'success',
-              title: 'Producto Actualizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-            this.getProducts();
+          this.modals = {
+              modal2: true,
+              message: "¡Producto actualizado con exito!",
+              icon: 'ni ni-check-bold ni-5x',
+              type: 'success'
+          }
+          setTimeout(() => {
+              this.modals = {
+                  modal1: false,
+                  modal2: false,
+                  modal3: false,
+                  modal4: false,
+                  message: "",
+                  icon: '',
+                  type:''
+              }
+              this.getProducts();
+          }, 1500);
+
         })
         .catch(err => {
           this.$swal({
@@ -1016,14 +1029,26 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         })
         .then(res => {
           if (res.data.status === 'ok') {
-            this.$swal({
-              type: 'success',
-              title: 'Cierre realizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-            this.getProducts();
+            this.modals = {
+              modal2: true,
+              message: "¡Cierre realizado!",
+              icon: 'ni ni-check-bold ni-5x',
+              type: 'success'
+          }
+          setTimeout(() => {
+              this.modals = {
+                  modal1: false,
+                  modal2: false,
+                  modal3: false,
+                  modal4: false,
+                  message: "",
+                  icon: '',
+                  type:''
+              }
+              this.getProducts();
             this.getHistoryClosed()
+          }, 1500);
+            
           }
           else{
             this.$swal({
