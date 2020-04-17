@@ -1,5 +1,13 @@
 <template>
     <div>
+        <modal :show.sync="modals.modal1"
+               :gradient="modals.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modals.icon"></i>
+                <h1 class="heading mt-5">{{modals.message}}</h1>
+            </div>
+        </modal>
         <base-header type="gradient-success" class="pb-6 pb-8 pt-5 pt-md-8">
             <!-- Card stats -->
             <div class="row">
@@ -71,8 +79,7 @@
                         <div slot="header" class="row align-items-center">
                           <template v-if="validRoute('metricas', 'filtrar')">
                             <div class="col-md-3">    
-                              <h5 v-if="!inspectorFilter">Filtre por fecha</h5> 
-                              <h5 v-else><strong>FILTRE PRIMERO</strong></h5>                       
+                              <h5>Filtre por fecha</h5>                      
                               <base-input
                               class="mb-1 mt-2" 
                               addon-left-icon="ni ni-calendar-grid-58">
@@ -418,8 +425,7 @@
                         <div slot="header" class="row align-items-center">
                           <template v-if="validRoute('metricas', 'filtrar')">
                             <div class="col-md-3">    
-                              <h5 v-if="!inspectorFilterDaily">Filtre por fecha</h5> 
-                              <h5 v-else><strong>FILTRE PRIMERO</strong></h5>                       
+                              <h5>Filtre por fecha</h5>                       
                               <base-input
                               class="mb-1 mt-2" 
                               addon-left-icon="ni ni-calendar-grid-58">
@@ -618,6 +624,12 @@
     },
     data() {
       return {
+        modals: {
+            modal1: false,
+            message: "",
+            icon: '',
+            type:''
+        },
         auth: [],
         TypeChartOptions: 'Escoja el tipo de gráfica',
         loaded:false,
@@ -808,41 +820,39 @@
         })
       },
       validate(text, api){
-        if (this.dates.range.length > 12) {
-          if (api == 'no-detailPerLender') {
-            this.inspectorLender = true
-            this.inspectorService = false
-            this.textCategories = text
-          }else if(api == 'no-detailPerService'){
-            this.inspectorService = true
-            this.inspectorLender = false
-            this.textCategories = text
-          }else{
-            this.textCategories = text
-            this.apiGraph = api
-            this.inspector = true
-            if (this.apiGraph != 'detailPerLender') {
-              this.inspectorLender = false
-            }
-            if (this.apiGraph != 'detailPerService') {
-              this.inspectorService = false
-            }
-          }
+        if (api == 'no-detailPerLender') {
+          this.inspectorLender = true
+          this.inspectorService = false
+          this.textCategories = text
+        }else if(api == 'no-detailPerService'){
+          this.inspectorService = true
+          this.inspectorLender = false
+          this.textCategories = text
         }else{
-          this.inspectorFilter = true
+          this.textCategories = text
+          this.apiGraph = api
+          this.inspector = true
+          if (this.apiGraph != 'detailPerLender') {
+            this.inspectorLender = false
+          }
+          if (this.apiGraph != 'detailPerService') {
+            this.inspectorService = false
+          }
         }
       },
       validateDaily(text, api){
-        if (this.dates.rangeDaily.length > 12) {
-          this.textCategoriesDaily = text
-          this.apiGraphDaily = api
-          this.inspectorDaily = true
-        }else{
-          this.inspectorFilterDaily = true
-        }
+        this.textCategoriesDaily = text
+        this.apiGraphDaily = api
+        this.inspectorDaily = true
       },
       runGraphDaily(){
-        const split = this.dates.rangeDaily.split(' a ')
+        var dates, split
+        if (this.dates.rangeDaily.length > 12) {
+          split = this.dates.rangeDaily.split(' a ')
+          dates = split[0]+':'+split[1]
+        }else{
+          dates = this.dates.rangeDaily+':'+'not'
+        }
         var tooltip = {
           y: [
             {
@@ -874,63 +884,86 @@
             ]
           }
         }
-        var typeAPI = axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraphDaily+'/'+split[0]+':'+split[1])
+        var typeAPI = axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraphDaily+'/'+dates)
         if (this.apiGraphDaily == 'getTopTenBestClients' || this.apiGraphDaily == 'getTopTenBestClientsRecommendations') {
           typeAPI = axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraphDaily)
         }
         typeAPI.then(res => {
-          if (this.apiGraphDaily == 'dailyQuantityPerDay') {
-            this.tablesDaily = {
-              firstTable: false,
-              secondTable: true,
-              thirdTable: false,
-              fourthTable: false, 
-              fivethTable: false
+          if (res.data.status == 'ok') {
+            if (this.apiGraphDaily == 'dailyQuantityPerDay') {
+              this.tablesDaily = {
+                firstTable: false,
+                secondTable: true,
+                thirdTable: false,
+                fourthTable: false, 
+                fivethTable: false
+              }
+            }else if (this.apiGraphDaily == 'dailyAveragePerDay') {
+              this.tablesDaily = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable: true,
+                fourthTable: false, 
+                fivethTable: false
+              }
+            }else if (this.apiGraphDaily == 'getTopTenBestClients') {
+              this.tablesDaily = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable: false, 
+                fourthTable: true,
+                fivethTable: false
+              }
+            }else if (this.apiGraphDaily == 'getTopTenBestClientsRecommendations') {
+              this.tablesDaily = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable: false, 
+                fourthTable: false, 
+                fivethTable: true
+              }
             }
-          }else if (this.apiGraphDaily == 'dailyAveragePerDay') {
-            this.tablesDaily = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable: true,
-              fourthTable: false, 
-              fivethTable: false
+            this.chartDaily = {
+              title: {
+                text: this.textCategoriesDaily,
+                align: 'left'
+              },
+              xaxis: {
+                categories: res.data.categories
+              },
+              tooltip: tooltip
             }
-          }else if (this.apiGraphDaily == 'getTopTenBestClients') {
-            this.tablesDaily = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable: false, 
-              fourthTable: true,
-              fivethTable: false
+            this.dataTableDaily = []
+            this.dataTableDaily = res.data.dataTable
+            this.seriesDaily = res.data.series
+            this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+          }else{
+            this.modals = {
+                modal1: true,
+                message: "No hay ventas en la fecha seleccionada",
+                icon: 'ni ni-fat-remove ni-5x',
+                type: 'danger'
             }
-          }else if (this.apiGraphDaily == 'getTopTenBestClientsRecommendations') {
-            this.tablesDaily = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable: false, 
-              fourthTable: false, 
-              fivethTable: true
-            }
+            setTimeout(() => {
+                this.modals = {
+                  modal1: false,  
+                  message: "",
+                  icon: '',
+                  type: ''
+                } 
+            }, 1500);
           }
-          this.chartDaily = {
-            title: {
-              text: this.textCategoriesDaily,
-              align: 'left'
-            },
-            xaxis: {
-              categories: res.data.categories
-            },
-            tooltip: tooltip
-          }
-          this.dataTableDaily = []
-          this.dataTableDaily = res.data.dataTable
-          this.seriesDaily = res.data.series
-          this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
         })
       },
       runGraph(){
-        const split = this.dates.range.split(' a ')
-        var typeAPI = axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+split[0]+':'+split[1])
+        var dates, split
+        if (this.dates.range.length > 12) {
+          split = this.dates.range.split(' a ')
+          dates = split[0]+':'+split[1]
+        }else{
+          dates = this.dates.range+':'+'not'
+        }
+        var typeAPI = axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+dates)
         var typeDatetime = {
             chart: {
               type: 'line',
@@ -958,148 +991,163 @@
             },
         }
         if (this.apiGraph == 'detailPerLender') {
-          typeAPI = axios.post(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+split[0]+':'+split[1], {
+          typeAPI = axios.post(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+dates, {
             lender: this.employeSelect
           })
         }else if(this.apiGraph == 'detailPerService'){
-          typeAPI = axios.post(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+split[0]+':'+split[1], {
+          typeAPI = axios.post(endPoint.endpointTarget+'/metrics/'+this.apiGraph+'/'+dates, {
             service: this.serviceSelect
           })
         }
         typeAPI.then(res => {
-          if (this.apiGraph == 'dailyProduction') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: true,
-              thirdTable:false,
-              quarterTable:false,
-              fifthTable:false,
-              sixthTable:false,
-              seventhTable:false,
-              eighthTable: false,
-              ninethTable: false,
-              tenthTable: false
+          if (res.data.status == 'ok') {
+            if (this.apiGraph == 'dailyProduction') {
+              this.chartOptions = typeDatetime
+              this.tables = {
+                firstTable: false,
+                secondTable: true,
+                thirdTable:false,
+                quarterTable:false,
+                fifthTable:false,
+                sixthTable:false,
+                seventhTable:false,
+                eighthTable: false,
+                ninethTable: false,
+                tenthTable: false
+              }
+            }else if (this.apiGraph == 'dailyServices') {
+              this.chartOptions = typeDatetime
+              this.tables = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable:true,
+                quarterTable:false,
+                fifthTable:false,
+                sixthTable:false,
+                seventhTable:false,
+                eighthTable: false,
+                ninethTable: false,
+                tenthTable: false
+              }
+            }else if (this.apiGraph == 'quantityProductionPerLender') {
+              this.chartOptions = typeDatetime
+              this.tables = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable:false, 
+                quarterTable:true,
+                fifthTable:false,
+                sixthTable:false,
+                seventhTable:false,
+                eighthTable: false,
+                ninethTable: false,
+                tenthTable: false
+              }
+            }else if (this.apiGraph == 'dailyExpenseGainTotal') {
+              this.chartOptions = typeDatetime
+              this.tables = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable:false, 
+                quarterTable:false,
+                fifthTable:true,
+                sixthTable:false,
+                seventhTable:false,
+                eighthTable: false,
+                ninethTable: false,
+                tenthTable: false
+              }
+            }else if (this.apiGraph == 'quantityComissionPerLender') {
+              this.chartOptions = typeDatetime
+              this.tables = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable:false, 
+                quarterTable:false,
+                fifthTable:false,
+                sixthTable:true,
+                seventhTable:false,
+                eighthTable: false,
+                ninethTable: false,
+                tenthTable: false
+              }
+            }else if (this.apiGraph == 'quantityServicesPerLender') {
+              this.chartOptions = typeDatetime
+              this.tables = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable:false, 
+                quarterTable:false,
+                fifthTable:false,
+                sixthTable:false,
+                seventhTable:true,
+                ninethTable: false,
+                nineth: false,
+                tenthTable: false
+              }
+            }else if (this.apiGraph == 'detailPerLender') {
+              this.chartOptions = typeDatetime
+              this.tables = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable:false, 
+                quarterTable:false,
+                fifthTable:false,
+                sixthTable:false,
+                seventhTable:false,
+                eighthTable: true,
+                ninethTable: false,
+                tenthTable: false
+              }
+            }else if (this.apiGraph == 'dailyDesign') {
+              this.chartOptions = typeDatetime
+              this.tables = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable:false, 
+                quarterTable:false,
+                fifthTable:false,
+                sixthTable:false,
+                seventhTable:false,
+                eighthTable: false,
+                ninethTable: true,
+                tenthTable: false
+              }
+            }else if (this.apiGraph == 'detailPerService') {
+              this.chartOptions = typeDatetime
+              this.tables = {
+                firstTable: false,
+                secondTable: false,
+                thirdTable:false, 
+                quarterTable:false,
+                fifthTable:false,
+                sixthTable:false,
+                seventhTable:false,
+                eighthTable: false,
+                ninethTable: false,
+                tenthTable: true
+              }
             }
-          }else if (this.apiGraph == 'dailyServices') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable:true,
-              quarterTable:false,
-              fifthTable:false,
-              sixthTable:false,
-              seventhTable:false,
-              eighthTable: false,
-              ninethTable: false,
-              tenthTable: false
+            this.dataTable = []
+            this.dataTable = res.data.dataTable
+            this.series = res.data.series
+            this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
+          }else{
+            this.modals = {
+                modal1: true,
+                message: "No hay ventas en la fecha seleccionada",
+                icon: 'ni ni-fat-remove ni-5x',
+                type: 'danger'
             }
-          }else if (this.apiGraph == 'quantityProductionPerLender') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable:false, 
-              quarterTable:true,
-              fifthTable:false,
-              sixthTable:false,
-              seventhTable:false,
-              eighthTable: false,
-              ninethTable: false,
-              tenthTable: false
-            }
-          }else if (this.apiGraph == 'dailyExpenseGainTotal') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable:false, 
-              quarterTable:false,
-              fifthTable:true,
-              sixthTable:false,
-              seventhTable:false,
-              eighthTable: false,
-              ninethTable: false,
-              tenthTable: false
-            }
-          }else if (this.apiGraph == 'quantityComissionPerLender') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable:false, 
-              quarterTable:false,
-              fifthTable:false,
-              sixthTable:true,
-              seventhTable:false,
-              eighthTable: false,
-              ninethTable: false,
-              tenthTable: false
-            }
-          }else if (this.apiGraph == 'quantityServicesPerLender') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable:false, 
-              quarterTable:false,
-              fifthTable:false,
-              sixthTable:false,
-              seventhTable:true,
-              ninethTable: false,
-              nineth: false,
-              tenthTable: false
-            }
-          }else if (this.apiGraph == 'detailPerLender') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable:false, 
-              quarterTable:false,
-              fifthTable:false,
-              sixthTable:false,
-              seventhTable:false,
-              eighthTable: true,
-              ninethTable: false,
-              tenthTable: false
-            }
-          }else if (this.apiGraph == 'dailyDesign') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable:false, 
-              quarterTable:false,
-              fifthTable:false,
-              sixthTable:false,
-              seventhTable:false,
-              eighthTable: false,
-              ninethTable: true,
-              tenthTable: false
-            }
-          }else if (this.apiGraph == 'detailPerService') {
-            this.chartOptions = typeDatetime
-            this.tables = {
-              firstTable: false,
-              secondTable: false,
-              thirdTable:false, 
-              quarterTable:false,
-              fifthTable:false,
-              sixthTable:false,
-              seventhTable:false,
-              eighthTable: false,
-              ninethTable: false,
-              tenthTable: true
-            }
+            setTimeout(() => {
+                this.modals = {
+                  modal1: false,  
+                  message: "",
+                  icon: '',
+                  type: ''
+                } 
+            }, 1500);
           }
-          this.dataTable = []
-          this.dataTable = res.data.dataTable
-          this.series = res.data.series
-          console.log(this.$refs.chartApis)
-          this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
-          console.log(this.chartOptions)
         })
       },
       getVentas(){

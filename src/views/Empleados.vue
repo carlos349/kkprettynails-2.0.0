@@ -326,7 +326,7 @@ import jwtDecode from 'jwt-decode'
 				if(res.data.status == 'Manicurista ingresada'){
                     this.modals = {
                         modal2: true,
-                        message: "¡Emplado registrado con exito!",
+                        message: "¡Empleado registrado con exito!",
                         icon: 'ni ni-check-bold ni-5x',
                         type: 'success'
                     }
@@ -335,8 +335,6 @@ import jwtDecode from 'jwt-decode'
                         this.getEmployes()
                         EventBus.$emit('reloadLenders', 'reload')
                     }, 1500);
-					
-					// this.emitMethod()
 				}else{
 					this.modals = {
                         modal2: true,
