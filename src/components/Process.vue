@@ -566,7 +566,8 @@ export default {
             },
             ifEdit: false, 
             inspectorDate: false,
-            editClientId: ''
+            editClientId: '',
+            ifrecomend: false
         }
     },
     created(){
@@ -730,7 +731,7 @@ export default {
                         }
                         this.getClient()
                     }, 1500);
-                    registerClient = {
+                    this.registerClient = {
                         name: '',
                         id: '',
                         contactOne: '',
@@ -739,7 +740,6 @@ export default {
                         recommender: '',
                         valid: false,
                     }
-                    
                 }else{
                     this.modals = {
                         modal1: true,
@@ -1052,6 +1052,7 @@ export default {
                 .then(res => {
                     this.docLender = res.data.documento
                     this.nombreManicurista = this.lenderSelect
+                    
                 })
                 .catch(err => {
                     console.log(err)
@@ -1070,6 +1071,7 @@ export default {
                 const split = this.clientSelect.split(' / ')
                 axios.get(endPoint.endpointTarget+'/clients/dataDiscount/' + split[1])
                 .then(res => {
+                    console.log(res)
                     this.newClient.text = "Editar cliente"
                     this.ifEdit = true
                     this.editClientId = res.data[0]._id
@@ -1078,7 +1080,15 @@ export default {
                     this.registerClient.contactOne = res.data[0].correoCliente
                     this.registerClient.contactTwo = res.data[0].instagramCliente
                     this.validRegister(2)
-                    
+                    this.clientRecomends = res.data[0].recomendaciones
+                    this.clientAtentions = res.data[0].participacion
+                    if (res.data[0].recomendaciones > 0) {
+                        this.discount = 15
+                        this.ifrecomend = true
+                    }else if (res.data[0].participacion == 0) {
+                        this.discount = 10
+                    }
+                    console.log(this.ifrecomend)
                 })
                 .catch(err => {
                     console.log(err)
@@ -1113,11 +1123,12 @@ export default {
 				const splitTwo = split[1].split(' ')
 				axios.get(endPoint.endpointTarget+'/clients/dataDiscount/'+splitTwo[1])
 				.then(res => {
-					if (res.data[0].participacion == 0) {
-						this.discount = 10
-					}else{
-						this.discount = ''
-					}
+					if (res.data[0].recomendaciones > 0) {
+                        this.discount = 15
+                        this.ifrecomend = true
+                    }else if (res.data[0].participacion == 0) {
+                        this.discount = 10
+                    }
 					axios.get(endPoint.endpointTarget+'/servicios')
 					.then(res => {
 						var subTotal = 0
@@ -1171,6 +1182,7 @@ export default {
             this.newClient.text = "Nuevo cliente"
             this.registerClient.name = ''
             this.registerClient.id = ''
+            this.ifrecomend = false
             this.validRegister()
 		},
         processSale() {
@@ -1225,7 +1237,8 @@ export default {
 						ifProcess: this.idProcess,
 						diseno: this.design,
 						totalSinDesign: this.subTotal,
-						documentoManicurista: this.docLender
+                        documentoManicurista: this.docLender,
+                        ifrecomend: this.ifrecomend
 					})
 					.then(res => {
 						
