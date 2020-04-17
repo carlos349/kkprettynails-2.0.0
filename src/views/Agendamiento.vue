@@ -17,7 +17,7 @@
                                     <span>Ventas por procesar</span>
                                     <badge type="primary">{{lengthClosedDates}}</badge>
                                 </base-button>
-                                <base-dropdown v-if="validRoute('agendamiento', 'filtrar')" class="maxheightDropDown mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
+                                <base-dropdown v-if="validRoute('agendamiento', 'filtrar')" class="maxheightDropDown dropAgend mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
                                     </base-button>
@@ -2349,7 +2349,7 @@
   };
 </script>
 <style>
-     .dropdown-menu{
+    .dropAgend .dropdown-menu{
         width: 100%;
         max-height: 30vh;
         overflow:hidden;
