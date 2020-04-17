@@ -99,7 +99,7 @@
                         </card>
                     </tabs>
                     <template v-if="validRoute('ventas', 'filtrar')">
-                        <base-button block class="mt-2" v-if="arreglo.status" type="default" v-on:click="cancelSale(arreglo._id)">Anular venta</base-button>
+                        <base-button block class="mt-2" v-if="arreglo.status" type="default" v-on:click="cancelSale(arreglo._id,arreglo.servicios)">Anular venta</base-button>
                     </template>
                     <template v-else>
                         <base-button disabled block class="mt-2" v-if="arreglo.status" type="default">Anular venta</base-button>
@@ -411,13 +411,16 @@ export default {
                 }, 2000);
             }
         },
-        async cancelSale(id){
-            console.log(id)
+        async cancelSale(id,servicios){
+            console.log(servicios)
             console.log(this.arreglo.EmployeComision)
             const cancelSale = await axios.put(endPoint.endpointTarget+'/ventas/'+id, {
                 employeComision: this.arreglo.EmployeComision
             })
             if (cancelSale.data.status == 'ok') {
+                axios.post(endPoint.endpointTarget+'/inventario/nullSale', {
+                    array:servicios
+                })
                 this.modals = {
                     modal2: true,
                     message: "¡Venta anulada!",
