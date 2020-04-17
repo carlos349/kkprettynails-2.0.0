@@ -337,11 +337,15 @@
                             </base-button>
 
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
-                                <span class="text-success" v-if="dateData.discount == true" >
-                                    Lleva descuento 
+                                <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'first'" >
+                                    Lleva descuento (Primer cliente)
                                     <i class="text-success p-1 ni ni-check-bold ni-1x aling-center"> </i>
                                 </span>
-                                <span class="text-danger" v-else >
+                                <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'recomnd'" >
+                                    Lleva descuento (Por recomendación)
+                                    <i class="text-success p-1 ni ni-check-bold ni-1x aling-center"> </i>
+                                </span>
+                                <span class="text-danger" v-if="dateData.discount.discount == false && dateData.discount.type == 'none'" >
                                     No lleva descuento 
                                     <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
                                 </span>
@@ -853,7 +857,7 @@
         },
         dateData: {
         history:[],
-        discount:false,
+        discount:{discount:false,type:'none'},
         clientEdit: null,
         fechaEdit: null,
         startEdit: null,
@@ -1687,13 +1691,16 @@
             axios.get(endPoint.endpointTarget+'/clients/dataDiscount/'+splitTwo[1])
             .then(res => {
             if (res.data[0].participacion == 0) {
-                            this.dateData.discount = true
-                        }else{
-                this.dateData.discount = false
+                this.dateData.discount.discount = true
+                this.dateData.discount.type = 'first'
+            }
+            else if(res.data[0].recomendaciones > 0) {
+                this.dateData.discount.discount = true
+                this.dateData.discount.type = 'recomnd'
             }
             this.dateData.history = []
             this.dateData.history = res.data[0].historical
-            
+            console.log(this.dateData.discount)
             })
             e.stopPropagation()
         },
