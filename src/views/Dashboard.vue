@@ -12,16 +12,12 @@
             <!-- Card stats -->
             <div class="row">
                 <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Total ventas"
+                    <stats-card title="Total de ventas"
                                 type="gradient-red"
                                 :sub-title="totalSales"
                                 icon="ni ni-active-40"
                                 class="mb-1 mb-xl-0"
                     >
-                    <template slot="footer">
-                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span><br>
-                        <span class="text-nowrap">Mes pasado <small class="text-muted">( 40 )</small></span>
-                    </template>
                     </stats-card>
                 </div>
                 <div class="col-xl-3 col-lg-6">
@@ -197,6 +193,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(firstDataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tables.secondTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
@@ -215,6 +213,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tables.thirdTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
@@ -233,6 +233,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tables.quarterTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
@@ -255,6 +257,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tables.fifthTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
@@ -277,6 +281,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tables.sixthTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
@@ -299,6 +305,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tables.seventhTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
@@ -321,6 +329,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tables.eighthTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
@@ -347,6 +357,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tables.ninethTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
@@ -369,6 +381,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tables.tenthTable" class="table-responsive col-md-4">
                             <vue-custom-scrollbar class="maxHeight">
@@ -387,6 +401,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
+                            </base-button>
                           </div>
                           <div class="col-md-8">
                             <apexchart ref="chartApis" :height="350" v-if="loaded" :options="chartOptions" :series="series"></apexchart>
@@ -495,6 +511,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(firstDataTableDaily, 'daily')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tablesDaily.secondTable" class="table-responsive col-md-5">
                             <vue-custom-scrollbar class="maxHeightEspecific">
@@ -517,6 +535,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTableDaily, 'daily')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tablesDaily.thirdTable" class="table-responsive col-md-5">
                             <vue-custom-scrollbar class="maxHeightEspecific">
@@ -539,6 +559,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTableDaily, 'daily')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tablesDaily.fourthTable" class="table-responsive col-md-5">
                             <vue-custom-scrollbar class="maxHeightEspecific">
@@ -561,6 +583,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTableDaily, 'daily')">Generar excel
+                            </base-button>
                           </div>
                           <div v-if="tablesDaily.fivethTable" class="table-responsive col-md-5">
                             <vue-custom-scrollbar class="maxHeightEspecific">
@@ -583,6 +607,8 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTableDaily, 'daily')">Generar excel
+                            </base-button>
                           </div>
                           <div class="col-md-7">
                             <apexchart ref="chartApisDaily" :height="400" v-if="loadedDaily" :options="chartDaily" :series="seriesDaily"></apexchart>
@@ -613,6 +639,7 @@
   import "flatpickr/dist/flatpickr.css";
   import {Spanish} from 'flatpickr/dist/l10n/es.js';
   import vueCustomScrollbar from 'vue-custom-scrollbar'
+  import XLSX from 'xlsx'
   export default {
     components: {
       LineChart,
@@ -955,6 +982,30 @@
           }
         })
       },
+      exportXLSX(data, tipo){
+        var split, dates, category
+        if (tipo == 'dates') {
+          category = this.textCategories
+          if (this.dates.range.length > 12) {
+            split = this.dates.range.split(' a ')
+            dates = split[0]
+          }else{
+            dates = this.dates.range
+          }
+        }else{
+          category = this.textCategoriesDaily
+          if (this.dates.rangeDaily.length > 12) {
+            split = this.dates.rangeDaily.split(' a ')
+            dates = split[0]
+          }else{
+            dates = this.dates.rangeDaily
+          }
+        }
+        var Datos = XLSX.utils.json_to_sheet(data) 
+        var wb = XLSX.utils.book_new() 
+        XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
+        XLSX.writeFile(wb, category+'-'+dates+'.xlsx') 
+      },
       runGraph(){
         var dates, split
         if (this.dates.range.length > 12) {
@@ -1153,7 +1204,7 @@
       getVentas(){
         axios.get(endPoint.endpointTarget+'/metrics/total')
         .then(res => {
-         this.totalSales = res.data.status
+          this.totalSales = res.data.status
         })
         .catch(() => {
           this.$swal({
@@ -1434,7 +1485,7 @@
 </script>
 <style>
 .maxHeight{
-  max-height: 325px;
+  max-height: 350px;
   overflow: scroll;
 }
 .maxHeightEspecific{
