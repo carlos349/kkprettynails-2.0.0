@@ -305,15 +305,23 @@
             <h1 class="heading mt-5">{{modals.message}}</h1>
         </div>
     </modal>
-    <modal :show.sync="modals.modal4">
+    <modal :show.sync="modals.modal4" modal-classes="modal-dialog-centered modal-xl">
       <h6 slot="header" class="modal-title" id="modal-title-default">Cierre de inventario</h6>
-      <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;"> 
+      <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+        <div class="row p-2 m-2">
+          <div class="col-7">
+            Nombre del producto
+          </div>
+          <div class="col-5 text-left">
+            Total real
+          </div>
+        </div> 
         <div v-for="(data, index) in rows" class="row p-2 m-2">
           <dt class="col-7 mt-2">{{data.producto}}</dt>
+
           <base-input class="col-5" v-model="countProduct[index].count" placeholder="Ingrese cantidad"></base-input>
         </div>
       </vue-custom-scrollbar> 
-      
       
       <template slot="footer">
           <base-button v-on:click="closeInventory" type="default">Cerrar inventario</base-button>
