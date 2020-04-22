@@ -72,7 +72,7 @@
             <div class="row">
                 <div class="col-12" >
                     <card header-classes="bg-transparent">
-                        <div slot="header" class="row align-items-center">
+                        <div slot="header" class="row align-items-center pb-3">
                           <template v-if="validRoute('metricas', 'filtrar')">
                             <div class="col-md-3">    
                               <h5>Filtre por fecha</h5>                      
@@ -172,7 +172,9 @@
                           </template>
                         </div>
                         <div class="row">
-                          <div v-if="tables.firstTable" class="table-responsive col-md-4">
+                          <div v-if="tables.firstTable" class="col-md-4">
+                            <base-button type="default" title="Generar Excel" size="sm" class="buttonExcel" icon="ni ni-book-bookmark" v-on:click="exportXLSX(firstDataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="firstDataTable">
                                 <template slot="columns">
@@ -193,10 +195,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(firstDataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tables.secondTable" class="table-responsive col-md-4">
+                          <div v-if="tables.secondTable" class=" col-md-4">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
@@ -213,10 +215,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tables.thirdTable" class="table-responsive col-md-4">
+                          <div v-if="tables.thirdTable" class=" col-md-4">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
@@ -233,10 +235,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tables.quarterTable" class="table-responsive col-md-4">
+                          <div v-if="tables.quarterTable" class=" col-md-4">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
@@ -257,10 +259,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tables.fifthTable" class="table-responsive col-md-4">
+                          <div v-if="tables.fifthTable" class="col-md-4">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
@@ -281,10 +283,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tables.sixthTable" class="table-responsive col-md-4">
+                          <div v-if="tables.sixthTable" class=" col-md-4">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
@@ -305,10 +307,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tables.seventhTable" class="table-responsive col-md-4">
+                          <div v-if="tables.seventhTable" class=" col-md-4">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
@@ -329,10 +331,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tables.eighthTable" class="table-responsive col-md-4">
+                          <div v-if="tables.eighthTable" class=" col-md-4">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
@@ -357,10 +359,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tables.ninethTable" class="table-responsive col-md-4">
+                          <div v-if="tables.ninethTable" class=" col-md-4">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
@@ -381,10 +383,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tables.tenthTable" class="table-responsive col-md-4">
+                          <div v-if="tables.tenthTable" class=" col-md-4">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeight">
                               <base-table thead-classes="thead-light" :data="dataTable">
                                 <template slot="columns">
@@ -401,8 +403,6 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTable, 'dates')">Generar excel
-                            </base-button>
                           </div>
                           <div class="col-md-8">
                             <apexchart ref="chartApis" :height="350" v-if="loaded" :options="chartOptions" :series="series"></apexchart>
@@ -490,7 +490,9 @@
                           </template>
                         </div>
                         <div class="row">
-                          <div v-if="tablesDaily.firstTable" class="table-responsive col-md-5">
+                          <div v-if="tablesDaily.firstTable" class=" col-md-5">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcelDaily" v-on:click="exportXLSX(firstDataTableDaily, 'daily')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="firstDataTableDaily">
                                 <template slot="columns">
@@ -511,10 +513,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(firstDataTableDaily, 'daily')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tablesDaily.secondTable" class="table-responsive col-md-5">
+                          <div v-if="tablesDaily.secondTable" class=" col-md-5">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcelDaily" v-on:click="exportXLSX(dataTableDaily, 'daily')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -535,10 +537,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTableDaily, 'daily')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tablesDaily.thirdTable" class="table-responsive col-md-5">
+                          <div v-if="tablesDaily.thirdTable" class=" col-md-5">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcelDaily" v-on:click="exportXLSX(dataTableDaily, 'daily')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -559,10 +561,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTableDaily, 'daily')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tablesDaily.fourthTable" class="table-responsive col-md-5">
+                          <div v-if="tablesDaily.fourthTable" class=" col-md-5">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcelDaily" v-on:click="exportXLSX(dataTableDaily, 'daily')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -583,10 +585,10 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTableDaily, 'daily')">Generar excel
-                            </base-button>
                           </div>
-                          <div v-if="tablesDaily.fivethTable" class="table-responsive col-md-5">
+                          <div v-if="tablesDaily.fivethTable" class=" col-md-5">
+                            <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcelDaily" v-on:click="exportXLSX(dataTableDaily, 'daily')">
+                            </base-button>
                             <vue-custom-scrollbar class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="dataTableDaily">
                                 <template slot="columns">
@@ -607,8 +609,6 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
-                            <base-button type="default" size="sm" class="mb-2 float-right" v-on:click="exportXLSX(dataTableDaily, 'daily')">Generar excel
-                            </base-button>
                           </div>
                           <div class="col-md-7">
                             <apexchart ref="chartApisDaily" :height="400" v-if="loadedDaily" :options="chartDaily" :series="seriesDaily"></apexchart>
@@ -1491,5 +1491,107 @@
 .maxHeightEspecific{
   max-height: 455px;
   overflow: scroll;
+}
+.buttonExcel{
+  position:absolute;
+  top:-2%;
+  left:243%;
+  z-index:100 !important;
+}
+.buttonExcelDaily{
+  position:absolute;
+  top:-2%;
+  left:195%;
+  z-index:100 !important;
+}
+@media (max-width: 1280px) {
+  .buttonExcel{
+    left:243%;
+  }
+  .buttonExcelDaily{
+    left:175%;
+  }
+}
+@media (max-width: 1140px) {
+  .buttonExcel{
+    left:223%;
+  }
+  .buttonExcelDaily{
+    left:175%;
+  }
+}
+@media (max-width: 1030px) {
+  .buttonExcel{
+    left:213%;
+  }
+  .buttonExcelDaily{
+    left:165%;
+  }
+}
+@media (max-width: 940px) {
+  .buttonExcel{
+    left:203%;
+  }
+  .buttonExcelDaily{
+    left:155%;
+  }
+}
+@media (max-width: 880px) {
+  .buttonExcel{
+    left:193%;
+  }
+  .buttonExcelDaily{
+    left:145%;
+  }
+}
+@media (max-width: 760px) {
+  .buttonExcel{
+    top:100%;
+    left:70%;
+  }
+  .buttonExcelDaily{
+    top:100%;
+    left:70%;
+  }
+}
+@media (max-width: 680px) {
+  .buttonExcel{
+    top:100%;
+    left:60%;
+  }
+  .buttonExcelDaily{
+    top:100%;
+    left:60%;
+  }
+}
+@media (max-width: 520px) {
+  .buttonExcel{
+    top:100%;
+    left:55%;
+  }
+  .buttonExcelDaily{
+    top:100%;
+    left:55%;
+  }
+}
+@media (max-width: 460px) {
+  .buttonExcel{
+    top:100%;
+    left:45%;
+  }
+  .buttonExcelDaily{
+    top:100%;
+    left:45%;
+  }
+}
+@media (max-width: 360px) {
+  .buttonExcel{
+    top:100%;
+    left:65%;
+  }
+  .buttonExcelDaily{
+    top:100%;
+    left:65%;
+  }
 }
 </style>

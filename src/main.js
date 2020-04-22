@@ -34,7 +34,7 @@ import { faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, f
 import endPoint from '../config-endpoint/endpoint.js'
 import VueSocketIO from 'vue-socket.io'
 import SocketIO from "socket.io-client"
-
+import CKEditor from '@ckeditor/ckeditor5-vue';
 /* STYLES */
 import VueFormWizard from 'vue-form-wizard'
 
@@ -54,6 +54,7 @@ Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)
 Vue.use(Popper)
+Vue.use(CKEditor);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueFormWizard)
 Vue.component('apexchart', VueApexCharts)
