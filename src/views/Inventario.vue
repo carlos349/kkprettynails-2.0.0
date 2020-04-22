@@ -319,7 +319,7 @@
         <div v-for="(data, index) in rows" class="row p-2 m-2">
           <dt class="col-7 mt-2">{{data.producto}}</dt>
 
-          <base-input class="col-5" v-model="countProduct[index].count" placeholder="Ingrese cantidad"></base-input>
+          <base-input class="col-5" v-model="countProduct[index].count" :placeholder="'Ingrese cantidad en '+data.type"></base-input>
         </div>
       </vue-custom-scrollbar> 
       
