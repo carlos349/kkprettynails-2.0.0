@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white">Reporte de {{nameLender}}</h1>
+                        <h1 class="display-2 text-white">Reporte de {{nameLender}} </h1>
                         <base-button v-if="validRoute('empleados', 'detalle')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
                         <base-button v-else disabled type="success">Datos avanzados</base-button>
                         <base-button v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
@@ -150,7 +150,26 @@
                 </template>
             </card>
         </modal>
-        <vue-bootstrap4-table :rows="sales" :columns="columns" :classes="classes" :config="config">
+        <div class="container-fluid hide">
+            <div class="row">
+                <div class="col-6">
+                    
+                    <dt class="col-sm-12">Fecha de Inicio: <b>{{formatDate(sales[0].fecha)}}</b> </dt>
+                    <dt class="col-sm-12">Fecha de Cierre: <b>{{formatDate(new Date())}}</b> </dt>
+                    <dt class="col-sm-12">Servicios totales del mes: <b>{{sales.length}}</b> </dt>
+                    <dt class="col-sm-12">Servicios totales: <b>{{salesTotal.length}}</b> </dt>
+                </div>
+                <div class="col-6">
+                    <dt class="col-sm-12">Comisión Total: <b>{{formatPrice(totalComission)}}</b> </dt>
+                    <dt class="col-sm-12">Total de Adelantos: <b>{{formatPrice(advancement)}}</b> </dt>
+                    <dt class="col-sm-12">Total de Bonos: <b>{{formatPrice(lenderBonus)}}</b> </dt>
+                    <dt class="col-sm-12">Total: <b>{{formatPrice(totalComission + lenderBonus - advancement)}}</b> </dt>
+                    <dt class="col-sm-12">Porcentaje de Servicios Realizados: <b>{{(sales.length * 100) / salesTotal.length}}%</b> </dt>
+                </div>
+            </div>
+            
+        </div>
+        <vue-bootstrap4-table :rows="sales" :columns="columns" :classes="classes" id="tbH" :config="config">
             <template slot="format-total" slot-scope="props">
                 <span>{{formatPrice(props.row.total)}}</span>
             </template>
@@ -172,6 +191,27 @@
                 Total Number of rows selected : {{props.selectedItemsCount}}
             </template>
         </vue-bootstrap4-table>
+        <div class="container-fluid hide">
+            <vue-bootstrap4-table :rows="lendeAdvancements" :columns="columnsLender" :classes="classes" :config="configLender" >
+                <template slot="format-total" slot-scope="props">
+                    <span>{{formatPrice(props.row.total)}}</span>
+                </template>
+                <template slot="format-date" slot-scope="props">
+                    <span>{{formatDate(props.row.date)}}</span>
+                </template>
+            </vue-bootstrap4-table>
+            <vue-bootstrap4-table :rows="lenderBonuses" :columns="columnsBonuses" :classes="classes" :config="configBonuses" >
+                <template slot="format-reason" slot-scope="props">
+                    <span>{{props.row.expense.split(" / ")[0]}}</span>
+                </template>
+                <template slot="format-total" slot-scope="props">
+                    <span>{{formatPrice(props.row.figure)}}</span>
+                </template>
+                <template slot="format-date" slot-scope="props">
+                    <span>{{formatDate(props.row.date)}}</span>
+                </template>
+            </vue-bootstrap4-table>
+        </div>
     </div>
 </template>
 <script>
@@ -196,7 +236,9 @@ export default {
             auth: [],
             id: localStorage.getItem('idReportEmploye'),
             sales: [],
+            salesTotal:[],
             fecha: '',
+            lenderBonuses:[],
             code: '',
             dataDetail: [],
             nameLender: '',
@@ -250,7 +292,54 @@ export default {
                 },
 
             ],
+            columnsBonuses: [
+                {
+                    label: "Razón",
+                    name: "expense",
+                    slot_name: "format-reason",
+                    // filter: {
+                    //     type: "simple",
+                    //     placeholder: "id"
+                    // },
+                    sort: true,
+                },
+                {
+                    label: "Total",
+                    name: "Figure",
+                    slot_name: "format-total",
+                    sort: false,
+                },
+                {
+                    label: "Fecha",
+                    name: "date",
+                    slot_name: "format-date",
+                    sort: false,
+                },
+
+            ],
+            configBonuses: {
+                card_title: "Bonos",
+                checkbox_rows: false,
+                rows_selectable : false,
+                highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+                per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+                show_refresh_button: false,
+                show_reset_button: false,  
+                selected_rows_info: false,
+                preservePageOnDataChange : true,
+                pagination_info : false,
+                pagination: false,
+                global_search: {
+                    placeholder: "Busque el prestador",
+                    visibility: false,
+                    case_sensitive: false,
+                    showClearButton: true,
+                    searchOnPressEnter: false,
+                    searchDebounceRate: 200,                      
+                },
+            },
             configLender: {
+                card_title: "Adelantos",
                 checkbox_rows: false,
                 rows_selectable : false,
                 highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
@@ -353,6 +442,7 @@ export default {
         this.getData()
         this.getAdvancements()
         this.getToken()
+        this.getBonus()
     },
     methods: {
         getToken(){
@@ -366,14 +456,25 @@ export default {
         servicesSale(Data){
             this.dataDetail = Data
             this.modals.modal3 = true
-            console.log(Data)
+            
         },
         getAdvancements(){
             axios.get(endPoint.endpointTarget+'/manicuristas/advancements/'+this.id)
             .then(res => {	
-                console.log(res.data)
+                
                 this.lendeAdvancements = []
                 this.lendeAdvancements = res.data
+            })
+            .catch(err => {
+                console.error(err)
+            })
+        },
+        getBonus(){
+            axios.get(endPoint.endpointTarget+'/manicuristas/getBonusByEmploye/'+this.id)
+            .then(res => {	
+                console.log(res.data)
+                this.lenderBonuses = []
+                this.lenderBonuses = res.data
             })
             .catch(err => {
                 console.error(err)
@@ -385,6 +486,7 @@ export default {
         registerExpense(){
             axios.post(endPoint.endpointTarget+'/manicuristas/registerAdvancement', {
                 reason: this.dataExpense.reason,
+                id:this.id,
                 name: this.nameLender,
                 prest: this.code,
                 total: this.dataExpense.amount,
@@ -470,6 +572,10 @@ export default {
                     }
                     this.totalSale = totals
                 })
+                axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrestAll/'+identification)
+                .then(res => {
+                    this.salesTotal = res.data
+                })
             })
             .catch(err => {
                 console.log(err )
@@ -480,34 +586,35 @@ export default {
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         printReport(){
-            this.$swal({
-                title: '¿Estás seguro de hacer el Cierre?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Si hacer Cierre',
-                cancelButtonText: 'No hacer Cierre',
-                showCloseButton: true,
-                showLoaderOnConfirm: true
-            })
-            .then(result => {
-                if (result.value) {
-                    axios.put(endPoint.endpointTarget+'/manicuristas/ClosePrest/'+this.code)
-                    .then(res => {
-                        if (res.data.status == 'ok') {
-                            setTimeout(()=> {
-                                router.push({path:'/Empleados'})
-                            }, 1000) 
-                        }else{
-                            this.$swal('Error en el cierre', 'Hubo un error', 'error')
-                        }
-                    }) 
-                    .catch(err => {
-                        console.log(err)
-                    })                   
-                }else{
-                    this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
-                }
-            })
+            print()
+            // this.$swal({
+            //     title: '¿Estás seguro de hacer el Cierre?',
+            //     type: 'warning',
+            //     showCancelButton: true,
+            //     confirmButtonText: 'Si hacer Cierre',
+            //     cancelButtonText: 'No hacer Cierre',
+            //     showCloseButton: true,
+            //     showLoaderOnConfirm: true
+            // })
+            // .then(result => {
+            //     if (result.value) {
+            //         axios.put(endPoint.endpointTarget+'/manicuristas/ClosePrest/'+this.code)
+            //         .then(res => {
+            //             if (res.data.status == 'ok') {
+            //                 setTimeout(()=> {
+            //                     router.push({path:'/Empleados'})
+            //                 }, 1000) 
+            //             }else{
+            //                 this.$swal('Error en el cierre', 'Hubo un error', 'error')
+            //             }
+            //         }) 
+            //         .catch(err => {
+            //             console.log(err)
+            //         })                   
+            //     }else{
+            //         this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
+            //     }
+            // })
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
@@ -525,6 +632,9 @@ export default {
 }
 </script>
 <style>
+    .card-header{
+        font-size: 2.5vw;
+    }
     .maxHeight{
         max-height: 200px;
         overflow-y: scroll;
@@ -532,4 +642,31 @@ export default {
     .maxHeight .card-footer{
         display:none;
     }
+    .hide{
+        display: none;
+    }
+    @media print {
+        .card-footer {
+            display :  none;
+        }
+        #sidenav-main{
+            display: none;
+        }
+        .main-content{
+            margin-left: 0 !important;
+        }
+        .btn{
+            display: none;
+        }
+        .hide{
+            display: block;
+        }
+        #tbH td:last-child, #tbH th:last-child{
+            display: none !important;
+        }
+        .hidden{
+            display: none;
+        }
+    }
+    
 </style>
