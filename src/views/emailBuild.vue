@@ -390,22 +390,22 @@ export default {
                     'Content-Type': 'multipart/form-data'
                 }
             })
-            // if (send.data.status == "ok"){ 
-            //     this.$swal({
-            //         type: 'success',
-            //         title: 'Correo enviado correctamente',
-            //         showConfirmButton: false,
-            //         timer: 1500
-            //     })
-            //     router.push({name: 'Clientes'})
-            // }else{
-            //     this.$swal({
-            //         type: 'error',
-            //         title: 'Error al enviar el correo',
-            //         showConfirmButton: false,
-            //         timer: 1500
-            //     })
-            // }       
+            if (send.data.status == "ok"){ 
+                this.$swal({
+                    type: 'success',
+                    title: 'Correo enviado correctamente',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                router.push({path: 'Clientes'})
+            }else{
+                this.$swal({
+                    type: 'error',
+                    title: 'Error al enviar el correo',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }       
         },
         editarTextarea (info, model){
             $(".textarea").removeClass("sombreado")
