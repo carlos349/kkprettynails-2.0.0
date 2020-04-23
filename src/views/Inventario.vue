@@ -305,7 +305,7 @@
             <h1 class="heading mt-5">{{modals.message}}</h1>
         </div>
     </modal>
-    <modal :show.sync="modals.modal4" modal-classes="modal-dialog-centered modal-xl">
+    <modal :show.sync="modals.modal4" modal-classes="modal-dialog-centered modal-lg">
       <h6 slot="header" class="modal-title" id="modal-title-default">Cierre de inventario</h6>
       <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
         <div class="row p-2 m-2">
