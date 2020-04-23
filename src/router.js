@@ -68,6 +68,11 @@ export default new Router({
           component: () => import('./views/Inventario.vue')
         },
         {
+          path: '/Correo',
+          name: '',
+          component: () => import('./views/emailBuild.vue')
+        },
+        {
           path: '/Gastos',
           name: '',
           component: () => import('./views/Gastos.vue')

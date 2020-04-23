@@ -605,7 +605,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                     {function: 'registrar', name:'Registrar', valid: false},
                     {function: 'editar', name:'Editar', valid: false},
                     {function: 'detalle', name:'Ver detalle', valid: false},
-                    {function: 'eliminar', name:'Eliminar', valid: false}
+                    {function: 'eliminar', name:'Eliminar', valid: false},
+                    {function: 'correos', name:'Envio de correos', valid: false}
                 ]
             }else if (route == 'inventario') {
                 this.functions = [

@@ -11,6 +11,7 @@
                         <h1 class="display-2 text-white">Sección de clientes</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus clientes, aquí podrás registrar, editar y visualizar todos tus clientes.</p>
                         <base-button v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un cliente</base-button>
+                        <base-button icon="ni ni-email-83" v-if="validRoute('clientes', 'correos')" type="success" @click="modals.modal3 = true">Enviar correos</base-button>
                         <base-button v-if="validRoute('clientes', 'filtrar')" @click="showFilter" type="default">Filtrar</base-button>
                     </div>
                 </div>
@@ -167,6 +168,55 @@
                 <h1 class="heading mt-5">{{modals.message}}</h1>
             </div>
         </modal>
+        <modal :show.sync="modals.modal3"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                        Elija la plantilla de diseño para su correo
+                    </div>
+                </template>
+                <template>
+                    <div class="row p-3">
+                        <div class="col-4 p-1">
+                            <div class="template" v-on:click="selectTemplate(1)">
+                                <img src="../assets/template-1.png" style="width:100%;" alt="">
+                            </div>
+                        </div>
+                        <div class="col-4 p-1">
+                            <div class="template" v-on:click="selectTemplate(2)">
+                                <img src="../assets/template-2.png" style="width:100%;" alt="">
+                            </div>
+                        </div>
+                        <div class="col-4 p-1">
+                            <div class="template" v-on:click="selectTemplate(3)">
+                                <img src="../assets/template-3.png" style="width:100%;" alt="">
+                            </div>
+                        </div>
+                        <div class="col-4 p-1">
+                            <div class="template" v-on:click="selectTemplate(4)">
+                                <img src="../assets/template-4.png" style="width:100%;" alt="">
+                            </div>
+                        </div>
+                        <div class="col-4 p-1">
+                            <div class="template" v-on:click="selectTemplate(5)">
+                                <img src="../assets/template-5.png" style="width:100%;" alt="">
+                            </div>
+                        </div>
+                        <div class="col-4 p-1">
+                            <div class="template" v-on:click="selectTemplate(6)">
+                                <img src="../assets/template-6.png" style="width:100%;" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </card>
+        </modal>
         <base-alert class="positionAlert" type="success" v-if="successRegister">
             <strong>Registrado!</strong> Has registrado al cliente con exito!
         </base-alert>
@@ -207,6 +257,7 @@ import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
+import router from '../router'
 // COMPONENTS
 
   export default {
@@ -236,6 +287,7 @@ import jwtDecode from 'jwt-decode'
         modals: {
             modal1: false,
             modal2: false,
+            modal3: false,
             message: "",
             icon: '',
             type:''
@@ -323,6 +375,7 @@ import jwtDecode from 'jwt-decode'
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+            console.log(this.auth)
         },
         getClients(){
             axios.get(endPoint.endpointTarget+'/clients')
@@ -371,6 +424,7 @@ import jwtDecode from 'jwt-decode'
                         this.modals = {
                             modal1: false,
                             modal2: false,
+                            modal3:false,
                             message: "",
                             icon: '',
                             type:''
@@ -391,6 +445,7 @@ import jwtDecode from 'jwt-decode'
                         this.modals = {
                             modal1: false,
                             modal2: false,
+                            modal3:false,
                             message: "",
                             icon: '',
                             type: ''
@@ -422,7 +477,9 @@ import jwtDecode from 'jwt-decode'
             }
             if (val == 1) {
                 this.modals = {
-                    modal1: false
+                    modal1: false,
+                    modal2:false,
+                    modal3:false,
                 }
             }
             if (val == 2) {
@@ -479,6 +536,7 @@ import jwtDecode from 'jwt-decode'
                                 this.modals = {
                                     modal1: false,
                                     modal2: false,
+                                    modal3:false,
                                     message: "",
                                     icon: '',
                                     type:''
@@ -503,6 +561,7 @@ import jwtDecode from 'jwt-decode'
                         this.modals = {
                             modal1: false,
                             modal2: false,
+                            modal3:false,
                             message: "",
                             icon: '',
                             type:''
@@ -531,6 +590,7 @@ import jwtDecode from 'jwt-decode'
                         this.modals = {
                             modal1: false,
                             modal2: false,
+                            modal3:false,
                             message: "",
                             icon: '',
                             type:''
@@ -550,6 +610,7 @@ import jwtDecode from 'jwt-decode'
                         this.modals = {
                             modal1: false,
                             modal2: false,
+                            modal3:false,
                             message: "",
                             icon: '',
                             type: ''
@@ -572,7 +633,22 @@ import jwtDecode from 'jwt-decode'
                     }
                 }
             }
-        }
+        },
+        selectTemplate(select){
+            this.modals = {
+                modal1: false,
+                modal2: false,
+                modal3:false,
+                message: "",
+                icon: '',
+                type: ''
+            }
+            setTimeout(() => {
+               localStorage.setItem('selectTemplate', select)
+                router.push({path: 'Correo'}) 
+            }, 200);
+			
+		}
     }
   };
 </script>
@@ -595,4 +671,16 @@ import jwtDecode from 'jwt-decode'
     .tableClient .vbt-table-tools .vbt-global-search .form-group{
         width: 30%;
     }
+    .template{
+		padding: 2px;
+		// background-color: #e4e8ec;
+		cursor: pointer;
+		-webkit-transition: all 0.5s ease-out;
+        opacity:.6;
+	}
+	.template:hover{
+		background-color: rgb(90, 90, 90);
+        opacity:1;
+	}
+
 </style>
