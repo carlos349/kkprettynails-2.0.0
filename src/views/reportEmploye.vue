@@ -154,7 +154,7 @@
             <div class="row">
                 <div class="col-6">
                     
-                    <dt class="col-sm-12">Fecha de Inicio: <b>{{formatDate(sales[0].fecha)}}</b> </dt>
+                    <dt class="col-sm-12">Fecha de Inicio: <b>{{formatDate(dateInit)}}</b> </dt>
                     <dt class="col-sm-12">Fecha de Cierre: <b>{{formatDate(new Date())}}</b> </dt>
                     <dt class="col-sm-12">Servicios totales del mes: <b>{{sales.length}}</b> </dt>
                     <dt class="col-sm-12">Servicios totales: <b>{{salesTotal.length}}</b> </dt>
@@ -189,6 +189,9 @@
             </template>
             <template slot="selected-rows-info" slot-scope="props">
                 Total Number of rows selected : {{props.selectedItemsCount}}
+            </template>
+            <template slot="result-info" slot-scope="props">
+                Si? : {{props.selectedItemsCount}}
             </template>
         </vue-bootstrap4-table>
         <div class="container-fluid hide">
@@ -237,6 +240,7 @@ export default {
             id: localStorage.getItem('idReportEmploye'),
             sales: [],
             salesTotal:[],
+            dateInit:'',
             fecha: '',
             lenderBonuses:[],
             code: '',
@@ -551,10 +555,12 @@ export default {
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         getData(){
+            const date = new Date()
+            this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
+            console.log(this.fecha)
             axios.get(endPoint.endpointTarget+'/manicuristas/justOneById/'+this.id)
             .then(resData => {
-                const date = new Date()
-                this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
+                
                 this.code = resData.data._id
                 this.nameLender = resData.data.nombre
                 this.totalComission = resData.data.comision
@@ -564,6 +570,7 @@ export default {
                 axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+identification)
                 .then(res => {
                     this.sales = res.data
+                    this.dateInit = res.data[0].fecha
                     let totals = 0
                     let comissions = 0
                     for (let index = 0; index < res.data.length; index++) {
