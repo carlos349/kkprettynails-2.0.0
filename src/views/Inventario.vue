@@ -19,7 +19,7 @@
     <tabs fill class="flex-column flex-md-row inventory">
         <card shadow>
             <tab-pane>
-                <span slot="title">
+                <span class="p-2" slot="title">
                     <i class="fa fa-box-open"></i>
                     Tabla de productos
                 </span>
@@ -28,8 +28,8 @@
                       <b>
                         <center>
                             
-                            <base-button v-b-tooltip.hover.top title="Compras" size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type,initialState(1,props.row._id), dataProduct.name = props.row.producto" icon="fa fa-plus"></base-button>
-                            <base-button v-b-tooltip.hover.top title="Eliminar" size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash"></base-button>
+                            <base-button  title="Compras" size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type, dataProduct.name = props.row.producto,initialState(1,props.row._id)" icon="fa fa-plus"></base-button>
+                            <base-button  title="Eliminar" size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash"></base-button>
                         </center>
                       </b>
                   </template>
@@ -169,7 +169,7 @@
                     <small>Datos del producto</small>
                 </div>
                 <div v-else style="margin-top:-30%" class="text-center text-muted mb-4">
-                    <small>Anexa mas productos</small>
+                    <small>Anexa mas productos a {{dataProduct.name}}</small>
                 </div>
                 <form role="form">
                    <div class="row" v-if="validForm == 3">
@@ -778,7 +778,9 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           }
           this.providerSup.validProvider = true
         }
-        this.dataProduct = {
+        if(type == ''){
+          console.log("No entre aqui")
+          this.dataProduct = {
           name:'',
           price:'',
           initial:'',
@@ -786,6 +788,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           id:''
         }
         this.unit = ''
+        }
       },
       pushData(name,cantidad,precio,id,type){
         this.validForm = 2
@@ -1155,5 +1158,11 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
   }
   .inventory .card-header{
     display:none;
+  }
+  .nav-item{
+    padding-left: 1rem;
+  }
+  .nav-item:last-child{
+    padding-right: 1rem !important;
   }
 </style>

@@ -1157,7 +1157,8 @@ export default {
 						this.subTotal = subTotal
 					})
 				})
-			})
+            })
+            console.log(this.serviciosSelecionados)
 		},
         initialState(){
             this.getServices()
@@ -1213,9 +1214,12 @@ export default {
 				if (this.totalSinFormato == totalFormadePago ) {
                     const itemList = []
                     for (let index = 0; index < this.serviciosSelecionados.length; index++) {
-                        for (let i = 0; i < this.serviciosSelecionados[index].productos.length; i++) {
-                            itemList.push(this.serviciosSelecionados[index].productos[i])
+                        if (this.serviciosSelecionados[index].productos) {
+                            for (let i = 0; i < this.serviciosSelecionados[index].productos.length; i++) {
+                                itemList.push(this.serviciosSelecionados[index].productos[i])
+                            }
                         }
+                        
                     }
                     axios.post(endPoint.endpointTarget+'/inventario/procesarVenta',{
                         array:itemList
