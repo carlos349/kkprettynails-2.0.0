@@ -226,7 +226,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text bg-default" id="basic-addon1">Para:</span>
                         </div>
-                        <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1">
+                        <input v-model="mails" type="text" v-on:change="countMails" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1">
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
@@ -319,6 +319,15 @@ export default {
             const splitMails = this.mails.split(',')
             this.mailsQuantity = splitMails.length
         },
+        countMails(){
+            const splitMails = this.mails.split(',')
+            this.mailsQuantity = splitMails.length
+            const count = this.mails.length
+            console.log(this.mails[count - 1])
+            if (this.mails[count - 1] == ',') {
+                this.mailsQuantity = this.mailsQuantity - 1
+            }
+        },
         onChange (image) {
             if (image) {
                 this.image = this.$refs.pictureInput.file
@@ -398,13 +407,6 @@ export default {
                     timer: 1500
                 })
                 router.push({path: 'Clientes'})
-            }else{
-                this.$swal({
-                    type: 'error',
-                    title: 'Error al enviar el correo',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
             }       
         },
         editarTextarea (info, model){
