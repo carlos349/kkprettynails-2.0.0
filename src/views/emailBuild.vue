@@ -15,7 +15,7 @@
             </div>
         </base-header>
         
-            <div class="p-0 m-0 row">
+            <div class="p-0 m-0 row " style="height:130vh;">
                 <div v-if="template == 1" class="col-md-7 templates">
                     <div class="container">
                         <picture-input 
@@ -218,7 +218,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text bg-default" id="basic-addon1">De:</span>
                         </div>
-                        <input v-model="de" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1">
+                        <input readonly v-model="de" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1">
                     </div>
                     <p style="color:#8b8a89" class="font-italic float-right">*Estas enviando el E-Mail a {{mailsQuantity}} personas</p>
                     <div class="input-group mb-3">
@@ -235,9 +235,7 @@
                         <input v-model="subject" type="text" class="form-control pl-2" placeholder="Asunto.." aria-label="Username" aria-describedby="basic-addon1">
                     </div>
                     <div class="ck-styles">
-                        <button class="btn btn-default float-right mb-2 buttonSend" v-on:click="SendMail">
-                            <i class="fa fa-paper-plane"></i>
-                        </button>
+                        
                         <ckeditor  @input="changeTextarea()" :editor="editor" v-model="editorData" ></ckeditor>
                     </div>
                 </div>
@@ -245,6 +243,9 @@
                     
                 </div> -->
             </div>
+            <button class="btn btn-default float-right mb-2 buttonSend" v-on:click="SendMail">
+                <i class="fa fa-paper-plane"></i>
+            </button>
         </div>
 </template>
 <script>
@@ -265,7 +266,7 @@ export default {
             textareaTwo:'Click para editar en el editor...',
             textareaThree:'Click para editar en el editor...',
             select: 0,
-            de: 'kkprettynails@gmail.com',
+            de: 'info@kkprettynails.cl',
             mails: '',
             mailsQuantity: '',
             subject: ''
@@ -475,7 +476,7 @@ export default {
     }
     .buttonSend{
         position:absolute;
-        top:37.5%;
+        top:35%;
         right: 2%;
     }
 </style>
