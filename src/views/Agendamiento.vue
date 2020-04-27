@@ -883,7 +883,8 @@
             discountSplit:[],
             employeDiscount:[],
             endDatesId:[],
-            clientIds:[]
+            clientIds:[],
+            ifrecomend:0
         },
         employeByDate: 'Filtrar por empleado', 
         clients:[],
@@ -2030,27 +2031,33 @@
         },
         ProccessSelectedDates(){    
             this.dateModals.modal4 = false 
-            
+              
             for (let index = 0; index < this.selectedDates.closedArray.length; index++) {
                 const position = this.selectedDates.closedArray[index]
+                
                 for (let indexTwo = 0; indexTwo < position.services.length; indexTwo++) {
                     const positionTwo = position.services[indexTwo];
                     this.selectedDates.services.push(positionTwo)
                 }
+                position.total = position.descuento > 0 ? position.total - (position.total / 100 * position.descuento) : position.total
+                position.totalLocal = position.descuento > 0 ? position.totalLocal - (position.totalLocal / 100 * position.descuento) : position.totalLocal
+                position.ifrecomend= position.descuento == 15 ? 1 : 0
+                position.comision = position.descuento > 0 ? position.comision - (position.comision / 100 * position.descuento) : position.comision
+                this.selectedDates.ifrecomend = 
                 this.selectedDates.client = index == 0 ? position.client : this.selectedDates.client + ' - ' + position.client
                 this.selectedDates.clientSplit = this.selectedDates.client.split('-')
                 this.selectedDates.employes = index == 0 ? position.employe : this.selectedDates.employes + ' / ' + position.employe
                 this.selectedDates.design = parseFloat(this.selectedDates.design) + parseFloat(position.design)
                 this.selectedDates.comision = parseFloat(this.selectedDates.comision) + parseFloat(position.comision)
                 this.selectedDates.totaLocal = parseFloat(this.selectedDates.totaLocal) + parseFloat(position.totalLocal)
-                this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(position.total)
+                this.selectedDates.total =  parseFloat(this.selectedDates.total) + parseFloat(position.total)
                 this.selectedDates.discount = index == 0 ? position.employe + ' / ' + position.descuento+'%' : this.selectedDates.discount + ' - ' +position.employe + ' / ' + position.descuento+'%'
                 this.selectedDates.discountSplit = this.selectedDates.discount.split('-')
                 this.selectedDates.employeDiscount.push({employe: position.employe, comision: position.comision})
                 this.selectedDates.endDatesId.push(position.id)
-                this.selectedDates.clientIds.push(position.client.split(' / ')[1])
+                this.selectedDates.clientIds.push({id:position.client.split(' / ')[1], ifrecomend:position.ifrecomend})
             }
-            
+             console.log(this.selectedDates.closedArray)
             this.dateModals.modal5 = true
         },
         hundredPorcent(tipo){
@@ -2276,6 +2283,7 @@
                 total: value.selected_item.total,
                 descuento: value.selected_item.descuento,
                 date: value.selected_item.date,
+                ifrecomend:0
             }
             this.selectedDates.closedArray.push(selectArray)
         },

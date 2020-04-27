@@ -38,7 +38,7 @@
                             <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
                                 <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, servicio.productos), countServices[index].count++">
                                     <span class="float-left">{{servicio.nombre}}</span>
-                                    <badge class="badgeClass float-right" type="primary" :id="servicio._id">{{countServices[index].count}}</badge>
+                                    <badge class="badgeClass badgeServices float-right" type="primary" :id="servicio._id">{{countServices[index].count}}</badge>
                                 </base-button>
                                 <base-button size="sm" type="default" v-on:click="borrarServicio(servicio.nombre,index,servicio._id,servicio.precio, servicio.descuento)">
                                     <font-awesome-icon icon="times"/>
@@ -204,7 +204,7 @@
                     <h1 class="pt-2">Total: {{total}}</h1>
                 </div>
                 <div class="col-6">
-                    <base-button size="lg" :disabled="validator" class="float-right w-75" type="success" v-on:click="processSale">
+                    <base-button size="lg" :disabled="validatorBtn" class="float-right w-75" type="success" v-on:click="processSale">
                         Procesar
                     </base-button>
                 </div>
@@ -461,6 +461,7 @@ export default {
         return {
             auth: [],
             validator:true,
+            validatorBtn:true,
             modals: {
                 modal1: false,
                 modal2: false,
@@ -1060,9 +1061,11 @@ export default {
             }
             if (this.clientSelect != null && this.lenderSelect != null) {
                 this.validator = false
+                this.validatorBtn = false
             }
             else{
                 this.validator = true
+                this.validatorBtn = true
 
             }
         },
@@ -1104,12 +1107,16 @@ export default {
             }
             if (this.clientSelect != null && this.lenderSelect != null) {
                 this.validator = false
+                this.validatorBtn = false
             }
             else{
                 this.validator = true
+                this.validatorBtn = true
             }
         },
         getDataToDate(id){
+            this.initialState()
+            
 			this.servicesProcess = []
 			this.serviciosSelecionados = []
 			this.idProcess = id
@@ -1131,6 +1138,7 @@ export default {
                     }
 					axios.get(endPoint.endpointTarget+'/servicios')
 					.then(res => {
+                        this.validator = true
 						var subTotal = 0
 						var desc = 0
 						for (let index = 0; index < this.servicesProcess.length; index++) {
@@ -1149,7 +1157,11 @@ export default {
 						this.price = this.formatPrice(subTotal)
 						if (this.discount == 10) {
 							desc = subTotal * 0.90
-						}else{
+                        }
+                        else if (this.discount == 15) {
+                            desc = subTotal * 0.85
+                        }
+                        else{
 							desc = subTotal
 						}
 						this.total = this.formatPrice(desc)
@@ -1158,11 +1170,14 @@ export default {
 					})
 				})
             })
+            
             console.log(this.serviciosSelecionados)
 		},
         initialState(){
+            $(".badgeServices").text('0')
             this.getServices()
             this.validator = true
+            this.validatorBtn = true
 			this.price = '0';
 			this.serviciosSelecionados = [];
 			this.discount = "";

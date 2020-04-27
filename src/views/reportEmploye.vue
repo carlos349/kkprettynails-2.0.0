@@ -8,7 +8,8 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white">Reporte de {{nameLender}} </h1>
+                        <h1 class="display-2 hidden text-white">Reporte de {{nameLender}} </h1>
+                        
                         <base-button v-if="validRoute('empleados', 'detalle')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
                         <base-button v-else disabled type="success">Datos avanzados</base-button>
                         <base-button v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
@@ -18,6 +19,9 @@
                 </div>
             </div>
         </base-header>
+        <center>
+                            <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre </h1> 
+                        </center>
         <modal :show.sync="modals.modal1"
                :gradient="modals.type"
                modal-classes="modal-danger modal-dialog-centered">
@@ -153,7 +157,7 @@
         <div class="container-fluid hide">
             <div class="row">
                 <div class="col-6">
-                    
+                    <dt class="col-sm-12">Nombre del empleado: <b>{{nameLender}}</b> </dt>
                     <dt class="col-sm-12">Fecha de Inicio: <b>{{formatDate(dateInit)}}</b> </dt>
                     <dt class="col-sm-12">Fecha de Cierre: <b>{{formatDate(new Date())}}</b> </dt>
                     <dt class="col-sm-12">Servicios totales del mes: <b>{{sales.length}}</b> </dt>
@@ -169,7 +173,7 @@
             </div>
             
         </div>
-        <vue-bootstrap4-table :rows="sales" :columns="columns" :classes="classes" id="tbH" :config="config">
+        <vue-bootstrap4-table :rows="sales" :columns="columns" class="printPadding" :classes="classes" id="tbH" :config="config">
             <template slot="format-total" slot-scope="props">
                 <span>{{formatPrice(props.row.total)}}</span>
             </template>
@@ -667,12 +671,21 @@ export default {
         }
         .hide{
             display: block;
+            
         }
         #tbH td:last-child, #tbH th:last-child{
             display: none !important;
         }
+        
         .hidden{
             display: none;
+        }
+        .printPadding{
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+        .card-header{
+            text-align: center;
         }
     }
     
