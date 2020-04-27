@@ -12,13 +12,18 @@
             <!-- Card stats -->
             <div class="row">
                 <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Total de ventas"
-                                type="gradient-red"
+                  <stats-card title="Total local"
+                                type="gradient-orange"
                                 :sub-title="totalSales"
-                                icon="ni ni-active-40"
+                                icon="ni ni-shop"
                                 class="mb-1 mb-xl-0"
                     >
-                    </stats-card>
+                    <template slot="footer">
+                        <span v-if="totalSalesPrevValid == true" class="text-success mr-2"><i class="fa fa-arrow-up"></i> {{formatFixed(porcentajeTotalSales)}}%</span>
+                        <span v-else class="text-danger mr-2"><i class="fa fa-arrow-down"></i> {{formatFixed(porcentajeTotalSales)}}%</span><br>
+                        <span class="text-nowrap">Mes pasado <small class="text-muted">  {{totalSalesPrev}}</small></span>
+                    </template>
+                  </stats-card>
                 </div>
                 <div class="col-xl-3 col-lg-6">
                     <stats-card title="Total local"
@@ -640,6 +645,7 @@
   import {Spanish} from 'flatpickr/dist/l10n/es.js';
   import vueCustomScrollbar from 'vue-custom-scrollbar'
   import XLSX from 'xlsx'
+  const dateNew = new Date()
   export default {
     components: {
       LineChart,
@@ -671,8 +677,8 @@
             locale: Spanish, // locale for this instance only          
         }, 
         dates: {
-          range: new Date(),
-          rangeDaily: new Date()
+          range: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear(),
+          rangeDaily: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear()
         },
         variable:10,
         ventas:[],
@@ -743,7 +749,10 @@
         inspectorDaily: false,
         Services: [],
         serviceSelect:'Seleccione un servicio',
-        ifServices: false
+        ifServices: false,
+        totalSalesPrev: 0,
+        totalSalesPrevValid: true,
+        porcentajeTotalSales: 0
       };
     },
     beforeCreate(){
@@ -767,7 +776,6 @@
       this.getEmployes()
       this.SalesQuantityChartFuncDaily()
       this.getToken()
-        console.log(this.auth)
     },
     methods: {
       getToken(){
@@ -1204,16 +1212,23 @@
       getVentas(){
         axios.get(endPoint.endpointTarget+'/metrics/total')
         .then(res => {
-          this.totalSales = res.data.status
+          this.totalSales = res.data.count
+          this.totalSalesPrev = res.data.countPrev
+          this.porcentajeTotalSales = (parseFloat(this.totalSales) - parseFloat(this.totalSalesPrev)) / parseFloat(this.totalSales) * 100
+          if (this.porcentajeTotalSales < 0) {
+            this.totalSalesPrevValid = false
+          }
+          console.log(this.totalSales,this.totalSalesPrev,this.porcentajeTotalSales,this.totalSalesPrevValid)
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err)
           this.$swal({
             type: 'error',
             title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
             showConfirmButton: false,
             timer: 2500
           })
-          router.push({name: 'login'})
+          // router.push({name: 'login'})
         })
       },
       totales(month){
@@ -1463,7 +1478,9 @@
         return val.toString()
       },
       formatFixed(val){
-        return val.toFixed(2)
+        if (val) {
+          return val.toFixed(2)
+        }
       },
       validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
