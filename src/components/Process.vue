@@ -183,7 +183,7 @@
                         />
                     </div>
                 </div>
-                <!-- <div class="col-6">
+                <div class="col-6">
                     <div v-on:change="changeDate">
                         <base-input addon-left-icon="ni ni-calendar-grid-58">
                             <flat-picker 
@@ -197,7 +197,7 @@
                             </flat-picker>
                         </base-input>
                     </div>
-                </div> -->
+                </div>
             </div>
             <div class="row">
                 <div class="col-6">
