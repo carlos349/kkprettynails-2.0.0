@@ -338,7 +338,7 @@
 
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'first'" >
-                                    Lleva descuento (Primer cliente)
+                                    Lleva descuento (Primera atención)
                                     <i class="text-success p-1 ni ni-check-bold ni-1x aling-center"> </i>
                                 </span>
                                 <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'recomnd'" >

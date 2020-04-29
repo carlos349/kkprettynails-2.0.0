@@ -597,35 +597,35 @@ export default {
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         printReport(){
-            print()
-            // this.$swal({
-            //     title: '¿Estás seguro de hacer el Cierre?',
-            //     type: 'warning',
-            //     showCancelButton: true,
-            //     confirmButtonText: 'Si hacer Cierre',
-            //     cancelButtonText: 'No hacer Cierre',
-            //     showCloseButton: true,
-            //     showLoaderOnConfirm: true
-            // })
-            // .then(result => {
-            //     if (result.value) {
-            //         axios.put(endPoint.endpointTarget+'/manicuristas/ClosePrest/'+this.code)
-            //         .then(res => {
-            //             if (res.data.status == 'ok') {
-            //                 setTimeout(()=> {
-            //                     router.push({path:'/Empleados'})
-            //                 }, 1000) 
-            //             }else{
-            //                 this.$swal('Error en el cierre', 'Hubo un error', 'error')
-            //             }
-            //         }) 
-            //         .catch(err => {
-            //             console.log(err)
-            //         })                   
-            //     }else{
-            //         this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
-            //     }
-            // })
+            this.$swal({
+                title: '¿Estás seguro de hacer el Cierre?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si hacer Cierre',
+                cancelButtonText: 'No hacer Cierre',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
+            })
+            .then(result => {
+                if (result.value) {
+                    axios.put(endPoint.endpointTarget+'/manicuristas/ClosePrest/'+this.code)
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            print()
+                            setTimeout(()=> {
+                                router.push({path:'/Empleados'})
+                            }, 1000) 
+                        }else{
+                            this.$swal('Error en el cierre', 'Hubo un error', 'error')
+                        }
+                    }) 
+                    .catch(err => {
+                        console.log(err)
+                    })                   
+                }else{
+                    this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
+                }
+            })
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
