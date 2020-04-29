@@ -1224,9 +1224,9 @@ export default {
 				this.design = 0
             }
             
-			const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
+            const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
 			if (this.clientSelect && this.lenderSelect != '') {
-				if (this.totalSinFormato == totalFormadePago ) {
+				if (Math.round(this.totalSinFormato) == Math.round(totalFormadePago)) {
                     const itemList = []
                     for (let index = 0; index < this.serviciosSelecionados.length; index++) {
                         if (this.serviciosSelecionados[index].productos) {
