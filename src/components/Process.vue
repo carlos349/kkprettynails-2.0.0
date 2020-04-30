@@ -960,7 +960,10 @@ export default {
                         this.totalSinFormato = parseFloat(this.totalSinFormato) + parseFloat(this.serviciosSelecionados[index].precio)
                     }
                 }
-                
+            }else{
+
+                this.total = this.formatPrice(this.subTotal + this.design)
+                this.totalSinFormato = this.subTotal + this.design
             }
 			
         },
@@ -1116,7 +1119,7 @@ export default {
         },
         getDataToDate(id){
             this.initialState()
-            
+            this.validator = false
 			this.servicesProcess = []
 			this.serviciosSelecionados = []
 			this.idProcess = id
@@ -1136,45 +1139,39 @@ export default {
                     }else if (res.data[0].participacion == 0) {
                         this.discount = 10
                     }
-					axios.get(endPoint.endpointTarget+'/servicios')
-					.then(res => {
-                        this.validator = true
-						var subTotal = 0
-						var desc = 0
-						for (let index = 0; index < this.servicesProcess.length; index++) {
-							this.serviciosSelecionados.push({servicio: this.servicesProcess[index].servicio, comision: this.servicesProcess[index].comision, precio: this.servicesProcess[index].precio, descuento: this.servicesProcess[index].descuento})
-							let valSpan = ''
-							let sumaVal = 0
-							for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
-								if (this.servicesProcess[index].servicio == res.data[indexTwo].nombre) {
-									subTotal = subTotal + parseFloat(res.data[indexTwo].precio)
-									let valSpan = $(`#${res.data[indexTwo]._id}`).text()
-									let sumaVal = parseFloat(valSpan) + 1
-									$(`#${res.data[indexTwo]._id}`).text(sumaVal)
-								}
-							}
+                    var subTotal = 0
+                    var desc = 0
+                    for (let index = 0; index < this.servicesProcess.length; index++) {
+                        this.serviciosSelecionados.push({servicio: this.servicesProcess[index].servicio, comision: this.servicesProcess[index].comision, precio: this.servicesProcess[index].precio, descuento: this.servicesProcess[index].descuento})
+                        let valSpan = ''
+                        let sumaVal = 0
+                        for (let indexTwo = 0; indexTwo < this.services.length; indexTwo++) {
+                            if (this.servicesProcess[index].servicio == this.services[indexTwo].nombre) {
+                                subTotal = subTotal + parseFloat(this.services[indexTwo].precio)
+                                this.countServices[indexTwo].count++
+                            }
                         }
-						this.price = this.formatPrice(subTotal)
-						if (this.discount == 10) {
-							desc = subTotal * 0.90
-                        }
-                        else if (this.discount == 15) {
-                            desc = subTotal * 0.85
-                        }
-                        else{
-							desc = subTotal
-						}
-						this.total = this.formatPrice(desc)
-						this.totalSinFormato = desc
-						this.subTotal = subTotal
-					})
+                    }
+                    this.price = this.formatPrice(subTotal)
+                    if (this.discount == 10) {
+                        desc = subTotal * 0.90
+                    }
+                    else if (this.discount == 15) {
+                        desc = subTotal * 0.85
+                    }
+                    else{
+                        desc = subTotal
+                    }
+                    this.total = this.formatPrice(desc)
+                    this.totalSinFormato = desc
+                    this.subTotal = subTotal
+                
 				})
             })
             
             console.log(this.serviciosSelecionados)
 		},
         initialState(){
-            $(".badgeServices").text('0')
             this.getServices()
             this.validator = true
             this.validatorBtn = true
@@ -1223,7 +1220,6 @@ export default {
 			if (this.design == '') {
 				this.design = 0
             }
-            
             const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
 			if (this.clientSelect && this.lenderSelect != '') {
 				if (Math.round(this.totalSinFormato) == Math.round(totalFormadePago)) {
