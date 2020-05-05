@@ -176,11 +176,11 @@
                             </div>
                           </template>
                         </div>
-                        <div class="row">
+                        <div class="row" v-if="progress">
                           <div v-if="tables.firstTable" class="col-md-4">
                             <base-button type="default" title="Generar Excel" size="sm" class="buttonExcel" icon="ni ni-book-bookmark" v-on:click="exportXLSX(firstDataTable, 'dates')">
                             </base-button>
-                            <vue-custom-scrollbar class="maxHeight">
+                            <vue-custom-scrollbar class="maxHeight" v-if="firstDataTable.length > 0">
                               <base-table thead-classes="thead-light" :data="firstDataTable">
                                 <template slot="columns">
                                   <th>Fecha</th>
@@ -200,6 +200,7 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <h1 class="text-center" v-else>No hay ventas de este mes</h1>
                           </div>
                           <div v-if="tables.secondTable" class=" col-md-4">
                             <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcel" v-on:click="exportXLSX(dataTable, 'dates')">
@@ -433,6 +434,17 @@
                               </base-dropdown> -->
                           </div>
                         </div>
+                        <center v-else>
+                            <loading-progress
+                                :progress="progress"
+                                :indeterminate="indeterminate"
+                                class="text-center"
+                                :hide-background="hideBackground"
+                                shape="circle"
+                                size="100"
+                                fill-duration="2"
+                            />
+                        </center>
                     </card>
                 </div>
             </div>
@@ -494,11 +506,11 @@
                             </div>
                           </template>
                         </div>
-                        <div class="row">
+                        <div class="row" v-if="progressDaily">
                           <div v-if="tablesDaily.firstTable" class=" col-md-5">
                             <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcelDaily" v-on:click="exportXLSX(firstDataTableDaily, 'daily')">
                             </base-button>
-                            <vue-custom-scrollbar class="maxHeightEspecific">
+                            <vue-custom-scrollbar v-if="firstDataTableDaily.length > 0" class="maxHeightEspecific">
                               <base-table thead-classes="thead-light" :data="firstDataTableDaily">
                                 <template slot="columns">
                                   <th>Día</th>
@@ -518,6 +530,7 @@
                                 </template>
                               </base-table>
                             </vue-custom-scrollbar >
+                            <h1 class="text-center" v-else>No hay ventas de este mes</h1>
                           </div>
                           <div v-if="tablesDaily.secondTable" class=" col-md-5">
                             <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcelDaily" v-on:click="exportXLSX(dataTableDaily, 'daily')">
@@ -619,6 +632,17 @@
                             <apexchart ref="chartApisDaily" :height="400" v-if="loadedDaily" :options="chartDaily" :series="seriesDaily"></apexchart>
                           </div>
                         </div>
+                        <center v-else>
+                            <loading-progress
+                                :progress="progressDaily"
+                                :indeterminate="indeterminate"
+                                class="text-center"
+                                :hide-background="hideBackground"
+                                shape="circle"
+                                size="100"
+                                fill-duration="2"
+                            />
+                        </center>
                     </card>
                 </div>
             </div>
@@ -657,6 +681,8 @@
     },
     data() {
       return {
+        progress: false,
+        progressDaily:false,
         modals: {
             modal1: false,
             message: "",
@@ -881,6 +907,7 @@
         this.inspectorDaily = true
       },
       runGraphDaily(){
+        this.progressDaily = false
         var dates, split
         if (this.dates.rangeDaily.length > 12) {
           split = this.dates.rangeDaily.split(' a ')
@@ -924,6 +951,7 @@
           typeAPI = axios.get(endPoint.endpointTarget+'/metrics/'+this.apiGraphDaily)
         }
         typeAPI.then(res => {
+          this.progressDaily = true
           if (res.data.status == 'ok') {
             if (this.apiGraphDaily == 'dailyQuantityPerDay') {
               this.tablesDaily = {
@@ -1015,6 +1043,7 @@
         XLSX.writeFile(wb, category+'-'+dates+'.xlsx') 
       },
       runGraph(){
+        this.progress = false
         var dates, split
         if (this.dates.range.length > 12) {
           split = this.dates.range.split(' a ')
@@ -1059,6 +1088,7 @@
           })
         }
         typeAPI.then(res => {
+          this.progress = true
           if (res.data.status == 'ok') {
             if (this.apiGraph == 'dailyProduction') {
               this.chartOptions = typeDatetime
@@ -1267,12 +1297,14 @@
         })
       },
       SalesQuantityChartFuncDaily(){
+        this.progressDaily = false
         const dateNow = new Date()
         const dateFormat = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-1'
         const dateFormatTwo = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-30'
         this.loaded = false
         axios.get(endPoint.endpointTarget+'/metrics/dailyQuantityPerDay/'+dateFormat+':'+dateFormatTwo)
         .then(res => {	
+          this.progressDaily = true
           const userlist = res.data
           this.firstDataTableDaily = res.data.dataTable
           this.tablesDaily = {
@@ -1347,6 +1379,7 @@
         })
       },
       SalesQuantityChartFunc(){
+        this.progress = false
         const dateNow = new Date()
         console.log(dateNow)
         const dateFormat = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-1'
@@ -1354,6 +1387,7 @@
         this.loaded = false
         axios.get(endPoint.endpointTarget+'/metrics/dailyExpenseGainTotal/'+dateFormat+':'+dateFormatTwo)
         .then(res => {	
+          this.progress = true
           const userlist = res.data
           this.firstDataTable = res.data.dataTable
           this.tables.firstTable = true
@@ -1611,4 +1645,13 @@
     left:65%;
   }
 }
+  .vue-progress-path path {
+      stroke-width: 12;
+  }
+  .vue-progress-path .progress {
+      stroke:#00768c;
+  }
+  .vue-progress-path .background {
+      stroke: transparent;
+  }
 </style>

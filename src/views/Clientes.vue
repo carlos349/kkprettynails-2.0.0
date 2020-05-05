@@ -223,7 +223,7 @@
 
         <!-- TABLA DE CLIENTES -->
 
-        <vue-bootstrap4-table class="tableClient" :rows="rows" :columns="columns" :classes="classes" :config="config">
+        <vue-bootstrap4-table v-if="progress" class="tableClient" :rows="rows" :columns="columns" :classes="classes" :config="config">
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <center>
@@ -244,6 +244,17 @@
                 Total Number of rows selected : {{props.selectedItemsCount}}
             </template>
         </vue-bootstrap4-table>
+        <center v-else>
+            <loading-progress
+                :progress="progress"
+                :indeterminate="indeterminate"
+                class="text-center"
+                :hide-background="hideBackground"
+                shape="circle"
+                size="100"
+                fill-duration="2"
+            />
+        </center>
 
         <!-- END -->
 
@@ -266,6 +277,7 @@ import router from '../router'
     },
     data() {
       return {
+        progress:false,
         auth: [],
         successRegister:false,
         clientsNames: [],
@@ -375,34 +387,20 @@ import router from '../router'
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
-            console.log(this.auth)
         },
         getClients(){
+            this.progress = false
             axios.get(endPoint.endpointTarget+'/clients')
             .then(res => {
 				console.log(res.data)
                 this.rows = res.data
                 for (let index = 0; index < res.data.length; index++) {
                     this.clientsNames.push(res.data[index].nombre + " / " + res.data[index].identidad)
-                    
                 }
-				// for (let i = 0; i < this.clients.length; i++) {
-				// 	// this.clients[i].push({thatId:this.clients[i].identidad}) 
-				// 	if (this.clients[i].correoCliente) {
-				// 		this.clients[i].identidad = this.clients[i].identidad + '\n / ' + this.clients[i].correoCliente 
-				// 	}
-				// 	if (this.clients[i].instagramCliente) {
-				// 		this.clients[i].identidad = this.clients[i].identidad + '\n / ' + this.clients[i].instagramCliente
-				// 	}
-				// 	this.clients[i].fecha = this.formatDate(this.clients[i].fecha)
-				// 	this.clients[i].ultimaFecha = this.formatDate(this.clients[i].ultimaFecha)
-					
-				// }
-				// console.log(this.clients)
+                this.progress = true
             })
         },
         registerClients(){
-            console.log(this.registerClient.recommender)
             var ifCheck = this.registerClient.discount ? 0 : 1
             axios.post(endPoint.endpointTarget+'/clients', {
                 nombre:this.registerClient.name,
@@ -682,5 +680,13 @@ import router from '../router'
 		background-color: rgb(90, 90, 90);
         opacity:1;
 	}
-
+    .vue-progress-path path {
+        stroke-width: 12;
+    }
+    .vue-progress-path .progress {
+        stroke:#00768c;
+    }
+    .vue-progress-path .background {
+        stroke: transparent;
+    }
 </style>

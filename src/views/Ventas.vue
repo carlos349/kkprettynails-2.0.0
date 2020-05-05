@@ -108,7 +108,7 @@
                 </template>
             </card>
         </modal>
-        <vue-bootstrap4-table :rows="sales" :columns="columns" :classes="classes" :config="configTable">
+        <vue-bootstrap4-table v-if="progress" :rows="sales" :columns="columns" :classes="classes" :config="configTable">
             <template slot="date-format" slot-scope="props">
                 {{formatDate(props.row.fecha)}}
             </template>
@@ -136,6 +136,18 @@
                
             </template>
         </vue-bootstrap4-table>
+        <center v-else>
+            <loading-progress
+                
+                :progress="progress"
+                :indeterminate="indeterminate"
+                class="text-center"
+                :hide-background="hideBackground"
+                shape="circle"
+                size="100"
+                fill-duration="2"
+            />
+        </center>
         <modal :show.sync="modals.modal2"
                :gradient="modals.type"
                modal-classes="modal-danger modal-dialog-centered">
@@ -164,6 +176,7 @@ export default {
     },
     data() {
         return {
+            progress:false,
             auth: [],
             socket: io(endPoint.endpointTarget),
             modals: {
@@ -275,6 +288,7 @@ export default {
             this.auth = decoded.access
         },
         async filterSale(){
+            this.progress = false
             this.inspectorFilter = true
             const splitDate = this.dates.range.split(' a ')
             console.log(splitDate.length)
@@ -299,6 +313,7 @@ export default {
                             }
                         }, 2000);
                     }else{
+                        this.progress = true
                         this.sales = sales.data.status
                     }
                 }catch(error){
@@ -342,7 +357,7 @@ export default {
             axios.get(endPoint.endpointTarget+'/ventas', config)
             .then(res => {
                 this.sales = res.data
-                
+                this.progress = true
             }).catch(err => {
                 this.modals = {
                     modal2: true,
@@ -487,3 +502,14 @@ export default {
     }
 }
 </script>
+<style>
+    .vue-progress-path path {
+        stroke-width: 12;
+    }
+    .vue-progress-path .progress {
+        stroke:#00768c;
+    }
+    .vue-progress-path .background {
+        stroke: transparent;
+    }
+</style>

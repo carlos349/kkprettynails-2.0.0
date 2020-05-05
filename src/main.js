@@ -35,6 +35,8 @@ import endPoint from '../config-endpoint/endpoint.js'
 import VueSocketIO from 'vue-socket.io'
 import SocketIO from "socket.io-client"
 import CKEditor from '@ckeditor/ckeditor5-vue';
+import 'vue-progress-path/dist/vue-progress-path.css'
+import VueProgress from 'vue-progress-path'
 /* STYLES */
 import VueFormWizard from 'vue-form-wizard'
 
@@ -63,7 +65,7 @@ Vue.use(new VueSocketIO({
     connection: SocketIO(endPoint.endpointTarget),
   })
 );
-
+Vue.use(VueProgress)
 /* FONTS LIBRARY */
 library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit)
 
