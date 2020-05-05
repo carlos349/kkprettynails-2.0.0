@@ -38,7 +38,7 @@
                             <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
                                 <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, servicio.productos), countServices[index].count++">
                                     <span class="float-left">{{servicio.nombre}}</span>
-                                    <badge class="badgeClass badgeServices float-right" type="primary" :id="servicio._id">{{countServices[index].count}}</badge>
+                                    <badge class="badgeClass badgeServices float-right" style="font-size: .9em;color:#4b4b4b" type="secondary" :id="servicio._id">{{countServices[index].count}}</badge>
                                 </base-button>
                                 <base-button size="sm" type="default" v-on:click="borrarServicio(servicio.nombre,index,servicio._id,servicio.precio, servicio.descuento)">
                                     <font-awesome-icon icon="times"/>
@@ -1168,11 +1168,11 @@ export default {
                 
 				})
             })
-            
-            console.log(this.serviciosSelecionados)
 		},
         initialState(){
             this.getServices()
+            $('#myInput').val('')
+            this.myFunction()
             this.validator = true
             this.validatorBtn = true
 			this.price = '0';
