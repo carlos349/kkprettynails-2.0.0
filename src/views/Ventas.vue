@@ -297,6 +297,7 @@ export default {
                 try {
                     const sales = await axios.get(endPoint.endpointTarget+'/ventas/findSalesByDate/'+Dates)
                     if (sales.data.status == 'no Sales') {
+                        this.progress = true
                         this.modals = {
                             modal2: true,
                             message: "No hay ventas en las fechas seleccionadas",
@@ -328,6 +329,7 @@ export default {
                 try {
                     const sales = await axios.get(endPoint.endpointTarget+'/ventas/findSalesByDay/'+Dates)
                     if (sales.data.status == 'no Sales') {
+                        this.progress = true
                         this.modals = {
                             modal2: true,
                             message: "No hay ventas en la fecha seleccionada",
@@ -344,6 +346,7 @@ export default {
                             }
                         }, 2000);
                     }else{
+                        this.progress = true
                         this.sales = sales.data.status
                     }
                 }catch(err){
