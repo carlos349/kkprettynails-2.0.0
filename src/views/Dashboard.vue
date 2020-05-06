@@ -506,7 +506,7 @@
                             </div>
                           </template>
                         </div>
-                        <div class="row" v-if="progressDaily">
+                        <div class="row">
                           <div v-if="tablesDaily.firstTable" class=" col-md-5">
                             <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcelDaily" v-on:click="exportXLSX(firstDataTableDaily, 'daily')">
                             </base-button>
@@ -632,7 +632,7 @@
                             <apexchart ref="chartApisDaily" :height="400" v-if="loadedDaily" :options="chartDaily" :series="seriesDaily"></apexchart>
                           </div>
                         </div>
-                        <center v-else>
+                        <!-- <center v-else>
                             <loading-progress
                                 :progress="progressDaily"
                                 :indeterminate="indeterminate"
@@ -642,7 +642,7 @@
                                 size="100"
                                 fill-duration="2"
                             />
-                        </center>
+                        </center> -->
                     </card>
                 </div>
             </div>
@@ -986,11 +986,13 @@
                 fivethTable: true
               }
             }
+            console.log(res)
             this.chartDaily = {
               title: {
                 text: this.textCategoriesDaily,
                 align: 'left'
               },
+              type: 'category',
               xaxis: {
                 categories: res.data.categories
               },
@@ -999,7 +1001,7 @@
             this.dataTableDaily = []
             this.dataTableDaily = res.data.dataTable
             this.seriesDaily = res.data.series
-            this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+            // this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
           }else{
             this.modals = {
                 modal1: true,
@@ -1248,7 +1250,6 @@
           if (this.porcentajeTotalSales < 0) {
             this.totalSalesPrevValid = false
           }
-          console.log(this.totalSales,this.totalSalesPrev,this.porcentajeTotalSales,this.totalSalesPrevValid)
         })
         .catch((err) => {
           console.log(err)
@@ -1264,7 +1265,6 @@
       totales(month){
         axios.get(endPoint.endpointTarget+'/ventas/totalSales/'+month)
         .then(res => {
-          console.log(res.data)
           this.totalLocal = this.formatPrice(res.data.totalLocal)
           this.gananciaNeta = this.formatPrice(res.data.gananciaNeta)
           this.gananciaTotal = this.formatPrice(res.data.gananciaTotal)
@@ -1381,7 +1381,6 @@
       SalesQuantityChartFunc(){
         this.progress = false
         const dateNow = new Date()
-        console.log(dateNow)
         const dateFormat = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-1'
         const dateFormatTwo = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-30'
         this.loaded = false

@@ -186,6 +186,9 @@
             <template slot="reportSale" slot-scope="props">
                 <base-button icon="ni ni-bullet-list-67" size="sm" type="primary" v-on:click="servicesSale(props.row.servicios)">Servicios</base-button>
             </template>
+            <template slot="cancelSale" slot-scope="props">
+                <base-button block size="sm" type="default" v-on:click="cancelSale(props.row._id, props.row.servicios, props.row.EmployeComision)">Anular</base-button>
+            </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
                 Filtrados {{props.filteredRowsLength}} | 
@@ -231,6 +234,7 @@ import jwtDecode from 'jwt-decode'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import flatPicker from "vue-flatpickr-component";
+import io from 'socket.io-client';
 import "flatpickr/dist/flatpickr.css";
 export default {
     components: {
@@ -240,6 +244,7 @@ export default {
     },
     data(){
         return {
+            socket: io(endPoint.endpointTarget),
             auth: [],
             id: localStorage.getItem('idReportEmploye'),
             sales: [],
@@ -410,6 +415,15 @@ export default {
                     //     type: "simple",
                     //     placeholder: "Enter country"
                     // },
+                },
+                {
+                    label: "Anular venta",
+                    name: "_id",
+                    slot_name:"cancelSale",
+                    // filter: {
+                    //     type: "simple",
+                    //     placeholder: "Enter country"
+                    // },
                 }
             ],
             config: {
@@ -465,6 +479,61 @@ export default {
             this.dataDetail = Data
             this.modals.modal3 = true
             
+        },
+        async cancelSale(id,servicios, comission){
+            console.log(comission)
+            const cancelSale = await axios.put(endPoint.endpointTarget+'/ventas/'+id, {
+                employeComision: comission
+            })
+            if (cancelSale.data.status == 'ok') {
+                axios.post(endPoint.endpointTarget+'/inventario/nullSale', {
+                    array:servicios
+                })
+                this.modals = {
+                    modal1: true,
+                    message: "¡Venta anulada!",
+                    icon: 'ni ni-check-bold ni-5x',
+                    type: 'success'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1: false,
+                        modal2: false,
+                        modal3: false,
+                        message: "",
+                        icon: '',
+                        type:''
+                    }
+                }, 1500);
+                this.getData()
+                const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
+                    userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                    userImage:localStorage.getItem('imageUser'),
+                    detail:'Anuló una venta del día '+this.formatDate(this.arreglo.fecha),
+                    link: 'Ventas'
+                })
+                if (notify) {
+                    this.socket.emit('sendNotification', notify.data)
+                }   
+            }
+            else{
+                this.modals = {
+                    modal1: true,
+                    message: "¡Error al anular!",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1: false,
+                        modal2: false,
+                        modal3: false,
+                        message: "",
+                        icon: '',
+                        type:''
+                    }
+                }, 1500);
+            }
         },
         getAdvancements(){
             axios.get(endPoint.endpointTarget+'/manicuristas/advancements/'+this.id)
@@ -573,6 +642,7 @@ export default {
                 const identification = resData.data.nombre+':'+resData.data.documento
                 axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+identification)
                 .then(res => {
+                    console.log(res)
                     this.sales = res.data
                     this.dateInit = res.data[0].fecha
                     let totals = 0

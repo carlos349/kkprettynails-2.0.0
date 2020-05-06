@@ -430,8 +430,6 @@ export default {
             }
         },
         async cancelSale(id,servicios){
-            console.log(servicios)
-            console.log(this.arreglo.EmployeComision)
             const cancelSale = await axios.put(endPoint.endpointTarget+'/ventas/'+id, {
                 employeComision: this.arreglo.EmployeComision
             })
