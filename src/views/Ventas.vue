@@ -26,7 +26,7 @@
                                 <base-button v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="filterSale">Filtrar</base-button>
                             </div>
                             <div class="col-md-2">
-                                <base-button v-if="inspectorFilter"  type="secondary" v-on:click="getSales">
+                                <base-button v-if="inspectorFilter"  type="secondary" v-on:click="getSales('button')">
                                     <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
                                 </base-button>
                             </div>
@@ -278,7 +278,7 @@ export default {
 		}
     },
     created(){
-        this.getSales()
+        this.getSales('no-button')
         this.getToken()
     },
     methods: {
@@ -291,7 +291,6 @@ export default {
             this.progress = false
             this.inspectorFilter = true
             const splitDate = this.dates.range.split(' a ')
-            console.log(splitDate.length)
             if (splitDate.length > 1) {
                 const Dates = splitDate[0]+':'+splitDate[1]
                 try {
@@ -354,7 +353,10 @@ export default {
                 }
             }
         },
-        getSales(){
+        getSales(button){
+            if(button == 'button'){
+                this.dates.range = ''
+            }
             this.inspectorFilter = false
             const config = {headers: {'x-access-token': localStorage.userToken}}
             axios.get(endPoint.endpointTarget+'/ventas', config)
@@ -452,7 +454,7 @@ export default {
                         type: ''
                     }
                 }, 2000);
-                this.getSales()
+                this.getSales('no-button')
                 this.arreglo.status = false
                 const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
                     userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
@@ -498,7 +500,7 @@ export default {
     },
     mounted (){
         EventBus.$on('reloadSales', status => {
-            this.getSales()
+            this.getSales('no-button')
         })
     }
 }

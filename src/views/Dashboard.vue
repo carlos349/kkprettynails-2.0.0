@@ -8,7 +8,7 @@
                 <h1 class="heading mt-5">{{modals.message}}</h1>
             </div>
         </modal>
-        <base-header type="gradient-success" class="pb-6 pb-8 pt-5 pt-md-8">
+        <base-header v-if="validRoute('metricas', 'filtrar')" type="gradient-success" class="pb-6 pb-8 pt-5 pt-md-8">
             <!-- Card stats -->
             <div class="row">
                 <div class="col-xl-3 col-lg-6">
@@ -71,9 +71,50 @@
                 </div>
             </div>
         </base-header>
-
+        <base-header v-else type="gradient-success" class="pb-6 pb-8 pt-5 pt-md-8">
+        <!-- Card stats -->
+            <div class="row">
+                <div class="col-xl-3 col-lg-6">
+                  <stats-card title="Servicios del mes"
+                    type="gradient-orange"
+                    :sub-title="servicesLender"
+                    icon="ni ni-single-02"
+                    class="mb-1 mb-xl-0"
+                  >
+                  </stats-card>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <stats-card title="Avances del mes"
+                      type="gradient-orange"
+                      :sub-title="'$ '+formatPrice(lenderAvancements)"
+                      icon="ni ni-single-02"
+                      class="mb-1 mb-xl-0"
+                    >
+                    </stats-card>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <stats-card title="Bonos del mes"
+                      type="gradient-green"
+                      :sub-title="'$ '+formatPrice(lenderBonus)"
+                      icon="ni ni-single-02"
+                      class="mb-1 mb-xl-0"
+                    >
+                    </stats-card>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <stats-card title="Total generado"
+                      type="gradient-info"
+                      :sub-title="'$ '+formatPrice(lenderComission)"
+                      icon="ni ni-single-02"
+                      class="mb-1 mb-xl-0"
+                    >
+                    </stats-card>
+                </div>
+            </div>
+        </base-header>
         <!--Charts-->
-        <div class="container-fluid mt--7">
+        <template v-if="validRoute('metricas', 'filtrar')"> 
+          <div class="container-fluid mt--7">
             <div class="row">
                 <div class="col-12" >
                     <card header-classes="bg-transparent">
@@ -437,9 +478,9 @@
                         <center v-else>
                             <loading-progress
                                 :progress="progress"
-                                :indeterminate="indeterminate"
+                                :indeterminate="true"
                                 class="text-center"
-                                :hide-background="hideBackground"
+                                :hide-background="true"
                                 shape="circle"
                                 size="100"
                                 fill-duration="2"
@@ -648,6 +689,70 @@
             </div>
             <!-- End charts-->
         </div>
+        </template>
+        <template v-else>
+          <div class="container-fluid mt-4">
+            <h1>Datos del mes</h1>
+            <div class="row">
+                <div class="col-12 " >
+                    <card header-classes="bg-transparent">
+                      <div slot="header" class="row align-items-center">
+                        <template>
+                          <div class="col-md-3">    
+                            <h3>Filtre por fecha</h3>                       
+                          </div>
+                        </template>
+                      </div>
+                      <div class="row" v-if="progress">
+                        <div v-if="tablesLender" class=" col-md-5">
+                          <base-button type="default" size="sm" title="Generar Excel" icon="ni ni-book-bookmark" class="buttonExcelDaily" v-on:click="exportXLSX(firstDataTableDaily, 'daily')">
+                          </base-button>
+                          <vue-custom-scrollbar v-if="dataTableLender.length > 0" class="maxHeightEspecific">
+                            <base-table thead-classes="thead-light" :data="dataTableLender">
+                              <template slot="columns">
+                                <th>Fecha</th>
+                                <th>Ganancia</th>
+                                <th>Producción</th>
+                                <th>Servicios</th>
+                              </template>
+                              <template slot-scope="{row}">
+                                <th scope="row">
+                                  {{row.Fecha}}
+                                </th>
+                                <th scope="row">
+                                  $ {{formatPrice(row.totalComision)}}
+                                </th>
+                                <th scope="row">
+                                  $ {{formatPrice(row.totalProduction)}}
+                                </th>
+                                  <th scope="row">
+                                  {{row.totalServices}}
+                                </th>
+                              </template>
+                            </base-table>
+                          </vue-custom-scrollbar >
+                          <h1 class="text-center" v-else>No hay ventas de este mes</h1>
+                        </div>
+                        <div class="col-md-7">
+                          <apexchart ref="chartApisDaily" :height="400" v-if="loadedLender" :options="chartLender" :series="seriesLender"></apexchart>
+                        </div>
+                      </div>
+                        <center v-else>
+                            <loading-progress
+                                :progress="progressDaily"
+                                :indeterminate="true"
+                                class="text-center"
+                                :hide-background="true"
+                                shape="circle"
+                                size="100"
+                                fill-duration="2"
+                            />
+                        </center>
+                    </card>
+                </div>
+            </div>
+          </div>
+        </template> 
     </div>
 </template>
 <script>
@@ -743,6 +848,11 @@
         apiGraph: '',
         attentions:[],
         dataTable: [],
+        tablesLender: false,
+        dataTableLender:[],
+        loadedLender: false,
+        chartLender: {},
+        seriesLender: [],
         tables: {
           firstTable: false,
           secondTable: false,
@@ -778,7 +888,11 @@
         ifServices: false,
         totalSalesPrev: 0,
         totalSalesPrevValid: true,
-        porcentajeTotalSales: 0
+        porcentajeTotalSales: 0,
+        servicesLender: 0,
+        lenderAvancements: 0,
+        lenderBonus: 0,
+        lenderComission: 0
       };
     },
     beforeCreate(){
@@ -802,12 +916,18 @@
       this.getEmployes()
       this.SalesQuantityChartFuncDaily()
       this.getToken()
+      
     },
     methods: {
       getToken(){
           const token = localStorage.userToken
-          const decoded = jwtDecode(token)  
+          const decoded = jwtDecode(token) 
+          this.lenderId = decoded.linkLender
           this.auth = decoded.access
+          if (this.lenderId != "") {
+            this.getLenderData()
+            this.chartLenderData()
+          }
       },
       getServices(){  
         axios.get(endPoint.endpointTarget+'/servicios')
@@ -815,6 +935,18 @@
           this.Services = res.data
         })
       },
+      async getLenderData(){
+          if (this.lenderId != "") {
+            const split = this.lenderId.split(' / ')
+            const lenderData = await axios.get(endPoint.endpointTarget+'/manicuristas/dataMetrics/'+split[0])
+            if (lenderData) {
+              this.servicesLender = lenderData.data.servicesLender
+              this.lenderAvancements = lenderData.data.lenderAvancements
+              this.lenderBonus = lenderData.data.lenderBonus
+              this.lenderComission = lenderData.data.lenderComission
+            }
+          }
+      },  
       selectService(name){
         this.serviceSelect = name
       },
@@ -1294,6 +1426,90 @@
           else {
             this.porcentajeTotal.push(true)
           } 
+        })
+      },
+      chartLenderData(){
+        console.log('aqui toy')
+        this.progressDaily = false
+        const split = this.lenderId.split(' / ')
+        const dateNow = new Date()
+        const dateFormat = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-1'
+        const dateFormatTwo = dateNow.getFullYear()+'-'+(dateNow.getMonth() + 1)+'-30'
+        this.loadedLender = false
+        axios.post(endPoint.endpointTarget+'/metrics/detailPerLender/'+dateFormat+':'+dateFormatTwo, {
+          lender: split[0]
+        })
+        .then(res => {
+          this.progressDaily = true
+          const userlist = res.data
+          this.dataTableLender = res.data.dataTable
+          this.seriesLender = userlist.series
+          this.chartLender = {
+            chart: {
+              height: 350,
+              type: 'line',
+              zoom: {
+                enabled: true
+              },
+            },
+            dataLabels: {
+              enabled: false
+            },
+            stroke: {
+              width: [5, 7, 5],
+              curve: 'straight',
+              dashArray: [0, 8, 5]
+            },
+            title: {
+              text: 'Estadisticas',
+              align: 'left'
+            },
+            legend: {
+              tooltipHoverFormatter: function(val, opts) {
+                return val 
+              }
+            },
+            markers: {
+              size: 0,
+              hover: {
+                sizeOffset: 6
+              }
+            },
+            xaxis: {
+              type: 'datetime',
+            },
+            tooltip: {
+              y: [
+                {
+                  title: {
+                    formatter: function (val) {
+                      return val+' $'
+                    }
+                  }
+                },
+                {
+                  title: {
+                    formatter: function (val) {
+                      return val+' $'
+                    }
+                  }
+                },
+                {
+                  title: {
+                    formatter: function (val) {
+                      return val+' $'
+                    }
+                  }
+                }
+              ]
+            },
+            grid: {
+              borderColor: '#f1f1f1',
+            }
+          }
+          
+          this.loadedLender = true
+          this.tablesLender = true
         })
       },
       SalesQuantityChartFuncDaily(){
