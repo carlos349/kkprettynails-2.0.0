@@ -4,8 +4,10 @@
             style="min-height: 50px; background-image: url(img/theme/clients.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
+            <base-button icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="success" v-on:click="modals.modal3 = true">Generar excel</base-button>
             <!-- Header container -->
             <div class="container-fluid d-flex align-items-center">
+                
                 <div class="row">
                     <div class="col-lg-12 col-md-12" style="display:inline-block">
                         <h1 class="display-2 text-white w-100">Sección de ventas</h1>
@@ -108,6 +110,96 @@
                 </template>
             </card>
         </modal>
+         <modal :show.sync="modals.modal3"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                       <h3>Aplica filtros para tu reporte</h3> 
+                    </div>
+                </template>
+                <template>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="date">Filtra por fecha</label>
+                            <base-input addon-left-icon="ni ni-calendar-grid-58">
+                                <flat-picker slot-scope="{focus, blur}"
+                                    @on-open="focus"
+                                    @on-close="blur"
+                                    :config="configDatePicker"
+                                    class="form-control datepicker"
+                                    v-model="dates.rangeExcel">
+                                </flat-picker>
+                            </base-input>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lender">¿Filtrar por prestadora en específico?</label>
+                            <div v-on:click="chooseLender"> 
+                                <vue-single-select v-if="validClient"
+                                v-model="lenderSelect"
+                                :options="lenderNames"
+                                placeholder="Prestadoras"
+                                ></vue-single-select> 
+                                <vue-single-select v-else
+                                v-model="lenderSelect"
+                                :options="lenderNames"
+                                placeholder="Prestadoras"
+                                class="bgcolor-danger"
+                                disabled
+                                ></vue-single-select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lender">¿Filtrar por cliente en específico?</label>
+                            <div v-on:click="chooseClient">
+                                <vue-single-select v-if="validLender"
+                                v-model="clientSelect"
+                                :options="clientNames"
+                                placeholder="Clientes"
+                                ></vue-single-select>  
+                                <vue-single-select v-else
+                                v-model="clientSelect"
+                                :options="clientNames"
+                                placeholder="Clientes"
+                                class="bgcolor-danger"
+                                disabled
+                                ></vue-single-select> 
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <center>
+                                <label for="" >Tipos de orden</label>
+                            </center>
+                            <div class="row">
+                                <base-radio name="firstTotal" value="true" class="mb-3 pl-7 col-md-6" v-model="orderSelect">
+                                    Mayor total
+                                </base-radio>
+                                <base-radio name="lastTotal" value="false" class="mb-3 pl-7 col-md-6" v-model="orderSelect">
+                                    Menor total
+                                </base-radio>
+                                <base-radio name="firstDate" value="false" class="mb-3 pl-7 col-md-6" v-model="orderSelect">
+                                    Primera fecha
+                                </base-radio>
+                                <base-radio name="lastDate" value="false" class="mb-3 pl-7 col-md-6" v-model="orderSelect">
+                                    Última fecha
+                                </base-radio>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <center>
+                                <base-button type="default" v-on:click="generateExcel()"> Generar
+                                </base-button>
+                            </center>
+                        </div>
+                    </div>
+                </template>
+            </card>
+        </modal>
         <vue-bootstrap4-table v-if="progress" :rows="sales" :columns="columns" :classes="classes" :config="configTable">
             <template slot="date-format" slot-scope="props">
                 {{formatDate(props.row.fecha)}}
@@ -140,9 +232,9 @@
             <loading-progress
                 
                 :progress="progress"
-                :indeterminate="indeterminate"
+                :indeterminate="true"
                 class="text-center"
-                :hide-background="hideBackground"
+                :hide-background="true"
                 shape="circle"
                 size="100"
                 fill-duration="2"
@@ -169,6 +261,8 @@ import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import io from 'socket.io-client';
 import jwtDecode from 'jwt-decode'
+import XLSX from 'xlsx'
+const dateNew = new Date()
 export default {
     components: {
         flatPicker,
@@ -182,12 +276,15 @@ export default {
             modals: {
                 modal1: false,
                 modal2: false,
+                modal3:false,
                 message: "",
                 icon: '',
                 type:''
             },
+            orderSelect: '',
             dates: {
-                range: new Date()
+                range: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear(),
+                rangeExcel: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear()
             },
             configDatePicker: {
                 allowInput: true, 
@@ -263,7 +360,15 @@ export default {
             errorAlert: false,
             messageSuccess: '',
             messageError: '',
-            inspectorFilter: false
+            inspectorFilter: false,
+            lenderSelect: '',
+            lenderNames: [],
+            clientSelect: '',
+            clientNames: [],
+            paySelect: '',
+            payNames: ['Efectivo', 'Transferencia', 'Débito', 'Crédito', 'Otros'],
+            validLender: true,
+            validClient: true,
         }
     },
     beforeCreate(){
@@ -280,12 +385,32 @@ export default {
     created(){
         this.getSales('no-button')
         this.getToken()
+        this.getClient()
+        this.getLenders()
     },
     methods: {
         getToken(){
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+        },
+        getClient(){
+            axios.get(endPoint.endpointTarget+'/clients')
+            .then(res => {
+                this.clientNames = []
+                for (let index = 0; index < res.data.length; index++) {
+                    this.clientNames.push(res.data[index].nombre+ ' / ' +res.data[index].identidad)
+                }
+            })
+        },
+        getLenders(){
+            axios.get(endPoint.endpointTarget+'/manicuristas')
+            .then(res => {
+                this.lenderNames = []
+                for (let index = 0; index < res.data.length; index++) {
+                    this.lenderNames.push(res.data[index].nombre)
+                }
+            })
         },
         async filterSale(){
             this.progress = false
@@ -307,6 +432,7 @@ export default {
                             this.modals = {
                                 modal1: false,
                                 modal2: false,
+                                modal3:false,
                                 message: "",
                                 icon: '',
                                 type: ''
@@ -339,6 +465,7 @@ export default {
                             this.modals = {
                                 modal1: false,
                                 modal2: false,
+                                modal3:false,
                                 message: "",
                                 icon: '',
                                 type: ''
@@ -374,6 +501,7 @@ export default {
                     this.modals = {
                         modal1: false,
                         modal2: false,
+                        modal3:false,
                         message: "",
                         icon: '',
                         type: ''
@@ -424,6 +552,7 @@ export default {
                     this.modals = {
                         modal1: false,
                         modal2: false,
+                        modal3:false,
                         message: "",
                         icon: '',
                         type: ''
@@ -449,6 +578,7 @@ export default {
                     this.modals = {
                         modal1: true,
                         modal2: false,
+                        modal3:false,
                         message: "",
                         icon: '',
                         type: ''
@@ -478,6 +608,7 @@ export default {
                     this.modals = {
                         modal1: true,
                         modal2: false,
+                        modal3:false,
                         message: "",
                         icon: '',
                         type: ''
@@ -495,6 +626,73 @@ export default {
                         } 
                     }
                 }
+            }
+        },
+        generateExcel(){
+            var valid = this.dates.rangeExcel
+            var dates = this.dates.rangeExcel+':not'
+            if (this.dates.rangeExcel.length > 12) {
+                dates = this.dates.rangeExcel
+                const split = this.dates.rangeExcel.split(' a ')
+                valid = split[0]
+            }
+            if (this.lenderSelect == null) {
+                this.lenderSelect = ''
+            }
+            if (this.clientSelect == null) {
+                this.clientSelect = ''
+            }
+            axios.post(endPoint.endpointTarget+'/ventas/generateDataExcel', {
+                rangeExcel:dates, 
+                lenderSelect: this.lenderSelect, 
+                clientSelect: this.clientSelect,
+                orderSelect: this.orderSelect
+            })
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    var Datos = XLSX.utils.json_to_sheet(res.data.dataTable) 
+                    var wb = XLSX.utils.book_new() 
+                    XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
+                    XLSX.writeFile(wb, 'Ventas del '+valid+'.xlsx') 
+                    this.lenderSelect = ''
+                    this.clientSelect = ''
+                    this.orderSelect = ''
+                    this.validLender = true
+                    this.validClient = true
+                    this.dates.rangeExcel = (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear()
+                    this.modals.modal3 = false
+                }else{
+                    this.modals = {
+                        modal2: true,
+                        message: "¡No se encontraron ventas!",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3:true,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 2000);
+                }
+            })
+        },
+        chooseLender(){
+            if (this.lenderSelect == '' || this.lenderSelect == null) {
+                this.validLender = true
+            }else{
+                this.validLender = false
+            }
+        },
+        chooseClient(){
+            if (this.clientSelect == '' || this.clientSelect == null) {
+                this.validClient = true
+            }else{
+                this.validClient = false
             }
         }
     },
@@ -514,5 +712,13 @@ export default {
     }
     .vue-progress-path .background {
         stroke: transparent;
+    }
+    .excel-generate{
+        position:absolute;
+        right:5%;
+        bottom:22%;
+    }
+    .bgcolor-danger #single-select{
+        border-color:red;
     }
 </style>
