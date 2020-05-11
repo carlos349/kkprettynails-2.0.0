@@ -171,25 +171,6 @@
                                 ></vue-single-select> 
                             </div>
                         </div>
-                        <div class="col-md-12 mt-2">
-                            <center>
-                                <label for="" >Tipos de orden</label>
-                            </center>
-                            <div class="row">
-                                <base-radio name="firstTotal" value="true" class="mb-3 pl-7 col-md-6" v-model="orderSelect">
-                                    Mayor total
-                                </base-radio>
-                                <base-radio name="lastTotal" value="false" class="mb-3 pl-7 col-md-6" v-model="orderSelect">
-                                    Menor total
-                                </base-radio>
-                                <base-radio name="firstDate" value="false" class="mb-3 pl-7 col-md-6" v-model="orderSelect">
-                                    Primera fecha
-                                </base-radio>
-                                <base-radio name="lastDate" value="false" class="mb-3 pl-7 col-md-6" v-model="orderSelect">
-                                    Última fecha
-                                </base-radio>
-                            </div>
-                        </div>
                         <div class="col-md-12">
                             <center>
                                 <base-button type="default" v-on:click="generateExcel()"> Generar
@@ -281,7 +262,6 @@ export default {
                 icon: '',
                 type:''
             },
-            orderSelect: '',
             dates: {
                 range: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear(),
                 rangeExcel: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear()
@@ -646,7 +626,6 @@ export default {
                 rangeExcel:dates, 
                 lenderSelect: this.lenderSelect, 
                 clientSelect: this.clientSelect,
-                orderSelect: this.orderSelect
             })
             .then(res => {
                 if (res.data.status == 'ok') {
@@ -656,7 +635,6 @@ export default {
                     XLSX.writeFile(wb, 'Ventas del '+valid+'.xlsx') 
                     this.lenderSelect = ''
                     this.clientSelect = ''
-                    this.orderSelect = ''
                     this.validLender = true
                     this.validClient = true
                     this.dates.rangeExcel = (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear()

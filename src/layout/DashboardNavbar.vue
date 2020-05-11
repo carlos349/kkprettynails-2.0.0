@@ -39,7 +39,8 @@
                       <div class="row align-items-center">
                         <div class="col-auto">
                           <!-- Avatar -->
-                          <img alt="Image placeholder" :src="imgEndpoint+notification.userImage" class="avatar rounded-circle">
+                          <img alt="Image placeholder" v-if="notification.userImage == ''" src="img/theme/profile-default.png" class="avatar rounded-circle">
+                          <img alt="Image placeholder" v-else :src="imgEndpoint+notification.userImage" class="avatar rounded-circle">
                         </div>
                         <div class="col ml--2">
                           <div class="d-flex justify-content-between align-items-center">
@@ -112,7 +113,8 @@
                 <base-dropdown class="nav-link pr-0">
                     <div class="media align-items-center" slot="title">
                 <span class="avatar avatar-sm rounded-circle">
-                  <img alt="Image placeholder" style="width:30px;height:30px;" :src="imgUser">
+                  <img alt="Image placeholder" style="width:30px;height:30px;"  v-if="imgUser.length == 35" src="img/theme/profile-default.png">
+                  <img alt="Image placeholder" style="width:30px;height:30px;"  v-else :src="imgUser">
                 </span>
                         <div style="cursor:pointer" class="media-body ml-2 d-none d-lg-block">
                             <span class="mb-0 text-sm  font-weight-bold">{{nombre}}</span>
