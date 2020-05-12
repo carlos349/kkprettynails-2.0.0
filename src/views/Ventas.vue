@@ -4,7 +4,7 @@
             style="min-height: 50px; background-image: url(img/theme/clients.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
-            <base-button icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="success" v-on:click="modals.modal3 = true">Generar excel</base-button>
+            
             <!-- Header container -->
             <div class="container-fluid d-flex align-items-center">
                 
@@ -181,6 +181,7 @@
                 </template>
             </card>
         </modal>
+        <base-button title="Generar excel" icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="modals.modal3 = true"></base-button>
         <vue-bootstrap4-table v-if="progress" :rows="sales" :columns="columns" :classes="classes" :config="configTable">
             <template slot="date-format" slot-scope="props">
                 {{formatDate(props.row.fecha)}}
@@ -693,8 +694,9 @@ export default {
     }
     .excel-generate{
         position:absolute;
-        right:5%;
-        bottom:22%;
+        right:2%;
+        top:30%;
+        z-index: 10;
     }
     .bgcolor-danger #single-select{
         border-color:red;

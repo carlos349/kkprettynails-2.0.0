@@ -37,6 +37,7 @@ import SocketIO from "socket.io-client"
 import CKEditor from '@ckeditor/ckeditor5-vue';
 import 'vue-progress-path/dist/vue-progress-path.css'
 import VueProgress from 'vue-progress-path'
+import VueCarousel from 'vue-carousel';
 /* STYLES */
 import VueFormWizard from 'vue-form-wizard'
 
@@ -66,6 +67,7 @@ Vue.use(new VueSocketIO({
   })
 );
 Vue.use(VueProgress)
+Vue.use(VueCarousel);
 /* FONTS LIBRARY */
 library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit)
 

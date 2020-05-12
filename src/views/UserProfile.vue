@@ -129,8 +129,8 @@
                                         </div>
                                         <div class="col-lg-6 form-group">
                                             <label><strong>Imagen de perfil</strong></label>
-                                            <input v-if="inspector" type="file" id="file" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
-                                            <input v-else type="file" id="file" ref="file" disabled class="form-control mb-3" >
+                                            <input v-if="inspector" type="file" id="fileProfile" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
+                                            <input v-else type="file" id="fileProfile" ref="file" disabled class="form-control mb-3" >
                                         </div>
                                     </div>
                                 </div>

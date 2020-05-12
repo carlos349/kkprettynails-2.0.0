@@ -360,21 +360,29 @@
                             <dt class="mt-3 text-center">Servicios</dt>
                             <badge v-for="service of selectedEvent.services" class="mt-1 ml-1 text-default" type="primary">{{service.servicio}}</badge>
                             <hr/>
-                            <dt class="text-center" style="margin-top:-10px;">Imagen del diseño</dt>
-                            <div v-if="selectedEvent.image == ''" class="row mt-1">
+                            <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <br><span v-if="selectedEvent.imageLength >= 3">(Llego al máximo)</span></dt>
+                            <div class="row mt-1">
                                 <div class="col-md-10">
                                     <label for="file">{{nameFile}}</label>
-                                    <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" >
+                                    <input disabled v-if="selectedEvent.imageLength >= 3" type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()" >
+                                    <input v-else type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()" >
                                 </div>
                                 <div class="col-md-2">
-                                    <base-button size="sm" class="p-2 w-100" type="default" v-on:click="uploadImageDesign(selectedEvent.id)">
+                                    <base-button disabled v-if="selectedEvent.imageLength >= 3" size="sm" class="p-2 w-100" type="default" v-on:click="uploadImageDesign(selectedEvent.id)">
+                                        <i class="ni ni-cloud-upload-96" style="font-size:16px;"></i>
+                                    </base-button>
+                                    <base-button v-else size="sm" class="p-2 w-100" type="default" v-on:click="uploadImageDesign(selectedEvent.id)">
                                         <i class="ni ni-cloud-upload-96" style="font-size:16px;"></i>
                                     </base-button>
                                 </div>
                             </div>
-                            <div v-else class="row mt-1">
+                            <div v-if="selectedEvent.imageLength > 0" class="row mt-1">
                                 <div class="col-md-12">
-                                    <img class="w-100" :src="imgEndpoint+'/static/designs/'+selectedEvent.image" alt="">
+                                    <carousel :perPage="1" :autoplayHoverPause="true" :autoplay="true">
+                                        <slide v-for="images of selectedEvent.image">
+                                            <img class="w-100" style="height: 50vh !important;" :src="imgEndpoint+'/static/designs/'+images" alt="">
+                                        </slide>
+                                    </carousel>
                                 </div>
                             </div>
                         </tab-pane>
@@ -731,6 +739,7 @@
   import vueCustomScrollbar from 'vue-custom-scrollbar'
   import EventBus from '../components/EventBus'
   import io from 'socket.io-client';
+  import { Carousel, Slide } from 'vue-carousel';
   //Back - End 
   import jwtDecode from 'jwt-decode'
   import axios from 'axios'
@@ -764,10 +773,12 @@
     
   export default {
     components: {
-     VueCal,
-     VueBootstrap4Table,
-     flatPicker,
-     vueCustomScrollbar
+        VueCal,
+        VueBootstrap4Table,
+        flatPicker,
+        vueCustomScrollbar,
+        Carousel,
+        Slide
     },
     data() {
       return {
@@ -1055,7 +1066,8 @@
                             empleada: res.data[index].employe,
                             id:res.data[index]._id,
                             process: res.data[index].process,
-                            image: res.data[index].image
+                            image: res.data[index].image,
+                            imageLength: res.data[index].image.length
                         }
                         this.events.push(arrayEvents)
                     }
@@ -1097,9 +1109,9 @@
                         empleada: res.data[index].employe,
                         id:res.data[index]._id,
                         process: res.data[index].process,
-                        image: res.data[index].image
+                        image: res.data[index].image,
+                        imageLength: res.data[index].image.length
                     }
-                    
                     this.events.push(arrayEvents)
                     }
                 })
@@ -1678,8 +1690,9 @@
                             services: res.data[index].services,
                             empleada: res.data[index].employe,
                             id:res.data[index]._id, 
-                            image: res.data[index].image
-                        }
+                            image: res.data[index].image,
+                            imageLength: res.data[index].image.length
+                        } 
                         this.events.push(arrayEvents)
                     }
                     this.employeByDate = name
@@ -2251,12 +2264,29 @@
             }
         },
         handleFileUpload(){
-            this.file = this.$refs.file.files[0]
-            this.nameFile = this.file.name
+            console.log(this.$refs.file.files.length)
+            const LengthImage = this.selectedEvent.image.length + this.$refs.file.files.length
+            if (LengthImage > 3) {
+                console.log('maximo')
+            }else{
+                this.file = this.$refs.file.files
+                if (this.file.length == 3) {
+                    this.nameFile = this.file[0].name+', '+this.file[1].name+', '+this.file[2].name
+                }else if (this.file.length == 2) {
+                    this.nameFile = this.file[0].name+', '+this.file[1].name
+                }else{
+                    this.nameFile = this.file[0].name
+                }
+            }            
         },
         uploadImageDesign(id){
             let formData = new FormData();
-			formData.append('image', this.file)
+            for (let index = 0; index < this.file.length; index++) {
+                const element = this.file[index];
+                formData.append('image', this.file[index])
+            }
+            console.log(this.selectedEvent.image)
+            formData.append('imagePrev', this.selectedEvent.image)
             axios.put(endPoint.endpointTarget+'/citas/uploadDesign/'+id, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -2265,6 +2295,7 @@
             .then(res => {
                 if (res.data.status == 'ok') {
                     this.selectedEvent.image = res.data.image
+                    // window.location.reload()
                 }
             })
         },
