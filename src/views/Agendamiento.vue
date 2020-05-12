@@ -351,7 +351,6 @@
                                 </span>
                                 
                             </base-button>
-
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span >Entrada:</span>
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
@@ -360,6 +359,24 @@
                             </base-button>
                             <dt class="mt-3 text-center">Servicios</dt>
                             <badge v-for="service of selectedEvent.services" class="mt-1 ml-1 text-default" type="primary">{{service.servicio}}</badge>
+                            <hr/>
+                            <dt class="text-center" style="margin-top:-10px;">Imagen del diseño</dt>
+                            <div v-if="selectedEvent.image == ''" class="row mt-1">
+                                <div class="col-md-10">
+                                    <label for="file">{{nameFile}}</label>
+                                    <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" >
+                                </div>
+                                <div class="col-md-2">
+                                    <base-button size="sm" class="p-2 w-100" type="default" v-on:click="uploadImageDesign(selectedEvent.id)">
+                                        <i class="ni ni-cloud-upload-96" style="font-size:16px;"></i>
+                                    </base-button>
+                                </div>
+                            </div>
+                            <div v-else class="row mt-1">
+                                <div class="col-md-12">
+                                    <img class="w-100" :src="imgEndpoint+'/static/designs/'+selectedEvent.image" alt="">
+                                </div>
+                            </div>
                         </tab-pane>
                         <tab-pane>
                             <span class="text-default" slot="title">
@@ -754,6 +771,7 @@
     },
     data() {
       return {
+        imgEndpoint: endPoint.endpointTarget,
         auth:[],
         socket : io(endPoint.endpointTarget),
         status: localStorage.getItem('status'),
@@ -935,7 +953,9 @@
         endEmploye:[],
         designEndDate:0,
         clientsNames:[],
-        lengthClosedDates:0
+        lengthClosedDates:0,
+        file: '',
+        nameFile:'Click aquí para subir imagen'
       };
     },
     beforeCreate(){
@@ -1034,7 +1054,8 @@
                             services: res.data[index].services,
                             empleada: res.data[index].employe,
                             id:res.data[index]._id,
-                            process: res.data[index].process
+                            process: res.data[index].process,
+                            image: res.data[index].image
                         }
                         this.events.push(arrayEvents)
                     }
@@ -1075,7 +1096,8 @@
                         services: res.data[index].services,
                         empleada: res.data[index].employe,
                         id:res.data[index]._id,
-                        process: res.data[index].process
+                        process: res.data[index].process,
+                        image: res.data[index].image
                     }
                     
                     this.events.push(arrayEvents)
@@ -1655,7 +1677,8 @@
                             cliente: res.data[index].client,
                             services: res.data[index].services,
                             empleada: res.data[index].employe,
-                            id:res.data[index]._id
+                            id:res.data[index]._id, 
+                            image: res.data[index].image
                         }
                         this.events.push(arrayEvents)
                     }
@@ -2227,6 +2250,24 @@
                 }
             }
         },
+        handleFileUpload(){
+            this.file = this.$refs.file.files[0]
+            this.nameFile = this.file.name
+        },
+        uploadImageDesign(id){
+            let formData = new FormData();
+			formData.append('image', this.file)
+            axios.put(endPoint.endpointTarget+'/citas/uploadDesign/'+id, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            })
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    this.selectedEvent.image = res.data.image
+                }
+            })
+        },
         endingDate(){
             const id = this.endId
             axios.post(endPoint.endpointTarget+'/citas/endDate/'+id, {
@@ -2622,5 +2663,27 @@
         border-radius: 5px;
         margin-top:-5px;
         font-size: .8rem;
+    }
+    #file {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+    label[for="file"] {
+        font-size: 12px;
+        font-weight: 600;
+        color: #fff;
+        background-color: #172b4d;
+        display: inline-block;
+        transition: all .5s;
+        cursor: pointer;
+        padding: 10px !important;
+        text-transform: uppercase;
+        width: 100%;
+        text-align: center;
+        border-radius: 5px;
     }
 </style>
