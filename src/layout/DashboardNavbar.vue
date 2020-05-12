@@ -113,7 +113,7 @@
                 <base-dropdown class="nav-link pr-0">
                     <div class="media align-items-center" slot="title">
                 <span class="avatar avatar-sm rounded-circle">
-                  <img alt="Image placeholder" style="width:30px;height:30px;"  v-if="imgUser.length == 35" src="img/theme/profile-default.png">
+                  <img alt="Image placeholder" style="width:30px;height:30px;"  v-if="haveImage == ''" src="img/theme/profile-default.png">
                   <img alt="Image placeholder" style="width:30px;height:30px;"  v-else :src="imgUser">
                 </span>
                         <div style="cursor:pointer" class="media-body ml-2 d-none d-lg-block">
@@ -170,6 +170,7 @@
         searchQuery: '',
         nombre: localStorage.nombre + ' ' + localStorage.apellido,
         imgUser: endPoint.imgEndpoint + localStorage.imageUser,
+        haveImage: localStorage.imageUser,
         imgEndpoint: endPoint.imgEndpoint,
         notifications: []
       };

@@ -24,7 +24,7 @@
                             <div class="col-lg-3 order-lg-2">
                                 <div class="card-profile-image">
                                     <a href="#">
-                                        <img style="width:150px; height:150px;" v-if="model.image.length == 35" src="img/theme/profile-default.png" class="rounded-circle">
+                                        <img style="width:150px; height:150px;" v-if="haveImage == ''" src="img/theme/profile-default.png" class="rounded-circle">
                                         <img style="width:150px; height:150px;" v-else :src="model.image" class="rounded-circle">
                                     </a>
                                 </div>
@@ -250,7 +250,8 @@
                     newPassVerify: '',
                     valid: null,
                     validAll: null
-                }
+                },
+                haveImage: ''
             }
         },
         beforeCreate(){
@@ -287,6 +288,7 @@
                     this.model.access = data.data.LastAccess
                     this.model.about = data.data.about
 					this.model.image = endPoint.imgEndpoint+data.data.userImage
+                    this.haveImage = data.data.userImage
 				}catch(err) {
 					this.$swal({
 						type: 'error',
