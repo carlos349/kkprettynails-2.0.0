@@ -13,7 +13,7 @@
                         <h1 class="display-2 text-white w-100">Sección de ventas</h1>
                         <label class="text-white" v-if="validRoute('ventas', 'filtrar')">Filtra tus ventas</label>
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <base-input v-if="validRoute('ventas', 'filtrar')" addon-left-icon="ni ni-calendar-grid-58">
                                     <flat-picker slot-scope="{focus, blur}"
                                         @on-open="focus"
@@ -31,6 +31,9 @@
                                 <base-button v-if="inspectorFilter"  type="secondary" v-on:click="getSales('button')">
                                     <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
                                 </base-button>
+                            </div>
+                            <div class="col-md-4">
+                                <base-button title="Generar excel" icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="modals.modal3 = true">Generar excel</base-button>
                             </div>
                         </div>
                         
@@ -181,7 +184,6 @@
                 </template>
             </card>
         </modal>
-        <base-button title="Generar excel" icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="modals.modal3 = true"></base-button>
         <vue-bootstrap4-table v-if="progress" :rows="sales" :columns="columns" :classes="classes" :config="configTable">
             <template slot="date-format" slot-scope="props">
                 {{formatDate(props.row.fecha)}}
@@ -692,12 +694,12 @@ export default {
     .vue-progress-path .background {
         stroke: transparent;
     }
-    .excel-generate{
+    /* .excel-generate{
         position:absolute;
         right:2%;
         top:30%;
         z-index: 10;
-    }
+    } */
     .bgcolor-danger #single-select{
         border-color:red;
     }

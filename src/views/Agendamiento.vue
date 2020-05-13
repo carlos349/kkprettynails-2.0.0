@@ -360,27 +360,22 @@
                             <dt class="mt-3 text-center">Servicios</dt>
                             <badge v-for="service of selectedEvent.services" class="mt-1 ml-1 text-default" type="primary">{{service.servicio}}</badge>
                             <hr/>
-                            <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <br><span v-if="selectedEvent.imageLength >= 3">(Llego al máximo)</span></dt>
-                            <div class="row mt-1">
-                                <div class="col-md-10">
-                                    <label for="file">{{nameFile}}</label>
-                                    <input disabled v-if="selectedEvent.imageLength >= 3" type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()" >
-                                    <input v-else type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()" >
-                                </div>
-                                <div class="col-md-2">
-                                    <base-button disabled v-if="selectedEvent.imageLength >= 3" size="sm" class="p-2 w-100" type="default" v-on:click="uploadImageDesign(selectedEvent.id)">
-                                        <i class="ni ni-cloud-upload-96" style="font-size:16px;"></i>
-                                    </base-button>
-                                    <base-button v-else size="sm" class="p-2 w-100" type="default" v-on:click="uploadImageDesign(selectedEvent.id)">
-                                        <i class="ni ni-cloud-upload-96" style="font-size:16px;"></i>
-                                    </base-button>
-                                </div>
+                            <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <span v-if="selectedEvent.imageLength >= 3"> (Máximo 3)</span></dt>
+                            <div class="row mt-1" v-if="selectedEvent.imageLength < 3">
+                                <label class="col-md-8" for="file">{{nameFile}}</label>
+                                <input type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()" >
+                                <button class="col-md-4 buttonUpload" v-on:click="uploadImageDesign(selectedEvent.id)">
+                                    <b>Enviar</b>
+                                </button>
                             </div>
                             <div v-if="selectedEvent.imageLength > 0" class="row mt-1">
                                 <div class="col-md-12">
                                     <carousel :perPage="1" :autoplayHoverPause="true" :autoplay="true">
-                                        <slide v-for="images of selectedEvent.image">
-                                            <img class="w-100" style="height: 50vh !important;" :src="imgEndpoint+'/static/designs/'+images" alt="">
+                                        <slide v-for="(images, index) of selectedEvent.image" class="imageHover">
+                                            <img  class="w-100" style="height: 50vh !important;" :src="imgEndpoint+'/static/designs/'+images" alt="">
+                                            <center>
+                                                <base-button type="danger" class="mt-2" size="sm" v-on:click="deleteImage(selectedEvent.image, index, selectedEvent.id)">Eliminar imagen</base-button>
+                                            </center>
                                         </slide>
                                     </carousel>
                                 </div>
@@ -2264,7 +2259,6 @@
             }
         },
         handleFileUpload(){
-            console.log(this.$refs.file.files.length)
             const LengthImage = this.selectedEvent.image.length + this.$refs.file.files.length
             if (LengthImage > 3) {
                 console.log('maximo')
@@ -2295,8 +2289,19 @@
             .then(res => {
                 if (res.data.status == 'ok') {
                     this.selectedEvent.image = res.data.image
-                    // window.location.reload()
+                    this.selectedEvent.imageLength = res.data.image.length
+                    this.$refs.file = ''
                 }
+            })
+        },
+        deleteImage(images, index, id){
+            images.splice(index, 1)
+            axios.put(endPoint.endpointTarget+'/citas/removeImage/'+id, {
+                images: images
+            })
+            .then(res => {
+                this.selectedEvent.image = images
+                this.selectedEvent.imageLength = this.selectedEvent.imageLength - 1
             })
         },
         endingDate(){
@@ -2715,6 +2720,19 @@
         text-transform: uppercase;
         width: 100%;
         text-align: center;
-        border-radius: 5px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
+    .hoverDelete:hover{
+        opacity: .8;
+        cursor: pointer;
+    }
+    .buttonUpload{
+        border:none;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        color:#fff;
+        background-color: #2dce89;
+        height: 38px !important;
     }
 </style>
