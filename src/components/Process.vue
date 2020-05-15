@@ -445,7 +445,7 @@ import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import jwtDecode from 'jwt-decode'
-
+import io from 'socket.io-client';
 import EventBus from './EventBus'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
@@ -459,6 +459,7 @@ export default {
     },
     data(){
         return {
+            socket: io(endPoint.endpointTarget),
             auth: [],
             validator:true,
             validatorBtn:true,
@@ -1256,8 +1257,8 @@ export default {
                         ifrecomend: this.ifrecomend
 					})
 					.then(res => {
-						
 						if (res.data.status == "Venta registrada") {
+
                             this.modals = {
                                 modal1: true,
                                 message: "Venta procesada",
@@ -1275,6 +1276,7 @@ export default {
                                     type: ''
                                 }
                             }, 1500);
+                            this.alertProducts()
 							this.servicios =''
 							this.initialState()
 							EventBus.$emit('reloadDates', 'process')
@@ -1359,6 +1361,36 @@ export default {
                     }
                 }, 1500);
 			}
+        },
+        alertProducts(){
+            axios.get(endPoint.endpointTarget+'/inventario/alertProducts')
+            .then(res => {
+                if (res.data.status) {
+                    var Detail = ''
+                    if (res.data.productsToAlert.length == 1) {
+                        Detail = 'Hace falta reintegrar el productos: '
+                    }else{
+                        Detail = 'Hace falta reintegrar los producto: '
+                    }
+                    for (let index = 0; index < res.data.productsToAlert.length; index++) {
+                        const element = res.data.productsToAlert[index];
+                        if (index == 0) {
+                            Detail = Detail + element.nameProduct
+                        }else{
+                            Detail = Detail + ', ' + element.nameProduct
+                        } 
+                    } 
+                    axios.post(endPoint.endpointTarget+'/notifications', {
+                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                        userImage:localStorage.getItem('imageUser'),
+                        detail: Detail,
+                        link: 'Inventario'
+                    })
+                    .then(res => {
+                        this.socket.emit('sendNotification', res.data)
+                    })
+                }
+            })
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {

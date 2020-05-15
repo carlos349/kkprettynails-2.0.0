@@ -961,7 +961,7 @@
         clientsNames:[],
         lengthClosedDates:0,
         file: '',
-        nameFile:'Click aquí para subir imagen'
+        nameFile:'Click aquí para cargar imagen'
       };
     },
     beforeCreate(){
@@ -2291,6 +2291,7 @@
                     this.selectedEvent.image = res.data.image
                     this.selectedEvent.imageLength = res.data.image.length
                     this.$refs.file = ''
+                    this.nameFile = 'Click aquí para cargar imagen'
                 }
             })
         },
