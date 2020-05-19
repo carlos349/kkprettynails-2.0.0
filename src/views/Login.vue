@@ -28,10 +28,45 @@
             </div>
             <div class="row mt-3">
                 <div class="col-6">
-                    <a href="#" class="text-light"><small>Olvidaste la contraseña?</small></a>
+                    <a href="#" class="text-light" v-on:click="modals.modal2 = true"><small>Olvidaste la contraseña?</small></a>
                 </div>
             </div>
         </div>
+        <modal :show.sync="modals.modal2"
+               body-classes="p-4"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                       <h3>Confirme su correo</h3> 
+                    </div>
+                </template>
+                <template>
+                    <form role="form">
+                        <base-input alternative
+                            class="mb-3"
+                            placeholder="Correo electronico registrado"
+                            addon-left-icon="ni ni-single-copy-04"
+                            v-model="emailRenew">
+                        </base-input>
+                        <div class="text-center">
+                            <base-button type="primary" v-on:click="SendNewPass">Enviar</base-button>
+                        </div>
+                    </form>
+                </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal"
+               :gradient="modals.type"
+               modal-classes="modal-danger modal-dialog-centered">
+            <div class="py-3 text-center">
+                <i :class="modals.icon"></i>
+                <h1 class="heading mt-5">{{modals.message}}</h1>
+            </div>
+        </modal>
     </div>
 </template>
 <script>
@@ -45,9 +80,17 @@ import jwtDecode from 'jwt-decode'
     data() {
       return {
         model: {
-          email: '',
-          password: ''
-        }
+            email: '',
+            password: '',
+        },
+        modals: {
+            modal: false,
+            modal2: false,
+            message: "",
+            icon: '',
+            type:''
+        },
+        emailRenew: ''
       }
     },
     beforeCreate(){
@@ -102,6 +145,65 @@ import jwtDecode from 'jwt-decode'
             EventBus.$emit('loggedin', status)
             localStorage.setItem('logged-in', status)
         },
+        SendNewPass(){
+            if (this.emailRenew == '') {
+                this.modals = {
+                    modal: true,
+                    message: "Debe llenar el dato de correo",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal:false,
+                        modal2:true,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
+                }, 1500);
+            }else{
+                axios.post(endPoint.endpointTarget+'/users/sendNewPass', {
+                    email: this.emailRenew
+                }) 
+                .then(res => {
+                    if (res.data.status == 'ok') {
+                        this.modals = {
+                            modal: true,
+                            message: "Se le envio un correo, con la contraseña provicional",
+                            icon: 'ni ni-check-bold ni-5x',
+                            type: 'success'
+                        }
+                        setTimeout(() => {
+                            this.modals = {
+                                modal: false,
+                                modal2: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 2500);
+                        this.emailRenew = ''
+                    }else{
+                        this.modals = {
+                            modal: true,
+                            message: "El correo no esta registrado",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
+                        }
+                        setTimeout(() => {
+                            this.modals = {
+                                modal: false,
+                                modal2: true,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 2000);
+                    }
+                })
+            }
+        }
     }
   }
 </script>

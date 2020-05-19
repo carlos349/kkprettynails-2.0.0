@@ -27,14 +27,21 @@
                   <template slot="edit" slot-scope="props">
                       <b>
                         <center>
-                            
                             <base-button  title="Compras" size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type, dataProduct.name = props.row.producto,initialState(1,props.row._id)" icon="fa fa-plus"></base-button>
+                            <base-button v-if="parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume) <= props.row.alertTotal" title="Alerta producto" size="sm" type="danger" icon="ni ni-bell-55" @click="dataStock(props.row._id, props.row.alertTotal, props.row.type)"></base-button>
+                            <base-button v-else title="Alerta producto" size="sm" type="success" icon="ni ni-bell-55" @click="dataStock(props.row._id, props.row.alertTotal, props.row.type)"></base-button>
                             <base-button  title="Eliminar" size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash"></base-button>
                         </center>
                       </b>
                   </template>
                   <template slot="totalIdeal" slot-scope="props">
-                    {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
+                    <span v-if="parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume) <= props.row.alertTotal" style="color:#f5365c">
+                      {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
+                    </span>
+                    <span v-else>
+                      {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
+                    </span>
+                    
                   </template>
                   <template slot="price" slot-scope="props">
                     $ {{formatPrice(props.row.monto)}}
@@ -243,6 +250,31 @@
             </template>
         </card>
     </modal>
+    <modal :show.sync="modals.modal6"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-sm">
+        <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+        <card type="secondary" shadow
+              header-classes="bg-white pb-5"
+              body-classes="px-lg-5 py-lg-5"
+              class="border-0">
+            <template>
+                <div style="margin-top:-30%" class="text-center text-muted mb-4">
+                    <small>Edite el total para que le sistema alerte cuando este próximo a acabarse ({{typeStock}})</small>
+                </div>
+                <form role="form">
+                    <base-input alternative
+                      placeholder="Total alarma"
+                      v-model="stockTotal"
+                      addon-left-icon="fa fa-bell">
+                    </base-input>
+                </form>
+            </template>
+            <div class="text-center">
+              <base-button v-on:click="editStock()" type="default">Editar</base-button>
+            </div>
+        </card>
+    </modal>
     <modal :show.sync="modals.modal3"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-sm">
@@ -393,6 +425,9 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         providerTable:[],
         unit:"",
         dateAdd:'',
+        stockTotal: '',
+        idToStock: '',
+        typeStock: '',
         addValid:true,
         configDatePicker: {
           allowInput: true,
@@ -406,6 +441,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           modal3: false,
           modal4: false,
           modal5: false,
+          modal6: false,
           message: "",
           icon: '',
           type:''
@@ -684,6 +720,8 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                         modal2: false,
                         modal3: false,
                         modal4: false,
+                        modal5: false,
+                        modal6: false,
                         message: "",
                         icon: '',
                         type:''
@@ -705,6 +743,8 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                     modal2: false,
                     modal3: false,
                     modal4: false,
+                    modal5: false,
+                    modal6: false,
                     message: "",
                     icon: '',
                     type:''
@@ -829,6 +869,8 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                         modal2: false,
                         modal3: false,
                         modal4: false,
+                        modal5: false,
+                        modal6: false,
                         message: "",
                         icon: '',
                         type:''
@@ -850,6 +892,8 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                   modal2: false,
                   modal3: false,
                   modal4: false,
+                  modal5: false,
+                  modal6: false,
                   message: "",
                   icon: '',
                   type:''
@@ -902,6 +946,8 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                   modal2: false,
                   modal3: false,
                   modal4: false,
+                  modal5: false,
+                  modal6: false,
                   message: "",
                   icon: '',
                   type:''
@@ -952,6 +998,10 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                     this.modals = {
                         modal1: false,
                         modal2: false,
+                        modal3: false,
+                        modal4: false,
+                        modal5: false,
+                        modal6: false,
                         message: "",
                         icon: '',
                         type:''
@@ -972,6 +1022,10 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                 this.modals = {
                     modal1: false,
                     modal2: false,
+                    modal3: false,
+                    modal4: false,
+                    modal5: false,
+                    modal6: false,
                     message: "",
                     icon: '',
                     type:''
@@ -1005,6 +1059,10 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                     this.modals = {
                         modal1: false,
                         modal2: false,
+                        modal3: false,
+                        modal4: false,
+                        modal5: false,
+                        modal6: false,
                         message: "",
                         icon: '',
                         type:''
@@ -1025,6 +1083,10 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                 this.modals = {
                     modal1: false,
                     modal2: false,
+                    modal3: false,
+                    modal4: false,
+                    modal5: false,
+                    modal6: false,
                     message: "",
                     icon: '',
                     type:''
@@ -1052,6 +1114,8 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                   modal2: false,
                   modal3: false,
                   modal4: false,
+                  modal5: false,
+                  modal6: false,
                   message: "",
                   icon: '',
                   type:''
@@ -1138,9 +1202,51 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
               timer: 1500
             })
         })
+      },
+      dataStock(id, alert, type){
+        this.modals.modal6 = true
+        this.idToStock = id
+        this.typeStock = type
+        this.stockTotal = alert
+      },
+      editStock(){
+        axios.put(endPoint.endpointTarget+'/inventario/editStockAlarm/'+this.idToStock, {
+          stockTotal:this.stockTotal
+        })
+        .then(res => {
+          if (res.data.status == 'ok') {
+            this.modals = {
+                modal2: true,
+                message: "Alarma actualizada",
+                icon: 'ni ni-check-bold ni-5x',
+                type: 'success'
+            }
+            setTimeout(() => {
+                this.modals = {
+                    modal1: false,
+                    modal2: false,
+                    modal3: false,
+                    modal4: false,
+                    modal5: false,
+                    modal6: false,
+                    message: "",
+                    icon: '',
+                    type:''
+                }
+                this.getProducts();
+            }, 1500);
+          }else{
+            this.$swal({
+              type: 'error',
+              title: 'Hubo un problema',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+        })
       }
     }
-  };
+  }
 </script>
 <style lang="scss">
   .card-header{
