@@ -41,12 +41,10 @@
                     <span v-else>
                       {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
                     </span>
-                    
                   </template>
                   <template slot="price" slot-scope="props">
                     $ {{formatPrice(props.row.monto)}}
                   </template>
-                  
                   <template slot="pagination-info" slot-scope="props">
                       Actuales {{props.currentPageRowsLength}} | 
                         Filtrados {{props.filteredRowsLength}} | 
@@ -221,6 +219,11 @@
                                 placeholder="Cantidad"
                                 v-model="dataProduct.initial"
                                 addon-left-icon="fa fa-box-open">
+                    </base-input>
+                    <base-input v-if="validForm == 1" alternative
+                          placeholder="Numero para alerta"
+                          v-model="dataProduct.alert"
+                          addon-left-icon="fa fa-bell">
                     </base-input>
                     <currency-input
                         v-on:keyup="valid"
@@ -448,9 +451,10 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         },
         dataProduct:{
           name:'',
-          price:'',
+          price:0,
           initial:'',
           entry:'',
+          alert:'',
           id:null
         },
         rows: [],
@@ -704,7 +708,8 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           product: this.dataProduct.name,
           type: this.unit,
           quantity: this.dataProduct.initial,
-          price: this.dataProduct.price
+          price: this.dataProduct.price,
+          alert:this.dataProduct.alert
         })
         .then(res => {
           if (res.data.status === 'ok') {
@@ -727,7 +732,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
                         type:''
                     }
                     this.getProducts();
-                    this.initialState(2)
+                    this.initialState(3)
                 }, 1500);
             
           }else{
@@ -800,15 +805,15 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           console.log(err)
         })
       },
-      initialState(tipe,id){
-        if (tipe == 1) {
+      initialState(type,id){
+        if (type == 1) {
           this.myId = id
           this.provider = ''
           this.dateAdd = ''
           this.dataProduct.price = ''
           console.log(this.myId)
         }
-        if (tipe == 2) {
+        if (type == 2) {
           this.provider = {
             name:'',
             rut:'',
@@ -818,16 +823,17 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
           }
           this.providerSup.validProvider = true
         }
-        if(type == ''){
+        if(type == 3){
           console.log("No entre aqui")
           this.dataProduct = {
-          name:'',
-          price:'',
-          initial:'',
-          add:'',
-          id:''
-        }
-        this.unit = ''
+            name:'',
+            price:0,
+            initial:'',
+            add:'',
+            alert: '',
+            id:''
+          }
+          this.unit = ''
         }
       },
       pushData(name,cantidad,precio,id,type){
