@@ -2,11 +2,24 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import DashboardLayout from '@/layout/DashboardLayout'
 import AuthLayout from '@/layout/AuthLayout'
+import AgendLayout from '@/views/AgendamientoCliente'
 Vue.use(Router)
 
 export default new Router({
   linkExactActiveClass: 'active',
   routes: [
+    {
+      path: '/Sectionclient',
+      redirect: 'AgendaCliente',
+      component: AgendLayout,
+      children: [
+        {
+          path: '/Agendamientocliente',
+          name: '',
+          component: () => import('./views/AgendamientoCliente.vue')
+        },
+      ] 
+    },
     {
       path: '/dashboard',
       redirect: 'dashboard',
