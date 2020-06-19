@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import DashboardLayout from '@/layout/DashboardLayout'
 import AuthLayout from '@/layout/AuthLayout'
 import AgendLayout from '@/views/AgendamientoCliente'
+import ConfirmLayout from '@/views/agendamientoConfirm'
 Vue.use(Router)
 
 export default new Router({
@@ -17,7 +18,19 @@ export default new Router({
           path: '/Agendamientocliente',
           name: '',
           component: () => import('./views/AgendamientoCliente.vue')
-        },
+        }
+      ] 
+    },
+    {
+      path: '/Sectionclientconfirm',
+      redirect: 'confirmCliente',
+      component: ConfirmLayout,
+      children: [
+        {
+          path: '/ConfirmacionAgenda',
+          name: '',
+          component: () => import('./views/agendamientoConfirm.vue')
+        }
       ] 
     },
     {

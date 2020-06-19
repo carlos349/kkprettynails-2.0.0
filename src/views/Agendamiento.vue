@@ -335,7 +335,12 @@
                                 <span >Empleado(s):</span>
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.empleada)}}</badge>
                             </base-button>
-
+                            <base-button class="mt-1 col-12" size="sm" type="secondary">
+                                <span >Entrada:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
+                                <span >Salida:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.end)}}</badge>
+                            </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'first'" >
                                     Lleva descuento (Primera atención)
@@ -349,15 +354,12 @@
                                     No lleva descuento 
                                     <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
                                 </span>
-                                
                             </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
-                                <span >Entrada:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
-                                <span >Salida:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.end)}}</badge>
+                                <span class="text-success" v-if="selectedEvent.confirmation">Confirmada</span>
+                                <span class="text-danger" v-else v-on:click="sendConfirmation(selectedEvent.id, selectedEvent.cliente, selectedEvent.start, selectedEvent.end)">Confirmar</span>
                             </base-button>
-                            <dt class="mt-3 text-center">Servicios</dt>
+                            <dt class="mt-3 text-center">Servicios</dt>  
                             <badge v-for="service of selectedEvent.services" class="mt-1 ml-1 text-default" type="primary">{{service.servicio}}</badge>
                             <hr/>
                             <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <span v-if="selectedEvent.imageLength >= 3"> (Máximo 3)</span></dt>
@@ -1062,7 +1064,8 @@
                             id:res.data[index]._id,
                             process: res.data[index].process,
                             image: res.data[index].image,
-                            imageLength: res.data[index].image.length
+                            imageLength: res.data[index].image.length,
+                            confirmation: res.data[index].confirmation
                         }
                         this.events.push(arrayEvents)
                     }
@@ -1105,7 +1108,8 @@
                         id:res.data[index]._id,
                         process: res.data[index].process,
                         image: res.data[index].image,
-                        imageLength: res.data[index].image.length
+                        imageLength: res.data[index].image.length,
+                        confirmation: res.data[index].confirmation
                     }
                     this.events.push(arrayEvents)
                     }
@@ -1686,7 +1690,8 @@
                             empleada: res.data[index].employe,
                             id:res.data[index]._id, 
                             image: res.data[index].image,
-                            imageLength: res.data[index].image.length
+                            imageLength: res.data[index].image.length,
+                            confirmation: res.data[index].confirmation
                         } 
                         this.events.push(arrayEvents)
                     }
@@ -2424,6 +2429,44 @@
 			}
 			}
         },
+        sendConfirmation(id, name, start, end){
+            console.log(id+'--'+name+'--'+start+'--'+end)
+            const nameFormat = this.formatName(name)
+            const contactFormat = this.formatContact(name)
+            const startFormat = this.dateSplitHours(start)
+            const endFormat = this.dateSplitHours(end)
+            const dateFormat = this.dateSplit(start)
+            axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
+                name: nameFormat,
+                contact: contactFormat,
+                start: startFormat,
+                end: endFormat,
+                date: dateFormat,
+            })
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    this.dateModals.modal1 = false
+                    this.modalsDialog = {
+                        modal2: true,
+                        message: "Se envio el correo de confirmacion, satisfactoriamente",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modalsDialog = {
+                            modal2: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                        this.dateModals.modal1 = true
+                    }, 1500);
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        }
     },
     computed: {
         ifSticky: () => {

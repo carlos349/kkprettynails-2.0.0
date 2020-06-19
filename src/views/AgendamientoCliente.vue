@@ -9,63 +9,76 @@
         <div class="container-fluid">
             <div class="row mt-4">
             <div class="col-md-8">
-                <div class="accordion" id="accordionExample">
-                        <div class="card style-dates-cards">
-                            <div class="card-header" id="headingOne">
-                                <div v-on:click="wantLenderChange">
-                                    <base-checkbox class="mb-3" v-model="checkboxes.Wantlender" >
-                                        <h2 style="margin-top: -5px;margin-bottom:-10px;">¿Desea una prestadora en específico?</h2> 
-                                    </base-checkbox>
-                                </div>
-                                
-                                <base-button class="w-25 style-collapse-dates" type="success" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Servicios
-                                </base-button>
-                            </div>
-                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <div class="row">
-                                        
-                                        <div class="col-4">
-                                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                                                <base-button v-for="category of categories" :key="category._id" type="default" class="w-100 mt-1" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true">{{category.name}}</base-button>
-
-                                            </div>
+                <card shadow>
+                    <div v-on:click="wantLenderChange">
+                        <base-checkbox class="mb-3" v-model="checkboxes.Wantlender" >
+                            <h2 style="margin-top: -5px;margin-bottom:-10px;">¿Desea una prestadora en específico?</h2> 
+                        </base-checkbox>
+                    </div>
+                    <ul class="nav nav-pills mb-3 row" id="pills-tab" role="tablist">
+                        <li class="nav-item col-md-3 col-sm-6" role="presentation">
+                            <base-button type="success" class="w-100 mt-1" data-toggle="pill" href="#pills-service" role="tab" aria-controls="v-pills-service" aria-selected="true" v-on:click="soWhat('service')">Servicios</base-button>
+                        </li>
+                        <li class="nav-item col-md-3 col-sm-6" role="presentation">
+                            <base-button title="Puede continuar" v-if="ifServices" type="success" class="w-100 mt-1" data-toggle="pill" href="#pills-date" role="tab" aria-controls="v-pills-date" aria-selected="true" v-on:click="soWhat('date')">
+                            Fecha
+                            <i class="fa fa-check-square float-right" aria-hidden="true" style="font-size:20px;color:#32325d;"></i>
+                            </base-button>
+                            <base-button title="Elija un servicio para continuar" v-else type="default" class="w-100 mt-1" data-toggle="pill" href="#pills-date" role="tab" aria-controls="v-pills-date" aria-selected="true" disabled>
+                            Fecha
+                            <i class="fa fa-exclamation-circle float-right danger" aria-hidden="true" style="font-size:20px;color:#f5365c;"></i>
+                            </base-button>
+                        </li>
+                        <li class="nav-item col-md-3 col-sm-6" role="presentation">
+                            <base-button title="Puede continuar" v-if="ifLender" type="success" class="w-100 mt-1" data-toggle="pill" href="#pills-lender" role="tab" aria-controls="v-pills-lender" aria-selected="true" v-on:click="generateLender(), soWhat('lender')">
+                            Prestadora
+                            <i class="fa fa-check-square float-right" aria-hidden="true" style="font-size:20px;color:#32325d;"></i>
+                            </base-button>
+                            <base-button title="Haganos saber si quiere un diseño para continuar" v-else type="default" class="w-100 mt-1" data-toggle="pill" href="#pills-lender" role="tab" aria-controls="v-pills-lender" aria-selected="true" disabled>
+                            Prestadora
+                            <i class="fa fa-exclamation-circle float-right danger" aria-hidden="true" style="font-size:20px;color:#f5365c;"></i>
+                            </base-button>
+                        </li>
+                        <li class="nav-item col-md-3 col-sm-6" role="presentation">
+                            <base-button title="Puede continuar" v-if="validSchedule" type="success" class="w-100 mt-1" data-toggle="pill" href="#pills-hour" role="tab" aria-controls="v-pills-hour" aria-selected="true" v-on:click="insertDate(), soWhat('hour')">
+                            Horario
+                            <i class="fa fa-check-square float-right" aria-hidden="true" style="font-size:20px;color:#32325d;"></i>
+                            </base-button>
+                            
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-service" role="tabpanel" aria-labelledby="pills-service-tab">
+                            <card shadow>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                            <base-button v-for="category of categories" :key="category._id" type="default" class="w-100 mt-1" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true">{{category.name}}</base-button>
                                         </div>
-                                        <div class="col-8">
-                                            <div class="tab-content" id="v-pills-tabContent">
-                                                <div v-for="category of categories" :key="category._id" class="tab-pane fade show " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                                    <div class="row" v-for="(service, index) of services">
-                                                        <div class="col-md-12" v-if="service.category == category.name">
-                                                                <button class="btn-header btnDate py-2 px-4 w-75 mt-2"> {{service.nombre}} <span class="badge badge-dark">{{serviceCount[index].count}}</span> </button> 
-                                                                <button class="btn-sevices btnDate" v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores)"><i class="fa fa-plus" aria-hidden="true" style="font-size:14px;"></i></button>
-                                                                <button class="btn-sevices btnDate" v-on:click="lessService(index, service.nombre, service.tiempo)"><i class="fa fa-minus" aria-hidden="true" style="font-size:14px;"></i></button>
-                                                        </div>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="tab-content" id="v-pills-tabContent">
+                                            <div v-for="category of categories" :key="category._id" class="tab-pane fade show " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                                <div class="row" v-for="(service, index) of services">
+                                                    <div class="col-md-12" v-if="service.category == category.name">
+                                                        <button class="btn-header btnDate py-2 px-4 w-75 mt-2"> 
+                                                            <span class="badge badge-default"><i class="fa fa-user-check" aria-hidden="true" style="font-size:10px;"></i>{{service.prestadores.length}} {{service.tiempo}}Min</span> | {{service.nombre}} |
+                                                            <span class="badge badge-default ">{{serviceCount[index].count}}</span> 
+                                                        </button> 
+
+                                                        <button class="btn-sevices btnDate" v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores)"><i class="fa fa-plus" aria-hidden="true" style="font-size:14px;"></i></button>
+                                                        <button class="btn-sevices btnDate" v-on:click="lessService(index, service.nombre, service.tiempo)"><i class="fa fa-minus" aria-hidden="true" style="font-size:14px;"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        
                                     </div>
                                 </div>
-                            </div>
+                            </card>
                         </div>
-                        <div class="card style-dates-cards">
-                            <div class="card-header" id="headingFour">
-                            <h2 class="mb-0">
-                                <base-button title="Puede continuar" v-if="ifServices" class="text-left collapsed style-collapse-dates w-25" type="success" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                    Fecha
-                                    <i class="fa fa-check-square float-right" aria-hidden="true" style="font-size:20px;color:#32325d;"></i>
-                                </base-button>
-                                <base-button title="Elija un servicio para continuar" v-else class="w-25 text-left collapsed style-collapse-dates" type="default" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" disabled>
-                                    Fecha
-                                    <i class="fa fa-exclamation-circle float-right danger" aria-hidden="true" style="font-size:20px;color:#f5365c;"></i>
-                                </base-button>
-                            </h2>
-                            </div>
-                            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
-                                <div class="card-body row">
+                        <div class="tab-pane fade" id="pills-date" role="tabpanel" aria-labelledby="pills-date-tab">
+                            <card shadow>
+                                <div class="row">
                                     <div class="col-md-6">
                                         <base-input addon-left-icon="ni ni-calendar-grid-58" >
                                             <flat-picker 
@@ -87,79 +100,72 @@
                                         </div>     
                                     </div>
                                 </div>
-                            </div>
+                            </card>
                         </div>
-                        <div id="lenderSection" class="card style-dates-cards">
-                            <div class="card-header" id="headingTwo">
-                            <h2 class="mb-0">
-                                <base-button title="Puede continuar" v-if="ifLender" class="w-25 text-left collapsed style-collapse-dates" type="success" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" v-on:click="generateLender()">
-                                    Prestadora
-                                    <i class="fa fa-check-square float-right" aria-hidden="true" style="font-size:20px;color:#32325d;"></i>
-                                </base-button>
-                                <base-button title="Haganos saber si quiere un diseño para continuar" v-else class="w-25 text-left collapsed style-collapse-dates" type="default" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" disabled>
-                                    Prestadora
-                                    <i class="fa fa-exclamation-circle float-right danger" aria-hidden="true" style="font-size:20px;color:#f5365c;"></i>
-                                </base-button>
-                            </h2>
-                            </div>
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                                <div class="card-body row" style="height:55vh">
-                                    <tabs fill class="flex-column flex-md-row w-100">
-                                        <card shadow>
-                                            <tab-pane v-on:click="console.log('solo una')">
-                                                <span slot="title" >
-                                                    <i class="fa fa-user"></i>
-                                                    Una sola prestadora
-                                                </span>
-                                                <vue-custom-scrollbar style="height:38vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                                <div class="row">
-                                                    <div class="col-md-3 text-center" v-for="lender of finalyLenders" :key="lender._id">
-                                                            <div class="frame" :class="lender._id" v-on:click="selectLender(lender.nombre, lender.class, lender.restTime, lender._id)">
-                                                                    <img alt="Image placeholder" style="width:100%;height:30vh;" src="img/theme/profile-defaultt.png">
-                                                                    <h3 style="margin-top:-30px;" :class="lender._id+'h3'">{{lender.nombre}}</h3>
-                                                            </div>
-                                                        
-                                                    </div>
+                        <div class="tab-pane fade" id="pills-lender" role="tabpanel" aria-labelledby="pills-lender-tab">
+                            <card shadow>
+                                <tabs fill class="flex-column flex-md-row w-100">
+                                        <tab-pane v-on:click="console.log('solo una')">
+                                            <span slot="title" >
+                                                <i class="fa fa-user"></i>
+                                                Una sola prestadora
+                                            </span>
+                                            <vue-custom-scrollbar style="height:38vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                            <div class="row">
+                                                <div class="col-md-3 text-center" v-for="lender of finalyLenders" :key="lender._id">
+                                                        <div class="frame" :class="lender._id" v-on:click="selectLender(lender.nombre, lender.class, lender.restTime, lender._id)">
+                                                                <img alt="Image placeholder" style="width:100%;height:25vh;" src="img/theme/profile-defaultt.png">
+                                                                <h3 style="margin-top:-30px;" :class="lender._id+'h3'">{{lender.nombre}}</h3>
+                                                        </div>
+                                                    
                                                 </div>
-                                                </vue-custom-scrollbar> 
-                                            </tab-pane>
-                                            <tab-pane title="Profile">
-                                                <span slot="title" >
-                                                    <i class="fa fa-users mr-2"></i>
-                                                    Diferentes prestadoras
-                                                </span>
-                                                <div class="row">
-                                                    <div class="col-md-3 ml-2 text-center" v-for="servicesSelect of registerDate.serviceSelectds" :key="servicesSelect">
-                                                        <base-dropdown>
-                                                            <base-button slot="title" type="primary" class="dropdown-toggle">
-                                                                {{servicesSelect.servicio}} <br> {{servicesSelect.lender}}
+                                            </div>
+                                            </vue-custom-scrollbar> 
+                                        </tab-pane>
+                                        <tab-pane title="Profile">
+                                            <span slot="title" >
+                                                <i class="fa fa-users mr-2"></i>
+                                                Diferentes prestadoras
+                                            </span>
+                                            <div class="row">
+                                                <div class="col-md-4 text-center" v-for="(servicesSelect, indexService) of registerDate.serviceSelectds" :key="servicesSelect">
+                                                    <badge style="font-size:1em !important" v-if="servicesSelect.start != ''" type="default" class="mb-1">Horario {{servicesSelect.start}} / {{servicesSelect.end}}</badge>
+                                                    <base-dropdown class="pl-1 w-100">
+                                                        <base-button slot="title" type="default" class="dropdown-toggle">
+                                                            {{servicesSelect.servicio}} <br> {{servicesSelect.lender}}
+                                                        </base-button>
+                                                        <vue-custom-scrollbar style="height:15vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                                            <b v-for="lenders of servicesSelect.lenders" :key="lenders" class="dropdown-item" style="color:#32325d;" v-on:click="servicesSelect.lender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime)">{{lenders.lender}}  </b>
+                                                        </vue-custom-scrollbar>
+                                                    </base-dropdown>
+                                                    <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                                        <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
+                                                            <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.Horario, index, indexService)" size="sm" class="col-12" type="success">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>Disponible</span>
                                                             </base-button>
-                                                            <vue-custom-scrollbar style="height:15vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                                                <b v-for="lenders of servicesSelect.lenders" :key="lenders" class="dropdown-item" style="color:#32325d;" v-on:click="servicesSelect.lender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender()">{{lenders.lender}}</b>
-                                                            </vue-custom-scrollbar>
-                                                        </base-dropdown>
-                                                    </div>
+                                                            <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>Ocupado</span>
+                                                            </base-button>
+                                                            <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>Seleccionado</span>
+                                                            </base-button>
+                                                            <base-button v-else size="sm" disabled class="col-12" type="secondary">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>No seleccionable</span>
+                                                            </base-button>
+                                                        </div>
+                                                    </vue-custom-scrollbar>
                                                 </div>
-                                            </tab-pane>
-                                        </card>
-                                    </tabs>
-                                </div>
-                            </div>
+                                            </div>
+                                        </tab-pane>
+                                </tabs>
+                            </card>
                         </div>
-                        <div class="card style-dates-cards">
-                            <div class="card-header bg-color" id="headingThree">
-                                <h2 class="mb-0">
-                                    <base-button  title="Puede continuar" v-if="validSchedule" class="w-25 text-left collapsed style-collapse-dates" type="success" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" v-on:click="insertDate()">
-                                        Horario 
-                                        <i class="fa fa-check-square float-right" aria-hidden="true" style="font-size:20px;color:#32325d;"></i>
-                                    </base-button>
-                                    <base-button title="Elija una prestadora para continuar" v-else class="w-25 text-left collapsed style-collapse-dates" type="default" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" disabled>
-                                        Horario 
-                                        <i class="fa fa-exclamation-circle float-right danger" aria-hidden="true" style="font-size:20px;color:#f5365c;"></i>
-                                    </base-button>
-                                </h2>
-                            </div>
-                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                        <div class="tab-pane fade" id="pills-hour" role="tabpanel" aria-labelledby="pills-hour-tab">
+                            <card shadow>
                                 <div v-if="noOneLender" class="card-body text-center">
                                     <div class="frameTable">
                                         <h2 class="text-left text-white mb-3 ml-3">Seleccione las horas para agendar</h2>
@@ -194,17 +200,14 @@
                                                     <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
                                                     <span>Disponible</span>
                                                 </base-button>
-
                                                 <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
                                                     <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
                                                     <span>Ocupado</span>
                                                 </base-button>
-
                                                 <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
                                                     <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
                                                     <span>Seleccionado</span>
                                                 </base-button>
-
                                                 <base-button v-else size="sm" disabled class="col-12" type="secondary">
                                                     <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
                                                     <span>No seleccionable</span>
@@ -226,57 +229,61 @@
                                         </center>
                                     </div>
                                 </div>
-                            </div>
+                            </card>
                         </div>
                     </div>
+                </card>
                 </div>
                 <div class="col-md-4 date-info">
-                    <h1>Información de la cita</h1>
-                    <ul>
-                        <li><b style="font-size:1.3em;">Servicio:</b>
-                            <ul>
-                                <template v-if="registerDate.serviceSelectds.length > 0">
-                                    <li  v-for="servicesSelectds of registerDate.serviceSelectds" :key="servicesSelectds">
-                                        <base-button size="sm" type="primary" class="mb-1 p-2">
-                                            <span>{{servicesSelectds.servicio}}</span>
-                                            <badge type="default"><b>{{servicesSelectds.lender}}</b></badge>
-                                        </base-button>
-                                    </li>
-                                </template>
-                                <li v-else>Ninguno seleccionado</li>
-                            </ul>
-                        </li>
-                        <li v-if="dates.simple != ''">
-                            <b style="font-size:1.3em;">Fecha:</b> {{dates.simple}}
-                        </li>
-                        <li v-else>
-                            <b style="font-size:1.3em;">Fecha:</b> Ninguna seleccionada
-                        </li>
-                        <li v-if="registerDate.design != 'nada'">
-                            <b style="font-size:1.3em;">Diseño:</b> <b class="text-uppercase"> {{registerDate.design}}</b>
-                        </li>
-                        <li v-else>
-                            <b style="font-size:1.3em;">Diseño:</b> Ninguna seleccionada
-                        </li>
-                        <li v-if="registerDate.employeSelect != ''">
-                            <b style="font-size:1.3em;">Prestadora:</b> <b class="text-uppercase"> {{registerDate.employeSelect}}</b>
-                        </li>
-                        <template v-if="noOneLender == false">
-                            <li v-if="registerDate.start == ''">
-                                <b style="font-size:1.3em;">Horario:</b> Ningun horario seleccionado
+                    <card shadow>
+                        <h1>Información de la cita</h1>
+                        <ul>
+                            <li><span style="font-size:1.3em;">Servicio:</span>
+                                <ul>
+                                    <template v-if="registerDate.serviceSelectds.length > 0">
+                                        <li  v-for="servicesSelectds of registerDate.serviceSelectds" :key="servicesSelectds">
+                                            <base-button size="sm" type="primary" class="mb-1 p-2">
+                                                <span>{{servicesSelectds.servicio}}</span>
+                                                <badge type="default"><b>{{servicesSelectds.lender}}</b></badge>
+                                            </base-button>
+                                            
+                                        </li>
+                                    </template>
+                                    <li v-else>Ninguno seleccionado</li>
+                                </ul>
+                            </li>
+                            <li v-if="dates.simple != ''">
+                                <span style="font-size:1.3em;">Fecha:</span> {{dates.simple}}
                             </li>
                             <li v-else>
-                                <b style="font-size:1.3em;">Horario:</b> {{registerDate.start}} - {{registerDate.end}}
+                                <span style="font-size:1.3em;">Fecha:</span> Ninguna seleccionada
                             </li>
-                        </template>
-                    </ul>
-                    <base-button v-if="ifLender && ifServices && validSchedule && validHour" type="success" icon="fa fa-check-square" v-on:click="modals.modal2 = true">Generar cita</base-button>
-                    <base-button v-else type="default" icon="fa fa-exclamation-circle" disabled>Generar cita</base-button>
+                            <li v-if="registerDate.design != 'nada'">
+                                <span style="font-size:1.3em;">Diseño:</span> <span class="text-uppercase"> {{registerDate.design}}</span>
+                            </li>
+                            <li v-else>
+                                <span style="font-size:1.3em;">Diseño:</span> Ninguna seleccionada
+                            </li>
+                            <li v-if="registerDate.employeSelect != ''">
+                                <span style="font-size:1.3em;">Prestadora:</span> <span class="text-uppercase"> {{registerDate.employeSelect}}</span>
+                            </li>
+                            <template v-if="noOneLender == false">
+                                <li v-if="registerDate.start == ''">
+                                    <span style="font-size:1.3em;">Horario:</span> Ningun horario seleccionado
+                                </li>
+                                <li v-else>
+                                    <span style="font-size:1.3em;">Horario:</span> {{registerDate.start}} - {{registerDate.end}}
+                                </li>
+                            </template>
+                        </ul>
+                        <base-button v-if="ifLender && ifServices && validHour" type="success" icon="fa fa-check-square" v-on:click="modals.modal2 = true">Generar cita</base-button>
+                        <base-button v-else type="default" icon="fa fa-exclamation-circle" disabled>Generar cita</base-button>
+                    </card>
                 </div>
             </div>
             
         </div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-Secondary mt-2">
+        <nav class="navbar navbar-expand-lg navbar-light bg-Secondary top-0">
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
                 <a class="navbar-brand" href="#">
                     <img src="img/brand/syswaLogo.png" alt="" style="height:30px;width:100px">
@@ -493,6 +500,13 @@
                     this.registerDate.sort = ''
                 }
             },
+            soWhat(type){
+                $('#pills-service').hide()
+                $('#pills-date').hide()
+                $('#pills-lender').hide()
+                $('#pills-hour').hide()
+                $('#pills-'+type).show(2000)
+            },
             validFields(){
                 if (this.registerUser.name != '' && this.registerUser.mail != '') {
                     this.validRegister = true
@@ -532,7 +546,7 @@
                                         icon: '',
                                         type: ''
                                     }
-                                    window.location = "kkprettynails.cl"
+                                    window.location = "http://kkprettynails.cl"
                                 }, 3000);
                             }    
                         })
@@ -597,10 +611,11 @@
                     console.log(err)
                 }
             },
-            validMultiLender(){
+            validMultiLender(index, lender, time, resTime){
                 this.registerDate.employeSelect = ''
                 this.validSchedule = false
                 this.noOneLender = true
+                this.selectHourService(index, lender, time, resTime)
                 var valid = 0 
                 for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                     const element = this.registerDate.serviceSelectds[index];
@@ -609,10 +624,29 @@
                     }
                 }
                 if (valid == 0) {
-                    this.validSchedule = true
                     this.noOneLender = true
-
                 }
+                
+            },
+            selectHourService(index, lender, time, resTime){
+                console.log(lender+'--'+ time+'--'+ resTime+'--'+index)
+                
+                this.selectServiceForHour = {}
+                this.selectServiceForHour = {
+                    employe: lender,
+                    date: this.dates.simple,
+                    time: parseFloat(time) + 15,
+                    resTime: resTime,
+                    index: index
+                }
+                axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.selectServiceForHour)
+                .then(res => { 
+                    this.registerDate.serviceSelectds[index].blocks = res.data
+                    console.log(this.registerDate.serviceSelectds[index])
+                    this.blockHour = res.data 
+                    this.progress = true
+                })
+                .catch(err => { console.log(err) })
             },
             validLender(){
                 if (this.registerDate.serviceSelectds.length > 0 && this.dates.simple != '') {
@@ -641,24 +675,17 @@
                 $('.'+id+'h3').css({'color':'#fff'})
                 this.validSchedule = true
                 this.noOneLender = false
-            },
-            selectHourService(index, lender, time, resTime){
-                console.log(lender+'--'+ time+'--'+ resTime)
-                this.modals.modal1 = true
-                this.selectServiceForHour = {}
-                this.selectServiceForHour = {
-                    employe: lender,
-                    date: this.dates.simple,
-                    time: parseFloat(time) + 15,
-                    resTime: resTime,
-                    index: index
+                this.validHour = false
+                for (let i = 0; i < this.registerDate.serviceSelectds.length; i++) {
+                    const element = this.registerDate.serviceSelectds[i];
+                    element.start = ''
+                    element.end = ''
+                    element.sort = ''
+                    element.lender = ''
+                    element.blocks = []
+                    element.restTime = ''
+                    element.class = ''
                 }
-                axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.selectServiceForHour)
-                .then(res => { 
-                    this.blockHour = res.data 
-                    this.progress = true
-                })
-                .catch(err => { console.log(err) })
             },
             insertDate(){
                 if (this.noOneLender) {
@@ -716,7 +743,7 @@
                         this.posibleLenders.push(lenders[index]) 
                     } 
                 } 
-                this.registerDate.serviceSelectds.push({comision: comision, precio: precio,servicio: service, lender: '', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: ''})
+                this.registerDate.serviceSelectds.push({comision: comision, precio: precio,servicio: service, lender: '', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: []})
                 this.registerDate.start = ''  
                 this.registerDate.end = '' 
                 this.registerDate.sort = ''    
@@ -781,20 +808,21 @@
                     console.log(err)
                 })
             },
-            selectBloqMulti(hora, i){
+            selectBloqMulti(hora, i, indexService){
+                console.log(indexService)
                 var sortSp = this.blockHour[i].Horario.split(":") 
-                this.registerDate.serviceSelectds[this.selectServiceForHour.index].start = this.blockHour[i].Horario
-                this.registerDate.serviceSelectds[this.selectServiceForHour.index].sort = sortSp[0]+sortSp[1]
+                this.registerDate.serviceSelectds[indexService].start = this.blockHour[i].Horario
+                this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
                 axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.selectServiceForHour)
                 .then(res => {
-                    
+                    console.log(this.selectServiceForHour)
                     for (let index = 0 ; index <= this.selectServiceForHour.time / 15; index++) {
                         res.data[i].validator = 'select'
-                        this.registerDate.serviceSelectds[this.selectServiceForHour.index].end = res.data[i].Horario
+                        this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
                         i++
                     }
+                    this.registerDate.serviceSelectds[indexService].blocks = res.data
                     this.blockHour = res.data
-
                     var valid = 0 
                     for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                         const element = this.registerDate.serviceSelectds[index];
@@ -841,14 +869,16 @@
 }
 .btn-header{
     background-color: #fff;
-    border:solid 2px #32325d;
+    border:solid .8px #32325d;
     border-radius: 5px;
     color: #32325d;
     padding-left: 10px;
-    font-weight: 600;
+    font-weight: 400;
+    text-align:left;
+    margin-right: 5px;
     width: 100%;
     transition: all ease .5s;
-    letter-spacing: .1em;
+    letter-spacing: .05em;
 }
 .btnDate:focus{
     outline:none !important;
@@ -898,5 +928,8 @@
     border-bottom: solid 1px #1c345d;
     color: #fff;
     padding: 10px;
+}
+.top-0{
+    margin-top:10% !important;
 }
 </style>
