@@ -4,7 +4,7 @@
             <div class="card bg-secondary shadow border-0">
                 <div class="card-body px-lg-5 py-lg-5">
                     <div class="btn-wrapper text-center mb-4">
-                        <span class="mb-5"><img style="width:20%" src="img/brand/syswaLogo.png"></span>
+                        <span class="mb-5"><img style="width:40%" src="img/brand/syswa-gestion.png"></span>
                     </div>
                     <form role="form">
                         <base-input class="input-group-alternative mb-3"

@@ -7,7 +7,7 @@
                 <span class="navbar-toggler-icon"></span>
             </navbar-toggle-button>
             <router-link  class="navbar-brand" to="/">
-                <img style="max-height: 2rem !important" :src="logo" class="navbar-brand-img" alt="...">
+                <img style="max-height: 2.2rem !important" :src="logo" class="navbar-brand-img" alt="...">
             </router-link>
 
             <slot name="mobile-right">
@@ -100,7 +100,7 @@
     props: {
       logo: {
         type: String,
-        default: 'img/brand/syswaLogo.png',
+        default: 'img/brand/syswa-gestion.png',
         description: 'Sidebar app logo'
       },
       autoClose: {

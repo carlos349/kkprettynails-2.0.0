@@ -29,7 +29,7 @@
                             <i class="fa fa-exclamation-circle float-right danger" aria-hidden="true" style="font-size:20px;color:#f5365c;"></i>
                             </base-button>
                         </li>
-                        <li class="nav-item col-md-3 col-sm-6" role="presentation">
+                        <li class="nav-item col-md-3 col-sm-6" role="presentation" id="lenderSection">
                             <base-button title="Puede continuar" v-if="ifLender" type="success" class="w-100 mt-1" data-toggle="pill" href="#pills-lender" role="tab" aria-controls="v-pills-lender" aria-selected="true" v-on:click="generateLender(), soWhat('lender')">
                             Prestadora
                             <i class="fa fa-check-square float-right" aria-hidden="true" style="font-size:20px;color:#32325d;"></i>
@@ -233,6 +233,9 @@
                         </div>
                     </div>
                 </card>
+                 <a class="navbar-brand mt-1" href="#">
+                    <img src="img/brand/syswaLogo.png" alt="" style="height:30px;width:100px">
+                </a>
                 </div>
                 <div class="col-md-4 date-info">
                     <card shadow>
@@ -283,11 +286,9 @@
             </div>
             
         </div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-Secondary top-0">
+        <nav class="navbar navbar-expand-lg navbar-light bg-Secondary top-7">
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                <a class="navbar-brand" href="#">
-                    <img src="img/brand/syswaLogo.png" alt="" style="height:30px;width:100px">
-                </a>
+               
             </div>
             <span class="navbar-text" style="float: right !important;">
                 © {{year}} | <a href="https://www.syswa.com" class="font-weight-bold ml-1" target="_blank">SYSWA</a> Todos los derechos reservados
@@ -372,11 +373,18 @@
                             addon-left-icon="fa fa-user">
                         </base-input>
                         <base-input alternative
+                            type="text"
+                            v-on:keyup="validFields()"
+                            placeholder="Escriba su apellido"
+                            v-model="registerUser.lastName"
+                            addon-left-icon="fa fa-user">
+                        </base-input>
+                        <base-input alternative
                             type="email"
                             v-on:keyup="validFields()"
                             placeholder="Escriba su correo"
                             v-model="registerUser.mail"
-                            addon-left-icon="fa fa-email">
+                            addon-left-icon="ni ni-email-83">
                         </base-input>
                         <base-button v-if="validRegister" type="success" v-on:click="finallyAgend()">
                             Finalizar agenda
@@ -431,7 +439,8 @@
                 },
                 registerUser: {
                     name: '',
-                    mail: ''
+                    mail: '',
+                    lastName: ''
                 },
                 year: new Date().getFullYear(),
                 modals: {
@@ -485,7 +494,6 @@
             this.getLenders()
             this.getServices()
             this.getCategories()
-            window.open
         },
         methods: {
             wantLenderChange(){
@@ -508,15 +516,16 @@
                 $('#pills-'+type).show(2000)
             },
             validFields(){
-                if (this.registerUser.name != '' && this.registerUser.mail != '') {
+                if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
                     this.validRegister = true
                 }else{
                     this.validRegister = false
                 }
             },
             finallyAgend(){
+                const name = this.registerUser.name+' '+this.registerUser.lastName
                 axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
-                    name: this.registerUser.name,
+                    name: name,
                     mail: this.registerUser.mail
                 })
                 .then(res => {
