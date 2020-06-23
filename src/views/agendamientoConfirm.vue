@@ -12,10 +12,12 @@
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import router from '../router'
+import io from 'socket.io-client';
 export default {
     data(){
         return {
-            id: this.$route.query.id
+            id: this.$route.query.id,
+            socket : io(endPoint.endpointTarget),
         }
     },
     created(){
@@ -27,12 +29,26 @@ export default {
             .then(res => {
                 if (res.data.status == 'ok') {
                     $('.divShow').show('slow')
+                    axios.post(endPoint.endpointTarget+'/notifications', {
+                        userName:'Cliente: '+res.data.data.client,
+                        userImage:localStorage.getItem('imageUser'),
+                        detail:'Confirmo su cita para el día '+this.formatDateTwo(res.data.data.date),
+                        link: 'agendamiento'
+                    })
+                    .then(res => {
+                        this.socket.emit('sendNotification', res.data)
+                    })
                     setTimeout(() => {
-                        window.location = "http://kkprettynails.cl"
+                        // window.location = "http://kkprettynails.cl"
                     }, 1000);
                 }
             })
-        }
+        },
+        formatDateTwo(date) {
+            let dateFormat = new Date(date)
+            console.log(dateFormat)
+            return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
+        },
     }
 }
 </script>

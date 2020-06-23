@@ -357,7 +357,7 @@
                             </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span class="text-success" v-if="selectedEvent.confirmation">Confirmada</span>
-                                <span class="text-danger" v-else v-on:click="sendConfirmation(selectedEvent.id, selectedEvent.cliente, selectedEvent.start, selectedEvent.end)">Confirmar</span>
+                                <span class="text-danger" v-else v-on:click="sendConfirmation(selectedEvent.id, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">Confirmar</span>
                             </base-button>
                             <dt class="mt-3 text-center">Servicios</dt>  
                             <badge v-for="service of selectedEvent.services" class="mt-1 ml-1 text-default" type="primary">{{service.servicio}}</badge>
@@ -2429,7 +2429,7 @@
 			}
 			}
         },
-        sendConfirmation(id, name, start, end){
+        sendConfirmation(id, name, start, end, services, lender){
             console.log(id+'--'+name+'--'+start+'--'+end)
             const nameFormat = this.formatName(name)
             const contactFormat = this.formatContact(name)
@@ -2442,6 +2442,8 @@
                 start: startFormat,
                 end: endFormat,
                 date: dateFormat,
+                service: services,
+                lenders: lender
             })
             .then(res => {
                 if (res.data.status == 'ok') {
@@ -2516,16 +2518,15 @@
     }
     /* Dot indicator */
     .vuecal__cell-events-count {
-    width: 40px;
-    min-width: 0;
-    height: 30px;
-    padding: 5px;
-    padding-top: 10px;
-    font-size: 16px;
-    background-color: #172b4d; 
+        width: 19px;
+        min-width: 0;
+        height: 17px;
+        padding: 2px;
+        font-size: 12px;
+        background-color: #172b4d; 
     }
     .vuecal__cell-content {
-        height: 100px;
+        height: 50px;
     }
     .vuecal__header{background-color: rgba(238, 238, 238, 0.623);border-radius: 5px 5px 0 0;}
     .vuecal__cell.today div .vuecal__cell-events-count, .vuecal__cell.current {background-color: #353535 !important;}

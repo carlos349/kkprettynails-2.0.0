@@ -233,9 +233,6 @@
                         </div>
                     </div>
                 </card>
-                 <a class="navbar-brand mt-1" href="#">
-                    <img src="img/brand/syswaLogo.png" alt="" style="height:30px;width:100px">
-                </a>
                 </div>
                 <div class="col-md-4 date-info">
                     <card shadow>
@@ -288,7 +285,9 @@
         </div>
         <nav class="navbar navbar-expand-lg navbar-light bg-Secondary top-7">
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-               
+               <a class="navbar-brand mt-1" href="#">
+                    <img src="img/brand/syswa-gestion.png" alt="" style="height:50px;width:150px">
+                </a>
             </div>
             <span class="navbar-text" style="float: right !important;">
                 © {{year}} | <a href="https://www.syswa.com" class="font-weight-bold ml-1" target="_blank">SYSWA</a> Todos los derechos reservados
@@ -522,6 +521,30 @@
                     this.validRegister = false
                 }
             },
+            sendConfirmation(id, name, mail, start, end, services, lender){
+                const nameFormat = name
+                const contactFormat = mail
+                const startFormat = start
+                const endFormat = end
+                const dateFormat = this.dates.simple
+                axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
+                    name: nameFormat,
+                    contact: contactFormat,
+                    start: startFormat,
+                    end: endFormat,
+                    date: dateFormat,
+                    service: services,
+                    lenders: lender
+                })
+                .then(res => {
+                    if (res.data.status == 'ok') {
+                        console.log(res.data.status)
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            },
             finallyAgend(){
                 const name = this.registerUser.name+' '+this.registerUser.lastName
                 axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
@@ -530,6 +553,16 @@
                 })
                 .then(res => {
                     this.client = res.data.data.nombre+' / '+res.data.data.identidad
+                    var lenderFinal = ''
+                    for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                        const element = this.registerDate.serviceSelectds[index].lender;
+                        if (index > 0){
+                            lenderFinal = lenderFinal+' - '+element
+                        }else{
+                            lenderFinal = element
+                        }
+                    }
+            
                     if (this.noOneLender) {
                         console.log(this.registerDate)
                         axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
@@ -539,6 +572,7 @@
                         })
                         .then(res => {
                             if (res.data.status == "cita creada") {
+                                this.sendConfirmation(res.data.id, name, this.registerUser.mail, this.registerDate.serviceSelectds[0].start, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
                                 this.modals.modal2 = false
                                 this.modals = {
                                     modal3: true,
@@ -555,7 +589,7 @@
                                         icon: '',
                                         type: ''
                                     }
-                                    window.location = "http://kkprettynails.cl"
+                                    window.location = "http://syswa.net"
                                 }, 3000);
                             }    
                         })
@@ -572,6 +606,7 @@
                         })
                         .then(res => {
                             if (res.data.status == "cita creada") {
+                                this.sendConfirmation(res.data.id, name, this.registerUser.mail, this.registerDate.start, this.registerDate.end, this.registerDate.serviceSelectds, this.registerDate.employeSelect)
                                 this.modals.modal2 = false
                                 this.modals = {
                                     modal3: true,
@@ -588,7 +623,7 @@
                                         icon: '',
                                         type: ''
                                     }
-                                    window.location = "http://kkprettynails.cl"
+                                    window.location = "http://syswa.net"
                                 }, 3000);
                             }
                         })
