@@ -39,8 +39,8 @@ export default {
                         this.socket.emit('sendNotification', res.data)
                     })
                     setTimeout(() => {
-                        // window.location = "http://kkprettynails.cl"
-                    }, 1000);
+                        window.location = "http://kkprettynails.cl"
+                    }, 2000);
                 }
             })
         },
