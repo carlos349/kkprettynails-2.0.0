@@ -6,10 +6,9 @@
             <navbar-toggle-button @click.native="showSidebar">
                 <span class="navbar-toggler-icon"></span>
             </navbar-toggle-button>
-            <router-link  class="navbar-brand" to="/">
-                <img style="max-height: 2.2rem !important" :src="logo" class="navbar-brand-img" alt="...">
-            </router-link>
-
+            
+            <img style="width:180px;height:100px;margin-left:-35px;margin-top:-20px;" :src="logo" alt="...">
+            
             <slot name="mobile-right">
                 <ul class="nav align-items-center d-md-none">
                     <!-- <base-dropdown class="nav-item" position="right">
@@ -60,7 +59,7 @@
                 </ul>
             </slot>
             <slot></slot>
-            <div v-show="$sidebar.showSidebar" class="navbar-collapse collapse show" id="sidenav-collapse-main">
+            <div v-show="$sidebar.showSidebar" class="navbar-collapse collapse show pt-0" id="sidenav-collapse-main">
 
                 <div class="navbar-collapse-header d-md-none">
                     <div class="row">
