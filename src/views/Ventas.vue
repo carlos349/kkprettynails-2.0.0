@@ -33,7 +33,7 @@
                                 </base-button>
                             </div>
                             <div class="col-md-4">
-                                <base-button title="Generar excel" icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="modals.modal3 = true">Generar excel</base-button>
+                                <base-button title="Generar excel" icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="modals.modal3 = true"> </base-button>
                             </div>
                         </div>
                         

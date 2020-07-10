@@ -13,6 +13,7 @@
                         <base-button v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un cliente</base-button>
                         <base-button icon="ni ni-email-83" v-if="validRoute('clientes', 'correos')" type="success" @click="modals.modal3 = true">Enviar correos</base-button>
                         <base-button v-if="validRoute('clientes', 'filtrar')" @click="showFilter" type="default">Filtrar</base-button>
+                        <base-button @click="generateExcel" type="default" icon="ni ni-book-bookmark"></base-button>
                     </div>
                 </div>
             </div>
@@ -269,6 +270,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
 import router from '../router'
+import XLSX from 'xlsx'
 // COMPONENTS
 
   export default {
@@ -399,6 +401,17 @@ import router from '../router'
                 }
                 this.progress = true
             })
+        },
+        generateExcel(){
+            var Data = []
+            for (let index = 0; index < this.rows.length; index++) {
+                const element = this.rows[index];
+                Data.push({Nombre: element.nombre, 'Contacto principal': element.identidad, 'Contacto adicional': element.correoCliente,'Contacto adicional 2°': element.instagramCliente, Atenciones: element.participacion, Recomendador: element.recomendacion, Recomendaciones: element.recomendaciones, 'Ultima atencion': this.formatDate(element.ultimaFecha), Fecha: this.formatDate(element.fecha)})
+            }
+            var Datos = XLSX.utils.json_to_sheet(Data) 
+            var wb = XLSX.utils.book_new() 
+            XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
+            XLSX.writeFile(wb, 'Clientes.xlsx') 
         },
         registerClients(){
             var ifCheck = this.registerClient.discount ? 0 : 1
