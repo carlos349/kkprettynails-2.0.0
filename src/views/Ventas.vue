@@ -4,14 +4,16 @@
             style="min-height: 50px; background-image: url(img/theme/clients.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
+            
             <!-- Header container -->
             <div class="container-fluid d-flex align-items-center">
+                
                 <div class="row">
                     <div class="col-lg-12 col-md-12" style="display:inline-block">
                         <h1 class="display-2 text-white w-100">Sección de ventas</h1>
                         <label class="text-white" v-if="validRoute('ventas', 'filtrar')">Filtra tus ventas</label>
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <base-input v-if="validRoute('ventas', 'filtrar')" addon-left-icon="ni ni-calendar-grid-58">
                                     <flat-picker slot-scope="{focus, blur}"
                                         @on-open="focus"
@@ -26,9 +28,12 @@
                                 <base-button v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="filterSale">Filtrar</base-button>
                             </div>
                             <div class="col-md-2">
-                                <base-button v-if="inspectorFilter"  type="secondary" v-on:click="getSales">
+                                <base-button v-if="inspectorFilter"  type="secondary" v-on:click="getSales('button')">
                                     <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
                                 </base-button>
+                            </div>
+                            <div class="col-md-4">
+                                <base-button title="Generar excel" icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="modals.modal3 = true"> </base-button>
                             </div>
                         </div>
                         
@@ -108,7 +113,78 @@
                 </template>
             </card>
         </modal>
-        <vue-bootstrap4-table :rows="sales" :columns="columns" :classes="classes" :config="configTable">
+         <modal :show.sync="modals.modal3"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                       <h3>Aplica filtros para tu reporte</h3> 
+                    </div>
+                </template>
+                <template>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="date">Filtra por fecha</label>
+                            <base-input addon-left-icon="ni ni-calendar-grid-58">
+                                <flat-picker slot-scope="{focus, blur}"
+                                    @on-open="focus"
+                                    @on-close="blur"
+                                    :config="configDatePicker"
+                                    class="form-control datepicker"
+                                    v-model="dates.rangeExcel">
+                                </flat-picker>
+                            </base-input>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lender">¿Filtrar por prestadora en específico?</label>
+                            <div v-on:click="chooseLender"> 
+                                <vue-single-select v-if="validClient"
+                                v-model="lenderSelect"
+                                :options="lenderNames"
+                                placeholder="Prestadoras"
+                                ></vue-single-select> 
+                                <vue-single-select v-else
+                                v-model="lenderSelect"
+                                :options="lenderNames"
+                                placeholder="Prestadoras"
+                                class="bgcolor-danger"
+                                disabled
+                                ></vue-single-select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lender">¿Filtrar por cliente en específico?</label>
+                            <div v-on:click="chooseClient">
+                                <vue-single-select v-if="validLender"
+                                v-model="clientSelect"
+                                :options="clientNames"
+                                placeholder="Clientes"
+                                ></vue-single-select>  
+                                <vue-single-select v-else
+                                v-model="clientSelect"
+                                :options="clientNames"
+                                placeholder="Clientes"
+                                class="bgcolor-danger"
+                                disabled
+                                ></vue-single-select> 
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <center>
+                                <base-button type="default" v-on:click="generateExcel()"> Generar
+                                </base-button>
+                            </center>
+                        </div>
+                    </div>
+                </template>
+            </card>
+        </modal>
+        <vue-bootstrap4-table v-if="progress" :rows="sales" :columns="columns" :classes="classes" :config="configTable">
             <template slot="date-format" slot-scope="props">
                 {{formatDate(props.row.fecha)}}
             </template>
@@ -136,6 +212,18 @@
                
             </template>
         </vue-bootstrap4-table>
+        <center v-else>
+            <loading-progress
+                
+                :progress="progress"
+                :indeterminate="true"
+                class="text-center"
+                :hide-background="true"
+                shape="circle"
+                size="100"
+                fill-duration="2"
+            />
+        </center>
         <modal :show.sync="modals.modal2"
                :gradient="modals.type"
                modal-classes="modal-danger modal-dialog-centered">
@@ -157,6 +245,8 @@ import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import io from 'socket.io-client';
 import jwtDecode from 'jwt-decode'
+import XLSX from 'xlsx'
+const dateNew = new Date()
 export default {
     components: {
         flatPicker,
@@ -164,17 +254,20 @@ export default {
     },
     data() {
         return {
+            progress:false,
             auth: [],
             socket: io(endPoint.endpointTarget),
             modals: {
                 modal1: false,
                 modal2: false,
+                modal3:false,
                 message: "",
                 icon: '',
                 type:''
             },
             dates: {
-                range: new Date()
+                range: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear(),
+                rangeExcel: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear()
             },
             configDatePicker: {
                 allowInput: true, 
@@ -250,7 +343,15 @@ export default {
             errorAlert: false,
             messageSuccess: '',
             messageError: '',
-            inspectorFilter: false
+            inspectorFilter: false,
+            lenderSelect: '',
+            lenderNames: [],
+            clientSelect: '',
+            clientNames: [],
+            paySelect: '',
+            payNames: ['Efectivo', 'Transferencia', 'Débito', 'Crédito', 'Otros'],
+            validLender: true,
+            validClient: true,
         }
     },
     beforeCreate(){
@@ -265,8 +366,10 @@ export default {
 		}
     },
     created(){
-        this.getSales()
+        this.getSales('no-button')
         this.getToken()
+        this.getClient()
+        this.getLenders()
     },
     methods: {
         getToken(){
@@ -274,15 +377,34 @@ export default {
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
         },
+        getClient(){
+            axios.get(endPoint.endpointTarget+'/clients')
+            .then(res => {
+                this.clientNames = []
+                for (let index = 0; index < res.data.length; index++) {
+                    this.clientNames.push(res.data[index].nombre+ ' / ' +res.data[index].identidad)
+                }
+            })
+        },
+        getLenders(){
+            axios.get(endPoint.endpointTarget+'/manicuristas')
+            .then(res => {
+                this.lenderNames = []
+                for (let index = 0; index < res.data.length; index++) {
+                    this.lenderNames.push(res.data[index].nombre)
+                }
+            })
+        },
         async filterSale(){
+            this.progress = false
             this.inspectorFilter = true
             const splitDate = this.dates.range.split(' a ')
-            console.log(splitDate.length)
             if (splitDate.length > 1) {
                 const Dates = splitDate[0]+':'+splitDate[1]
                 try {
                     const sales = await axios.get(endPoint.endpointTarget+'/ventas/findSalesByDate/'+Dates)
                     if (sales.data.status == 'no Sales') {
+                        this.progress = true
                         this.modals = {
                             modal2: true,
                             message: "No hay ventas en las fechas seleccionadas",
@@ -293,12 +415,14 @@ export default {
                             this.modals = {
                                 modal1: false,
                                 modal2: false,
+                                modal3:false,
                                 message: "",
                                 icon: '',
                                 type: ''
                             }
                         }, 2000);
                     }else{
+                        this.progress = true
                         this.sales = sales.data.status
                     }
                 }catch(error){
@@ -313,6 +437,7 @@ export default {
                 try {
                     const sales = await axios.get(endPoint.endpointTarget+'/ventas/findSalesByDay/'+Dates)
                     if (sales.data.status == 'no Sales') {
+                        this.progress = true
                         this.modals = {
                             modal2: true,
                             message: "No hay ventas en la fecha seleccionada",
@@ -323,12 +448,14 @@ export default {
                             this.modals = {
                                 modal1: false,
                                 modal2: false,
+                                modal3:false,
                                 message: "",
                                 icon: '',
                                 type: ''
                             }
                         }, 2000);
                     }else{
+                        this.progress = true
                         this.sales = sales.data.status
                     }
                 }catch(err){
@@ -336,13 +463,16 @@ export default {
                 }
             }
         },
-        getSales(){
+        getSales(button){
+            if(button == 'button'){
+                this.dates.range = ''
+            }
             this.inspectorFilter = false
             const config = {headers: {'x-access-token': localStorage.userToken}}
             axios.get(endPoint.endpointTarget+'/ventas', config)
             .then(res => {
                 this.sales = res.data
-                
+                this.progress = true
             }).catch(err => {
                 this.modals = {
                     modal2: true,
@@ -354,6 +484,7 @@ export default {
                     this.modals = {
                         modal1: false,
                         modal2: false,
+                        modal3:false,
                         message: "",
                         icon: '',
                         type: ''
@@ -404,6 +535,7 @@ export default {
                     this.modals = {
                         modal1: false,
                         modal2: false,
+                        modal3:false,
                         message: "",
                         icon: '',
                         type: ''
@@ -412,8 +544,6 @@ export default {
             }
         },
         async cancelSale(id,servicios){
-            console.log(servicios)
-            console.log(this.arreglo.EmployeComision)
             const cancelSale = await axios.put(endPoint.endpointTarget+'/ventas/'+id, {
                 employeComision: this.arreglo.EmployeComision
             })
@@ -431,12 +561,13 @@ export default {
                     this.modals = {
                         modal1: true,
                         modal2: false,
+                        modal3:false,
                         message: "",
                         icon: '',
                         type: ''
                     }
                 }, 2000);
-                this.getSales()
+                this.getSales('no-button')
                 this.arreglo.status = false
                 const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
                     userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
@@ -460,6 +591,7 @@ export default {
                     this.modals = {
                         modal1: true,
                         modal2: false,
+                        modal3:false,
                         message: "",
                         icon: '',
                         type: ''
@@ -478,12 +610,97 @@ export default {
                     }
                 }
             }
+        },
+        generateExcel(){
+            var valid = this.dates.rangeExcel
+            var dates = this.dates.rangeExcel+':not'
+            if (this.dates.rangeExcel.length > 12) {
+                dates = this.dates.rangeExcel
+                const split = this.dates.rangeExcel.split(' a ')
+                valid = split[0]
+            }
+            if (this.lenderSelect == null) {
+                this.lenderSelect = ''
+            }
+            if (this.clientSelect == null) {
+                this.clientSelect = ''
+            }
+            axios.post(endPoint.endpointTarget+'/ventas/generateDataExcel', {
+                rangeExcel:dates, 
+                lenderSelect: this.lenderSelect, 
+                clientSelect: this.clientSelect,
+            })
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    var Datos = XLSX.utils.json_to_sheet(res.data.dataTable) 
+                    var wb = XLSX.utils.book_new() 
+                    XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
+                    XLSX.writeFile(wb, 'Ventas del '+valid+'.xlsx') 
+                    this.lenderSelect = ''
+                    this.clientSelect = ''
+                    this.validLender = true
+                    this.validClient = true
+                    this.dates.rangeExcel = (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear()
+                    this.modals.modal3 = false
+                }else{
+                    this.modals = {
+                        modal2: true,
+                        message: "¡No se encontraron ventas!",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3:true,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 2000);
+                }
+            })
+        },
+        chooseLender(){
+            if (this.lenderSelect == '' || this.lenderSelect == null) {
+                this.validLender = true
+            }else{
+                this.validLender = false
+            }
+        },
+        chooseClient(){
+            if (this.clientSelect == '' || this.clientSelect == null) {
+                this.validClient = true
+            }else{
+                this.validClient = false
+            }
         }
     },
     mounted (){
         EventBus.$on('reloadSales', status => {
-            this.getSales()
+            this.getSales('no-button')
         })
     }
 }
 </script>
+<style>
+    .vue-progress-path path {
+        stroke-width: 12;
+    }
+    .vue-progress-path .progress {
+        stroke:#00768c;
+    }
+    .vue-progress-path .background {
+        stroke: transparent;
+    }
+    /* .excel-generate{
+        position:absolute;
+        right:2%;
+        top:30%;
+        z-index: 10;
+    } */
+    .bgcolor-danger #single-select{
+        border-color:red;
+    }
+</style>

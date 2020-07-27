@@ -13,6 +13,7 @@
                         <base-button v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un cliente</base-button>
                         <base-button icon="ni ni-email-83" v-if="validRoute('clientes', 'correos')" type="success" @click="modals.modal3 = true">Enviar correos</base-button>
                         <base-button v-if="validRoute('clientes', 'filtrar')" @click="showFilter" type="default">Filtrar</base-button>
+                        <base-button @click="generateExcel" type="default" icon="ni ni-book-bookmark"></base-button>
                     </div>
                 </div>
             </div>
@@ -223,7 +224,7 @@
 
         <!-- TABLA DE CLIENTES -->
 
-        <vue-bootstrap4-table class="tableClient" :rows="rows" :columns="columns" :classes="classes" :config="config">
+        <vue-bootstrap4-table v-if="progress" class="tableClient" :rows="rows" :columns="columns" :classes="classes" :config="config">
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <center>
@@ -244,6 +245,17 @@
                 Total Number of rows selected : {{props.selectedItemsCount}}
             </template>
         </vue-bootstrap4-table>
+        <center v-else>
+            <loading-progress
+                :progress="progress"
+                :indeterminate="indeterminate"
+                class="text-center"
+                :hide-background="hideBackground"
+                shape="circle"
+                size="100"
+                fill-duration="2"
+            />
+        </center>
 
         <!-- END -->
 
@@ -258,6 +270,7 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
 import router from '../router'
+import XLSX from 'xlsx'
 // COMPONENTS
 
   export default {
@@ -266,6 +279,7 @@ import router from '../router'
     },
     data() {
       return {
+        progress:false,
         auth: [],
         successRegister:false,
         clientsNames: [],
@@ -375,34 +389,31 @@ import router from '../router'
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
-            console.log(this.auth)
         },
         getClients(){
+            this.progress = false
             axios.get(endPoint.endpointTarget+'/clients')
             .then(res => {
 				console.log(res.data)
                 this.rows = res.data
                 for (let index = 0; index < res.data.length; index++) {
                     this.clientsNames.push(res.data[index].nombre + " / " + res.data[index].identidad)
-                    
                 }
-				// for (let i = 0; i < this.clients.length; i++) {
-				// 	// this.clients[i].push({thatId:this.clients[i].identidad}) 
-				// 	if (this.clients[i].correoCliente) {
-				// 		this.clients[i].identidad = this.clients[i].identidad + '\n / ' + this.clients[i].correoCliente 
-				// 	}
-				// 	if (this.clients[i].instagramCliente) {
-				// 		this.clients[i].identidad = this.clients[i].identidad + '\n / ' + this.clients[i].instagramCliente
-				// 	}
-				// 	this.clients[i].fecha = this.formatDate(this.clients[i].fecha)
-				// 	this.clients[i].ultimaFecha = this.formatDate(this.clients[i].ultimaFecha)
-					
-				// }
-				// console.log(this.clients)
+                this.progress = true
             })
         },
+        generateExcel(){
+            var Data = []
+            for (let index = 0; index < this.rows.length; index++) {
+                const element = this.rows[index];
+                Data.push({Nombre: element.nombre, 'Contacto principal': element.identidad, 'Contacto adicional': element.correoCliente,'Contacto adicional 2°': element.instagramCliente, Atenciones: element.participacion, Recomendador: element.recomendacion, Recomendaciones: element.recomendaciones, 'Ultima atencion': this.formatDate(element.ultimaFecha), Fecha: this.formatDate(element.fecha)})
+            }
+            var Datos = XLSX.utils.json_to_sheet(Data) 
+            var wb = XLSX.utils.book_new() 
+            XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
+            XLSX.writeFile(wb, 'Clientes.xlsx') 
+        },
         registerClients(){
-            console.log(this.registerClient.recommender)
             var ifCheck = this.registerClient.discount ? 0 : 1
             axios.post(endPoint.endpointTarget+'/clients', {
                 nombre:this.registerClient.name,
@@ -682,5 +693,13 @@ import router from '../router'
 		background-color: rgb(90, 90, 90);
         opacity:1;
 	}
-
+    .vue-progress-path path {
+        stroke-width: 12;
+    }
+    .vue-progress-path .progress {
+        stroke:#00768c;
+    }
+    .vue-progress-path .background {
+        stroke: transparent;
+    }
 </style>

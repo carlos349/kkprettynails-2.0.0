@@ -38,7 +38,7 @@
                             <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
                                 <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, servicio.productos), countServices[index].count++">
                                     <span class="float-left">{{servicio.nombre}}</span>
-                                    <badge class="badgeClass badgeServices float-right" type="primary" :id="servicio._id">{{countServices[index].count}}</badge>
+                                    <badge class="badgeClass badgeServices float-right" style="font-size: .9em;color:#4b4b4b" type="secondary" :id="servicio._id">{{countServices[index].count}}</badge>
                                 </base-button>
                                 <base-button size="sm" type="default" v-on:click="borrarServicio(servicio.nombre,index,servicio._id,servicio.precio, servicio.descuento)">
                                     <font-awesome-icon icon="times"/>
@@ -183,7 +183,7 @@
                         />
                     </div>
                 </div>
-                <!-- <div class="col-6">
+                <div class="col-6">
                     <div v-on:change="changeDate">
                         <base-input addon-left-icon="ni ni-calendar-grid-58">
                             <flat-picker 
@@ -197,7 +197,7 @@
                             </flat-picker>
                         </base-input>
                     </div>
-                </div> -->
+                </div>
             </div>
             <div class="row">
                 <div class="col-6">
@@ -523,7 +523,7 @@ import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import jwtDecode from 'jwt-decode'
-
+import io from 'socket.io-client';
 import EventBus from './EventBus'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
@@ -537,6 +537,7 @@ export default {
     },
     data(){
         return {
+            socket: io(endPoint.endpointTarget),
             auth: [],
             validator:true,
             validatorBtn:true,
@@ -1044,7 +1045,10 @@ export default {
                         this.totalSinFormato = parseFloat(this.totalSinFormato) + parseFloat(this.serviciosSelecionados[index].precio)
                     }
                 }
-                
+            }else{
+
+                this.total = this.formatPrice(this.subTotal + this.design)
+                this.totalSinFormato = this.subTotal + this.design
             }
 			
         },
@@ -1200,7 +1204,7 @@ export default {
         },
         getDataToDate(id){
             this.initialState()
-            
+            this.validator = false
 			this.servicesProcess = []
 			this.serviciosSelecionados = []
 			this.idProcess = id
@@ -1220,46 +1224,40 @@ export default {
                     }else if (res.data[0].participacion == 0) {
                         this.discount = 10
                     }
-					axios.get(endPoint.endpointTarget+'/servicios')
-					.then(res => {
-                        this.validator = true
-						var subTotal = 0
-						var desc = 0
-						for (let index = 0; index < this.servicesProcess.length; index++) {
-							this.serviciosSelecionados.push({servicio: this.servicesProcess[index].servicio, comision: this.servicesProcess[index].comision, precio: this.servicesProcess[index].precio, descuento: this.servicesProcess[index].descuento})
-							let valSpan = ''
-							let sumaVal = 0
-							for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
-								if (this.servicesProcess[index].servicio == res.data[indexTwo].nombre) {
-									subTotal = subTotal + parseFloat(res.data[indexTwo].precio)
-									let valSpan = $(`#${res.data[indexTwo]._id}`).text()
-									let sumaVal = parseFloat(valSpan) + 1
-									$(`#${res.data[indexTwo]._id}`).text(sumaVal)
-								}
-							}
+                    var subTotal = 0
+                    var desc = 0
+                    for (let index = 0; index < this.servicesProcess.length; index++) {
+                        this.serviciosSelecionados.push({servicio: this.servicesProcess[index].servicio, comision: this.servicesProcess[index].comision, precio: this.servicesProcess[index].precio, descuento: this.servicesProcess[index].descuento})
+                        let valSpan = ''
+                        let sumaVal = 0
+                        for (let indexTwo = 0; indexTwo < this.services.length; indexTwo++) {
+                            if (this.servicesProcess[index].servicio == this.services[indexTwo].nombre) {
+                                subTotal = subTotal + parseFloat(this.services[indexTwo].precio)
+                                this.countServices[indexTwo].count++
+                            }
                         }
-						this.price = this.formatPrice(subTotal)
-						if (this.discount == 10) {
-							desc = subTotal * 0.90
-                        }
-                        else if (this.discount == 15) {
-                            desc = subTotal * 0.85
-                        }
-                        else{
-							desc = subTotal
-						}
-						this.total = this.formatPrice(desc)
-						this.totalSinFormato = desc
-						this.subTotal = subTotal
-					})
+                    }
+                    this.price = this.formatPrice(subTotal)
+                    if (this.discount == 10) {
+                        desc = subTotal * 0.90
+                    }
+                    else if (this.discount == 15) {
+                        desc = subTotal * 0.85
+                    }
+                    else{
+                        desc = subTotal
+                    }
+                    this.total = this.formatPrice(desc)
+                    this.totalSinFormato = desc
+                    this.subTotal = subTotal
+                
 				})
             })
-            
-            console.log(this.serviciosSelecionados)
 		},
         initialState(){
-            $(".badgeServices").text('0')
             this.getServices()
+            $('#myInput').val('')
+            this.myFunction()
             this.validator = true
             this.validatorBtn = true
 			this.price = '0';
@@ -1307,10 +1305,9 @@ export default {
 			if (this.design == '') {
 				this.design = 0
             }
-            
-			const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
+            const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
 			if (this.clientSelect && this.lenderSelect != '') {
-				if (this.totalSinFormato == totalFormadePago ) {
+				if (Math.round(this.totalSinFormato) == Math.round(totalFormadePago)) {
                     const itemList = []
                     for (let index = 0; index < this.serviciosSelecionados.length; index++) {
                         if (this.serviciosSelecionados[index].productos) {
@@ -1344,8 +1341,8 @@ export default {
                         ifrecomend: this.ifrecomend
 					})
 					.then(res => {
-						
 						if (res.data.status == "Venta registrada") {
+
                             this.modals = {
                                 modal1: true,
                                 message: "Venta procesada",
@@ -1363,6 +1360,7 @@ export default {
                                     type: ''
                                 }
                             }, 1500);
+                            this.alertProducts()
 							this.servicios =''
 							this.initialState()
 							EventBus.$emit('reloadDates', 'process')
@@ -1447,6 +1445,36 @@ export default {
                     }
                 }, 1500);
 			}
+        },
+        alertProducts(){
+            axios.get(endPoint.endpointTarget+'/inventario/alertProducts')
+            .then(res => {
+                if (res.data.status) {
+                    var Detail = ''
+                    if (res.data.productsToAlert.length == 1) {
+                        Detail = 'Hace falta reintegrar el productos: '
+                    }else{
+                        Detail = 'Hace falta reintegrar los producto: '
+                    }
+                    for (let index = 0; index < res.data.productsToAlert.length; index++) {
+                        const element = res.data.productsToAlert[index];
+                        if (index == 0) {
+                            Detail = Detail + element.nameProduct
+                        }else{
+                            Detail = Detail + ', ' + element.nameProduct
+                        } 
+                    } 
+                    axios.post(endPoint.endpointTarget+'/notifications', {
+                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                        userImage:localStorage.getItem('imageUser'),
+                        detail: Detail,
+                        link: 'Inventario'
+                    })
+                    .then(res => {
+                        this.socket.emit('sendNotification', res.data)
+                    })
+                }
+            })
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {

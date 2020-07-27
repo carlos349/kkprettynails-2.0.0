@@ -42,7 +42,8 @@
                                     class="mb-3"
                                     placeholder="Documento"
                                     v-model="registerEmploye.id"
-                                    v-on:keyup="validRegister(),registerEmploye.id = formatRut(registerEmploye.id)"
+                                    v-on:keyup="validRegister()"
+                                    v-on:change="registerEmploye.id = formatRut(registerEmploye.id)"
                                     addon-left-icon="ni ni-key-25"
                                      addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>

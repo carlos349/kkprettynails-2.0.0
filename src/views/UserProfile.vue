@@ -10,7 +10,7 @@
                     <div class="col-lg-7 col-md-10">
                         <h1 class="display-2 text-white">Hola {{model.first_name}}</h1>
                         <p class="text-white mt-0 mb-5">Este es tu perfil, puedes ver tu progreso trabajando para KKPrettyNails, en las diferentes secciones.Tambien puedes editar tus datos.</p>
-                        <base-button type="info" v-on:click="inspector = true">Editar perfil</base-button>
+                        <base-button class="mb-5" type="info" v-on:click="inspector = true">Editar perfil</base-button>
                     </div>
                 </div>
             </div>
@@ -24,7 +24,8 @@
                             <div class="col-lg-3 order-lg-2">
                                 <div class="card-profile-image">
                                     <a href="#">
-                                        <img style="width:150px; height:150px;" :src="model.image" class="rounded-circle">
+                                        <img style="width:150px; height:150px;" v-if="haveImage == ''" src="img/theme/profile-default.png" class="rounded-circle">
+                                        <img style="width:150px; height:150px;" v-else :src="model.image" class="rounded-circle">
                                     </a>
                                 </div>
                             </div>
@@ -128,8 +129,8 @@
                                         </div>
                                         <div class="col-lg-6 form-group">
                                             <label><strong>Imagen de perfil</strong></label>
-                                            <input v-if="inspector" type="file" id="file" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
-                                            <input v-else type="file" id="file" ref="file" disabled class="form-control mb-3" >
+                                            <input v-if="inspector" type="file" id="fileProfile" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
+                                            <input v-else type="file" id="fileProfile" ref="file" disabled class="form-control mb-3" >
                                         </div>
                                     </div>
                                 </div>
@@ -249,7 +250,8 @@
                     newPassVerify: '',
                     valid: null,
                     validAll: null
-                }
+                },
+                haveImage: ''
             }
         },
         beforeCreate(){
@@ -286,6 +288,7 @@
                     this.model.access = data.data.LastAccess
                     this.model.about = data.data.about
 					this.model.image = endPoint.imgEndpoint+data.data.userImage
+                    this.haveImage = data.data.userImage
 				}catch(err) {
 					this.$swal({
 						type: 'error',

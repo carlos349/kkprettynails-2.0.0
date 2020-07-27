@@ -12,6 +12,8 @@
                         <p class="text-white mt-0 mb-2">Esta es la sección servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
                         <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true"  type="success">Ingrese un servicio</base-button>
                         <base-button v-else disabled  type="success">Ingrese un servicio</base-button>
+                        <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorias</base-button>
+                        <base-button v-else disabled  type="default">Categorias</base-button>
                     </div>
                 </div>
             </div>
@@ -55,6 +57,10 @@
                             class="form-control mb-3"
                             style="margin-top:-10px;"
                         />	
+                        <select class="form-control mb-3" v-model="categoryRegister">
+                            <option style="color:black;">Escoja una categoria</option>
+                            <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
+                        </select>
                         <select class="form-control mb-3" v-model="timeRegister">
                             <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
                             <option style="color:black;" value="15">15 Minutos</option>
@@ -144,7 +150,7 @@
                             v-model="comissionEdit"
                             addon-right-icon="fa fa-asterisk text-danger" >
                         </base-input>
-                        <currency-input
+                        <currency-input 
                             v-model="priceEdit"
                             locale="de"
                             addon-left-icon="ni ni-time-alarm"
@@ -152,6 +158,9 @@
                             style="margin-top:-10px;"
                             addon-right-icon="fa fa-asterisk text-danger" 
                         />	
+                        <select class="form-control mb-3" v-model="editCategoryServicer">
+                            <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
+                        </select>
                         <select class="form-control mb-3" v-model="timeEdit">
                             <option style="color:black;" value="15">15 Minutos</option>
                             <option style="color:black;" value="30">30 Minutos</option>
@@ -218,7 +227,7 @@
         <vue-bootstrap4-table :rows="services" :columns="columns" :classes="classes" :config="config">
             <template slot="actionButtons" class="mx-auto" slot-scope="props">
                 <center>
-                   <base-button v-if="validRoute('servicios', 'editar')" icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos)">Editar</base-button>
+                   <base-button v-if="validRoute('servicios', 'editar')" icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos,props.row.category)">Editar</base-button>
                     <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" >Editar</base-button>
                     <template v-if="validRoute('servicios', 'activaciones')">
                         <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)">Activo</base-button>
@@ -288,6 +297,55 @@
                 </template>
             </card>
         </modal>
+        <modal :show.sync="modals.modal5"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-lg">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                       <h3>Categorias</h3> 
+                    </div>
+                </template>
+                <template>
+                    <vue-bootstrap4-table :rows="categories" :columns="columnsCategories" class="class_categories" :classes="classes" :config="configCategories">
+                        <template slot="deleteCat" slot-scope="props">
+                            <base-button class="text-center float-right" icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="deleteCategory(props.row._id)">Borrar</base-button> 
+                        </template>
+                    </vue-bootstrap4-table>
+                    <base-button type="success" class="mt-1 float-right" @click="modals.modal6 = true">Nueva categoria
+                    </base-button>
+                </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal6"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-sm">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                       <h3>Registre una categoria</h3> 
+                    </div>
+                </template>
+                <template>
+                    <base-input  
+                        alternative
+                        placeholder="nombre de la categoria"
+                        v-model="nameCategory"
+                        addon-left-icon="fa fa-list-ol">
+                    </base-input>
+                    <base-button type="success" class="mt-1 float-right" v-on:click="newCategory">Registrar categoria
+                    </base-button>
+                </template>
+            </card>
+        </modal>
     </div>
 </template>
 <script>
@@ -310,6 +368,7 @@ export default {
     data(){
         return {
             auth: [],
+            categoryRegister: 'Escoja una categoria',
             unitPerItem: '',
             countModal:'',
             typeItemModal:'',
@@ -319,10 +378,14 @@ export default {
                 modal2: false,
                 modal3: false,
                 modal4: false,
+                modal5: false,
+                modal6: false,
                 message: "",
                 icon: '',
                 type:''
             },
+            nameCategory: '',
+            categories: [],
             serviceRegister: '',
             priceRegister: 0,
             comissionRegister: '',
@@ -346,6 +409,18 @@ export default {
                 // },
                 sort: true,
             }],
+            columnsCategories: [{
+                    label: "Nombre",
+                    name: "name",
+                    sort: true,
+                },
+                {
+                    label: "Borrar",
+                    name: "name",
+                    slot_name: "deleteCat",
+                    sort: false,
+                },
+            ],
             columns: [{
                 label: "Nombre",
                 name: "nombre",
@@ -408,6 +483,25 @@ export default {
                 preservePageOnDataChange : true,
                 pagination_info : true
             },
+            configCategories: {
+                card_title: "",
+                checkbox_rows: false,
+                rows_selectable : false,
+                highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+                rows_selectable: false,
+                per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+                global_search: {
+                    placeholder: "Enter custom Search text",
+                    visibility: false,
+                    case_sensitive: false
+                },
+                show_refresh_button: false,
+                show_reset_button: false,  
+                selected_rows_info: false,
+                preservePageOnDataChange : false,
+                pagination_info : false,
+                pagination: false
+            },
             configLender: {
                 checkbox_rows: true,
                 rows_selectable : true,
@@ -447,7 +541,8 @@ export default {
             itemSelected:[],
             EdititemSelected:[],
             itemsBox:[],
-            itemIndex:''
+            itemIndex:'',
+            editCategoryServicer:''
         }
     },
     beforeCreate(){
@@ -466,6 +561,7 @@ export default {
         this.getLenders()
         this.getProducts()
         this.getToken()
+        this.getCategories()
     },
     methods: {
         getToken(){
@@ -570,6 +666,8 @@ export default {
                         modal2:false,
                         modal3: false,
                         modal4:false,
+                        modal5: false,
+                        modal6: false,
                         message: "",
                         icon: '',
                         type: ''
@@ -616,6 +714,8 @@ export default {
                         modal2:false,
                         modal3: false,
                         modal4: false,
+                        modal5: false,
+                        modal6: false,
                         message: "",
                         icon: '',
                         type: ''
@@ -635,6 +735,8 @@ export default {
                             modal2:false,
                             modal3: false,
                             modal4: false,
+                            modal5: false,
+                            modal6: false,
                             message: "",
                             icon: '',
                             type: ''
@@ -649,6 +751,7 @@ export default {
                         tiempoServicio: this.timeRegister,
                         prestadores: this.lenderSelecteds,
                         productos:this.itemSelected,
+                        categoryRegister: this.categoryRegister,
                         descuento: ifCheck
                     }).then(res => {
                         if (res.data.status == 'Servicio creado') {
@@ -664,6 +767,8 @@ export default {
                                     modal2:false,
                                     modal3: false,
                                     modal4: false,
+                                    modal5: false,
+                                    modal6: false,
                                     message: "",
                                     icon: '',
                                     type: ''
@@ -685,6 +790,8 @@ export default {
                                     modal2:false,
                                     modal3: false,
                                     modal4: false,
+                                    modal5: false,
+                                    modal6: false,
                                     message: "",
                                     icon: '',
                                     type: ''
@@ -706,7 +813,7 @@ export default {
             $('.maxHeight  thead .vbt-checkbox').click()
             $('.maxHeight  thead .vbt-checkbox').prop('checked', false)
         },
-        dataEdit(id, lenders, name, time, discount, comission, price,items){
+        dataEdit(id, lenders, name, time, discount, comission, price,items, category){
             console.log(items)
             this.itemsBox = []
             for (let index = 0; index < this.rowsItems.length; index++) {
@@ -720,6 +827,7 @@ export default {
             this.EdititemSelected = items
             this.serviceEdit = name
             this.priceEdit = price
+            this.editCategoryServicer = category
             this.comissionEdit = comission
             this.timeEdit = time
             this.addDiscountEdit = discount
@@ -769,6 +877,8 @@ export default {
                         modal2:false,
                         modal3: false,
                         modal4: false,
+                        modal5: false,
+                        modal6: false,
                         message: "",
                         icon: '',
                         type: ''
@@ -788,6 +898,8 @@ export default {
                             modal2:false,
                             modal3: false,
                             modal4: false,
+                            modal5: false,
+                            modal6: false,
                             message: "",
                             icon: '',
                             type: ''
@@ -804,7 +916,8 @@ export default {
 						comisionServicio: this.comissionEdit,
                         prestadores: this.EditlenderSelecteds,
                         productos: this.EdititemSelected,
-						descuento: this.addDiscountEdit
+                        descuento: this.addDiscountEdit,
+                        editCategoryServicer: this.editCategoryServicer
 					}).then(res => {
                         this.modals = {
                             modal3: true,
@@ -815,10 +928,12 @@ export default {
                         setTimeout(() => {
                             this.getServices();
                             this.modals = {
-                                modal1:false,
-                                modal2:false,
+                                modal1: false,
+                                modal2: false,
                                 modal3: false,
                                 modal4: false,
+                                modal5: false,
+                                modal6: false,
                                 message: "",
                                 icon: '',
                                 type: ''
@@ -881,6 +996,34 @@ export default {
                 }
                 console.log(this.EdititemSelected)
             }
+        },
+        async getCategories(){
+            const categories = await axios.get(endPoint.endpointTarget+'/servicios/getCategory')
+            console.log(categories)
+            if (categories.data.length > 0) {
+                this.categories = categories.data
+            }
+        },
+        newCategory(){
+            axios.post(endPoint.endpointTarget+'/servicios/newCategory', {
+                name: this.nameCategory
+            })
+            .then(res => {
+                console.log(res)
+                if (res.data.status == 'ok') {
+                    this.getCategories()
+                    this.nameCategory = ''
+                    this.modals.modal6 = false
+                }
+            })
+        },
+        deleteCategory(id){
+            axios.delete(endPoint.endpointTarget+'/servicios/deleteCategory/'+id)
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    this.getCategories()
+                }
+            })
         }
     }
 }
@@ -926,5 +1069,11 @@ export default {
     }
     .card-header{
         font-size: 2.5vw;
+    }
+    .class_categories .card-header{
+        display: none;
+    }
+    .class_categories .card-footer{
+        display: none;
     }
 </style>

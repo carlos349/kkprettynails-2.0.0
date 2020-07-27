@@ -335,10 +335,15 @@
                                 <span >Empleado(s):</span>
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.empleada)}}</badge>
                             </base-button>
-
+                            <base-button class="mt-1 col-12" size="sm" type="secondary">
+                                <span >Entrada:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
+                                <span >Salida:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.end)}}</badge>
+                            </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'first'" >
-                                    Lleva descuento (Primer cliente)
+                                    Lleva descuento (Primera atención)
                                     <i class="text-success p-1 ni ni-check-bold ni-1x aling-center"> </i>
                                 </span>
                                 <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'recomnd'" >
@@ -349,17 +354,34 @@
                                     No lleva descuento 
                                     <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
                                 </span>
-                                
                             </base-button>
-
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
-                                <span >Entrada:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
-                                <span >Salida:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.end)}}</badge>
+                                <span class="text-success" v-if="selectedEvent.confirmation">Confirmada</span>
+                                <span class="text-danger" v-else v-on:click="sendConfirmation(selectedEvent.id, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">Confirmar</span>
                             </base-button>
-                            <dt class="mt-3 text-center">Servicios</dt>
+                            <dt class="mt-3 text-center">Servicios</dt>  
                             <badge v-for="service of selectedEvent.services" class="mt-1 ml-1 text-default" type="primary">{{service.servicio}}</badge>
+                            <hr/>
+                            <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <span v-if="selectedEvent.imageLength >= 3"> (Máximo 3)</span></dt>
+                            <div class="row mt-1" v-if="selectedEvent.imageLength < 3">
+                                <label class="col-md-8" for="file">{{nameFile}}</label>
+                                <input type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()" >
+                                <button class="col-md-4 buttonUpload" v-on:click="uploadImageDesign(selectedEvent.id)">
+                                    <b>Enviar</b>
+                                </button>
+                            </div>
+                            <div v-if="selectedEvent.imageLength > 0" class="row mt-1">
+                                <div class="col-md-12">
+                                    <carousel :perPage="1" :autoplayHoverPause="true" :autoplay="true">
+                                        <slide v-for="(images, index) of selectedEvent.image" class="imageHover">
+                                            <img  class="w-100" style="height: 50vh !important;" :src="imgEndpoint+'/static/designs/'+images" alt="">
+                                            <center>
+                                                <base-button type="danger" class="mt-2" size="sm" v-on:click="deleteImage(selectedEvent.image, index, selectedEvent.id)">Eliminar imagen</base-button>
+                                            </center>
+                                        </slide>
+                                    </carousel>
+                                </div>
+                            </div>
                         </tab-pane>
                         <tab-pane>
                             <span class="text-default" slot="title">
@@ -714,6 +736,7 @@
   import vueCustomScrollbar from 'vue-custom-scrollbar'
   import EventBus from '../components/EventBus'
   import io from 'socket.io-client';
+  import { Carousel, Slide } from 'vue-carousel';
   //Back - End 
   import jwtDecode from 'jwt-decode'
   import axios from 'axios'
@@ -747,13 +770,16 @@
     
   export default {
     components: {
-     VueCal,
-     VueBootstrap4Table,
-     flatPicker,
-     vueCustomScrollbar
+        VueCal,
+        VueBootstrap4Table,
+        flatPicker,
+        vueCustomScrollbar,
+        Carousel,
+        Slide
     },
     data() {
       return {
+        imgEndpoint: endPoint.endpointTarget,
         auth:[],
         socket : io(endPoint.endpointTarget),
         status: localStorage.getItem('status'),
@@ -935,7 +961,9 @@
         endEmploye:[],
         designEndDate:0,
         clientsNames:[],
-        lengthClosedDates:0
+        lengthClosedDates:0,
+        file: '',
+        nameFile:'Click aquí para cargar imagen'
       };
     },
     beforeCreate(){
@@ -1034,7 +1062,10 @@
                             services: res.data[index].services,
                             empleada: res.data[index].employe,
                             id:res.data[index]._id,
-                            process: res.data[index].process
+                            process: res.data[index].process,
+                            image: res.data[index].image,
+                            imageLength: res.data[index].image.length,
+                            confirmation: res.data[index].confirmation
                         }
                         this.events.push(arrayEvents)
                     }
@@ -1075,9 +1106,11 @@
                         services: res.data[index].services,
                         empleada: res.data[index].employe,
                         id:res.data[index]._id,
-                        process: res.data[index].process
+                        process: res.data[index].process,
+                        image: res.data[index].image,
+                        imageLength: res.data[index].image.length,
+                        confirmation: res.data[index].confirmation
                     }
-                    
                     this.events.push(arrayEvents)
                     }
                 })
@@ -1655,8 +1688,11 @@
                             cliente: res.data[index].client,
                             services: res.data[index].services,
                             empleada: res.data[index].employe,
-                            id:res.data[index]._id
-                        }
+                            id:res.data[index]._id, 
+                            image: res.data[index].image,
+                            imageLength: res.data[index].image.length,
+                            confirmation: res.data[index].confirmation
+                        } 
                         this.events.push(arrayEvents)
                     }
                     this.employeByDate = name
@@ -2227,6 +2263,53 @@
                 }
             }
         },
+        handleFileUpload(){
+            const LengthImage = this.selectedEvent.image.length + this.$refs.file.files.length
+            if (LengthImage > 3) {
+                console.log('maximo')
+            }else{
+                this.file = this.$refs.file.files
+                if (this.file.length == 3) {
+                    this.nameFile = this.file[0].name+', '+this.file[1].name+', '+this.file[2].name
+                }else if (this.file.length == 2) {
+                    this.nameFile = this.file[0].name+', '+this.file[1].name
+                }else{
+                    this.nameFile = this.file[0].name
+                }
+            }            
+        },
+        uploadImageDesign(id){
+            let formData = new FormData();
+            for (let index = 0; index < this.file.length; index++) {
+                const element = this.file[index];
+                formData.append('image', this.file[index])
+            }
+            console.log(this.selectedEvent.image)
+            formData.append('imagePrev', this.selectedEvent.image)
+            axios.put(endPoint.endpointTarget+'/citas/uploadDesign/'+id, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            })
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    this.selectedEvent.image = res.data.image
+                    this.selectedEvent.imageLength = res.data.image.length
+                    this.$refs.file = ''
+                    this.nameFile = 'Click aquí para cargar imagen'
+                }
+            })
+        },
+        deleteImage(images, index, id){
+            images.splice(index, 1)
+            axios.put(endPoint.endpointTarget+'/citas/removeImage/'+id, {
+                images: images
+            })
+            .then(res => {
+                this.selectedEvent.image = images
+                this.selectedEvent.imageLength = this.selectedEvent.imageLength - 1
+            })
+        },
         endingDate(){
             const id = this.endId
             axios.post(endPoint.endpointTarget+'/citas/endDate/'+id, {
@@ -2346,6 +2429,46 @@
 			}
 			}
         },
+        sendConfirmation(id, name, start, end, services, lender){
+            console.log(id+'--'+name+'--'+start+'--'+end)
+            const nameFormat = this.formatName(name)
+            const contactFormat = this.formatContact(name)
+            const startFormat = this.dateSplitHours(start)
+            const endFormat = this.dateSplitHours(end)
+            const dateFormat = this.dateSplit(start)
+            axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
+                name: nameFormat,
+                contact: contactFormat,
+                start: startFormat,
+                end: endFormat,
+                date: dateFormat,
+                service: services,
+                lenders: lender
+            })
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    this.dateModals.modal1 = false
+                    this.modalsDialog = {
+                        modal2: true,
+                        message: "Se envio el correo de confirmacion, satisfactoriamente",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
+                    }
+                    setTimeout(() => {
+                        this.modalsDialog = {
+                            modal2: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                        this.dateModals.modal1 = true
+                    }, 1500);
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        }
     },
     computed: {
         ifSticky: () => {
@@ -2395,16 +2518,15 @@
     }
     /* Dot indicator */
     .vuecal__cell-events-count {
-    width: 40px;
-    min-width: 0;
-    height: 30px;
-    padding: 5px;
-    padding-top: 10px;
-    font-size: 16px;
-    background-color: #172b4d; 
+        width: 19px;
+        min-width: 0;
+        height: 17px;
+        padding: 2px;
+        font-size: 12px;
+        background-color: #172b4d; 
     }
     .vuecal__cell-content {
-        height: 100px;
+        height: 50px;
     }
     .vuecal__header{background-color: rgba(238, 238, 238, 0.623);border-radius: 5px 5px 0 0;}
     .vuecal__cell.today div .vuecal__cell-events-count, .vuecal__cell.current {background-color: #353535 !important;}
@@ -2622,5 +2744,40 @@
         border-radius: 5px;
         margin-top:-5px;
         font-size: .8rem;
+    }
+    #file {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+    label[for="file"] {
+        font-size: 12px;
+        font-weight: 600;
+        color: #fff;
+        background-color: #172b4d;
+        display: inline-block;
+        transition: all .5s;
+        cursor: pointer;
+        padding: 10px !important;
+        text-transform: uppercase;
+        width: 100%;
+        text-align: center;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
+    .hoverDelete:hover{
+        opacity: .8;
+        cursor: pointer;
+    }
+    .buttonUpload{
+        border:none;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        color:#fff;
+        background-color: #2dce89;
+        height: 38px !important;
     }
 </style>
