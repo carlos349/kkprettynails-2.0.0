@@ -386,6 +386,74 @@
             </template>
             </card>
         </modal>
+        <modal :show.sync="modals.modal5"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+               
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Validación de codigo</h3>
+                    </div>
+                </template>
+                <template>
+                    <form role="form">
+                        <base-input 
+                            alternative
+                            class="mb-3"
+                            placeholder="Codigo"
+                            v-model="codeArticulo"
+                            addon-left-icon="ni ni-key-25">
+                        </base-input>
+                       	
+                        
+                        <base-button type="default" v-on:click="validCode()">
+                            Verificar
+                        </base-button> 
+                    </form>
+            </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal6"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+               
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                
+                <template>
+                    <div class="col-sm-12">
+                                
+                                
+                                <base-button class="col-12  p-2 mt-1" type="secondary">
+                                    <span class="text-center"> Articulo <br> </span>
+                                    <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
+                                </base-button>
+                                <base-button class="col-12  p-2 mt-1" type="secondary">
+                                    <span class="text-center"> Estado <br> </span>
+                                    <badge v-if="estadoArticulo == 'Nconfirmado'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
+                                    <badge v-else-if="estadoArticulo == 'confirmado'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
+                                    <badge v-else style="font-size:0.8em !important" type="default" class="text-default mt-2">Usado</badge>
+                                </base-button>
+                                
+                            </div>
+                            <center>
+                                <base-button v-if="estadoArticulo == 'confirmado'" type="success" class="mt-5" v-on:click="verifyCode()">
+                                    Validar
+                                </base-button>
+                                <base-button v-else type="default" disabled class="mt-5">
+                                    Validar
+                                </base-button> 
+                            </center>
+                            
+            </template>
+            </card>
+        </modal>
         <div v-if="validRoute('procesar', 'nuevo_cliente')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
 			<div class="row">
 				<div class="col-2 pt-1">
@@ -438,6 +506,16 @@
 				</div>
 			</div>
         </div>
+        <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal5 = true" class="p-2 menuVerRedo navSCode" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
+			<div class="row">
+				<div class="col-2 pt-1">
+					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="pager" />
+				</div>
+				<div v-if="reloadSales.valid" class="col-10 pl-4 pt-1">
+					<b style="font-size:14px;">Validar codigo</b>	
+				</div>
+			</div>
+        </div>
     </div>
 </template>
 <script>
@@ -467,6 +545,8 @@ export default {
                 modal2: false,
                 modal3: false,
                 modal4: false,
+                modal5: false,
+                modal6: false,
                 message: "",
                 icon: '',
                 type:''
@@ -480,6 +560,10 @@ export default {
                 recommender: '',
                 valid: false,
             },
+            articulo:'',
+            estadoArticulo:'',
+            idArticulo:'',
+            codeArticulo:'',
             cashFunds: {
                 cashName: '',
                 cashAmount: 0,
@@ -1200,7 +1284,7 @@ export default {
             this.registerClient.id = ''
             this.ifrecomend = false
             this.validRegister()
-		},
+        },
         processSale() {
 			if (this.payCash == '') {
 				this.payCash = 0
@@ -1376,6 +1460,56 @@ export default {
                 }
             }
         },
+        validCode(){
+            axios.get(endPoint.endpointTarget+'/pedidos/validCode/'+this.codeArticulo)
+            .then( res =>{
+                if (res.data) {
+                    this.articulo = res.data.articulo
+                    this.estadoArticulo = res.data.estado
+                    this.idArticulo = res.data._id
+                    this.modals.modal6 = true
+                }
+            })
+        },
+        verifyCode(){
+            this.$swal({
+					type: 'warning',
+					title: '¿Seguro que desea verificar el codigo?',
+					showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonColor: '#2dce89',
+                    cancelButtonColor: '#f5365c',
+                    confirmButtonText: 'Si',
+                    cancelButtonText: 'No'
+				}).then((result) => {
+                    if (result.value) {
+                        axios.get(endPoint.endpointTarget+'/pedidos/useCode/'+this.idArticulo)
+                        .then( res =>{
+                            if (res.data.status == 'ok') {
+                                this.$swal({
+                                type: 'success',
+                                title: 'Codigo verificado',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.modals.modal5 = false
+                            this.modals.modal6 = false
+                            this.articulo = ''
+                            this.estadoArticulo = ''
+                            this.idArticulo = ''
+                            }
+                            else{
+                                this.$swal({
+                                    type: 'error',
+                                    title: 'Problemas de conexión',
+                                    showConfirmButton: false,
+                                    timer: 1500
+						        })
+                            }
+                        })
+                    }
+                    })
+        }
     },
     mounted (){
         EventBus.$on('reloadServices', status => {
@@ -1506,6 +1640,15 @@ export default {
 	cursor: pointer;
 	width:7%;
 	top:15.5%;
+	right:-7%;
+	background-color: white;
+	position: absolute;
+	border-radius: 0 5px 5px 0;
+}
+.navSCode{
+	cursor: pointer;
+	width:7%;
+	top:22.6%;
 	right:-7%;
 	background-color: white;
 	position: absolute;
