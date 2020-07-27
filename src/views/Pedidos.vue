@@ -10,7 +10,7 @@
                     <div class="col-12">
                         <h1 class="display-2 text-white">Pedidos</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus pedidos, aquí podrás visualizar todos tus pedidos.</p>
-                        <base-button v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">???</base-button>
+                        
                         
                         <base-button v-if="validRoute('clientes', 'filtrar')" @click="showFilter" type="default">Filtrar</base-button>
                     </div>
