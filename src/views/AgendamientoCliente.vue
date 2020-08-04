@@ -11,12 +11,12 @@
                 <form-wizard @on-complete="modals.modal2 = true" color="#174c8e" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!"> 
                     <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
-                    <tab-content title="Servicios" icon="fa fa-list-ul" :before-change="validateFirstStep" >
+                    <tab-content title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
                         <div class="row">
                             <div class="col-md-12">
                                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                    <li v-for="category of categories" :key="category._id" class="nav-item" role="presentation">
-                                        <base-button type="default" class="w-100 mt-1 categoryButton" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true">{{category.name}}</base-button>
+                                    <li v-for="(category, index) of categories" :key="category._id" class="nav-item" role="presentation">
+                                        <button class="categoryButton" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
                                     </li>
                                 </ul>
                             </div>
@@ -25,19 +25,22 @@
                                     <div class="tab-content" id="pills-tabContent">
                                         <div v-for="category of categories" :key="category._id" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row mt-2">
-                                                 <div v-for="(service, index) of services" :key="service" class="col-md-3" v-if="service.category == category.name">
+                                                 <div v-for="(service, index) of services" :key="service" class="col-xl-3 col-md-6" v-if="service.category == category.name">
                                                     <div class="card-service row">
-                                                        <div class="col-5" style="padding: 0px !important;">
-                                                            <span class="price-service">{{formatPrice(service.precio)}} $</span> 
+                                                        <h3 class="name-service"> {{service.nombre}}</h3>
+                                                        <div class="col-12"><img src="img/brand/calendar.png" alt=""></div>
+                                                        
+                                                        <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;padding-top: 5px !important;">
+                                                            <div class="price-service ">{{formatPrice(service.precio)}} $</div> 
                                                         </div>
-                                                        <div class="col-7" style="padding: 0px !important;margin-top:-5px;">
-                                                            <p class="name-service mt-1"> {{service.nombre}}</p>
-                                                        </div>
-                                                        <div class="col-12 mt-4" style="padding: 0px !important;">
+                                                        <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;margin-top:-5px;">
+                                                            
                                                             <div class="button-service-group">
-                                                                <button class="button-service-left categoryButton" v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores)"><i class="fa fa-plus"></i></button>
+                                                                <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.nombre, service.tiempo)"></i></button>
                                                                 <span class="span-button-service">{{serviceCount[index].count}}</span>
-                                                                <button class="button-service-right categoryButton" v-on:click="lessService(index, service.nombre, service.tiempo)"><i class="fa fa-minus"></i></button>
+                                                                <button class="button-service-right" 
+                                                                v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores)"
+                                                                ><i class="fa fa-plus"></i></button>
                                                             </div>
                                                             
                                                         </div>  
@@ -46,30 +49,20 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    
-                                        <!-- <div v-for="category of categories" :key="category._id" class="tab-pane fade show " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                            <div v-for="(service, index) of services" class="row" v-if="service.category == category.name">
-                                                <div class="col-md-6">
-                                                    <button class="btn-header btnDate py-2 px-4 mt-2"> 
-                                                        <span class="badge badge-default">{{service.tiempo}}Min</span> | {{service.nombre}} |
-                                                        <span class="badge badge-default ">{{serviceCount[index].count}}</span> 
-                                                    </button> 
-                                                </div> 
-                                                <div class="col-md-3">
-                                                    <button class="btn-sevices btnDate w-100 mt-3" v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores)"><i class="fa fa-plus" aria-hidden="true" style="font-size:14px;"></i></button>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <button class="btn-sevices btnDate w-100 mt-3" v-on:click="lessService(index, service.nombre, service.tiempo)"><i class="fa fa-minus" aria-hidden="true" style="font-size:14px;"></i></button> 
-                                                </div>
-                                            </div>
-                                        </div> -->
                                     </div>
                                 <!-- </vue-custom-scrollbar> -->
                             </div>
-                            <div class="row mx-auto mt-3">
+                            <!-- <div class="row mx-auto mt-3">
                                 <h3>¿Se realizara un diseño?</h3> 
                                 <base-radio name="si" value="true" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>Si</b> </base-radio>
                                 <base-radio name="no" value="false" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>No</b> </base-radio> 
+                            </div> -->
+                            <div class="mx-auto mt-4">
+                                <h3>¿Se realizara un diseño?</h3> 
+                                <div class="ml-1">
+                                    <span class="ml-5 font-weight-bold spanSelect" id="yes" v-on:click="selectDesign('first')">SI</span>
+                                    <span class="ml-5 font-weight-bold spanSelect" id="not" v-on:click="selectDesign('second')">NO</span>
+                                </div>
                             </div>
                         </div>
                     </tab-content>
@@ -77,7 +70,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="w-75 mx-auto" >
-                                    <h3 class="text-center">Seleccione una fecha</h3>
+                                    <h4 class="text-center text-uppercase">Fechas disponibles</h4>
                                     <base-input addon-left-icon="ni ni-calendar-grid-58 clickCalendar" style="cursor:pointer;" >
                                         <flat-picker 
                                                 @on-change="openCalendar"
@@ -95,72 +88,114 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="row mb-3">
-                                    <div class="col-lg-4 col-md-6 text-center mt-2" v-for="(servicesSelect, indexService) of registerDate.serviceSelectds" :key="servicesSelect">
-                                        <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="default" class="mb-1">
-                                            <span v-if="servicesSelect.start != ''">{{servicesSelect.lender}} - {{servicesSelect.start}} / {{servicesSelect.end}}</span>
-                                            <span v-else>{{servicesSelect.lender}} </span>
-                                        </badge>
-                                        <badge style="font-size:.7em !important" v-else type="default" class="mb-1">Seleccione prestador y horario</badge>
-                                        <base-dropdown class="w-100">
-                                            <base-button v-if="servicesSelect.valid" slot="title" type="default" class="dropdown-toggle w-100">
-                                                {{servicesSelect.servicio}} 
-                                            </base-button>
-                                             <base-button v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                {{servicesSelect.servicio}} 
-                                            </base-button>
-                                                <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid" class="dropdown-item w-100" style="color:#32325d;" v-on:click="servicesSelect.start = '', servicesSelect.end = '', servicesSelect.lender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime)">{{lenders.lender}}  </b>
-                                        </base-dropdown>
-                                        <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                            <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
-                                                <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.Horario, index, indexService)" size="sm" class="col-12" type="success">
-                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                    <span>Disponible</span>
-                                                </base-button>
-                                                <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                    <span>Ocupado</span>
-                                                </base-button>
-                                                <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                    <span>Seleccionado</span>
-                                                </base-button>
-                                                <base-button v-else size="sm" disabled class="col-12" type="secondary">
-                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                    <span>No seleccionable</span>
-                                                </base-button>
+                                    <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDate.serviceSelectds" :key="servicesSelect">
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1">
+                                                    <span style="color:#1c2021;font-weight:600;" >{{servicesSelect.servicio}} </span>
+                                                </badge>
+                                                <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#1c2021;font-weight:600;" >Seleccione prestador y horario</span></badge>
+                                                <base-dropdown class="w-100">
+                                                    <base-button style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid" slot="title" type="default" class="dropdown-toggle w-100">
+                                                        {{servicesSelect.lender}} 
+                                                    </base-button>
+                                                    <base-button style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                        {{servicesSelect.lender}} 
+                                                    </base-button>
+                                                    <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid" class="dropdown-item w-100" style="color:#32325d;" v-on:click="servicesSelect.start = '', servicesSelect.end = '', servicesSelect.lender = lenders.lender, servicesSelect.realLender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime)">{{lenders.lender}}  </b>
+                                                </base-dropdown>
                                             </div>
-                                        </vue-custom-scrollbar>
+                                            <div class="col-md-5">
+                                                <badge type="secondary" style="font-size:.7em !important" class="mb-1">
+                                                   <span style="color:#000;font-weight:600;">Horarios disponibles</span> 
+                                                </badge>
+                                                <base-button v-on:click="openBlocks('block'+indexService)" class="w-100" v-if="servicesSelect.valid" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" icon-rigth="ni ni-bag-17">
+                                                <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}}</span>
+                                                <span v-else>Seleccione una hora </span>
+                                                </base-button>
+                                                <base-button v-else style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" icon-rigth="ni ni-bag-17" disabled>
+                                                Seleccione una hora 
+                                                </base-button>
+                                                <vue-custom-scrollbar class="w-75 mx-auto" :id="'block'+indexService" style="max-height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                                    <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
+                                                        <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.Horario, index, indexService, 'block'+indexService)" size="sm" class="col-12" type="success">
+                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                            <span>Disponible</span>
+                                                        </base-button>
+                                                        <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                            <span>Ocupado</span>
+                                                        </base-button>
+                                                        <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                            <span>Seleccionado</span>
+                                                        </base-button>
+                                                        <base-button v-else size="sm" disabled class="col-12" type="secondary">
+                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                            <span>No seleccionable</span>
+                                                        </base-button>
+                                                    </div>
+                                                </vue-custom-scrollbar>
+                                            </div>   
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </tab-content>
-                    <tab-content title="Información" icon="fa fa-info">
+                    <tab-content title="Información" icon="fa fa-question-circle">
                         <div class="row">
-                            <div class="col-md-6 col-sm-12" >
+                            <div class="col-md-8 col-sm-12" >
                                 <dt>Servicios</dt>
-                                <vue-custom-scrollbar class="col-12" style="height:35vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
-                                    <base-button v-for="data in registerDate.serviceSelectds" class="col-10 mt-1" type="secondary">
-                                        <span class="float-left">{{data.servicio}} </span>
-                                        <badge class="text-default float-left" type="success">{{data.lender}}</badge>
-                                        <badge class="text-default float-left" type="success">{{data.start}} / {{data.end}}</badge>
-                                    </base-button>
-                                </vue-custom-scrollbar>
+                                <div class="row">
+                                    <div class="card-services-information col-md-6" v-for="(data, index) in registerDate.serviceSelectds" :key="data">
+                                        <badge type="secondary" class="mb-1 w-100">
+                                            <span style="color:#000;font-weight:600;">servicio {{index + 1}}</span> 
+                                        </badge>
+                                        <base-button slot="title" type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
+                                            <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;">{{data.servicio}}</span> </badge><br>
+                                            <span class="mx-auto">{{data.realLender}}</span>
+                                        </base-button>
+                                        <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                            <span style="color:#000;font-weight:600;font-size:.9em;">Desde las</span> 
+                                        </badge>
+                                        <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                            <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.start}}</span> 
+                                        </badge>
+                                        <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                            <span style="color:#000;font-weight:600;font-size:.9em;">Hasta las</span> 
+                                        </badge>
+                                        <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                            <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.end}}</span> 
+                                        </badge>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-4 col-sm-12">
                                 <dt>Información de agenda</dt>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
-                                    <span class="float-left"> Fecha </span>
-                                    <badge style="font-size:1em !important" type="success" class="text-default float-right">{{dates.simple}}</badge>
+                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                Fecha: <span class="font-weight-bold">{{dates.simple}}</span>
                                 </base-button>
-                                    <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
-                                    <span class="float-left"> Diseño </span>
-                                    <badge style="font-size:1em !important" type="success" class="text-default float-right text-uppercase">{{registerDate.design}}</badge>
+                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                    Diseño: <span class="text-uppercase font-weight-bold">{{registerDate.design}}</span>
                                 </base-button>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
-                                    <span class="float-left"> Hora de inicio </span>
-                                    <badge v-if="registerDate.serviceSelectds[0]" style="font-size:1em !important" type="success" class="text-default float-right">{{registerDate.serviceSelectds[0].start}}</badge>
-                                </base-button>
+                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                    Hora de inicio: <span v-if="registerDate.serviceSelectds[0]" class="font-weight-bold">{{registerDate.serviceSelectds[0].start}}</span>
+                                </base-button><br><br>
+                                <dt>Pago</dt>
+                                <div style="display:inline-block">
+                                    <span class="ml-3">Tipo de pago</span>
+                                    <base-dropdown class="ml-4">
+                                        <base-button slot="title" type="default" class="dropdown-toggle w-100 dropdownPay" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                            Presencial efectivo 
+                                        </base-button>
+                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
+                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
+                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
+                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Transferencia')">Transferencia</b>
+                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('WebPay')">WebPay</b> 
+                                    </base-dropdown>
+                                </div>
                             </div>
                         </div>
                     </tab-content>
@@ -170,7 +205,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-Secondary">
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
                <a class="navbar-brand " href="#">
-                    <img src="img/brand/syswa-gestion.png" alt="" style="height:100px;width:200px">
+                    <img src="img/brand/syswa-gestion.png" alt="" style="height:140px;width:220px">
                 </a>
             </div>
             <span class="navbar-text" style="float: right !important;">
@@ -179,43 +214,77 @@
         </nav>
         <modal :show.sync="modals.modal2"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
+               modal-classes="modal-dialog-centered modal-lg">
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  body-classes="px-lg-4 py-lg-4"
                   class="border-0">
                 <template>
                     <div class="text-muted text-center mb-3">
-                        <h3>Identidad del agendamiento</h3>
+                        <h3>Formulario de compra</h3>
                     </div>
                 </template>
                 <template>
                     <form role="form">
-                        <base-input alternative
-                            type="text"
-                            v-on:keyup="validFields()"
-                            placeholder="Escriba su nombre"
-                            v-model="registerUser.name"
-                            addon-left-icon="fa fa-user">
-                        </base-input>
-                        <base-input alternative
-                            type="text"
-                            v-on:keyup="validFields()"
-                            placeholder="Escriba su apellido"
-                            v-model="registerUser.lastName"
-                            addon-left-icon="fa fa-user">
-                        </base-input>
-                        <base-input alternative
-                            type="email"
-                            v-on:keyup="validFields()"
-                            placeholder="Escriba su correo"
-                            v-model="registerUser.mail"
-                            addon-left-icon="ni ni-email-83">
-                        </base-input>
-                        <base-button v-if="validRegister" type="success" v-on:click="finallyAgend()">
+                        <div class="row">
+                            <base-input alternative
+                                class="col-md-6"
+                                type="text"
+                                v-on:keyup="validFields()"
+                                placeholder="Escriba su nombre"
+                                v-model="registerUser.name"
+                                addon-left-icon="fa fa-user">
+                            </base-input>
+                            <base-input alternative
+                                class="col-md-6"
+                                type="text"
+                                v-on:keyup="validFields()"
+                                placeholder="Escriba su apellido"
+                                v-model="registerUser.lastName"
+                                addon-left-icon="fa fa-user">
+                            </base-input>
+                            <base-input alternative
+                                class="col-md-6"
+                                type="email"
+                                v-on:keyup="validFields()"
+                                placeholder="Escriba su correo"
+                                v-model="registerUser.mail"
+                                addon-left-icon="ni ni-email-83">
+                            </base-input>
+                            <base-input alternative
+                                class="col-md-6"
+                                type="email"
+                                v-on:keyup="validFields()"
+                                placeholder="Escriba su número de teléfono"
+                                v-model="registerUser.phone"
+                                addon-left-icon="fa fa-phone">
+                            </base-input>
+                            <base-input alternative
+                                class="col-md-6"
+                                type="email"
+                                v-on:keyup="validFields()"
+                                placeholder="Escriba su correo"
+                                v-model="registerUser.pay"
+                                addon-left-icon="fa fa-money-check-alt">
+                            </base-input>
+                            <base-input alternative
+                                class="col-md-6"
+                                v-if="registerUser.pay == 'Transferencia'"
+                                type="file"
+                                v-on:keyup="validFields()"
+                                v-model="registerUser.pdf"
+                                addon-left-icon="fa fa-file-pdf">
+                            </base-input>
+                        </div>
+                        <div class="card-info">
+                            <div>
+                                Aqui iría una información sobre normas o reglas, dependiendo del método de pago.
+                            </div>
+                        </div>
+                        <base-button style="float:right;margin-top:-50px;border-radius:20px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
                             Finalizar agenda
                         </base-button>  
-                        <base-button v-else type="default" v-on:click="finallyAgend()" disabled>
+                        <base-button style="float:right;margin-top:-50px;border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
                             Finalizar agenda
                         </base-button> 
                     </form>
@@ -266,7 +335,10 @@
                 registerUser: {
                     name: '',
                     mail: '',
-                    lastName: ''
+                    lastName: '',
+                    phone: '',
+                    pay: 'Presencial efectivo',
+                    pdf: ''
                 },
                 validWizard: true,
                 year: new Date().getFullYear(),
@@ -278,6 +350,7 @@
                     icon: '',
                     type:''
                 },
+                arrayLendersSelect: [],
                 checkboxes: {
                     Wantlender: false
                 },
@@ -401,7 +474,7 @@
                         axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
                             dataDate: this.registerDate,
                             date: this.dates.simple,
-                            client: this.client
+                            client: this.registerUser
                         })
                         .then(res => {
                             if (res.data.status == "cita creada") {
@@ -492,61 +565,71 @@
                 this.registerDate.employeSelect = ''
                 this.validSchedule = false
                 this.noOneLender = true
-                this.selectHourService(index, lender, time, resTime)
-                var valid = 0 
-                for (let i = 0; i < this.registerDate.serviceSelectds.length; i++) {
-                    const element = this.registerDate.serviceSelectds[i];
-                    if (element.lender == "") {
-                        valid = 1
-                    }
-                }
-
-                for (let j = 0; j < this.registerDate.serviceSelectds.length; j++) {
-                    for (let x = 0; x < this.registerDate.serviceSelectds[j].lenders.length; x++) {
-                        const elementTwo = this.registerDate.serviceSelectds[j].lenders[x];
-                        if (elementTwo.lender == lender) {
-                            elementTwo.valid = false
-                        }else{
-                            elementTwo.valid = true
-                        }
-                    }
-                }
-
-                if (valid == 0) {
-                    this.noOneLender = true
-                }
                 
+                this.selectHourService(index, lender, time, resTime)
             },
             selectHourService(index, lender, time, resTime){
                 console.log(lender+'--'+ time+'--'+ resTime+'--'+index)
-                
-                this.selectServiceForHour = {}
-                this.selectServiceForHour = {
+                const finalTime =  this.registerDate.design == 'si' ? time + 15 : time
+                this.registerDate.serviceSelectds[index].lenderSelectData = {
                     employe: lender,
                     date: this.dates.simple,
-                    time: parseFloat(time) + 15,
+                    time: finalTime,
                     resTime: resTime,
                     index: index
                 }
-                axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.selectServiceForHour)
+
+                axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDate.serviceSelectds[index].lenderSelectData)
                 .then(res => { 
-                    this.registerDate.serviceSelectds[index].blocks = res.data
-                    console.log(this.registerDate.serviceSelectds[index])
-                    this.blockHour = res.data 
-                    this.progress = true
+                    if (this.registerDate.serviceSelectds[index].validAfter) {
+                       for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
+                            const element = this.registerDate.serviceSelectds[j];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.realLender = ''
+                            element.blocks = []
+                            element.restTime = ''
+                            element.class = ''
+                            element.valid = false
+                            this.arrayLendersSelect = []
+                        } 
+                    }
+                    var editBlock = false
+                    var indexEdit = 0
+                    if (index > 0) {
+                        for (let i = 0; i < this.arrayLendersSelect.length; i++) {
+                            const element = this.arrayLendersSelect[i];
+                            if (element.lender == lender) {
+                                editBlock = true
+                                indexEdit = element.index
+                                
+                            }
+                        }
+                    }
+                    if (editBlock) {
+                        console.log(this.arrayLendersSelect)
+                        this.registerDate.serviceSelectds[index].blocks = this.registerDate.serviceSelectds[indexEdit].blocks
+                        axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
+                            array: this.registerDate.serviceSelectds[index].blocks,
+                            time: parseFloat(time)
+                        })
+                        .then(res => {
+                            this.arrayLendersSelect.push({index: index, lender: lender}) 
+                            this.registerDate.serviceSelectds[index].blocks = res.data
+                            this.registerDate.serviceSelectds[index].validAfter = true
+                        })
+                    }else{
+                        this.registerDate.serviceSelectds[index].blocks = res.data
+                        this.arrayLendersSelect.push({index: index, lender: lender}) 
+                        console.log(this.arrayLendersSelect)
+                        this.registerDate.serviceSelectds[index].validAfter = true
+                    }
+                    
                 })
                 .catch(err => { console.log(err) })
             },
             validLender(){
-                // if (this.checkboxes.Wantlender == false) {
-                //     this.generateLender()
-                //     this.validSchedule = true
-                //     const count = this.finalyLenders.length
-                //     const random = Math.round(Math.random() * count)
-                //     this.registerDate.employeSelect = this.finalyLenders[random].nombre
-                //     this.registerDate.class = this.finalyLenders[random].class
-                //     this.registerDate.employeResTime = this.finalyLenders[random].restTime
-                // }
                 this.generateLender()
                 if (this.registerDate.serviceSelectds.length > 0 && this.dates.simple != '') {
                     this.validWizard = true
@@ -574,6 +657,7 @@
                     element.start = ''
                     element.end = ''
                     element.sort = ''
+                    element.realLender = ''
                     element.lender = ''
                     element.blocks = []
                     element.restTime = ''
@@ -636,7 +720,7 @@
                         this.posibleLenders.push(lenders[index]) 
                     } 
                 } 
-                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [], valid: false})
+                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false })
                 this.registerDate.start = ''  
                 this.registerDate.end = '' 
                 this.registerDate.sort = ''    
@@ -701,43 +785,99 @@
                     console.log(err)
                 })
             },
-            selectBloqMulti(hora, i, indexService){
+            selectBloqMulti(hora, i, indexService, open){
+                setTimeout(() => {
+                    $('#'+open).toggle('slow')
+                }, 500);
                 console.log(indexService)
-                var sortSp = this.blockHour[i].Horario.split(":") 
-                this.registerDate.serviceSelectds[indexService].start = this.blockHour[i].Horario
+                var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].Horario.split(":") 
+                this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
                 this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
-                axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.selectServiceForHour)
+                console.log(this.registerDate.serviceSelectds[indexService])
+                axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDate.serviceSelectds[indexService].lenderSelectData)
                 .then(res => {
-                    console.log(this.selectServiceForHour)
-                    for (let index = 0 ; index <= this.selectServiceForHour.time / 15; index++) {
-                        res.data[i].validator = 'select'
-                        this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
-                        i++
-                    }
-                    this.registerDate.serviceSelectds[indexService].blocks = res.data
-                    this.blockHour = res.data
-                    var valid = 0 
-                    for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                        const element = this.registerDate.serviceSelectds[index];
-                        if (element.start == "") {
-                            valid = 1
+                    console.log(res)
+                    var editBlock = false
+                    if (indexService > 0) {
+                        for (let i = 0; i < this.arrayLendersSelect.length; i++) {
+                            const element = this.arrayLendersSelect[i];
+                            if (element.lender == this.registerDate.serviceSelectds[indexService].realLender) {
+                                editBlock = true
+                            }
                         }
                     }
-                    if (valid == 0) {
-                        this.validHour = true
+                    if (editBlock) {
+                        console.log('entre en el edit')
+                        console.log(this.arrayLendersSelect)
+                        axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
+                            array: this.registerDate.serviceSelectds[indexService].blocks,
+                            time: this.registerDate.serviceSelectds[indexService].lenderSelectData.time
+                        })
+                        .then(res => {
+                            for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
+                                res.data[i].validator = 'select'
+                                this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
+                                i++
+                            }
+                            this.registerDate.serviceSelectds[indexService].blocks = res.data
+                            for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                                const element = this.registerDate.serviceSelectds[indexService];
+                                if (element.start == "") {
+                                    valid = 1
+                                }
+                            }
+                            if (valid == 0) {
+                                this.validHour = true
+                            }
+                        })
+                    }else{
+                        console.log('NO entre en el edit')
+                        for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
+                            res.data[i].validator = 'select'
+                            this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
+                            i++
+                        }
+                        this.registerDate.serviceSelectds[indexService].blocks = res.data
+                        this.blockHour = res.data
+                        var valid = 0 
+                        for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                            const element = this.registerDate.serviceSelectds[index];
+                            if (element.start == "") {
+                                valid = 1
+                            }
+                        }
+                        if (valid == 0) {
+                            this.validHour = true
+                        }
+                        this.registerDate.serviceSelectds[indexService].blocks = res.data
                     }
+                    
                     const finalIndex = parseFloat(indexService) + parseFloat(1)
                     if (this.registerDate.serviceSelectds[finalIndex]) {
-                        if (this.registerDate.serviceSelectds[finalIndex].valid == false) {
-                            console.log(finalIndex)
-                            console.log(this.registerDate.serviceSelectds[finalIndex].lenders.length)
-                            const count = this.registerDate.serviceSelectds[finalIndex].lenders.length
-                            const random = Math.round(Math.random() * (parseFloat(count) - parseFloat(1)))
-                            const finalLender = this.registerDate.serviceSelectds[finalIndex].lenders[random].lender
-                            const finalRestime = this.registerDate.serviceSelectds[finalIndex].lenders[random].resTime
-                            this.validMultiLender(finalIndex, finalLender, this.registerDate.serviceSelectds[finalIndex].duration, finalRestime)
+                        axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.dates.simple)
+                        .then(res => {
                             this.registerDate.serviceSelectds[finalIndex].valid = true
-                        }
+                            var counter = 0
+                            var validCounter = false
+                            for (let i = finalIndex; i < res.data.array.length; i++) {
+                                const element = res.data.array[i];
+                                for (let j = 0; j <  this.registerDate.serviceSelectds[finalIndex].lenders.length; j++) {
+                                    const elementTwo =  this.registerDate.serviceSelectds[finalIndex].lenders[j];
+                                    if (element.name == elementTwo.lender) {
+                                        counter = j
+                                        validCounter = true
+                                        break
+                                    }
+                                }
+                                if (validCounter) {
+                                    break
+                                }
+                            }
+                            const finalLender = this.registerDate.serviceSelectds[finalIndex].lenders[counter].lender
+                            const finalRestime = this.registerDate.serviceSelectds[finalIndex].lenders[counter].resTime
+                            this.registerDate.serviceSelectds[finalIndex].realLender = finalLender
+                            this.validMultiLender(finalIndex, finalLender, this.registerDate.serviceSelectds[finalIndex].duration, finalRestime)
+                        })
                     }
                 })
                 .catch(err => {
@@ -778,15 +918,79 @@
                     this.validHour = false
                 }else{
                     setTimeout(() => {
-                        this.registerDate.serviceSelectds[0].valid = true
-                        const count = this.registerDate.serviceSelectds[0].lenders.length
-                        const random = Math.round(Math.random() * (parseFloat(count) - parseFloat(1)))
-                        const finalLender = this.registerDate.serviceSelectds[0].lenders[random].lender
-                        const finalRestime = this.registerDate.serviceSelectds[0].lenders[random].resTime
-                        this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
-                        this.readyChange = false
-                    }, 500);
+                        axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.dates.simple)
+                        .then(res => {
+                            
+                            var counter = 0
+                            var validCounter = false
+                            for (let i = 0; i < res.data.array.length; i++) {
+                                const element = res.data.array[i];
+                                for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
+                                    const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
+                                    if (element.name == elementTwo.lender) {
+                                        counter = j
+                                        validCounter = true
+                                        break
+                                    }
+                                }
+                                if (validCounter) {
+                                    break
+                                }
+                            }
+                            console.log(validCounter)
+                            if (validCounter) {
+                                const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
+                                const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
+                                console.log(finalLender)
+                                this.registerDate.serviceSelectds[0].valid = true
+                                this.registerDate.serviceSelectds[0].realLender = finalLender
+                                this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
+                                this.readyChange = false
+                            }else{
+                                this.modals = {
+                                    modal3: true,
+                                    message: "No tenemos hay prestadores disponibles, para la fecha.",
+                                    icon: 'ni ni-fat-remove ni-5x',
+                                    type: 'danger'
+                                }
+                                setTimeout(() => {
+                                    this.modals = {
+                                        modal1:false,
+                                        modal2:false,
+                                        modal3: false,
+                                        message: "",
+                                        icon: '',
+                                        type: ''
+                                    }
+                                }, 3000);
+                            }
+                            
+                            
+                        })
+                    }, 200); 
                 }
+            },
+            openBlocks(open){
+                $('#'+open).toggle('slow')
+            },
+            selectPay(pay){
+                $('.dropdownPay').text(pay)
+                this.registerUser.pay = pay
+            },
+            selectDesign(type){
+                if (type == 'first') {
+                    $('.spanSelect').css({'background-color':'#fff', 'color':'#174c8e'})
+                    $('#yes').css({'background-color':'#174c8e', 'color':'#fff'})
+                    this.registerDate.design = 'si'
+                }else{
+                    $('.spanSelect').css({'background-color':'#fff', 'color':'#174c8e'})
+                    $('#not').css({'background-color':'#174c8e', 'color':'#fff'})
+                    this.registerDate.design = 'no'
+                }
+            },
+            selectCat(cat){
+                $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54'})
+                $('#'+cat).css({'padding':'14px', 'background-color': '#174c8e', 'color': '#fff'})
             }
         }
     }
@@ -894,61 +1098,100 @@
     background-color: #174c8e !important;
 }
 .categoryButton{
-    background-color: #174c8e !important;
-    border-color: #174c8e !important;
+    background-color: #d5dadd;
+    border:none;
+    color: #434a54;
+    padding: 10px;
+    border-radius: 15px;
+    font-family: Open Sans, sans-serif;
+    font-weight: 500;
+    font-size:1.2em;
+    transition: all 0.5s ease-out;
+}
+.categoryButton:hover{
+    background-color: #174c8e;
+    color: #fff;
+}
+button:focus{
+    outline: none !important;
 }
 .card-service{
-    padding: 20px 10px;
-    border: solid 2px #D4D8D4;
-    border-top: solid 4px #174c8e;
+    padding: 10px 10px;
+    background-color: #e2e3de;
+    border-radius: 10px;
+    border-bottom: solid 8px #174c8e;
     width: 100%;
     transition: all 0.5s ease-out;
+    overflow: hidden;
 }
 .card-service:hover{
     background-color: #D4D8D4;
 }
 .price-service{
-    background-color: #2ACB3A;
-    padding: 10px;
-    border-radius: 8px;
-    color: #fff;
+    background-color: #fff;
+    padding: 4px;
+    width: 80%;
+    letter-spacing: .02em; 
+    text-align:center;
+    border-radius: 20px;
     font-weight: 600;
-    -webkit-box-shadow: inset 0px 0px 26px -12px rgba(14,68,19,1);
-    -moz-box-shadow: inset 0px 0px 26px -12px rgba(14,68,19,1);
-    box-shadow: inset 0px 0px 26px -12px rgba(14,68,19,1);
+    color: #090909;
+    font-size: 1.2em;
 }
 .name-service{
-    font-size: .9em;
+    font-size: 1.2em;
     line-height: normal;
-    letter-spacing: .02em;
+    max-width: 60%;
+    letter-spacing: .02em; 
+    margin-left:4px; 
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+.name-service{
+    color: #090909;
+}
+
+.card-service img{
+    width: 80px;
+    position: absolute;
+    top:-50px;
+    right: -50px;
 }
 .button-service-group{
     float: right;
+    background-color: #fff;
+    border-radius: 18px;
+    margin-top:3px;
+    padding: 4px;
 }
 .span-button-service{
-    padding: 9.5px 15px;
-    background-color: #D4D8D4;
+    padding: 5px;
+    background-color: transparent;
     font-weight: 600;
 }
 .button-service-left{
     border:none;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-    padding: 6px 15px;
-    color: #fff;
+    border-radius: 20px;
+    padding: 2px 6px;
+    background-color: #fff;
+    color: #090909;
+    border: solid .5px #090909;
     font-weight: 400;
     font-size: 1rem;
     transition: all 0.5s ease-out;
+    margin-right:5px;
 }
 .button-service-right{
     border:none;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    padding: 6px 15px;
-    color: #fff;
+    border-radius: 20px;
+    padding: 2px 6px;
+    background-color: #fff;
+    border: solid .5px #090909;
+    color: #090909;
     font-weight: 400;
     font-size: 1rem;
     transition: all 0.4s ease-out;
+    margin-left: 5px;
 }
 .button-service-left i{
     transition: all 0.4s ease-out;
@@ -957,7 +1200,7 @@
     transition: all 0.5s ease-out;
 }
 .button-service-left:hover i{
-    transform: rotate(90deg);
+    transform: rotate(360deg);
 }
 .button-service-right:hover i{
     transform: rotate(180deg);
@@ -967,5 +1210,56 @@
 }
 .button-service-right:focus{
     outline: none;
+}
+.card-info{
+    width: 60%;
+    padding: 15px;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(144,204,254,1) 0%, rgba(23,76,142,1) 100%);
+    border-radius: 5px;
+}
+.card-info div{
+    width: 100%;
+    padding: 10px;
+    background-color: #fefefe;
+    border-radius: 5px;
+    text-align: justify;
+    -webkit-box-shadow: 0px 0px 16px -11px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 16px -11px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 16px -11px rgba(0,0,0,0.75);
+}
+.spanSelect{
+    cursor:pointer;
+    border-radius: 20px; 
+    transition: all 0.4s ease-out;
+}
+.spanSelect:nth-child(1n){
+    padding: 8px 10px;
+}
+.spanSelect:nth-child(2n){
+    padding: 10px 6px;
+}
+.spanSelect:hover{
+    background-color: #174c8e;
+    color:#fff;
+}
+.card-services-information{
+    padding: 20px;
+}
+@media only screen and (max-width: 468px)
+{
+	.name-service{
+        font-size: 1em;
+        z-index:1;
+        max-width: 85%;
+        margin-bottom:20px;
+    }
+    .button-service-group{
+        float:left !important;
+        margin-top:-20px !important; 
+    }
+    .card-service img{
+        top:-30px;
+    }
 }
 </style>
