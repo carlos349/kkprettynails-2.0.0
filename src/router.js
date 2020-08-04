@@ -44,6 +44,11 @@ export default new Router({
           component: () => import('./views/Dashboard.vue')
         },
         {
+          path: '/Pedidos',
+          name: '',
+          component: () => import('./views/Pedidos.vue')
+        },
+        {
           path: '/icons',
           name: '',
           component: () => import('./views/Icons.vue')

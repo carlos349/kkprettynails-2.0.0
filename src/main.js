@@ -30,7 +30,7 @@ import VueSingleSelect from "vue-single-select";
 import VueCurrencyInput from 'vue-currency-input'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit} from '@fortawesome/free-solid-svg-icons'
+import { faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit, faPager} from '@fortawesome/free-solid-svg-icons'
 import endPoint from '../config-endpoint/endpoint.js'
 import VueSocketIO from 'vue-socket.io'
 import SocketIO from "socket.io-client"
@@ -69,7 +69,7 @@ Vue.use(new VueSocketIO({
 Vue.use(VueProgress)
 Vue.use(VueCarousel);
 /* FONTS LIBRARY */
-library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit)
+library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit, faPager)
 
 new Vue({
   router,

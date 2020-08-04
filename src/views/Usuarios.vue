@@ -295,7 +295,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             {route: 'inventario', valid: false},
             {route: 'gastos', valid: false},
             {route: 'agendamiento', valid: false},
-            {route: 'caja', valid: false}
+            {route: 'caja', valid: false},
+            {route: 'pedidos', valid: false}
         ],
         functions: [],
         linkLender:'',
@@ -522,7 +523,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                 {route: 'inventario', valid: false},
                 {route: 'gastos', valid: false},
                 {route: 'agendamiento', valid: false},
-                {route: 'caja', valid: false}
+                {route: 'caja', valid: false},
+                {route: 'pedidos', valid: false}
             ]
             this.mail = mail 
             this.idAccess = id
@@ -600,6 +602,15 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                     {function: 'correos', name: 'Envio de correos', valid: false},
                 ]
             }else if (route == 'clientes') {
+                this.functions = [
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false},
+                    {function: 'correos', name:'Envio de correos', valid: false}
+                ]
+            }else if (route == 'pedidos') {
                 this.functions = [
                     {function: 'filtrar', name:'Filtrar', valid: false},
                     {function: 'registrar', name:'Registrar', valid: false},
