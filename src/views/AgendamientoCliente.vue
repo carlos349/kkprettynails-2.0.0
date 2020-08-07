@@ -278,7 +278,7 @@
                                 </base-input>
                             </div>
                             <div class="col-md-6">
-                                <label for="pay">Comprobante de pago <span style="color:red;">*</span></label>
+                                <label v-if="registerUser.pay == 'Transferencia'" for="pay">Comprobante de pago <span style="color:red;">*</span></label>
                                 <input alternative
                                     v-if="registerUser.pay == 'Transferencia'"
                                     type="file"
@@ -632,7 +632,7 @@
                         this.client = res.data.data.nombre+' / '+res.data.data.identidad
                         var lenderFinal = ''
                         for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                            const element = this.registerDate.serviceSelectds[index].lender;
+                            const element = this.registerDate.serviceSelectds[index].realLender;
                             if (index > 0){
                                 lenderFinal = lenderFinal+' - '+element
                             }else{
@@ -1030,7 +1030,7 @@
                             }
                             const finalLender = this.registerDate.serviceSelectds[finalIndex].lenders[counter].lender
                             const finalRestime = this.registerDate.serviceSelectds[finalIndex].lenders[counter].resTime
-                            this.registerDate.serviceSelectds[finalIndex].class = this.registerDate.serviceSelectds[0].lenders[counter].class
+                            this.registerDate.serviceSelectds[finalIndex].class = this.registerDate.serviceSelectds[finalIndex].lenders[counter].class
                             this.registerDate.serviceSelectds[finalIndex].realLender = finalLender
                             this.validMultiLender(finalIndex, finalLender, this.registerDate.serviceSelectds[finalIndex].duration, finalRestime)
                         })
