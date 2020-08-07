@@ -8,25 +8,25 @@
         </base-nav>
         <div class="container-fluid mt-4">
             <card shadow>
-                <form-wizard @on-complete="modals.modal2 = true" color="#174c8e" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!"> 
+                <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!"> 
                     <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
                     <tab-content title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
                         <div class="row">
-                            <div class="col-md-12">
-                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <div style="width:auto;" class="mx-auto" >
+                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="wi">
                                     <li v-for="(category, index) of categories" :key="category._id" class="nav-item" role="presentation">
-                                        <button class="categoryButton" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
+                                        <button class="categoryButton text-uppercase" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
                                     </li>
-                                </ul>
+                                </ul>   
                             </div>
                             <div class="col-md-12">
                                 <!-- <vue-custom-scrollbar  style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;"> -->
                                     <div class="tab-content" id="pills-tabContent">
                                         <div v-for="category of categories" :key="category._id" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row mt-2">
-                                                 <div v-for="(service, index) of services" :key="service" class="col-xl-3 col-md-6" v-if="service.category == category.name">
-                                                    <div class="card-service row">
+                                                 <div v-for="(service, index) of services" :key="service" class="col-xl-3 col-md-6 px-4" v-if="service.category == category.name">
+                                                    <div class="card-service row" :id="'cardS'+index">
                                                         <h3 class="name-service"> {{service.nombre}}</h3>
                                                         <div class="col-12"><img src="img/brand/calendar.png" alt=""></div>
                                                         
@@ -36,10 +36,10 @@
                                                         <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;margin-top:-5px;">
                                                             
                                                             <div class="button-service-group">
-                                                                <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.nombre, service.tiempo)"></i></button>
+                                                                <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.nombre, service.tiempo, 'cardS'+index)"></i></button>
                                                                 <span class="span-button-service">{{serviceCount[index].count}}</span>
                                                                 <button class="button-service-right" 
-                                                                v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores)"
+                                                                v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores, 'cardS'+index)"
                                                                 ><i class="fa fa-plus"></i></button>
                                                             </div>
                                                             
@@ -57,18 +57,18 @@
                                 <base-radio name="si" value="true" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>Si</b> </base-radio>
                                 <base-radio name="no" value="false" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>No</b> </base-radio> 
                             </div> -->
-                            <div class="mx-auto mt-4">
-                                <h3>¿Se realizara un diseño?</h3> 
+                            <div class="mx-auto mt-5">
+                                <h2 style="font-weight:500;color:#090909;">¿Se realizará un diseño?</h2> 
                                 <div class="ml-1">
-                                    <span class="ml-5 font-weight-bold spanSelect" id="yes" v-on:click="selectDesign('first')">SI</span>
-                                    <span class="ml-5 font-weight-bold spanSelect" id="not" v-on:click="selectDesign('second')">NO</span>
+                                    <span class="ml-5 font-weight-bold spanSelect" style="color:#090909;" id="yes" v-on:click="selectDesign('first')">Sí</span>
+                                    <span class="ml-5 font-weight-bold spanSelect" style="color:#090909;" id="not" v-on:click="selectDesign('second')">No</span>
                                 </div>
                             </div>
                         </div>
                     </tab-content>
                     <tab-content title="Profesionales" icon="fa fa-users" :before-change="validLender">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-4" style="margin-top:16px;">
                                 <div class="w-75 mx-auto" >
                                     <h4 class="text-center text-uppercase">Fechas disponibles</h4>
                                     <base-input addon-left-icon="ni ni-calendar-grid-58 clickCalendar" style="cursor:pointer;" >
@@ -78,7 +78,7 @@
                                                 @on-open="focus"
                                                 @on-close="blur"
                                                 :config="configDate"
-                                                placeholder="Select date" 
+                                                placeholder="Seleccione una fecha" 
                                                 class="form-control date-client datepicker pl-3"
                                                 aria-placeholder="Seleccione una fecha"
                                                 v-model="dates.simple">
@@ -90,52 +90,58 @@
                                 <div class="row mb-3">
                                     <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDate.serviceSelectds" :key="servicesSelect">
                                         <div class="row">
-                                            <div class="col-md-5">
-                                                <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1">
-                                                    <span style="color:#1c2021;font-weight:600;" >{{servicesSelect.servicio}} </span>
-                                                </badge>
-                                                <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#1c2021;font-weight:600;" >Seleccione prestador y horario</span></badge>
-                                                <base-dropdown class="w-100">
-                                                    <base-button style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid" slot="title" type="default" class="dropdown-toggle w-100">
-                                                        {{servicesSelect.lender}} 
-                                                    </base-button>
-                                                    <base-button style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                        {{servicesSelect.lender}} 
-                                                    </base-button>
-                                                    <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid" class="dropdown-item w-100" style="color:#32325d;" v-on:click="servicesSelect.start = '', servicesSelect.end = '', servicesSelect.lender = lenders.lender, servicesSelect.realLender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime)">{{lenders.lender}}  </b>
-                                                </base-dropdown>
+                                            <div class="col-md-6">
+                                                <div class="py-1" style="background-color:#f8fcfd;">
+                                                    <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1">
+                                                        <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
+                                                        <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.servicio}} </span>
+                                                    </badge>
+                                                    <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
+                                                    <base-dropdown class="responsiveButtonsPercent">
+                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid" slot="title" type="default" class="dropdown-toggle w-100">
+                                                            {{servicesSelect.lender}} 
+                                                        </base-button>
+                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                            {{servicesSelect.lender}} 
+                                                        </base-button>
+                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid" class="dropdown-item w-100" style="color:#32325d;" v-on:click="servicesSelect.start = '', servicesSelect.end = '', servicesSelect.lender = lenders.lender, servicesSelect.realLender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime, 'check'+indexService)">{{lenders.lender}}  </b>
+                                                    </base-dropdown>
+                                                </div>
                                             </div>
-                                            <div class="col-md-5">
-                                                <badge type="secondary" style="font-size:.7em !important" class="mb-1">
-                                                   <span style="color:#000;font-weight:600;">Horarios disponibles</span> 
-                                                </badge>
-                                                <base-button v-on:click="openBlocks('block'+indexService)" class="w-100" v-if="servicesSelect.valid" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" icon-rigth="ni ni-bag-17">
-                                                <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}}</span>
-                                                <span v-else>Seleccione una hora </span>
-                                                </base-button>
-                                                <base-button v-else style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" icon-rigth="ni ni-bag-17" disabled>
-                                                Seleccione una hora 
-                                                </base-button>
-                                                <vue-custom-scrollbar class="w-75 mx-auto" :id="'block'+indexService" style="max-height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                                    <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
-                                                        <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.Horario, index, indexService, 'block'+indexService)" size="sm" class="col-12" type="success">
-                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                            <span>Disponible</span>
-                                                        </base-button>
-                                                        <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                            <span>Ocupado</span>
-                                                        </base-button>
-                                                        <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                            <span>Seleccionado</span>
-                                                        </base-button>
-                                                        <base-button v-else size="sm" disabled class="col-12" type="secondary">
-                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                            <span>No seleccionable</span>
-                                                        </base-button>
-                                                    </div>
-                                                </vue-custom-scrollbar>
+                                            <div class="col-md-6 pb-2">
+                                                <div class="py-1" style="background-color:#f8fcfd;">
+                                                    <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1">
+                                                    <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> <br>  
+                                                    </badge>
+                                                    <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
+                                                        <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i></span>
+
+                                                        <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
+                                                    </base-button>
+                                                    <base-button class="responsiveButtonsPercent" v-else style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
+                                                    Seleccione una hora
+                                                    </base-button>
+                                                    <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
+                                                        <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
+                                                            <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.Horario, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>Disponible</span>
+                                                            </base-button>
+                                                            <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>Ocupado</span>
+                                                            </base-button>
+                                                            <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>Seleccionado</span>
+                                                            </base-button>
+                                                            <base-button v-else size="sm" disabled class="col-12" type="secondary">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>No seleccionable</span>
+                                                            </base-button>
+                                                        </div>
+                                                    </vue-custom-scrollbar>
+                                                </div>
                                             </div>   
                                         </div>
                                     </div>
@@ -146,56 +152,58 @@
                     <tab-content title="Información" icon="fa fa-question-circle">
                         <div class="row">
                             <div class="col-md-8 col-sm-12" >
-                                <dt>Servicios</dt>
                                 <div class="row">
-                                    <div class="card-services-information col-md-6" v-for="(data, index) in registerDate.serviceSelectds" :key="data">
-                                        <badge type="secondary" class="mb-1 w-100">
-                                            <span style="color:#000;font-weight:600;">servicio {{index + 1}}</span> 
-                                        </badge>
-                                        <base-button slot="title" type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
-                                            <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;">{{data.servicio}}</span> </badge><br>
-                                            <span class="mx-auto">{{data.realLender}}</span>
-                                        </base-button>
-                                        <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                            <span style="color:#000;font-weight:600;font-size:.9em;">Desde las</span> 
-                                        </badge>
-                                        <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                            <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.start}}</span> 
-                                        </badge>
-                                        <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                            <span style="color:#000;font-weight:600;font-size:.9em;">Hasta las</span> 
-                                        </badge>
-                                        <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                            <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.end}}</span> 
-                                        </badge>
+                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDate.serviceSelectds" :key="data">
+                                        <div class="p-3">
+                                            <center>
+                                            <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
+                                            </center>
+                                            <base-button slot="title" type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
+                                                <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.servicio}}</span> </badge><br>
+                                                <span class="mx-auto" style="font-size:1.2em;">{{data.realLender}}</span>
+                                            </base-button>
+                                            <div style="background-color:#f8fcfd;">
+                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                    <span style="color:#000;font-weight:600;font-size:.9em;text-transform:none;">Desde las</span> 
+                                                </badge>
+                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                    <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.start}}</span> 
+                                                </badge>
+                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                    <span style="color:#000;font-weight:600;font-size:.9em;text-transform:none;">Hasta las</span> 
+                                                </badge>
+                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                    <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.end}}</span> 
+                                                </badge>
+                                            </div>
+                                            
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-12">
-                                <dt>Información de agenda</dt>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                Fecha: <span class="font-weight-bold">{{dates.simple}}</span>
-                                </base-button>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                    Diseño: <span class="text-uppercase font-weight-bold">{{registerDate.design}}</span>
-                                </base-button>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                    Hora de inicio: <span v-if="registerDate.serviceSelectds[0]" class="font-weight-bold">{{registerDate.serviceSelectds[0].start}}</span>
+                            <div class="col-md-4 col-sm-12 pt-5">
+                                <center>
+                                <base-dropdown class="mt-1 responsiveButtonsPercent mx-auto">
+                                    <base-button slot="title" type="default" class="dropdown-toggle w-100 dropdownPay" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                        Tipo de pago
+                                    </base-button>
+                                    <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
+                                    <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
+                                    <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
+                                    <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Transferencia')">Transferencia</b>
+                                    <!-- <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('WebPay')">WebPay</b>  -->
+                                </base-dropdown><br><br>
+                                <base-button class="mt-2 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                Fecha: <strong>{{dates.simple}}</strong>
                                 </base-button><br><br>
-                                <dt>Pago</dt>
-                                <div style="display:inline-block">
-                                    <span class="ml-3">Tipo de pago</span>
-                                    <base-dropdown class="ml-4">
-                                        <base-button slot="title" type="default" class="dropdown-toggle w-100 dropdownPay" style="border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                            Presencial efectivo 
-                                        </base-button>
-                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
-                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
-                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
-                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Transferencia')">Transferencia</b>
-                                        <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('WebPay')">WebPay</b> 
-                                    </base-dropdown>
-                                </div>
+                                <base-button class="mt-1 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                    Diseño: <strong class="text-uppercase">{{registerDate.design}}</strong>
+                                </base-button><br><br>
+                                <base-button class="mt-1 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                    Hora de inicio: <strong v-if="registerDate.serviceSelectds[0]">{{registerDate.serviceSelectds[0].start}}</strong>
+                                </base-button><br><br>
+                                
+                                </center><br>
                             </div>
                         </div>
                     </tab-content>
@@ -227,67 +235,173 @@
                 <template>
                     <form role="form">
                         <div class="row">
-                            <base-input alternative
-                                class="col-md-6"
-                                type="text"
-                                v-on:keyup="validFields()"
-                                placeholder="Escriba su nombre"
-                                v-model="registerUser.name"
-                                addon-left-icon="fa fa-user">
-                            </base-input>
-                            <base-input alternative
-                                class="col-md-6"
-                                type="text"
-                                v-on:keyup="validFields()"
-                                placeholder="Escriba su apellido"
-                                v-model="registerUser.lastName"
-                                addon-left-icon="fa fa-user">
-                            </base-input>
-                            <base-input alternative
-                                class="col-md-6"
-                                type="email"
-                                v-on:keyup="validFields()"
-                                placeholder="Escriba su correo"
-                                v-model="registerUser.mail"
-                                addon-left-icon="ni ni-email-83">
-                            </base-input>
-                            <base-input alternative
-                                class="col-md-6"
-                                type="email"
-                                v-on:keyup="validFields()"
-                                placeholder="Escriba su número de teléfono"
-                                v-model="registerUser.phone"
-                                addon-left-icon="fa fa-phone">
-                            </base-input>
-                            <base-input alternative
-                                class="col-md-6"
-                                type="email"
-                                v-on:keyup="validFields()"
-                                placeholder="Escriba su correo"
-                                v-model="registerUser.pay"
-                                addon-left-icon="fa fa-money-check-alt">
-                            </base-input>
-                            <base-input alternative
-                                class="col-md-6"
-                                v-if="registerUser.pay == 'Transferencia'"
-                                type="file"
-                                v-on:keyup="validFields()"
-                                v-model="registerUser.pdf"
-                                addon-left-icon="fa fa-file-pdf">
-                            </base-input>
-                        </div>
-                        <div class="card-info">
-                            <div>
-                                Aqui iría una información sobre normas o reglas, dependiendo del método de pago.
+                            <div class="col-md-6">
+                                <span style="color:red;position:absolute;right:20px;top:5px;z-index:1;">*</span>
+                                <base-input alternative
+                                    type="text"
+                                    v-on:keyup="validFields()"
+                                    placeholder="Escriba su nombre"
+                                    v-model="registerUser.name"
+                                    addon-left-icon="fa fa-user">
+                                </base-input>
+                                <span style="color:red;position:absolute;right:20px;top:70px;z-index:1;">*</span>
+                                <base-input alternative
+                                    type="text"
+                                    v-on:keyup="validFields()"
+                                    placeholder="Escriba su apellido"
+                                    v-model="registerUser.lastName"
+                                    addon-left-icon="fa fa-user">
+                                </base-input>
+                                <span style="color:red;position:absolute;right:20px;top:140px;z-index:1;">*</span>
+                                <base-input alternative
+                                    type="email"
+                                    v-on:keyup="validFields()"
+                                    placeholder="Escriba su correo"
+                                    v-model="registerUser.mail"
+                                    addon-left-icon="ni ni-email-83">
+                                </base-input>
+                                <span style="color:blue;position:absolute;right:20px;top:200px;z-index:1;">+</span>
+                                <base-input alternative
+                                    type="email"
+                                    v-on:keyup="validFields()"
+                                    placeholder="Escriba su número de teléfono"
+                                    v-model="registerUser.phone"
+                                    addon-left-icon="fa fa-phone">
+                                </base-input>
+                                <base-input alternative
+                                    type="email"
+                                    v-on:keyup="validFields()"
+                                    placeholder="Escriba su correo"
+                                    readonly
+                                    v-model="registerUser.pay"
+                                    addon-left-icon="fa fa-money-check-alt">
+                                </base-input>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="pay">Comprobante de pago <span style="color:red;">*</span></label>
+                                <input alternative
+                                    v-if="registerUser.pay == 'Transferencia'"
+                                    type="file"
+                                    ref="file" class="form-control mb-1"
+                                    v-on:change="handleFileUpload()">
+                                
+                                <div class="card-info">
+                                    <div>
+                                        <p v-if="registerUser.pay == 'Presencial efectivo'">
+                                            Al finalizar su agendamiento usted debe considerar que su hora está tomada con pago de forma presencial mediante <b style="font-weight:600;">efectivo</b> en nuestro establecimiento.
+                                            <br><br>
+                                            <b style="font-weight:600;">Importante:</b> para evitar retrasos en los servicios, <b style="font-weight:600;">no se atenderá una vez pasado los 15 minutos de la hora agendada.</b>
+                                        </p>
+                                        <p v-if="registerUser.pay == 'Presencial Débito'">
+                                            Al finalizar su agendamiento usted debe considerar que su hora está tomada con pago de forma presencial mediante <b style="font-weight:600;">débito</b> en nuestro establecimiento.
+                                            <br><br>
+                                            <b style="font-weight:600;">Importante:</b> para evitar retrasos en los servicios, <b style="font-weight:600;">no se atenderá una vez pasado los 15 minutos de la hora agendada.</b>
+                                        </p>
+                                        <p v-if="registerUser.pay == 'Presencial Crédito'">
+                                            Al finalizar su agendamiento usted debe considerar que su hora está tomada con pago de forma presencial mediante <b style="font-weight:600;">crédito</b> en nuestro establecimiento.
+                                            <br><br>
+                                            <b style="font-weight:600;">Importante:</b> para evitar retrasos en los servicios, <b style="font-weight:600;">no se atenderá una vez pasado los 15 minutos de la hora agendada.</b>
+                                        </p>
+                                        <p v-if="registerUser.pay == 'Transferencia'">
+                                            Al finalizar su agendamiento usted debe considerar que su hora está tomada con pago mediante <b style="font-weight:600;">transferencia electrónica por validar.</b> 
+                                            <br><br>
+                                            Una vez validado su pago le llegará un correo donde debe confirmar su cita.
+                                        </p>
+                                    </div>
+                                </div>
+                                <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
+                                    Finalizar agenda
+                                </base-button>  
+                                <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
+                                    Finalizar agenda
+                                </base-button> 
                             </div>
                         </div>
-                        <base-button style="float:right;margin-top:-50px;border-radius:20px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
-                            Finalizar agenda
-                        </base-button>  
-                        <base-button style="float:right;margin-top:-50px;border-radius:20px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
-                            Finalizar agenda
-                        </base-button> 
+                        
+                        
                     </form>
+                </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal4"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-lg">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-4 py-lg-4"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Formulario de compra</h3>
+                    </div>
+                </template>
+                <template>
+                    <div class="card-info text-justify">
+                        <div>
+                            <p>
+                                ¡Listo! Hemos enviado la confirmación de la cita al correo electrónico. 
+                                <b style="font-weight:600;">Para que la cita quede confirmada deberás darle clic al botón de confirmar.</b>
+                                <br><br>
+                                Para confirmar su cita tendrás un plazo máximo de 24 horas, de lo contrario su hora quedará cancelada, habilitando ese espacio para otro cliente. <br><br>
+                                Recuerde revisar la casilla de spam o correo no deseado. Si este correo electrónico no llega por favor ponte en contacto con nosotros mediante WhatsApp y verificaremos de inmediato
+                            </p>
+                            <p class="text-center">+56 9 7262 8949</p>
+                        </div>
+                    </div>
+                    <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" type="success" v-on:click="location">
+                        Finalizar
+                    </base-button>
+                </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal5"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-lg">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-4 py-lg-4"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Formulario de compra</h3>
+                    </div>
+                </template>
+                <template>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="card-info text-justify">
+                                <div>
+                                    <p style="font-size:0.9em;">
+                                        <b style="font-weight:600;">Los datos de transferencia son:</b>
+                                        <br><br><br>
+                                        <b style="font-weight:600;">Nombre:</b><br>
+                                        <b style="font-weight:600;">RUT:</b><br>
+                                        <b style="font-weight:600;">Cuenta:</b><br>
+                                        <b style="font-weight:600;">Banco:</b><br>
+                                        <b style="font-weight:600;">Correo:</b>
+                                    </p><br>
+                                    <h3 class="text-center">El monto a trasferir es:</h3>
+                                    <h2 class="text-center font-weight-bold">$ {{this.formatPrice(totalPrice)}}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="card-info text-center">
+                                <div>
+                                    <p style="font-size:0.9em;">
+                                        <b style="font-weight:600;">Importante.</b>
+                                        <br><br>
+                                        Al realizar el pago mediante transferencia electrónica deberás adjuntar este comprobante en el formulario de pago que se mostrará a continuación. 
+                                    </p>
+                                </div>
+                            </div>
+                            <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" type="success" v-on:click="modals.modal5 = false, modals.modal2 = true">
+                                Continuar
+                            </base-button>
+                        </div>
+                    </div>
+                    
+                    
                 </template>
             </card>
         </modal>
@@ -328,6 +442,7 @@
                     locale: Spanish, // locale for this instance only
                     minDate: new Date()        
                 },
+                validPay:false,
                 progress:false,
                 dates:{
                     simple: ''
@@ -340,12 +455,15 @@
                     pay: 'Presencial efectivo',
                     pdf: ''
                 },
+                totalPrice: 0,
                 validWizard: true,
                 year: new Date().getFullYear(),
                 modals: {
                     modal1: false,
                     modal2: false,
                     modal3: false,
+                    modal4: false,
+                    modal5: false,
                     message: "",
                     icon: '',
                     type:''
@@ -388,7 +506,8 @@
                 noOneLender: false,
                 selectServiceForHour: {},
                 validRegister: false,
-                client: ''
+                client: '',
+                file: ''
             }
         },
         created(){
@@ -397,16 +516,40 @@
             this.getCategories()
         },
         methods: {
-            wantLenderChange(){
-                if (this.checkboxes.Wantlender == true) {
-                    $('#lenderSection').css({'display': 'none'})
+            handleFileUpload(){
+                this.file = this.$refs.file.files[0]
+                console.log(this.file)
+            },
+            location(){
+                window.location = 'https://kkprettynails.cl/inicio'
+            },
+            finalFunction(){
+                if (this.validPay) {
+                    if (this.registerUser.pay == 'Transferencia') {
+                        this.modals.modal5 = true
+                    }else{
+                        this.modals.modal2 = true
+                    }
                 }else{
-                    $('#lenderSection').css({'display': 'block'})
-                    this.validSchedule = false
-                    this.registerDate.employeSelect = ''
-                    this.registerDate.start = ''
-                    this.registerDate.end = ''
-                    this.registerDate.sort = ''
+                    $('.dropdownPay').css({'color': 'red'})
+                    this.modals = {
+                        modal3: true,
+                        message: "Por favor, Seleccione el tipo de pago.",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1:false,
+                            modal2:false,
+                            modal3: false,
+                            modal4: false,
+                            modal5: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 3000);
                 }
             },
             formatPrice(value) {
@@ -421,10 +564,18 @@
                 $('#pills-'+type).show(2000)
             },
             validFields(){
-                if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
-                    this.validRegister = true
+                if (this.registerUser.pay == 'Transferencia') {
+                    if (this.file != '', this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
+                        this.validRegister = true
+                    }else{
+                        this.validRegister = false
+                    }
                 }else{
-                    this.validRegister = false
+                    if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
+                        this.validRegister = true
+                    }else{
+                        this.validRegister = false
+                    }
                 }
             },
             sendConfirmation(id, name, mail, start, end, services, lender){
@@ -452,89 +603,83 @@
                 })
             },
             finallyAgend(){
-                const name = this.registerUser.name+' '+this.registerUser.lastName
-                axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
-                    name: name,
-                    mail: this.registerUser.mail
-                })
-                .then(res => {
-                    this.client = res.data.data.nombre+' / '+res.data.data.identidad
-                    var lenderFinal = ''
-                    for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                        const element = this.registerDate.serviceSelectds[index].lender;
-                        if (index > 0){
-                            lenderFinal = lenderFinal+' - '+element
-                        }else{
-                            lenderFinal = element
+                if (this.registerUser.pay == 'Transferencia' && this.file == '') {
+                    this.modals = {
+                        modal3: true,
+                        message: "Por favor, agregue el comprobante de pago.",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1:false,
+                            modal2:true,
+                            modal3: false,
+                            modal4: false,
+                            modal5: false,
+                            message: "",
+                            icon: '',
+                            type: ''
                         }
-                    }
-            
-                    if (this.noOneLender) {
-                        console.log(this.registerDate)
-                        axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
-                            dataDate: this.registerDate,
-                            date: this.dates.simple,
-                            client: this.registerUser
-                        })
-                        .then(res => {
-                            if (res.data.status == "cita creada") {
-                                this.sendConfirmation(res.data.id, name, this.registerUser.mail, this.registerDate.serviceSelectds[0].start, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
-                                this.modals.modal2 = false
-                                this.modals = {
-                                    modal3: true,
-                                    message: "Cita creada con exito, se le notificara al correo su confirmacion.",
-                                    icon: 'ni ni-check-bold ni-5x',
-                                    type: 'success'
-                                }
-                                setTimeout(() => {
-                                    this.modals = {
-                                        modal1:false,
-                                        modal2:false,
-                                        modal3: false,
-                                        message: "",
-                                        icon: '',
-                                        type: ''
-                                    }
-                                    window.location = "http://kkprettynails.cl"
-                                }, 3000);
-                            }    
-                        })
-                    }else{
-                        axios.post(endPoint.endpointTarget+'/citas', {
-                            entrada: this.registerDate.start,
-                            salida: this.registerDate.end,
-                            sort: this.registerDate.sort,
-                            fecha: this.dates.simple,
-                            cliente: this.client,
-                            servicios: this.registerDate.serviceSelectds,
-                            class: this.registerDate.class,
-                            manicuristas: this.registerDate.employeSelect
-                        })
-                        .then(res => {
-                            if (res.data.status == "cita creada") {
-                                this.sendConfirmation(res.data.id, name, this.registerUser.mail, this.registerDate.start, this.registerDate.end, this.registerDate.serviceSelectds, this.registerDate.employeSelect)
-                                this.modals.modal2 = false
-                                this.modals = {
-                                    modal3: true,
-                                    message: "Cita creada con exito, se le notificara al correo su confirmacion.",
-                                    icon: 'ni ni-check-bold ni-5x',
-                                    type: 'success'
-                                }
-                                setTimeout(() => {
-                                    this.modals = {
-                                        modal1:false,
-                                        modal2:false,
-                                        modal3: false,
-                                        message: "",
-                                        icon: '',
-                                        type: ''
-                                    }
-                                    window.location = "http://kkprettynails.cl"
-                                }, 3000);
+                    }, 3000);
+                }else{
+                    const name = this.registerUser.name+' '+this.registerUser.lastName
+                    axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
+                        name: name,
+                        mail: this.registerUser.mail
+                    })
+                    .then(res => {
+                        this.client = res.data.data.nombre+' / '+res.data.data.identidad
+                        var lenderFinal = ''
+                        for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                            const element = this.registerDate.serviceSelectds[index].lender;
+                            if (index > 0){
+                                lenderFinal = lenderFinal+' - '+element
+                            }else{
+                                lenderFinal = element
                             }
-                        })
-                    }
-                })
+                        }
+                        if (this.registerUser.pay == 'Transferencia') {
+                            let formData = new FormData();
+                            formData.append('file', this.file)
+                            axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                            })
+                            .then(res => {
+                                axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                                    dataDate: this.registerDate,
+                                    date: this.dates.simple,
+                                    client: this.registerUser,
+                                    pdf: res.data.nameFile
+                                })
+                                .then(res => {
+                                    if (res.data.status == "cita creada") {
+                                        this.sendConfirmation(res.data.id, name, this.registerUser.mail, this.registerDate.serviceSelectds[0].start, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                        this.modals.modal2 = false
+                                        this.modals.modal4 = true
+                                    }    
+                                })   
+                            })
+                        }else{
+                            axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                                dataDate: this.registerDate,
+                                date: this.dates.simple,
+                                client: this.registerUser,
+                                pdf: 'not'
+                            })
+                            .then(res => {
+                                if (res.data.status == "cita creada") {
+                                    this.sendConfirmation(res.data.id, name, this.registerUser.mail, this.registerDate.serviceSelectds[0].start, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                    this.modals.modal2 = false
+                                    this.modals.modal4 = true
+                                }    
+                            })
+                        }
+                        
+                    })
+                }
             },
             async getServices(){
                 try{
@@ -561,11 +706,12 @@
                     console.log(err)
                 }
             },
-            validMultiLender(index, lender, time, resTime){
+            validMultiLender(index, lender, time, resTime, check){
+                $('#'+check).removeClass('fa-check')
                 this.registerDate.employeSelect = ''
                 this.validSchedule = false
                 this.noOneLender = true
-                
+                console.log(this.registerDate.serviceSelectds[index])
                 this.selectHourService(index, lender, time, resTime)
             },
             selectHourService(index, lender, time, resTime){
@@ -690,7 +836,8 @@
                 }
                 
             },
-            plusService(index, service, time, comision, precio, lenders){
+            plusService(index, service, time, comision, precio, lenders, card){
+                $('#'+card).css({'border-bottom': 'solid 8px #174c8e'})
                 this.ifServices = true
                 this.serviceCount[index].count++
                 this.registerDate.duration = this.registerDate.duration + parseFloat(time)
@@ -703,6 +850,7 @@
                         }
                     }  
                 }
+                console.log(lendersName)
                 if (this.posibleLenders.length > 0) {
                     for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                         var verify = 0
@@ -724,11 +872,15 @@
                 this.registerDate.start = ''  
                 this.registerDate.end = '' 
                 this.registerDate.sort = ''    
-                this.validHour = false   
+                this.validHour = false  
+                this.totalPrice = this.totalPrice + precio
             },
-            lessService(index, service, time){
+            lessService(index, service, time, card){
                 if (this.serviceCount[index].count > 0) {
                     this.serviceCount[index].count--
+                    if (this.serviceCount[index].count == 0) {
+                        $('#'+card).css({'border-bottom': 'none'})
+                    }
                     this.registerDate.duration = this.registerDate.duration - parseFloat(time)
                 }
                 for (var i = 0; i < this.registerDate.serviceSelectds.length; i++) {
@@ -747,6 +899,7 @@
                 this.registerDate.end = '' 
                 this.registerDate.sort = '' 
                 this.validHour = false
+                this.totalPrice = this.totalPrice - precio
                 console.log(this.registerDate.serviceSelectds)
             },
             generateLender(){
@@ -785,7 +938,7 @@
                     console.log(err)
                 })
             },
-            selectBloqMulti(hora, i, indexService, open){
+            selectBloqMulti(hora, i, indexService, open, check){
                 setTimeout(() => {
                     $('#'+open).toggle('slow')
                 }, 500);
@@ -829,6 +982,7 @@
                             if (valid == 0) {
                                 this.validHour = true
                             }
+                            $('#'+check).addClass('fa-check')
                         })
                     }else{
                         console.log('NO entre en el edit')
@@ -850,6 +1004,7 @@
                             this.validHour = true
                         }
                         this.registerDate.serviceSelectds[indexService].blocks = res.data
+                        $('#'+check).addClass('fa-check')
                     }
                     
                     const finalIndex = parseFloat(indexService) + parseFloat(1)
@@ -875,6 +1030,7 @@
                             }
                             const finalLender = this.registerDate.serviceSelectds[finalIndex].lenders[counter].lender
                             const finalRestime = this.registerDate.serviceSelectds[finalIndex].lenders[counter].resTime
+                            this.registerDate.serviceSelectds[finalIndex].class = this.registerDate.serviceSelectds[0].lenders[counter].class
                             this.registerDate.serviceSelectds[finalIndex].realLender = finalLender
                             this.validMultiLender(finalIndex, finalLender, this.registerDate.serviceSelectds[finalIndex].duration, finalRestime)
                         })
@@ -941,6 +1097,7 @@
                             if (validCounter) {
                                 const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
                                 const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
+                                this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
                                 console.log(finalLender)
                                 this.registerDate.serviceSelectds[0].valid = true
                                 this.registerDate.serviceSelectds[0].realLender = finalLender
@@ -958,6 +1115,8 @@
                                         modal1:false,
                                         modal2:false,
                                         modal3: false,
+                                        modal4: false,
+                                        modal5: false,
                                         message: "",
                                         icon: '',
                                         type: ''
@@ -975,22 +1134,24 @@
             },
             selectPay(pay){
                 $('.dropdownPay').text(pay)
+                $('.dropdownPay').css({'color':'#090909'})
                 this.registerUser.pay = pay
+                this.validPay = true
             },
             selectDesign(type){
                 if (type == 'first') {
-                    $('.spanSelect').css({'background-color':'#fff', 'color':'#174c8e'})
-                    $('#yes').css({'background-color':'#174c8e', 'color':'#fff'})
+                    $('.spanSelect').css({'background-color':'#fff', 'color':'#090909'})
+                    $('#yes').css({'background-color':'#7a91cb'})
                     this.registerDate.design = 'si'
                 }else{
-                    $('.spanSelect').css({'background-color':'#fff', 'color':'#174c8e'})
-                    $('#not').css({'background-color':'#174c8e', 'color':'#fff'})
+                    $('.spanSelect').css({'background-color':'#fff', 'color':'#090909'})
+                    $('#not').css({'background-color':'#7a91cb'})
                     this.registerDate.design = 'no'
                 }
             },
             selectCat(cat){
-                $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54'})
-                $('#'+cat).css({'padding':'14px', 'background-color': '#174c8e', 'color': '#fff'})
+                $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
+                $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
             }
         }
     }
@@ -1104,8 +1265,8 @@
     padding: 10px;
     border-radius: 15px;
     font-family: Open Sans, sans-serif;
-    font-weight: 500;
-    font-size:1.2em;
+    font-weight: 600;
+    font-size:1em;
     transition: all 0.5s ease-out;
 }
 .categoryButton:hover{
@@ -1119,7 +1280,6 @@ button:focus{
     padding: 10px 10px;
     background-color: #e2e3de;
     border-radius: 10px;
-    border-bottom: solid 8px #174c8e;
     width: 100%;
     transition: all 0.5s ease-out;
     overflow: hidden;
@@ -1141,7 +1301,7 @@ button:focus{
 .name-service{
     font-size: 1.2em;
     line-height: normal;
-    max-width: 60%;
+    max-width: 50%;
     letter-spacing: .02em; 
     margin-left:4px; 
     margin-bottom: 10px;
@@ -1157,6 +1317,24 @@ button:focus{
     top:-50px;
     right: -50px;
 }
+.stepTitle {
+    font-weight: 600;
+}
+.wizard-progress-bar{
+    color:#eff2f7 !important;
+    background-color:#eff2f7 !important;
+}
+/* .wizard-icon-container{
+    background: rgb(2,0,36);
+    background: linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(225,233,246,1) 0%, rgba(173,190,230,1) 100%);
+    
+}
+.wizard-icon-container i{
+color: #174c8e;
+}
+.wizard-icon-circle{
+    border-color: #adbee6 !important;
+} */
 .button-service-group{
     float: right;
     background-color: #fff;
@@ -1166,8 +1344,11 @@ button:focus{
 }
 .span-button-service{
     padding: 5px;
+    margin-top: 5px;
     background-color: transparent;
     font-weight: 600;
+    color: #090909;
+    font-size: 1.2em;
 }
 .button-service-left{
     border:none;
@@ -1212,7 +1393,7 @@ button:focus{
     outline: none;
 }
 .card-info{
-    width: 60%;
+    width: 100%;
     padding: 15px;
     background: rgb(2,0,36);
     background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(144,204,254,1) 0%, rgba(23,76,142,1) 100%);
@@ -1221,12 +1402,16 @@ button:focus{
 .card-info div{
     width: 100%;
     padding: 10px;
+    padding-top: 20px;
     background-color: #fefefe;
     border-radius: 5px;
-    text-align: justify;
     -webkit-box-shadow: 0px 0px 16px -11px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 0px 16px -11px rgba(0,0,0,0.75);
     box-shadow: 0px 0px 16px -11px rgba(0,0,0,0.75);
+}
+.card-info div p{
+    font-size: 1em;
+    line-height: 1.1em;
 }
 .spanSelect{
     cursor:pointer;
@@ -1240,11 +1425,17 @@ button:focus{
     padding: 10px 6px;
 }
 .spanSelect:hover{
-    background-color: #174c8e;
+    background-color: #7a91cb;
     color:#fff;
 }
 .card-services-information{
     padding: 20px;
+}
+.wizard-header h2{
+    font-size: 1.6em;
+}
+.responsiveButtonsPercent{
+    width: 75%;
 }
 @media only screen and (max-width: 468px)
 {
@@ -1261,5 +1452,18 @@ button:focus{
     .card-service img{
         top:-30px;
     }
+}
+@media only screen and (max-width: 768px)
+{
+    .card-service{
+        margin-top:10px;
+    }
+    .responsiveButtonsPercent{
+        width: 100% !important;
+    }
+    .wizard-btn{
+      min-width: 80px !important;  
+    }
+    
 }
 </style>
