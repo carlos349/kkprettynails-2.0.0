@@ -1339,7 +1339,7 @@ button:focus{
 .name-service{
     font-size: 1.2em;
     line-height: normal;
-    max-width: 50%;
+    max-width: 80%;
     letter-spacing: .02em; 
     margin-left:4px; 
     margin-bottom: 10px;
