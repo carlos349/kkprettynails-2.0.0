@@ -66,7 +66,7 @@
                             </div>
                         </div>
                     </tab-content>
-                    <tab-content title="Profesionales" icon="fa fa-users" :before-change="validLender">
+                    <tab-content title="Profesionales" icon="fa fa-users" :before-change="validateLastStep">
                         <div class="row">
                             <div class="col-md-4" style="margin-top:16px;">
                                 <div class="w-75 mx-auto" >
@@ -97,14 +97,14 @@
                                                         <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.servicio}} </span>
                                                     </badge>
                                                     <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
-                                                    <base-dropdown class="responsiveButtonsPercent">
+                                                    <base-dropdown class="responsiveButtonsPercent styleDropdown">
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid" slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
-                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid" class="dropdown-item w-100" style="color:#32325d;" v-on:click="servicesSelect.start = '', servicesSelect.end = '', servicesSelect.lender = lenders.lender, servicesSelect.realLender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime, 'check'+indexService)">{{lenders.lender}}  </b>
+                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid" class="dropdown-item w-100" style="color:#fff;" v-on:click="servicesSelect.start = '', servicesSelect.end = '',validHour = false, servicesSelect.lender = lenders.lender, servicesSelect.realLender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime, 'check'+indexService)">{{lenders.lender}}  </b>
                                                     </base-dropdown>
                                                 </div>
                                             </div>
@@ -183,14 +183,14 @@
                             </div>
                             <div class="col-md-4 col-sm-12 pt-5">
                                 <center>
-                                <base-dropdown class="mt-1 responsiveButtonsPercent mx-auto">
+                                <base-dropdown class="mt-1 responsiveButtonsPercent mx-auto styleDropdown">
                                     <base-button slot="title" type="default" class="dropdown-toggle w-100 dropdownPay" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
                                         Tipo de pago
                                     </base-button>
-                                    <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
-                                    <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
-                                    <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
-                                    <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('Transferencia')">Transferencia</b>
+                                    <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
+                                    <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
+                                    <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
+                                    <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Transferencia')">Transferencia</b>
                                     <!-- <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('WebPay')">WebPay</b>  -->
                                 </base-dropdown><br><br>
                                 <base-button class="mt-2 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
@@ -235,7 +235,7 @@
                 <template>
                     <form role="form">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-6 borderRight">
                                 <span style="color:red;position:absolute;right:20px;top:5px;z-index:1;">*</span>
                                 <base-input alternative
                                     type="text"
@@ -269,12 +269,13 @@
                                     addon-left-icon="fa fa-phone">
                                 </base-input>
                                 <base-input alternative
-                                    type="email"
+                                    type="text"
                                     v-on:keyup="validFields()"
                                     placeholder="Escriba su correo"
                                     readonly
                                     v-model="registerUser.pay"
-                                    addon-left-icon="fa fa-money-check-alt">
+                                    addon-left-icon="fa fa-money-check-alt"
+                                    style="margin-bottom: 0px !important;">
                                 </base-input>
                             </div>
                             <div class="col-md-6">
@@ -284,7 +285,7 @@
                                     type="file"
                                     ref="file" class="form-control mb-1"
                                     v-on:change="handleFileUpload()">
-                                
+                                <hr style="margin-bottom:5px !important;margin-top:10px !important;" v-if="registerUser.pay == 'Transferencia'">
                                 <div class="card-info">
                                     <div>
                                         <p v-if="registerUser.pay == 'Presencial efectivo'">
@@ -308,13 +309,23 @@
                                             Una vez validado su pago le llegará un correo donde debe confirmar su cita.
                                         </p>
                                     </div>
+                                </div> 
+                                <div v-if="registerUser.pay == 'Transferencia'">
+                                    <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
+                                        Finalizar agenda
+                                    </base-button>  
+                                    <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
+                                        Finalizar agenda
+                                    </base-button>
                                 </div>
-                                <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
-                                    Finalizar agenda
-                                </base-button>  
-                                <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
-                                    Finalizar agenda
-                                </base-button> 
+                                <div v-else class="mt-5">
+                                    <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
+                                        Finalizar agenda
+                                    </base-button>  
+                                    <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
+                                        Finalizar agenda
+                                    </base-button>
+                                </div>
                             </div>
                         </div>
                         
@@ -331,12 +342,13 @@
                   body-classes="px-lg-4 py-lg-4"
                   class="border-0">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div class="text-muted text-center">
                         <h3>Formulario de compra</h3>
                     </div>
                 </template>
                 <template>
                     <div class="card-info text-justify">
+                        <hr>
                         <div>
                             <p>
                                 ¡Listo! Hemos enviado la confirmación de la cita al correo electrónico. 
@@ -345,10 +357,11 @@
                                 Para confirmar su cita tendrás un plazo máximo de 24 horas, de lo contrario su hora quedará cancelada, habilitando ese espacio para otro cliente. <br><br>
                                 Recuerde revisar la casilla de spam o correo no deseado. Si este correo electrónico no llega por favor ponte en contacto con nosotros mediante WhatsApp y verificaremos de inmediato
                             </p>
+                            <hr>
                             <p class="text-center">+56 9 7262 8949</p>
                         </div>
                     </div>
-                    <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" type="success" v-on:click="location">
+                    <base-button class="w-25" style="float:right;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="location">
                         Finalizar
                     </base-button>
                 </template>
@@ -368,34 +381,34 @@
                 </template>
                 <template>
                     <div class="row">
-                        <div class="col-md-7">
-                            <div class="card-info text-justify">
+                        <div class="col-md-7 borderRight">
+                            <div class="card-info-data text-justify">
                                 <div>
                                     <p style="font-size:0.9em;">
                                         <b style="font-weight:600;">Los datos de transferencia son:</b>
-                                        <br><br><br>
-                                        <b style="font-weight:600;">Nombre:</b><br>
-                                        <b style="font-weight:600;">RUT:</b><br>
-                                        <b style="font-weight:600;">Cuenta:</b><br>
-                                        <b style="font-weight:600;">Banco:</b><br>
-                                        <b style="font-weight:600;">Correo:</b>
+                                        <br><br>
+                                        <b style="font-weight:600;">Nombre:</b> Katriel Capacho<br>
+                                        <b style="font-weight:600;">Banco:</b> Banco estado<br>
+                                        <b style="font-weight:600;">Cuenta rut:</b> 262530322<br>
+                                        <b style="font-weight:600;">Rut:</b> 26253022-1<br>
+                                        <b style="font-weight:600;">Correo: </b>kkprettynails@gmail.com
                                     </p><br>
                                     <h3 class="text-center">El monto a trasferir es:</h3>
                                     <h2 class="text-center font-weight-bold">$ {{this.formatPrice(totalPrice)}}</h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-5 pt-3">
                             <div class="card-info text-center">
                                 <div>
-                                    <p style="font-size:0.9em;">
+                                    <p style="font-size:0.9em;line-height:1.4em;">
                                         <b style="font-weight:600;">Importante.</b>
                                         <br><br>
                                         Al realizar el pago mediante transferencia electrónica deberás adjuntar este comprobante en el formulario de pago que se mostrará a continuación. 
                                     </p>
                                 </div>
                             </div>
-                            <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" type="success" v-on:click="modals.modal5 = false, modals.modal2 = true">
+                            <base-button class="w-100" style="margin-top:55px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="modals.modal5 = false, modals.modal2 = true">
                                 Continuar
                             </base-button>
                         </div>
@@ -438,7 +451,7 @@
                 socket: io(endPoint.endpointTarget),
                 configDate: {
                     allowInput: false,
-                    dateFormat: 'm-d-Y',
+                    dateFormat: 'd-m-Y',
                     locale: Spanish, // locale for this instance only
                     minDate: new Date()        
                 },
@@ -447,6 +460,7 @@
                 dates:{
                     simple: ''
                 },
+                finalDate: '',
                 registerUser: {
                     name: '',
                     mail: '',
@@ -583,7 +597,7 @@
                 const contactFormat = mail
                 const startFormat = start
                 const endFormat = end
-                const dateFormat = this.dates.simple
+                const dateFormat = this.finalDate
                 axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
                     name: nameFormat,
                     contact: contactFormat,
@@ -631,12 +645,15 @@
                     .then(res => {
                         this.client = res.data.data.nombre+' / '+res.data.data.identidad
                         var lenderFinal = ''
+                        var hourFinal = ''
                         for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                            const element = this.registerDate.serviceSelectds[index].realLender;
+                            const element = this.registerDate.serviceSelectds[index];
                             if (index > 0){
-                                lenderFinal = lenderFinal+' - '+element
+                                lenderFinal = lenderFinal+' - '+element.realLender
+                                hourFinal = hourFinal+' - '+element.start+'Hrs'
                             }else{
-                                lenderFinal = element
+                                lenderFinal = element.realLender
+                                hourFinal = element.start+'Hrs '
                             }
                         }
                         if (this.registerUser.pay == 'Transferencia') {
@@ -650,13 +667,13 @@
                             .then(res => {
                                 axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
                                     dataDate: this.registerDate,
-                                    date: this.dates.simple,
+                                    date: this.finalDate,
                                     client: this.registerUser,
                                     pdf: res.data.nameFile
                                 })
                                 .then(res => {
                                     if (res.data.status == "cita creada") {
-                                        this.sendConfirmation(res.data.id, name, this.registerUser.mail, this.registerDate.serviceSelectds[0].start, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                        this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
                                         this.modals.modal2 = false
                                         this.modals.modal4 = true
                                     }    
@@ -665,13 +682,13 @@
                         }else{
                             axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
                                 dataDate: this.registerDate,
-                                date: this.dates.simple,
+                                date: this.finalDate,
                                 client: this.registerUser,
                                 pdf: 'not'
                             })
                             .then(res => {
                                 if (res.data.status == "cita creada") {
-                                    this.sendConfirmation(res.data.id, name, this.registerUser.mail, this.registerDate.serviceSelectds[0].start, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                    this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
                                     this.modals.modal2 = false
                                     this.modals.modal4 = true
                                 }    
@@ -719,7 +736,7 @@
                 const finalTime =  this.registerDate.design == 'si' ? time + 15 : time
                 this.registerDate.serviceSelectds[index].lenderSelectData = {
                     employe: lender,
-                    date: this.dates.simple,
+                    date: this.finalDate,
                     time: finalTime,
                     resTime: resTime,
                     index: index
@@ -741,16 +758,26 @@
                             this.arrayLendersSelect = []
                         } 
                     }
+                    // var editBlock = false
+                    // var indexEdit = 0
+                    // if (index > 0) {
+                    //     for (let i = 0; i < this.arrayLendersSelect.length; i++) {
+                    //         const element = this.arrayLendersSelect[i];
+                    //         if (element.lender == lender) {
+                                
+                                
+                    //         }
+                    //     }
+                    // }
                     var editBlock = false
                     var indexEdit = 0
-                    if (index > 0) {
-                        for (let i = 0; i < this.arrayLendersSelect.length; i++) {
-                            const element = this.arrayLendersSelect[i];
-                            if (element.lender == lender) {
-                                editBlock = true
-                                indexEdit = element.index
-                                
-                            }
+                    const q = index - 1 
+                    for (let j = 0; j <= q; j++) {
+                        const element = this.registerDate.serviceSelectds[j];
+                        console.log(element.realLender +' == '+ lender)
+                        if (element.realLender == lender) {
+                            editBlock = true
+                            indexEdit = j
                         }
                     }
                     if (editBlock) {
@@ -772,12 +799,13 @@
                         this.registerDate.serviceSelectds[index].validAfter = true
                     }
                     
+                    
                 })
                 .catch(err => { console.log(err) })
             },
             validLender(){
                 this.generateLender()
-                if (this.registerDate.serviceSelectds.length > 0 && this.dates.simple != '') {
+                if (this.registerDate.serviceSelectds.length > 0 && this.finalDate != '') {
                     this.validWizard = true
                     this.ifLender = true
                     return true
@@ -824,7 +852,7 @@
                     this.blockHour = []
                     axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
                         employe: this.registerDate.employeSelect,
-                        date: this.dates.simple,
+                        date: this.finalDate,
                         time: this.registerDate.duration,
                         resTime:this.registerDate.employeResTime
                     })
@@ -920,7 +948,7 @@
                 
                 axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
                     employe: this.registerDate.employeSelect,
-                    date: this.dates.simple,
+                    date: this.finalDate,
                     time: this.registerDate.duration,
                     resTime : this.registerDate.employeResTime
                 })
@@ -973,8 +1001,10 @@
                                 i++
                             }
                             this.registerDate.serviceSelectds[indexService].blocks = res.data
+                            var valid = 0 
                             for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                                const element = this.registerDate.serviceSelectds[indexService];
+                                const element = this.registerDate.serviceSelectds[index];
+                                console.log(element.start)
                                 if (element.start == "") {
                                     valid = 1
                                 }
@@ -996,6 +1026,7 @@
                         var valid = 0 
                         for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                             const element = this.registerDate.serviceSelectds[index];
+                            console.log(element.start)
                             if (element.start == "") {
                                 valid = 1
                             }
@@ -1009,7 +1040,7 @@
                     
                     const finalIndex = parseFloat(indexService) + parseFloat(1)
                     if (this.registerDate.serviceSelectds[finalIndex]) {
-                        axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.dates.simple)
+                        axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                         .then(res => {
                             this.registerDate.serviceSelectds[finalIndex].valid = true
                             var counter = 0
@@ -1053,6 +1084,7 @@
                 
             },
             validateLastStep() {
+                console.log(this.validHour)
                 if (this.validHour) {
                     this.validWizard = true
                     return this.validHour
@@ -1063,71 +1095,76 @@
                 
             },
             openCalendar(){
-                if (this.readyChange) {
-                    for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                        const element = this.registerDate.serviceSelectds[index];
-                        element.start = ''
-                        element.end = ''
-                        element.sort = ''
-                        element.blocks = []
-                    }
-                    this.validHour = false
-                }else{
-                    setTimeout(() => {
-                        axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.dates.simple)
-                        .then(res => {
-                            
-                            var counter = 0
-                            var validCounter = false
-                            for (let i = 0; i < res.data.array.length; i++) {
-                                const element = res.data.array[i];
-                                for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
-                                    const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
-                                    if (element.name == elementTwo.lender) {
-                                        counter = j
-                                        validCounter = true
+                setTimeout(() => {
+                    const split = this.dates.simple.split('-')
+                    this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
+                    console.log(this.finalDate)
+                    if (this.readyChange) {
+                        for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                            const element = this.registerDate.serviceSelectds[index];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.blocks = []
+                        }
+                        this.validHour = false
+                    }else{
+                        setTimeout(() => {
+                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                            .then(res => {
+                                console.log(res)
+                                var counter = 0
+                                var validCounter = false
+                                for (let i = 0; i < res.data.array.length; i++) {
+                                    const element = res.data.array[i];
+                                    for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
+                                        const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
+                                        if (element.name == elementTwo.lender) {
+                                            counter = j
+                                            validCounter = true
+                                            break
+                                        }
+                                    }
+                                    if (validCounter) {
                                         break
                                     }
                                 }
+                                console.log(validCounter)
                                 if (validCounter) {
-                                    break
-                                }
-                            }
-                            console.log(validCounter)
-                            if (validCounter) {
-                                const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
-                                const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
-                                this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
-                                console.log(finalLender)
-                                this.registerDate.serviceSelectds[0].valid = true
-                                this.registerDate.serviceSelectds[0].realLender = finalLender
-                                this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
-                                this.readyChange = false
-                            }else{
-                                this.modals = {
-                                    modal3: true,
-                                    message: "No tenemos hay prestadores disponibles, para la fecha.",
-                                    icon: 'ni ni-fat-remove ni-5x',
-                                    type: 'danger'
-                                }
-                                setTimeout(() => {
+                                    const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
+                                    const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
+                                    this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
+                                    console.log(finalLender)
+                                    this.registerDate.serviceSelectds[0].valid = true
+                                    this.registerDate.serviceSelectds[0].realLender = finalLender
+                                    this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
+                                    this.readyChange = false
+                                }else{
                                     this.modals = {
-                                        modal1:false,
-                                        modal2:false,
-                                        modal3: false,
-                                        modal4: false,
-                                        modal5: false,
-                                        message: "",
-                                        icon: '',
-                                        type: ''
+                                        modal3: true,
+                                        message: "No tenemos hay prestadores disponibles, para la fecha.",
+                                        icon: 'ni ni-fat-remove ni-5x',
+                                        type: 'danger'
                                     }
-                                }, 3000);
-                            }
-                            
-                            
-                        })
-                    }, 200); 
-                }
+                                    setTimeout(() => {
+                                        this.modals = {
+                                            modal1:false,
+                                            modal2:false,
+                                            modal3: false,
+                                            modal4: false,
+                                            modal5: false,
+                                            message: "",
+                                            icon: '',
+                                            type: ''
+                                        }
+                                    }, 3000);
+                                }
+                                
+                                
+                            })
+                        }, 200); 
+                    }
+                }, 200);
             },
             openBlocks(open){
                 $('#'+open).toggle('slow')
@@ -1283,6 +1320,7 @@ button:focus{
     width: 100%;
     transition: all 0.5s ease-out;
     overflow: hidden;
+    min-height: 140px;
 }
 .card-service:hover{
     background-color: #D4D8D4;
@@ -1392,26 +1430,36 @@ color: #174c8e;
 .button-service-right:focus{
     outline: none;
 }
-.card-info{
+.card-info-data{
     width: 100%;
-    padding: 15px;
-    background: rgb(2,0,36);
-    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(144,204,254,1) 0%, rgba(23,76,142,1) 100%);
-    border-radius: 5px;
-}
-.card-info div{
-    width: 100%;
-    padding: 10px;
-    padding-top: 20px;
-    background-color: #fefefe;
+    padding: 4px;
+    background-color: #d5dadd;
     border-radius: 5px;
     -webkit-box-shadow: 0px 0px 16px -11px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 0px 16px -11px rgba(0,0,0,0.75);
     box-shadow: 0px 0px 16px -11px rgba(0,0,0,0.75);
 }
+.card-info-data div{
+    width: 100%;
+    padding: 10px;
+    background-color: #fefefe;
+    padding-top: 20px;
+    border-radius: 5px;
+}
+.card-info{
+    width: 100%;
+    padding: 4px;
+    border-radius: 5px;
+}
+.card-info div{
+    width: 100%;
+    padding: 10px;
+    padding-top: 4px;
+    border-radius: 5px;
+}
 .card-info div p{
-    font-size: 1em;
-    line-height: 1.1em;
+    font-size: .9em;
+    line-height: 1.2em;
 }
 .spanSelect{
     cursor:pointer;
@@ -1436,6 +1484,22 @@ color: #174c8e;
 }
 .responsiveButtonsPercent{
     width: 75%;
+}
+.styleDropdown .dropdown-menu{
+    background-color:#2dce89;
+    width: 80%;
+    left: 10%;
+    cursor:pointer;
+}
+.styleDropdown .dropdown-item{
+    transition: all 0.4s ease-out;
+}
+.styleDropdown .dropdown-item:hover{
+    background-color: #96e6c4 !important; 
+    color:#090909 !important;  
+}
+.borderRight{
+    border-right: solid 1px #e0e5e8;
 }
 @media only screen and (max-width: 468px)
 {
@@ -1464,6 +1528,8 @@ color: #174c8e;
     .wizard-btn{
       min-width: 80px !important;  
     }
-    
+    .borderRight{
+        border:none;
+    }
 }
 </style>
