@@ -535,7 +535,26 @@
                 console.log(this.file)
             },
             location(){
-                window.location = 'https://kkprettynails.cl/inicio'
+                this.modals = {
+                    modal3: true,
+                    message: "¡Cita creada con exito!",
+                    icon: 'ni ni-check-bold ni-5x',
+                    type: 'success'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1:false,
+                        modal2:false,
+                        modal3: false,
+                        modal4: false,
+                        modal5: false,
+                        message: "",
+                        icon: '',
+                        type: ''
+                    }
+                    window.location = 'https://kkprettynails.cl/inicio'
+                }, 3000);
+                
             },
             finalFunction(){
                 if (this.validPay) {
