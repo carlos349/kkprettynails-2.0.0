@@ -104,7 +104,7 @@
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
-                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && lenders.restDay != getDay" class="dropdown-item w-100" style="color:#fff;" v-on:click="servicesSelect.start = '', servicesSelect.end = '',validHour = false, servicesSelect.lender = lenders.lender, servicesSelect.realLender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime, 'check'+indexService)">{{lenders.lender}}  </b>
+                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && lenders.restDay != getDay" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.resTime, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
                                                     </base-dropdown>
                                                 </div>
                                             </div>
@@ -764,6 +764,64 @@
                 console.log(this.registerDate.serviceSelectds[index])
                 this.selectHourService(index, lender, time, resTime)
             },
+            insertData(index, lender, restTime, Class, duration, check, lenders){
+                if (lender == 'Primera disponible') {
+                    console.log(lenders)
+                    axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                    .then(res => {
+                        var lenderSelect = ''
+                        for (let j = index; j < res.data.array.length; j++) {
+                            const element = res.data.array[j];
+                            for (let x = 0; x < lenders.length; x++) {
+                                const elementTwo = lenders[x];
+                                if (element.name == elementTwo.lender) {
+                                    lenderSelect = x
+                                }
+                            }
+                        }
+                        if (lenderSelect == '') {
+                            for (let j = 0; j < res.data.array.length; j++) {
+                                const element = res.data.array[j];
+                                for (let x = 0; x < lenders.length; x++) {
+                                    const elementTwo = lenders[x];
+                                    if (element.name == elementTwo.lender) {
+                                        lenderSelect = x
+                                    }
+                                }
+                            }
+                            this.registerDate.serviceSelectds[index].start = ''
+                            this.registerDate.serviceSelectds[index].end = ''
+                            this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
+                            this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
+                            this.registerDate.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                            this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
+                            this.validHour = false 
+                            this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                        }else{
+                            this.registerDate.serviceSelectds[index].start = ''
+                            this.registerDate.serviceSelectds[index].end = ''
+                            this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
+                            this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
+                            this.registerDate.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                            this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
+                            this.validHour = false 
+                            this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }else{
+                    this.registerDate.serviceSelectds[index].start = ''
+                    this.registerDate.serviceSelectds[index].end = ''
+                    this.registerDate.serviceSelectds[index].lender = lender
+                    this.registerDate.serviceSelectds[index].realLender = lender
+                    this.registerDate.serviceSelectds[index].restTime = restTime
+                    this.registerDate.serviceSelectds[index].class = Class
+                    this.validHour = false 
+                    this.validMultiLender(index, lender, duration, restTime, check) 
+                }
+            },
             selectHourService(index, lender, time, resTime){
                 console.log(lender+'--'+ time+'--'+ resTime+'--'+index)
                 const finalTime =  this.registerDate.design == 'si' ? time + 15 : time
@@ -902,7 +960,7 @@
                 this.ifServices = true
                 this.serviceCount[index].count++
                 this.registerDate.duration = this.registerDate.duration + parseFloat(time)
-                var lendersName = []
+                var lendersName = [{lender: 'Primera disponible', resTime: '', restDay: '', class: '', valid:true}]
                 for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                     for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
                         if (this.lenders[indexThree]._id == lenders[indexTwo]) {
