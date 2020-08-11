@@ -104,7 +104,7 @@
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
-                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid" class="dropdown-item w-100" style="color:#fff;" v-on:click="servicesSelect.start = '', servicesSelect.end = '',validHour = false, servicesSelect.lender = lenders.lender, servicesSelect.realLender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime, 'check'+indexService)">{{lenders.lender}}  </b>
+                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && lenders.restDay != getDay" class="dropdown-item w-100" style="color:#fff;" v-on:click="servicesSelect.start = '', servicesSelect.end = '',validHour = false, servicesSelect.lender = lenders.lender, servicesSelect.realLender = lenders.lender, servicesSelect.restTime = lenders.resTime, servicesSelect.class = lenders.class, validMultiLender(indexService, lenders.lender, servicesSelect.duration, lenders.resTime, 'check'+indexService)">{{lenders.lender}}  </b>
                                                     </base-dropdown>
                                                 </div>
                                             </div>
@@ -501,6 +501,7 @@
                     sort: '',
                     end: ''
                 },
+                getDay: 0,
                 lenders: [],
                 services: [],
                 serviceCount: [],
@@ -597,6 +598,11 @@
                 $('#pills-'+type).show(2000)
             },
             validFields(){
+                const split = this.registerUser.mail.split('@')
+                var splitTwo = ''
+                if (split.length == 2) {
+                    splitTwo = split[1].split('.')
+                }
                 if (this.registerUser.pay == 'Transferencia') {
                     if (this.file != '', this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
                         this.validRegister = true
@@ -605,7 +611,15 @@
                     }
                 }else{
                     if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
-                        this.validRegister = true
+                        if (split.length == 2) {
+                            if (splitTwo.length == 2) {
+                                this.validRegister = true
+                            }else{
+                                this.validRegister = false
+                            }
+                        }else{
+                            this.validRegister = false
+                        }
                     }else{
                         this.validRegister = false
                     }
@@ -892,7 +906,7 @@
                 for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                     for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
                         if (this.lenders[indexThree]._id == lenders[indexTwo]) {
-                            lendersName.push({lender: this.lenders[indexThree].nombre, resTime: this.lenders[indexThree].restTime, class: this.lenders[indexThree].class, valid: true})
+                            lendersName.push({lender: this.lenders[indexThree].nombre, resTime: this.lenders[indexThree].restTime, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
                             break
                         }
                     }  
@@ -1117,7 +1131,8 @@
                 setTimeout(() => {
                     const split = this.dates.simple.split('-')
                     this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
-                    console.log(this.finalDate)
+                    const restDay = new Date(this.finalDate+' 10:00')
+                    this.getDay = restDay.getDay()
                     if (this.readyChange) {
                         for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                             const element = this.registerDate.serviceSelectds[index];
@@ -1125,8 +1140,63 @@
                             element.end = ''
                             element.sort = ''
                             element.blocks = []
+                            element.valid = false
                         }
                         this.validHour = false
+                        setTimeout(() => {
+                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                            .then(res => {
+                                console.log(res)
+                                var counter = 0
+                                var validCounter = false
+                                for (let i = 0; i < res.data.array.length; i++) {
+                                    const element = res.data.array[i];
+                                    for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
+                                        const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
+                                        if (element.name == elementTwo.lender) {
+                                            counter = j
+                                            validCounter = true
+                                            break
+                                        }
+                                    }
+                                    if (validCounter) {
+                                        break
+                                    }
+                                }
+                                console.log(validCounter)
+                                if (validCounter) {
+                                    const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
+                                    const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
+                                    this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
+                                    console.log(finalLender)
+                                    this.registerDate.serviceSelectds[0].valid = true
+                                    this.registerDate.serviceSelectds[0].realLender = finalLender
+                                    this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
+                                    this.readyChange = true
+                                }else{
+                                    this.modals = {
+                                        modal3: true,
+                                        message: "No tenemos hay prestadores disponibles, para la fecha.",
+                                        icon: 'ni ni-fat-remove ni-5x',
+                                        type: 'danger'
+                                    }
+                                    setTimeout(() => {
+                                        this.modals = {
+                                            modal1:false,
+                                            modal2:false,
+                                            modal3: false,
+                                            modal4: false,
+                                            modal5: false,
+                                            message: "",
+                                            icon: '',
+                                            type: ''
+                                        }
+                                    }, 3000);
+                                }
+                                
+                                
+                            })
+                        }, 200); 
                     }else{
                         setTimeout(() => {
                             axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
@@ -1157,7 +1227,7 @@
                                     this.registerDate.serviceSelectds[0].valid = true
                                     this.registerDate.serviceSelectds[0].realLender = finalLender
                                     this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
-                                    this.readyChange = false
+                                    this.readyChange = true
                                 }else{
                                     this.modals = {
                                         modal3: true,
