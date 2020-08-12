@@ -1,12 +1,12 @@
 <template>
     <div class="font">
-        <base-nav class="navbar navbar-horizontal navbar-expand-lg bg-gradient">  
-            <a slot="brand" class="navbar-brand" href="http://syswa.com">
-                <img src="img/brand/logokk.png" alt="" style="height:70px;width:70px">
-                <b class="ml-3 mt-3" style="font-size: 1.2em;color:#fff;">KKPRETTYNAILS</b> 
-            </a>
+        <base-nav class="navbar navbar-horizontal navbar-expand-lg bg-gradient"
+        style="max-height:80px;">  
+            <div class="borderImageBrand">
+                <img src="img/brand/logokk.png" class="imageBrand" alt="" >
+            </div>
         </base-nav>
-        <div class="container-fluid mt-4">
+        <div class="container-fluid mt-5">
             <card shadow>
                 <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!"> 
                     <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
@@ -638,7 +638,8 @@
                     end: endFormat,
                     date: dateFormat,
                     service: services,
-                    lenders: lender
+                    lenders: lender,
+                    payment: this.registerUser.pay
                 })
                 .then(res => {
                     if (res.data.status == 'ok') {
@@ -1433,8 +1434,21 @@
     margin-top:10% !important;
 }
 .bg-gradient{
-    background: rgb(2,0,36);
-    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,134,229,1) 0%, rgba(23,76,142,1) 89%);
+    background-image: url('/img/theme/Banner.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.borderImageBrand{
+    height:110px;
+    width:110px;
+    margin-top: 60px;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: #fff;
+}
+.imageBrand{
+    height:90px;
+    width:90px;
 }
 .inactiveButton{
     background-color: #959595 !important;
