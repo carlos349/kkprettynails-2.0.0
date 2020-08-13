@@ -262,8 +262,9 @@
                                 </base-input>
                                 <span style="color:blue;position:absolute;right:20px;top:200px;z-index:1;">+</span>
                                 <base-input alternative
-                                    type="email"
-                                    v-on:keyup="validFields()"
+                                    type="text"
+                                    v-on:input="formatPhone"
+                                    maxlength="9"
                                     placeholder="Escriba su número de teléfono"
                                     v-model="registerUser.phone"
                                     addon-left-icon="fa fa-phone">
@@ -597,6 +598,15 @@
                 $('#pills-hour').hide()
                 $('#pills-'+type).show(2000)
             },
+            formatPhone(){
+                var number = this.registerUser.phone.replace(/[^\d]/g, '')
+                if (number.length == 9) {
+                    number = number.replace(/(\d{1})(\d{4})/, "$1-$2-");
+                } else if (number.length == 10) {
+                    number = number.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+                }
+                this.registerUser.phone = number
+            },
             validFields(){
                 const split = this.registerUser.mail.split('@')
                 var splitTwo = ''
@@ -605,7 +615,15 @@
                 }
                 if (this.registerUser.pay == 'Transferencia') {
                     if (this.file != '', this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
-                        this.validRegister = true
+                        if (split.length == 2) {
+                            if (splitTwo.length == 2) {
+                                this.validRegister = true
+                            }else{
+                                this.validRegister = false
+                            }
+                        }else{
+                            this.validRegister = false
+                        }
                     }else{
                         this.validRegister = false
                     }
@@ -687,7 +705,7 @@
                                 hourFinal = hourFinal+' - '+element.start+'Hrs'
                             }else{
                                 lenderFinal = element.realLender
-                                hourFinal = element.start+'Hrs '
+                                hourFinal = element.start+'Hrs'
                             }
                         }
                         if (this.registerUser.pay == 'Transferencia') {
@@ -1164,10 +1182,18 @@
                 })
             },
             validateFirstStep() {
-                console.log(this.registerDate.design)
-                
                 if (this.registerDate.design != 'nada' && this.ifServices) {
                     this.validWizard = true
+                    if ( this.dates.simple != '') {
+                        for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                            const element = this.registerDate.serviceSelectds[index];
+                                if (element.valid == false) {
+                                    element.valid = true
+                                    this.insertData(index, 'Primera disponible', '', '', element.duration, 'check'+index, element.lenders)
+                                    break
+                                }
+                        }
+                    }
                     return this.ifServices
                 }else{
                     this.validWizard = false
