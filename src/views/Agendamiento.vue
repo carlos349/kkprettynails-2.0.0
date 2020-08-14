@@ -342,6 +342,10 @@
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.end)}}</badge>
                             </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
+                                <span >Tipo de pago:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{selectedEvent.typepay}}</badge>
+                            </base-button>
+                            <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'first'" >
                                     Lleva descuento (Primera atención)
                                     <i class="text-success p-1 ni ni-check-bold ni-1x aling-center"> </i>
@@ -355,9 +359,15 @@
                                     <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
                                 </span>
                             </base-button>
-                            <base-button class="mt-1 col-12" size="sm" type="secondary">
-                                <span class="text-success" v-if="selectedEvent.confirmation">Confirmada</span>
-                                <span class="text-danger" v-else v-on:click="sendConfirmation(selectedEvent.id, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">Confirmar</span>
+                            <dt class="mt-3 text-center">Confirmación de cita</dt>
+                            <base-button v-if="selectedEvent.confirmation" class="mt-1 col-12" size="sm" type="success">
+                                Confirmada
+                            </base-button>
+                            <base-button v-else class="mt-1 col-12" size="sm" type="default" v-on:click="sendConfirmation(selectedEvent.id, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                Enviar confirmación
+                            </base-button>
+                            <base-button v-if="selectedEvent.typepay == 'Transferencia'" class="mt-1 col-12" size="sm" type="default">
+                                <a :href="imgEndpoint+'/static/designs/'+selectedEvent.paypdf" target="_blank" download>Descargar comprobante</a>
                             </base-button>
                             <dt class="mt-3 text-center">Servicios</dt>  
                             <badge v-for="service of selectedEvent.services" class="mt-1 ml-1 text-default" type="primary">{{service.servicio}}</badge>
@@ -1065,7 +1075,11 @@
                             process: res.data[index].process,
                             image: res.data[index].image,
                             imageLength: res.data[index].image.length,
-                            confirmation: res.data[index].confirmation
+                            confirmation: res.data[index].confirmation,
+                            confirmationId: res.data[index].confirmationId,
+                            type: res.data[index].type,
+                            typepay: res.data[index].typepay,
+                            paypdf: res.data[index].paypdf
                         }
                         this.events.push(arrayEvents)
                     }
@@ -1109,7 +1123,11 @@
                         process: res.data[index].process,
                         image: res.data[index].image,
                         imageLength: res.data[index].image.length,
-                        confirmation: res.data[index].confirmation
+                        confirmation: res.data[index].confirmation,
+                        confirmationId: res.data[index].confirmationId,
+                        type: res.data[index].type,
+                        typepay: res.data[index].typepay,
+                        paypdf: res.data[index].paypdf
                     }
                     this.events.push(arrayEvents)
                     }
@@ -1691,7 +1709,11 @@
                             id:res.data[index]._id, 
                             image: res.data[index].image,
                             imageLength: res.data[index].image.length,
-                            confirmation: res.data[index].confirmation
+                            confirmation: res.data[index].confirmation,
+                            confirmationId: res.data[index].confirmationId,
+                            type: res.data[index].type,
+                            typepay: res.data[index].typepay,
+                            paypdf: res.data[index].paypdf
                         } 
                         this.events.push(arrayEvents)
                     }
