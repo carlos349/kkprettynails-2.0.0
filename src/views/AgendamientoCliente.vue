@@ -15,8 +15,8 @@
                         <div class="row">
                             <div style="width:auto;" class="mx-auto" >
                                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="wi">
-                                    <li v-for="(category, index) of categories" :key="category._id" class="nav-item" role="presentation">
-                                        <button class="categoryButton text-uppercase" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
+                                    <li v-for="(category, index) of categories" :key="category._id" class="nav-item responsiveItem" role="presentation">
+                                        <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
                                     </li>
                                 </ul>   
                             </div>
@@ -26,7 +26,7 @@
                                         <div v-for="category of categories" :key="category._id" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row mt-2">
                                                  <div v-for="(service, index) of services" :key="service" class="col-xl-3 col-md-6 px-4" v-if="service.category == category.name">
-                                                    <div class="card-service row" :id="'cardS'+index">
+                                                    <div class="card-service row mt-2" :id="'cardS'+index">
                                                         <h3 class="name-service"> {{service.nombre}}</h3>
                                                         <div class="col-12"><img src="img/brand/calendar.png" alt=""></div>
                                                         
@@ -1702,6 +1702,9 @@ color: #174c8e;
     }
     .card-service img{
         top:-30px;
+    }
+    .responsiveItem{
+        width: 100%;
     }
 }
 @media only screen and (max-width: 768px)
