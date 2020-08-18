@@ -428,8 +428,14 @@
                 
                 <template>
                     <div class="col-sm-12">
-                                
-                                
+                                <base-button class="col-12  p-2 mt-1" type="secondary">
+                                    <span class="text-center"> Comprador <br> </span>
+                                    <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{compradorArticulo}}</badge>
+                                </base-button>
+                                <base-button class="col-12  p-2 mt-1" type="secondary">
+                                    <span class="text-center"> Medio de pago <br> </span>
+                                    <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{medioPagoArticulo}}</badge>
+                                </base-button>
                                 <base-button class="col-12  p-2 mt-1" type="secondary">
                                     <span class="text-center"> Articulo <br> </span>
                                     <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
@@ -506,7 +512,7 @@
 				</div>
 			</div>
         </div>
-        <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal5 = true" class="p-2 menuVerRedo navSCode" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
+        <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal5 = true, codeArticulo = ''" class="p-2 menuVerRedo navSCode" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
 			<div class="row">
 				<div class="col-2 pt-1">
 					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="pager" />
@@ -562,6 +568,8 @@ export default {
                 valid: false,
             },
             articulo:'',
+            compradorArticulo:'',
+            medioPagoArticulo:'',
             estadoArticulo:'',
             idArticulo:'',
             codeArticulo:'',
@@ -1495,7 +1503,17 @@ export default {
                     this.articulo = res.data.articulo
                     this.estadoArticulo = res.data.estado
                     this.idArticulo = res.data._id
+                    this.compradorArticulo = res.data.cliente
+                    this.medioPagoArticulo = res.data.medio
                     this.modals.modal6 = true
+                }
+                else{
+                    this.$swal({
+                                type: 'error',
+                                title: 'Codigo no existe',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                 }
             })
         },

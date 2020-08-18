@@ -187,7 +187,7 @@
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <center>
-                        <base-button v-if="validRoute('clientes', 'detalle') && props.row.estado == 'Nconfirmado'" size="sm" type="success" @click="modals.modal3 = true, idPedido = props.row._id,identidadPedido = props.row.contacto, codePedido = props.row.codigo" icon="ni ni-check-bold">Confirmar</base-button>
+                        <base-button v-if="validRoute('clientes', 'detalle') && props.row.estado == 'Nconfirmado'" size="sm" type="success" @click="modals.modal3 = true, idPedido = props.row._id,identidadPedido = props.row.contacto, codePedido = props.row.codigo, articuloPedido = props.row.articulo" icon="ni ni-check-bold">Confirmar</base-button>
                         <base-button v-else-if="props.row.estado == 'usado'" size="sm" disabled type="danger"  >Utilizado</base-button>
                         <base-button disabled v-else size="sm" type="default" >Confirmado</base-button>
                         
@@ -240,6 +240,7 @@ import router from '../router'
         idPedido:'',
         identidadPedido:'',
         codePedido:'',
+        articuloPedido:'',
         successRegister:false,
         clientsNames: [],
         tipeForm: '',
@@ -640,7 +641,8 @@ import router from '../router'
                 if (res.data.status == 'Servicio actualizado') {
                     axios.post(endPoint.endpointTarget+'/pedidos/sendEmailPedido',{
                         to : this.identidadPedido,
-                        code : this.codePedido
+                        code : this.codePedido,
+                        article : this.articuloPedido
                     })
                     this.modals = {
                         modal2: true,
