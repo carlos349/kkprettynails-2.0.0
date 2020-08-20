@@ -1,31 +1,30 @@
 <template>
     <div class="font">
-        <base-nav class="navbar navbar-horizontal navbar-expand-lg bg-gradient"
-        style="max-height:80px;">  
+        <nav class="headerStyles" id="upView">  
             <div class="borderImageBrand">
                 <img src="img/brand/logokk.png" class="imageBrand" alt="" >
             </div>
-        </base-nav>
-        <div class="container-fluid mt-5">
+        </nav>
+        <div class="container-fluid" style="margin-top:8rem;">
             <card shadow>
                 <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!"> 
                     <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
                     <tab-content title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
                         <div class="row">
-                            <div style="width:auto;" class="mx-auto" >
-                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="wi">
-                                    <li v-for="(category, index) of categories" :key="category._id" class="nav-item responsiveItem" role="presentation">
-                                        <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
-                                    </li>
-                                </ul>   
-                            </div>
-                            <div class="col-md-12">
-                                <!-- <vue-custom-scrollbar  style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;"> -->
+                            <div class="showDevice col-md-12 row">
+                                <div style="width:auto;" class="mx-auto" >
+                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="wi">
+                                        <li v-for="(category, index) of categories" :key="category._id" class="nav-item responsiveItem" role="presentation">
+                                            <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
+                                        </li>
+                                    </ul>   
+                                </div>
+                                <div class="col-md-12">
                                     <div class="tab-content" id="pills-tabContent">
-                                        <div v-for="category of categories" :key="category._id" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                        <div v-for="category of categories" :key="category._id" class="tab-pane fade " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row mt-2">
-                                                 <div v-for="(service, index) of services" :key="service" class="col-xl-3 col-md-6 px-4" v-if="service.category == category.name">
+                                                <div v-for="(service, index) of services" :key="service" class="col-xl-3 col-md-6 px-4" v-if="service.category == category.name">
                                                     <div class="card-service row mt-2" :id="'cardS'+index">
                                                         <h3 class="name-service"> {{service.nombre}}</h3>
                                                         <div class="col-12"><img src="img/brand/calendar.png" alt=""></div>
@@ -36,7 +35,7 @@
                                                         <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;margin-top:-5px;">
                                                             
                                                             <div class="button-service-group">
-                                                                <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.nombre, service.tiempo, 'cardS'+index)"></i></button>
+                                                                <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.nombre, service.tiempo, 'cardS'+index, service.precio)"></i></button>
                                                                 <span class="span-button-service">{{serviceCount[index].count}}</span>
                                                                 <button class="button-service-right" 
                                                                 v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores, 'cardS'+index)"
@@ -44,20 +43,52 @@
                                                             </div>
                                                             
                                                         </div>  
-                                                        
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                     </div>
-                                <!-- </vue-custom-scrollbar> -->
+                                </div>
                             </div>
-                            <!-- <div class="row mx-auto mt-3">
-                                <h3>¿Se realizara un diseño?</h3> 
-                                <base-radio name="si" value="true" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>Si</b> </base-radio>
-                                <base-radio name="no" value="false" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>No</b> </base-radio> 
-                            </div> -->
-                            <div class="mx-auto mt-5">
+                            <div class="showPhone col-md-12">
+                                <base-dropdown class="w-100 mx-auto mb-3 styleDropdown">
+                                    <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
+                                        {{CatSelected}}
+                                    </base-button>
+                                    <b v-for="category of categories" :key="category._id" v-on:click="selectCategoryPhone(category.name)" class="dropdown-item w-100" style="color:#fff;"> {{category.name}} </b>
+                                </base-dropdown>
+                                <base-dropdown class="w-100 mx-auto styleDropdown" v-if="servicesPhoneShow">
+                                    <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
+                                        Servicios 
+                                    </base-button>
+                                    <b v-for="service of servicesCat" :key="service" v-on:click="selectServicePhone(service._id)" class="dropdown-item w-100" style="color:#fff;"> {{service.nombre}} </b>
+                                </base-dropdown>
+                                <div v-if="validObject()">
+                                    <div v-for="(service, index) of serviceSelected" :key="service" class="w-100 mx-auto">
+                                        <div class="card-service row m-0 mt-2" :id="'cardSP'+index">
+                                            <h3 class="name-service"> {{service.nombre}}</h3>
+                                            <div class="col-12"><img src="img/brand/calendar.png" alt=""></div>
+                                            
+                                            <div class="col-6 mt-4" style="padding: 0px !important;padding-top: 5px !important;">
+                                                <div class="price-service ">{{formatPrice(service.precio)}} $</div> 
+                                            </div>
+                                            <div class="col-6 mt-4" style="padding: 0px !important;margin-top:-5px;">
+                                                
+                                                <div class="button-service-group">
+                                                    <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessServicePhone(index, service.nombre, service.tiempo, 'cardSP'+index, service.precio)"></i></button>
+                                                    <span class="span-button-service">{{servicePhoneCount[index].count}}</span>
+                                                    <button class="button-service-right" 
+                                                    v-on:click="plusServicePhone(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores, 'cardSP'+index)"
+                                                    ><i class="fa fa-plus"></i></button>
+                                                </div>
+                                                
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mx-auto mt-3">
                                 <h2 style="font-weight:500;color:#090909;">¿Se realizará un diseño?</h2> 
                                 <div class="ml-1">
                                     <span class="ml-5 font-weight-bold spanSelect" style="color:#090909;" id="yes" v-on:click="selectDesign('first')">Sí</span>
@@ -192,16 +223,19 @@
                                     <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
                                     <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Transferencia')">Transferencia</b>
                                     <!-- <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('WebPay')">WebPay</b>  -->
-                                </base-dropdown><br><br>
-                                <base-button class="mt-2 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                </base-dropdown><br>
+                                <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
                                 Fecha: <strong>{{dates.simple}}</strong>
-                                </base-button><br><br>
-                                <base-button class="mt-1 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                </base-button><br>
+                                <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
                                     Diseño: <strong class="text-uppercase">{{registerDate.design}}</strong>
-                                </base-button><br><br>
-                                <base-button class="mt-1 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                </base-button><br>
+                                <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
                                     Hora de inicio: <strong v-if="registerDate.serviceSelectds[0]">{{registerDate.serviceSelectds[0].start}}</strong>
-                                </base-button><br><br>
+                                </base-button><br>
+                                <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                    Total: <strong class="text-uppercase">{{formatPrice(totalPrice)}} $</strong>
+                                </base-button>
                                 
                                 </center><br>
                             </div>
@@ -210,19 +244,20 @@
                 </form-wizard>
             </card>
         </div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-Secondary">
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-               <a class="navbar-brand " href="#">
-                    <img src="img/brand/syswa-gestion.png" alt="" style="height:140px;width:220px">
+        <nav class="navbar navbar-expand-lg navbar-light bg-Secondary row m-0 p-0">
+            <div  id="navbarTogglerDemo01" class="mx-auto col-6 m-0">
+               <a href="https://syswa.net">
+                    <img src="img/brand/syswa-gestion.png" class="logoSyswaFooter" alt="" style="">
                 </a>
             </div>
-            <span class="navbar-text" style="float: right !important;">
+            <span class="navbar-text col-6 m-0" style="float: right !important;">
                 © {{year}} | <a href="https://www.syswa.com" class="font-weight-bold ml-1" target="_blank">SYSWA</a> Todos los derechos reservados
             </span>
         </nav>
         <modal :show.sync="modals.modal2"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-4 py-lg-4"
@@ -371,6 +406,7 @@
         <modal :show.sync="modals.modal5"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-4 py-lg-4"
@@ -461,6 +497,10 @@
                 dates:{
                     simple: ''
                 },
+                servicesCat: [],
+                serviceSelected: [],
+                servicesPhoneShow:false,
+                CatSelected: 'Categorias',
                 finalDate: '',
                 registerUser: {
                     name: '',
@@ -506,6 +546,7 @@
                 lenders: [],
                 services: [],
                 serviceCount: [],
+                servicePhoneCount: [],
                 posibleLenders: [],
                 ifLender: false,
                 ifServices: false,
@@ -974,6 +1015,74 @@
                 }
                 
             },
+            plusServicePhone(index, service, time, comision, precio, lenders, card){
+                $('#'+card).css({'border-bottom': 'solid 8px #174c8e'})
+                this.ifServices = true
+                this.servicePhoneCount[index].count++
+                this.serviceSelected[index].set = true
+                this.registerDate.duration = this.registerDate.duration + parseFloat(time)
+                var lendersName = [{lender: 'Primera disponible', resTime: '', restDay: '', class: '', valid:true}]
+                for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
+                    for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
+                        if (this.lenders[indexThree]._id == lenders[indexTwo]) {
+                            lendersName.push({lender: this.lenders[indexThree].nombre, resTime: this.lenders[indexThree].restTime, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
+                            break
+                        }
+                    }  
+                }
+                console.log(lendersName)
+                if (this.posibleLenders.length > 0) {
+                    for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
+                        var verify = 0
+                        for (let indexTwo = 0; indexTwo < this.posibleLenders.length; indexTwo++) {
+                            if (lenders[indexThree] == this.posibleLenders[indexTwo]) {
+                                verify++
+                            }
+                        }  
+                        if (verify == 0) {
+                            this.posibleLenders.push(lenders[indexThree])
+                        }
+                    }
+                }else{
+                    for (let index = 0; index < lenders.length; index++) {
+                        this.posibleLenders.push(lenders[index]) 
+                    } 
+                } 
+                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false })
+                this.registerDate.start = ''  
+                this.registerDate.end = '' 
+                this.registerDate.sort = ''    
+                this.validHour = false  
+                this.totalPrice = this.totalPrice + precio
+            },
+            lessServicePhone(index, service, time, card, precio){
+                if (this.servicePhoneCount[index].count > 0) {
+                    this.servicePhoneCount[index].count--
+                    if (this.servicePhoneCount[index].count == 0) {
+                        $('#'+card).css({'border-bottom': 'solid 8px #e2e3de'})
+                        this.serviceSelected[index].set = false
+                    }
+                    this.registerDate.duration = this.registerDate.duration - parseFloat(time)
+                }
+                for (var i = 0; i < this.registerDate.serviceSelectds.length; i++) {
+                    if (this.registerDate.serviceSelectds[i].servicio == service ) {
+                        this.registerDate.serviceSelectds.splice(i, 1)
+                        break
+                    }
+                }
+                if (this.registerDate.serviceSelectds.length == 0) {
+                    this.ifServices = false
+                    this.validLender()
+                    this.validSchedule = false
+                    this.posibleLenders = []
+                }
+                this.registerDate.start = ''
+                this.registerDate.end = '' 
+                this.registerDate.sort = '' 
+                this.validHour = false
+                this.totalPrice = this.totalPrice - precio
+                console.log(this.registerDate.serviceSelectds)
+            },
             plusService(index, service, time, comision, precio, lenders, card){
                 $('#'+card).css({'border-bottom': 'solid 8px #174c8e'})
                 this.ifServices = true
@@ -1013,11 +1122,11 @@
                 this.validHour = false  
                 this.totalPrice = this.totalPrice + precio
             },
-            lessService(index, service, time, card){
+            lessService(index, service, time, card, precio){
                 if (this.serviceCount[index].count > 0) {
                     this.serviceCount[index].count--
                     if (this.serviceCount[index].count == 0) {
-                        $('#'+card).css({'border-bottom': 'none'})
+                        $('#'+card).css({'border-bottom': 'solid 8px #e2e3de'})
                     }
                     this.registerDate.duration = this.registerDate.duration - parseFloat(time)
                 }
@@ -1182,6 +1291,7 @@
                 })
             },
             validateFirstStep() {
+                window.scrollTo(0, 0);
                 if (this.registerDate.design != 'nada' && this.ifServices) {
                     this.validWizard = true
                     if ( this.dates.simple != '') {
@@ -1196,12 +1306,31 @@
                     }
                     return this.ifServices
                 }else{
+                    this.modals = {
+                        modal3: true,
+                        message: "Elija un servicio y diseño",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1:false,
+                            modal2:false,
+                            modal3: false,
+                            modal4: false,
+                            modal5: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 2000);
                     this.validWizard = false
                     return false
                 }
                 
             },
             validateLastStep() {
+                window.scrollTo(0, 0);
                 console.log(this.validHour)
                 if (this.validHour) {
                     this.validWizard = true
@@ -1363,6 +1492,94 @@
             selectCat(cat){
                 $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
                 $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
+            }, 
+            async selectCategoryPhone(name){
+                for (let j = 0; j < this.serviceSelected.length; j++) {
+                    const element = this.serviceSelected[j];
+                    if (element.set == false) {
+                        this.serviceSelected.splice(j, 1)
+                        this.servicePhoneCount.splice(j, 1)
+                    }
+                }
+                this.servicesPhoneShow = false
+                this.servicesCat = []
+                try {
+                    const services = await  axios.post(endPoint.endpointTarget+'/servicios/servicesByCategory', {
+                        name: name
+                    })
+                    if (services.data.status == 'ok') {
+                        this.servicesPhoneShow = true
+                        this.servicesCat = services.data.services
+                        this.CatSelected = name
+                    }else{
+                        this.modals = {
+                            modal3: true,
+                            message: "categoria sin servicios",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
+                        }
+                        setTimeout(() => {
+                            this.modals = {
+                                modal1:false,
+                                modal2:false,
+                                modal3: false,
+                                modal4: false,
+                                modal5: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 2000);
+                    }
+                }catch (err){
+                    console.log(err)
+                }
+            },
+            validObject (){
+                if (this.serviceSelected.length === 0) {
+                    return false
+                }else{
+                    return true
+                }
+            },
+            async selectServicePhone(id){
+                for (let j = 0; j < this.serviceSelected.length; j++) {
+                    const element = this.serviceSelected[j];
+                    if (element.set == false) {
+                        this.serviceSelected.splice(j, 1)
+                        this.servicePhoneCount.splice(j, 1)
+                    }
+                }
+                try {
+                    const service = await axios.get(endPoint.endpointTarget+'/servicios/getServiceInfo/'+id)
+                    if (service.data.status == 'ok') {
+                        service.data.service.set = false
+                        console.log(service.data.service)
+                        this.serviceSelected.unshift(service.data.service)
+                        this.servicePhoneCount.unshift({count: 0})
+                    }else{
+                        this.modals = {
+                            modal3: true,
+                            message: "Error técnico",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
+                        }
+                        setTimeout(() => {
+                            this.modals = {
+                                modal1:false,
+                                modal2:false,
+                                modal3: false,
+                                modal4: false,
+                                modal5: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 2000);
+                    }
+                }catch(err){
+                    console.log(err)
+                }
             }
         }
     }
@@ -1459,15 +1676,22 @@
 .top-0{
     margin-top:10% !important;
 }
-.bg-gradient{
+.headerStyles{
     background-image: url('/img/theme/Banner.png');
     background-size: cover;
     background-repeat: no-repeat;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    margin-bottom: 100px;
+    z-index: 1;
+    max-height:80px;
 }
 .borderImageBrand{
     height:110px;
     width:110px;
-    margin-top: 60px;
+    margin-top: 15px;
+    margin-left: 25px;
     padding: 10px;
     border-radius: 50%;
     background-color: #fff;
@@ -1507,7 +1731,8 @@ button:focus{
     width: 100%;
     transition: all 0.5s ease-out;
     overflow: hidden;
-    min-height: 140px;
+    min-height: 145px;
+    border-bottom: solid 8px #e2e3de;
 }
 .card-service:hover{
     background-color: #D4D8D4;
@@ -1688,6 +1913,13 @@ color: #174c8e;
 .borderRight{
     border-right: solid 1px #e0e5e8;
 }
+.showPhone{
+    display: none;
+}
+.logoSyswaFooter{
+    height:140px;
+    width:220px
+}
 @media only screen and (max-width: 468px)
 {
 	.name-service{
@@ -1696,15 +1928,27 @@ color: #174c8e;
         max-width: 85%;
         margin-bottom:20px;
     }
-    .button-service-group{
-        float:left !important;
-        margin-top:-20px !important; 
-    }
     .card-service img{
-        top:-30px;
+        top:-40px;
     }
     .responsiveItem{
         width: 100%;
+    }
+    .borderImageBrand{
+        margin-left:35%;
+    }
+    .showDevice{
+        display: none !important;
+    }
+    .showPhone{
+        display: block;
+    }
+    .card-services-information {
+        padding: 0;
+    }
+    .logoSyswaFooter{
+        height:110px;
+        width:180px
     }
 }
 @media only screen and (max-width: 768px)
