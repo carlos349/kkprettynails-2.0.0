@@ -234,7 +234,7 @@
                                     Hora de inicio: <strong v-if="registerDate.serviceSelectds[0]">{{registerDate.serviceSelectds[0].start}}</strong>
                                 </base-button><br>
                                 <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                    Total: <strong class="text-uppercase">{{formatPrice(totalPrice)}} $</strong>
+                                    Total: <strong class="text-uppercase">$ {{formatPrice(totalPrice)}}</strong>
                                 </base-button>
                                 
                                 </center><br>
