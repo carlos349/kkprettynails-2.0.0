@@ -283,6 +283,7 @@ import XLSX from 'xlsx'
         auth: [],
         successRegister:false,
         clientsNames: [],
+        clientIds:[],
         tipeForm: '',
         registerClient: {
             name:'',
@@ -394,10 +395,11 @@ import XLSX from 'xlsx'
             this.progress = false
             axios.get(endPoint.endpointTarget+'/clients')
             .then(res => {
-				console.log(res.data)
+				
                 this.rows = res.data
                 for (let index = 0; index < res.data.length; index++) {
                     this.clientsNames.push(res.data[index].nombre + " / " + res.data[index].identidad)
+                    this.clientIds.push(res.data[index].nombre + " / " + res.data[index].identidad + "-" + res.data[index]._id)
                 }
                 this.progress = true
             })
@@ -415,10 +417,21 @@ import XLSX from 'xlsx'
         },
         registerClients(){
             var ifCheck = this.registerClient.discount ? 0 : 1
+            var idRecomender = ''
+            if (this.registerClient.recommender != null) {
+                for (let i = 0; i < this.clientIds.length; i++) {
+                    const spId = this.clientIds[i].split("-")
+                    if (spId[0] == this.registerClient.recommender) {
+                        idRecomender = spId[1]
+                    } 
+                }
+            }
+            
             axios.post(endPoint.endpointTarget+'/clients', {
                 nombre:this.registerClient.name,
                 identidad:this.registerClient.id,
                 recomendador:this.registerClient.recommender,
+                idRecomender:idRecomender,
                 correoCliente:this.registerClient.contactOne,
                 instagramCliente:this.registerClient.contactTwo,
                 ifCheck: ifCheck
