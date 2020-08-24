@@ -733,7 +733,8 @@
                     const name = this.registerUser.name+' '+this.registerUser.lastName
                     axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
                         name: name,
-                        mail: this.registerUser.mail
+                        mail: this.registerUser.mail,
+                        referidoId: ''
                     })
                     .then(res => {
                         this.client = res.data.data.nombre+' / '+res.data.data.identidad
