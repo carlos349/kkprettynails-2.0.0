@@ -8,12 +8,12 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white w-100">Sección de servicios</h1>
+                        <h1  class="display-2 text-white w-100">Sección de servicios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
-                        <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true"  type="success">Ingrese un servicio</base-button>
-                        <base-button v-else disabled  type="success">Ingrese un servicio</base-button>
-                        <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorias</base-button>
-                        <base-button v-else disabled  type="default">Categorias</base-button>
+                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true"  type="success">Ingrese un servicio</base-button>
+                        <base-button v-tooltip="'You have new messages.'" v-else disabled  type="success">Ingrese un servicio</base-button>
+                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorias</base-button>
+                        <base-button v-tooltip="'You have new messages.'" v-else disabled  type="default">Categorias</base-button>
                     </div>
                 </div>
             </div>
@@ -36,49 +36,56 @@
                 <template>
                     <form role="form">
                         <base-input alternative
-                            class="mb-3"
+                            class="col-sm-12 mb-3"
                             placeholder="Nombre"
                             addon-left-icon="ni ni-single-copy-04"
                             v-model="serviceRegister"
                             addon-right-icon="fa fa-asterisk text-danger" >
                         </base-input>
-                        <base-input alternative
-                            type="number"
-                            max-count="100"
-                            placeholder="comision (%)"
-                            addon-left-icon="ni ni-money-coins"
-                            v-model="comissionRegister"
-                            addon-right-icon="fa fa-asterisk text-danger" >
-                        </base-input>
-                        <currency-input
-                            v-model="priceRegister"
-                            locale="de"
-                            placeholder="Costo"
-                            class="form-control mb-3"
-                            style="margin-top:-10px;"
-                        />	
-                        <select class="form-control mb-3" v-model="categoryRegister">
-                            <option style="color:black;">Escoja una categoria</option>
-                            <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
-                        </select>
-                        <select class="form-control mb-3" v-model="timeRegister">
-                            <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
-                            <option style="color:black;" value="15">15 Minutos</option>
-                            <option style="color:black;" value="30">30 Minutos</option>
-                            <option style="color:black;" value="45">45 Minutos</option>
-                            <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
-                            <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
-                            <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
-                            <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
-                            <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
-                            <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
-                            <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
-                        </select>
-                        <div class="row mx-auto mt-2">
+                        <div class="row m-0 p-0 pr-3 col-sm-12">
+                            <base-input alternative
+                                v-on:keyup="pruebameEste()"
+                                max-count="100"
+                                placeholder="Comisión (%)"
+                                addon-left-icon="ni ni-money-coins"
+                                v-model="comissionRegister"
+                                class="col-sm-4 mx-auto"
+                                addon-right-icon="fa fa-asterisk text-danger" >
+                            </base-input>
+                            <currency-input
+                                v-model="priceRegister"
+                                locale="de"
+                                placeholder="Costo"
+                                class="form-control mx-auto col-sm-3"
+                                style=""
+                            />
+                            <select class="form-control col-sm-4 mx-auto mb-3" v-model="categoryRegister">
+                                <option style="color:black;">Categoria</option>
+                                <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
+                            </select>
+                            <select class="form-control col-sm-5 mx-auto mb-3" v-model="timeRegister">
+                                <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
+                                <option style="color:black;" value="15">15 Minutos</option>
+                                <option style="color:black;" value="30">30 Minutos</option>
+                                <option style="color:black;" value="45">45 Minutos</option>
+                                <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+                                <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
+                                <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
+                                <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
+                                <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
+                                <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
+                                <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
+                            </select>
+                            <div style="margin-top:-10px" class="row col-sm-6 mx-auto">
                             <h3 class="w-100 text-center">¿Aplica descuento?</h3>
                             <base-radio name="false" value="true" inline class="mb-3 mx-auto" v-model="addDiscount"> <b>Si</b> </base-radio>
                             <base-radio name="true" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
                         </div>
+                        </div>
+                        	
+                        
+                        
+                        
                         <tabs fill class="flex-column flex-md-row">
                             <tab-pane>
                                 <span slot="title">
@@ -143,41 +150,45 @@
                             v-model="serviceEdit"
                             addon-right-icon="fa fa-asterisk text-danger" >
                         </base-input>
-                        <base-input alternative
-                            type="text"
-                            placeholder="comision (%)"
-                            addon-left-icon="ni ni-money-coins"
-                            v-model="comissionEdit"
-                            addon-right-icon="fa fa-asterisk text-danger" >
-                        </base-input>
-                        <currency-input 
-                            v-model="priceEdit"
-                            locale="de"
-                            addon-left-icon="ni ni-time-alarm"
-                            class="form-control mb-3"
-                            style="margin-top:-10px;"
-                            addon-right-icon="fa fa-asterisk text-danger" 
-                        />	
-                        <select class="form-control mb-3" v-model="editCategoryServicer">
-                            <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
-                        </select>
-                        <select class="form-control mb-3" v-model="timeEdit">
-                            <option style="color:black;" value="15">15 Minutos</option>
-                            <option style="color:black;" value="30">30 Minutos</option>
-                            <option style="color:black;" value="45">45 Minutos</option>
-                            <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
-                            <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
-                            <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
-                            <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
-                            <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
-                            <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
-                            <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
-                        </select>
-                        <div class="row mx-auto mt-2">
-                            <h3 class="w-100 text-center">¿Aplica descuento?</h3>
-                            <base-radio name="false"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
-                            <base-radio name="true"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>No</b> </base-radio> 
+                        <div class="row">
+                            <base-input alternative
+                                type="text"
+                                placeholder="Comisión"
+                                class="col-sm-4 "
+                                addon-left-icon="ni ni-money-coins"
+                                v-model="comissionEdit"
+                                addon-right-icon="fa fa-asterisk text-danger" >
+                            </base-input>
+                            <currency-input 
+                                v-model="priceEdit"
+                                locale="de"
+                                addon-left-icon="ni ni-time-alarm"
+                                class="form-control mx-auto col-sm-3 mb-3"
+                                
+                                addon-right-icon="fa fa-asterisk text-danger" 
+                            />	
+                            <select class="form-control mb-3 col-sm-4 mx-auto" v-model="editCategoryServicer">
+                                <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
+                            </select>
+                            <select class="form-control col-sm-5 mx-auto mb-3" v-model="timeEdit">
+                                <option style="color:black;" value="15">15 Minutos</option>
+                                <option style="color:black;" value="30">30 Minutos</option>
+                                <option style="color:black;" value="45">45 Minutos</option>
+                                <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+                                <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
+                                <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
+                                <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
+                                <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
+                                <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
+                                <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
+                            </select>
+                            <div class="row mx-auto col-sm-6" style="margin-top:-2%">
+                                <h3 class="w-100 text-center">¿Aplica descuento?</h3>
+                                <base-radio name="false"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
+                                <base-radio name="true"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>No</b> </base-radio> 
+                            </div>
                         </div>
+                        
                         <tabs fill class="flex-column flex-md-row">
                             <tab-pane>
                                 <span slot="title">
@@ -227,15 +238,17 @@
         <vue-bootstrap4-table :rows="services" :columns="columns" :classes="classes" :config="config">
             <template slot="actionButtons" class="mx-auto" slot-scope="props">
                 <center>
-                   <base-button v-if="validRoute('servicios', 'editar')" icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos,props.row.category)">Editar</base-button>
-                    <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" >Editar</base-button>
+                   <base-button v-if="validRoute('servicios', 'editar')" icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos,props.row.category)"></base-button>
+                    <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" ></base-button>
                     <template v-if="validRoute('servicios', 'activaciones')">
-                        <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)">Activo</base-button>
-                        <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)">Inactivo</base-button> 
+                             <base-button v-tooltip.top-center="'sirves?'" class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)"></base-button>
+                            <base-button v-tooltip.top-center="'sirves?'" class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)"></base-button> 
+                  
+                        
                     </template>
                     <template v-else>
-                        <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" disabled>Activo</base-button>
-                        <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled>Inactivo</base-button> 
+                        <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
+                        <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled></base-button> 
                     </template>
                 </center>
             </template>
@@ -250,7 +263,6 @@
             </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
-                Filtrados {{props.filteredRowsLength}} | 
                 Registros totales {{props.originalRowsLength}}
             </template>
             <template slot="selected-rows-info" slot-scope="props">
@@ -356,6 +368,9 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 import router from '../router'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
+import VTooltip from 'v-tooltip'
+ 
+
 // COMPONENTS
 import Modal from '@/components/Modal'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
@@ -363,12 +378,13 @@ export default {
     components: {
         VueBootstrap4Table,
         Modal,
-        vueCustomScrollbar
+        vueCustomScrollbar,
+        VTooltip
     },
     data(){
         return {
             auth: [],
-            categoryRegister: 'Escoja una categoria',
+            categoryRegister: 'Categoria',
             unitPerItem: '',
             countModal:'',
             typeItemModal:'',
@@ -387,7 +403,7 @@ export default {
             nameCategory: '',
             categories: [],
             serviceRegister: '',
-            priceRegister: 0,
+            priceRegister: '',
             comissionRegister: '',
             timeRegister: 'Seleccione el tiempo',
             services: [],
@@ -710,7 +726,7 @@ export default {
                 }
                 setTimeout(() => {
                     this.modals = {
-                        modal1:false,
+                        modal1:true,
                         modal2:false,
                         modal3: false,
                         modal4: false,
@@ -731,7 +747,7 @@ export default {
                     }
                     setTimeout(() => {
                         this.modals = {
-                            modal1:false,
+                            modal1:true,
                             modal2:false,
                             modal3: false,
                             modal4: false,
@@ -1024,6 +1040,9 @@ export default {
                     this.getCategories()
                 }
             })
+        },
+        pruebameEste(e){
+            
         }
     }
 }
@@ -1075,5 +1094,110 @@ export default {
     }
     .class_categories .card-footer{
         display: none;
+    }
+    .tooltip {
+    display: block !important;
+    z-index: 10000;
+    }
+    
+    .tooltip .tooltip-inner {
+    background: black;
+    color: white;
+    border-radius: 16px;
+    padding: 5px 10px 4px;
+    }
+    
+    .tooltip .tooltip-arrow {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: absolute;
+    margin: 5px;
+    border-color: black;
+    z-index: 1;
+    }
+    
+    .tooltip[x-placement^="top"] {
+    margin-bottom: 5px;
+    }
+    
+    .tooltip[x-placement^="top"] .tooltip-arrow {
+    border-width: 5px 5px 0 5px;
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+    border-bottom-color: transparent !important;
+    bottom: -5px;
+    left: calc(50% - 5px);
+    margin-top: 0;
+    margin-bottom: 0;
+    }
+    
+    .tooltip[x-placement^="bottom"] {
+    margin-top: 5px;
+    }
+    
+    .tooltip[x-placement^="bottom"] .tooltip-arrow {
+    border-width: 0 5px 5px 5px;
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+    border-top-color: transparent !important;
+    top: -5px;
+    left: calc(50% - 5px);
+    margin-top: 0;
+    margin-bottom: 0;
+    }
+    
+    .tooltip[x-placement^="right"] {
+    margin-left: 5px;
+    }
+    
+    .tooltip[x-placement^="right"] .tooltip-arrow {
+    border-width: 5px 5px 5px 0;
+    border-left-color: transparent !important;
+    border-top-color: transparent !important;
+    border-bottom-color: transparent !important;
+    left: -5px;
+    top: calc(50% - 5px);
+    margin-left: 0;
+    margin-right: 0;
+    }
+    
+    .tooltip[x-placement^="left"] {
+    margin-right: 5px;
+    }
+    
+    .tooltip[x-placement^="left"] .tooltip-arrow {
+    border-width: 5px 0 5px 5px;
+    border-top-color: transparent !important;
+    border-right-color: transparent !important;
+    border-bottom-color: transparent !important;
+    right: -5px;
+    top: calc(50% - 5px);
+    margin-left: 0;
+    margin-right: 0;
+    }
+    
+    .tooltip.popover .popover-inner {
+    background: #f9f9f9;
+    color: black;
+    padding: 24px;
+    border-radius: 5px;
+    box-shadow: 0 5px 30px rgba(black, .1);
+    }
+    
+    .tooltip.popover .popover-arrow {
+    border-color: #f9f9f9;
+    }
+    
+    .tooltip[aria-hidden='true'] {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .15s, visibility .15s;
+    }
+    
+    .tooltip[aria-hidden='false'] {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity .15s;
     }
 </style>

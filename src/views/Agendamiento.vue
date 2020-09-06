@@ -11,7 +11,7 @@
                         <h1 class="display-2 text-white w-100">Sección de Agenda</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         <div class="col-12">
-                            <div class="row buttons">
+                            <div style="width:120%" class="row buttons">
                                 <base-button v-if="validRoute('agendamiento', 'agendar')" @click="modals.modal1 = true , initialState()"  type="success">Agendar</base-button>
                                 <base-button v-if="validRoute('agendamiento', 'procesar')" class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" type="primary">
                                     <span>Ventas por procesar</span>
@@ -995,7 +995,11 @@
         this.getUsers()
         this.getDates()
         this.getClosed()
-        
+        $(document).ready(function(){
+            for (let i = 35; i < 42; i++) {
+                $(".vuecal__cell").eq(i).hide()
+            }
+        });
     },
     destroyed () {
         window.removeEventListener('scroll', this.handleScroll);

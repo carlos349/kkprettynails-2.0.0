@@ -1,6 +1,6 @@
 const server = 'kkprettynailsback.syswa.net'
 const portClient = '3389'
-const endpointTarget = `https://${server}`
+const endpointTarget = `http://localhost:4200`
 const imgEndpoint = `${endpointTarget}/static/users/`
 
 

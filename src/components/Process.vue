@@ -183,21 +183,7 @@
                         />
                     </div>
                 </div>
-                <div class="col-6">
-                    <div v-on:change="changeDate">
-                        <base-input addon-left-icon="ni ni-calendar-grid-58">
-                            <flat-picker 
-                                    slot-scope="{focus, blur}"
-                                    @on-open="focus"
-                                    @on-close="blur"
-                                    :config="{allowInput: true}"
-                                    class="form-control datepicker"
-                                    aria-placeholder="Seleccione una fecha"
-                                    v-model="dates.dateSale">
-                            </flat-picker>
-                        </base-input>
-                    </div>
-                </div>
+                
             </div>
             <div class="row">
                 <div class="col-6">
@@ -389,13 +375,13 @@
         <modal :show.sync="modals.modal5"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
-               
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  body-classes="px-lg-5 "
                   class="border-0">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div style="margin-top:-10%" class="text-muted text-center mb-3">
                         <h3>Validación de codigo</h3>
                     </div>
                 </template>

@@ -202,14 +202,18 @@
             </template>
             <template slot="reportSale" slot-scope="props">
                 <center v-if="validRoute('ventas', 'detalle')" >
-                    <base-button v-if="props.row.status" icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataReport(props.row._id)">Detalle</base-button>
-                    <base-button v-else icon="ni ni-fat-add" size="sm" type="danger" v-on:click="dataReport(props.row._id)">Detalle</base-button>
+                    <base-button v-if="props.row.status" icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataReport(props.row._id)"></base-button>
+                    <base-button v-else icon="ni ni-fat-add" size="sm" type="danger" v-on:click="dataReport(props.row._id)"></base-button>
                 </center>
                 <center v-else >
-                    <base-button v-if="props.row.status" icon="ni ni-fat-add" disabled size="sm" type="default" v-on:click="dataReport(props.row._id)">Detalle</base-button>
-                    <base-button v-else icon="ni ni-fat-add" disabled size="sm" type="danger" v-on:click="dataReport(props.row._id)">Detalle</base-button>
+                    <base-button v-if="props.row.status" icon="ni ni-fat-add" disabled size="sm" type="default" v-on:click="dataReport(props.row._id)"></base-button>
+                    <base-button v-else icon="ni ni-fat-add" disabled size="sm" type="danger" v-on:click="dataReport(props.row._id)"></base-button>
                 </center>
                
+            </template>
+            <template slot="pagination-info" slot-scope="props">
+                Actuales {{props.currentPageRowsLength}} | 
+                Registros totales {{props.originalRowsLength}}
             </template>
         </vue-bootstrap4-table>
         <center v-else>

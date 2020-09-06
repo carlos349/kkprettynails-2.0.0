@@ -238,7 +238,6 @@
             </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
-                 Filtrados {{props.filteredRowsLength}} | 
                 Registros totales {{props.originalRowsLength}}
             </template>
             <template slot="selected-rows-info" slot-scope="props">
@@ -383,7 +382,13 @@ import XLSX from 'xlsx'
     },
     created(){
 		this.getClients();
-        this.getToken()
+        this.getToken();
+        $(document).ready(function(){
+    $(".page-link").click(function(){
+      console.log("asdasd")
+      $("html, body").animate({ scrollTop: 0 }, "slow");
+    });
+  });
     },
     methods: {
         getToken(){

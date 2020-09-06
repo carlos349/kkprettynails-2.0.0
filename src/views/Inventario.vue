@@ -47,7 +47,7 @@
                   </template>
                   <template slot="pagination-info" slot-scope="props">
                       Actuales {{props.currentPageRowsLength}} | 
-                        Filtrados {{props.filteredRowsLength}} | 
+                         
                       Registros totales {{props.originalRowsLength}}
                   </template>
                   <template slot="selected-rows-info" slot-scope="props">
@@ -79,7 +79,7 @@
                   
                   <template slot="pagination-info" slot-scope="props">
                       Actuales {{props.currentPageRowsLength}} | 
-                        Filtrados {{props.filteredRowsLength}} | 
+                         
                       Registros totales {{props.originalRowsLength}}
                   </template>
                   <template slot="selected-rows-info" slot-scope="props">
@@ -117,7 +117,7 @@
                               
                               <template slot="pagination-info" slot-scope="props">
                                   Actuales {{props.currentPageRowsLength}} | 
-                                    Filtrados {{props.filteredRowsLength}} | 
+                                     
                                   Registros totales {{props.originalRowsLength}}
                               </template>
                               <template slot="selected-rows-info" slot-scope="props">
@@ -146,7 +146,7 @@
                               
                               <template slot="pagination-info" slot-scope="props">
                                   Actuales {{props.currentPageRowsLength}} | 
-                                    Filtrados {{props.filteredRowsLength}} | 
+                                     
                                   Registros totales {{props.originalRowsLength}}
                               </template>
                               <template slot="selected-rows-info" slot-scope="props">
@@ -370,7 +370,7 @@
         <vue-bootstrap4-table class="tableClient" :rows="reports" :columns="columHistoryReport" :classes="classes" :config="config">
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
-                  Filtrados {{props.filteredRowsLength}} | 
+                   
                 Registros totales {{props.originalRowsLength}}
             </template>
             <template slot="selected-rows-info" slot-scope="props">
@@ -784,6 +784,14 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
               showConfirmButton: false,
               timer: 1500
             })
+            this.provider = {
+              name:'',
+              rut:'',
+              contact:'',
+              contactPlus:'',
+              direction:'',
+            }
+            
             this.getProducts();
             this.getProviders();
           }else{

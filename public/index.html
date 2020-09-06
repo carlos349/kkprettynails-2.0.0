@@ -22,11 +22,11 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
   </body>
  <script>
-  //  $("#app").scroll(function() {
-  //           if ($(this).scrollTop()==0){
-  //           //Ejecutar función
-  //           alert('Top!!');
-  //           }
-  //       });
+  $(document).ready(function(){
+    
+    $(document).on('click','.page-link',function(){
+      window.scrollTo({ top: 100, left: 100, behavior: 'smooth' });
+    });
+  });
  </script>
 </html>
