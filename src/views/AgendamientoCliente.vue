@@ -100,7 +100,7 @@
                     <tab-content title="Profesionales" icon="fa fa-users" :before-change="validateLastStep">
                         <div class="row">
                             <div class="col-md-4" style="margin-top:16px;">
-                                <div class="w-75 mx-auto" >
+                                <div class="w-75 mx-auto" v-on:click="modals.modal3 = true">
                                     <h4 class="text-center text-uppercase">Fechas disponibles</h4>
                                     <base-input addon-left-icon="ni ni-calendar-grid-58 clickCalendar" style="cursor:pointer;" >
                                         <flat-picker 
@@ -109,6 +109,7 @@
                                                 @on-open="focus"
                                                 @on-close="blur"
                                                 :config="configDate"
+                                                disabled
                                                 placeholder="Seleccione una fecha" 
                                                 class="form-control date-client datepicker pl-3"
                                                 aria-placeholder="Seleccione una fecha"
@@ -508,7 +509,7 @@
                     lastName: '',
                     phone: '',
                     pay: 'Presencial efectivo',
-                    pdf: ''
+                    pdf: 'danger'
                 },
                 totalPrice: 0,
                 validWizard: true,
@@ -519,8 +520,8 @@
                     modal3: false,
                     modal4: false,
                     modal5: false,
-                    message: "",
-                    icon: '',
+                    message: "Disculpa, las citas todavia no están habilitadas",
+                    icon: 'ni ni-fat-remove ni-5x',
                     type:''
                 },
                 arrayLendersSelect: [],
@@ -571,6 +572,7 @@
             this.getLenders()
             this.getServices()
             this.getCategories()
+            this.modals.modal3 = true
         },
         methods: {
             handleFileUpload(){
