@@ -351,7 +351,7 @@
                                     </div>
                                 </div> 
                                 <div v-if="registerUser.pay == 'Transferencia'">
-                                    <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
+                                    <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" :disabled="ifDisabled" v-if="validRegister" type="success" v-on:click="finallyAgend()">
                                         Finalizar agenda
                                     </base-button>  
                                     <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
@@ -359,7 +359,7 @@
                                     </base-button>
                                 </div>
                                 <div v-else class="mt-5">
-                                    <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
+                                    <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" :disabled="ifDisabled" v-if="validRegister" type="success" v-on:click="finallyAgend()">
                                         Finalizar agenda
                                     </base-button>  
                                     <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
@@ -568,7 +568,8 @@
                 selectServiceForHour: {},
                 validRegister: false,
                 client: '',
-                file: ''
+                file: '',
+                ifDisabled: false
             }
         },
         created(){
@@ -714,6 +715,7 @@
                 })
             },
             finallyAgend(){
+                this.ifDisabled = true
                 if (this.registerUser.pay == 'Transferencia' && this.file == '') {
                     this.modals = {
                         modal3: true,
@@ -722,6 +724,7 @@
                         type: 'danger'
                     }
                     setTimeout(() => {
+                        this.ifDisabled = false
                         this.modals = {
                             modal1:false,
                             modal2:true,
@@ -776,6 +779,7 @@
                                         this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
                                         this.modals.modal2 = false
                                         this.modals.modal4 = true
+                                        this.ifDisabled = false
                                     }    
                                 })   
                             })
@@ -789,6 +793,7 @@
                             })
                             .then(res => {
                                 if (res.data.status == "cita creada") {
+                                    this.ifDisabled = false
                                     this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
                                     this.modals.modal2 = false
                                     this.modals.modal4 = true
