@@ -738,6 +738,7 @@
                     axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
                         name: name,
                         mail: this.registerUser.mail,
+                        number: this.registerUser.phone,
                         referidoId: ''
                     })
                     .then(res => {
