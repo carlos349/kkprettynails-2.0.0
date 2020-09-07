@@ -85,6 +85,7 @@
                             <option style="color:black;" value="4">Jueves</option>
                             <option style="color:black;" value="5">Viernes</option>
                             <option style="color:black;" value="6">Sabado</option>
+                            <option style="color:black;" value="10">Ninguno</option>
                         </select>
                         <div class="text-center">
                             <base-button type="primary" v-if="registerEmploye.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
@@ -141,7 +142,7 @@
             </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
-                 Filtrados {{props.filteredRowsLength}} | 
+               
                 Registros totales {{props.originalRowsLength}}
             </template>
             <template slot="selected-rows-info" slot-scope="props">
@@ -371,7 +372,7 @@ import jwtDecode from 'jwt-decode'
 					if(res.data.status == "Manicurista Editada"){
 						this.modals = {
                             modal2: true,
-                            message: "¡Emplado editado con exito!",
+                            message: "¡Empleado editado con exito!",
                             icon: 'ni ni-check-bold ni-5x',
                             type: 'success'
                         }
@@ -408,7 +409,7 @@ import jwtDecode from 'jwt-decode'
                         if(res.data.status = 'Prestador borrado'){
                             this.modals = {
                                 modal2: true,
-                                message: "¡Emplado eliminado!",
+                                message: "¡Empleado eliminado!",
                                 icon: 'ni ni-check-bold ni-5x',
                                 type: 'success'
                             }

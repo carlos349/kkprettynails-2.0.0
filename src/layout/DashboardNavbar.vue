@@ -33,7 +33,7 @@
               <div style="z-index:10000" class="dropdown-menu dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
                
                 <!-- List group -->
-                <div class="list-group list-group-flush">
+                <div class="list-group list-group-flush" style="z-index:10000">
                   <a v-for="notification in notifications" href="#!" class="list-group-item list-group-item-action">
                     <router-link :to="notification.link">
                       <div class="row align-items-center">

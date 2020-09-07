@@ -239,8 +239,7 @@
                 </base-button> 
             </template>
             <template slot="pagination-info" slot-scope="props">
-                Actuales {{props.currentPageRowsLength}} | 
-                 Filtrados {{props.filteredRowsLength}} | 
+                Actuales {{props.currentPageRowsLength}} |  
                 Registros totales {{props.originalRowsLength}}
             </template>
             <template slot="selected-rows-info" slot-scope="props">

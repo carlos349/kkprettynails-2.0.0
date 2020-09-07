@@ -4,10 +4,10 @@
             <div class="card bg-secondary shadow border-0">
                 <div class="card-body px-lg-5 py-lg-5">
                     <div class="btn-wrapper text-center mb-4">
-                        <span class="mb-5"><img style="width:40%" src="img/brand/syswa-gestion.png"></span>
+                        <span class="mb-5"><img style="width:30%" src="img/brand/syswa-isotipo.png"></span> <br><br>
                     </div>
-                    <form role="form">
-                        <base-input class="input-group-alternative mb-3"
+                    <form class="mt-3" role="form">
+                        <base-input class="input-group-alternative mt-4 mb-3"
                                     placeholder="Correo"
                                     addon-left-icon="ni ni-email-83"
                                     v-model="model.email">
@@ -21,14 +21,15 @@
                         </base-input>
 
                         <div class="text-center">
-                            <base-button type="primary" v-on:click="login()" class="my-4">Ingresar</base-button>
+                            <base-button type="default" v-on:click="login()" class="my-2">Ingresar</base-button> <br>
+                            
                         </div>
                     </form>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-6">
-                    <a href="#" class="text-light" v-on:click="modals.modal2 = true"><small>Olvidaste la contraseña?</small></a>
+                    
                 </div>
             </div>
         </div>
