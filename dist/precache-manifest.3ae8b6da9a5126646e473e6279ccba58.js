@@ -12,20 +12,20 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-cover.jpg"
   },
   {
-    "revision": "968a647fd4962662ee8c",
-    "url": "/js/chunk-224d2132.25c78c6b.js"
-  },
-  {
-    "revision": "7a7eb629e27c8097cf54",
-    "url": "/js/chunk-68cc9a36.8e340d4a.js"
+    "revision": "85e5d08b5cdb71242690",
+    "url": "/js/chunk-224d2132.3114e6c5.js"
   },
   {
     "revision": "f703eaaed9a404e2b342a4d5d98f261a",
     "url": "/img/theme/reportes.jpg"
   },
   {
-    "revision": "8ec68ca73b32d42f9706",
-    "url": "/js/chunk-bcfcbab4.0d9a1af5.js"
+    "revision": "d553348cf6ac56fe0f51",
+    "url": "/js/chunk-42bb221a.35ed6fd9.js"
+  },
+  {
+    "revision": "7a7eb629e27c8097cf54",
+    "url": "/js/chunk-68cc9a36.8e340d4a.js"
   },
   {
     "revision": "3b5703a1ae7299076c26f5a6513a93b5",
@@ -40,8 +40,8 @@ self.__precacheManifest = [
     "url": "/img/theme/users.jpg"
   },
   {
-    "revision": "45c607d39185165316a8",
-    "url": "/js/demo.6b8dcb12.js"
+    "revision": "f7481baf7e66eff4c7e0",
+    "url": "/js/demo.1df8684e.js"
   },
   {
     "revision": "d272b05fa09aaad4cb84463d148cef01",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "23bda786c3bbf91fc09bb53ccef4e960",
+    "revision": "0de3f965e40e87f99c71caf60bdfb5d9",
     "url": "/index.html"
   },
   {
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "e3b414c8a08bda7d54f4",
-    "url": "/js/app.80ab2046.js"
+    "revision": "2bfd8c9e61a4e88a488e",
+    "url": "/js/app.27cb2164.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -140,8 +140,8 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "e3b414c8a08bda7d54f4",
-    "url": "/css/app.b2e0f068.css"
+    "revision": "2bfd8c9e61a4e88a488e",
+    "url": "/css/app.c06c87ae.css"
   },
   {
     "revision": "afb0175f4417917d8cb162e0884b5fa9",
@@ -160,11 +160,11 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
-    "revision": "968a647fd4962662ee8c",
+    "revision": "85e5d08b5cdb71242690",
     "url": "/css/chunk-224d2132.9ea7f80b.css"
   },
   {
-    "revision": "45c607d39185165316a8",
+    "revision": "f7481baf7e66eff4c7e0",
     "url": "/css/demo.2217c147.css"
   },
   {
@@ -172,8 +172,8 @@ self.__precacheManifest = [
     "url": "/css/chunk-vendors.47a9ace2.css"
   },
   {
-    "revision": "8ec68ca73b32d42f9706",
-    "url": "/css/chunk-bcfcbab4.1b013227.css"
+    "revision": "d553348cf6ac56fe0f51",
+    "url": "/css/chunk-42bb221a.96837d82.css"
   },
   {
     "revision": "16d4b55f8b1c1f2cc3782a3e3386c329",
