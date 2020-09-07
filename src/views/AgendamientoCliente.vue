@@ -401,7 +401,7 @@
                             <p class="text-center">+56 9 7262 8949</p>
                         </div>
                     </div>
-                    <base-button class="w-25" style="float:right;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="location">
+                    <base-button style="width:200px;float:right;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="location">
                         Finalizar
                     </base-button>
                 </template>
@@ -1425,7 +1425,7 @@
                                     }else{
                                         this.modals = {
                                             modal3: true,
-                                            message: "No tenemos hay prestadores disponibles, para la fecha.",
+                                            message: "No contamos con profesionales disponibles para la fecha seleccionada.",
                                             icon: 'ni ni-fat-remove ni-5x',
                                             type: 'danger'
                                         }
@@ -1958,6 +1958,13 @@ color: #174c8e;
 }
 @media only screen and (max-width: 468px)
 {
+    .styleDropdown .dropdown-menu{
+        width: 100%;
+        left: 0%;
+    }
+    .styleDropdown .dropdown-item{
+        font-size:0.600rem !important;
+    }
 	.name-service{
         font-size: 1em;
         z-index:1;
