@@ -1658,7 +1658,7 @@
             })
         },
         register(){
-            var lenderFinal = ''
+            var lenderaopl = ''
             var hourFinal = ''
             for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                 const element = this.registerDae.serviceSelectds[index];
@@ -2625,19 +2625,17 @@
                 const restDay = new Date(this.finalDate+' 10:00')
                 this.getDay = restDay.getDay()
                 if (this.getDay == 0 || this.getDay == 6) {
-                    this.modals = {
-                        modal3: true,
+                    this.modals.modal1 = false
+                    this.modalsDialog = {
+                        modal2: true,
                         message: "No laboramos Sábados y Domingos.",
                         icon: 'ni ni-fat-remove ni-5x',
                         type: 'danger'
                     }
                     setTimeout(() => {
-                        this.modals = {
-                            modal1:false,
-                            modal2:false,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
+                        this.modals.modal1 = true
+                        this.modalsDialog = {
+                            modal2: true,
                             message: "",
                             icon: '',
                             type: ''
@@ -2685,27 +2683,23 @@
                                     this.validMultiLender(0, finalLender, this.registerDae.serviceSelectds[0].duration, finalRestime)
                                     this.readyChange = true
                                 }else{
-                                    this.modals = {
-                                        modal3: true,
+                                    this.modals.modal1 = false
+                                    this.modalsDialog = {
+                                        modal2: true,
                                         message: "No tenemos hay prestadores disponibles, para la fecha.",
                                         icon: 'ni ni-fat-remove ni-5x',
                                         type: 'danger'
                                     }
                                     setTimeout(() => {
-                                        this.modals = {
-                                            modal1:false,
-                                            modal2:false,
-                                            modal3: false,
-                                            modal4: false,
-                                            modal5: false,
+                                        this.modals.modal1 = true
+                                        this.modalsDialog = {
+                                            modal2: true,
                                             message: "",
                                             icon: '',
                                             type: ''
                                         }
                                     }, 3000);
-                                }
-                                
-                                
+                                }  
                             })
                         }, 200); 
                     }else{
@@ -2740,19 +2734,17 @@
                                     this.validMultiLender(0, finalLender, this.registerDae.serviceSelectds[0].duration, finalRestime)
                                     this.readyChange = true
                                 }else{
-                                    this.modals = {
-                                        modal3: true,
+                                    this.modals.modal1 = false
+                                    this.modalsDialog = {
+                                        modal2: true,
                                         message: "No tenemos hay prestadores disponibles, para la fecha.",
                                         icon: 'ni ni-fat-remove ni-5x',
                                         type: 'danger'
                                     }
                                     setTimeout(() => {
-                                        this.modals = {
-                                            modal1:false,
-                                            modal2:false,
-                                            modal3: false,
-                                            modal4: false,
-                                            modal5: false,
+                                        this.modals.modal1 = true
+                                        this.modalsDialog = {
+                                            modal2: true,
                                             message: "",
                                             icon: '',
                                             type: ''
