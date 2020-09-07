@@ -14,7 +14,7 @@
                         <div class="row">
                             <div class="showDevice col-md-12 row">
                                 <div style="width:auto;" class="mx-auto" >
-                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist" style="wi">
+                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                         <li v-for="(category, index) of categories" :key="category._id" class="nav-item responsiveItem" role="presentation">
                                             <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
                                         </li>
@@ -95,12 +95,16 @@
                                     <span class="ml-5 font-weight-bold spanSelect" style="color:#090909;" id="not" v-on:click="selectDesign('second')">No</span>
                                 </div>
                             </div>
+                            <div class="w-100 mt-2">
+                                <h4 class="text-center"><b style="color:red;font-weight:600;">¡Atención!</b> El costo del servicio no incluye diseños, estos tienen un valor adicional <br> y será indicado por la profesionales durante la atención.</h4>
+                            </div>
+                            
                         </div>
                     </tab-content>
                     <tab-content title="Profesionales" icon="fa fa-users" :before-change="validateLastStep">
                         <div class="row">
                             <div class="col-md-4" style="margin-top:16px;">
-                                <div class="w-75 mx-auto" v-on:click="modals.modal3 = true">
+                                <div class="w-75 mx-auto" >
                                     <h4 class="text-center text-uppercase">Fechas disponibles</h4>
                                     <base-input addon-left-icon="ni ni-calendar-grid-58 clickCalendar" style="cursor:pointer;" >
                                         <flat-picker 
@@ -109,7 +113,6 @@
                                                 @on-open="focus"
                                                 @on-close="blur"
                                                 :config="configDate"
-                                                disabled
                                                 placeholder="Seleccione una fecha" 
                                                 class="form-control date-client datepicker pl-3"
                                                 aria-placeholder="Seleccione una fecha"
@@ -572,7 +575,6 @@
             this.getLenders()
             this.getServices()
             this.getCategories()
-            this.modals.modal3 = true
         },
         methods: {
             handleFileUpload(){
@@ -597,7 +599,7 @@
                         icon: '',
                         type: ''
                     }
-                    window.location = 'https://kkprettynails.cl/inicio'
+                    window.location = 'https://kkprettynails.cl/'
                 }, 3000);
                 
             },
@@ -765,7 +767,8 @@
                                     dataDate: this.registerDate,
                                     date: this.finalDate,
                                     client: this.registerUser,
-                                    pdf: res.data.nameFile
+                                    pdf: res.data.nameFile,
+                                    ifClient: true
                                 })
                                 .then(res => {
                                     if (res.data.status == "cita creada") {
@@ -780,7 +783,8 @@
                                 dataDate: this.registerDate,
                                 date: this.finalDate,
                                 client: this.registerUser,
-                                pdf: 'not'
+                                pdf: 'not',
+                                ifClient: true
                             })
                             .then(res => {
                                 if (res.data.status == "cita creada") {
@@ -833,13 +837,21 @@
                     axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                     .then(res => {
                         var lenderSelect = ''
+                        console.log(res)
+                        console.log(lenders)
+                        var validCounter = false
                         for (let j = index; j < res.data.array.length; j++) {
                             const element = res.data.array[j];
                             for (let x = 0; x < lenders.length; x++) {
                                 const elementTwo = lenders[x];
                                 if (element.name == elementTwo.lender) {
                                     lenderSelect = x
+                                    validCounter = true
+                                    break
                                 }
+                            }
+                            if (validCounter) {
+                                break
                             }
                         }
                         if (lenderSelect == '') {
@@ -1350,125 +1362,146 @@
                     this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
                     const restDay = new Date(this.finalDate+' 10:00')
                     this.getDay = restDay.getDay()
-                    if (this.readyChange) {
-                        for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                            const element = this.registerDate.serviceSelectds[index];
-                            element.start = ''
-                            element.end = ''
-                            element.sort = ''
-                            element.blocks = []
-                            element.valid = false
+                    if (this.getDay == 0 || this.getDay == 6) {
+                        this.modals = {
+                            modal3: true,
+                            message: "Disculpa, No laboramos Sábados y Domingos.",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
                         }
-                        this.validHour = false
                         setTimeout(() => {
-                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
-                            .then(res => {
-                                console.log(res)
-                                var counter = 0
-                                var validCounter = false
-                                for (let i = 0; i < res.data.array.length; i++) {
-                                    const element = res.data.array[i];
-                                    for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
-                                        const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
-                                        if (element.name == elementTwo.lender) {
-                                            counter = j
-                                            validCounter = true
-                                            break
-                                        }
-                                    }
-                                    if (validCounter) {
-                                        break
-                                    }
-                                }
-                                console.log(validCounter)
-                                if (validCounter) {
-                                    const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
-                                    const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
-                                    this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
-                                    console.log(finalLender)
-                                    this.registerDate.serviceSelectds[0].valid = true
-                                    this.registerDate.serviceSelectds[0].realLender = finalLender
-                                    this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
-                                    this.readyChange = true
-                                }else{
-                                    this.modals = {
-                                        modal3: true,
-                                        message: "No tenemos hay prestadores disponibles, para la fecha.",
-                                        icon: 'ni ni-fat-remove ni-5x',
-                                        type: 'danger'
-                                    }
-                                    setTimeout(() => {
-                                        this.modals = {
-                                            modal1:false,
-                                            modal2:false,
-                                            modal3: false,
-                                            modal4: false,
-                                            modal5: false,
-                                            message: "",
-                                            icon: '',
-                                            type: ''
-                                        }
-                                    }, 3000);
-                                }
-                                
-                                
-                            })
-                        }, 200); 
+                            this.modals = {
+                                modal1:false,
+                                modal2:false,
+                                modal3: false,
+                                modal4: false,
+                                modal5: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 3000);
                     }else{
-                        setTimeout(() => {
-                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
-                            .then(res => {
-                                console.log(res)
-                                var counter = 0
-                                var validCounter = false
-                                for (let i = 0; i < res.data.array.length; i++) {
-                                    const element = res.data.array[i];
-                                    for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
-                                        const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
-                                        if (element.name == elementTwo.lender) {
-                                            counter = j
-                                            validCounter = true
+                        if (this.readyChange) {
+                            for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                                const element = this.registerDate.serviceSelectds[index];
+                                element.start = ''
+                                element.end = ''
+                                element.sort = ''
+                                element.blocks = []
+                                element.valid = false
+                            }
+                            this.validHour = false
+                            setTimeout(() => {
+                                axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                                .then(res => {
+                                    console.log(res)
+                                    var counter = 0
+                                    var validCounter = false
+                                    for (let i = 0; i < res.data.array.length; i++) {
+                                        const element = res.data.array[i];
+                                        for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
+                                            const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
+                                            if (element.name == elementTwo.lender) {
+                                                counter = j
+                                                validCounter = true
+                                                break
+                                            }
+                                        }
+                                        if (validCounter) {
                                             break
                                         }
                                     }
+                                    console.log(validCounter)
                                     if (validCounter) {
-                                        break
-                                    }
-                                }
-                                console.log(validCounter)
-                                if (validCounter) {
-                                    const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
-                                    const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
-                                    this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
-                                    console.log(finalLender)
-                                    this.registerDate.serviceSelectds[0].valid = true
-                                    this.registerDate.serviceSelectds[0].realLender = finalLender
-                                    this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
-                                    this.readyChange = true
-                                }else{
-                                    this.modals = {
-                                        modal3: true,
-                                        message: "No tenemos hay prestadores disponibles, para la fecha.",
-                                        icon: 'ni ni-fat-remove ni-5x',
-                                        type: 'danger'
-                                    }
-                                    setTimeout(() => {
+                                        const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
+                                        const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
+                                        this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
+                                        console.log(finalLender)
+                                        this.registerDate.serviceSelectds[0].valid = true
+                                        this.registerDate.serviceSelectds[0].realLender = finalLender
+                                        this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
+                                        this.readyChange = true
+                                    }else{
                                         this.modals = {
-                                            modal1:false,
-                                            modal2:false,
-                                            modal3: false,
-                                            modal4: false,
-                                            modal5: false,
-                                            message: "",
-                                            icon: '',
-                                            type: ''
+                                            modal3: true,
+                                            message: "No tenemos hay prestadores disponibles, para la fecha.",
+                                            icon: 'ni ni-fat-remove ni-5x',
+                                            type: 'danger'
                                         }
-                                    }, 3000);
-                                }
-                                
-                                
-                            })
-                        }, 200); 
+                                        setTimeout(() => {
+                                            this.modals = {
+                                                modal1:false,
+                                                modal2:false,
+                                                modal3: false,
+                                                modal4: false,
+                                                modal5: false,
+                                                message: "",
+                                                icon: '',
+                                                type: ''
+                                            }
+                                        }, 3000);
+                                    }
+                                    
+                                    
+                                })
+                            }, 200); 
+                        }else{
+                            setTimeout(() => {
+                                axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                                .then(res => {
+                                    console.log(res)
+                                    var counter = 0
+                                    var validCounter = false
+                                    for (let i = 0; i < res.data.array.length; i++) {
+                                        const element = res.data.array[i];
+                                        for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
+                                            const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
+                                            if (element.name == elementTwo.lender) {
+                                                counter = j
+                                                validCounter = true
+                                                break
+                                            }
+                                        }
+                                        if (validCounter) {
+                                            break
+                                        }
+                                    }
+                                    console.log(validCounter)
+                                    if (validCounter) {
+                                        const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
+                                        const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
+                                        this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
+                                        console.log(finalLender)
+                                        this.registerDate.serviceSelectds[0].valid = true
+                                        this.registerDate.serviceSelectds[0].realLender = finalLender
+                                        this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
+                                        this.readyChange = true
+                                    }else{
+                                        this.modals = {
+                                            modal3: true,
+                                            message: "No tenemos hay prestadores disponibles, para la fecha.",
+                                            icon: 'ni ni-fat-remove ni-5x',
+                                            type: 'danger'
+                                        }
+                                        setTimeout(() => {
+                                            this.modals = {
+                                                modal1:false,
+                                                modal2:false,
+                                                modal3: false,
+                                                modal4: false,
+                                                modal5: false,
+                                                message: "",
+                                                icon: '',
+                                                type: ''
+                                            }
+                                        }, 3000);
+                                    }
+                                    
+                                    
+                                })
+                            }, 200); 
+                        }
                     }
                 }, 200);
             },
@@ -1878,14 +1911,14 @@ color: #174c8e;
 }
 .spanSelect{
     cursor:pointer;
-    border-radius: 20px; 
+    border-radius: 50%; 
     transition: all 0.4s ease-out;
 }
 .spanSelect:nth-child(1n){
-    padding: 8px 10px;
+    padding: 8px 12px;
 }
 .spanSelect:nth-child(2n){
-    padding: 10px 6px;
+    padding: 10px 10px;
 }
 .spanSelect:hover{
     background-color: #7a91cb;

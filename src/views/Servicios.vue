@@ -35,52 +35,61 @@
                 </template>
                 <template>
                     <form role="form">
-                        <base-input alternative
-                            class="col-sm-12 mb-3"
-                            placeholder="Nombre"
-                            addon-left-icon="ni ni-single-copy-04"
-                            v-model="serviceRegister"
-                            addon-right-icon="fa fa-asterisk text-danger" >
-                        </base-input>
-                        <div class="row m-0 p-0 pr-3 col-sm-12">
+                        <div class="row m-0">
                             <base-input alternative
-                                v-on:keyup="pruebameEste()"
-                                max-count="100"
-                                placeholder="Comisión (%)"
-                                addon-left-icon="ni ni-money-coins"
-                                v-model="comissionRegister"
-                                class="col-sm-4 mx-auto"
+                                class="col-sm-12 mb-3"
+                                placeholder="Nombre"
+                                addon-left-icon="ni ni-single-copy-04"
+                                v-model="serviceRegister"
                                 addon-right-icon="fa fa-asterisk text-danger" >
                             </base-input>
-                            <currency-input
-                                v-model="priceRegister"
-                                locale="de"
-                                placeholder="Costo"
-                                class="form-control mx-auto col-sm-3"
-                                style=""
-                            />
-                            <select class="form-control col-sm-4 mx-auto mb-3" v-model="categoryRegister">
-                                <option style="color:black;">Categoria</option>
-                                <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
-                            </select>
-                            <select class="form-control col-sm-5 mx-auto mb-3" v-model="timeRegister">
-                                <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
-                                <option style="color:black;" value="15">15 Minutos</option>
-                                <option style="color:black;" value="30">30 Minutos</option>
-                                <option style="color:black;" value="45">45 Minutos</option>
-                                <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
-                                <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
-                                <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
-                                <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
-                                <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
-                                <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
-                                <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
-                            </select>
+                            <div class="col-md-4">
+                                <base-input alternative
+                                    v-on:keyup="pruebameEste()"
+                                    max-count="100"
+                                    placeholder="Comisión (%)"
+                                    addon-left-icon="ni ni-money-coins"
+                                    v-model="comissionRegister"
+                                    addon-right-icon="fa fa-asterisk text-danger" >
+                                </base-input>
+                            </div>
+                            <div class="col-md-4">
+                                <currency-input
+                                    v-model="priceRegister"
+                                    locale="de"
+                                    placeholder="Costo"
+                                    class="form-control w-100   "
+                                    style=""
+                                />
+
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-control mb-3" v-model="categoryRegister">
+                                    <option style="color:black;">Categoria</option>
+                                    <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6"> 
+                                <select class="form-control mb-3" v-model="timeRegister">
+                                    <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
+                                    <option style="color:black;" value="15">15 Minutos</option>
+                                    <option style="color:black;" value="30">30 Minutos</option>
+                                    <option style="color:black;" value="45">45 Minutos</option>
+                                    <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+                                    <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
+                                    <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
+                                    <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
+                                    <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
+                                    <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
+                                    <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
+                                </select>
+
+                            </div>
                             <div style="margin-top:-10px" class="row col-sm-6 mx-auto">
-                            <h3 class="w-100 text-center">¿Aplica descuento?</h3>
-                            <base-radio name="false" value="true" inline class="mb-3 mx-auto" v-model="addDiscount"> <b>Si</b> </base-radio>
-                            <base-radio name="true" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
-                        </div>
+                                <h3 class="w-100 text-center">¿Aplica descuento?</h3>
+                                <base-radio name="false" value="true" inline class="mb-3 mx-auto" v-model="addDiscount"> <b>Si</b> </base-radio>
+                                <base-radio name="true" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
+                            </div>
                         </div>
                         	
                         
@@ -325,7 +334,7 @@
                 <template>
                     <vue-bootstrap4-table :rows="categories" :columns="columnsCategories" class="class_categories" :classes="classes" :config="configCategories">
                         <template slot="deleteCat" slot-scope="props">
-                            <base-button class="text-center float-right" icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="deleteCategory(props.row._id)">Borrar</base-button> 
+                            <base-button class="text-center float-right mr-2" icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="deleteCategory(props.row._id)">Borrar</base-button> 
                         </template>
                     </vue-bootstrap4-table>
                     <base-button type="success" class="mt-1 float-right" @click="modals.modal6 = true">Nueva categoria

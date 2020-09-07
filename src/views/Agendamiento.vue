@@ -65,76 +65,208 @@
                 
                 <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
-                    <h2 v-if="registerDate.valid == true" slot="title">Datos de agendamiento </h2>
+                    <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
 
-                    <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateWizardOne">
+                    <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateFirstStep">
                         <template>
                             <div class="text-muted text-center p-0">
                                 Seleccione los servicios
                             </div>
                         </template>
+                        
                         <div class="col-12">
-                                <center>
-                                    <base-button v-if="registerDate.valid2 == true" disabled type="secondary" class="text-default">
-                                        <font-awesome-icon class="mx-auto"  icon="redo-alt" />
-                                    </base-button>
-                                        <base-button v-else v-on:click="initialState()" type="secondary" class="text-default">
-                                        <font-awesome-icon class="mx-auto"  icon="redo-alt" />
-                                    </base-button>
-                                </center>
-                                
-                        </div>
-                        <vue-custom-scrollbar v-on:scroll="scroll()" class="row p-2" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                            <div v-for="(name, index) in services" class="col-md-6 col-sm-12 pl-1 mt-2">
-                                <base-button v-on:click="pushService(name.prestadores,name.nombre,name.tiempo, name.comision, name.precio,name.descuento,index)" class="col-12 "  type="default">
-                                    <badge class="float-left text-white col-md-2 col-sm-12" pill type="default">
-                                        <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
-                                        <i class="far fa-clock ml-1"></i> {{name.tiempo}}Min
-                                    </badge>
-                                    <span class="float-left">{{name.nombre}}</span>
-                                    <badge class="text-default float-right col-md-1 col-sm-12" type="white">{{countServices[index].count}}</badge>
+                            <center>
+                                <base-button v-if="registerDate.valid2 == true" disabled type="secondary" class="text-default">
+                                    <font-awesome-icon class="mx-auto"  icon="redo-alt" />
                                 </base-button>
+                                    <base-button v-else v-on:click="initialState()" type="secondary" class="text-default">
+                                    <font-awesome-icon class="mx-auto"  icon="redo-alt" />
+                                </base-button>
+                            </center>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="row col-md-12">
+                                <div style="width:auto;" class="mx-auto">
+                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                        <li v-for="(category, index) of categories" :key="category._id" class="nav-item responsiveItem" role="presentation">
+                                            <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
+                                        </li>
+                                    </ul>   
+                                </div>
+                                <vue-custom-scrollbar class="w-100" v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                    <div class="tab-content" id="pills-tabContent">
+                                        <div v-for="category of categories" :key="category._id" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                            <div class="row">
+                                                <template v-for="(name, index) of services" >
+                                                    <div class="col-lg-6 mt-2" :key="name" v-if="name.category == category.name">
+                                                        <base-button class="w-100" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores)"  type="default">
+                                                            <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
+                                                                <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
+                                                                <i class="far fa-clock ml-1"></i> {{name.tiempo}}Min
+                                                            </badge>
+                                                            <span class="float-left">{{name.nombre}}</span>
+                                                            <badge class="text-default float-right col-md-1 col-sm-12" type="white">{{countServices[index].count}}</badge>
+                                                        </base-button>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </vue-custom-scrollbar>
                             </div>
-                        </vue-custom-scrollbar>
-                        <div class="row mx-auto mt-2">
-                            <h3>¿Se realizara un diseño?</h3> 
-                            <base-radio name="si" value="true" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>Si</b> </base-radio>
-                            <base-radio name="no" value="false" inline class="mb-3 ml-5" v-model="registerDate.design"> <b>No</b> </base-radio> 
+                        </div>
+                        <div style="width:auto;" class="mx-auto">
+                            <div class="row mx-auto mt-2">
+                                <h3 class="ml-3">¿Se realizara un diseño?</h3> 
+                                <base-radio name="si" value="true" inline class="mb-3 ml-3" v-model="registerDae.design"> <b>Si</b> </base-radio>
+                                <base-radio name="no" value="false" inline class="mb-3 ml-3" v-model="registerDae.design"> <b>No</b> </base-radio> 
+                            </div>
                         </div>
                     </tab-content>
 
-                    <tab-content icon="ni ni-collection" title="Información" :before-change="validateWizardTwo">
+                    <tab-content icon="ni ni-collection" title="Profesionales" :before-change="validateLastStep">
                         <div class="row">
-                            <div class="col-md-6 p-0 col-sm-12" v-on:keyup.enter="selectClient()" @click="selectClient()">
-                               <vue-single-select
-                                    v-model="registerDate.client"
-                                    :options="clientsNames"
-                                    
-                                    placeholder="Seleccione un cliente"
-                                    class="col-12 mx-auto mt-1"
-                                ></vue-single-select> 
-                            </div>
-                            
-                            <div class="col-md-6 col-sm-12 mx-auto">
+                            <div class="col-md-4 col-sm-12 mx-auto mt-4">
+                                <h4 class="text-center text-uppercase">Fechas disponibles</h4>
                                 <base-input addon-left-icon="ni ni-calendar-grid-58">
                                     <flat-picker slot-scope="{focus, blur}"
+                                                @on-change="openCalendar"
                                                 @on-open="focus"
                                                 @on-close="blur"
                                                 :config="configDatePicker"
                                                 class="form-control datepicker"
-                                                v-model="registerDate.date"
+                                                v-model="registerDae.date"
                                                 placeholder="Seleccione una fecha">
                                     </flat-picker>
                                 </base-input>
                             </div>
+                            <div class="col-md-8">
+                                <div class="row mb-3">
+                                    <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" :key="servicesSelect">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="py-1" style="background-color:#f8fcfd;">
+                                                    <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1">
+                                                        <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
+                                                        <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.servicio}} </span>
+                                                    </badge>
+                                                    <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
+                                                    <base-dropdown class="responsiveButtonsPercent styleDropdown">
+                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid" slot="title" type="default" class="dropdown-toggle w-100">
+                                                            {{servicesSelect.lender}} 
+                                                        </base-button>
+                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                            {{servicesSelect.lender}} 
+                                                        </base-button>
+                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && lenders.restDay != getDay" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.resTime, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
+                                                    </base-dropdown>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 pb-2">
+                                                <div class="py-1" style="background-color:#f8fcfd;">
+                                                    <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1">
+                                                    <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> <br>  
+                                                    </badge>
+                                                    <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
+                                                        <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i></span>
+
+                                                        <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
+                                                    </base-button>
+                                                    <base-button class="responsiveButtonsPercent" v-else style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
+                                                    Seleccione una hora
+                                                    </base-button>
+                                                    <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
+                                                        <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
+                                                            <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.Horario, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>Disponible</span>
+                                                            </base-button>
+                                                            <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>Ocupado</span>
+                                                            </base-button>
+                                                            <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>Seleccionado</span>
+                                                            </base-button>
+                                                            <base-button v-else size="sm" disabled class="col-12" type="secondary">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                <span>No seleccionable</span>
+                                                            </base-button>
+                                                        </div>
+                                                    </vue-custom-scrollbar>
+                                                </div>
+                                            </div>   
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div> 
+                    </tab-content>
+                    <tab-content title="Información" icon="fa fa-question-circle">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-12" >
+                                <div class="row">
+                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDae.serviceSelectds" :key="data">
+                                        <div class="p-3">
+                                            <center>
+                                            <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
+                                            </center>
+                                            <base-button slot="title" type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
+                                                <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.servicio}}</span> </badge><br>
+                                                <span class="mx-auto" style="font-size:1.2em;">{{data.realLender}}</span>
+                                            </base-button>
+                                            <div style="background-color:#f8fcfd;">
+                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                    <span style="color:#000;font-weight:600;font-size:.9em;text-transform:none;">Desde las</span> 
+                                                </badge>
+                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                    <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.start}}</span> 
+                                                </badge>
+                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                    <span style="color:#000;font-weight:600;font-size:.9em;text-transform:none;">Hasta las</span> 
+                                                </badge>
+                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                    <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.end}}</span> 
+                                                </badge>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12 pt-5">
+                                <center>
+                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                    Fecha: <strong>{{registerDae.date}}</strong>
+                                    </base-button><br>
+                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                        Diseño: <strong class="text-uppercase">{{registerDae.design}}</strong>
+                                    </base-button><br>
+                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                        Hora de inicio: <strong v-if="registerDae.serviceSelectds[0]">{{registerDae.serviceSelectds[0].start}}</strong>
+                                    </base-button><br>
+                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                        Total: <strong class="text-uppercase">$ {{formatPrice(totalPrice)}}</strong>
+                                    </base-button>
+                                </center><br>
+                            </div>
+                        </div>
                         <template>
                             <div class="text-muted text-center">
                                 Datos del cliente
                             </div>
                         </template>
-                         <div  class="row">
+                        <div class="w-100 " v-on:keyup.enter="selectClient()" @click="selectClient()">
+                            <vue-single-select
+                                v-model="registerDate.client"
+                                :options="clientsNames"
+                                placeholder="Seleccione un cliente"
+                                class="w-50 mx-auto mt-1"
+                            ></vue-single-select> 
+                        </div>
+                        <div  class="row">
                             <div style="color:black !important" class="col-md-6">
                                 <base-input v-on:keyup="validRegister()" class="text-white" placeholder="Nombre del cliente" v-model="dateClient.name" addon-left-icon="ni ni-circle-08"></base-input>
                             </div>
@@ -188,97 +320,6 @@
                                 <base-button  type="default"  v-if="dateClient.valid && dateClient.valid2 != true" disabled class="col-12" icon="fas fa-edit">Editar cliente</base-button>
                                 <base-button type="success" disabled v-if="dateClient.valid != true && dateClient.valid2 != true" class="col-12" icon="fas fa-user-plus">Registrar cliente</base-button>
                                 <base-button type="success" v-on:click="newClient()" v-if="dateClient.valid != true && dateClient.valid2" class="col-12" icon="fas fa-user-plus">Registrar cliente</base-button>
-                            </div>
-                            
-                        </div>
-                    </tab-content>
-
-                    <tab-content icon="fas fa-user-clock" title="Disponibilidad" :before-change="validateWizardThree">
-                        <div class="row">
-                            <div class="text-muted text-center mt-2 col-md-4 col-sm-12">
-                                Seleccione un empleado y disponibilidad
-                            </div>
-                            <base-dropdown class="col-lg-6 dropAgend  w-50 mt-1 p-0">
-                                <base-button slot="title" type="default" class="dropdown-toggle col-12 col-sm-12">
-                                     {{registerDate.employeSelect}}
-                                </base-button>
-                                <li v-for="data in employeShow" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmploye(data.name, data.class, data.restTime, data.img)" class="w-100">
-                                    <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                    </base-button>
-                                    <base-button v-else class="dropdown-item w-100" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                    </base-button>
-                                </li>
-                            </base-dropdown>
-                            <div class="col-1">
-                                <img v-if="img1 != ''" class="avatar rounded-circle" :src="img1" />
-                            </div>
-                        </div>
-                        <div class="text-muted text-center mt-1">
-                                Horario disponible
-                            </div>
-                        <vue-custom-scrollbar class="p-2" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                            <div class="col-12" v-for="(block , index) of blockHour">
-                                <base-button v-if="block.validator == true" v-on:click="selectBloq(block.Horario, index)" size="sm" class="col-12" type="success">
-                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                    <span>Disponible</span>
-                                </base-button>
-
-                                <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                    <span>Ocupado</span>
-                                </base-button>
-
-                                <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                    <span>Seleccionado</span>
-                                </base-button>
-
-                                <base-button v-else size="sm" disabled class="col-12" type="secondary">
-                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                    <span>No seleccionable</span>
-                                </base-button>
-                            </div>
-                        </vue-custom-scrollbar>
-                    </tab-content>
-                    <tab-content icon="ni ni-check-bold" title="Finalizar">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-12" >
-                                <dt>Servicios</dt>
-                                <vue-custom-scrollbar class="col-12" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
-                                    <base-button v-for="data in registerDate.servicesShow" class="col-10 mt-1" type="secondary">
-                                        <span class="float-left">{{data}}</span>
-                                        <!-- <badge class="text-default float-right" type="success">4</badge> -->
-                                    </base-button>
-                                </vue-custom-scrollbar>
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                                <dt>Información de agenda</dt>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
-                                    <span class="float-left"> Cliente: </span>
-                                    <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{dateClient.name}}</badge>
-                                </base-button>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
-                                    <span class="float-left"> Identidad: </span>
-                                    <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{dateClient.id}}</badge>
-                                </base-button>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
-                                    <span class="float-left"> Empleado: </span>
-                                    <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{registerDate.employeSelect}}</badge>
-                                </base-button>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
-                                    <span class="float-left"> Fecha: </span>
-                                    <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{registerDate.date}}</badge>
-                                </base-button>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
-                                    <span class="float-left"> Hora de inicio: </span>
-                                    <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{registerDate.start}}</badge>
-                                </base-button>
-                                <base-button class="col-12 col-md-10 p-2 mt-1" type="secondary">
-                                    <span class="float-left"> Hora de salida: </span>
-                                    <badge style="font-size:0.8em !important" type="success" class="text-default float-left">{{registerDate.end}}</badge>
-                                </base-button>
                             </div>
                         </div>
                     </tab-content>
@@ -797,25 +838,46 @@
         employes:[],
         blockHour:[],
         blockHourEdit:[],
+        finalDate:'',
+        readyChange: false,
+        validHour: false,
+        getDay: 0,
+        arrayLendersSelect: [],
+        registerDae: {
+            employeSelect: '',
+            date: '',
+            duration: 0,
+            restTime:'',
+            class: '',
+            employeResTime: '',
+            serviceSelectds: [],
+            design:'nada',
+            start: '',
+            sort: '',
+            end: '',
+            valid: true
+        },
+        ifServices: false,
+        validWizard: false,
         registerDate: {
-        services:[],
-        servicesShow:[],
-        employePerService:[],
-        employe:[],
-        employeSelect:"Seleccione un empleado",
-        employeClass:null,
-        employeResTime:null,
-        client:null,
-        duration:0,
-        design:null,
-        block:null,
-        start:null,
-        end:null,
-        sort:null,
-        date:null,
-        valid:true,
-        valid2:true,
-        valid3:false
+            services:[],
+            servicesShow:[],
+            employePerService:[],
+            employe:[],
+            employeSelect:"Seleccione un empleado",
+            employeClass:null,
+            employeResTime:null,
+            client:null,
+            duration:0,
+            design:null,
+            block:null,
+            start:null,
+            end:null,
+            sort:null,
+            date:null,
+            valid:true,
+            valid2:true,
+            valid3:false
         },
         columnsDatesClosed: [{
                 label: "Fecha",
@@ -864,6 +926,8 @@
         classes: {
             table: "table-bordered table-striped"
         },
+        validHour: false,
+        totalPrice: 0,
         modalsDialog: {
             modal2: false,
             type: '',
@@ -871,23 +935,23 @@
             message: '', 
         },
         dateClient: {
-        name:'',
-        id:'',
-        infoOne:null,
-        infoTwo:null,
-        partipation:null,
-        recommender:null,
-        recommenders:null,
-        lastDate:null,
-        discount:null,
-        date:null,
-        _id:null,
-        valid:false,
-        valid2:false
+            name:'',
+            id:'',
+            infoOne:null,
+            infoTwo:null,
+            partipation:null,
+            recommender:null,
+            recommenders:null,
+            lastDate:null,
+            discount:null,
+            date:null,
+            _id:null,
+            valid:false,
+            valid2:false
         },
         configDatePicker: {
         allowInput: true,
-        dateFormat: 'm-d-Y',
+        dateFormat: 'd-m-Y',
         locale: Spanish, // locale for this instance only
         minDate: new Date(),         
         },
@@ -957,6 +1021,7 @@
             modal4:false,
             modal5:false
         },
+        categories: [],
         radio: {
         radio1: "radio1",
         radio2: "radio3"
@@ -973,7 +1038,8 @@
         clientsNames:[],
         lengthClosedDates:0,
         file: '',
-        nameFile:'Click aquí para cargar imagen'
+        nameFile:'Click aquí para cargar imagen',
+        lenders: []
       };
     },
     beforeCreate(){
@@ -995,6 +1061,8 @@
         this.getUsers()
         this.getDates()
         this.getClosed()
+        this.getCategories()
+        this.getLenders()
         $(document).ready(function(){
             for (let i = 35; i < 42; i++) {
                 $(".vuecal__cell").eq(i).hide()
@@ -1009,6 +1077,14 @@
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+        },
+        async getLenders(){
+            try{
+                const Lenders = await axios.get(endPoint.endpointTarget+'/manicuristas') 
+                this.lenders = Lenders.data 
+            }catch(err){
+                console.log(err)
+            }
         },
         validatorLender(){
             const token = localStorage.userToken
@@ -1169,7 +1245,13 @@
                 }
                 
   			})
-  		},
+          },
+         async getCategories(){
+            const categories = await axios.get(endPoint.endpointTarget+'/servicios/getCategory')
+            if (categories.data.length > 0) {
+                this.categories = categories.data
+            }
+        },
         getServices() {
             axios.get(endPoint.endpointTarget+'/servicios')
             .then(res => {
@@ -1253,45 +1335,28 @@
 				})
 			}
 			
-		},
-        pushService(prestadores,nombre,tiempo, comision, precio,descuento,count){
-            this.registerDate.valid2 = false
-            if (this.registerDate.services == '') {
-                this.registerDate.services.push({'servicio': nombre, 'comision': comision, 'precio': precio, 'descuento': descuento})
-                this.registerDate.servicesShow.push(nombre)
-                for (let index = 0; index < prestadores.length; index++) {
-                    this.registerDate.employePerService.push(prestadores[index])
-                }
-            }
-            else{
-                var inspector = true
-                var inspector2 = false
-                for (let index = 0; index < this.registerDate.services.length; index++) {
-                    if (this.registerDate.services[index].servicio == nombre || this.registerDate.services[index].servicio == nombre + "("+ this.countServices[count].count +")" ) {
-                    this.registerDate.servicesShow.splice(index,1)
-                    this.registerDate.servicesShow.push(nombre+ "(" + (parseFloat(this.countServices[count].count) +1) + ")")
-                    inspector = false
-                    break  
+        },
+        selectCat(cat){
+            $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
+            $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
+        }, 
+        plusService(index, service, time, comision, precio, lenders){
+            this.ifServices = true
+            this.countServices[index].count++
+            this.registerDae.duration = this.registerDae.duration + parseFloat(time)
+            var lendersName = [{lender: 'Primera disponible', resTime: '', restDay: '', class: '', valid:true}]
+            for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
+                for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
+                    if (this.lenders[indexThree]._id == lenders[indexTwo]) {
+                        lendersName.push({lender: this.lenders[indexThree].nombre, resTime: this.lenders[indexThree].restTime, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
+                        break
                     }
-                }
-                if (inspector == true) {
-                    this.registerDate.services.push({'servicio': nombre, 'comision': comision, 'precio': precio, 'descuento': descuento})
-                    this.registerDate.servicesShow.push(nombre)
-                }
-                for (let c = 0; c < prestadores.length; c++) {
-                    for (let index = 0; index < this.registerDate.employePerService.length; index++) {
-                        if (prestadores[c] == this.registerDate.employePerService[index]) {
-                            inspector2 = true
-                            break
-                        }
-                    }  
-                    if (inspector2 == false) {
-                        this.registerDate.employePerService.push(prestadores[c])
-                    }
-                }   
+                }  
             }
-            this.registerDate.duration = parseFloat(this.registerDate.duration) + parseFloat(tiempo)
-            this.countServices[count].count++  
+            console.log(lendersName)
+            this.registerDae.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false }) 
+            this.validHour = false  
+            this.totalPrice = parseFloat(this.totalPrice) + parseFloat(precio)
             
         },
         validateWizardOne(){
@@ -1415,6 +1480,25 @@
                 valid2:true,
                 valid3:false
             }
+            this.readyChange = false
+            this.validHour = false
+            this.getDay = 0
+            this.ifServices = false
+            this.validWizard = false
+            this.registerDae = {
+                employeSelect: '',
+                date: '',
+                duration: 0,
+                restTime:'',
+                class: '',
+                employeResTime: '',
+                serviceSelectds: [],
+                design:'nada',
+                start: '',
+                sort: '',
+                end: '',
+                valid: true
+            },
             this.dateClient = {
                 name:'',
                 id:'',
@@ -1547,61 +1631,100 @@
                 console.log(err)
                 })
         },
-        register(){
-            axios.post(endPoint.endpointTarget+'/citas', {
-            entrada: this.registerDate.start,
-            salida: this.registerDate.end,
-            sort: this.registerDate.sort,
-            fecha: this.registerDate.date,
-            cliente: this.dateClient.name + " / " + this.dateClient.id,
-            servicios: this.registerDate.services,
-            class: this.registerDate.employeClass,
-            manicuristas: this.registerDate.employeSelect
+        sendConfirmationn(id, name, mail, start, end, services, lender){
+            const nameFormat = name
+            const contactFormat = mail
+            const startFormat = start
+            const endFormat = end
+            const dateFormat = this.finalDate
+            console.log(id+'  --  '+ name+'  --  '+ mail+'  --  '+ start+'  --  '+ end+'  --  '+ services+'  --  '+ lender)
+            axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
+                name: nameFormat,
+                contact: contactFormat,
+                start: startFormat,
+                end: endFormat,
+                date: dateFormat,
+                service: services,
+                lenders: lender,
+                payment: 'No especificado'
             })
             .then(res => {
-            if(res.data.status == 'cita creada'){
-                this.modals = {
-                    modal1:true,
-                    modal2: true,
-                    message: "¡Agendamiento exitoso!",
-                    icon: 'ni ni-check-bold ni-5x',
-                    type: 'success'
+                if (res.data.status == 'ok') {
+                    console.log(res.data.status)
                 }
-                this.getDates()
-                if (this.employeByDate != 'Filtrar por empleado') {
-                    this.getCitasByEmploye()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        register(){
+            var lenderFinal = ''
+            var hourFinal = ''
+            for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                const element = this.registerDae.serviceSelectds[index];
+                if (index > 0){
+                    lenderFinal = lenderFinal+' - '+element.realLender
+                    hourFinal = hourFinal+' - '+element.start+'Hrs'
+                }else{
+                    lenderFinal = element.realLender
+                    hourFinal = element.start+'Hrs'
                 }
-                axios.post(endPoint.endpointTarget+'/notifications', {
-                    userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                    userImage:localStorage.getItem('imageUser'),
-                    detail:'Creo una cita',
-                    link: 'agendamiento'
+            }
+            if (this.registerDate.client) {
+                const User = {
+                    name: this.dateClient.name,
+                    mail: this.dateClient.id,
+                    lastName: '',
+                    phone: '',
+                    pay: 'No especificado',
+                    pdf: ''
+                }
+                axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                    dataDate: this.registerDae,
+                    date: this.finalDate,
+                    client: User,
+                    pdf: 'not',
+                    ifClient: false
                 })
                 .then(res => {
-                    this.socket.emit('sendNotification', res.data)
-                })
-                setTimeout(() => {
-                    this.initialState()
-                    this.modals = {
-                        modal1:true,  
-                        modal2: false,
-                        message: '',
-                        icon: '',
-                        type: ''
-                    }
-                    
-                }, 1500);
-            }else if(res.data.status == 'cita ocupada'){
-                this.$swal({
-                type: 'error',
-                title: 'Cita ocupada',
-                showConfirmButton: false,
-                timer: 1500
-                })
+                    if (res.data.status == "cita creada") {
+                        this.sendConfirmationn(res.data.id, User.name, User.mail, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, lenderFinal)
+                        this.modals.modal1 = false
+                        this.modalsDialog = {
+                            modal2: true,
+                            type: 'success',
+                            icon: 'ni ni-check-bold ni-5x',
+                            message: '¡Agendamiento exitoso!', 
+                        }
+                        this.getDates()
+                        if (this.employeByDate != 'Filtrar por empleado') {
+                            this.getCitasByEmploye()
+                        }
+                        axios.post(endPoint.endpointTarget+'/notifications', {
+                            userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                            userImage:localStorage.getItem('imageUser'),
+                            detail:'Creo una cita',
+                            link: 'agendamiento'
+                        })
+                        .then(res => {
+                            this.socket.emit('sendNotification', res.data)
+                        })
+                        setTimeout(() => {
+                            this.initialState()
+                            this.modals.modal1 = true
+                            this.modalsDialog = {
+                                modal2: false,
+                                type: '',
+                                icon: '',
+                                message: '', 
+                            }
+                        }, 1500);
+                    }    
+                }) 
             }else{
-                console.log(res.data)
+                this.registerDae.valid = false
             }
-            })
+            
         },
         newClient(){
             const name = this.dateClient.name.split(' ')
@@ -2494,7 +2617,442 @@
             .catch(err => {
                 console.log(err)
             })
-        }
+        },
+        openCalendar(){
+            setTimeout(() => {
+                const split = this.registerDae.date.split('-')
+                this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
+                const restDay = new Date(this.finalDate+' 10:00')
+                this.getDay = restDay.getDay()
+                if (this.getDay == 0 || this.getDay == 6) {
+                    this.modals = {
+                        modal3: true,
+                        message: "No laboramos Sábados y Domingos.",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1:false,
+                            modal2:false,
+                            modal3: false,
+                            modal4: false,
+                            modal5: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 3000);
+                }else{
+                    if (this.readyChange) {
+                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                            const element = this.registerDae.serviceSelectds[index];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.blocks = []
+                            element.valid = false
+                        }
+                        this.validHour = false
+                        setTimeout(() => {
+                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                            .then(res => {
+                                console.log(res)
+                                var counter = 0
+                                var validCounter = false
+                                for (let i = 0; i < res.data.array.length; i++) {
+                                    const element = res.data.array[i];
+                                    for (let j = 0; j <  this.registerDae.serviceSelectds[0].lenders.length; j++) {
+                                        const elementTwo =  this.registerDae.serviceSelectds[0].lenders[j];
+                                        if (element.name == elementTwo.lender) {
+                                            counter = j
+                                            validCounter = true
+                                            break
+                                        }
+                                    }
+                                    if (validCounter) {
+                                        break
+                                    }
+                                }
+                                console.log(validCounter)
+                                if (validCounter) {
+                                    const finalLender = this.registerDae.serviceSelectds[0].lenders[counter].lender
+                                    const finalRestime = this.registerDae.serviceSelectds[0].lenders[counter].resTime
+                                    this.registerDae.serviceSelectds[0].class = this.registerDae.serviceSelectds[0].lenders[counter].class
+                                    console.log(finalLender)
+                                    this.registerDae.serviceSelectds[0].valid = true
+                                    this.registerDae.serviceSelectds[0].realLender = finalLender
+                                    this.validMultiLender(0, finalLender, this.registerDae.serviceSelectds[0].duration, finalRestime)
+                                    this.readyChange = true
+                                }else{
+                                    this.modals = {
+                                        modal3: true,
+                                        message: "No tenemos hay prestadores disponibles, para la fecha.",
+                                        icon: 'ni ni-fat-remove ni-5x',
+                                        type: 'danger'
+                                    }
+                                    setTimeout(() => {
+                                        this.modals = {
+                                            modal1:false,
+                                            modal2:false,
+                                            modal3: false,
+                                            modal4: false,
+                                            modal5: false,
+                                            message: "",
+                                            icon: '',
+                                            type: ''
+                                        }
+                                    }, 3000);
+                                }
+                                
+                                
+                            })
+                        }, 200); 
+                    }else{
+                        setTimeout(() => {
+                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                            .then(res => {
+                                console.log(res)
+                                var counter = 0
+                                var validCounter = false
+                                for (let i = 0; i < res.data.array.length; i++) {
+                                    const element = res.data.array[i];
+                                    for (let j = 0; j <  this.registerDae.serviceSelectds[0].lenders.length; j++) {
+                                        const elementTwo =  this.registerDae.serviceSelectds[0].lenders[j];
+                                        if (element.name == elementTwo.lender) {
+                                            counter = j
+                                            validCounter = true
+                                            break
+                                        }
+                                    }
+                                    if (validCounter) {
+                                        break
+                                    }
+                                }
+                                console.log(validCounter)
+                                if (validCounter) {
+                                    const finalLender = this.registerDae.serviceSelectds[0].lenders[counter].lender
+                                    const finalRestime = this.registerDae.serviceSelectds[0].lenders[counter].resTime
+                                    this.registerDae.serviceSelectds[0].class = this.registerDae.serviceSelectds[0].lenders[counter].class
+                                    console.log(finalLender)
+                                    this.registerDae.serviceSelectds[0].valid = true
+                                    this.registerDae.serviceSelectds[0].realLender = finalLender
+                                    this.validMultiLender(0, finalLender, this.registerDae.serviceSelectds[0].duration, finalRestime)
+                                    this.readyChange = true
+                                }else{
+                                    this.modals = {
+                                        modal3: true,
+                                        message: "No tenemos hay prestadores disponibles, para la fecha.",
+                                        icon: 'ni ni-fat-remove ni-5x',
+                                        type: 'danger'
+                                    }
+                                    setTimeout(() => {
+                                        this.modals = {
+                                            modal1:false,
+                                            modal2:false,
+                                            modal3: false,
+                                            modal4: false,
+                                            modal5: false,
+                                            message: "",
+                                            icon: '',
+                                            type: ''
+                                        }
+                                    }, 3000);
+                                }
+                            })
+                        }, 200); 
+                    }
+                }
+            }, 200);
+        },
+        validMultiLender(index, lender, time, resTime, check){
+            $('#'+check).removeClass('fa-check')
+            this.registerDae.employeSelect = ''
+            this.validSchedule = false
+            this.noOneLender = true
+            console.log(this.registerDae.serviceSelectds[index])
+            this.selectHourService(index, lender, time, resTime)
+        },
+        selectHourService(index, lender, time, resTime){
+            console.log(lender+'--'+ time+'--'+ resTime+'--'+index)
+            const finalTime =  this.registerDae.design == 'si' ? time + 15 : time
+            this.registerDae.serviceSelectds[index].lenderSelectData = {
+                employe: lender,
+                date: this.finalDate,
+                time: finalTime,
+                resTime: resTime,
+                index: index
+            }
+
+            axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDae.serviceSelectds[index].lenderSelectData)
+            .then(res => { 
+                if (this.registerDae.serviceSelectds[index].validAfter) {
+                    for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                        const element = this.registerDae.serviceSelectds[j];
+                        element.start = ''
+                        element.end = ''
+                        element.sort = ''
+                        element.realLender = ''
+                        element.blocks = []
+                        element.restTime = ''
+                        element.class = ''
+                        element.valid = false
+                        this.arrayLendersSelect = []
+                    } 
+                }
+                // var editBlock = false
+                // var indexEdit = 0
+                // if (index > 0) {
+                //     for (let i = 0; i < this.arrayLendersSelect.length; i++) {
+                //         const element = this.arrayLendersSelect[i];
+                //         if (element.lender == lender) {
+                            
+                            
+                //         }
+                //     }
+                // }
+                var editBlock = false
+                var indexEdit = 0
+                const q = index - 1 
+                for (let j = 0; j <= q; j++) {
+                    const element = this.registerDae.serviceSelectds[j];
+                    console.log(element.realLender +' == '+ lender)
+                    if (element.realLender == lender) {
+                        editBlock = true
+                        indexEdit = j
+                    }
+                }
+                if (editBlock) {
+                    console.log(this.arrayLendersSelect)
+                    this.registerDae.serviceSelectds[index].blocks = this.registerDae.serviceSelectds[indexEdit].blocks
+                    axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
+                        array: this.registerDae.serviceSelectds[index].blocks,
+                        time: parseFloat(time)
+                    })
+                    .then(res => {
+                        this.arrayLendersSelect.push({index: index, lender: lender}) 
+                        this.registerDae.serviceSelectds[index].blocks = res.data
+                        this.registerDae.serviceSelectds[index].validAfter = true
+                    })
+                }else{
+                    this.registerDae.serviceSelectds[index].blocks = res.data
+                    this.arrayLendersSelect.push({index: index, lender: lender}) 
+                    console.log(this.arrayLendersSelect)
+                    this.registerDae.serviceSelectds[index].validAfter = true
+                }
+                
+                
+            })
+            .catch(err => { console.log(err) })
+        },
+        selectBloqMulti(hora, i, indexService, open, check){
+            setTimeout(() => {
+                $('#'+open).toggle('slow')
+            }, 500);
+            console.log(indexService)
+            var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].Horario.split(":") 
+            this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
+            this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
+            console.log(this.registerDae.serviceSelectds[indexService])
+            axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDae.serviceSelectds[indexService].lenderSelectData)
+            .then(res => {
+                console.log(res)
+                var editBlock = false
+                if (indexService > 0) {
+                    for (let i = 0; i < this.arrayLendersSelect.length; i++) {
+                        const element = this.arrayLendersSelect[i];
+                        if (element.lender == this.registerDae.serviceSelectds[indexService].realLender) {
+                            editBlock = true
+                        }
+                    }
+                }
+                if (editBlock) {
+                    console.log('entre en el edit')
+                    console.log(this.arrayLendersSelect)
+                    axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
+                        array: this.registerDae.serviceSelectds[indexService].blocks,
+                        time: this.registerDae.serviceSelectds[indexService].lenderSelectData.time
+                    })
+                    .then(res => {
+                        for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
+                            res.data[i].validator = 'select'
+                            this.registerDae.serviceSelectds[indexService].end = res.data[i].Horario
+                            i++
+                        }
+                        this.registerDae.serviceSelectds[indexService].blocks = res.data
+                        var valid = 0 
+                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                            const element = this.registerDae.serviceSelectds[index];
+                            console.log(element.start)
+                            if (element.start == "") {
+                                valid = 1
+                            }
+                        }
+                        if (valid == 0) {
+                            this.validHour = true
+                        }
+                        $('#'+check).addClass('fa-check')
+                    })
+                }else{
+                    console.log('NO entre en el edit')
+                    for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
+                        res.data[i].validator = 'select'
+                        this.registerDae.serviceSelectds[indexService].end = res.data[i].Horario
+                        i++
+                    }
+                    this.registerDae.serviceSelectds[indexService].blocks = res.data
+                    this.blockHour = res.data
+                    var valid = 0 
+                    for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                        const element = this.registerDae.serviceSelectds[index];
+                        console.log(element.start)
+                        if (element.start == "") {
+                            valid = 1
+                        }
+                    }
+                    if (valid == 0) {
+                        this.validHour = true
+                    }
+                    this.registerDae.serviceSelectds[indexService].blocks = res.data
+                    $('#'+check).addClass('fa-check')
+                }
+                
+                const finalIndex = parseFloat(indexService) + parseFloat(1)
+                if (this.registerDae.serviceSelectds[finalIndex]) {
+                    axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                    .then(res => {
+                        this.registerDae.serviceSelectds[finalIndex].valid = true
+                        var counter = 0
+                        var validCounter = false
+                        for (let i = finalIndex; i < res.data.array.length; i++) {
+                            const element = res.data.array[i];
+                            for (let j = 0; j <  this.registerDae.serviceSelectds[finalIndex].lenders.length; j++) {
+                                const elementTwo =  this.registerDae.serviceSelectds[finalIndex].lenders[j];
+                                if (element.name == elementTwo.lender) {
+                                    counter = j
+                                    validCounter = true
+                                    break
+                                }
+                            }
+                            if (validCounter) {
+                                break
+                            }
+                        }
+                        const finalLender = this.registerDae.serviceSelectds[finalIndex].lenders[counter].lender
+                        const finalRestime = this.registerDae.serviceSelectds[finalIndex].lenders[counter].resTime
+                        this.registerDae.serviceSelectds[finalIndex].class = this.registerDae.serviceSelectds[finalIndex].lenders[counter].class
+                        this.registerDae.serviceSelectds[finalIndex].realLender = finalLender
+                        this.validMultiLender(finalIndex, finalLender, this.registerDae.serviceSelectds[finalIndex].duration, finalRestime)
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        insertData(index, lender, restTime, Class, duration, check, lenders){
+            if (lender == 'Primera disponible') {
+                console.log(lenders)
+                axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                .then(res => {
+                    var lenderSelect = ''
+                    console.log(res)
+                    console.log(lenders)
+                    var validCounter = false
+                    for (let j = index; j < res.data.array.length; j++) {
+                        const element = res.data.array[j];
+                        for (let x = 0; x < lenders.length; x++) {
+                            const elementTwo = lenders[x];
+                            if (element.name == elementTwo.lender) {
+                                lenderSelect = x
+                                validCounter = true
+                                break
+                            }
+                        }
+                        if (validCounter) {
+                            break
+                        }
+                    }
+                    if (lenderSelect == '') {
+                        for (let j = 0; j < res.data.array.length; j++) {
+                            const element = res.data.array[j];
+                            for (let x = 0; x < lenders.length; x++) {
+                                const elementTwo = lenders[x];
+                                if (element.name == elementTwo.lender) {
+                                    lenderSelect = x
+                                }
+                            }
+                        }
+                        this.registerDae.serviceSelectds[index].start = ''
+                        this.registerDae.serviceSelectds[index].end = ''
+                        this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
+                        this.registerDae.serviceSelectds[index].realLender = lenders[lenderSelect].lender
+                        this.registerDae.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                        this.registerDae.serviceSelectds[index].class = lenders[lenderSelect].class
+                        this.validHour = false 
+                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                    }else{
+                        this.registerDae.serviceSelectds[index].start = ''
+                        this.registerDae.serviceSelectds[index].end = ''
+                        this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
+                        this.registerDae.serviceSelectds[index].realLender = lenders[lenderSelect].lender
+                        this.registerDae.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                        this.registerDae.serviceSelectds[index].class = lenders[lenderSelect].class
+                        this.validHour = false 
+                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                this.registerDae.serviceSelectds[index].start = ''
+                this.registerDae.serviceSelectds[index].end = ''
+                this.registerDae.serviceSelectds[index].lender = lender
+                this.registerDae.serviceSelectds[index].realLender = lender
+                this.registerDae.serviceSelectds[index].restTime = restTime
+                this.registerDae.serviceSelectds[index].class = Class
+                this.validHour = false 
+                this.validMultiLender(index, lender, duration, restTime, check) 
+            }
+        },
+        openBlocks(open){
+            $('#'+open).toggle('slow')
+        },
+        validateFirstStep() {
+            if (this.registerDae.design != 'nada' && this.ifServices) {
+                this.validWizard = true
+                if (this.registerDae.date != '') {
+                    for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                        const element = this.registerDae.serviceSelectds[index];
+                            if (element.valid == false) {
+                                element.valid = true
+                                this.insertData(index, 'Primera disponible', '', '', element.duration, 'check'+index, element.lenders)
+                                break
+                            }
+                    }
+                }
+                this.registerDae.valid = true
+                return this.ifServices
+            }else{
+                this.registerDae.valid = false
+                return false
+            }
+            
+        },
+        validateLastStep() {
+            console.log(this.validHour)
+            if (this.validHour) {
+                this.validWizard = true
+                this.registerDae.valid = true
+                return this.validHour
+            }else{
+                this.validWizard = false
+                this.registerDae.valid = false
+                return this.validHour
+            }
+            
+        },
     },
     computed: {
         ifSticky: () => {
