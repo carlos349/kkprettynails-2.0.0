@@ -304,6 +304,7 @@
                                     type="text"
                                     v-on:input="formatPhone"
                                     maxlength="9"
+                                    class="text-lowercase"
                                     placeholder="Escriba su número de teléfono"
                                     v-model="registerUser.phone"
                                     addon-left-icon="fa fa-phone">
@@ -656,6 +657,9 @@
             validFields(){
                 const split = this.registerUser.mail.split('@')
                 var splitTwo = ''
+                if (this.registerUser.mail.length == 1) {
+                    this.registerUser.mail = this.registerUser.mail.toLowerCase()
+                }
                 if (split.length == 2) {
                     splitTwo = split[1].split('.')
                 }
@@ -716,6 +720,7 @@
             },
             finallyAgend(){
                 this.ifDisabled = true
+                const phone = '+56 '+this.registerUser.phone
                 if (this.registerUser.pay == 'Transferencia' && this.file == '') {
                     this.modals = {
                         modal3: true,
@@ -741,7 +746,7 @@
                     axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
                         name: name,
                         mail: this.registerUser.mail,
-                        number: this.registerUser.phone,
+                        number: phone,
                         referidoId: ''
                     })
                     .then(res => {
