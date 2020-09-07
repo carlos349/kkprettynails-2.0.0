@@ -1658,7 +1658,7 @@
             })
         },
         register(){
-            var lenderaopl = ''
+            var lenderFinal = ''
             var hourFinal = ''
             for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                 const element = this.registerDae.serviceSelectds[index];
