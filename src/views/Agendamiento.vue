@@ -579,13 +579,22 @@
                   header-classes="bg-white pb-5"
                   body-classes=""
                   class="border-0">
-                <currency-input
-                title="Monto de diseño"
-                v-model="designEndDate"
-                placeholder="Monto de diseño"
-                locale="de"
-                class="form-control mb-3"
-                />
+                <div class="form-group" style="margin-top:-20px;">
+                    <label for="Montodiseño">Monto del diseño</label>
+                    <currency-input
+                    title="Monto de diseño"
+                    v-model="designEndDate"
+                    placeholder="Monto de diseño"
+                    locale="de"
+                    class="form-control mb-3"
+                    />
+                </div>
+                <template v-for="servicesEnding of EndDateServices" >
+                   <button v-if="servicesEnding.valid" :key="servicesEnding.name" v-on:click="discountServiceDate(servicesEnding.id, servicesEnding.index, servicesEnding.name)" type="button" class="btn btn-default btn-sm mr-1 mb-2">
+                        <span>{{servicesEnding.name}}</span>
+                        <span class="badge badge-primary text-white">X</span>
+                    </button> 
+                </template>
                 <table class="table" v-bind:style="{ 'background-color': '#6BB2E5', 'border-radius' : '5px', 'border':'none !important'}" >
                     <thead>
                         <tr>
@@ -602,20 +611,20 @@
                 <vue-custom-scrollbar class="ListaProcesar">
                     <table class="table tableBg" id="myTable">
                         <tbody>
-                        <tr v-for="(servicio, index) in services" >
-                            <td style="border:none" v-if="servicio.active" class="font-weight-bold">
-                            <base-button outline  size="sm" type="default" class="w-75 btn procesar text-left" v-on:click="conteoServicioDate(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, index)">
-                                {{servicio.nombre}} <span class="badge badge-dark conteoServ mt-1 float-right" :class="servicio._id" v-bind:id="index+servicio._id">0</span>
-                            </base-button>
-                            <base-button v-on:click="discountServiceDate(servicio._id, index, servicio.nombre)" outline size="sm" type="default" class="w-20 btn btn-back  text-left" >
-                                <font-awesome-icon icon="times"/>
-                            </base-button>
-                            
-                            </td>
-                            <td style="border:none" v-if="servicio.active" class="font-weight-bold  ">
-                                <b>$ {{formatPrice(servicio.precio)}}</b>
-                            </td>
-                        </tr>
+                            <tr v-for="(servicio, index) in services" >
+                                <td style="border:none" v-if="servicio.active" class="font-weight-bold">
+                                <base-button outline  size="sm" type="default" class="w-75 btn procesar text-left" v-on:click="conteoServicioDate(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, index)">
+                                    {{servicio.nombre}} <span class="badge badge-dark conteoServ mt-1 float-right" :class="servicio._id" v-bind:id="index+servicio._id">0</span>
+                                </base-button>
+                                <base-button v-on:click="discountServiceDate(servicio._id, index, servicio.nombre)" outline size="sm" type="default" class="w-20 btn btn-back  text-left" >
+                                    <font-awesome-icon icon="times"/>
+                                </base-button>
+                                
+                                </td>
+                                <td style="border:none" v-if="servicio.active" class="font-weight-bold  ">
+                                    <b>$ {{formatPrice(servicio.precio)}}</b>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </vue-custom-scrollbar>
@@ -1039,7 +1048,8 @@
         lengthClosedDates:0,
         file: '',
         nameFile:'Click aquí para cargar imagen',
-        lenders: []
+        lenders: [],
+        EndDateServices: []
       };
     },
     beforeCreate(){
@@ -1866,7 +1876,7 @@
 					showConfirmButton: false,
 					timer: 2500
 				})
-				router.push({name: 'Login'})
+				router.push({name: 'login'})
 			})
         },
         onEventClick(event, e){
@@ -1878,17 +1888,19 @@
             const splitThree = split[0].split(' ')
             axios.get(endPoint.endpointTarget+'/clients/dataDiscount/'+splitTwo[1])
             .then(res => {
-            if (res.data[0].participacion == 0) {
-                this.dateData.discount.discount = true
-                this.dateData.discount.type = 'first'
-            }
-            else if(res.data[0].recomendaciones > 0) {
-                this.dateData.discount.discount = true
-                this.dateData.discount.type = 'recomnd'
-            }
-            this.dateData.history = []
-            this.dateData.history = res.data[0].historical
-            console.log(this.dateData.discount)
+                if (res.data[0].participacion == 0) {
+                    this.dateData.discount.discount = true
+                    this.dateData.discount.type = 'first'
+                }
+                else if(res.data[0].recomendaciones > 0) {
+                    this.dateData.discount.discount = true
+                    this.dateData.discount.type = 'recomnd'
+                }else{
+                    this.dateData.discount.discount = false
+                    this.dateData.discount.type = 'none'
+                }
+                this.dateData.history = []
+                this.dateData.history = res.data[0].historical
             })
             e.stopPropagation()
         },
@@ -2151,17 +2163,21 @@
             this.myFunction()
             axios.get(endPoint.endpointTarget+'/servicios')
             .then(res => {
-            for (let index = 0; index < services.length; index++) {
-                
-                for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
-                
-                if (services[index].servicio == res.data[indexTwo].nombre) {
-                    let valSpan = $(`.${res.data[indexTwo]._id}`).text()
-                    let sumaVal = parseFloat(valSpan) + 1
-                    $(`.${res.data[indexTwo]._id}`).text(sumaVal)
+                this.EndDateServices = []
+                for (let i = 0; i < res.data.length; i++) {
+                    $(`.${res.data[i]._id}`).text(0)
                 }
-                } 
-            }
+                for (let index = 0; index < services.length; index++) {
+                    for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
+                        if (services[index].servicio == res.data[indexTwo].nombre) {
+                            let valSpan = $(`.${res.data[indexTwo]._id}`).text()
+                            let sumaVal = parseFloat(valSpan) + 1
+                            $(`.${res.data[indexTwo]._id}`).text(sumaVal)
+                            this.EndDateServices.push({name: services[index].servicio, id: res.data[indexTwo]._id, index: indexTwo, valid: true})
+                        }
+                    } 
+                }
+                console.log(this.EndDateServices)
             })
             // for (let index = 0; index < services.length; index++) {
             //   if (services[index].) {
@@ -2400,6 +2416,7 @@
             $("#"+index+esto).text(conteoTotal)
             const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'descuento': discount}
             this.serviciosSelecionadosDates.push(servicios)
+            this.EndDateServices.push({name: servicio, id: esto, index: index,valid: true})
         },
         discountServiceDate(esto, index, nombre){
             const conteo = $("#"+index+esto).text()
@@ -2410,6 +2427,12 @@
                     if (this.serviciosSelecionadosDates[index].servicio == nombre) {
                         this.serviciosSelecionadosDates.splice(index, 1)
                         break
+                    }
+                }
+                for (let i = 0; i < this.EndDateServices.length; i++) {
+                    const element = this.EndDateServices[i];
+                    if (element.name == nombre) {
+                        element.valid = false
                     }
                 }
             }
