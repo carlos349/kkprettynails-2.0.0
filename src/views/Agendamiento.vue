@@ -1866,7 +1866,7 @@
 					showConfirmButton: false,
 					timer: 2500
 				})
-				router.push({name: 'Login'})
+				router.push({name: 'login'})
 			})
         },
         onEventClick(event, e){

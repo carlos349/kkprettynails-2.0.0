@@ -721,6 +721,7 @@
             finallyAgend(){
                 this.ifDisabled = true
                 const phone = '+56 '+this.registerUser.phone
+                console.log(phone)
                 if (this.registerUser.pay == 'Transferencia' && this.file == '') {
                     this.modals = {
                         modal3: true,
