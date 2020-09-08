@@ -1162,6 +1162,7 @@
                             paypdf: res.data[index].paypdf
                         }
                         this.events.push(arrayEvents)
+                        console.log(this.events)
                     }
                 })
             }else{
@@ -1210,6 +1211,7 @@
                         paypdf: res.data[index].paypdf
                     }
                     this.events.push(arrayEvents)
+                    console.log(this.events)
                     }
                 })
             }
