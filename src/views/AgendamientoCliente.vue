@@ -106,7 +106,7 @@
                             <div class="col-md-4" style="margin-top:16px;">
                                 <div class="w-75 mx-auto" >
                                     <h4 class="text-center text-uppercase">Fechas disponibles</h4>
-                                    <base-input addon-left-icon="ni ni-calendar-grid-58 clickCalendar" style="cursor:pointer;" >
+                                    <base-input addon-left-icon="ni ni-calendar-grid-58 clickCalendar" v-model="dates.simple" v-on:change="openCalendar" style="cursor:pointer;" >
                                         <flat-picker 
                                                 @on-change="openCalendar"
                                                 slot-scope="{focus, blur}"
