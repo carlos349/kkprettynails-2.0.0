@@ -1878,17 +1878,19 @@
             const splitThree = split[0].split(' ')
             axios.get(endPoint.endpointTarget+'/clients/dataDiscount/'+splitTwo[1])
             .then(res => {
-            if (res.data[0].participacion == 0) {
-                this.dateData.discount.discount = true
-                this.dateData.discount.type = 'first'
-            }
-            else if(res.data[0].recomendaciones > 0) {
-                this.dateData.discount.discount = true
-                this.dateData.discount.type = 'recomnd'
-            }
-            this.dateData.history = []
-            this.dateData.history = res.data[0].historical
-            console.log(this.dateData.discount)
+                if (res.data[0].participacion == 0) {
+                    this.dateData.discount.discount = true
+                    this.dateData.discount.type = 'first'
+                }
+                else if(res.data[0].recomendaciones > 0) {
+                    this.dateData.discount.discount = true
+                    this.dateData.discount.type = 'recomnd'
+                }else{
+                    this.dateData.discount.discount = false
+                    this.dateData.discount.type = 'none'
+                }
+                this.dateData.history = []
+                this.dateData.history = res.data[0].historical
             })
             e.stopPropagation()
         },
