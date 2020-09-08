@@ -404,7 +404,7 @@
                             <base-button v-if="selectedEvent.confirmation" class="mt-1 col-12" size="sm" type="success">
                                 Confirmada
                             </base-button>
-                            <base-button v-else class="mt-1 col-12" size="sm" type="default" v-on:click="sendConfirmation(selectedEvent.id, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                            <base-button v-else class="mt-1 col-12" size="sm" type="default" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
                                 Enviar confirmación
                             </base-button>
                             <base-button v-if="selectedEvent.typepay == 'Transferencia'" class="mt-1 col-12" size="sm" type="default">
@@ -2592,7 +2592,8 @@
                 end: endFormat,
                 date: dateFormat,
                 service: services,
-                lenders: lender
+                lenders: lender,
+                payment: 'No especificado'
             })
             .then(res => {
                 if (res.data.status == 'ok') {
