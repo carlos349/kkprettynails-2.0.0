@@ -1,7 +1,7 @@
 self.__precacheManifest = [
   {
-    "revision": "2300fe007d5a1d67cb00c281b16319c5",
-    "url": "/img/theme/profile-default.png"
+    "revision": "50dd5fdc839dfc16739b15370650485c",
+    "url": "/img/theme/react.jpg"
   },
   {
     "revision": "6fb59a1b94cc43776f270e1de6622cf8",
@@ -20,8 +20,8 @@ self.__precacheManifest = [
     "url": "/img/theme/reportes.jpg"
   },
   {
-    "revision": "2aba09822288a0b8d119",
-    "url": "/js/chunk-42bb221a.0579ba78.js"
+    "revision": "9de263d3e9af67e91de0",
+    "url": "/js/chunk-42bb221a.964d2f0d.js"
   },
   {
     "revision": "7a7eb629e27c8097cf54",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "765c175472b5b4a6eec330dfc7c63944",
+    "revision": "93ebd1180eae908a2a06b91b92384cdd",
     "url": "/index.html"
   },
   {
@@ -88,12 +88,12 @@ self.__precacheManifest = [
     "url": "/img/theme/bootstrap.jpg"
   },
   {
-    "revision": "50dd5fdc839dfc16739b15370650485c",
-    "url": "/img/theme/react.jpg"
+    "revision": "2300fe007d5a1d67cb00c281b16319c5",
+    "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "61909361146d3f198b17",
-    "url": "/js/app.21f13512.js"
+    "revision": "1ad46f5c5f1b96eaf1b5",
+    "url": "/js/app.080fcafa.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -136,11 +136,11 @@ self.__precacheManifest = [
     "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
-    "revision": "61909361146d3f198b17",
+    "revision": "1ad46f5c5f1b96eaf1b5",
     "url": "/css/app.a8b9a607.css"
   },
   {
@@ -156,8 +156,8 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.c1733565.eot"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
     "revision": "85e5d08b5cdb71242690",
@@ -172,7 +172,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-vendors.47a9ace2.css"
   },
   {
-    "revision": "2aba09822288a0b8d119",
+    "revision": "9de263d3e9af67e91de0",
     "url": "/css/chunk-42bb221a.96837d82.css"
   },
   {
