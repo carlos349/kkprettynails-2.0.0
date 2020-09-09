@@ -378,12 +378,12 @@ export default {
         },
         validRegister(valid){
             if (valid == 3) {
-                this.cashFunds.valid = this.cashFunds.cashName != '' && this.cashFunds.cashAmount > 0 ? true : false
+                this.cashFunds.valid = this.cashFunds.cashName != '' ? true : false
             }else if(valid == 2){
                 const total = this.cashManual + this.cashManual + this.debitManual + this.creditManual + this.transferManual + this.othersManual
-                this.validFinally = this.getFund > 0 && total > 0  ? true : false
+                this.validFinally = total > 0  ? true : false
             }else{
-                this.validEgress = this.egressManual > 0 && this.closeIdentification != '' ? true : false
+                this.validEgress = this.closeIdentification != '' ? true : false
             }
             
         },
@@ -433,21 +433,26 @@ export default {
         getFunds(){
             axios.get(endPoint.endpointTarget+'/ventas/getFund')
             .then(res => {
-                console.log(res)
-                this.fund = res.data[0].amount
-                this.checker = res.data[0].userRegister 
-                if (this.fund == 0 || this.checker == '') {
+                if (res.data.status == 'bad') {
                     this.cashFunds.inspector = true
                     this.fund = 0
                     this.checker = 'No hay cajero registrado'
+                }else{
+                    this.fund = res.data.fondos[0].amount
+                    this.checker = res.data.fondos[0].userRegister 
+                    if (this.checker == '') {
+                        this.cashFunds.inspector = true
+                        this.fund = 0
+                        this.checker = 'No hay cajero registrado'
+                    }
                 }
             })
         },
         daySalesClose(){
             axios.get(endPoint.endpointTarget+'/ventas/getFund')
             .then(res => {
-                this.getFund = res.data[0].amount
-                this.egressSystem = res.data[0].amount
+                this.getFund = res.data.fondos[0].amount
+                this.egressSystem = res.data.fondos[0].amount
                 axios.get(endPoint.endpointTarget+'/ventas/getClosingDay')
                 .then(res => {
                     if (res.data.status == 'bad') {
