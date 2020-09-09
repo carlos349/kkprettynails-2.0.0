@@ -378,7 +378,7 @@ export default {
         },
         validRegister(valid){
             if (valid == 3) {
-                this.cashFunds.valid = this.cashFunds.cashName != '' && this.cashFunds.cashAmount > 0 ? true : false
+                this.cashFunds.valid = this.cashFunds.cashName != '' ? true : false
             }else if(valid == 2){
                 const total = this.cashManual + this.cashManual + this.debitManual + this.creditManual + this.transferManual + this.othersManual
                 this.validFinally = this.getFund > 0 && total > 0  ? true : false
