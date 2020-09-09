@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main">
+    <nav style="padding:2%" class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main">
         <div class="container-fluid">
 
             <!--Toggler-->
@@ -7,7 +7,8 @@
                 <span class="navbar-toggler-icon"></span>
             </navbar-toggle-button>
             
-            <img style="width:180px;height:100px;margin-left:-35px;margin-top:-20px;" :src="logo" alt="...">
+            <img v-if="screen.width < 768" style="width:13%" :src="logo" alt="...">
+            <img v-else style="width:180px;height:100px;margin-left:-35px;margin-top:-20px;" :src="logo" alt="...">
             
             <slot name="mobile-right">
                 <ul class="nav align-items-center d-md-none">
@@ -26,7 +27,9 @@
                         <a slot="title" class="nav-link" href="#" role="button">
                             <div class="media align-items-center">
                               <span class="avatar avatar-sm rounded-circle">
-                                <img alt="Image placeholder" :src="imgUser">
+                                <img alt="Image placeholders" style="width:30px;height:30px;"  v-if="haveImage == ''" src="img/theme/profile-default.png">
+                                <img alt="Image placeholdesr" style="width:30px;height:30px;"  v-else :src="imgUser">
+                                
                               </span>
                             </div>
                         </a>
@@ -51,10 +54,10 @@
                             <span>Soporte</span>
                         </router-link> -->
                         <div class="dropdown-divider"></div>
-                        <a href="#!" class="dropdown-item">
+                        <router-link to="/login" class="dropdown-item">
                             <i class="ni ni-user-run"></i>
                             <span>Cerrar sesión</span>
-                        </a>
+                        </router-link>
                     </base-dropdown>
                 </ul>
             </slot>
@@ -93,13 +96,14 @@
     },
     data() {
       return {
+        haveImage: localStorage.imageUser,
         imgUser: endPoint.imgEndpoint + localStorage.imageUser
       }
     },
     props: {
       logo: {
         type: String,
-        default: 'img/brand/syswa-gestion.png',
+        default: 'img/brand/syswa-isotipo.png',
         description: 'Sidebar app logo'
       },
       autoClose: {

@@ -301,6 +301,7 @@
                     <base-input  alternative
                                 placeholder="RUT de la empresa"
                                 v-model="provider.rut"
+                                v-on:change="provider.rut = formatRut(provider.rut)"
                                 addon-left-icon="fa fa-key"
                                 addon-right-icon="fas fa-plus text-default">
                     </base-input>
@@ -1258,7 +1259,19 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
             })
           }
         })
-      }
+      },
+      formatRut(value) {
+			let around = value.length - 2
+			let concat = ''
+			for (let index = 0; index < value.length; index++) {
+				concat = concat + value[index]
+				if (around == index) {
+					concat = concat + '.'
+				}
+			} 
+			let val = concat.replace('.', '-')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        }
     }
   }
 </script>

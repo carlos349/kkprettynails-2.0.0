@@ -9,7 +9,7 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12">
                         <h1 class="display-2 text-white w-100">Sección de Agenda</h1>
-                        <p class="text-white mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
+                        <p class="text-white headMob mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         <div class="col-12">
                             <div style="width:120%" class="row buttons">
                                 <base-button v-if="validRoute('agendamiento', 'agendar')" @click="modals.modal1 = true , initialState()"  type="success">Agendar</base-button>
@@ -440,26 +440,34 @@
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="validRoute('agendamiento', 'editar')" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-6 mt-2">
-                                   <base-button icon="fa fa-edit" class="mx-auto col-12" type="default">Editar</base-button> 
+                                <div v-if="validRoute('agendamiento', 'editar')" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-md-6 mx-auto mt-2"><center>
+
+                                   <base-button icon="fa fa-edit" class="mx-auto col-10" type="default">Editar</base-button> 
+                                </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-6 mt-2">
-                                        <base-button icon="fa fa-check-square" class="mx-auto col-12" type="default">Finalizar</base-button> 
+                                    <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-md-6 mx-auto mt-2"><center>
+
+                                        <base-button icon="fa fa-check-square" class="mx-auto col-10" type="default">Finalizar</base-button> 
+                                    </center>
                                     </div>
                                 </template>
                                 <template v-if="validRoute('agendamiento', 'cerrar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-6 mt-2">
-                                        <base-button icon="fa fa-times" class=" col-12 mx-auto" type="danger">Cerrar</base-button> 
+                                    <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2"><center>
+
+                                        <base-button icon="fa fa-times" class=" col-10 mx-auto" type="danger">Cerrar</base-button> 
+                                    </center>
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent.id)" class="col-6 mt-2">
-                                   <base-button icon="fa fa-trash-alt" class=" col-12 mx-auto" type="danger">Borrar</base-button> 
+                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2"><center>
+
+                                   <base-button icon="fa fa-trash-alt" class=" col-10 mx-auto" type="danger">Borrar</base-button> 
+                                </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'procesar')">
                                     <div v-if="selectedEvent.process == true" class="col-12 text-center mt-2">
-                                        <base-button icon="fa fa-calendar-check" class=" col-12 mx-auto" type="success" v-on:click="processDate(selectedEvent.id, 'process')">Procesar</base-button> 
+                                        <base-button icon="fa fa-calendar-check" class=" col-10 mx-auto" type="success" v-on:click="processDate(selectedEvent.id, 'process')">Procesar</base-button> 
                                     </div>
                                 </template>
                                 

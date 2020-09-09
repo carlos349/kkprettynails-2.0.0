@@ -76,11 +76,17 @@
                                     <option style="color:black;" value="30">30 Minutos</option>
                                     <option style="color:black;" value="45">45 Minutos</option>
                                     <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+                                    <option style="color:black;" value="75">75 Minutos (1:15 Hr)</option>
                                     <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
+                                    <option style="color:black;" value="105">105 Minutos (1:45 Hr)</option>
                                     <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
+                                    <option style="color:black;" value="135">135 Minutos (2:15 Hr)</option>
                                     <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
+                                    <option style="color:black;" value="165">165 Minutos (2:45 Hr)</option>
                                     <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
+                                    <option style="color:black;" value="195">195 Minutos (3:15 Hr)</option>
                                     <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
+                                    <option style="color:black;" value="225">225 Minutos (3:45 Hr)</option>
                                     <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
                                 </select>
 
