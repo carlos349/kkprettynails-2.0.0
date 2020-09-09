@@ -433,15 +433,13 @@ export default {
         getFunds(){
             axios.get(endPoint.endpointTarget+'/ventas/getFund')
             .then(res => {
-                console.log(res)
                 if (res.data.status == 'bad') {
                     this.cashFunds.inspector = true
-                    console.log(this.cashFunds.inspector)
                     this.fund = 0
                     this.checker = 'No hay cajero registrado'
                 }else{
-                    this.fund = res.data[0].amount
-                    this.checker = res.data[0].userRegister 
+                    this.fund = res.data.fondos[0].amount
+                    this.checker = res.data.fondos[0].userRegister 
                     if (this.fund == 0 || this.checker == '') {
                         this.cashFunds.inspector = true
                         this.fund = 0
@@ -453,8 +451,8 @@ export default {
         daySalesClose(){
             axios.get(endPoint.endpointTarget+'/ventas/getFund')
             .then(res => {
-                this.getFund = res.data[0].amount
-                this.egressSystem = res.data[0].amount
+                this.getFund = res.data.fondos[0].amount
+                this.egressSystem = res.data.fondos[0].amount
                 axios.get(endPoint.endpointTarget+'/ventas/getClosingDay')
                 .then(res => {
                     if (res.data.status == 'bad') {
