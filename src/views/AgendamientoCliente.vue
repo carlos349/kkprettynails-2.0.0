@@ -119,6 +119,7 @@
                                                 v-model="dates.simple">
                                         </flat-picker>
                                     </base-input>
+                                    
                                 </div>
                             </div>
                             <div class="col-md-8">
@@ -492,10 +493,18 @@
             return {
                 socket: io(endPoint.endpointTarget),
                 configDate: {
+                    inline:false,
                     allowInput: false,
                     dateFormat: 'd-m-Y',
                     locale: Spanish, // locale for this instance only
-                    minDate: new Date()        
+                    minDate: new Date(),
+                    "disable": [
+                        function(date) {
+                            // return true to disable
+                            return (date.getDay() === 0 );
+
+                        }
+                    ]        
                 },
                 validPay:false,
                 progress:false,
@@ -577,6 +586,7 @@
             this.getLenders()
             this.getServices()
             this.getCategories()
+            this.device()
         },
         methods: {
             handleFileUpload(){
@@ -1369,12 +1379,15 @@
                 
             },
             openCalendar(){
+                console.log("hola vale")
+                console.log(this.dates.simple)
+                
                 setTimeout(() => {
                     const split = this.dates.simple.split('-')
                     this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
                     const restDay = new Date(this.finalDate+' 10:00')
                     this.getDay = restDay.getDay()
-                    if (this.getDay == 0 || this.getDay == 6) {
+                    if (this.getDay == 0) {
                         this.modals = {
                             modal3: true,
                             message: "Disculpa, No laboramos Sábados y Domingos.",
@@ -1392,6 +1405,7 @@
                                 icon: '',
                                 type: ''
                             }
+                            this.dates.simple = ''
                         }, 3000);
                     }else{
                         if (this.readyChange) {
@@ -1588,6 +1602,11 @@
                     return false
                 }else{
                     return true
+                }
+            },
+            device(){
+                if (screen.width < 768) {
+                    this.configDate.inline = true
                 }
             },
             async selectServicePhone(id){

@@ -7,7 +7,8 @@
                 <span class="navbar-toggler-icon"></span>
             </navbar-toggle-button>
             
-            <img style="width:110px;height:60px;margin-left:10px;margin-top:-10px;" :src="logo" alt="...">
+            <img v-if="screen < 768" style="width:13%" :src="logo" alt="...">
+            <img v-else style="width: 155%;margin-left: -52px;margin-top: -48px;margin-bottom: -20%;" :src="logoB" alt="...">
             
             <slot name="mobile-right">
                 <ul class="nav align-items-center d-md-none">
@@ -96,13 +97,19 @@
     data() {
       return {
         haveImage: localStorage.imageUser,
-        imgUser: endPoint.imgEndpoint + localStorage.imageUser
+        imgUser: endPoint.imgEndpoint + localStorage.imageUser,
+        screen: screen.width
       }
     },
     props: {
       logo: {
         type: String,
         default: 'img/brand/syswa-isotipo.png',
+        description: 'Sidebar app logo'
+      },
+      logoB: {
+        type: String,
+        default: 'img/brand/syswa-gestion.png',
         description: 'Sidebar app logo'
       },
       autoClose: {
