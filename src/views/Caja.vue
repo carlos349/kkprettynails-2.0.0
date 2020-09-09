@@ -440,7 +440,7 @@ export default {
                 }else{
                     this.fund = res.data.fondos[0].amount
                     this.checker = res.data.fondos[0].userRegister 
-                    if (this.fund == 0 || this.checker == '') {
+                    if (this.checker == '') {
                         this.cashFunds.inspector = true
                         this.fund = 0
                         this.checker = 'No hay cajero registrado'
