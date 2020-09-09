@@ -40,8 +40,8 @@ self.__precacheManifest = [
     "url": "/img/theme/users.jpg"
   },
   {
-    "revision": "202691f216f0f60ba686",
-    "url": "/js/demo.a6836f4f.js"
+    "revision": "e32bd17ea249bdec1b0a",
+    "url": "/js/demo.4487480a.js"
   },
   {
     "revision": "d272b05fa09aaad4cb84463d148cef01",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "9204ea94cb7f94fa4a4b9f0eb4951bbe",
+    "revision": "672f4fd894e259a980e7552070b5f127",
     "url": "/index.html"
   },
   {
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "aa9142e6903ae6531f56",
-    "url": "/js/app.bb3ad1a9.js"
+    "revision": "04d937d237ff037b48d7",
+    "url": "/js/app.224bd2a9.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -140,7 +140,7 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "aa9142e6903ae6531f56",
+    "revision": "04d937d237ff037b48d7",
     "url": "/css/app.a8b9a607.css"
   },
   {
@@ -164,7 +164,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-224d2132.9ea7f80b.css"
   },
   {
-    "revision": "202691f216f0f60ba686",
+    "revision": "e32bd17ea249bdec1b0a",
     "url": "/css/demo.2217c147.css"
   },
   {

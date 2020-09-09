@@ -381,9 +381,9 @@ export default {
                 this.cashFunds.valid = this.cashFunds.cashName != '' ? true : false
             }else if(valid == 2){
                 const total = this.cashManual + this.cashManual + this.debitManual + this.creditManual + this.transferManual + this.othersManual
-                this.validFinally = this.getFund > 0 && total > 0  ? true : false
+                this.validFinally = total > 0  ? true : false
             }else{
-                this.validEgress = this.egressManual > 0 && this.closeIdentification != '' ? true : false
+                this.validEgress = this.closeIdentification != '' ? true : false
             }
             
         },
