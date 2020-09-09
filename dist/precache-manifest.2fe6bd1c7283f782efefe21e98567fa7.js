@@ -16,8 +16,8 @@ self.__precacheManifest = [
     "url": "/js/chunk-224d2132.e2c62ac9.js"
   },
   {
-    "revision": "3b5703a1ae7299076c26f5a6513a93b5",
-    "url": "/img/brand/syswa-gestion.png"
+    "revision": "f703eaaed9a404e2b342a4d5d98f261a",
+    "url": "/img/theme/reportes.jpg"
   },
   {
     "revision": "51454921d8d2174758d0",
@@ -28,8 +28,8 @@ self.__precacheManifest = [
     "url": "/js/chunk-68cc9a36.8e340d4a.js"
   },
   {
-    "revision": "f703eaaed9a404e2b342a4d5d98f261a",
-    "url": "/img/theme/reportes.jpg"
+    "revision": "3b5703a1ae7299076c26f5a6513a93b5",
+    "url": "/img/brand/syswa-gestion.png"
   },
   {
     "revision": "b75d4e20ed7330a5723c",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "81226b59291d3caa6a6f66e270f1ac25",
+    "revision": "cc17d005d8bc81a23149d832d33a5247",
     "url": "/index.html"
   },
   {
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "d85ac650e3287309bcbc",
-    "url": "/js/app.4558a280.js"
+    "revision": "e980622c1b8938caff11",
+    "url": "/js/app.0a75d600.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -140,7 +140,7 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "d85ac650e3287309bcbc",
+    "revision": "e980622c1b8938caff11",
     "url": "/css/app.11077f9b.css"
   },
   {

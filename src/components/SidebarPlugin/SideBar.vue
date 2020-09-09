@@ -7,8 +7,7 @@
                 <span class="navbar-toggler-icon"></span>
             </navbar-toggle-button>
             
-            <img v-if="screen.width < 768" style="width:13%" :src="logo" alt="...">
-            <img v-else style="width:180px;height:100px;margin-left:-35px;margin-top:-20px;" :src="logo" alt="...">
+            <img style="width:110px;height:60px;margin-left:10px;margin-top:-10px;" :src="logo" alt="...">
             
             <slot name="mobile-right">
                 <ul class="nav align-items-center d-md-none">
