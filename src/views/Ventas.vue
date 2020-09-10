@@ -197,6 +197,20 @@
             <template slot="localGain" slot-scope="props">
                 {{formatPrice(props.row.ganancialocal)}}
             </template>
+            <template slot="client" slot-scope="props">
+                <div v-if="props.row.cliente.length == 1">{{props.row.cliente[0]}}</div>
+                <div v-else>
+                    <center>
+                        <base-dropdown>
+                            <base-button slot="title" type="secondary" class="dropdown-toggle">
+                            Ver clientes
+                            </base-button>
+                            <div v-for="client of props.row.cliente" class="dropdown-item">{{client}}</div>
+                        </base-dropdown>
+                    </center>
+                    
+                </div>
+            </template>
             <template slot="totalGain" slot-scope="props">
                 {{formatPrice(props.row.total)}}
             </template>
@@ -303,6 +317,7 @@ export default {
             {
                 label: "Cliente",
                 name: "cliente",
+                slot_name: "client",
                 // filter: {
                 //     type: "simple",
                 //     placeholder: "Enter first name"
@@ -476,6 +491,18 @@ export default {
             axios.get(endPoint.endpointTarget+'/ventas', config)
             .then(res => {
                 this.sales = res.data
+                for (let i = 0; i < this.sales.length; i++) {
+                    const datas = this.sales[i].cliente
+                    this.sales[i].cliente = []
+                    if (datas.includes('-')) {
+                        const sp = datas.split("-")
+                        this.sales[i].cliente = sp
+                    }
+                    else{
+                        this.sales[i].cliente.push(datas)
+                    }
+                }
+                console.log(this.sales)
                 this.progress = true
             }).catch(err => {
                 this.modals = {

@@ -38,8 +38,8 @@ import CKEditor from '@ckeditor/ckeditor5-vue';
 import 'vue-progress-path/dist/vue-progress-path.css'
 import VueProgress from 'vue-progress-path'
 import VueCarousel from 'vue-carousel';
-
- 
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/antd.css';
 
  
 
@@ -57,6 +57,7 @@ const pluginOptions = {globalOptions: { currency: {'prefix':'$ '},precision: 0, 
 
 /* USES*/
 
+Vue.use(Antd);
 Vue.component('vue-single-select', VueSingleSelect);
 Vue.use(VueCurrencyInput, pluginOptions)
 Vue.use(ArgonDashboard)

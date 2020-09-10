@@ -57,7 +57,7 @@
             </tab-pane>
 
             <tab-pane title="Profile">
-                <span slot="title">
+                <span id="provedorBtn" slot="title">
                     <i class="fa fa-user-tie"></i>
                     Tabla de provedores
                 </span>
@@ -385,6 +385,7 @@
             </base-button>
         </template>
     </modal>
+
   </div>
 </template>
 <script>
@@ -792,7 +793,18 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
               contactPlus:'',
               direction:'',
             }
-            
+            this.modals = {
+              modal1: false,
+              modal2: false,
+              modal3: false,
+              modal4: false,
+              modal5: false,
+              modal6: false,
+              message: "",
+              icon: '',
+              type:''
+            }
+            document.getElementById("provedorBtn").click()
             this.getProducts();
             this.getProviders();
           }else{

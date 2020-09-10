@@ -1381,7 +1381,7 @@
             openCalendar(){
                 console.log("hola vale")
                 console.log(this.dates.simple)
-                
+                this.configDate.inline = false
                 setTimeout(() => {
                     const split = this.dates.simple.split('-')
                     this.finalDate = split[1]+'-'+split[0]+'-'+split[2]

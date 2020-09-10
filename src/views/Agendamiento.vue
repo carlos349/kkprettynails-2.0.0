@@ -675,12 +675,38 @@
                   class="border-0">
                 <div class="row">
                     <div class="col-6 text-center">
-                        <dt>Clientes</dt>
+                        <dt>Cliente(s)</dt>
                         <base-button class="mt-1" v-for="client of selectedDates.clientSplit" size="sm" type="secondary">{{client}}</base-button>
                     </div>
                     <div class="col-6 text-center">
-                        <dt>Empleado</dt>
-                        <base-button class="mt-1" v-for="employe of selectedDates.discountSplit" size="sm" type="secondary">{{employe}}</base-button>
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <dt>Empleado(s)</dt>
+                            </div>
+                            <div class="col-sm-2">
+                                <dt>%</dt>
+                            </div>
+                        </div>
+                        
+                        <div v-for="(employe, index) of selectedDates.discountBetter">
+                            <div class="row p-0 m-0">
+                                <base-button class=" col-sm-9 mb-1 mt-1" size="sm" type="secondary">{{employe.employe}}</base-button>
+                                <base-input 
+                                    type="text"
+                                    v-model="employe.discount"
+                                    placeholder="%"
+                                    v-on:keypress="noCero(index)"
+                                    v-on:keyup="changeDiscount(index)"
+                                    v-on:click="cleanDiscount(index)"
+                                    v-on:change="changePrice(index)"
+                                    class="col-sm-2 m-0 mb-1 p-0"
+                                    style="font-size: 0.75rem;"
+                                    >
+                                </base-input>
+                            </div>
+                            
+                        </div>
+                        
                     </div>
                     <div class="col-12">
                         <dt class="mt-3 text-center">Servicios</dt>
@@ -998,6 +1024,7 @@
             total:0,
             discount:0,
             discountSplit:[],
+            discountBetter:[],
             employeDiscount:[],
             endDatesId:[],
             clientIds:[],
@@ -1180,7 +1207,7 @@
                             paypdf: res.data[index].paypdf
                         }
                         this.events.push(arrayEvents)
-                        console.log(this.events)
+                        
                     }
                 })
             }else{
@@ -1229,7 +1256,7 @@
                         paypdf: res.data[index].paypdf
                     }
                     this.events.push(arrayEvents)
-                    console.log(this.events)
+                    
                     }
                 })
             }
@@ -1373,7 +1400,7 @@
                     }
                 }  
             }
-            console.log(lendersName)
+            
             this.registerDae.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false }) 
             this.validHour = false  
             this.totalPrice = parseFloat(this.totalPrice) + parseFloat(precio)
@@ -1657,7 +1684,7 @@
             const startFormat = start
             const endFormat = end
             const dateFormat = this.finalDate
-            console.log(id+'  --  '+ name+'  --  '+ mail+'  --  '+ start+'  --  '+ end+'  --  '+ services+'  --  '+ lender)
+            
             axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
                 name: nameFormat,
                 contact: contactFormat,
@@ -1670,7 +1697,7 @@
             })
             .then(res => {
                 if (res.data.status == 'ok') {
-                    console.log(res.data.status)
+                    
                 }
             })
             .catch(err => {
@@ -2121,6 +2148,7 @@
                     total:0,
                     discount:0,
                     discountSplit:[],
+                    discountBetter:[],
                     employeDiscount:[],
                     endDatesId:[],
                     clientIds:[]
@@ -2144,6 +2172,7 @@
                     total:0,
                     discount:0,
                     discountSplit:[],
+                    discountBetter:[],
                     employeDiscount:[],
                     endDatesId:[],
                     clientIds:[]
@@ -2185,7 +2214,7 @@
                         }
                     } 
                 }
-                console.log(this.EndDateServices)
+                
             })
             // for (let index = 0; index < services.length; index++) {
             //   if (services[index].) {
@@ -2264,11 +2293,17 @@
                 this.selectedDates.total =  parseFloat(this.selectedDates.total) + parseFloat(position.total)
                 this.selectedDates.discount = index == 0 ? position.employe + ' / ' + position.descuento+'%' : this.selectedDates.discount + ' - ' +position.employe + ' / ' + position.descuento+'%'
                 this.selectedDates.discountSplit = this.selectedDates.discount.split('-')
+                
+                
                 this.selectedDates.employeDiscount.push({employe: position.employe, comision: position.comision})
                 this.selectedDates.endDatesId.push(position.id)
                 this.selectedDates.clientIds.push({id:position.client.split(' / ')[1], ifrecomend:position.ifrecomend})
             }
-             console.log(this.selectedDates.closedArray)
+            for (let i = 0; i < this.selectedDates.discountSplit.length; i++) {
+                    const sp = this.selectedDates.discountSplit[i].split(" / ")
+                    this.selectedDates.discountBetter.push({employe:sp[0] , discount:sp[1].split("%")[0]})
+                }
+             console.log(this.selectedDates.services)
             this.dateModals.modal5 = true
         },
         hundredPorcent(tipo){
@@ -2448,7 +2483,7 @@
         handleFileUpload(){
             const LengthImage = this.selectedEvent.image.length + this.$refs.file.files.length
             if (LengthImage > 3) {
-                console.log('maximo')
+                
             }else{
                 this.file = this.$refs.file.files
                 if (this.file.length == 3) {
@@ -2466,7 +2501,7 @@
                 const element = this.file[index];
                 formData.append('image', this.file[index])
             }
-            console.log(this.selectedEvent.image)
+            
             formData.append('imagePrev', this.selectedEvent.image)
             axios.put(endPoint.endpointTarget+'/citas/uploadDesign/'+id, formData, {
                 headers: {
@@ -2591,7 +2626,7 @@
             }, 500);
         },
         scroll(){
-            console.log("qloq chiamo")
+            
         },
         myFunction() {
 			var input, filter, table, tr, td, i, txtValue;
@@ -2612,7 +2647,7 @@
 			}
         },
         sendConfirmation(id, name, start, end, services, lender){
-            console.log(id+'--'+name+'--'+start+'--'+end)
+            
             const nameFormat = this.formatName(name)
             const contactFormat = this.formatContact(name)
             const startFormat = this.dateSplitHours(start)
@@ -2688,12 +2723,12 @@
                                     break
                                 }
                             }
-                            console.log(validCounter)
+                            
                             if (validCounter) {
                                 const finalLender = this.registerDae.serviceSelectds[0].lenders[counter].lender
                                 const finalRestime = this.registerDae.serviceSelectds[0].lenders[counter].resTime
                                 this.registerDae.serviceSelectds[0].class = this.registerDae.serviceSelectds[0].lenders[counter].class
-                                console.log(finalLender)
+                                
                                 this.registerDae.serviceSelectds[0].valid = true
                                 this.registerDae.serviceSelectds[0].realLender = finalLender
                                 this.validMultiLender(0, finalLender, this.registerDae.serviceSelectds[0].duration, finalRestime)
@@ -2739,12 +2774,12 @@
                                     break
                                 }
                             }
-                            console.log(validCounter)
+                            
                             if (validCounter) {
                                 const finalLender = this.registerDae.serviceSelectds[0].lenders[counter].lender
                                 const finalRestime = this.registerDae.serviceSelectds[0].lenders[counter].resTime
                                 this.registerDae.serviceSelectds[0].class = this.registerDae.serviceSelectds[0].lenders[counter].class
-                                console.log(finalLender)
+                                
                                 this.registerDae.serviceSelectds[0].valid = true
                                 this.registerDae.serviceSelectds[0].realLender = finalLender
                                 this.validMultiLender(0, finalLender, this.registerDae.serviceSelectds[0].duration, finalRestime)
@@ -2777,11 +2812,11 @@
             this.registerDae.employeSelect = ''
             this.validSchedule = false
             this.noOneLender = true
-            console.log(this.registerDae.serviceSelectds[index])
+            
             this.selectHourService(index, lender, time, resTime)
         },
         selectHourService(index, lender, time, resTime){
-            console.log(lender+'--'+ time+'--'+ resTime+'--'+index)
+           
             const finalTime =  this.registerDae.design == 'si' ? time + 15 : time
             this.registerDae.serviceSelectds[index].lenderSelectData = {
                 employe: lender,
@@ -2823,14 +2858,14 @@
                 const q = index - 1 
                 for (let j = 0; j <= q; j++) {
                     const element = this.registerDae.serviceSelectds[j];
-                    console.log(element.realLender +' == '+ lender)
+                    
                     if (element.realLender == lender) {
                         editBlock = true
                         indexEdit = j
                     }
                 }
                 if (editBlock) {
-                    console.log(this.arrayLendersSelect)
+                    
                     this.registerDae.serviceSelectds[index].blocks = this.registerDae.serviceSelectds[indexEdit].blocks
                     axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
                         array: this.registerDae.serviceSelectds[index].blocks,
@@ -2844,7 +2879,7 @@
                 }else{
                     this.registerDae.serviceSelectds[index].blocks = res.data
                     this.arrayLendersSelect.push({index: index, lender: lender}) 
-                    console.log(this.arrayLendersSelect)
+                   
                     this.registerDae.serviceSelectds[index].validAfter = true
                 }
                 
@@ -2856,11 +2891,11 @@
             setTimeout(() => {
                 $('#'+open).toggle('slow')
             }, 500);
-            console.log(indexService)
+            
             var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].Horario.split(":") 
             this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
             this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
-            console.log(this.registerDae.serviceSelectds[indexService])
+            
             axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDae.serviceSelectds[indexService].lenderSelectData)
             .then(res => {
                 console.log(res)
@@ -2874,8 +2909,7 @@
                     }
                 }
                 if (editBlock) {
-                    console.log('entre en el edit')
-                    console.log(this.arrayLendersSelect)
+                    
                     axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
                         array: this.registerDae.serviceSelectds[indexService].blocks,
                         time: this.registerDae.serviceSelectds[indexService].lenderSelectData.time
@@ -2890,7 +2924,7 @@
                         var valid = 0 
                         for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                             const element = this.registerDae.serviceSelectds[index];
-                            console.log(element.start)
+                            
                             if (element.start == "") {
                                 valid = 1
                             }
@@ -2901,7 +2935,7 @@
                         $('#'+check).addClass('fa-check')
                     })
                 }else{
-                    console.log('NO entre en el edit')
+                    
                     for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
                         res.data[i].validator = 'select'
                         this.registerDae.serviceSelectds[indexService].end = res.data[i].Horario
@@ -2912,7 +2946,7 @@
                     var valid = 0 
                     for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                         const element = this.registerDae.serviceSelectds[index];
-                        console.log(element.start)
+                        
                         if (element.start == "") {
                             valid = 1
                         }
@@ -2959,12 +2993,11 @@
         },
         insertData(index, lender, restTime, Class, duration, check, lenders){
             if (lender == 'Primera disponible') {
-                console.log(lenders)
+                
                 axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                 .then(res => {
                     var lenderSelect = ''
-                    console.log(res)
-                    console.log(lenders)
+                    
                     var validCounter = false
                     for (let j = index; j < res.data.array.length; j++) {
                         const element = res.data.array[j];
@@ -3048,7 +3081,7 @@
             
         },
         validateLastStep() {
-            console.log(this.validHour)
+            
             if (this.validHour) {
                 this.validWizard = true
                 this.registerDae.valid = true
@@ -3060,10 +3093,69 @@
             }
             
         },
+        changeDiscount(i){
+            if (this.selectedDates.discountBetter[i].discount == '' ||this.selectedDates.discountBetter[i].discount == '00' ) {
+                this.selectedDates.discountBetter[i].discount = '0'
+            }else{
+                this.selectedDates.discountBetter[i].discount = this.selectedDates.discountBetter[i].discount.replace(/^0+/, '')
+            }
+            
+            this.selectedDates.discountSplit[i] = this.selectedDates.discountSplit[i].split(" / ")[0] + " / " + this.selectedDates.discountBetter[i].discount + "%"
+            this.selectedDates.discount = ''
+            for (let e = 0; e < this.selectedDates.discountSplit.length; e++) {
+                if (e == 0) {
+                    this.selectedDates.discount = this.selectedDates.discountSplit[e]
+                }
+                else{
+                    this.selectedDates.discount = this.selectedDates.discount + '-' + this.selectedDates.discountSplit[e]
+                }
+            }
+
+            let discount = 0
+            for (let c = 0; c < this.selectedDates.discountBetter.length; c++) {
+                discount = parseFloat(discount) + parseFloat(this.selectedDates.discountBetter[c].discount)
+                
+            }
+            
+            if (discount > 0) {
+                this.selectedDates.total = this.selectedDates.design
+                
+                for (let index = 0; index < this.selectedDates.services.length; index++) {
+                    if (!this.selectedDates.services[index].descuento) {
+                            const descuento = parseFloat(discount) / 100
+                            
+                            const porcentaje = 1 - parseFloat(descuento)
+                            
+                            const precioConDescuento = parseFloat(this.selectedDates.services[index].precio) * parseFloat(porcentaje)
+                              
+                            const totalConDescuento = parseFloat(this.selectedDates.total) + parseFloat(precioConDescuento)
+                            
+                            this.selectedDates.total = totalConDescuento 
+                            console.log("aqui")
+                    }
+                    else{ 
+                        console.log("alla")
+                        this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.services[index].precio)
+                    }
+                }
+            }else{
+                this.selectedDates.total = this.selectedDates.design
+                for (let index = 0; index < this.selectedDates.services.length; index++) {
+                            const totalSinDescuento = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.services[index].precio)
+                            this.selectedDates.total = totalSinDescuento 
+                            console.log("aqui")
+                }
+            }
+        },
+        cleanDiscount(i){
+            if (this.selectedDates.discountBetter[i].discount == 0) {
+                this.selectedDates.discountBetter[i].discount = ''
+            }
+        },
     },
     computed: {
         ifSticky: () => {
-            console.log(this.$refs.aggend)
+            
             return this.$refs.aggend
         }
     },

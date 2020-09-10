@@ -55,28 +55,38 @@
             <div class="row pt-3 shadowTop">
                 <div class="col-sm-5">
                     <div class="input-group">
-                        <base-input alternative
-                            title="Sub Total"
-                            type="text"
-                            class="align"
-                            placeholder=""
-                            addon-left-icon="ni ni-money-coins"
-                            v-model="price"
-                            disabled
-                        ></base-input>
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Sub Total</span>
+                            </template>
+                            <base-input alternative
+                                type="text"
+                                class="align"
+                                placeholder=""
+                                addon-left-icon="ni ni-money-coins"
+                                v-model="price"
+                                disabled
+                            ></base-input>
+                        </a-tooltip>
+                        
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="input-group">
-                        <base-input v-if="validRoute('procesar', 'descuento')" alternative
-                            title="Descuento"
+                        <a-tooltip v-if="validRoute('procesar', 'descuento')" placement="topLeft">
+                            <template slot="title">
+                            <span>Descuento</span>
+                            </template>
+                            <base-input  alternative
                             type="text"
                             class="align"
-                            placeholder="Descuento"
+                            placeholder="0%"
                             addon-left-icon="ni ni-tag"
                             v-on:change="descuentoFunc(true)"
                             v-model="discount"
                         ></base-input>
+                        </a-tooltip>
+                        
                         <base-input v-else disabled 
                             alternative
                             title="Descuento deshabilitado"

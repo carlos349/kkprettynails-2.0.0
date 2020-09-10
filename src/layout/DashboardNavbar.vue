@@ -39,7 +39,7 @@
                       <div class="row align-items-center">
                         <div class="col-auto">
                           <!-- Avatar -->
-                          <img alt="Image placeholder" v-if="notification.userImage == ''" src="img/theme/profile-default.png" class="avatar rounded-circle">
+                          <img alt="Image placeholder" v-if="notification.userImage == '' || notification.userImage == null" src="img/theme/profile-default.png" class="avatar rounded-circle">
                           <img alt="Image placeholder" v-else :src="imgEndpoint+notification.userImage" class="avatar rounded-circle">
                         </div>
                         <div class="col ml--2">
