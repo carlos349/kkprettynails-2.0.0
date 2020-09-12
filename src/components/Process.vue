@@ -99,13 +99,19 @@
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <currency-input
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Adicional por diseño</span>
+                        </template>
+                        <currency-input
                         title="Diseño"
                         v-model="design"
                         placeholder="Diseño"
                         locale="de"
                         class="form-control"
                         v-on:keyup="addDesign()"/>
+                    </a-tooltip>
+                    
                 </div>
             </div>
             <div class="text-muted text-center mb-1" style="margin-top:-15px;">
@@ -113,85 +119,115 @@
             </div>
             <div class="row">
                 <div class="col-4">
-                    <div class="input-group mb-2">
-                        <div title="Efectivo" v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
-                            <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
-                            <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
-                            </span>
-                            
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Efectivo</span>
+                        </template>
+                        <div class="input-group mb-2">
+                            <div title="Efectivo" v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
+                                <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
+                                </span>
+                                
+                            </div>
+                            <currency-input
+                                v-model="payCash"
+                                locale="de"
+                                placeholder="Efectivo"
+                                class="form-control"
+                            />
                         </div>
-                        <currency-input
-                            v-model="payCash"
-                            locale="de"
-                            placeholder="Efectivo"
-                            class="form-control"
-                        />
-                    </div>
+                    </a-tooltip>
+                    
                 </div>
                 <div class="col-4">
-                    <div title="Transferencia" class="input-group mb-2">
-                        <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
-                            <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
-                            <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
-                            </span>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Transferencia</span>
+                        </template>
+                        <div title="Transferencia" class="input-group mb-2">
+                            <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
+                                <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
+                                </span>
+                            </div>
+                            <currency-input
+                                v-model="payTransfer"
+                                locale="de"
+                                placeholder="Transferencia"
+                                class="form-control"
+                            />
                         </div>
-                        <currency-input
-                            v-model="payTransfer"
-                            locale="de"
-                            placeholder="Transferencia"
-                            class="form-control"
-                        />
-                    </div>
+                    </a-tooltip>
+                    
                 </div>
                 <div class="col-4">
-                    <div title="Otros" class="input-group mb-2">
-                        <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
-                            <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                <b class="others" style="font-size:0.6em;display:none">100%</b>
-                            <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
-                            </span>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Otros</span>
+                        </template>
+                        <div title="Otros" class="input-group mb-2">
+                            <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="others" style="font-size:0.6em;display:none">100%</b>
+                                <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
+                                </span>
+                            </div>
+                            <currency-input
+                                v-model="payOthers"
+                                locale="de"
+                                placeholder="Otros"
+                                class="form-control"
+                            />
                         </div>
-                        <currency-input
-                            v-model="payOthers"
-                            locale="de"
-                            placeholder="Otros"
-                            class="form-control"
-                        />
-                    </div>
+                    </a-tooltip>
+                    
                 </div>
                 <div title="Débito" class="col-6">
-                    <div class="input-group mb-2">
-                        <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
-                            <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                <b class="debit" style="font-size:0.6em;display:none">100%</b>
-                                <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
-                            </span>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Débito</span>
+                        </template>
+                        <div class="input-group mb-2">
+                            <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="debit" style="font-size:0.6em;display:none">100%</b>
+                                    <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
+                                </span>
+                            </div>
+                            <currency-input
+                                v-model="payDebit"
+                                locale="de"
+                                placeholder="Débito"
+                                class="form-control"
+                            />
                         </div>
-                        <currency-input
-                            v-model="payDebit"
-                            locale="de"
-                            placeholder="Débito"
-                            class="form-control"
-                        />
-                    </div>
+                    </a-tooltip>
+                    
                 </div>
                 <div title="Crédito" class="col-6">
-                    <div class="input-group mb-2">
-                        <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
-                            <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                <b class="credit" style="font-size:0.6em;display:none">100%</b>
-                                <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
-                            </span>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Crédito</span>
+                        </template>
+                        <div class="input-group mb-2">
+                            <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
+                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                    <b class="credit" style="font-size:0.6em;display:none">100%</b>
+                                    <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
+                                </span>
+                            </div>
+                            <currency-input
+                                v-model="payCredit"
+                                locale="de"
+                                placeholder="Crédito"
+                                class="form-control"
+                            />
                         </div>
-                        <currency-input
-                            v-model="payCredit"
-                            locale="de"
-                            placeholder="Crédito"
-                            class="form-control"
-                        />
-                    </div>
+                    </a-tooltip>
+                    
                 </div>
                 
             </div>

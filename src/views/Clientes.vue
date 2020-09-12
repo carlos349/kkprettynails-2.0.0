@@ -228,10 +228,22 @@
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <center>
-                        <base-button v-if="validRoute('clientes', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67">Detalles</base-button>
-                        <base-button disabled v-else size="sm" type="default" icon="ni ni-bullet-list-67">Detalles</base-button>
-                        <base-button v-if="validRoute('clientes', 'eliminar')" size="sm" v-on:click="deleteClient(props.row._id)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
-                        <base-button disabled v-else size="sm" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Detalles / Editar</span>
+                            </template>
+                            <base-button v-if="validRoute('clientes', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67"></base-button>
+                            <base-button disabled v-else size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
+                        </a-tooltip>
+                        
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Eliminar</span>
+                            </template>
+                            <base-button v-if="validRoute('clientes', 'eliminar')" size="sm" v-on:click="deleteClient(props.row._id)" type="warning" icon="fas fa-trash"></base-button>
+                            <base-button disabled v-else size="sm" type="warning" icon="fas fa-trash"></base-button>
+                        </a-tooltip>
+                        
                     </center>
                     
                 </b>
