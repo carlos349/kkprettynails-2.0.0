@@ -9,8 +9,8 @@
                 <div class="row">
                     <div class="col-12">
                         <h1  class="display-2 text-white w-100">Sección de servicios</h1>
-                        <p class="text-white mt-0 mb-2">Esta es la sección servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
-                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true"  type="success">Ingrese un servicio</base-button>
+                        <p class="text-white mt-0 mb-2">Esta es la sección de servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
+                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true,clean()"  type="success">Ingrese un servicio</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-else disabled  type="success">Ingrese un servicio</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorias</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-else disabled  type="default">Categorias</base-button>
@@ -108,7 +108,7 @@
                                         Empleados
                                     </i>
                                 </span>
-                                <vue-custom-scrollbar class="maxHeight">
+                                <vue-custom-scrollbar ref="table" class="maxHeight">
                                     <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
                                     </vue-bootstrap4-table>
                                 </vue-custom-scrollbar >
@@ -186,16 +186,23 @@
                                 <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
                             </select>
                             <select class="form-control col-sm-5 mx-auto mb-3" v-model="timeEdit">
-                                <option style="color:black;" value="15">15 Minutos</option>
-                                <option style="color:black;" value="30">30 Minutos</option>
-                                <option style="color:black;" value="45">45 Minutos</option>
-                                <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
-                                <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
-                                <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
-                                <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
-                                <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
-                                <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
-                                <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
+                                <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
+                                    <option style="color:black;" value="15">15 Minutos</option>
+                                    <option style="color:black;" value="30">30 Minutos</option>
+                                    <option style="color:black;" value="45">45 Minutos</option>
+                                    <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+                                    <option style="color:black;" value="75">75 Minutos (1:15 Hr)</option>
+                                    <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
+                                    <option style="color:black;" value="105">105 Minutos (1:45 Hr)</option>
+                                    <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
+                                    <option style="color:black;" value="135">135 Minutos (2:15 Hr)</option>
+                                    <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
+                                    <option style="color:black;" value="165">165 Minutos (2:45 Hr)</option>
+                                    <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
+                                    <option style="color:black;" value="195">195 Minutos (3:15 Hr)</option>
+                                    <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
+                                    <option style="color:black;" value="225">225 Minutos (3:45 Hr)</option>
+                                    <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
                             </select>
                             <div class="row mx-auto col-sm-6" style="margin-top:-2%">
                                 <h3 class="w-100 text-center">¿Aplica descuento?</h3>
@@ -211,7 +218,7 @@
                                         Empleados
                                     </i>
                                 </span>
-                                <vue-custom-scrollbar ref="table" class="maxHeight">
+                                <vue-custom-scrollbar class="maxHeight">
                                     <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
                                     </vue-bootstrap4-table>
                                 </vue-custom-scrollbar >
@@ -253,18 +260,29 @@
         <vue-bootstrap4-table :rows="services" :columns="columns" :classes="classes" :config="config">
             <template slot="actionButtons" class="mx-auto" slot-scope="props">
                 <center>
-                   <base-button v-if="validRoute('servicios', 'editar')" icon="ni ni-fat-add" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos,props.row.category)"></base-button>
-                    <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" ></base-button>
-                    <template v-if="validRoute('servicios', 'activaciones')">
-                             <base-button v-tooltip.top-center="'sirves?'" class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)"></base-button>
-                            <base-button v-tooltip.top-center="'sirves?'" class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)"></base-button> 
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Editar</span>
+                        </template>
+                        <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos,props.row.category)"></base-button>
+                        <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" ></base-button>
+                    </a-tooltip>
+    
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Activar / Desactivar</span>
+                        </template>
+                        <template v-if="validRoute('servicios', 'activaciones')">
+                             <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)"></base-button>
+                            <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)"></base-button> 
                   
-                        
-                    </template>
-                    <template v-else>
-                        <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
-                        <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled></base-button> 
-                    </template>
+                        </template>
+                        <template v-else>
+                            <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
+                            <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled></base-button> 
+                        </template>
+                    </a-tooltip>
+                    
                 </center>
             </template>
             <template slot="price" slot-scope="props">
@@ -888,11 +906,7 @@ export default {
             }, 100);
         },
         clean(){
-            let selected = this.$refs.table.$children[0].$data.selected_items
-            for (let c = 0; c <= selected.length; c++) {
-                selected.shift()
-                console.log(selected.length)
-            } 
+            this.$refs.table.$children[0].unSelectAllItems()
         },
         editService(){
             if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {

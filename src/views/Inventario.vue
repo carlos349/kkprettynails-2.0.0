@@ -27,10 +27,28 @@
                   <template slot="edit" slot-scope="props">
                       <b>
                         <center>
+                          <a-tooltip placement="top">
+                            <template slot="title">
+                              <span>Anexar productos</span>
+                            </template>
                             <base-button  title="Compras" size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type, dataProduct.name = props.row.producto,initialState(1,props.row._id)" icon="fa fa-plus"></base-button>
+                          </a-tooltip>
+
+                          <a-tooltip placement="top">
+                            <template slot="title">
+                              <span>Alerta de productos</span>
+                            </template>
                             <base-button v-if="parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume) <= props.row.alertTotal" title="Alerta producto" size="sm" type="danger" icon="ni ni-bell-55" @click="dataStock(props.row._id, props.row.alertTotal, props.row.type)"></base-button>
                             <base-button v-else title="Alerta producto" size="sm" type="success" icon="ni ni-bell-55" @click="dataStock(props.row._id, props.row.alertTotal, props.row.type)"></base-button>
+                          </a-tooltip>  
+
+                          <a-tooltip placement="top">
+                            <template slot="title">
+                              <span>Eliminar</span>
+                            </template>
                             <base-button  title="Eliminar" size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash"></base-button>
+                          </a-tooltip>  
+                            
                         </center>
                       </b>
                   </template>
@@ -65,8 +83,21 @@
                   <template slot="edit" slot-scope="props">
                       <b>
                         <center>
-                            <base-button size="sm" type="default" @click="modals.modal3 = true, providerSup.typeProvider = 'Editar', pushDataProvider(props.row.nombre, props.row.rut, props.row.contacto,props.row.contactoAdicional,props.row.ubicacion,props.row._id)" icon="ni ni-bullet-list-67">Editar</base-button>
-                            <base-button size="sm" type="danger" @click="deleteProvider(props.row._id)" icon="fa fa-trash">Eliminar</base-button>
+                          <a-tooltip placement="top">
+                            <template slot="title">
+                              <span>Editar</span>
+                            </template>
+                            <base-button size="sm" type="default" @click="modals.modal3 = true, providerSup.typeProvider = 'Editar', pushDataProvider(props.row.nombre, props.row.rut, props.row.contacto,props.row.contactoAdicional,props.row.ubicacion,props.row._id)" icon="fas fa-edit"></base-button>
+                            
+                          </a-tooltip>
+
+                          <a-tooltip placement="top">
+                            <template slot="title">
+                              <span>Eliminar</span>
+                            </template>
+                            <base-button size="sm" type="danger" @click="deleteProvider(props.row._id)" icon="fa fa-trash"></base-button>
+                          </a-tooltip>
+                            
                         </center>
                       </b>
                   </template>
@@ -135,7 +166,13 @@
                               <template slot="edit" slot-scope="props">
                                   <b>
                                     <center>
-                                        <base-button size="sm" type="default" @click="modals.modal5 = true ,validForm = 2, reports = props.row.array" icon="ni ni-bullet-list-67">Ver informe</base-button>
+                                      <a-tooltip placement="top">
+                                        <template slot="title">
+                                          <span>Ver informe</span>
+                                        </template>
+                                        <base-button size="sm" type="default" @click="modals.modal5 = true ,validForm = 2, reports = props.row.array" icon="ni ni-bullet-list-67"></base-button>
+                                      </a-tooltip>
+                                        
                                         <!-- <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Anular</base-button> -->
                                     </center>
                                   </b>

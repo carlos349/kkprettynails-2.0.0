@@ -225,18 +225,35 @@
                 </base-dropdown>
             </template>
             <template slot="access" class="text-left" slot-scope="props" >
-                <base-button v-if="validRoute('usuarios', 'editar')" v-on:click="dataEdit(props.row.access, props.row._id, props.row.email)" size="sm" slot="title" type="success" class="w-100">
-                    Agregar accesos
-                </base-button>
-                <base-button v-else size="sm" slot="title" type="success" disabled class="w-100">
-                    Agregar accesos
-                </base-button>
+                <center>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Agregar accesos</span>
+                        </template>
+                        <base-button v-if="validRoute('usuarios', 'editar')" icon="ni ni-fat-add" v-on:click="dataEdit(props.row.access, props.row._id, props.row.email)" size="sm"  type="success" class="mx-auto">
+                            
+                        </base-button>
+                        <base-button v-else size="sm"  type="success" disabled class="mx-auto">
+                            
+                        </base-button>
+                    </a-tooltip>
+                </center>
+                
+                
             </template>
             <template slot="Administrar" slot-scope="props">
-                <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteClient(props.row._id, props.row.status)" type="warning" icon="ni ni-fat-remove">Eliminar</base-button>     
-                <base-button v-else size="sm" slot="title" type="warning" icon="ni ni-fat-remove" disabled class="w-100">
-                    Eliminar
-                </base-button> 
+                <center>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Eliminar</span>
+                        </template>
+                        <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteClient(props.row._id, props.row.status)" type="warning" icon="fas fa-trash"></base-button>     
+                        <base-button v-else size="sm" slot="title" type="warning" icon="fas fa-trash" disabled>
+                            
+                        </base-button> 
+                    </a-tooltip>
+                </center>
+                
             </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} |  

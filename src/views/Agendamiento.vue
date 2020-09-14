@@ -100,7 +100,7 @@
                                             <div class="row">
                                                 <template v-for="(name, index) of services" >
                                                     <div class="col-lg-6 mt-2" :key="name" v-if="name.category == category.name">
-                                                        <base-button class="w-100" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores)"  type="default">
+                                                        <base-button class="w-100" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores, name.descuento)"  type="default">
                                                             <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
                                                                 <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
                                                                 <i class="far fa-clock ml-1"></i> {{name.tiempo}}Min
@@ -649,7 +649,7 @@
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
-                <vue-custom-scrollbar class="listDatesEnd maxHeightEdit w-100">
+                <vue-custom-scrollbar ref="table" class="listDatesEnd maxHeightEdit w-100">
                     <vue-bootstrap4-table :rows="closedDates" :columns="columnsDatesClosed" :classes="classes" :config="configDatesClosed" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
                         <template slot="format-date" slot-scope="props">
                             {{formatDate(props.row.date)}}
@@ -669,151 +669,158 @@
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
             <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar</h5>
-            <card type="secondary" shadow
+            <card  type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes=""
                   class="border-0">
-                <div class="row">
-                    <div class="col-6 text-center">
-                        <dt>Cliente(s)</dt>
-                        <base-button class="mt-1" v-for="client of selectedDates.clientSplit" size="sm" type="secondary">{{client}}</base-button>
-                    </div>
-                    <div class="col-6 text-center">
-                        <div class="row">
-                            <div class="col-sm-9">
-                                <dt>Empleado(s)</dt>
-                            </div>
-                            <div class="col-sm-2">
-                                <dt>%</dt>
-                            </div>
+                  <div v-on:click="noBlank">
+                    <div class="row">
+                        <div class="col-6 text-center">
+                            <dt>Cliente(s)</dt>
+                            <base-button class="mt-1" v-for="client of selectedDates.clientSplit" size="sm" type="secondary">{{client}}</base-button>
                         </div>
-                        
-                        <div v-for="(employe, index) of selectedDates.discountBetter">
-                            <div class="row p-0 m-0">
-                                <base-button class=" col-sm-9 mb-1 mt-1" size="sm" type="secondary">{{employe.employe}}</base-button>
-                                <base-input 
-                                    type="text"
-                                    v-model="employe.discount"
-                                    placeholder="%"
-                                    v-on:keypress="noCero(index)"
-                                    v-on:keyup="changeDiscount(index)"
-                                    v-on:click="cleanDiscount(index)"
-                                    v-on:change="changePrice(index)"
-                                    class="col-sm-2 m-0 mb-1 p-0"
-                                    style="font-size: 0.75rem;"
-                                    >
-                                </base-input>
+                        <div class="col-6 text-center">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <dt>Empleado(s)</dt>
+                                </div>
+                                <div class="col-sm-2">
+                                    <dt>%</dt>
+                                </div>
+                            </div>
+                            
+                            <div v-for="(employe, index) of selectedDates.discountBetter">
+                                <div class="row p-0 m-0">
+                                    <base-button class=" col-sm-9 mb-1 mt-1" size="sm" type="secondary">{{employe.employe}}</base-button>
+                                    <base-input 
+                                        type="text"
+                                        v-model="employe.discount"
+                                        placeholder="%"
+                                        
+                                        v-on:keypress="noCero(index)"
+                                        v-on:keyup="changeDiscount(index)"
+                                        v-on:click="cleanDiscount(index)"
+                                        v-on:change="changePrice(index)"
+                                        class="col-sm-2 m-0 mb-1 p-0"
+                                        style="font-size: 0.75rem;"
+                                        >
+                                    </base-input>
+                                </div>
+                                
                             </div>
                             
                         </div>
-                        
-                    </div>
-                    <div class="col-12">
-                        <dt class="mt-3 text-center">Servicios</dt>
-                        <badge v-for="servicesClosedDate of selectedDates.services" class="mt-1 ml-1 text-default" type="primary">{{servicesClosedDate.servicio}}</badge>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <base-button type="secondary" class="col-12">
-                            <span class="float-left">Total</span>
-                            <badge style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.total)}} $</badge>
-                        </base-button>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <base-button type="secondary" class="col-12">
-                            <span class="float-left">Diseño</span>
-                            <badge style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.design)}} $</badge>
-                        </base-button>
-                    </div>
-                </div>
-                <div class="text-muted text-center mb-1 mt-2">
-                    Medios de pago
-                </div>
-                <div class="row">
-                    <div class="col-4">
-                        <div class="input-group mb-2">
-                            <div title="Efectivo" v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
-                                <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
-                                </span>
-                                
-                            </div>
-                            <currency-input
-                                v-model="payCash"
-                                locale="de"
-                                placeholder="Efectivo"
-                                class="form-control"
-                            />
+                        <div class="col-12">
+                            <dt class="mt-3 text-center">Servicios</dt>
+                            <badge v-for="servicesClosedDate of selectedDates.services" class="mt-1 ml-1 text-default" type="primary">{{servicesClosedDate.servicio}}</badge>
+                        </div>
+                        <div class="col-6 mt-2">
+                            <base-button type="secondary" class="col-12">
+                                <span class="float-left">Total</span>
+                                <badge v-if="loading == false" style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.total)}} $</badge>
+                                <div v-else>
+                                    <a-spin size="small" class="float-right" />
+                                </div>
+                            </base-button>
+                        </div>
+                        <div class="col-6 mt-2">
+                            <base-button type="secondary" class="col-12">
+                                <span class="float-left">Diseño</span>
+                                <badge style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.design)}} $</badge>
+                            </base-button>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div title="Transferencia" class="input-group mb-2">
-                            <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
-                                <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
-                                </span>
+                    <div class="text-muted text-center mb-1 mt-2">
+                        Medios de pago
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="input-group mb-2">
+                                <div title="Efectivo" v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
+                                    <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
+                                    </span>
+                                    
+                                </div>
+                                <currency-input
+                                    v-model="payCash"
+                                    locale="de"
+                                    placeholder="Efectivo"
+                                    class="form-control"
+                                />
                             </div>
-                            <currency-input
-                                v-model="payTransfer"
-                                locale="de"
-                                placeholder="Transferencia"
-                                class="form-control"
-                            />
+                        </div>
+                        <div class="col-4">
+                            <div title="Transferencia" class="input-group mb-2">
+                                <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
+                                    <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
+                                    </span>
+                                </div>
+                                <currency-input
+                                    v-model="payTransfer"
+                                    locale="de"
+                                    placeholder="Transferencia"
+                                    class="form-control"
+                                />
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div title="Otros" class="input-group mb-2">
+                                <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="others" style="font-size:0.6em;display:none">100%</b>
+                                    <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
+                                    </span>
+                                </div>
+                                <currency-input
+                                    v-model="payOthers"
+                                    locale="de"
+                                    placeholder="Otros"
+                                    class="form-control"
+                                />
+                            </div>
+                        </div>
+                        <div title="Débito" class="col-6">
+                            <div class="input-group mb-2">
+                                <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="debit" style="font-size:0.6em;display:none">100%</b>
+                                        <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
+                                    </span>
+                                </div>
+                                <currency-input
+                                    v-model="payDebit"
+                                    locale="de"
+                                    placeholder="Débito"
+                                    class="form-control"
+                                />
+                            </div>
+                        </div>
+                        <div title="Crédito" class="col-6">
+                            <div class="input-group mb-2">
+                                <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="credit" style="font-size:0.6em;display:none">100%</b>
+                                        <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
+                                    </span>
+                                </div>
+                                <currency-input
+                                    v-model="payCredit"
+                                    locale="de"
+                                    placeholder="Crédito"
+                                    class="form-control"
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div title="Otros" class="input-group mb-2">
-                            <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="others" style="font-size:0.6em;display:none">100%</b>
-                                <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
-                                </span>
-                            </div>
-                            <currency-input
-                                v-model="payOthers"
-                                locale="de"
-                                placeholder="Otros"
-                                class="form-control"
-                            />
-                        </div>
+                    <div class="text-center mt-2">
+                        <base-button icon="fa fa-calendar-check" v-on:click="processSelected" :disabled="loading" class="col-4 mx-auto" type="success">Procesar</base-button> 
                     </div>
-                    <div title="Débito" class="col-6">
-                        <div class="input-group mb-2">
-                            <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="debit" style="font-size:0.6em;display:none">100%</b>
-                                    <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
-                                </span>
-                            </div>
-                            <currency-input
-                                v-model="payDebit"
-                                locale="de"
-                                placeholder="Débito"
-                                class="form-control"
-                            />
-                        </div>
-                    </div>
-                    <div title="Crédito" class="col-6">
-                        <div class="input-group mb-2">
-                            <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="credit" style="font-size:0.6em;display:none">100%</b>
-                                    <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
-                                </span>
-                            </div>
-                            <currency-input
-                                v-model="payCredit"
-                                locale="de"
-                                placeholder="Crédito"
-                                class="form-control"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center mt-2">
-                    <base-button icon="fa fa-calendar-check" v-on:click="processSelected" class="col-4 mx-auto" type="success">Procesar</base-button> 
-                </div>
+                  </div>
+                
             </card>
         </modal>    
     </div>
@@ -885,6 +892,7 @@
         readyChange: false,
         validHour: false,
         getDay: 0,
+        loading:false,
         arrayLendersSelect: [],
         registerDae: {
             employeSelect: '',
@@ -1265,6 +1273,7 @@
         getClosed() {
             axios.get(endPoint.endpointTarget+'/citas/endingdates')
             .then( res => {
+                console.log(res.data)
                 this.closedDates = res.data
                 this.lengthClosedDates = res.data.length
             })
@@ -1387,7 +1396,7 @@
             $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
             $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
         }, 
-        plusService(index, service, time, comision, precio, lenders){
+        plusService(index, service, time, comision, precio, lenders, discount){
             this.ifServices = true
             this.countServices[index].count++
             this.registerDae.duration = this.registerDae.duration + parseFloat(time)
@@ -1401,7 +1410,7 @@
                 }  
             }
             
-            this.registerDae.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false }) 
+            this.registerDae.serviceSelectds.push({comision: comision, precio: precio, discount:discount, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false }) 
             this.validHour = false  
             this.totalPrice = parseFloat(this.totalPrice) + parseFloat(precio)
             
@@ -2134,6 +2143,7 @@
             })
         },
         initialDate(val){
+            this.$refs.table.$children[0].unSelectAllItems()
             $('.desMarc').prop('checked' , false)
             if (val == 1) {
                 this.selectedDates = {
@@ -2277,7 +2287,7 @@
                 
                 for (let indexTwo = 0; indexTwo < position.services.length; indexTwo++) {
                     const positionTwo = position.services[indexTwo];
-                    this.selectedDates.services.push(positionTwo)
+                    this.selectedDates.services.push({service:positionTwo, employe:position.employe})
                 }
                 position.total = position.descuento > 0 ? position.total - (position.total / 100 * position.descuento) : position.total
                 position.totalLocal = position.descuento > 0 ? position.totalLocal - (position.totalLocal / 100 * position.descuento) : position.totalLocal
@@ -2292,7 +2302,7 @@
                 this.selectedDates.totaLocal = parseFloat(this.selectedDates.totaLocal) + parseFloat(position.totalLocal)
                 this.selectedDates.total =  parseFloat(this.selectedDates.total) + parseFloat(position.total)
                 this.selectedDates.discount = index == 0 ? position.employe + ' / ' + position.descuento+'%' : this.selectedDates.discount + ' - ' +position.employe + ' / ' + position.descuento+'%'
-                this.selectedDates.discountSplit = this.selectedDates.discount.split('-')
+                this.selectedDates.discountSplit = this.selectedDates.discount.split(' - ')
                 
                 
                 this.selectedDates.employeDiscount.push({employe: position.employe, comision: position.comision})
@@ -2591,6 +2601,7 @@
                 ifrecomend:0
             }
             this.selectedDates.closedArray.push(selectArray)
+            console.log(this.selectedDates.closedArray)
         },
         unSelected(value){
         
@@ -3116,47 +3127,81 @@
                 }
             }
 
+            
+        },
+        changePrice(){
+            
+            this.loading = true
             let discount = 0
+            let employe = ''
+            this.selectedDates.total = 0
+            
             for (let c = 0; c < this.selectedDates.discountBetter.length; c++) {
-                discount = parseFloat(discount) + parseFloat(this.selectedDates.discountBetter[c].discount)
+                discount = this.selectedDates.discountBetter[c].discount
+                employe = this.selectedDates.discountBetter[c].employe
                 
+                if (discount >= 0) {
+                    
+                    for (let index = 0; index < this.selectedDates.services.length; index++) {
+                        
+                        if (!this.selectedDates.services[index].service.discount) {
+                            
+                            if (this.selectedDates.services[index].employe == employe) {
+                                
+                                if (discount == 0) {
+                                    this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.services[index].service.precio)
+                                    
+                                }
+                                else{
+                                    
+                                    const descuento = parseFloat(discount) / 100
+                                
+                                    const porcentaje = 1 - parseFloat(descuento)
+                                    
+                                    const precioConDescuento = parseFloat(this.selectedDates.services[index].service.precio) * parseFloat(porcentaje)
+                                    
+                                    this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(precioConDescuento) 
+                                    
+                                }
+                            }
+                        }
+                        else{ 
+                            if (this.selectedDates.services[index].employe == employe) {
+                                this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.services[index].precio)
+                                
+                            }    
+                        }
+                    }
+                    this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.design)
+                }
             }
             
-            if (discount > 0) {
-                this.selectedDates.total = this.selectedDates.design
-                
-                for (let index = 0; index < this.selectedDates.services.length; index++) {
-                    if (!this.selectedDates.services[index].descuento) {
-                            const descuento = parseFloat(discount) / 100
-                            
-                            const porcentaje = 1 - parseFloat(descuento)
-                            
-                            const precioConDescuento = parseFloat(this.selectedDates.services[index].precio) * parseFloat(porcentaje)
-                              
-                            const totalConDescuento = parseFloat(this.selectedDates.total) + parseFloat(precioConDescuento)
-                            
-                            this.selectedDates.total = totalConDescuento 
-                            console.log("aqui")
-                    }
-                    else{ 
-                        console.log("alla")
-                        this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.services[index].precio)
-                    }
-                }
-            }else{
-                this.selectedDates.total = this.selectedDates.design
-                for (let index = 0; index < this.selectedDates.services.length; index++) {
-                            const totalSinDescuento = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.services[index].precio)
-                            this.selectedDates.total = totalSinDescuento 
-                            console.log("aqui")
-                }
-            }
+            this.loading = false
         },
         cleanDiscount(i){
-            if (this.selectedDates.discountBetter[i].discount == 0) {
-                this.selectedDates.discountBetter[i].discount = ''
+            setTimeout(() => {
+                if (this.selectedDates.discountBetter[i].discount == 0) {
+                    this.selectedDates.discountBetter[i].discount = ''
+                }
+            
+                this.loading = true
+            }, 100);
+            
+        },
+        noBlank(){
+            
+            if (this.loading == true) {
+                this.loading = false
+            }
+            for (let d = 0; d < this.selectedDates.discountBetter.length; d++) {
+                if (this.selectedDates.discountBetter[d].discount == '') {
+                    this.selectedDates.discountBetter[d].discount = 0
+                }
             }
         },
+        noCero(){
+            this.loading = true
+        }
     },
     computed: {
         ifSticky: () => {

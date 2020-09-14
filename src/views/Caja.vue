@@ -30,8 +30,14 @@
             <template slot="Administrar" slot-scope="props">
                 <b>
                     <center>
-                       <base-button v-if="validRoute('caja', 'reporte')" size="sm" type="default" icon="ni ni-fat-remove" v-on:click="dataReport(props.row._id)">Reporte</base-button> 
-                       <base-button v-else size="sm" type="default" icon="ni ni-fat-remove" disabled>Reporte</base-button> 
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Reporte</span>
+                            </template>
+                            <base-button v-if="validRoute('caja', 'reporte')" size="sm" type="default" icon="fas fa-clipboard" v-on:click="dataReport(props.row._id)"></base-button> 
+                            <base-button v-else size="sm" type="default" icon="fas fa-clipboard" disabled></base-button> 
+                        </a-tooltip>
+                       
                     </center>
                     
                 </b>
