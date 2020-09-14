@@ -605,14 +605,14 @@
                 </template>
                 <table class="table" v-bind:style="{ 'background-color': '#6BB2E5', 'border-radius' : '5px', 'border':'none !important'}" >
                     <thead>
-                        <tr>
-                        <th style="border-radius:5px !important;border:none" class="text-left pl-4 text-white">
-                            
-                            <input autocomplete="off" style="outline:none !important;background-color:white !important" type="text" id="myInput" v-on:keyup="myFunction()" class="inputFind" placeholder="Filtrar servicios"/>
-                        </th>
-                        <th style="color:white;border:none" class="text-center pl-5 pb-3">
-                            Precio 
-                        </th>
+                        <tr class="pt-2">
+                            <th style="border-radius:5px !important;border:none" class="text-left pl-4 text-white pt-2">
+                                
+                                <input autocomplete="off" style="outline:none !important;background-color:white !important" type="text" id="myInput" v-on:keyup="myFunction()" class="inputFind" placeholder="Filtrar servicios"/>
+                            </th>
+                            <th style="color:white;border:none" class="text-center pl-5 pt-2">
+                                Precio 
+                            </th>
                         </tr>
                     </thead>
                 </table>
@@ -620,24 +620,24 @@
                     <table class="table tableBg" id="myTable">
                         <tbody>
                             <tr v-for="(servicio, index) in services" >
-                                <td style="border:none" v-if="servicio.active" class="font-weight-bold">
-                                <base-button outline  size="sm" type="default" class="w-75 btn procesar text-left" v-on:click="conteoServicioDate(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, index)">
-                                    {{servicio.nombre}} <span class="badge badge-dark conteoServ mt-1 float-right" :class="servicio._id" v-bind:id="index+servicio._id">0</span>
-                                </base-button>
-                                <base-button v-on:click="discountServiceDate(servicio._id, index, servicio.nombre)" outline size="sm" type="default" class="w-20 btn btn-back  text-left" >
-                                    <font-awesome-icon icon="times"/>
-                                </base-button>
-                                
+                                <td style="border:none" v-if="servicio.active" class="font-weight-bold pt-1 pb-1">
+                                    <base-button outline  size="sm" type="default" class="w-75 btn procesar text-left" v-on:click="conteoServicioDate(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, index)">
+                                        {{servicio.nombre}} <span class="badge badge-dark conteoServ mt-1 float-right" :class="servicio._id" v-bind:id="index+servicio._id">0</span>
+                                    </base-button>
+                                    <base-button v-on:click="discountServiceDate(servicio._id, index, servicio.nombre)" outline size="sm" type="default" class="w-20 btn btn-back  text-left" >
+                                        <font-awesome-icon icon="times"/>
+                                    </base-button>
                                 </td>
-                                <td style="border:none" v-if="servicio.active" class="font-weight-bold  ">
-                                    <b>$ {{formatPrice(servicio.precio)}}</b>
+                                <td style="border:none" v-if="servicio.active" class="pt-2">
+                                    <b class="mt-3">$ {{formatPrice(servicio.precio)}}</b>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </vue-custom-scrollbar>
                 <div class="text-center">
-                    <base-button v-on:click="endingDate()" class="mt-3" type="default">Finalizar</base-button>
+                    <base-button v-if="serviciosSelecionadosDates.length > 0" v-on:click="endingDate()" class="mt-3" type="default">Finalizar</base-button>
+                    <base-button v-else disabled class="mt-3" type="default">Finalizar</base-button>
                 </div>
             </card>
         </modal>
@@ -2529,6 +2529,11 @@
         },
         endingDate(){
             const id = this.endId
+            console.log(this.designEndDate)
+            if (this.designEndDate == null) {
+                
+                this.designEndDate = 0
+            }
             axios.post(endPoint.endpointTarget+'/citas/endDate/'+id, {
                 services:this.serviciosSelecionadosDates,
                 client:this.endClient,
@@ -3190,6 +3195,9 @@
     .vuecal__title-bar {background-color: #172b4d;color: #fff !important}
     .vuecal__title button{
         color: white !important
+    }
+    .vuecal__cell--selected{
+        z-index: 0 !important;
     }
     .vuecal__body{
         background-color:white;
