@@ -465,6 +465,12 @@ export default {
         this.getAdvancements()
         this.getToken()
         this.getBonus()
+        $(document).ready(function(){
+            setTimeout(() => {
+               $("input[placeholder='Go to page']").hide(); 
+            }, 200);
+            
+        });
     },
     methods: {
         getToken(){

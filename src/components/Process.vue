@@ -104,7 +104,7 @@
                         <span>Adicional por diseño</span>
                         </template>
                         <currency-input
-                        title="Diseño"
+                        
                         v-model="design"
                         placeholder="Diseño"
                         locale="de"
@@ -124,7 +124,7 @@
                         <span>Efectivo</span>
                         </template>
                         <div class="input-group mb-2">
-                            <div title="Efectivo" v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
+                            <div  v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
                                 <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
                                     <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
                                 <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
@@ -146,7 +146,7 @@
                         <template slot="title">
                         <span>Transferencia</span>
                         </template>
-                        <div title="Transferencia" class="input-group mb-2">
+                        <div class="input-group mb-2">
                             <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
                                 <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
                                     <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
@@ -168,7 +168,7 @@
                         <template slot="title">
                         <span>Otros</span>
                         </template>
-                        <div title="Otros" class="input-group mb-2">
+                        <div  class="input-group mb-2">
                             <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
                                 <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
                                     <b class="others" style="font-size:0.6em;display:none">100%</b>
@@ -185,7 +185,7 @@
                     </a-tooltip>
                     
                 </div>
-                <div title="Débito" class="col-6">
+                <div class="col-6">
                     <a-tooltip placement="top">
                         <template slot="title">
                         <span>Débito</span>
@@ -207,7 +207,7 @@
                     </a-tooltip>
                     
                 </div>
-                <div title="Crédito" class="col-6">
+                <div class="col-6">
                     <a-tooltip placement="top">
                         <template slot="title">
                         <span>Crédito</span>

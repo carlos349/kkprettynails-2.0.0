@@ -281,6 +281,12 @@ export default {
     created(){
         this.getClosing()
         this.getToken()
+        $(document).ready(function(){
+            setTimeout(() => {
+               $("input[placeholder='Go to page']").hide(); 
+            }, 200);
+            
+        });
     },
     methods: {
         getToken(){

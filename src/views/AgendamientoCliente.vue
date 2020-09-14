@@ -24,7 +24,7 @@
                                     <div class="tab-content" id="pills-tabContent">
                                         <div v-for="category of categories" :key="category._id" class="tab-pane fade " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row mt-2">
-                                                <div v-for="(service, index) of services" :key="service" class="col-xl-3 col-md-6 px-4" v-if="service.category == category.name">
+                                                <div v-for="(service, index) of services" :key="service" class="col-xl-3 col-md-6 px-4" v-if="service.category == category.name && service.active == true">
                                                     <div class="card-service row mt-2" :id="'cardS'+index">
                                                         <h3 class="name-service"> {{service.nombre}}</h3>
                                                         <div class="col-12"><img src="img/brand/calendar.png" alt=""></div>

@@ -348,11 +348,13 @@ export default {
                 highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
                 rows_selectable: true,
                 per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+                num_of_visibile_pagination_buttons: 7,
                 global_search: {
                     placeholder: "Enter custom Search text",
                     visibility: false,
                     case_sensitive: false
                 },
+                
                 show_refresh_button: false,
                 show_reset_button: false,  
                 selected_rows_info: true,
@@ -395,6 +397,13 @@ export default {
         this.getToken()
         this.getClient()
         this.getLenders()
+        $(document).ready(function(){
+            setTimeout(() => {
+               $("input[placeholder='Go to page']").hide(); 
+            }, 200);
+            
+        });
+        
     },
     methods: {
         getToken(){
