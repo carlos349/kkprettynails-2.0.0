@@ -1314,7 +1314,7 @@
                 this.closedDates = []
                 this.lengthClosedDates = 0
                 let date = new Date()
-                let dates = (date.getDate() -1)+"-"+(date.getMonth()+1)+"-"+date.getFullYear()
+                let dates = date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear()
                 console.log(dates)
                 console.log(res.data.length)
                 for (let i = 0; i < res.data.length; i++) {
@@ -2342,7 +2342,9 @@
             }
             for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
                 this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)
+                this.selectedDates.design = parseFloat(this.selectedDates.design) + this.selectedDates.closedArray[i].design
             }  
+            this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.design)
             this.dateModals.modal5 = true
         },
         hundredPorcent(tipo){
@@ -3139,6 +3141,8 @@
             this.loading = true
             let discount = this.selectedDates.closedArray[pos].descuento
             this.selectedDates.closedArray[pos].comision = 0
+            this.selectedDates.design = 0
+            let design = this.selectedDates.closedArray[pos].design
             
             this.selectedDates.closedArray[pos].total = 0
             this.selectedDates.total = 0
@@ -3164,10 +3168,16 @@
                 else{ 
                     this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
                 }
+                
             } 
+            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(design)
             for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
                 this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)
+                this.selectedDates.design = parseFloat(this.selectedDates.design) + this.selectedDates.closedArray[i].design
             }
+            
+            
+            this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.design)
             this.loading = false
         },
         cleanDiscount(i){

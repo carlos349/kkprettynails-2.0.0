@@ -1379,7 +1379,7 @@
                 
             },
             openCalendar(){
-                console.log("hola vale")
+                
                 console.log(this.dates.simple)
                 this.configDate.inline = false
                 setTimeout(() => {
