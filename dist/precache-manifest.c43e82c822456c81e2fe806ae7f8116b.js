@@ -24,8 +24,8 @@ self.__precacheManifest = [
     "url": "/img/theme/reportes.jpg"
   },
   {
-    "revision": "547da43d13a00519e7ea",
-    "url": "/js/chunk-6bcdc2aa.f8e2057c.js"
+    "revision": "226306a9069b899c09f5",
+    "url": "/js/chunk-6bcdc2aa.dd254483.js"
   },
   {
     "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "49f8d44bbde8cb0d75782d1982d255b1",
+    "revision": "67a9627d7bf7acc2bcd8f2a5bb8a96a7",
     "url": "/index.html"
   },
   {
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "c0531de165ea9e96b67f",
-    "url": "/js/app.9cfb5e80.js"
+    "revision": "80bf91a1b203d8c92c03",
+    "url": "/js/app.e79f99b1.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -136,11 +136,11 @@ self.__precacheManifest = [
     "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "c0531de165ea9e96b67f",
+    "revision": "80bf91a1b203d8c92c03",
     "url": "/css/app.2bcc8aa7.css"
   },
   {
@@ -148,16 +148,16 @@ self.__precacheManifest = [
     "url": "/img/brand/calendar.png"
   },
   {
-    "revision": "f82ec6ba2dc4181db2af35c499462840",
-    "url": "/fonts/nucleo-icons.f82ec6ba.ttf"
-  },
-  {
     "revision": "c1733565b32b585676302d4233c39da8",
     "url": "/fonts/nucleo-icons.c1733565.eot"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "f82ec6ba2dc4181db2af35c499462840",
+    "url": "/fonts/nucleo-icons.f82ec6ba.ttf"
+  },
+  {
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
     "revision": "980dde4262246c2273d4",
@@ -172,7 +172,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-vendors.ccdcef6f.css"
   },
   {
-    "revision": "547da43d13a00519e7ea",
+    "revision": "226306a9069b899c09f5",
     "url": "/css/chunk-6bcdc2aa.95594ea1.css"
   },
   {
