@@ -1092,7 +1092,8 @@
         file: '',
         nameFile:'Click aquí para cargar imagen',
         lenders: [],
-        EndDateServices: []
+        EndDateServices: [],
+        availableslenders: []
       };
     },
     beforeCreate(){
@@ -2773,7 +2774,12 @@
                     setTimeout(() => {
                         axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                         .then(res => {
-                            console.log(res)
+                            for (let j = 0; j < 3; j++) {
+                                for (let index = 0; index < res.data.array.length; index++) {
+                                    const element = res.data.array[index];
+                                    this.availableslenders.push(element)
+                                }
+                            }
                             var counter = 0
                             var validCounter = false
                             for (let i = 0; i < res.data.array.length; i++) {
@@ -2976,51 +2982,15 @@
                 
                 const finalIndex = parseFloat(indexService) + parseFloat(1)
                 if (this.registerDae.serviceSelectds[finalIndex]) {
-                    axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
-                    .then(res => {
-                        this.registerDae.serviceSelectds[finalIndex].valid = true
-                        var counter = 0
-                        var validCounter = false
-                        for (let i = finalIndex; i < res.data.array.length; i++) {
-                            const element = res.data.array[i];
-                            for (let j = 0; j <  this.registerDae.serviceSelectds[finalIndex].lenders.length; j++) {
-                                const elementTwo =  this.registerDae.serviceSelectds[finalIndex].lenders[j];
-                                if (element.name == elementTwo.lender) {
-                                    counter = j
-                                    validCounter = true
-                                    break
-                                }
-                            }
-                            if (validCounter) {
-                                break
-                            }
-                        }
-                        const finalLender = this.registerDae.serviceSelectds[finalIndex].lenders[counter].lender
-                        const finalRestime = this.registerDae.serviceSelectds[finalIndex].lenders[counter].resTime
-                        this.registerDae.serviceSelectds[finalIndex].class = this.registerDae.serviceSelectds[finalIndex].lenders[counter].class
-                        this.registerDae.serviceSelectds[finalIndex].realLender = finalLender
-                        this.validMultiLender(finalIndex, finalLender, this.registerDae.serviceSelectds[finalIndex].duration, finalRestime)
-                    })
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        },
-        insertData(index, lender, restTime, Class, duration, check, lenders){
-            if (lender == 'Primera disponible') {
-                
-                axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
-                .then(res => {
-                    var lenderSelect = ''
-                    
+                    this.registerDae.serviceSelectds[finalIndex].valid = true
+                    var counter = 0
                     var validCounter = false
-                    for (let j = index; j < res.data.array.length; j++) {
-                        const element = res.data.array[j];
-                        for (let x = 0; x < lenders.length; x++) {
-                            const elementTwo = lenders[x];
+                    for (let i = finalIndex; i < this.availableslenders.length; i++) {
+                        const element = this.availableslenders[i];
+                        for (let j = 0; j <  this.registerDae.serviceSelectds[finalIndex].lenders.length; j++) {
+                            const elementTwo =  this.registerDae.serviceSelectds[finalIndex].lenders[j];
                             if (element.name == elementTwo.lender) {
-                                lenderSelect = x
+                                counter = j
                                 validCounter = true
                                 break
                             }
@@ -3029,38 +2999,63 @@
                             break
                         }
                     }
-                    if (lenderSelect == '') {
-                        for (let j = 0; j < res.data.array.length; j++) {
-                            const element = res.data.array[j];
-                            for (let x = 0; x < lenders.length; x++) {
-                                const elementTwo = lenders[x];
-                                if (element.name == elementTwo.lender) {
-                                    lenderSelect = x
-                                }
+                    const finalLender = this.registerDae.serviceSelectds[finalIndex].lenders[counter].lender
+                    const finalRestime = this.registerDae.serviceSelectds[finalIndex].lenders[counter].resTime
+                    this.registerDae.serviceSelectds[finalIndex].class = this.registerDae.serviceSelectds[finalIndex].lenders[counter].class
+                    this.registerDae.serviceSelectds[finalIndex].realLender = finalLender
+                    this.validMultiLender(finalIndex, finalLender, this.registerDae.serviceSelectds[finalIndex].duration, finalRestime)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        insertData(index, lender, restTime, Class, duration, check, lenders){
+            if (lender == 'Primera disponible') {
+                var lenderSelect = ''
+                var validCounter = false
+                for (let j = index; j < this.availableslenders.length; j++) {
+                    const element = this.availableslenders[j];
+                    for (let x = 0; x < lenders.length; x++) {
+                        const elementTwo = lenders[x];
+                        if (element.name == elementTwo.lender) {
+                            lenderSelect = x
+                            validCounter = true
+                            break
+                        }
+                    }
+                    if (validCounter) {
+                        break
+                    }
+                }
+                if (lenderSelect == '') {
+                    for (let j = 0; j < this.availableslenders.length; j++) {
+                        const element = this.availableslenders[j];
+                        for (let x = 0; x < lenders.length; x++) {
+                            const elementTwo = lenders[x];
+                            if (element.name == elementTwo.lender) {
+                                lenderSelect = x
                             }
                         }
-                        this.registerDae.serviceSelectds[index].start = ''
-                        this.registerDae.serviceSelectds[index].end = ''
-                        this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
-                        this.registerDae.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                        this.registerDae.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
-                        this.registerDae.serviceSelectds[index].class = lenders[lenderSelect].class
-                        this.validHour = false 
-                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
-                    }else{
-                        this.registerDae.serviceSelectds[index].start = ''
-                        this.registerDae.serviceSelectds[index].end = ''
-                        this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
-                        this.registerDae.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                        this.registerDae.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
-                        this.registerDae.serviceSelectds[index].class = lenders[lenderSelect].class
-                        this.validHour = false 
-                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
                     }
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+                    this.registerDae.serviceSelectds[index].start = ''
+                    this.registerDae.serviceSelectds[index].end = ''
+                    this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
+                    this.registerDae.serviceSelectds[index].realLender = lenders[lenderSelect].lender
+                    this.registerDae.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                    this.registerDae.serviceSelectds[index].class = lenders[lenderSelect].class
+                    this.validHour = false 
+                    this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                }else{
+                    this.registerDae.serviceSelectds[index].start = ''
+                    this.registerDae.serviceSelectds[index].end = ''
+                    this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
+                    this.registerDae.serviceSelectds[index].realLender = lenders[lenderSelect].lender
+                    this.registerDae.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                    this.registerDae.serviceSelectds[index].class = lenders[lenderSelect].class
+                    this.validHour = false 
+                    this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                }
             }else{
                 this.registerDae.serviceSelectds[index].start = ''
                 this.registerDae.serviceSelectds[index].end = ''

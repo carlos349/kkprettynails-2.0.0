@@ -579,7 +579,8 @@
                 validRegister: false,
                 client: '',
                 file: '',
-                ifDisabled: false
+                ifDisabled: false,
+                availableslenders: []
             }
         },
         created(){
@@ -855,59 +856,50 @@
             },
             insertData(index, lender, restTime, Class, duration, check, lenders){
                 if (lender == 'Primera disponible') {
-                    console.log(lenders)
-                    axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
-                    .then(res => {
-                        var lenderSelect = ''
-                        console.log(res)
-                        console.log(lenders)
-                        var validCounter = false
-                        for (let j = index; j < res.data.array.length; j++) {
-                            const element = res.data.array[j];
+                    var lenderSelect = ''
+                    var validCounter = false
+                    for (let j = index; j < this.availableslenders.length; j++) {
+                        const element = this.availableslenders[j];
+                        for (let x = 0; x < lenders.length; x++) {
+                            const elementTwo = lenders[x];
+                            if (element.name == elementTwo.lender) {
+                                lenderSelect = x
+                                validCounter = true
+                                break
+                            }
+                        }
+                        if (validCounter) {
+                            break
+                        }
+                    }
+                    if (lenderSelect == '') {
+                        for (let j = 0; j < this.availableslenders.length; j++) {
+                            const element = this.availableslenders[j];
                             for (let x = 0; x < lenders.length; x++) {
                                 const elementTwo = lenders[x];
                                 if (element.name == elementTwo.lender) {
                                     lenderSelect = x
-                                    validCounter = true
-                                    break
                                 }
                             }
-                            if (validCounter) {
-                                break
-                            }
                         }
-                        if (lenderSelect == '') {
-                            for (let j = 0; j < res.data.array.length; j++) {
-                                const element = res.data.array[j];
-                                for (let x = 0; x < lenders.length; x++) {
-                                    const elementTwo = lenders[x];
-                                    if (element.name == elementTwo.lender) {
-                                        lenderSelect = x
-                                    }
-                                }
-                            }
-                            this.registerDate.serviceSelectds[index].start = ''
-                            this.registerDate.serviceSelectds[index].end = ''
-                            this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
-                            this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                            this.registerDate.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
-                            this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
-                            this.validHour = false 
-                            this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
-                        }else{
-                            this.registerDate.serviceSelectds[index].start = ''
-                            this.registerDate.serviceSelectds[index].end = ''
-                            this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
-                            this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                            this.registerDate.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
-                            this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
-                            this.validHour = false 
-                            this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
+                        this.registerDate.serviceSelectds[index].start = ''
+                        this.registerDate.serviceSelectds[index].end = ''
+                        this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
+                        this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
+                        this.registerDate.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                        this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
+                        this.validHour = false 
+                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                    }else{
+                        this.registerDate.serviceSelectds[index].start = ''
+                        this.registerDate.serviceSelectds[index].end = ''
+                        this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
+                        this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
+                        this.registerDate.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                        this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
+                        this.validHour = false 
+                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                    }
                 }else{
                     this.registerDate.serviceSelectds[index].start = ''
                     this.registerDate.serviceSelectds[index].end = ''
@@ -1296,31 +1288,28 @@
                     
                     const finalIndex = parseFloat(indexService) + parseFloat(1)
                     if (this.registerDate.serviceSelectds[finalIndex]) {
-                        axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
-                        .then(res => {
-                            this.registerDate.serviceSelectds[finalIndex].valid = true
-                            var counter = 0
-                            var validCounter = false
-                            for (let i = finalIndex; i < res.data.array.length; i++) {
-                                const element = res.data.array[i];
-                                for (let j = 0; j <  this.registerDate.serviceSelectds[finalIndex].lenders.length; j++) {
-                                    const elementTwo =  this.registerDate.serviceSelectds[finalIndex].lenders[j];
-                                    if (element.name == elementTwo.lender) {
-                                        counter = j
-                                        validCounter = true
-                                        break
-                                    }
-                                }
-                                if (validCounter) {
+                        this.registerDate.serviceSelectds[finalIndex].valid = true
+                        var counter = 0
+                        var validCounter = false
+                        for (let i = finalIndex; i < this.availableslenders.length; i++) {
+                            const element = this.availableslenders[i];
+                            for (let j = 0; j <  this.registerDate.serviceSelectds[finalIndex].lenders.length; j++) {
+                                const elementTwo =  this.registerDate.serviceSelectds[finalIndex].lenders[j];
+                                if (element.name == elementTwo.lender) {
+                                    counter = j
+                                    validCounter = true
                                     break
                                 }
                             }
-                            const finalLender = this.registerDate.serviceSelectds[finalIndex].lenders[counter].lender
-                            const finalRestime = this.registerDate.serviceSelectds[finalIndex].lenders[counter].resTime
-                            this.registerDate.serviceSelectds[finalIndex].class = this.registerDate.serviceSelectds[finalIndex].lenders[counter].class
-                            this.registerDate.serviceSelectds[finalIndex].realLender = finalLender
-                            this.validMultiLender(finalIndex, finalLender, this.registerDate.serviceSelectds[finalIndex].duration, finalRestime)
-                        })
+                            if (validCounter) {
+                                break
+                            }
+                        }
+                        const finalLender = this.registerDate.serviceSelectds[finalIndex].lenders[counter].lender
+                        const finalRestime = this.registerDate.serviceSelectds[finalIndex].lenders[counter].resTime
+                        this.registerDate.serviceSelectds[finalIndex].class = this.registerDate.serviceSelectds[finalIndex].lenders[counter].class
+                        this.registerDate.serviceSelectds[finalIndex].realLender = finalLender
+                        this.validMultiLender(finalIndex, finalLender, this.registerDate.serviceSelectds[finalIndex].duration, finalRestime)
                     }
                 })
                 .catch(err => {
@@ -1379,8 +1368,6 @@
                 
             },
             openCalendar(){
-                console.log("hola vale")
-                console.log(this.dates.simple)
                 this.configDate.inline = false
                 setTimeout(() => {
                     const split = this.dates.simple.split('-')
@@ -1477,6 +1464,12 @@
                                 axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                                 .then(res => {
                                     console.log(res)
+                                    for (let j = 0; j < 3; j++) {
+                                        for (let index = 0; index < res.data.array.length; index++) {
+                                            const element = res.data.array[index];
+                                            this.availableslenders.push(element)
+                                        }
+                                    }
                                     var counter = 0
                                     var validCounter = false
                                     for (let i = 0; i < res.data.array.length; i++) {
