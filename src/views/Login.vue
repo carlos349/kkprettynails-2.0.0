@@ -6,7 +6,7 @@
                     <div class="btn-wrapper text-center mb-4">
                         <span class="mb-5"><img style="width:30%" src="img/brand/syswa-isotipo.png"></span> <br><br>
                     </div>
-                    <form class="mt-3" role="form">
+                    <form v-if="loading == false" class="mt-3" role="form">
                         <base-input class="input-group-alternative mt-4 mb-3"
                                     placeholder="Correo"
                                     addon-left-icon="ni ni-email-83"
@@ -22,9 +22,13 @@
 
                         <div class="text-center">
                             <base-button type="default" v-on:click="login()" class="my-2">Ingresar</base-button> <br>
-                            
+                            <a v-on:click="modals.modal2 = true"><dt>¿Has olvidado la contraseña?</dt></a> 
                         </div>
                     </form>
+                    <center v-else>
+                       <a-spin  class="mx-auto my-5 py-5" /> 
+                    </center>
+                    
                 </div>
             </div>
             <div class="row mt-3">
@@ -91,7 +95,8 @@ import jwtDecode from 'jwt-decode'
             icon: '',
             type:''
         },
-        emailRenew: ''
+        emailRenew: '',
+        loading: false
       }
     },
     beforeCreate(){
@@ -105,6 +110,7 @@ import jwtDecode from 'jwt-decode'
     },
     methods: {
         login() {
+            this.loading = true
             axios.post(endPoint.endpointTarget+'/users/login', {
                 email: this.model.email,
                 password: this.model.password
@@ -116,6 +122,7 @@ import jwtDecode from 'jwt-decode'
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    this.loading = false
                 }else if(res.data.error == 'User does not exist'){
                     this.$swal({
                         type: 'error',
@@ -123,6 +130,7 @@ import jwtDecode from 'jwt-decode'
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    this.loading = false
                 }else{
                     localStorage.setItem('userToken', res.data.token)
                     this.email = ''
@@ -139,6 +147,15 @@ import jwtDecode from 'jwt-decode'
                     console.log(decoded.access)
                     this.emitMethod(decoded.status)
                 }
+            })
+            .catch(err =>{
+                this.$swal({
+                    type: 'error',
+                    title: 'Problemas de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                this.loading = false
             })
         },
         emitMethod(status) {

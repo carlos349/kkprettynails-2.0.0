@@ -15,7 +15,8 @@
                                 <base-button v-if="validRoute('agendamiento', 'agendar')" @click="modals.modal1 = true , initialState()"  type="success">Agendar</base-button>
                                 <base-button v-if="validRoute('agendamiento', 'procesar')" class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" type="primary">
                                     <span>Ventas por procesar</span>
-                                    <badge type="primary">{{lengthClosedDates}}</badge>
+                                    <badge v-if="loadingEnds == false" type="primary">{{lengthClosedDates}}</badge>
+                                    <a-spin v-else  class="float-right ml-2" size="small" /> 
                                 </base-button>
                                 <base-dropdown v-if="validRoute('agendamiento', 'filtrar')" class="maxheightDropDown dropAgend mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
@@ -77,10 +78,8 @@
                         
                         <div class="col-12">
                             <center>
-                                <base-button v-if="registerDate.valid2 == true" disabled type="secondary" class="text-default">
-                                    <font-awesome-icon class="mx-auto"  icon="redo-alt" />
-                                </base-button>
-                                    <base-button v-else v-on:click="initialState()" type="secondary" class="text-default">
+                                
+                                <base-button v-on:click="initialState()" type="secondary" class="text-default">
                                     <font-awesome-icon class="mx-auto"  icon="redo-alt" />
                                 </base-button>
                             </center>
@@ -100,7 +99,7 @@
                                             <div class="row">
                                                 <template v-for="(name, index) of services" >
                                                     <div class="col-lg-6 mt-2" :key="name" v-if="name.category == category.name">
-                                                        <base-button class="w-100" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores, name.descuento)"  type="default">
+                                                        <base-button v-if="name.active == true" class="w-100" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores, name.descuento)"  type="default">
                                                             <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
                                                                 <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
                                                                 <i class="far fa-clock ml-1"></i> {{name.tiempo}}Min
@@ -1126,6 +1125,7 @@
         nameFile:'Click aquí para cargar imagen',
         lenders: [],
         EndDateServices: [],
+        loadingEnds:true,
         columnsEndSelectedDates: [
             
             { title: 'Empleado', dataIndex: 'employe', key: 'employe' },
@@ -1326,6 +1326,7 @@
                 }
                 console.log(this.closedDates)
                 this.lengthClosedDates = this.closedDates.length
+                this.loadingEnds = false
             })
         },
         getEmployes(){
@@ -2459,6 +2460,22 @@
                             }
                         }, 1500);
                     }
+                    else if(res.data.status == "no-cash"){
+							this.modalsDialog = {
+                                modal2: true,
+                                message: "Primero debe registrar un fondo de caja",
+                                icon: 'ni ni-fat-remove ni-5x',
+                                type: 'danger'
+                            }
+                            setTimeout(() => {
+                                this.modalsDialog = {
+                                    modal2: false,
+                                    message: "",
+                                    icon: '',
+                                    type: ''
+                                }
+                            }, 1500);
+						}
                 })
             }
             else{
@@ -3148,7 +3165,7 @@
             this.selectedDates.total = 0
             for (let index = 0; index < this.selectedDates.closedArray[pos].services.length; index++) {
                 
-                if (!this.selectedDates.closedArray[pos].services[index].discount) {
+                if (!this.selectedDates.closedArray[pos].services[index].descuento) {
                         
                         if (discount == 0) {
                             this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
@@ -3205,7 +3222,7 @@
         discPerEmploye(employe){
             let valid = true
             for (let index = 0; index < this.selectedDates.closedArray[employe].services.length; index++) {
-                if (this.selectedDates.closedArray[employe].services[index].discount == false ) {
+                if (this.selectedDates.closedArray[employe].services[index].descuento == false ) {
                     valid = false
                 }
                 
