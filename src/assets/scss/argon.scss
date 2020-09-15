@@ -76,8 +76,16 @@
     font-size: .85vw;
 }
 
-
-
+.ant-table-row td{
+    padding: 0px 8px !important;
+}
+.tbCell{
+    height: 275px;
+    overflow-y: scroll;
+}
+.card-body {
+    padding-top: 0;
+}
 @media screen and (max-width: 768px){
     .display-2{
         font-size: 8vw;
@@ -90,6 +98,21 @@
     }
     .flatpickr-calendar{
         left:-40%
+    }
+    .table td {
+        font-size: 2.5vw !important;
+    }
+    .vbt-per-page-dropdown{
+        display: none;
+    }
+    .page-item{
+        width: 30px;
+        height: 30px;
+        margin-left: 1.5%;
+        margin-bottom: 5%;
+    }
+    .tbCell{
+        overflow-x: scroll;
     }
 }
 

@@ -108,7 +108,7 @@
                                         Empleados
                                     </i>
                                 </span>
-                                <vue-custom-scrollbar ref="table" class="maxHeight">
+                                <vue-custom-scrollbar ref="tableC" class="maxHeight">
                                     <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
                                     </vue-bootstrap4-table>
                                 </vue-custom-scrollbar >
@@ -218,7 +218,7 @@
                                         Empleados
                                     </i>
                                 </span>
-                                <vue-custom-scrollbar class="maxHeight">
+                                <vue-custom-scrollbar ref="table" class="maxHeight">
                                     <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
                                     </vue-bootstrap4-table>
                                 </vue-custom-scrollbar >
@@ -611,6 +611,12 @@ export default {
         this.getProducts()
         this.getToken()
         this.getCategories()
+        $(document).ready(function(){
+            setTimeout(() => {
+               $("input[placeholder='Go to page']").hide(); 
+            }, 200);
+            
+        });
     },
     methods: {
         getToken(){
@@ -906,7 +912,7 @@ export default {
             }, 100);
         },
         clean(){
-            this.$refs.table.$children[0].unSelectAllItems()
+            this.$refs.tableC.$children[0].unSelectAllItems()
         },
         editService(){
             if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {

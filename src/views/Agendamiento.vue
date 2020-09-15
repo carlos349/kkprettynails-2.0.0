@@ -329,7 +329,7 @@
 
             </card>
         </modal>
-        <vue-custom-scrollbar class="calen" style="height:63vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
+        <vue-custom-scrollbar class="calen" style="height:75vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
             <vue-cal
                 class="calen"
                 :locale="locale"
@@ -667,7 +667,7 @@
         </modal>
         <modal :show.sync="dateModals.modal5"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-lg">
+               modal-classes="modal-dialog-centered modal-xl">
             <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar</h5>
             <card  type="secondary" shadow
                   header-classes="bg-white pb-5"
@@ -675,46 +675,53 @@
                   class="border-0">
                   <div v-on:click="noBlank">
                     <div class="row">
-                        <div class="col-6 text-center">
-                            <dt>Cliente(s)</dt>
-                            <base-button class="mt-1" v-for="client of selectedDates.clientSplit" size="sm" type="secondary">{{client}}</base-button>
+                        <div class="col-sm-12 tbCell">
+                            <a-table :pagination="false"  :columns="columnsEndSelectedDates" size="middle" :data-source="selectedDates.closedArray">
+                                <template slot="descuento" slot-scope="text, record, index">
+                                    <a-tooltip placement="top">
+                                        <template slot="title">
+                                        <span v-if="discPerEmploye(index)">Su servicio no permite descuentos</span>
+                                        <span v-else>Descuento</span>
+                                        </template>
+                                        <base-input 
+                                            type="text"
+                                            v-model="record.descuento"
+                                            placeholder="%"
+                                            :disabled="discPerEmploye(index)"
+                                            v-on:click="cleanDiscount(index)"
+                                            v-on:keyup="changePrice(index)"
+                                            class="w-50 mt-3"
+                                            
+                                            >
+                                        </base-input>
+                                    </a-tooltip>
+                                </template>
+                                <template slot="diseño" slot-scope="text">
+                                    <p>{{formatPrice(text)}} $ </p>
+                                </template>
+                                <template slot="total" slot-scope="text">
+                                    <p>{{formatPrice(text)}} $</p>
+                                </template>
+                                <template slot="expandedRowRender" slot-scope="record">
+                                    <div class="row">
+                                        <dt>Servicio(s): </dt>
+                                        <div  v-for="(service, index) of record.services" class="row ml-3" :key="service.servicio"> 
+                                            <div v-if="index == 0">
+                                                {{' '+service.servicio}}
+                                            </div>
+                                            <div v-else>
+                                                , {{service.servicio}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </template>
+                            </a-table>
                         </div>
-                        <div class="col-6 text-center">
-                            <div class="row">
-                                <div class="col-sm-9">
-                                    <dt>Empleado(s)</dt>
-                                </div>
-                                <div class="col-sm-2">
-                                    <dt>%</dt>
-                                </div>
-                            </div>
-                            
-                            <div v-for="(employe, index) of selectedDates.discountBetter">
-                                <div class="row p-0 m-0">
-                                    <base-button class=" col-sm-9 mb-1 mt-1" size="sm" type="secondary">{{employe.employe}}</base-button>
-                                    <base-input 
-                                        type="text"
-                                        v-model="employe.discount"
-                                        placeholder="%"
-                                        
-                                        v-on:keypress="noCero(index)"
-                                        v-on:keyup="changeDiscount(index)"
-                                        v-on:click="cleanDiscount(index)"
-                                        v-on:change="changePrice(index)"
-                                        class="col-sm-2 m-0 mb-1 p-0"
-                                        style="font-size: 0.75rem;"
-                                        >
-                                    </base-input>
-                                </div>
-                                
-                            </div>
-                            
-                        </div>
-                        <div class="col-12">
-                            <dt class="mt-3 text-center">Servicios</dt>
-                            <badge v-for="servicesClosedDate of selectedDates.services" class="mt-1 ml-1 text-default" type="primary">{{servicesClosedDate.servicio}}</badge>
-                        </div>
-                        <div class="col-6 mt-2">
+                        
+                        
+                        
+                        <div class="col-3 mx-auto mt-2">
                             <base-button type="secondary" class="col-12">
                                 <span class="float-left">Total</span>
                                 <badge v-if="loading == false" style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.total)}} $</badge>
@@ -723,7 +730,7 @@
                                 </div>
                             </base-button>
                         </div>
-                        <div class="col-6 mt-2">
+                        <div class="col-3 mx-auto mt-2">
                             <base-button type="secondary" class="col-12">
                                 <span class="float-left">Diseño</span>
                                 <badge style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.design)}} $</badge>
@@ -734,89 +741,115 @@
                         Medios de pago
                     </div>
                     <div class="row">
-                        <div class="col-4">
-                            <div class="input-group mb-2">
-                                <div title="Efectivo" v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
-                                    <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
-                                    </span>
-                                    
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Efectivo</span>
+                            </template>
+                            <div class="col-2">
+                                <div class="input-group mb-2">
+                                    <div v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
+                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                            <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
+                                        <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
+                                        </span>
+                                        
+                                    </div>
+                                    <currency-input
+                                        v-model="payCash"
+                                        locale="de"
+                                        placeholder="Efectivo"
+                                        class="form-control"
+                                    />
                                 </div>
-                                <currency-input
-                                    v-model="payCash"
-                                    locale="de"
-                                    placeholder="Efectivo"
-                                    class="form-control"
-                                />
                             </div>
-                        </div>
-                        <div class="col-4">
-                            <div title="Transferencia" class="input-group mb-2">
-                                <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
-                                    <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
-                                    </span>
+                        </a-tooltip>
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Transferencia</span>
+                            </template>
+                            <div class="col-2">
+                                <div  class="input-group mb-2">
+                                    <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
+                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                            <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
+                                        <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
+                                        </span>
+                                    </div>
+                                    <currency-input
+                                        v-model="payTransfer"
+                                        locale="de"
+                                        placeholder="Transferencia"
+                                        class="form-control"
+                                    />
                                 </div>
-                                <currency-input
-                                    v-model="payTransfer"
-                                    locale="de"
-                                    placeholder="Transferencia"
-                                    class="form-control"
-                                />
                             </div>
-                        </div>
-                        <div class="col-4">
-                            <div title="Otros" class="input-group mb-2">
-                                <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="others" style="font-size:0.6em;display:none">100%</b>
-                                    <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
-                                    </span>
+                        </a-tooltip>
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Otros</span>
+                            </template>
+                            <div class="col-2">
+                                <div  class="input-group mb-2">
+                                    <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
+                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                            <b class="others" style="font-size:0.6em;display:none">100%</b>
+                                        <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
+                                        </span>
+                                    </div>
+                                    <currency-input
+                                        v-model="payOthers"
+                                        locale="de"
+                                        placeholder="Otros"
+                                        class="form-control"
+                                    />
                                 </div>
-                                <currency-input
-                                    v-model="payOthers"
-                                    locale="de"
-                                    placeholder="Otros"
-                                    class="form-control"
-                                />
                             </div>
-                        </div>
-                        <div title="Débito" class="col-6">
-                            <div class="input-group mb-2">
-                                <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="debit" style="font-size:0.6em;display:none">100%</b>
-                                        <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
-                                    </span>
+                        </a-tooltip>
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Débito</span>
+                            </template>
+                            <div class="col-3">
+                                <div class="input-group mb-2">
+                                    <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
+                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                            <b class="debit" style="font-size:0.6em;display:none">100%</b>
+                                            <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
+                                        </span>
+                                    </div>
+                                    <currency-input
+                                        v-model="payDebit"
+                                        locale="de"
+                                        placeholder="Débito"
+                                        class="form-control"
+                                    />
                                 </div>
-                                <currency-input
-                                    v-model="payDebit"
-                                    locale="de"
-                                    placeholder="Débito"
-                                    class="form-control"
-                                />
                             </div>
-                        </div>
-                        <div title="Crédito" class="col-6">
-                            <div class="input-group mb-2">
-                                <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="credit" style="font-size:0.6em;display:none">100%</b>
-                                        <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
-                                    </span>
+                        </a-tooltip>
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Crédito</span>
+                            </template>
+                            <div class="col-3">
+                                <div class="input-group mb-2">
+                                    <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
+                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                            <b class="credit" style="font-size:0.6em;display:none">100%</b>
+                                            <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
+                                        </span>
+                                    </div>
+                                    <currency-input
+                                        v-model="payCredit"
+                                        locale="de"
+                                        placeholder="Crédito"
+                                        class="form-control"
+                                    />
                                 </div>
-                                <currency-input
-                                    v-model="payCredit"
-                                    locale="de"
-                                    placeholder="Crédito"
-                                    class="form-control"
-                                />
                             </div>
-                        </div>
+                        </a-tooltip>
+                        
                     </div>
-                    <div class="text-center mt-2">
+                    <div class="text-center mt-">
                         <base-button icon="fa fa-calendar-check" v-on:click="processSelected" :disabled="loading" class="col-4 mx-auto" type="success">Procesar</base-button> 
                     </div>
                   </div>
@@ -1093,7 +1126,16 @@
         nameFile:'Click aquí para cargar imagen',
         lenders: [],
         EndDateServices: [],
-        availableslenders: []
+        availableslenders: [],
+        columnsEndSelectedDates: [
+            
+            { title: 'Empleado', dataIndex: 'employe', key: 'employe' },
+            { title: 'Cliente', dataIndex: 'client', key: 'cliente' },
+            { title: 'Diseño', dataIndex: 'design', key: 'design', scopedSlots: { customRender: 'diseño' } },
+            
+            { title: 'Descuento', dataIndex: 'descuento', key: 'descuento', scopedSlots: { customRender: 'descuento' } },
+            { title: 'Total', dataIndex: 'total', key: 'total', scopedSlots: { customRender: 'total' } },
+        ]
       };
     },
     beforeCreate(){
@@ -1117,11 +1159,7 @@
         this.getClosed()
         this.getCategories()
         this.getLenders()
-        $(document).ready(function(){
-            for (let i = 35; i < 42; i++) {
-                $(".vuecal__cell").eq(i).hide()
-            }
-        });
+        
     },
     destroyed () {
         window.removeEventListener('scroll', this.handleScroll);
@@ -1273,10 +1311,22 @@
         },
         getClosed() {
             axios.get(endPoint.endpointTarget+'/citas/endingdates')
-            .then( res => {
-                console.log(res.data)
-                this.closedDates = res.data
-                this.lengthClosedDates = res.data.length
+            .then(res => {
+                this.closedDates = []
+                this.lengthClosedDates = 0
+                let date = new Date()
+                let dates = date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear()
+                console.log(dates)
+                console.log(res.data.length)
+                for (let i = 0; i < res.data.length; i++) {
+                    let dateF = new Date(res.data[i].date)
+                    let datesF = (dateF.getDate())+"-"+(dateF.getMonth()+1)+"-"+dateF.getFullYear()
+                    if (dates == datesF) {
+                        this.closedDates.push(res.data[i])
+                    }
+                }
+                console.log(this.closedDates)
+                this.lengthClosedDates = this.closedDates.length
             })
         },
         getEmployes(){
@@ -2280,41 +2330,22 @@
             }
             })
         },
-        ProccessSelectedDates(){    
+        ProccessSelectedDates(){
+
             this.dateModals.modal4 = false 
-              
+            this.selectedDates.total = 0      
             for (let index = 0; index < this.selectedDates.closedArray.length; index++) {
                 const position = this.selectedDates.closedArray[index]
-                
-                for (let indexTwo = 0; indexTwo < position.services.length; indexTwo++) {
-                    const positionTwo = position.services[indexTwo];
-                    this.selectedDates.services.push({service:positionTwo, employe:position.employe})
-                }
                 position.total = position.descuento > 0 ? position.total - (position.total / 100 * position.descuento) : position.total
                 position.totalLocal = position.descuento > 0 ? position.totalLocal - (position.totalLocal / 100 * position.descuento) : position.totalLocal
                 position.ifrecomend= position.descuento == 15 ? 1 : 0
                 position.comision = position.descuento > 0 ? position.comision - (position.comision / 100 * position.descuento) : position.comision
-                this.selectedDates.ifrecomend = 
-                this.selectedDates.client = index == 0 ? position.client : this.selectedDates.client + ' - ' + position.client
-                this.selectedDates.clientSplit = this.selectedDates.client.split('-')
-                this.selectedDates.employes = index == 0 ? position.employe : this.selectedDates.employes + ' / ' + position.employe
-                this.selectedDates.design = parseFloat(this.selectedDates.design) + parseFloat(position.design)
-                this.selectedDates.comision = parseFloat(this.selectedDates.comision) + parseFloat(position.comision)
-                this.selectedDates.totaLocal = parseFloat(this.selectedDates.totaLocal) + parseFloat(position.totalLocal)
-                this.selectedDates.total =  parseFloat(this.selectedDates.total) + parseFloat(position.total)
-                this.selectedDates.discount = index == 0 ? position.employe + ' / ' + position.descuento+'%' : this.selectedDates.discount + ' - ' +position.employe + ' / ' + position.descuento+'%'
-                this.selectedDates.discountSplit = this.selectedDates.discount.split(' - ')
-                
-                
-                this.selectedDates.employeDiscount.push({employe: position.employe, comision: position.comision})
-                this.selectedDates.endDatesId.push(position.id)
-                this.selectedDates.clientIds.push({id:position.client.split(' / ')[1], ifrecomend:position.ifrecomend})
             }
-            for (let i = 0; i < this.selectedDates.discountSplit.length; i++) {
-                    const sp = this.selectedDates.discountSplit[i].split(" / ")
-                    this.selectedDates.discountBetter.push({employe:sp[0] , discount:sp[1].split("%")[0]})
-                }
-             console.log(this.selectedDates.services)
+            for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
+                this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)
+                this.selectedDates.design = parseFloat(this.selectedDates.design) + this.selectedDates.closedArray[i].design
+            }  
+            this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.design)
             this.dateModals.modal5 = true
         },
         hundredPorcent(tipo){
@@ -2392,22 +2423,13 @@
 
             if (this.selectedDates.total == totalFormadePago) {
                 axios.post(endPoint.endpointTarget+'/ventas/processEndDates', {
-                    servicesClosedDates: this.selectedDates.services,
-                    clientClosedDates: this.selectedDates.client,
-                    employeClosedDates: this.selectedDates.employes,
-                    designClosedDates: this.selectedDates.design,
-                    comisionClosedDates: this.selectedDates.comision,
-                    totalLocalClosedDates: this.selectedDates.totaLocal,
-                    totalClosedDates: this.selectedDates.total,
-                    descuentoClosedDates: this.selectedDates.discount,
-                    employeClosedDatesWithDiscount: this.selectedDates.employeDiscount,
-                    datesClientIdentification: this.selectedDates.clientIds,
+                    arrayClosedDates:this.selectedDates.closedArray,
                     pagoEfectivo: this.payCash,
                     pagoOtros: this.payOthers,
                     pagoRedCDebito: this.payDebit,
                     pagoRedCCredito: this.payCredit,
                     pagoTransf: this.payTransfer,
-                    endDatesId: this.selectedDates.endDatesId
+                    
                 })
                 .then(res => {
                     if (res.data.status == "Venta registrada") {
@@ -3105,81 +3127,59 @@
             
         },
         changeDiscount(i){
-            if (this.selectedDates.discountBetter[i].discount == '' ||this.selectedDates.discountBetter[i].discount == '00' ) {
-                this.selectedDates.discountBetter[i].discount = '0'
-            }else{
-                this.selectedDates.discountBetter[i].discount = this.selectedDates.discountBetter[i].discount.replace(/^0+/, '')
-            }
             
-            this.selectedDates.discountSplit[i] = this.selectedDates.discountSplit[i].split(" / ")[0] + " / " + this.selectedDates.discountBetter[i].discount + "%"
-            this.selectedDates.discount = ''
-            for (let e = 0; e < this.selectedDates.discountSplit.length; e++) {
-                if (e == 0) {
-                    this.selectedDates.discount = this.selectedDates.discountSplit[e]
-                }
-                else{
-                    this.selectedDates.discount = this.selectedDates.discount + '-' + this.selectedDates.discountSplit[e]
-                }
-            }
 
             
         },
-        changePrice(){
+        changePrice(pos){
             
             this.loading = true
-            let discount = 0
-            let employe = ''
-            this.selectedDates.total = 0
+            let discount = this.selectedDates.closedArray[pos].descuento
+            this.selectedDates.closedArray[pos].comision = 0
+            this.selectedDates.design = 0
+            let design = this.selectedDates.closedArray[pos].design
             
-            for (let c = 0; c < this.selectedDates.discountBetter.length; c++) {
-                discount = this.selectedDates.discountBetter[c].discount
-                employe = this.selectedDates.discountBetter[c].employe
+            this.selectedDates.closedArray[pos].total = 0
+            this.selectedDates.total = 0
+            for (let index = 0; index < this.selectedDates.closedArray[pos].services.length; index++) {
                 
-                if (discount >= 0) {
-                    
-                    for (let index = 0; index < this.selectedDates.services.length; index++) {
+                if (!this.selectedDates.closedArray[pos].services[index].discount) {
                         
-                        if (!this.selectedDates.services[index].service.discount) {
+                        if (discount == 0) {
+                            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
+                        }
+                        else{
+                            const descuento = parseFloat(discount) / 100
+                        
+                            const porcentaje = 1 - parseFloat(descuento)
                             
-                            if (this.selectedDates.services[index].employe == employe) {
-                                
-                                if (discount == 0) {
-                                    this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.services[index].service.precio)
-                                    
-                                }
-                                else{
-                                    
-                                    const descuento = parseFloat(discount) / 100
-                                
-                                    const porcentaje = 1 - parseFloat(descuento)
-                                    
-                                    const precioConDescuento = parseFloat(this.selectedDates.services[index].service.precio) * parseFloat(porcentaje)
-                                    
-                                    this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(precioConDescuento) 
-                                    
-                                }
-                            }
+                            const precioConDescuento = parseFloat(this.selectedDates.closedArray[pos].services[index].precio) * parseFloat(porcentaje)
+                            const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(precioConDescuento)) / 100
+                            this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision)
+                    
+                            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(precioConDescuento) 
                         }
-                        else{ 
-                            if (this.selectedDates.services[index].employe == employe) {
-                                this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.services[index].precio)
-                                
-                            }    
-                        }
-                    }
-                    this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.design)
                 }
+                else{ 
+                    this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
+                }
+                
+            } 
+            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(design)
+            for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
+                this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)
+                this.selectedDates.design = parseFloat(this.selectedDates.design) + this.selectedDates.closedArray[i].design
             }
             
+            
+            this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.design)
             this.loading = false
         },
         cleanDiscount(i){
             setTimeout(() => {
-                if (this.selectedDates.discountBetter[i].discount == 0) {
-                    this.selectedDates.discountBetter[i].discount = ''
+                if (this.selectedDates.closedArray[i].descuento == 0) {
+                    this.selectedDates.closedArray[i].descuento = ''
                 }
-            
-                this.loading = true
             }, 100);
             
         },
@@ -3188,14 +3188,24 @@
             if (this.loading == true) {
                 this.loading = false
             }
-            for (let d = 0; d < this.selectedDates.discountBetter.length; d++) {
-                if (this.selectedDates.discountBetter[d].discount == '') {
-                    this.selectedDates.discountBetter[d].discount = 0
+            for (let d = 0; d < this.selectedDates.closedArray.length; d++) {
+                if (this.selectedDates.closedArray[d].descuento == '') {
+                    this.selectedDates.closedArray[d].descuento = 0
                 }
             }
         },
         noCero(){
             this.loading = true
+        },
+        discPerEmploye(employe){
+            let valid = true
+            for (let index = 0; index < this.selectedDates.closedArray[employe].services.length; index++) {
+                if (this.selectedDates.closedArray[employe].services[index].discount == false ) {
+                    valid = false
+                }
+                
+            }
+            return valid
         }
     },
     computed: {

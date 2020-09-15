@@ -518,7 +518,12 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 		this.getUsers();
         this.getLenders()
         this.getToken()
-        
+        $(document).ready(function(){
+            setTimeout(() => {
+               $("input[placeholder='Go to page']").hide(); 
+            }, 200);
+            
+        });
     },
     methods: {
         getToken(){
