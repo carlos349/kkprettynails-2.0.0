@@ -1125,11 +1125,8 @@
         nameFile:'Click aquí para cargar imagen',
         lenders: [],
         EndDateServices: [],
-<<<<<<< HEAD
         loadingEnds:true,
-=======
         availableslenders: [],
->>>>>>> 00850aa5d5941254e6bb8b2aa6f0017329c01a82
         columnsEndSelectedDates: [
             
             { title: 'Empleado', dataIndex: 'employe', key: 'employe' },
