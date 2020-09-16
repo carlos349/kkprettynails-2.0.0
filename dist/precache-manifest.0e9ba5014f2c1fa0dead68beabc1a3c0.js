@@ -136,8 +136,8 @@ self.__precacheManifest = [
     "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
     "revision": "669658b13e9b705a0cd3",
@@ -156,8 +156,8 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.c1733565.eot"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
     "revision": "24b957db9b1bacaab822",
