@@ -47,7 +47,7 @@ export default {
         formatDateTwo(date) {
             let dateFormat = new Date(date)
             console.log(dateFormat)
-            return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
+            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
         },
     }
 }

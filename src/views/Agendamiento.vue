@@ -98,8 +98,8 @@
                                         <div v-for="category of categories" :key="category._id" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row">
                                                 <template v-for="(name, index) of services" >
-                                                    <div class="col-lg-6 mt-2" :key="name" v-if="name.category == category.name">
-                                                        <base-button v-if="name.active == true" class="w-100" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores, name.descuento)"  type="default">
+                                                    <div class="col-lg-6 mt-2" :key="name" v-if="name.category == category.name && name.active == true">
+                                                        <base-button  class="w-100" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores, name.descuento)"  type="default">
                                                             <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
                                                                 <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
                                                                 <i class="far fa-clock ml-1"></i> {{name.tiempo}}Min

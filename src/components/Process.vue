@@ -1,560 +1,562 @@
 <template>
-    <div class="row">
-        <div class="col-6">
-            <div v-on:click="chooseClient">
-              <vue-single-select
-                v-model="clientSelect"
-                :options="clientNames"
-                placeholder="Clientes"
-                ></vue-single-select>  
-            </div>
-        </div>
-        <div class="col-6">
-            <div v-on:click="chooseLender"> 
+    <a-spin size="large" :spinning="spinning">
+        <div class="row spin-content">
+            <div class="col-6">
+                <div v-on:click="chooseClient">
                 <vue-single-select
-                v-model="lenderSelect"
-                :options="lenderNames"
-                placeholder="Prestadoras"
-                ></vue-single-select> 
+                    v-model="clientSelect"
+                    :options="clientNames"
+                    placeholder="Clientes"
+                    ></vue-single-select>  
+                </div>
             </div>
-        </div>
-        <div class="col-12">
-            <table class="table" v-bind:style="{ 'background-color': '#172b4d', 'border-radius' : '10px', 'border':'none !important'}" >
-                <thead>
-                    <tr>
-                        <th style="border-radius:15px !important;border:none">
-                            <input class="w-75 inputFilter" id="myInput" v-on:keyup="myFunction()" type="text" placeholder="Filtre servicios">
-                        </th>
-                        <th style="color:white;border:none" class="text-center pb-2">
-                            Precio 
-                        </th>
-                    </tr>
-                </thead>
-            </table>
-            <vue-custom-scrollbar ref="scroll" class="ps-container ListaProcesar p-2 ps ps--active-y">
-                <table class="table tableBg" id="myTable">
-                    <tbody>
-                        <tr v-for="(servicio, index) in services" v-bind:key="servicio._id">
-                            <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
-                                <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, servicio.productos), countServices[index].count++">
-                                    <span class="float-left">{{servicio.nombre}}</span>
-                                    <badge class="badgeClass badgeServices float-right" style="font-size: .9em;color:#4b4b4b" type="secondary" :id="servicio._id">{{countServices[index].count}}</badge>
-                                </base-button>
-                                <base-button size="sm" type="default" v-on:click="borrarServicio(servicio.nombre,index,servicio._id,servicio.precio, servicio.descuento)">
-                                    <font-awesome-icon icon="times"/>
-                                </base-button>
-                            </td>
-                            <td style="border:none" v-if="servicio.active" class="font-weight-bold text-center">
-                                {{formatPrice(servicio.precio)}}
-                            </td>
+            <div class="col-6">
+                <div v-on:click="chooseLender"> 
+                    <vue-single-select
+                    v-model="lenderSelect"
+                    :options="lenderNames"
+                    placeholder="Prestadoras"
+                    ></vue-single-select> 
+                </div>
+            </div>
+            <div class="col-12">
+                <table class="table" v-bind:style="{ 'background-color': '#172b4d', 'border-radius' : '10px', 'border':'none !important'}" >
+                    <thead>
+                        <tr>
+                            <th style="border-radius:15px !important;border:none">
+                                <input class="w-75 inputFilter" id="myInputProccess" v-on:keyup="myFunction()" type="text" placeholder="Filtre servicios">
+                            </th>
+                            <th style="color:white;border:none" class="text-center pb-2">
+                                Precio 
+                            </th>
                         </tr>
-                        
-                    </tbody>
+                    </thead>
                 </table>
-            </vue-custom-scrollbar>
-            <div class="row pt-3 shadowTop">
-                <div class="col-sm-5">
-                    <div class="input-group">
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Sub Total</span>
-                            </template>
-                            <base-input alternative
+                <vue-custom-scrollbar ref="scroll" class="ps-container ListaProcesar p-2 ps ps--active-y">
+                    <table class="table tableBg" id="myTableProcess">
+                        
+                            <tr v-for="(servicio, index) in services" class="soy" v-bind:key="servicio._id">
+                                <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
+                                    <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, servicio.productos), countServices[index].count++">
+                                        <span class="float-left">{{servicio.nombre}}</span>
+                                        <badge class="badgeClass badgeServices float-right" style="font-size: .9em;color:#4b4b4b" type="secondary" :id="servicio._id">{{countServices[index].count}}</badge>
+                                    </base-button>
+                                    <base-button size="sm" type="default" v-on:click="borrarServicio(servicio.nombre,index,servicio._id,servicio.precio, servicio.descuento)">
+                                        <font-awesome-icon icon="times"/>
+                                    </base-button>
+                                </td>
+                                <td style="border:none" v-if="servicio.active" class="font-weight-bold text-center">
+                                    {{formatPrice(servicio.precio)}}
+                                </td>
+                            </tr>
+                            
+                        
+                    </table>
+                </vue-custom-scrollbar>
+                <div class="row pt-3 shadowTop">
+                    <div class="col-sm-5">
+                        <div class="input-group">
+                            <a-tooltip placement="top">
+                                <template slot="title">
+                                <span>Sub Total</span>
+                                </template>
+                                <base-input alternative
+                                    type="text"
+                                    class="align"
+                                    placeholder=""
+                                    addon-left-icon="ni ni-money-coins"
+                                    v-model="price"
+                                    disabled
+                                ></base-input>
+                            </a-tooltip>
+                            
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="input-group">
+                            <a-tooltip v-if="validRoute('procesar', 'descuento')" placement="topLeft">
+                                <template slot="title">
+                                <span>Descuento</span>
+                                </template>
+                                <base-input  alternative
                                 type="text"
                                 class="align"
-                                placeholder=""
-                                addon-left-icon="ni ni-money-coins"
-                                v-model="price"
-                                disabled
+                                placeholder="0%"
+                                addon-left-icon="ni ni-tag"
+                                v-on:change="descuentoFunc(true)"
+                                v-model="discount"
                             ></base-input>
-                        </a-tooltip>
-                        
+                            </a-tooltip>
+                            
+                            <base-input v-else disabled 
+                                alternative
+                                title="Descuento deshabilitado"
+                                type="text"
+                                class="align"
+                                placeholder="Descuento"
+                                addon-left-icon="ni ni-tag"
+                                v-model="discount"
+                            ></base-input>
+                        </div>
                     </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="input-group">
-                        <a-tooltip v-if="validRoute('procesar', 'descuento')" placement="topLeft">
+                    <div class="col-sm-4">
+                        <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Descuento</span>
+                            <span>Adicional por diseño</span>
                             </template>
-                            <base-input  alternative
-                            type="text"
-                            class="align"
-                            placeholder="0%"
-                            addon-left-icon="ni ni-tag"
-                            v-on:change="descuentoFunc(true)"
-                            v-model="discount"
-                        ></base-input>
+                            <currency-input
+                            
+                            v-model="design"
+                            placeholder="Diseño"
+                            locale="de"
+                            class="form-control"
+                            v-on:keyup="addDesign()"/>
                         </a-tooltip>
                         
-                        <base-input v-else disabled 
-                            alternative
-                            title="Descuento deshabilitado"
-                            type="text"
-                            class="align"
-                            placeholder="Descuento"
-                            addon-left-icon="ni ni-tag"
-                            v-model="discount"
-                        ></base-input>
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Adicional por diseño</span>
-                        </template>
-                        <currency-input
+                <div class="text-muted text-center mb-1" style="margin-top:-15px;">
+                    Medios de pago
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Efectivo</span>
+                            </template>
+                            <div class="input-group mb-2">
+                                <div  v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
+                                    <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
+                                    </span>
+                                    
+                                </div>
+                                <currency-input
+                                    v-model="payCash"
+                                    locale="de"
+                                    placeholder="Efectivo"
+                                    class="form-control"
+                                />
+                            </div>
+                        </a-tooltip>
                         
-                        v-model="design"
-                        placeholder="Diseño"
-                        locale="de"
-                        class="form-control"
-                        v-on:keyup="addDesign()"/>
-                    </a-tooltip>
+                    </div>
+                    <div class="col-4">
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Transferencia</span>
+                            </template>
+                            <div class="input-group mb-2">
+                                <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
+                                    <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
+                                    </span>
+                                </div>
+                                <currency-input
+                                    v-model="payTransfer"
+                                    locale="de"
+                                    placeholder="Transferencia"
+                                    class="form-control"
+                                />
+                            </div>
+                        </a-tooltip>
+                        
+                    </div>
+                    <div class="col-4">
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Otros</span>
+                            </template>
+                            <div  class="input-group mb-2">
+                                <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="others" style="font-size:0.6em;display:none">100%</b>
+                                    <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
+                                    </span>
+                                </div>
+                                <currency-input
+                                    v-model="payOthers"
+                                    locale="de"
+                                    placeholder="Otros"
+                                    class="form-control"
+                                />
+                            </div>
+                        </a-tooltip>
+                        
+                    </div>
+                    <div class="col-6">
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Débito</span>
+                            </template>
+                            <div class="input-group mb-2">
+                                <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="debit" style="font-size:0.6em;display:none">100%</b>
+                                        <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
+                                    </span>
+                                </div>
+                                <currency-input
+                                    v-model="payDebit"
+                                    locale="de"
+                                    placeholder="Débito"
+                                    class="form-control"
+                                />
+                            </div>
+                        </a-tooltip>
+                        
+                    </div>
+                    <div class="col-6">
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Crédito</span>
+                            </template>
+                            <div class="input-group mb-2">
+                                <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
+                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <b class="credit" style="font-size:0.6em;display:none">100%</b>
+                                        <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
+                                    </span>
+                                </div>
+                                <currency-input
+                                    v-model="payCredit"
+                                    locale="de"
+                                    placeholder="Crédito"
+                                    class="form-control"
+                                />
+                            </div>
+                        </a-tooltip>
+                        
+                    </div>
                     
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="pt-2">Total: {{total}}</h1>
+                    </div>
+                    <div class="col-6">
+                        <base-button size="lg" :disabled="validatorBtn" class="float-right w-75" type="success" v-on:click="processSale">
+                            Procesar
+                        </base-button>
+                    </div>
                 </div>
             </div>
-            <div class="text-muted text-center mb-1" style="margin-top:-15px;">
-                Medios de pago
-            </div>
-            <div class="row">
-                <div class="col-4">
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Efectivo</span>
-                        </template>
-                        <div class="input-group mb-2">
-                            <div  v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
-                                <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
-                                </span>
-                                
-                            </div>
-                            <currency-input
-                                v-model="payCash"
-                                locale="de"
-                                placeholder="Efectivo"
-                                class="form-control"
-                            />
-                        </div>
-                    </a-tooltip>
-                    
+            <modal :show.sync="modals.modal1"
+                :gradient="modals.type"
+                modal-classes="modal-danger modal-dialog-centered">
+                <div class="py-3 text-center">
+                    <i :class="modals.icon"></i>
+                    <h1 class="heading mt-5">{{modals.message}}</h1>
                 </div>
-                <div class="col-4">
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Transferencia</span>
-                        </template>
-                        <div class="input-group mb-2">
-                            <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
-                                <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
-                                </span>
-                            </div>
-                            <currency-input
-                                v-model="payTransfer"
-                                locale="de"
-                                placeholder="Transferencia"
-                                class="form-control"
-                            />
-                        </div>
-                    </a-tooltip>
-                    
-                </div>
-                <div class="col-4">
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Otros</span>
-                        </template>
-                        <div  class="input-group mb-2">
-                            <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="others" style="font-size:0.6em;display:none">100%</b>
-                                <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
-                                </span>
-                            </div>
-                            <currency-input
-                                v-model="payOthers"
-                                locale="de"
-                                placeholder="Otros"
-                                class="form-control"
-                            />
-                        </div>
-                    </a-tooltip>
-                    
-                </div>
-                <div class="col-6">
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Débito</span>
-                        </template>
-                        <div class="input-group mb-2">
-                            <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="debit" style="font-size:0.6em;display:none">100%</b>
-                                    <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
-                                </span>
-                            </div>
-                            <currency-input
-                                v-model="payDebit"
-                                locale="de"
-                                placeholder="Débito"
-                                class="form-control"
-                            />
-                        </div>
-                    </a-tooltip>
-                    
-                </div>
-                <div class="col-6">
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Crédito</span>
-                        </template>
-                        <div class="input-group mb-2">
-                            <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
-                                <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                    <b class="credit" style="font-size:0.6em;display:none">100%</b>
-                                    <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
-                                </span>
-                            </div>
-                            <currency-input
-                                v-model="payCredit"
-                                locale="de"
-                                placeholder="Crédito"
-                                class="form-control"
-                            />
-                        </div>
-                    </a-tooltip>
-                    
-                </div>
-                
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <h1 class="pt-2">Total: {{total}}</h1>
-                </div>
-                <div class="col-6">
-                    <base-button size="lg" :disabled="validatorBtn" class="float-right w-75" type="success" v-on:click="processSale">
-                        Procesar
-                    </base-button>
-                </div>
-            </div>
-        </div>
-        <modal :show.sync="modals.modal1"
-               :gradient="modals.type"
-               modal-classes="modal-danger modal-dialog-centered">
-            <div class="py-3 text-center">
-                <i :class="modals.icon"></i>
-                <h1 class="heading mt-5">{{modals.message}}</h1>
-            </div>
-        </modal>
-        <modal :show.sync="modals.modal2"
-              body-classes="p-0"
-              modal-classes="modal-dialog-centered modal-md">
-              <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
-          <card type="secondary" shadow
-                header-classes="bg-white pb-5"
-                body-classes="px-lg-5"
-                class="border-0">
-              <template>
-                  <div class="text-muted text-center mb-3">
-                      <h1>Datos del cliente</h1> 
-                  </div>
-              </template>
-              <template>
-                  <form role="form">
-                        <base-input alternative
-                                    class="mb-3"
-                                    placeholder="Nombre"
-                                    v-model="registerClient.name"
-                                    v-on:change="validRegister(2)"
-                                    addon-left-icon="ni ni-single-02">
-                        </base-input>
-                        <base-input alternative
-                                    type="text"
-                                    placeholder="Contacto principal"
-                                    v-model="registerClient.id"
-                                    v-on:change="validRegister(2)"
-                                    addon-left-icon="fa fa-address-card">
-                        </base-input>
-                        <base-input alternative
-                                    type="text"
-                                    placeholder="Contacto adicional"
-                                    v-model="registerClient.contactOne"
-                                    addon-left-icon="fa fa-address-card">
-                        </base-input>
-                        <base-input alternative
-                                    type="text"
-                                    placeholder="Contacto adicional"
-                                    v-model="registerClient.contactTwo"
-                                    addon-left-icon="fa fa-address-card">
-                        </base-input>
-                        <base-checkbox v-if="!ifEdit" v-model="registerClient.discount" class="mb-3">
-                            Descuento de nuevo cliente
-                        </base-checkbox>
-                        <vue-single-select 
-                            v-if="!ifEdit"
-                            v-model="registerClient.recommender"
-                            :options="clientNames"
-                            placeholder="Recomendador"
-                        ></vue-single-select>
-                        <div class="text-center">
-                            <base-button type="default" v-if="!registerClient.valid" disabled class="my-4">Registrar</base-button>
-                            <base-button type="default" v-on:click="registerClients()" v-if="registerClient.valid && !ifEdit" class="my-4">Registrar</base-button>
-                            <base-button type="default" v-on:click="editClient()" v-if="registerClient.valid && ifEdit" class="my-4">Editar</base-button>
-                        </div> 
-                    </form>
-              </template>
-          </card>
-        </modal>
-        <modal :show.sync="modals.modal3"
-              body-classes="p-0"
-              modal-classes="modal-dialog-centered modal-md">
-              <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
-          <card type="secondary" shadow
-                header-classes="bg-white pb-5"
-                body-classes="px-lg-5"
-                class="border-0">
-              <template>
-                  <div style="margin-top:-15%" class="text-muted text-center mb-3">
-                      <h1>Nuevo servicio</h1> 
-                  </div>
-              </template>
-              <template>
-                    <form role="form">
-                        <base-input alternative
-                            v-on:change="validRegister(1)"
-                            class="mb-3"
-                            placeholder="Nombre"
-                            addon-left-icon="ni ni-single-copy-04"
-                            v-model="registerService.serviceRegister">
-                        </base-input>
-                        <base-input alternative
-                            v-on:change="validRegister(1)"
-                            type="number"
-                            max-count="100"
-                            placeholder="comision (%)"
-                            addon-left-icon="ni ni-money-coins"
-                            v-model="registerService.comissionRegister">
-                        </base-input>
-                        <currency-input
-                            v-on:change="validRegister(1)"
-                            v-model="registerService.priceRegister"
-                            locale="de"
-                            placeholder="Costo"
-                            class="form-control mb-3"
-                            style="margin-top:-10px;"
-                        />	
-                        <select class="form-control mb-3" v-on:change="validRegister(1)" v-model="registerService.timeRegister">
-                            <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
-                            <option style="color:black;" value="15">15 Minutos</option>
-                            <option style="color:black;" value="30">30 Minutos</option>
-                            <option style="color:black;" value="45">45 Minutos</option>
-                            <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
-                            <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
-                            <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
-                            <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
-                            <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
-                            <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
-                            <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
-                        </select>
-                        <div  class="row mx-auto mt-2">
-                            <h3 class="w-100 text-center">¿Aplica descuento?</h3>
-                            <base-radio name="false" inline class="mb-3 mx-auto" v-model="registerService.addDiscount"> <b>Si</b> </base-radio>
-                            <base-radio name="true" inline class="mb-3 mx-auto" v-model="registerService.addDiscount"> <b>No</b> </base-radio> 
-                        </div>
-                        <vue-custom-scrollbar class="maxHeight">
-                            <vue-bootstrap4-table :rows="registerService.lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
-                            </vue-bootstrap4-table>
-                        </vue-custom-scrollbar >
-                        <div class="text-center">
-                            <base-button v-if="!registerService.valid" type="default" class="my-4" v-on:click="registerServiceProcess()" disabled>Registrar</base-button>
-                            <base-button v-else type="default" class="my-4" v-on:click="registerServiceProcess()" >Registrar</base-button>
-                        </div>
-                    </form>
-              </template>
-          </card>
-        </modal>
-        <modal :show.sync="modals.modal4"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
+            </modal>
+            <modal :show.sync="modals.modal2"
+                body-classes="p-0"
+                modal-classes="modal-dialog-centered modal-md">
+                <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
+                    header-classes="bg-white pb-5"
+                    body-classes="px-lg-5"
+                    class="border-0">
                 <template>
                     <div class="text-muted text-center mb-3">
-                        <h3>Registrar monto de apertura</h3>
+                        <h1>Datos del cliente</h1> 
                     </div>
                 </template>
                 <template>
                     <form role="form">
-                        <base-input 
-                            alternative
-                            class="mb-3"
-                            placeholder="Nombre el cajero"
-                            v-on:keyup="validRegister(3)"
-                            v-model="cashFunds.cashName"
-                            addon-left-icon="ni ni-circle-08">
-                        </base-input>
-                        <currency-input
-                            v-model="cashFunds.cashAmount"
-                            v-on:keyup="validRegister(3)"
-                            locale="de"
-                            addon-left-icon="ni ni-money-coins"
-                            class="form-control mb-3"
-                            style="margin-top:-10px;"
-                        />	
-                        <base-button v-if="!cashFunds.valid" type="default" disabled>
-                            Ingresar fondo
-                        </base-button>
-                        <base-button v-else type="default" v-on:click="registerFund">
-                            Ingresar fondo
-                        </base-button> 
-                    </form>
-            </template>
+                            <base-input alternative
+                                        class="mb-3"
+                                        placeholder="Nombre"
+                                        v-model="registerClient.name"
+                                        v-on:change="validRegister(2)"
+                                        addon-left-icon="ni ni-single-02">
+                            </base-input>
+                            <base-input alternative
+                                        type="text"
+                                        placeholder="Contacto principal"
+                                        v-model="registerClient.id"
+                                        v-on:change="validRegister(2)"
+                                        addon-left-icon="fa fa-address-card">
+                            </base-input>
+                            <base-input alternative
+                                        type="text"
+                                        placeholder="Contacto adicional"
+                                        v-model="registerClient.contactOne"
+                                        addon-left-icon="fa fa-address-card">
+                            </base-input>
+                            <base-input alternative
+                                        type="text"
+                                        placeholder="Contacto adicional"
+                                        v-model="registerClient.contactTwo"
+                                        addon-left-icon="fa fa-address-card">
+                            </base-input>
+                            <base-checkbox v-if="!ifEdit" v-model="registerClient.discount" class="mb-3">
+                                Descuento de nuevo cliente
+                            </base-checkbox>
+                            <vue-single-select 
+                                v-if="!ifEdit"
+                                v-model="registerClient.recommender"
+                                :options="clientNames"
+                                placeholder="Recomendador"
+                            ></vue-single-select>
+                            <div class="text-center">
+                                <base-button type="default" v-if="!registerClient.valid" disabled class="my-4">Registrar</base-button>
+                                <base-button type="default" v-on:click="registerClients()" v-if="registerClient.valid && !ifEdit" class="my-4">Registrar</base-button>
+                                <base-button type="default" v-on:click="editClient()" v-if="registerClient.valid && ifEdit" class="my-4">Editar</base-button>
+                            </div> 
+                        </form>
+                </template>
             </card>
-        </modal>
-        <modal :show.sync="modals.modal5"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+            </modal>
+            <modal :show.sync="modals.modal3"
+                body-classes="p-0"
+                modal-classes="modal-dialog-centered modal-md">
+                <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 "
-                  class="border-0">
+                    header-classes="bg-white pb-5"
+                    body-classes="px-lg-5"
+                    class="border-0">
                 <template>
-                    <div style="margin-top:-10%" class="text-muted text-center mb-3">
-                        <h3>Validación de codigo</h3>
+                    <div style="margin-top:-15%" class="text-muted text-center mb-3">
+                        <h1>Nuevo servicio</h1> 
                     </div>
                 </template>
                 <template>
-                    <form role="form">
-                        <base-input 
-                            alternative
-                            class="mb-3"
-                            placeholder="Codigo"
-                            v-model="codeArticulo"
-                            addon-left-icon="ni ni-key-25">
-                        </base-input>
-                       	
-                        
-                        <base-button type="default" v-on:click="validCode()">
-                            Verificar
-                        </base-button> 
-                    </form>
-            </template>
-            </card>
-        </modal>
-        <modal :show.sync="modals.modal6"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-               
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                
-                <template>
-                    <div class="col-sm-12">
-                                <base-button class="col-12  p-2 mt-1" type="secondary">
-                                    <span class="text-center"> Comprador <br> </span>
-                                    <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{compradorArticulo}}</badge>
-                                </base-button>
-                                <base-button class="col-12  p-2 mt-1" type="secondary">
-                                    <span class="text-center"> Medio de pago <br> </span>
-                                    <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{medioPagoArticulo}}</badge>
-                                </base-button>
-                                <base-button class="col-12  p-2 mt-1" type="secondary">
-                                    <span class="text-center"> Articulo <br> </span>
-                                    <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
-                                </base-button>
-                                <base-button class="col-12  p-2 mt-1" type="secondary">
-                                    <span class="text-center"> Estado <br> </span>
-                                    <badge v-if="estadoArticulo == 'Nconfirmado'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
-                                    <badge v-else-if="estadoArticulo == 'confirmado'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
-                                    <badge v-else style="font-size:0.8em !important" type="default" class="text-default mt-2">Usado</badge>
-                                </base-button>
-                                
+                        <form role="form">
+                            <base-input alternative
+                                v-on:change="validRegister(1)"
+                                class="mb-3"
+                                placeholder="Nombre"
+                                addon-left-icon="ni ni-single-copy-04"
+                                v-model="registerService.serviceRegister">
+                            </base-input>
+                            <base-input alternative
+                                v-on:change="validRegister(1)"
+                                type="number"
+                                max-count="100"
+                                placeholder="comision (%)"
+                                addon-left-icon="ni ni-money-coins"
+                                v-model="registerService.comissionRegister">
+                            </base-input>
+                            <currency-input
+                                v-on:change="validRegister(1)"
+                                v-model="registerService.priceRegister"
+                                locale="de"
+                                placeholder="Costo"
+                                class="form-control mb-3"
+                                style="margin-top:-10px;"
+                            />	
+                            <select class="form-control mb-3" v-on:change="validRegister(1)" v-model="registerService.timeRegister">
+                                <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
+                                <option style="color:black;" value="15">15 Minutos</option>
+                                <option style="color:black;" value="30">30 Minutos</option>
+                                <option style="color:black;" value="45">45 Minutos</option>
+                                <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+                                <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
+                                <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
+                                <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
+                                <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
+                                <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
+                                <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
+                            </select>
+                            <div  class="row mx-auto mt-2">
+                                <h3 class="w-100 text-center">¿Aplica descuento?</h3>
+                                <base-radio name="false" inline class="mb-3 mx-auto" v-model="registerService.addDiscount"> <b>Si</b> </base-radio>
+                                <base-radio name="true" inline class="mb-3 mx-auto" v-model="registerService.addDiscount"> <b>No</b> </base-radio> 
                             </div>
-                            <center>
-                                <base-button v-if="estadoArticulo == 'confirmado'" type="success" class="mt-5" v-on:click="verifyCode()">
-                                    Validar
-                                </base-button>
-                                <base-button v-else type="default" disabled class="mt-5">
-                                    Validar
-                                </base-button> 
-                            </center>
-                            
-            </template>
+                            <vue-custom-scrollbar class="maxHeight">
+                                <vue-bootstrap4-table :rows="registerService.lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll">
+                                </vue-bootstrap4-table>
+                            </vue-custom-scrollbar >
+                            <div class="text-center">
+                                <base-button v-if="!registerService.valid" type="default" class="my-4" v-on:click="registerServiceProcess()" disabled>Registrar</base-button>
+                                <base-button v-else type="default" class="my-4" v-on:click="registerServiceProcess()" >Registrar</base-button>
+                            </div>
+                        </form>
+                </template>
             </card>
-        </modal>
-        <div v-if="validRoute('procesar', 'nuevo_cliente')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
-			<div class="row">
-				<div class="col-2 pt-1">
-                    <font-awesome-icon v-if="ifEdit" class="icons" style="color:#172b4d;font-size:1em" icon="user-edit" />
-					<font-awesome-icon v-else class="icons" style="color:#172b4d;font-size:1em" icon="user-plus" />
-				</div>
-				<div v-if="newClient.valid" class="col-10 pl-4 pt-1">
-					<b style="font-size:14px;">{{newClient.text}}</b>	
-				</div>
-			</div>	
+            </modal>
+            <modal :show.sync="modals.modal4"
+                body-classes="p-0"
+                modal-classes="modal-dialog-centered modal-md">
+                <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
+                <card type="secondary" shadow
+                    header-classes="bg-white pb-5"
+                    body-classes="px-lg-5 py-lg-5"
+                    class="border-0">
+                    <template>
+                        <div class="text-muted text-center mb-3">
+                            <h3>Registrar monto de apertura</h3>
+                        </div>
+                    </template>
+                    <template>
+                        <form role="form">
+                            <base-input 
+                                alternative
+                                class="mb-3"
+                                placeholder="Nombre el cajero"
+                                v-on:keyup="validRegister(3)"
+                                v-model="cashFunds.cashName"
+                                addon-left-icon="ni ni-circle-08">
+                            </base-input>
+                            <currency-input
+                                v-model="cashFunds.cashAmount"
+                                v-on:keyup="validRegister(3)"
+                                locale="de"
+                                addon-left-icon="ni ni-money-coins"
+                                class="form-control mb-3"
+                                style="margin-top:-10px;"
+                            />	
+                            <base-button v-if="!cashFunds.valid" type="default" disabled>
+                                Ingresar fondo
+                            </base-button>
+                            <base-button v-else type="default" v-on:click="registerFund">
+                                Ingresar fondo
+                            </base-button> 
+                        </form>
+                </template>
+                </card>
+            </modal>
+            <modal :show.sync="modals.modal5"
+                body-classes="p-0"
+                modal-classes="modal-dialog-centered modal-md">
+                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+                <card type="secondary" shadow
+                    header-classes="bg-white pb-5"
+                    body-classes="px-lg-5 "
+                    class="border-0">
+                    <template>
+                        <div style="margin-top:-10%" class="text-muted text-center mb-3">
+                            <h3>Validación de codigo</h3>
+                        </div>
+                    </template>
+                    <template>
+                        <form role="form">
+                            <base-input 
+                                alternative
+                                class="mb-3"
+                                placeholder="Codigo"
+                                v-model="codeArticulo"
+                                addon-left-icon="ni ni-key-25">
+                            </base-input>
+                            
+                            
+                            <base-button type="default" v-on:click="validCode()">
+                                Verificar
+                            </base-button> 
+                        </form>
+                </template>
+                </card>
+            </modal>
+            <modal :show.sync="modals.modal6"
+                body-classes="p-0"
+                modal-classes="modal-dialog-centered modal-md">
+                
+                <card type="secondary" shadow
+                    header-classes="bg-white pb-5"
+                    body-classes="px-lg-5 py-lg-5"
+                    class="border-0">
+                    
+                    <template>
+                        <div class="col-sm-12">
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Comprador <br> </span>
+                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{compradorArticulo}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Medio de pago <br> </span>
+                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{medioPagoArticulo}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Articulo <br> </span>
+                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Estado <br> </span>
+                                        <badge v-if="estadoArticulo == 'Nconfirmado'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
+                                        <badge v-else-if="estadoArticulo == 'confirmado'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
+                                        <badge v-else style="font-size:0.8em !important" type="default" class="text-default mt-2">Usado</badge>
+                                    </base-button>
+                                    
+                                </div>
+                                <center>
+                                    <base-button v-if="estadoArticulo == 'confirmado'" type="success" class="mt-5" v-on:click="verifyCode()">
+                                        Validar
+                                    </base-button>
+                                    <base-button v-else type="default" disabled class="mt-5">
+                                        Validar
+                                    </base-button> 
+                                </center>
+                                
+                </template>
+                </card>
+            </modal>
+            <div v-if="validRoute('procesar', 'nuevo_cliente')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
+                <div class="row">
+                    <div class="col-2 pt-1">
+                        <font-awesome-icon v-if="ifEdit" class="icons" style="color:#172b4d;font-size:1em" icon="user-edit" />
+                        <font-awesome-icon v-else class="icons" style="color:#172b4d;font-size:1em" icon="user-plus" />
+                    </div>
+                    <div v-if="newClient.valid" class="col-10 pl-4 pt-1">
+                        <b style="font-size:14px;">{{newClient.text}}</b>	
+                    </div>
+                </div>	
+            </div>
+            <div v-else v-bind:style="{  'height': '45px', 'z-index' : '1000' }" class="p-2 navSVenta">
+                <div class="row">
+                    <div class="col-2 pt-1">
+                        <font-awesome-icon v-if="ifEdit" class="icons" style="color:#f5365c;font-size:1em" icon="user-edit" />
+                        <font-awesome-icon v-else class="icons" style="color:#f5365c;font-size:1em" icon="user-plus" />
+                    </div>
+                    <div v-if="newClient.valid" class="col-10 pl-4 pt-1">
+                        <b style="font-size:14px;">{{newClient.text}}</b>	
+                    </div>
+                </div>	
+            </div>
+            <div v-if="validRoute('procesar', 'nuevo_servicio')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal3 = true" class="p-2 menuVerServi navSServi" v-on:mouseenter="mouseOverVenta(newService)" v-on:mouseleave="mouseLeaveVenta(newService)">
+                <div class="row">
+                    <div class="col-2 pt-1">
+                        <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="folder-plus" />
+                    </div>
+                    <div v-if="newService.valid" class="col-10 pl-4 pt-1">
+                        <b style="font-size:14px;">{{newService.text}}</b>	
+                    </div>
+                </div>
+            </div>
+            <div v-else v-bind:style="{  'height': '45px', 'z-index' : '1000' }" class="p-2 navSServi">
+                <div class="row">
+                    <div class="col-2 pt-1">
+                        <font-awesome-icon class="icons" style="color:#f5365c;font-size:1em" icon="folder-plus" />
+                    </div>
+                    <div v-if="newService.valid" class="col-10 pl-4 pt-1">
+                        <b style="font-size:14px;">{{newService.text}}</b>	
+                    </div>
+                </div>
+            </div>
+            <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="initialState()" class="p-2 menuVerRedo navSRedo" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
+                <div class="row">
+                    <div class="col-2 pt-1">
+                        <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
+                    </div>
+                    <div v-if="reloadSales.valid" class="col-10 pl-4 pt-1">
+                        <b style="font-size:14px;">{{reloadSales.text}}</b>	
+                    </div>
+                </div>
+            </div>
+            <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal5 = true, codeArticulo = ''" class="p-2 menuVerRedo navSCode" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
+                <div class="row">
+                    <div class="col-2 pt-1">
+                        <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="pager" />
+                    </div>
+                    <div v-if="reloadSales.valid" class="col-10 pl-4 pt-1">
+                        <b style="font-size:14px;">Validar codigo</b>	
+                    </div>
+                </div>
+            </div>
         </div>
-        <div v-else v-bind:style="{  'height': '45px', 'z-index' : '1000' }" class="p-2 navSVenta">
-			<div class="row">
-				<div class="col-2 pt-1">
-                    <font-awesome-icon v-if="ifEdit" class="icons" style="color:#f5365c;font-size:1em" icon="user-edit" />
-					<font-awesome-icon v-else class="icons" style="color:#f5365c;font-size:1em" icon="user-plus" />
-				</div>
-				<div v-if="newClient.valid" class="col-10 pl-4 pt-1">
-					<b style="font-size:14px;">{{newClient.text}}</b>	
-				</div>
-			</div>	
-        </div>
-		<div v-if="validRoute('procesar', 'nuevo_servicio')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal3 = true" class="p-2 menuVerServi navSServi" v-on:mouseenter="mouseOverVenta(newService)" v-on:mouseleave="mouseLeaveVenta(newService)">
-			<div class="row">
-				<div class="col-2 pt-1">
-					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="folder-plus" />
-				</div>
-				<div v-if="newService.valid" class="col-10 pl-4 pt-1">
-					<b style="font-size:14px;">{{newService.text}}</b>	
-				</div>
-			</div>
-        </div>
-        <div v-else v-bind:style="{  'height': '45px', 'z-index' : '1000' }" class="p-2 navSServi">
-			<div class="row">
-				<div class="col-2 pt-1">
-					<font-awesome-icon class="icons" style="color:#f5365c;font-size:1em" icon="folder-plus" />
-				</div>
-				<div v-if="newService.valid" class="col-10 pl-4 pt-1">
-					<b style="font-size:14px;">{{newService.text}}</b>	
-				</div>
-			</div>
-        </div>
-		<div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="initialState()" class="p-2 menuVerRedo navSRedo" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
-			<div class="row">
-				<div class="col-2 pt-1">
-					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
-				</div>
-				<div v-if="reloadSales.valid" class="col-10 pl-4 pt-1">
-					<b style="font-size:14px;">{{reloadSales.text}}</b>	
-				</div>
-			</div>
-        </div>
-        <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal5 = true, codeArticulo = ''" class="p-2 menuVerRedo navSCode" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
-			<div class="row">
-				<div class="col-2 pt-1">
-					<font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="pager" />
-				</div>
-				<div v-if="reloadSales.valid" class="col-10 pl-4 pt-1">
-					<b style="font-size:14px;">Validar codigo</b>	
-				</div>
-			</div>
-        </div>
-    </div>
+    </a-spin>
 </template>
 <script>
 import axios from 'axios'
@@ -579,6 +581,7 @@ export default {
             auth: [],
             validator:true,
             validatorBtn:true,
+            spinning:false,
             modals: {
                 modal1: false,
                 modal2: false,
@@ -1114,10 +1117,11 @@ export default {
 			$("."+tipo).toggle()
 		},
         myFunction() {
+            console.log("hola")
 			var input, filter, table, tr, td, i, txtValue;
-			input = document.getElementById("myInput");
+			input = document.getElementById("myInputProccess");
 			filter = input.value.toUpperCase();
-			table = document.getElementById("myTable");
+			table = document.getElementById("myTableProcess");
 			tr = table.getElementsByTagName("tr");
 			for (i = 0; i < tr.length; i++) {
 			td = tr[i].getElementsByTagName("td")[0];
@@ -1324,6 +1328,7 @@ export default {
             this.validRegister()
         },
         processSale() {
+            this.spinning = true
 			if (this.payCash == '') {
 				this.payCash = 0
 			}
@@ -1404,7 +1409,8 @@ export default {
 							this.servicios =''
 							this.initialState()
 							EventBus.$emit('reloadDates', 'process')
-							EventBus.$emit('reloadSales', 'process')
+                            EventBus.$emit('reloadSales', 'process')
+                            this.spinning = false
 						}else if(res.data.status == "no-cash"){
 							this.modals = {
                                 modal1: true,
@@ -1423,6 +1429,7 @@ export default {
                                     type: ''
                                 }
                             }, 1500);
+                            this.spinning = false
 						}
 					}).catch(err => {
 						this.$swal({
@@ -1430,7 +1437,8 @@ export default {
 							title: 'experimentamos problemas :(',
 							showConfirmButton: false,
 							timer: 1500
-						})
+                        })
+                        this.spinning = false
 					})
 				}else{
                     this.modals = {
@@ -1449,6 +1457,7 @@ export default {
                             icon: '',
                             type: ''
                         }
+                        this.spinning = false
                     }, 1500);
 					if (this.pagoEfectivo == 0) {
 						this.pagoEfectivo = ''
@@ -1483,6 +1492,7 @@ export default {
                         icon: '',
                         type: ''
                     }
+                    this.spinning = false
                 }, 1500);
 			}
         },

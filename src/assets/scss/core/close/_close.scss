@@ -10,9 +10,9 @@
     &>span:not(.sr-only) {
         background-color: $close-bg;
         color: $close-color;
-        line-height: 17px;
-        height: 1.25rem;
-        width: 1.25rem;
+        line-height: 0px;
+        height: 1rem;
+        width: 0.25rem;
         border-radius: 50%;
         font-size: 1.25rem;
         display: block;
