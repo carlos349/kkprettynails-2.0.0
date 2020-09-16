@@ -11,6 +11,7 @@
                         <h1 class="display-2 text-white">Hola {{model.first_name}}</h1>
                         <p class="text-white mt-0 mb-5">Este es tu perfil, puedes ver tu progreso trabajando para KKPrettyNails, en las diferentes secciones.Tambien puedes editar tus datos.</p>
                         <base-button class="mb-5" type="info" v-on:click="inspector = true">Editar perfil</base-button>
+                        <base-button class="mb-5" type="info" v-on:click="modals.modal2 = true">Cambiar contraseña</base-button>
                     </div>
                 </div>
             </div>
@@ -146,7 +147,7 @@
                                     </div>
                                 </div>
                                 <base-button class="float-right" v-if="inspector" type="info" v-on:click="editProfile">Editar</base-button>
-                                <base-button v-if="inspector" type="info" v-on:click="modals.modal2 = true">Cambiar contraseña</base-button>
+                                <base-button class="float-left" v-if="inspector" type="danger" v-on:click="inspector = false">Cancelar</base-button>
                             </form>
                         </template>
                     </card>
