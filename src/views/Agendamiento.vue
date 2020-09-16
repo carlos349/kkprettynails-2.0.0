@@ -333,14 +333,22 @@
                 class="calen"
                 :locale="locale"
                 :events="events"
-                :time-from="600 "
+                :time-from="600"
                 :time-to="1275"
-                :timeStep="15"
-                default-view="month"
+                :time-step="15"
+                active-view="month"
                 :disable-views="['years', 'year', 'week']" 
                 events-count-on-month-view
+                :split-days="splitDays"
+                @view-change="validatorLendersDaysSplit('view-change', $event)"
+                :sticky-split-labels="stickySplitLabels"
                 :on-event-click="onEventClick"
-                :overlapsPerTimeStep="true">
+                :overlaps-per-time-step="true">
+                <template v-slot:split-label="{ split }">
+                    <img v-if="split.img != 'no'" class="avatar avatar-sm rounded-circle mr-2" :src="split.img" /> 
+                    <img v-else class="avatar avatar-sm rounded-circle mr-2" src="https://www.w3schools.com/howto/img_avatar.png" /> 
+                    <strong class="text-white" > {{ split.label }}</strong>
+                </template>
             </vue-cal>
         </vue-custom-scrollbar>
         
@@ -529,7 +537,8 @@
                         <flat-picker  slot-scope="{focus, blur}"
                                     @on-open="focus"
                                     @on-close="blur"
-                                    :config="configDatePicker"
+                                    @on-change="insertDateTwo"
+                                    :config="configDatePickerEdit"
                                     class="form-control datepicker"
                                     v-model="dateData.fechaEditPick"
                                     placeholder="Seleccione una fecha">
@@ -1038,6 +1047,12 @@
         locale: Spanish, // locale for this instance only
         minDate: new Date(),         
         },
+        configDatePickerEdit: {
+            lowInput: true,
+            dateFormat: 'm-d-Y',
+            locale: Spanish, // locale for this instance only
+            minDate: new Date(), 
+        },
         dateData: {
         history:[],
         discount:{discount:false,type:'none'},
@@ -1135,7 +1150,11 @@
             
             { title: 'Descuento', dataIndex: 'descuento', key: 'descuento', scopedSlots: { customRender: 'descuento' } },
             { title: 'Total', dataIndex: 'total', key: 'total', scopedSlots: { customRender: 'total' } },
-        ]
+        ],
+        stickySplitLabels: true,
+        minCellWidth: 400,
+        minSplitWidth: 0,
+        splitDays: []
       };
     },
     beforeCreate(){
@@ -1174,8 +1193,32 @@
             try{
                 const Lenders = await axios.get(endPoint.endpointTarget+'/manicuristas') 
                 this.lenders = Lenders.data 
+                
+                console.log(this.splitDays)
             }catch(err){
                 console.log(err)
+            }
+        },
+        logEvents(change, event){
+            console.log(change)
+            console.log(event)
+        },
+        validatorLendersDaysSplit(change, event){
+            this.splitDays = []
+            console.log(this.employeShow)
+            if (event.view == 'day') {
+                for (let index = 0; index < this.employeShow.length; index++) {
+                    const name = this.employeShow[index];
+                    const split = name.class.split('class')[1]
+                    for (let j = 0; j < event.events.length; j++) {
+                        const element = event.events[j]
+                        if (element.empleada == name.name) {
+                            this.splitDays.push({id: parseInt(split), class: name.class+'Split', label: name.name, img: name.img})
+                            break
+                        }
+                    }
+                }
+                console.log(this.splitDays)
             }
         },
         validatorLender(){
@@ -1214,26 +1257,9 @@
                 .then(res => {
                     for (let index = 0; index < res.data.length; index++) {
                         let dateNow = new Date(res.data[index].date)
-                        let formatDate = ''
-                        let formatDateTwo = ''
-                        if (dateNow.getMonth() == 9 || dateNow.getMonth() == 10 || dateNow.getMonth() == 11) {
-                            if (dateNow.getDate() < 10) {
-                            formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                            formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
-                            }else{
-                            formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                            formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
-                            }
-                            
-                        }else{
-                            if (dateNow.getDate() < 10) {
-                            formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                            formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
-                            }else{
-                            formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                            formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
-                            }  
-                        }
+                        let formatDate = dateNow.format('YYYY MM DD')+" "+res.data[index].start
+                        let formatDateTwo = dateNow.format('YYYY MM DD')+" "+res.data[index].end
+                        const split = res.data[index].class.split('class')[1]
                         let arrayEvents = {
                             start: formatDate,
                             end: formatDateTwo,
@@ -1251,10 +1277,10 @@
                             confirmationId: res.data[index].confirmationId,
                             type: res.data[index].type,
                             typepay: res.data[index].typepay,
-                            paypdf: res.data[index].paypdf
+                            paypdf: res.data[index].paypdf,
+                            split: parseInt(split)
                         }
                         this.events.push(arrayEvents)
-                        
                     }
                 })
             }else{
@@ -1263,26 +1289,9 @@
                 .then(res => {
                     for (let index = 0; index < res.data.length; index++) {
                     let dateNow = new Date(res.data[index].date)
-                    let formatDate = ''
-                    let formatDateTwo = ''
-                    if (dateNow.getMonth() == 9 || dateNow.getMonth() == 10 || dateNow.getMonth() == 11) {
-                        if (dateNow.getDate() < 10) {
-                        formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                        formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
-                        }else{
-                        formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                        formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
-                        }
-                        
-                    }else{
-                        if (dateNow.getDate() < 10) {
-                        formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                        formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
-                        }else{
-                        formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                        formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
-                        }  
-                    }
+                    let formatDate = dateNow.format('YYYY MM DD')+" "+res.data[index].start
+                    let formatDateTwo = dateNow.format('YYYY MM DD')+" "+res.data[index].end
+                    const split = res.data[index].class.split('class')[1]
                     let arrayEvents = {
                         start: formatDate,
                         end: formatDateTwo,
@@ -1300,10 +1309,10 @@
                         confirmationId: res.data[index].confirmationId,
                         type: res.data[index].type,
                         typepay: res.data[index].typepay,
-                        paypdf: res.data[index].paypdf
+                        paypdf: res.data[index].paypdf,
+                        split: parseInt(split)
                     }
                     this.events.push(arrayEvents)
-                    
                     }
                 })
             }
@@ -1337,8 +1346,9 @@
                 var insp = false
                 for (let index = 0; index < this.employes.length; index++) {
                     for (let i = 0; i < this.users.length; i++) {
-                        if (this.employes[index].nombre + "/" + this.employes[index].documento == this.users[i].linkLender) {
-                            this.employeShow.push({name:this.employes[index].nombre,img:endPoint.imgEndpoint+this.users[i].userImage,restDay:this.employes[index].restDay, restTime:this.employes[index].restTime,class:this.employes[index].class})
+                        console.log()
+                        if (this.employes[index].nombre + " / " + this.employes[index].documento == this.users[i].linkLender && this.users[i].userImage.length > 1) {
+                            this.employeShow.push({name:this.employes[index].nombre, img:endPoint.imgEndpoint+this.users[i].userImage,restDay:this.employes[index].restDay, restTime:this.employes[index].restTime, class:this.employes[index].class})
                             insp = false
                             break
                         }
@@ -1351,7 +1361,6 @@
                         this.employeShow.push({name:this.employes[index].nombre,img:'no',restDay:this.employes[index].restDay, restTime:this.employes[index].restTime,class:this.employes[index].class})
                     }
                 }
-                
   			})
           },
          async getCategories(){
@@ -1910,28 +1919,9 @@
                 .then(res => {
                     for (let index = 0; index < res.data.length; index++) {
                         let dateNow = new Date(res.data[index].date)
-                        let formatDate = ''
-                        let formatDateTwo = ''
-                        if (dateNow.getMonth() == 9 || dateNow.getMonth() == 10 || dateNow.getMonth() == 11) {
-                            if (dateNow.getDate() < 10) {
-                                formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                                formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
-                            }
-                            else{
-                                formatDate = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                                formatDateTwo = dateNow.getFullYear() +"-"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
-                            }
-                        }
-                        else{
-                            if (dateNow.getDate() < 10) {
-                                formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].start
-                                formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-0"+dateNow.getDate()+" "+res.data[index].end
-                            }
-                            else{
-                                formatDate = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].start
-                                formatDateTwo = dateNow.getFullYear() +"-0"+(dateNow.getMonth() + 1)+"-"+dateNow.getDate()+" "+res.data[index].end
-                            }  
-                        }
+                        let formatDate = dateNow.format('YYYY MM DD')+" "+res.data[index].start
+                        let formatDateTwo = dateNow.format('YYYY MM DD')+" "+res.data[index].end
+                        const split = res.data[index].class.split('class')[1]
                         let arrayEvents = {
                             start: formatDate,
                             end: formatDateTwo,
@@ -1948,7 +1938,8 @@
                             confirmationId: res.data[index].confirmationId,
                             type: res.data[index].type,
                             typepay: res.data[index].typepay,
-                            paypdf: res.data[index].paypdf
+                            paypdf: res.data[index].paypdf,
+                            split: parseInt(split)
                         } 
                         this.events.push(arrayEvents)
                     }
@@ -1977,7 +1968,7 @@
         },
         onEventClick(event, e){
             this.selectedEvent = event
-        
+            console.log(event)
             this.dateModals.modal1 = true
             const split = event.cliente.split('/')
             const splitTwo = split[1].split(' ')
@@ -2001,23 +1992,20 @@
             e.stopPropagation()
         },
         dateSplit(value){
-            if (value) {
-            const split = value.split(' ')
-            return split[0]
-            }
+            const date = new Date(value).format('DD MM YYYY')
+            var formatDate = date.split(' ')
+            return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
         },
         dateSplitHours(value){
-            if (value) {
-            const split = value.split(' ')
-            return split[1]
-            }
+            const date = new Date(value)
+            var formatTime = date.getHours()+':'+date.getMinutes()  
+            return formatTime
         },
         formatName(name){
             if (name) {
-            var sp = name.split(" / ")
-            return sp[0]
-            }
-            
+                var sp = name.split(" / ")
+                return sp[0]
+            } 
         },
         formatContact(contact){
             if (contact) {
@@ -2035,22 +2023,23 @@
             return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
         },
         dataEdit(id, start, end, services, cliente, empleada, classDate){
-            
+            const startFormat = new Date(start).format('YYYY-MM-DD HH:mm')
+            const endFormat = new Date(end).format('YYYY-MM-DD HH:mm')
             this.dateModals.modal2 = true
-            const Datedate = this.dateSplit(start)
+            const Datedate = this.dateSplit(startFormat)
             this.changeDateEdit = false
-            const startDate = this.dateSplitHours(start)
-            const endDate = this.dateSplitHours(end)
+            const startDate = this.dateSplitHours(startFormat)
+            const endDate = this.dateSplitHours(endFormat)
             const separStart = startDate.split(':')
             const separEnd = endDate.split(':')
-            
+            const dateForPicker =  new Date(start).format('MM-DD-YYYY')
             const SumHours  = ((parseFloat(separEnd[0]) - parseFloat(separStart[0])) * 60)
             const SumMinutes = parseFloat(separEnd[1]) - parseFloat(separStart[1])
             const TotalMinutes = SumHours + SumMinutes
-            
+            console.log(dateForPicker)
             this.dateData.clientEdit = cliente
-            this.dateData.fechaEdit = this.formatDateTwo(Datedate)
-            this.dateData.fechaEditPick = this.formatDateTwo(Datedate)
+            this.dateData.fechaEdit = dateForPicker
+            this.dateData.fechaEditPick = dateForPicker
             this.dateData.startEdit = startDate
             this.dateData.endEdit = endDate
             this.dateData.lenderEdit = empleada
@@ -2075,36 +2064,39 @@
               
         },
         insertDateTwo(){
-            if (this.dateData.fechaEditPick != null) {
-                this.blockHourEdit = []
-                axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
-                    employe: this.dateData.lenderEdit,
-                    date: this.dateData.fechaEditPick,
-                    time: this.dateData.duracionEdit,
-                    resTime:this.dateData.resTimeFinalEdit
-                })
-                .then(res => {
-                    this.blockHourEdit = res.data
-                })
-                .catch(err => {
-                console.log(err)
-                })
-            }
-            else {
-                this.blockHourEdit = []
-                axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
-                    employe: this.dateData.lenderEdit,
-                    date: this.dateData.fechaEdit ,
-                    time: this.dateData.duracionEdit,
-                    resTime:this.dateData.resTimeFinalEdit
-                })
-                .then(res => {
-                    this.blockHourEdit = res.data
-                })
-                .catch(err => {
-                console.log(err)
-                })
-            }
+            setTimeout(() => {
+                if (this.dateData.fechaEditPick != null) {
+                    this.blockHourEdit = []
+                    axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
+                        employe: this.dateData.lenderEdit,
+                        date: this.dateData.fechaEditPick,
+                        time: this.dateData.duracionEdit,
+                        resTime:this.dateData.resTimeFinalEdit
+                    })
+                    .then(res => {
+                        console.log(res)
+                        this.blockHourEdit = res.data
+                    })
+                    .catch(err => {
+                    console.log(err)
+                    })
+                }
+                else {
+                    this.blockHourEdit = []
+                    axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
+                        employe: this.dateData.lenderEdit,
+                        date: this.dateData.fechaEdit ,
+                        time: this.dateData.duracionEdit,
+                        resTime:this.dateData.resTimeFinalEdit
+                    })
+                    .then(res => {
+                        this.blockHourEdit = res.data
+                    })
+                    .catch(err => {
+                    console.log(err)
+                    })
+                } 
+            }, 200);
         },
         editDate(){
             if (this.dateData.startEdit && this.dateData.endEdit != '') {
@@ -2119,11 +2111,12 @@
             else {
                 dateEdit =  this.dateData.fechaEditPick
             }
+            const entrada = this.dateData.startEdit
             axios.put(endPoint.endpointTarget+'/citas/editDate/'+this.dateData.dateEditId, {
             entrada: this.dateData.startEdit,
             salida: this.dateData.endEdit,
             sort: sort,
-            fecha: dateEdit,
+            fecha: this.dateData.fechaEditPick,
             cliente: this.dateData.clientEdit,
             class: this.dateData.classFinalEdit,
             manicuristas: this.dateData.lenderEdit
@@ -2138,6 +2131,7 @@
                 })
                 this.blockHourEdit = []
                 this.getDates();
+                this.dateModals.modal2 = false
                 setTimeout(() => {
                 // if (this.employeByDate != 'Manicuristas') {
                 //     this.getDatesb()
@@ -3263,6 +3257,14 @@
     .vuecal__title button{
         color: white !important
     }
+    .vuecal__split-days-headers{
+        height: 3em !important;
+    }
+    .day-split-header {
+        background-color: #0b4fa4;
+        padding-top:10px;
+        padding-bottom: 10px;
+    }
     .vuecal__cell--selected{
         z-index: 0 !important;
     }
@@ -3283,9 +3285,6 @@
         font-size: 12px;
         background-color: #172b4d; 
     }
-    .vuecal__cell-content {
-        height: 50px;
-    }
     .vuecal__header{background-color: rgba(238, 238, 238, 0.623);border-radius: 5px 5px 0 0;}
     .vuecal__cell.today div .vuecal__cell-events-count, .vuecal__cell.current {background-color: #353535 !important;}
     .vuecal:not(.vuecal--day-view) .vuecal__cell.selected {background-color: rgba(235, 255, 245, 0.4);}
@@ -3294,24 +3293,26 @@
     font-weight:600;}
     .vuecal__heading span{color:#000;font-family: 'Raleway', sans-serif;
     font-weight:600;}
-    .vuecal--rounded-theme.vuecal--green-theme:not(.vuecal--day-view) .vuecal__cell-content {
-        background-color: #1F5673;
-        height: 10vh !important;
-    }
-    .vuecal__cell-split {
-        background-color: #1F5673;
-        height: 10vh !important;
-    }
     .vuecal--green-theme .vuecal__title-bar {
         background-color: #1F5673;
     }
     .vuecal__time-column .vuecal__time-cell{
         color: #0F2027
     }
+    .vuecal__cell-split.class1Split {background-color: rgba(234, 197, 190, 0.6);}
+    .vuecal__cell-split.class2Split {background-color: rgb(188, 209, 255, 0.6);}
+    .vuecal__cell-split.class3Split {background-color: rgb(221, 239, 189, 0.6);}
+    .vuecal__cell-split.class4Split {background-color: rgb(205, 242, 226, 0.6);}
+    .vuecal__cell-split.class5Split {background-color: rgb(183, 232, 205, 0.6);}
+    .vuecal__cell-split.class6Split {background-color: rgb(192, 229, 221, 0.6);}
+    .vuecal__cell-split.class7Split {background-color: rgb(242, 230, 230, 0.6);}
+    .vuecal__cell-split.class8Split {background-color: rgb(255, 214, 214, 0.6);}
+    .vuecal__cell-split.class9Split {background-color: rgb(255, 209, 186, 0.6);}
+    .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.6);}
     .class1 {
-    background:#BCBCBC;
-    border: 1px solid #BCBCBC;
-    color: #343633;
+        background:#EAC5BE;
+        border: 1px solid #EAC5BE;
+        color: #343633;
     }
     .class2 {
     background:#BCD1FF;
@@ -3446,11 +3447,6 @@
     .class28 {
     background:#EBD8D0;
     border: 1px solid #EBD8D0;
-    color: #343633;
-    }
-    .class28 {
-    background:#EAC9C1;
-    border: 1px solid #EAC9C1;
     color: #343633;
     }
     .class29 {
