@@ -123,7 +123,7 @@
                             </div>
                         </div>
                     </tab-content>
-
+                
                     <tab-content icon="ni ni-collection" title="Profesionales" :before-change="validateLastStep">
                         <div class="row">
                             <div class="col-md-4 col-sm-12 mx-auto mt-4">
@@ -140,7 +140,9 @@
                                     </flat-picker>
                                 </base-input>
                             </div>
+                            
                             <div class="col-md-8">
+                                <vue-custom-scrollbar class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                                 <div class="row mb-3">
                                     <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" :key="servicesSelect">
                                         <div class="row">
@@ -200,10 +202,13 @@
                                         </div>
                                     </div>
                                 </div>
+                                </vue-custom-scrollbar>
                             </div>
+                            
                         </div> 
                     </tab-content>
                     <tab-content title="Información" icon="fa fa-question-circle">
+                        <vue-custom-scrollbar class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                         <div class="row">
                             <div class="col-md-8 col-sm-12" >
                                 <div class="row">
@@ -315,12 +320,13 @@
                                 </base-button>
                             </div>
                             <div class="col-auto mx-auto mt-4">
-                                <base-button  type="default" v-on:click="clientEdit" v-if="dateClient.valid && dateClient.valid2" class="col-12" icon="fas fa-edit">Editar cliente</base-button>
-                                <base-button  type="default"  v-if="dateClient.valid && dateClient.valid2 != true" disabled class="col-12" icon="fas fa-edit">Editar cliente</base-button>
-                                <base-button type="success" disabled v-if="dateClient.valid != true && dateClient.valid2 != true" class="col-12" icon="fas fa-user-plus">Registrar cliente</base-button>
-                                <base-button type="success" v-on:click="newClient()" v-if="dateClient.valid != true && dateClient.valid2" class="col-12" icon="fas fa-user-plus">Registrar cliente</base-button>
+                                <base-button  type="default" v-on:click="clientEdit" v-if="dateClient.valid && dateClient.valid2" class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
+                                <base-button  type="default"  v-if="dateClient.valid && dateClient.valid2 != true" disabled class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
+                                <base-button type="success" disabled v-if="dateClient.valid != true && dateClient.valid2 != true" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
+                                <base-button type="success" v-on:click="newClient()" v-if="dateClient.valid != true && dateClient.valid2" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
                             </div>
                         </div>
+                        </vue-custom-scrollbar>
                     </tab-content>
                 </form-wizard>
 

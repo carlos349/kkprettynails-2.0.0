@@ -56,7 +56,7 @@ Vue.config.productionTip = false
 const pluginOptions = {globalOptions: { currency: {'prefix':'$ '},precision: 0, distractionFree:false, autoDecimalMode:false}}
 
 /* USES*/
-
+Vue.use(require('vue-moment'));
 Vue.use(Antd);
 Vue.component('vue-single-select', VueSingleSelect);
 Vue.use(VueCurrencyInput, pluginOptions)

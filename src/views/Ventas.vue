@@ -10,6 +10,7 @@
                 
                 <div class="row">
                     <div class="col-lg-12 col-md-12" style="display:inline-block">
+                        <span>{{  }}</span>
                         <h1 class="display-2 text-white w-100">Sección de ventas</h1>
                         <label class="text-white" v-if="validRoute('ventas', 'filtrar')">Filtra tus ventas</label>
                         <div class="row">
@@ -270,6 +271,8 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import io from 'socket.io-client';
 import jwtDecode from 'jwt-decode'
 import XLSX from 'xlsx'
+import VueMoment from 'vue-moment'
+var moment = require('moment'); // require
 const dateNew = new Date()
 export default {
     components: {
@@ -290,13 +293,13 @@ export default {
                 type:''
             },
             dates: {
-                range: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear(),
-                rangeExcel: (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear()
+                range: dateNew,
+                rangeExcel: dateNew
             },
             configDatePicker: {
                 allowInput: true, 
                 mode: 'range',
-                dateFormat: 'm-d-Y',
+                dateFormat: 'd-m-Y',
                 locale: Spanish, // locale for this instance only          
             }, 
             columns: [{
@@ -430,11 +433,15 @@ export default {
             })
         },
         async filterSale(){
+            
             this.progress = false
             this.inspectorFilter = true
             const splitDate = this.dates.range.split(' a ')
             if (splitDate.length > 1) {
-                const Dates = splitDate[0]+':'+splitDate[1]
+                var f1 = splitDate[0].split("-")
+                var f2 = splitDate[1].split("-")
+                var Dates = f1[1]+"-"+f1[0]+"-"+f1[2]+":"+f2[1]+"-"+f2[0]+"-"+f2[2]
+                
                 try {
                     const sales = await axios.get(endPoint.endpointTarget+'/ventas/findSalesByDate/'+Dates)
                     if (sales.data.status == 'no Sales') {
