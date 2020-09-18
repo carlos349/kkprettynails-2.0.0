@@ -2346,7 +2346,7 @@
                 this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)
                 this.selectedDates.design = parseFloat(this.selectedDates.design) + this.selectedDates.closedArray[i].design
             }  
-            this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.design)
+            
             this.dateModals.modal5 = true
         },
         hundredPorcent(tipo){
@@ -2462,6 +2462,7 @@
                         }, 1500);
                     }
                     else if(res.data.status == "no-cash"){
+                            this.dateModals.modal5 = false
 							this.modalsDialog = {
                                 modal2: true,
                                 message: "Primero debe registrar un fondo de caja",
@@ -2469,6 +2470,7 @@
                                 type: 'danger'
                             }
                             setTimeout(() => {
+                                this.dateModals.modal5 = true
                                 this.modalsDialog = {
                                     modal2: false,
                                     message: "",
@@ -3174,22 +3176,24 @@
                             const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(precioConDescuento)) / 100
                             this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision)
                     
-                            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(precioConDescuento) 
+                            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(precioConDescuento)
                         }
                 }
                 else{ 
                     this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
+                    
                 }
                 
             } 
-            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(design)
+            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(design)  
+            
             for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
                 this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)
                 this.selectedDates.design = parseFloat(this.selectedDates.design) + this.selectedDates.closedArray[i].design
             }
             
             
-            this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.design)
+            
             this.loading = false
         },
         cleanDiscount(i){
@@ -3217,7 +3221,7 @@
         discPerEmploye(employe){
             let valid = true
             for (let index = 0; index < this.selectedDates.closedArray[employe].services.length; index++) {
-                if (this.selectedDates.closedArray[employe].services[index].descuento == false ) {
+                if (this.selectedDates.closedArray[employe].services[index].discount == false ) {
                     valid = false
                 }
                 
