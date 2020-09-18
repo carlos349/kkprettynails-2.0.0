@@ -3267,9 +3267,7 @@
         height: 3em !important;
     }
     .day-split-header {
-        background-color: #0b4fa4;
-        padding-top:10px;
-        padding-bottom: 10px;
+        background-color: rgba(23, 43, 77, 0.7);
     }
     .vuecal__cell--selected{
         z-index: 0 !important;
