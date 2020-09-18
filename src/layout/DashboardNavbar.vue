@@ -24,18 +24,17 @@
               </div>
             </li>
             <li class="nav-item dropdown">
-              <a v-on:click="getNotifications" v-if="!activeNotifications" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="ni ni-bell-55"></i>
-              </a>
-              <a v-on:click="getNotifications" v-else class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <a-badge :count="0" dot>
-                  <i class="ni ni-bell-55"></i>
-                </a-badge>
-              </a>
-              <div style="z-index:10000" class="dropdown-menu dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
+              
+                <a v-on:click="validateNotifications()" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="ni ni-bell-55" style="font-size:18px;z-index:1;"></i>
+                  <badge v-if="activeNotifications > 0" class="notifyNumber text-white" type="primary" style="font-size:14px;z-index:0;">{{activeNotifications}}</badge>
+                </a>
+              <div style="z-index:10000" class="dropdown-menu dDeste  dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
                
                 <!-- List group -->
+                <vue-custom-scrollbar class="w-100" style="height:50vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                 <div class="list-group list-group-flush" style="z-index:10000">
+                  
                   <a v-for="notification in notifications" href="#!" class="list-group-item list-group-item-action">
                     <router-link :to="notification.link">
                       <div class="row align-items-center">
@@ -59,9 +58,14 @@
                     </router-link>
                   </a>
                   
+                  <a-empty v-if="notifications.length == 0" :image="simpleImage">
+                    <span slot="description"> No posees notificaciones nuevas </span>
+                    
+                  </a-empty>
                 </div>
                 <!-- View all -->
-                <a href="#!" class="dropdown-item text-center text-primary font-weight-bold py-3">Ver todas</a>
+                <span v-on:click="getAll" v-if="all" style="cursor:pointer" class="dropdown-item-text text-center text-primary font-weight-bold py-3">Ver todas</span>
+                </vue-custom-scrollbar>
               </div>
             </li>
             <!-- <li class="nav-item dropdown">
@@ -162,22 +166,34 @@
   import io from 'socket.io-client';
   import * as moment from 'moment';
   import 'moment/locale/es';
+  import { Empty } from 'ant-design-vue';
+  import vueCustomScrollbar from 'vue-custom-scrollbar'
   moment.locale('es');
   export default {
+    components: {
+        vueCustomScrollbar
+    },
     data() {
       return {
         socket : io(endPoint.endpointTarget),
-        activeNotifications: false,
+        activeNotifications: 0,
         showMenu: false,
         searchQuery: '',
         nombre: localStorage.nombre + ' ' + localStorage.apellido,
         imgUser: endPoint.imgEndpoint + localStorage.imageUser,
         haveImage: localStorage.imageUser,
+        idUser: localStorage._id,
         imgEndpoint: endPoint.imgEndpoint,
-        notifications: []
+        notifications: [],
+        count:0,
+        all: true
       };
     },
+    beforeCreate() {
+      this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
+    },
     created() {
+      this.getNotifications()
     },
     methods: {
       toggleSidebar() {
@@ -192,16 +208,34 @@
         console.log('cerro')
       },
       getNotifications(){
-        console.log('hpla')
-        this.activeNotifications = false
-        axios.get(endPoint.endpointTarget+'/notifications/onlyFive') 
+        axios.get(endPoint.endpointTarget+'/notifications/noViews/'+this.idUser) 
         .then(res => {
           this.notifications = res.data
+          this.activeNotifications = this.notifications.length
+          this.all = true
+        })
+      },
+      validateNotifications(){
+        axios.get(endPoint.endpointTarget+'/notifications/validateViews/'+this.idUser) 
+        .then(res => {
+          this.notifications = res.data
+          this.activeNotifications = 0
+          this.all = true
         })
       },
       momentTime(value) {
         const dateNoti = new Date(value)
         return moment(dateNoti, "YYYYMMDD").fromNow();
+      },
+      getAll() {
+        setTimeout(() => {
+          $(".dDeste").dropdown('toggle')
+        }, 100);
+        axios.get(endPoint.endpointTarget+'/notifications/getAll') 
+        .then(res => {
+          this.notifications = res.data
+          this.all = false
+        })
       }
 
     },
@@ -216,8 +250,8 @@
       })
       this.socket.on('notify', (data) => {
         this.notifications.push(data)
-        this.activeNotifications = true
-        console.log(this.activeNotifications )
+        this.activeNotifications++
+        
       });
     }
   };

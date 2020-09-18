@@ -89,6 +89,11 @@
 .wizard-navigation{
     height: 600px;
 }
+.notifyNumber{
+    position: absolute;
+    top: -5px;
+    right: 4px;
+}
 @media screen and (max-width: 768px){
     .display-2{
         font-size: 8vw;
