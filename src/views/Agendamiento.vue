@@ -275,7 +275,7 @@
                                 <base-input v-on:keyup="validRegister()" class="text-white" placeholder="Nombre del cliente" v-model="dateClient.name" addon-left-icon="ni ni-circle-08"></base-input>
                             </div>
                             <div class="col-md-6">
-                                <base-input v-on:keyup="validRegister()" placeholder="Identidad" v-model="dateClient.id" addon-left-icon="ni ni-key-25"></base-input>
+                                <base-input v-on:keyup="validRegister()" placeholder="Correo" v-model="dateClient.id" addon-left-icon="ni ni-key-25"></base-input>
                             </div>
                             <div class="col-md-6">
                                 <base-input placeholder="Correo" v-model="dateClient.infoOne" addon-left-icon="ni ni-fat-add"></base-input>
@@ -3271,9 +3271,7 @@
         height: 3em !important;
     }
     .day-split-header {
-        background-color: #0b4fa4;
-        padding-top:10px;
-        padding-bottom: 10px;
+        background-color: rgba(23, 43, 77, 0.7);
     }
     .vuecal__cell--selected{
         z-index: 0 !important;
