@@ -665,11 +665,14 @@ export default {
             }
         },
         generateExcel(){
+            console.log(this.dates.rangeExcel.length)
             var valid = this.dates.rangeExcel
             var dates = this.dates.rangeExcel+':not'
             if (this.dates.rangeExcel.length > 12) {
-                dates = this.dates.rangeExcel
                 const split = this.dates.rangeExcel.split(' a ')
+                var f1 = split[0].split("-")
+                var f2 = split[1].split("-")
+                dates = f1[1]+"-"+f1[0]+"-"+f1[2]+" a "+f2[1]+"-"+f2[0]+"-"+f2[2]
                 valid = split[0]
             }
             if (this.lenderSelect == null) {

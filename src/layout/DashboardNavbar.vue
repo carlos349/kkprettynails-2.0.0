@@ -63,9 +63,10 @@
                     
                   </a-empty>
                 </div>
+                </vue-custom-scrollbar>
                 <!-- View all -->
                 <span v-on:click="getAll" v-if="all" style="cursor:pointer" class="dropdown-item-text text-center text-primary font-weight-bold py-3">Ver todas</span>
-                </vue-custom-scrollbar>
+                
               </div>
             </li>
             <!-- <li class="nav-item dropdown">

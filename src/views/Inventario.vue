@@ -16,7 +16,7 @@
             </div>
         </div>
     </base-header>
-    <tabs fill class="flex-column flex-md-row inventory">
+    <tabs fill class="flex-column flex-md-row inventory inventoryTabs">
         <card shadow>
             <tab-pane>
                 <span class="p-2" slot="title">
@@ -418,7 +418,7 @@
 
         <template slot="footer">
             
-            <base-button type="link" class="ml-auto" @click="modals.modal4 = false">Cerrar
+            <base-button type="link" class="ml-auto" @click="modals.modal5 = false">Cerrar
             </base-button>
         </template>
     </modal>
@@ -1160,6 +1160,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         })
       },
       closeInventory(){
+        console.log(this.countProduct)
         axios.post(endPoint.endpointTarget+'/inventario/closeInventory', {
           user:this.usuario,
           array:this.countProduct
@@ -1344,7 +1345,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
   .nav-item{
     padding-left: 1rem;
   }
-  .nav-item:last-child{
+  .inventoryTabs .nav-item:last-child{
     padding-right: 1rem !important;
   }
 </style>

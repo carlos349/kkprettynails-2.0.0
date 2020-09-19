@@ -11,7 +11,7 @@
                         <h1 class="display-2 text-white">Pedidos</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus pedidos, aquí podrás visualizar todos tus pedidos.</p>
                         
-                        
+                        <base-button v-if="validRoute('clientes', 'filtrar')" @click="modals.modal1 = true" type="success">Crear pedido</base-button>
                         <base-button v-if="validRoute('clientes', 'filtrar')" @click="showFilter" type="default">Filtrar</base-button>
                     </div>
                 </div>
@@ -31,99 +31,20 @@
                   class="border-0">
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                        Datos del cliente
+                        Aun en construcción
                     </div>
                 </template>
                 <template>
-                    <tabs v-if="registerClient.valid2 == true" fill class="flex-column flex-md-row">
-                        <card shadow>
-                            <tab-pane>
-                                <span v-if="registerClient.valid2 == true" slot="title">
-                                    <i class="ni ni-collection"></i>
-                                    Basicos
-                                </span>
-                                <form role="form">
-                                    <base-input alternative
-                                                class="mb-3"
-                                                placeholder="Nombre"
-                                                v-model="registerClient.name"
-                                                v-on:change="validRegister()"
-                                                addon-left-icon="ni ni-single-02"
-                                                addon-right-icon="fa fa-asterisk text-danger">
-                                    </base-input>
-                                    <base-input alternative
-                                                type="text"
-                                                placeholder="Contacto principal"
-                                                v-model="registerClient.id"
-                                                v-on:change="validRegister()"
-                                                addon-left-icon="fa fa-address-card"
-                                                addon-right-icon="fa fa-asterisk text-danger">
-                                    </base-input>
-                                    <base-input alternative
-                                                type="text"
-                                                placeholder="Contacto adicional"
-                                                v-model="registerClient.contactOne"
-                                                addon-left-icon="fa fa-address-card"
-                                                addon-right-icon="fas fa-plus text-default">
-                                    </base-input>
-                                    <base-input alternative
-                                                type="text"
-                                                placeholder="Contacto adicional"
-                                                v-model="registerClient.contactTwo"
-                                                addon-left-icon="fa fa-address-card"
-                                                addon-right-icon="fas fa-plus text-default">
-                                    </base-input>
-                                    <div class="text-center">
-                                        <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
-                                        <base-button type="primary" v-on:click="clientEdit()" v-else class="my-4">{{tipeForm}}</base-button>
-                                    </div>
-                                    
-                                </form>                                
-                            </tab-pane>
-
-                            <tab-pane v-if="registerClient.valid2 == true">
-                                <span slot="title">
-                                    <i class="ni ni-chart-bar-32"></i>
-                                    Avanzados
-                                </span>
-                                <div class="row">
-                                    <base-button class="col-12 mt-1" type="primary">
-                                        <span>Participación</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.participation}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12 mt-1" type="primary">
-                                        <span class="text-left">Recomendaciones</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.recommenders}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12 mt-1" type="primary">
-                                        <span class="text-left">Recomendador</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.recommender}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12 mt-1" type="primary">
-                                        <span>Cliente desde</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.date}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12 mt-1" type="primary">
-                                        <span>Ultima atención</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.lastDate}}</badge>
-                                    </base-button>
-                                </div>
-                            </tab-pane>
-                        </card>
-                    </tabs>
-                    <form v-else role="form">
-                        <base-input alternative
-                                    class="mb-3"
-                                    placeholder="Nombre"
-                                    v-model="registerClient.name"
-                                    v-on:change="validRegister()"
-                                    addon-left-icon="ni ni-single-02"
-                                    addon-right-icon="fa fa-asterisk text-danger"
-                                    >
-                        </base-input>
+                    
+                    <form role="form">
+                        <vue-single-select
+                            v-model="registerClient.recommender"
+                            :options="clientsNames"
+                            placeholder="Comprador"
+                        ></vue-single-select>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto principal"
+                                    placeholder="Contacto"
                                     v-model="registerClient.id"
                                     v-on:change="validRegister()"
                                     addon-left-icon="fa fa-address-card"
@@ -131,26 +52,19 @@
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto adicional"
+                                    placeholder="Pedido"
                                     v-model="registerClient.contactOne"
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fas fa-plus text-default">
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto adicional"
+                                    placeholder="Medio de pago"
                                     v-model="registerClient.contactTwo"
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fas fa-plus text-default">
                         </base-input>
-                        <base-checkbox v-model="registerClient.discount" class="mb-3">
-                            Descuento de nuevo cliente
-                        </base-checkbox>
-                        <vue-single-select
-                            v-model="registerClient.recommender"
-                            :options="clientsNames"
-                            placeholder="Recomendador"
-                        ></vue-single-select>
+                        
                         <div class="text-center">
                             <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
                             <base-button type="primary" v-on:click="registerClients()" v-else class="my-4">{{tipeForm}}</base-button>
@@ -177,42 +91,131 @@
             </div>
         </modal>
         
-        <base-alert class="positionAlert" type="success" v-if="successRegister">
-            <strong>Registrado!</strong> Has registrado al cliente con exito!
-        </base-alert>
 
         <!-- TABLA DE CLIENTES -->
+        <tabs fill class="flex-column flex-md-row">
+            <card shadow>
+                <tab-pane>
+                    <span slot="title">
+                        <i class="ni ni-cart"></i>
+                        Pedidos por confirmar
+                    </span>
+                    <vue-bootstrap4-table class="tableClient" :rows="rowsPending" :columns="columns" :classes="classes" :config="config">
+                        <template slot="Administrar" slot-scope="props">
+                            <b>
+                                <center>
+                                    <a-tooltip placement="top">
+                                        <template slot="title">
+                                        <span>Confirmar pedido</span>
+                                        </template>
+                                        <base-button v-if="validRoute('clientes', 'detalle') && props.row.estado == 'Nconfirmado'" size="sm" type="success" @click="modals.modal3 = true, idPedido = props.row._id,identidadPedido = props.row.contacto, codePedido = props.row.codigo, articuloPedido = props.row.articulo, clientePedido = props.row.cliente" icon="ni ni-check-bold"></base-button>
+                                    </a-tooltip>
+                                    
+                                </center>
+                                
+                            </b>
+                        </template>
+                        <template slot="date" slot-scope="props">
+                            <b>
+                               
+                                {{formatDate(props.row.date)}}
+                                    
+                                
+                                
+                            </b>
+                        </template>
 
-        <vue-bootstrap4-table class="tableClient" :rows="rows" :columns="columns" :classes="classes" :config="config">
-            <template slot="Administrar" slot-scope="props">
-                <b>
-                    <center>
-                        <base-button v-if="validRoute('clientes', 'detalle') && props.row.estado == 'Nconfirmado'" size="sm" type="success" @click="modals.modal3 = true, idPedido = props.row._id,identidadPedido = props.row.contacto, codePedido = props.row.codigo, articuloPedido = props.row.articulo, clientePedido = props.row.cliente" icon="ni ni-check-bold">Confirmar</base-button>
-                        <base-button v-else-if="props.row.estado == 'usado'" size="sm" disabled type="danger"  >Utilizado</base-button>
-                        <base-button disabled v-else size="sm" type="default" >Confirmado</base-button>
+                        <template slot="vencimiento" slot-scope="props">
+                            <b>
+                                
+                                {{formatCaducity(props.row.date)}}
+                              
+                                
+                            </b>
+                        </template>
                         
-                    </center>
-                    
-                </b>
-            </template>
-            <template slot="date" slot-scope="props">
-                <b>
-                    <center>
-                       {{formatDate(props.row.date)}}
+                        <template slot="pagination-info" slot-scope="props">
+                            Actuales {{props.currentPageRowsLength}} | 
+                            Registros totales {{props.originalRowsLength}}
+                        </template>
+                        <template slot="selected-rows-info" slot-scope="props">
+                            Total Number of rows selected : {{props.selectedItemsCount}}
+                        </template>
+                    </vue-bootstrap4-table>
+                </tab-pane>
+
+                <tab-pane title="Profile">
+                    <span slot="title">
+                        <i class="ni ni-check-bold"></i>
+                        Pedidos confirmados
+                    </span>
+                    <vue-bootstrap4-table class="tableClient" :rows="rowsConfirmed" :columns="columnsConfirmed" :classes="classes" :config="config">
                         
-                    </center>
-                    
-                </b>
-            </template>
-            
-            <template slot="pagination-info" slot-scope="props">
-                Actuales {{props.currentPageRowsLength}} | 
-                Registros totales {{props.originalRowsLength}}
-            </template>
-            <template slot="selected-rows-info" slot-scope="props">
-                Total Number of rows selected : {{props.selectedItemsCount}}
-            </template>
-        </vue-bootstrap4-table>
+                        <template slot="date" slot-scope="props">
+                            <b>
+                                {{formatDate(props.row.date)}}
+                            </b>
+                        </template>
+                        <template slot="dateConfirm" slot-scope="props">
+                            <b>
+                               
+                                {{formatDate(props.row.dateConfirm)}}
+                              
+                                
+                            </b>
+                        </template>
+                        <template slot="pagination-info" slot-scope="props">
+                            Actuales {{props.currentPageRowsLength}} | 
+                            Registros totales {{props.originalRowsLength}}
+                        </template>
+                        <template slot="selected-rows-info" slot-scope="props">
+                            Total Number of rows selected : {{props.selectedItemsCount}}
+                        </template>
+                    </vue-bootstrap4-table>
+                </tab-pane>
+
+                <tab-pane>
+                    <span slot="title">
+                        <i class="ni ni-folder-17"></i>
+                        Pedidos procesados / vencidos
+                    </span>
+                    <vue-bootstrap4-table class="tableClient" :rows="rowsUsed" :columns="columnsProccess" :classes="classes" :config="config">
+                        <template slot="date" slot-scope="props">
+                            <b>
+                                
+                                {{formatDate(props.row.date)}}
+                                    
+                                
+                                
+                            </b>
+                        </template>
+                        <template slot="dateProccess" slot-scope="props">
+                            <b>
+                                <div v-if="props.row.estado == 'usado'">
+                                    {{formatDate(props.row.dateProccess)}}  
+                                </div>
+                                <a-tooltip  v-else placement="top">
+                                    <template slot="title">
+                                    <span>Pedido vencido el {{formatDate(props.row.dateProccess)}}  </span>
+                                    </template>
+                                    <base-button size="sm" type="danger"  >Vencido</base-button>
+                                </a-tooltip>
+                                
+                            </b>
+                        </template>
+                        <template slot="pagination-info" slot-scope="props">
+                            Actuales {{props.currentPageRowsLength}} | 
+                            Registros totales {{props.originalRowsLength}}
+                        </template>
+                        <template slot="selected-rows-info" slot-scope="props">
+                            Total Number of rows selected : {{props.selectedItemsCount}}
+                        </template>
+                    </vue-bootstrap4-table>
+                </tab-pane>
+            </card>
+        </tabs>
+
+        
 
         <!-- END -->
 
@@ -227,6 +230,9 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
 import router from '../router'
+import * as moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 // COMPONENTS
 
   export default {
@@ -266,7 +272,138 @@ import router from '../router'
             icon: '',
             type:''
         },
-        rows: [],
+        rowsPending: [],
+        rowsConfirmed: [],
+        rowsUsed: [],
+        columnsConfirmed: [{
+                label: "Fecha",
+                name: "date",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: true,
+                slot_name: "date"
+            },
+            {
+                label: "N° de pedido",
+                name: "nPedido",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter first name"
+                // },
+                sort: true,
+            },
+            {
+                label: "Regalador",
+                name: "cliente",
+                sort: true,
+            },
+            {
+                label: "Articulo",
+                name: "articulo",
+                sort: true,
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter country"
+                // },
+            },
+            {
+                label: "Medio de pago",
+                name: "tipoPago",
+                sort: true,
+                slot_name: "vencimiento"
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter country"
+                // },
+            },
+            {
+                label: "Total",
+                name: "total",
+                sort: true,
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter country"
+                // },
+            },
+            
+            {
+                label: "Fecha de confirmación",
+                name: "dateConfirm",
+                sort: true,
+                slot_name: "dateConfirm"
+            },
+        ],
+        columnsProccess: [{
+                label: "Fecha",
+                name: "date",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: true,
+                slot_name: "date"
+            },
+            {
+                label: "N° de pedido",
+                name: "nPedido",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter first name"
+                // },
+                sort: true,
+            },
+            {
+                label: "Regalador",
+                name: "cliente",
+                sort: true,
+            },
+            {
+                label: "Articulo",
+                name: "articulo",
+                sort: true,
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter country"
+                // },
+            },
+            {
+                label: "Codigo",
+                name: "codigo",
+                sort: true,
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter country"
+                // },
+            },
+            {
+                label: "Medio de pago",
+                name: "tipoPago",
+                sort: true,
+                
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter country"
+                // },
+            },
+            {
+                label: "Total",
+                name: "total",
+                sort: true,
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter country"
+                // },
+            },
+            
+            {
+                label: "Fecha de procesamiento",
+                name: "dateProccess",
+                sort: true,
+                slot_name: "dateProccess"
+            },
+        ],
         columns: [{
                 label: "Fecha",
                 name: "date",
@@ -304,6 +441,16 @@ import router from '../router'
                 label: "Articulo",
                 name: "articulo",
                 sort: true,
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "Enter country"
+                // },
+            },
+            {
+                label: "Fecha de vencimiento",
+                name: "",
+                sort: true,
+                slot_name: "vencimiento"
                 // filter: {
                 //     type: "simple",
                 //     placeholder: "Enter country"
@@ -361,7 +508,7 @@ import router from '../router'
 		}
     },
     created(){
-		this.getClients();
+		this.getOrders();
         this.getToken()
     },
     methods: {
@@ -371,13 +518,18 @@ import router from '../router'
             this.auth = decoded.access
             console.log(this.auth)
         },
-        getClients(){
-            axios.get(endPoint.endpointTarget+'/pedidos')
+        getOrders(){
+            axios.get(endPoint.endpointTarget+'/pedidos/findPending')
             .then(res => {
-				console.log(res.data)
-                this.rows = res.data
-                
-				
+                this.rowsPending = res.data
+            })
+            axios.get(endPoint.endpointTarget+'/pedidos/findConfirmed')
+            .then(res => {
+                this.rowsConfirmed = res.data
+            })
+            axios.get(endPoint.endpointTarget+'/pedidos/findUsed')
+            .then(res => {
+                this.rowsUsed = res.data
             })
         },
         registerClients(){
@@ -488,7 +640,9 @@ import router from '../router'
         },
         formatDate(date) {
             let dateFormat = new Date(date)
-            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+" "+" ("+ dateFormat.getHours()+":"+ dateFormat.getMinutes()+")"
+            dateFormat.setDate(dateFormat.getDate() +1)
+
+            return moment(dateFormat).format("DD-MM-YYYY")
         },
         deleteClient(id){
 			this.$swal({
@@ -629,7 +783,7 @@ import router from '../router'
 			
         },
         confirmar(){
-            console.log(this.identidadPedido + "  -  " + this.codePedido)
+            
             axios.put(endPoint.endpointTarget+'/pedidos/'+this.idPedido, {
                 nombreClienteEditar: this.registerClient.name,
                 identidadClienteEditar: this.registerClient.id,
@@ -660,7 +814,7 @@ import router from '../router'
                             icon: '',
                             type:''
                         }
-                        this.getClients();
+                        this.getOrders();
                         this.initialState(1)
                         EventBus.$emit('reloadClients', 'reload')
                     }, 1500);
@@ -684,10 +838,13 @@ import router from '../router'
                 }
             })
         },
-        formatDate(date) {
-        let dateFormat = new Date(date)
-        return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
-      },
+        
+        formatCaducity(date) {
+            let dateFormat = new Date(date)
+            dateFormat.setDate(dateFormat.getDate() + 7)
+            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
+        }
+
     }
   };
 </script>

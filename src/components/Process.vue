@@ -119,7 +119,7 @@
                     Medios de pago
                 </div>
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-6">
                         <a-tooltip placement="top">
                             <template slot="title">
                             <span>Efectivo</span>
@@ -142,7 +142,7 @@
                         </a-tooltip>
                         
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <a-tooltip placement="top">
                             <template slot="title">
                             <span>Transferencia</span>
@@ -164,7 +164,7 @@
                         </a-tooltip>
                         
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <a-tooltip placement="top">
                             <template slot="title">
                             <span>Otros</span>
@@ -181,6 +181,28 @@
                                     locale="de"
                                     placeholder="Otros"
                                     class="form-control"
+                                />
+                            </div>
+                        </a-tooltip>
+                        
+                    </div>
+                    <div class="col-6">
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Codigo de pedido</span>
+                            </template>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend w-25 text-center hundred">
+                                    <span style="background-color: #e9ecef;" class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="shopping-cart"/>	
+                                    </span>
+                                </div>
+                                <currency-input
+                                    v-model="payOrder"
+                                    locale="de"
+                                    readonly
+                                    placeholder="Crédito"
+                                    class="form-control pl-1"
                                 />
                             </div>
                         </a-tooltip>
@@ -230,6 +252,7 @@
                         </a-tooltip>
                         
                     </div>
+                    
                     
                 </div>
                 <div class="row">
@@ -474,6 +497,10 @@
                                         <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
                                     </base-button>
                                     <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Monto del pedido <br> </span>
+                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{totalArticulo}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
                                         <span class="text-center"> Estado <br> </span>
                                         <badge v-if="estadoArticulo == 'Nconfirmado'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
                                         <badge v-else-if="estadoArticulo == 'confirmado'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
@@ -499,7 +526,7 @@
                         <font-awesome-icon v-if="ifEdit" class="icons" style="color:#172b4d;font-size:1em" icon="user-edit" />
                         <font-awesome-icon v-else class="icons" style="color:#172b4d;font-size:1em" icon="user-plus" />
                     </div>
-                    <div v-if="newClient.valid" class="col-10 pl-4 pt-1">
+                    <div v-if="newClient.valid" class="col-9 pl-4 pt-1">
                         <b style="font-size:14px;">{{newClient.text}}</b>	
                     </div>
                 </div>	
@@ -510,7 +537,7 @@
                         <font-awesome-icon v-if="ifEdit" class="icons" style="color:#f5365c;font-size:1em" icon="user-edit" />
                         <font-awesome-icon v-else class="icons" style="color:#f5365c;font-size:1em" icon="user-plus" />
                     </div>
-                    <div v-if="newClient.valid" class="col-10 pl-4 pt-1">
+                    <div v-if="newClient.valid" class="col-9 pl-4 pt-1">
                         <b style="font-size:14px;">{{newClient.text}}</b>	
                     </div>
                 </div>	
@@ -520,7 +547,7 @@
                     <div class="col-2 pt-1">
                         <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="folder-plus" />
                     </div>
-                    <div v-if="newService.valid" class="col-10 pl-4 pt-1">
+                    <div v-if="newService.valid" class="col-9 pl-4 pt-1">
                         <b style="font-size:14px;">{{newService.text}}</b>	
                     </div>
                 </div>
@@ -530,7 +557,7 @@
                     <div class="col-2 pt-1">
                         <font-awesome-icon class="icons" style="color:#f5365c;font-size:1em" icon="folder-plus" />
                     </div>
-                    <div v-if="newService.valid" class="col-10 pl-4 pt-1">
+                    <div v-if="newService.valid" class="col-9 pl-4 pt-1">
                         <b style="font-size:14px;">{{newService.text}}</b>	
                     </div>
                 </div>
@@ -545,7 +572,7 @@
                     </div>
                 </div>
             </div>
-            <div v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal5 = true, codeArticulo = ''" class="p-2 menuVerRedo navSCode" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
+            <div v-bind:style="{  'height': '42px', 'z-index' : '1000' }" v-on:click="modals.modal5 = true, codeArticulo = ''" class="p-2 menuVerRedo navSCode" v-on:mouseenter="mouseOverVenta(reloadSales)" v-on:mouseleave="mouseLeaveVenta(reloadSales)">
                 <div class="row">
                     <div class="col-2 pt-1">
                         <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="pager" />
@@ -608,6 +635,7 @@ export default {
             estadoArticulo:'',
             idArticulo:'',
             codeArticulo:'',
+            totalArticulo:'',
             cashFunds: {
                 cashName: '',
                 cashAmount: 0,
@@ -671,6 +699,7 @@ export default {
             payOthers: 0,
             payDebit: 0,
             payCredit: 0,
+            payOrder:0,
             subTotal: 0,
             total: 0,
             totalSinFormato:0,           
@@ -891,7 +920,10 @@ export default {
             })
         },
         mouseOverVenta(objectType){
-            objectType.valid = true 
+            setTimeout(() => {
+               objectType.valid = true 
+            }, 500);
+             
 		},
 		mouseLeaveVenta(objectType){
             objectType.valid = false
@@ -1350,7 +1382,10 @@ export default {
 			if (this.design == '') {
 				this.design = 0
             }
-            const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
+            if (this.payOrder == '') {
+				this.payOrder = 0
+            }
+            const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit) + parseFloat(this.payOrder)
 			if (this.clientSelect && this.lenderSelect != '') {
 				if (Math.round(this.totalSinFormato) == Math.round(totalFormadePago)) {
                     const itemList = []
@@ -1374,7 +1409,8 @@ export default {
 						pagoOtros:this.payOthers,
 						pagoRedCDebito:this.payDebit,
 						pagoRedCCredito:this.payCredit,
-						pagoTransf:this.payTransfer,
+                        pagoTransf:this.payTransfer,
+                        pagoOrder:this.payOrder,
                         descuento:this.discount,
                         processDate: this.inspectorDate,
 						fecha:this.dates.dateSale,
@@ -1502,9 +1538,9 @@ export default {
                 if (res.data.status) {
                     var Detail = ''
                     if (res.data.productsToAlert.length == 1) {
-                        Detail = 'Hace falta reintegrar el productos: '
+                        Detail = 'Hace falta reintegrar el producto: '
                     }else{
-                        Detail = 'Hace falta reintegrar los producto: '
+                        Detail = 'Hace falta reintegrar los productos: '
                     }
                     for (let index = 0; index < res.data.productsToAlert.length; index++) {
                         const element = res.data.productsToAlert[index];
@@ -1546,7 +1582,8 @@ export default {
                     this.estadoArticulo = res.data.estado
                     this.idArticulo = res.data._id
                     this.compradorArticulo = res.data.cliente
-                    this.medioPagoArticulo = res.data.medio
+                    this.medioPagoArticulo = res.data.tipoPago
+                    this.totalArticulo = res.data.total
                     this.modals.modal6 = true
                 }
                 else{
@@ -1580,6 +1617,9 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                            var remp = this.totalArticulo.replace('.', "")
+                            var remp2 = remp.replace('$ ', "")
+                            this.payOrder = remp2
                             this.modals.modal5 = false
                             this.modals.modal6 = false
                             this.articulo = ''
@@ -1702,7 +1742,7 @@ export default {
 	cursor: pointer;
 	width:7%;
 	top:3.5%;
-	right:-7%;
+	right:-11%;
 	background-color: white;
 	position: absolute;
 	border-radius: 0 5px 5px 0;
@@ -1715,7 +1755,7 @@ export default {
 	cursor: pointer;
 	width:7%;
 	top:9.5%;
-	right:-7%;
+	right:-11%;
 	background-color: white;
 	position: absolute;
 	border-radius: 0 5px 5px 0;
@@ -1728,7 +1768,7 @@ export default {
 	cursor: pointer;
 	width:7%;
 	top:15.5%;
-	right:-7%;
+	right:-11%;
 	background-color: white;
 	position: absolute;
 	border-radius: 0 5px 5px 0;
@@ -1737,24 +1777,24 @@ export default {
 	cursor: pointer;
 	width:7%;
 	top:22.6%;
-	right:-7%;
+	right:-11%;
 	background-color: white;
 	position: absolute;
 	border-radius: 0 5px 5px 0;
 }
 .menuVerVentas:hover{
-	width: 30%;
-	right:-30%;
+	width: 33%;
+	right:-37%;
 	z-index:2;
 }
 .menuVerServi:hover{
-	width: 30%;
-	right:-30%;
+	width: 33%;
+	right:-37%;
 	z-index:2;
 }
 .menuVerRedo:hover{
-	width: 30%;
-	right:-30%;
+	width: 33%;
+	right:-37%;
 	z-index:2;
 }
  
