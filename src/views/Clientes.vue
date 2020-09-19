@@ -54,7 +54,7 @@
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
-                                                placeholder="Contacto principal"
+                                                placeholder="Correo"
                                                 v-model="registerClient.id"
                                                 v-on:change="validRegister()"
                                                 addon-left-icon="fa fa-address-card"
@@ -124,7 +124,7 @@
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto principal"
+                                    placeholder="Correo"
                                     v-model="registerClient.id"
                                     v-on:change="validRegister()"
                                     addon-left-icon="fa fa-address-card"

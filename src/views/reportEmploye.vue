@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 hidden text-white">Reporte de {{nameLender}} </h1>
+                        <h1 class="display-2 hidden text-white">Reporte de {{nameLender}}</h1>
                         
                         <base-button v-if="validRoute('empleados', 'detalle')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
                         <base-button v-else disabled type="success">Datos avanzados</base-button>
@@ -20,8 +20,8 @@
             </div>
         </base-header>
         <center>
-                            <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre </h1> 
-                        </center>
+            <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre</h1> 
+        </center>
         <modal :show.sync="modals.modal1"
                :gradient="modals.type"
                modal-classes="modal-danger modal-dialog-centered">
@@ -39,7 +39,7 @@
                   body-classes="px-lg-5 "
                   class="border-0">
                 <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                    <div style="margin-top:-10% !important" class="text-muted text-center mb-3">
                         Datos del mes
                     </div>
                 </template>
@@ -52,7 +52,7 @@
                                     Datos
                                 </span>
                                 <div class="description">
-                                    <base-button type="secondary" class="w-100 mb-1">
+                                    <base-button type="secondary" class="w-100 mb-1 mt-3">
                                         <span class="float-left">Fecha</span>
                                         <badge style="font-size:.9em" class="float-right text-default" type="success">{{fecha}}</badge>
                                     </base-button>
@@ -84,7 +84,7 @@
                                     Adelantos o bonos
                                 </span>
                                 <form role="form">
-                                    <base-checkbox class="mb-3" v-model="bonus">
+                                    <base-checkbox class="mb-3 mt-3" v-model="bonus">
                                         ¿Esta registrando un bono?
                                     </base-checkbox>
                                     <base-input alternative

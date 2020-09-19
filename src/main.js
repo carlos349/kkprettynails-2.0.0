@@ -40,7 +40,9 @@ import VueProgress from 'vue-progress-path'
 import VueCarousel from 'vue-carousel';
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
-
+import * as moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
  
 
 /* STYLES */
@@ -56,7 +58,6 @@ Vue.config.productionTip = false
 const pluginOptions = {globalOptions: { currency: {'prefix':'$ '},precision: 0, distractionFree:false, autoDecimalMode:false}}
 
 /* USES*/
-Vue.use(require('vue-moment'));
 Vue.use(Antd);
 Vue.component('vue-single-select', VueSingleSelect);
 Vue.use(VueCurrencyInput, pluginOptions)
