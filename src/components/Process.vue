@@ -201,7 +201,7 @@
                                     v-model="payOrder"
                                     locale="de"
                                     readonly
-                                    placeholder="Crédito"
+                                    placeholder="Codigo pedido"
                                     class="form-control pl-1"
                                 />
                             </div>
@@ -1360,6 +1360,7 @@ export default {
             this.validRegister()
         },
         processSale() {
+            
             this.spinning = true
 			if (this.payCash == '') {
 				this.payCash = 0
@@ -1386,7 +1387,8 @@ export default {
 				this.payOrder = 0
             }
             const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit) + parseFloat(this.payOrder)
-			if (this.clientSelect && this.lenderSelect != '') {
+            console.log(totalFormadePago)
+            if (this.clientSelect && this.lenderSelect != '') {
 				if (Math.round(this.totalSinFormato) == Math.round(totalFormadePago)) {
                     const itemList = []
                     for (let index = 0; index < this.serviciosSelecionados.length; index++) {

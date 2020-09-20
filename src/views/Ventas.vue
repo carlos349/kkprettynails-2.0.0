@@ -81,8 +81,9 @@
                                     <h3 v-if="arreglo.pagoEfectivo > 0"><strong class="text-left pl-5">Efectivo: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoEfectivo)}} </span></h3> 
                                     <h3 v-if="arreglo.pagoRedCDebito > 0"><strong class="text-left pl-5">Débito: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoRedCDebito)}} </span></h3>
                                     <h3 v-if="arreglo.pagoRedCCredito > 0"><strong class="text-left pl-5">Crédito: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoRedCCredito)}} </span></h3>
-                                    <h3 v-if="arreglo.pagoTransf > 0"><strong class="text-left pl-5">transferencia: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoTransf)}} </span></h3>
+                                    <h3 v-if="arreglo.pagoTransf > 0"><strong class="text-left pl-5">Transferencia: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoTransf)}} </span></h3>
                                     <h3 v-if="arreglo.pagoOtros > 0"><strong class="text-left pl-5">Otros: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoOtros)}} </span></h3>
+                                    <h3 v-if="arreglo.pagoOrder > 0"><strong class="text-left pl-5">Pago por pedido: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoOrder)}} </span></h3>
                                 </div>
                             </tab-pane>
                             <tab-pane>
