@@ -27,7 +27,7 @@
                                             <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
                                         </base-button>
                                     </li>
-                                    <li v-for="data in employeShow"  v-on:click="getCitasByEmploye(data.name,data.img)">
+                                    <li v-for="data in employeShow" :key="data"  v-on:click="getCitasByEmploye(data.name,data.img)">
                                         <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
                                             <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
                                         </base-button>
@@ -64,7 +64,7 @@
                 </modal>
                   <!-- WIZARD -->
                 
-                <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
+                <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
                     <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
@@ -1637,6 +1637,7 @@
                 valid:false,
                 valid2:false
             }
+            this.totalPrice = 0
             this.img1 = ''
             this.blockHour = []
             for (let index = 0; index < this.countServices.length; index++) {

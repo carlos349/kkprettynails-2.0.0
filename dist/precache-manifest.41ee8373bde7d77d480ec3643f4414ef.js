@@ -16,8 +16,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-cover.jpg"
   },
   {
-    "revision": "24c979fcdced535d69a4",
-    "url": "/js/chunk-6bcdc2aa.8dec7933.js"
+    "revision": "ce0d158f53ad385041ba",
+    "url": "/js/chunk-6bcdc2aa.9a25ecf6.js"
   },
   {
     "revision": "f703eaaed9a404e2b342a4d5d98f261a",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "8425bb4639fe9fdb23b54acca62be9af",
+    "revision": "eac20e2fc054e849f46288ae1f52e473",
     "url": "/index.html"
   },
   {
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "82d0add3f3587c9daf2a",
-    "url": "/js/app.40c330d3.js"
+    "revision": "5c87a8f3ec6d64aa43dd",
+    "url": "/js/app.16506c9c.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -140,27 +140,27 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
-    "revision": "82d0add3f3587c9daf2a",
-    "url": "/css/app.e4c8d7d8.css"
+    "revision": "5c87a8f3ec6d64aa43dd",
+    "url": "/css/app.4cd96210.css"
   },
   {
     "revision": "afb0175f4417917d8cb162e0884b5fa9",
     "url": "/img/brand/calendar.png"
   },
   {
-    "revision": "f82ec6ba2dc4181db2af35c499462840",
-    "url": "/fonts/nucleo-icons.f82ec6ba.ttf"
-  },
-  {
     "revision": "c1733565b32b585676302d4233c39da8",
     "url": "/fonts/nucleo-icons.c1733565.eot"
+  },
+  {
+    "revision": "f82ec6ba2dc4181db2af35c499462840",
+    "url": "/fonts/nucleo-icons.f82ec6ba.ttf"
   },
   {
     "revision": "426439788ec5ba772cdf94057f6f4659",
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "24c979fcdced535d69a4",
+    "revision": "ce0d158f53ad385041ba",
     "url": "/css/chunk-6bcdc2aa.6b232577.css"
   },
   {
