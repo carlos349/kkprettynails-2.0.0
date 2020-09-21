@@ -16,8 +16,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-cover.jpg"
   },
   {
-    "revision": "43aad8a8e0af7dc5c0c0",
-    "url": "/js/chunk-6bcdc2aa.bde3d30b.js"
+    "revision": "24c979fcdced535d69a4",
+    "url": "/js/chunk-6bcdc2aa.8dec7933.js"
   },
   {
     "revision": "f703eaaed9a404e2b342a4d5d98f261a",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "f1e4a80081ccfdd41bda896289458ec8",
+    "revision": "8425bb4639fe9fdb23b54acca62be9af",
     "url": "/index.html"
   },
   {
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "e50c00c7c6636b907dc2",
-    "url": "/js/app.a419a5f5.js"
+    "revision": "82d0add3f3587c9daf2a",
+    "url": "/js/app.40c330d3.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -136,11 +136,11 @@ self.__precacheManifest = [
     "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
-    "revision": "e50c00c7c6636b907dc2",
+    "revision": "82d0add3f3587c9daf2a",
     "url": "/css/app.e4c8d7d8.css"
   },
   {
@@ -156,11 +156,11 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.c1733565.eot"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "43aad8a8e0af7dc5c0c0",
+    "revision": "24c979fcdced535d69a4",
     "url": "/css/chunk-6bcdc2aa.6b232577.css"
   },
   {
