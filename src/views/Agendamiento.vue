@@ -1263,8 +1263,8 @@
                 .then(res => {
                     for (let index = 0; index < res.data.length; index++) {
                         let dateNow = new Date(res.data[index].date)
-                        let formatDate = dateNow.format('YYYY MM DD')+" "+res.data[index].start
-                        let formatDateTwo = dateNow.format('YYYY MM DD')+" "+res.data[index].end
+                        let formatDate = dateNow.format('YYYY-MM-DD')+" "+res.data[index].start
+                        let formatDateTwo = dateNow.format('YYYY-MM-DD')+" "+res.data[index].end
                         const split = res.data[index].class.split('class')[1]
                         let arrayEvents = {
                             start: formatDate,
@@ -1295,8 +1295,8 @@
                 .then(res => {
                     for (let index = 0; index < res.data.length; index++) {
                     let dateNow = new Date(res.data[index].date)
-                    let formatDate = dateNow.format('YYYY MM DD')+" "+res.data[index].start
-                    let formatDateTwo = dateNow.format('YYYY MM DD')+" "+res.data[index].end
+                    let formatDate = dateNow.format('YYYY-MM-DD')+" "+res.data[index].start
+                    let formatDateTwo = dateNow.format('YYYY-MM-DD')+" "+res.data[index].end
                     const split = res.data[index].class.split('class')[1]
                     let arrayEvents = {
                         start: formatDate,
@@ -1925,8 +1925,8 @@
                 .then(res => {
                     for (let index = 0; index < res.data.length; index++) {
                         let dateNow = new Date(res.data[index].date)
-                        let formatDate = dateNow.format('YYYY MM DD')+" "+res.data[index].start
-                        let formatDateTwo = dateNow.format('YYYY MM DD')+" "+res.data[index].end
+                        let formatDate = dateNow.format('YYYY-MM-DD')+" "+res.data[index].start
+                        let formatDateTwo = dateNow.format('YYYY-MM-DD')+" "+res.data[index].end
                         const split = res.data[index].class.split('class')[1]
                         let arrayEvents = {
                             start: formatDate,
