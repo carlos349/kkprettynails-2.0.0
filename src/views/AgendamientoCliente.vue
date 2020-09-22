@@ -62,7 +62,7 @@
                                     <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
                                         Servicios 
                                     </base-button>
-                                    <b v-for="service of servicesCat" :key="service" v-on:click="selectServicePhone(service._id)" class="dropdown-item w-100" style="color:#fff;"> {{service.nombre}} </b>
+                                    <b v-for="service of servicesCat" :key="service" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.nombre}} </b>
                                 </base-dropdown>
                                 <div v-if="validObject()">
                                     <div v-for="(service, index) of serviceSelected" :key="service" class="w-100 mx-auto">

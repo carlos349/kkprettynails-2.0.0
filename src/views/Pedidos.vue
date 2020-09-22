@@ -13,6 +13,9 @@
                         
                         <base-button v-if="validRoute('clientes', 'filtrar')" @click="modals.modal1 = true" type="success">Crear pedido</base-button>
                         <base-button v-if="validRoute('clientes', 'filtrar')" @click="showFilter" type="default">Filtrar</base-button>
+                        <base-button type="primary">Pedidos por confirmar: {{rowsPending.length}}</base-button>
+                        
+                        <base-button type="secondary">Monto total: <span class="text-success">$ {{formatPrice(totalPending)}}</span> </base-button>
                     </div>
                 </div>
             </div>
@@ -275,6 +278,7 @@ moment.locale('es');
         rowsPending: [],
         rowsConfirmed: [],
         rowsUsed: [],
+        totalPending:0,
         columnsConfirmed: [{
                 label: "Fecha",
                 name: "date",
@@ -522,6 +526,14 @@ moment.locale('es');
             axios.get(endPoint.endpointTarget+'/pedidos/findPending')
             .then(res => {
                 this.rowsPending = res.data
+                for (let i = 0; i < res.data.length; i++) {
+                    const element = res.data[i];
+                    var remp = element.total.replace('.', "")
+                    var remp1 = remp.replace(',', "")
+                    var remp2 = remp1.replace('$ ', "")
+                    console.log(remp2)
+                    this.totalPending = parseFloat(this.totalPending)+parseFloat(remp2)
+                }
             })
             axios.get(endPoint.endpointTarget+'/pedidos/findConfirmed')
             .then(res => {
@@ -842,8 +854,12 @@ moment.locale('es');
         formatCaducity(date) {
             let dateFormat = new Date(date)
             dateFormat.setDate(dateFormat.getDate() + 7)
-            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
-        }
+            return moment(dateFormat).format("DD-MM-YYYY")
+        },
+        formatPrice(value) {
+          let val = (value/1).toFixed(2).replace('.', ',')
+          return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      },
 
     }
   };
