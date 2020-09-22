@@ -40,8 +40,8 @@ self.__precacheManifest = [
     "url": "/img/theme/inventario.jpg"
   },
   {
-    "revision": "a68e8ae5f5c873fa7662",
-    "url": "/js/demo.13d85d74.js"
+    "revision": "f23e510003a7d11bf43f",
+    "url": "/js/demo.940c4c58.js"
   },
   {
     "revision": "d272b05fa09aaad4cb84463d148cef01",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "eac20e2fc054e849f46288ae1f52e473",
+    "revision": "59fc15cca430b932b36a44a82b5827a6",
     "url": "/index.html"
   },
   {
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "5c87a8f3ec6d64aa43dd",
-    "url": "/js/app.16506c9c.js"
+    "revision": "25aa8bda558a284bfde3",
+    "url": "/js/app.d87b3b00.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -136,11 +136,11 @@ self.__precacheManifest = [
     "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "5c87a8f3ec6d64aa43dd",
+    "revision": "25aa8bda558a284bfde3",
     "url": "/css/app.4cd96210.css"
   },
   {
@@ -148,23 +148,23 @@ self.__precacheManifest = [
     "url": "/img/brand/calendar.png"
   },
   {
-    "revision": "c1733565b32b585676302d4233c39da8",
-    "url": "/fonts/nucleo-icons.c1733565.eot"
-  },
-  {
     "revision": "f82ec6ba2dc4181db2af35c499462840",
     "url": "/fonts/nucleo-icons.f82ec6ba.ttf"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "c1733565b32b585676302d4233c39da8",
+    "url": "/fonts/nucleo-icons.c1733565.eot"
+  },
+  {
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
     "revision": "ce0d158f53ad385041ba",
     "url": "/css/chunk-6bcdc2aa.6b232577.css"
   },
   {
-    "revision": "a68e8ae5f5c873fa7662",
+    "revision": "f23e510003a7d11bf43f",
     "url": "/css/demo.f0b07245.css"
   },
   {
