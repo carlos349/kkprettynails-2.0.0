@@ -16,8 +16,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-cover.jpg"
   },
   {
-    "revision": "ce0d158f53ad385041ba",
-    "url": "/js/chunk-6bcdc2aa.9a25ecf6.js"
+    "revision": "8abc6f4d322488d1452e",
+    "url": "/js/chunk-6bcdc2aa.447b38e1.js"
   },
   {
     "revision": "f703eaaed9a404e2b342a4d5d98f261a",
@@ -40,8 +40,8 @@ self.__precacheManifest = [
     "url": "/img/theme/inventario.jpg"
   },
   {
-    "revision": "f23e510003a7d11bf43f",
-    "url": "/js/demo.940c4c58.js"
+    "revision": "3d8b45c382871afb24e6",
+    "url": "/js/demo.6abed9cf.js"
   },
   {
     "revision": "d272b05fa09aaad4cb84463d148cef01",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "59fc15cca430b932b36a44a82b5827a6",
+    "revision": "067704e0a9499dc21daec457a1786194",
     "url": "/index.html"
   },
   {
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "25aa8bda558a284bfde3",
-    "url": "/js/app.d87b3b00.js"
+    "revision": "0fdd79ebf106558210ff",
+    "url": "/js/app.c42c9b89.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -136,11 +136,11 @@ self.__precacheManifest = [
     "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
-    "revision": "25aa8bda558a284bfde3",
+    "revision": "0fdd79ebf106558210ff",
     "url": "/css/app.4cd96210.css"
   },
   {
@@ -156,15 +156,15 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.c1733565.eot"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "ce0d158f53ad385041ba",
-    "url": "/css/chunk-6bcdc2aa.6b232577.css"
+    "revision": "8abc6f4d322488d1452e",
+    "url": "/css/chunk-6bcdc2aa.83f769ae.css"
   },
   {
-    "revision": "f23e510003a7d11bf43f",
+    "revision": "3d8b45c382871afb24e6",
     "url": "/css/demo.f0b07245.css"
   },
   {
