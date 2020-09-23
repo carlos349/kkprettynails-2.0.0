@@ -681,12 +681,22 @@
         </modal>
         <modal :show.sync="dateModals.modal5"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-xl">
+               modal-classes="modal-dialog-centered borderOnly modal-xl">
             <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar</h5>
             <card  type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes=""
                   class="border-0">
+                  <div v-bind:style="{  'height': '42px', 'z-index' : '1000' }" v-on:click="dateModals.modal6 = true, codeArticulo = ''" class="p-2 menuVerRedoAgenda navSCodeAgenda" >
+                        <div class="row">
+                            <div class="col-2 pt-1">
+                                <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="pager" />
+                            </div>
+                            <div class="col-10 pl-4 pt-1">
+                                <b style="font-size:14px;">Validar código</b>	
+                            </div>
+                        </div>
+                    </div>
                   <div v-on:click="noBlank">
                     <div class="row">
                         <div class="col-sm-12 tbCell">
@@ -759,7 +769,7 @@
                             <template slot="title">
                             <span>Efectivo</span>
                             </template>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <div class="input-group mb-2">
                                     <div v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
                                         <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
@@ -781,7 +791,7 @@
                             <template slot="title">
                             <span>Transferencia</span>
                             </template>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <div  class="input-group mb-2">
                                     <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
                                         <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
@@ -802,7 +812,7 @@
                             <template slot="title">
                             <span>Otros</span>
                             </template>
-                            <div class="col-2">
+                            <div class="col-3">
                                 <div  class="input-group mb-2">
                                     <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
                                         <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
@@ -821,9 +831,30 @@
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Débito</span>
+                            <span>Código de pedido</span>
                             </template>
                             <div class="col-3">
+                                <div  class="input-group mb-2">
+                                    <div class="input-group-prepend w-25 text-center ">
+                                        <span style="background-color: #e9ecef;" class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                            <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="shopping-cart"/>	
+                                        </span>
+                                    </div>
+                                    <currency-input
+                                        v-model="payOrder"
+                                        locale="de"
+                                        readonly
+                                        placeholder="Código de pedido"
+                                        class="form-control"
+                                    />
+                                </div>
+                            </div>
+                        </a-tooltip>
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Débito</span>
+                            </template>
+                            <div class="col-4 mx-auto">
                                 <div class="input-group mb-2">
                                     <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
                                         <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
@@ -844,7 +875,7 @@
                             <template slot="title">
                             <span>Crédito</span>
                             </template>
-                            <div class="col-3">
+                            <div class="col-4 mx-auto">
                                 <div class="input-group mb-2">
                                     <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
                                         <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
@@ -869,7 +900,85 @@
                   </div>
                 
             </card>
-        </modal>    
+        </modal>   
+        <modal :show.sync="dateModals.modal6"
+                body-classes="p-0"
+                modal-classes="modal-dialog-centered modal-md">
+                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+                <card type="secondary" shadow
+                    header-classes="bg-white pb-5"
+                    body-classes="px-lg-5 "
+                    class="border-0">
+                    <template>
+                        <div style="margin-top:-10%" class="text-muted text-center mb-3">
+                            <h3>Validación de código</h3>
+                        </div>
+                    </template>
+                    <template>
+                        <form role="form">
+                            <base-input 
+                                alternative
+                                class="mb-3"
+                                placeholder="Código"
+                                v-model="codeArticulo"
+                                addon-left-icon="ni ni-key-25">
+                            </base-input>
+                            
+                            
+                            <base-button type="default" v-on:click="validCode()">
+                                Verificar
+                            </base-button> 
+                        </form>
+                </template>
+                </card>
+            </modal>
+            <modal :show.sync="dateModals.modal7"
+                body-classes="p-0"
+                modal-classes="modal-dialog-centered modal-md">
+                
+                <card type="secondary" shadow
+                    header-classes="bg-white pb-5"
+                    body-classes="px-lg-5 py-lg-5"
+                    class="border-0">
+                    
+                    <template>
+                        <div class="col-sm-12">
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Comprador <br> </span>
+                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{compradorArticulo}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Medio de pago <br> </span>
+                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{medioPagoArticulo}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Articulo <br> </span>
+                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Monto del pedido <br> </span>
+                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{totalArticulo}}</badge>
+                                    </base-button>
+                                    <base-button class="col-12  p-2 mt-1" type="secondary">
+                                        <span class="text-center"> Estado <br> </span>
+                                        <badge v-if="estadoArticulo == 'Nconfirmado'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
+                                        <badge v-else-if="estadoArticulo == 'confirmado'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
+                                        <badge v-else style="font-size:0.8em !important" type="default" class="text-default mt-2">Usado</badge>
+                                    </base-button>
+                                    
+                                </div>
+                                <center>
+                                    <base-button v-if="estadoArticulo == 'confirmado'" type="success" class="mt-5" v-on:click="verifyCode()">
+                                        Validar
+                                    </base-button>
+                                    <base-button v-else type="default" disabled class="mt-5">
+                                        Validar
+                                    </base-button> 
+                                </center>
+                                
+                </template>
+                </card>
+            </modal> 
     </div>
 </template>
 <script>
@@ -1024,6 +1133,14 @@
         classes: {
             table: "table-bordered table-striped"
         },
+        articulo:'',
+        compradorArticulo:'',
+        medioPagoArticulo:'',
+        estadoArticulo:'',
+        idArticulo:'',
+        codeArticulo:'',
+        totalArticulo:'',
+        haveCode:false,
         validHour: false,
         totalPrice: 0,
         modalsDialog: {
@@ -1111,6 +1228,7 @@
         payOthers:0,
         payDebit:0,
         payCredit:0,
+        payOrder:0,
         servicesFinish:[],
         modals: {
             modal1:false,
@@ -1124,7 +1242,9 @@
             modal2:false,
             modal3:false,
             modal4:false,
-            modal5:false
+            modal5:false,
+            modal6:false,
+            modal7:false
         },
         categories: [],
         radio: {
@@ -2221,6 +2341,8 @@
                 this.payOthers = 0
                 this.payDebit = 0
                 this.payCredit = 0
+                this.payOrder = 0
+                this.haveCode == false
             }
             else {
                this.selectedDates = {
@@ -2358,7 +2480,7 @@
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payCash = this.selectedDates.total
+                this.payCash = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
             }
             if (tipo == "trasnferencia") {
                 this.payCash = 0
@@ -2366,7 +2488,7 @@
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payTransfer = this.selectedDates.total
+                this.payTransfer = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
             }
             if (tipo == "others") {
                 this.payCash = 0
@@ -2374,7 +2496,7 @@
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payOthers = this.selectedDates.total
+                this.payOthers = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
             }
             if (tipo == "credit") {
                 this.payCash = 0
@@ -2382,7 +2504,7 @@
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payCredit = this.selectedDates.total
+                this.payCredit = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
             }
             if (tipo == "debit") {
                 this.payCash = 0
@@ -2390,7 +2512,7 @@
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payDebit = this.selectedDates.total
+                this.payDebit = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
             }
         },
         hundredMouseOver(tipo){
@@ -2414,6 +2536,9 @@
 			}
 			if (this.payCredit == '') {
 				this.payCredit = 0
+            }
+            if (this.payOrder == '') {
+				this.payOrder = 0
 			}
             if (this.selectedDates.discount == '') {
             this.selectedDates.discount = 0
@@ -2421,7 +2546,7 @@
             if (this.selectedDates.design == '') {
             this.selectedDates.design = 0
             }
-            const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit)
+            const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit) + parseFloat(this.payOrder)
 
             if (this.selectedDates.total == totalFormadePago) {
                 axios.post(endPoint.endpointTarget+'/ventas/processEndDates', {
@@ -2431,10 +2556,15 @@
                     pagoRedCDebito: this.payDebit,
                     pagoRedCCredito: this.payCredit,
                     pagoTransf: this.payTransfer,
+                    pagoOrder: this.payOrder
                     
                 })
                 .then(res => {
                     if (res.data.status == "Venta registrada") {
+                        if (this.haveCode == true) {
+                            axios.get(endPoint.endpointTarget+'/pedidos/useCode/'+this.idArticulo)
+                            .then( res =>{})
+                        }
                         this.initialDate()
                         this.dateModals.modal5 = false
                         this.modalsDialog = {
@@ -2443,6 +2573,7 @@
                             icon: 'ni ni-check-bold ni-5x',
                             type: 'success'
                         }
+                        
                         this.getClosed()
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
@@ -3228,6 +3359,51 @@
                 
             }
             return valid
+        },
+        validCode(){
+            axios.get(endPoint.endpointTarget+'/pedidos/validCode/'+this.codeArticulo)
+            .then( res =>{
+                if (res.data) {
+                    this.articulo = res.data.articulo
+                    this.estadoArticulo = res.data.estado
+                    this.idArticulo = res.data._id
+                    this.compradorArticulo = res.data.cliente
+                    this.medioPagoArticulo = res.data.tipoPago
+                    this.totalArticulo = res.data.total
+                    this.dateModals.modal7 = true
+                }
+                else{
+                    this.$swal({
+                        type: 'error',
+                        title: 'Código no existe',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+        },
+        verifyCode(){
+            this.$swal({
+					type: 'warning',
+					title: '¿Seguro que desea verificar el código?',
+					showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonColor: '#2dce89',
+                    cancelButtonColor: '#f5365c',
+                    confirmButtonText: 'Si',
+                    cancelButtonText: 'No'
+				}).then((result) => {
+                    if (result.value) {
+                            var remp = this.totalArticulo.replace('.', "")
+                            var remp1 = remp.replace(',00', "")
+                            var remp2 = remp1.replace('$ ', "")
+                            this.payOrder = remp2
+                            this.haveCode = true
+                            this.dateModals.modal6 = false
+                            this.dateModals.modal7 = false
+                            
+                    }
+                })
         }
     },
     computed: {
@@ -3543,4 +3719,24 @@
         background-color: #2dce89;
         height: 38px !important;
     }
+    .menuVerRedoAgenda{
+	transition: all 0.3s ease-out;
+	overflow: hidden;
+    }
+
+    .navSCodeAgenda{
+        cursor: pointer;
+        width: 18%;
+        top: -20%;
+        right: 82%;
+        z-index: 1;
+        border-bottom: 2px solid #0000005c;
+        background-color: white;
+        position: absolute;
+        border-radius: 5px 5px 0 0;
+    }
+    .borderOnly .modal-content{
+        border-radius: 0 0.4375rem 0.4375rem 0.4375rem !important;
+    }
+    
 </style>

@@ -189,7 +189,7 @@
                     <div class="col-6">
                         <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Codigo de pedido</span>
+                            <span>Código de pedido</span>
                             </template>
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend w-25 text-center hundred">
@@ -201,7 +201,7 @@
                                     v-model="payOrder"
                                     locale="de"
                                     readonly
-                                    placeholder="Codigo pedido"
+                                    placeholder="Código pedido"
                                     class="form-control pl-1"
                                 />
                             </div>
@@ -452,7 +452,7 @@
                     class="border-0">
                     <template>
                         <div style="margin-top:-10%" class="text-muted text-center mb-3">
-                            <h3>Validación de codigo</h3>
+                            <h3>Validación de código</h3>
                         </div>
                     </template>
                     <template>
@@ -460,7 +460,7 @@
                             <base-input 
                                 alternative
                                 class="mb-3"
-                                placeholder="Codigo"
+                                placeholder="Código"
                                 v-model="codeArticulo"
                                 addon-left-icon="ni ni-key-25">
                             </base-input>
@@ -578,7 +578,7 @@
                         <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="pager" />
                     </div>
                     <div v-if="reloadSales.valid" class="col-10 pl-4 pt-1">
-                        <b style="font-size:14px;">Validar codigo</b>	
+                        <b style="font-size:14px;">Validar código</b>	
                     </div>
                 </div>
             </div>
@@ -700,6 +700,7 @@ export default {
             payDebit: 0,
             payCredit: 0,
             payOrder:0,
+            haveCode:false,
             subTotal: 0,
             total: 0,
             totalSinFormato:0,           
@@ -1175,7 +1176,7 @@ export default {
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payCash = this.totalSinFormato
+                this.payCash = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
             }
             if (tipo == "trasnferencia") {
                 this.payCash = 0
@@ -1183,7 +1184,7 @@ export default {
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payTransfer = this.totalSinFormato
+                this.payTransfer = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
             }
             if (tipo == "others") {
                 this.payCash = 0
@@ -1191,7 +1192,7 @@ export default {
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payOthers = this.totalSinFormato
+                this.payOthers = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
             }
             if (tipo == "credit") {
                 this.payCash = 0
@@ -1199,7 +1200,7 @@ export default {
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payCredit = this.totalSinFormato
+                this.payCredit = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
             }
             if (tipo == "debit") {
                 this.payCash = 0
@@ -1207,7 +1208,7 @@ export default {
                 this.payOthers = 0
                 this.payCredit = 0
                 this.payDebit = 0
-                this.payDebit = this.totalSinFormato
+                this.payDebit = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
             }
 			
         },
@@ -1345,7 +1346,8 @@ export default {
 			this.payCash = 0
 			this.payOthers = 0
 			this.payDebit = 0
-			this.payCredit = 0
+            this.payCredit = 0
+            this.payOrder = 0
 			this.payTransfer = 0
 			this.lenderSelect = null
 			this.clientSelect = null
@@ -1358,6 +1360,7 @@ export default {
             this.registerClient.id = ''
             this.ifrecomend = false
             this.validRegister()
+            this.haveCode = false
         },
         processSale() {
             
@@ -1432,6 +1435,11 @@ export default {
                                 icon: 'ni ni-check-bold ni-5x',
                                 type: 'success'
                             }
+                            if (this.haveCode == true) {
+                                axios.get(endPoint.endpointTarget+'/pedidos/useCode/'+this.idArticulo)
+                                .then( res =>{})
+                            }
+                            
                             setTimeout(() => {
                                 this.modals = {
                                     modal1: false,
@@ -1442,6 +1450,7 @@ export default {
                                     icon: '',
                                     type: ''
                                 }
+                                this.haveCode = false
                             }, 1500);
                             this.alertProducts()
 							this.servicios =''
@@ -1590,18 +1599,18 @@ export default {
                 }
                 else{
                     this.$swal({
-                                type: 'error',
-                                title: 'Codigo no existe',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
+                        type: 'error',
+                        title: 'Código no existe',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             })
         },
         verifyCode(){
             this.$swal({
 					type: 'warning',
-					title: '¿Seguro que desea verificar el codigo?',
+					title: '¿Seguro que desea verificar el código?',
 					showConfirmButton: true,
                     showCancelButton: true,
                     confirmButtonColor: '#2dce89',
@@ -1610,35 +1619,16 @@ export default {
                     cancelButtonText: 'No'
 				}).then((result) => {
                     if (result.value) {
-                        axios.get(endPoint.endpointTarget+'/pedidos/useCode/'+this.idArticulo)
-                        .then( res =>{
-                            if (res.data.status == 'ok') {
-                                this.$swal({
-                                type: 'success',
-                                title: 'Codigo verificado',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
                             var remp = this.totalArticulo.replace('.', "")
-                            var remp2 = remp.replace('$ ', "")
+                            var remp1 = remp.replace(',00', "")
+                            var remp2 = remp1.replace('$ ', "")
                             this.payOrder = remp2
+                            this.haveCode = true
                             this.modals.modal5 = false
                             this.modals.modal6 = false
-                            this.articulo = ''
-                            this.estadoArticulo = ''
-                            this.idArticulo = ''
-                            }
-                            else{
-                                this.$swal({
-                                    type: 'error',
-                                    title: 'Problemas de conexión',
-                                    showConfirmButton: false,
-                                    timer: 1500
-						        })
-                            }
-                        })
+                            
                     }
-                    })
+                })
         }
     },
     mounted (){

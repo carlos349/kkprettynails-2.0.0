@@ -162,7 +162,7 @@
                         <template slot="dateConfirm" slot-scope="props">
                             <b>
                                
-                                {{formatDate(props.row.dateConfirm)}}
+                                {{formatDates(props.row.dateConfirm)}}
                               
                                 
                             </b>
@@ -195,11 +195,11 @@
                         <template slot="dateProccess" slot-scope="props">
                             <b>
                                 <div v-if="props.row.estado == 'usado'">
-                                    {{formatDate(props.row.dateProccess)}}  
+                                    {{formatDates(props.row.dateProccess)}}  
                                 </div>
                                 <a-tooltip  v-else placement="top">
                                     <template slot="title">
-                                    <span>Pedido vencido el {{formatDate(props.row.dateProccess)}}  </span>
+                                    <span>Pedido vencido el {{formatDates(props.row.dateProccess)}}  </span>
                                     </template>
                                     <base-button size="sm" type="danger"  >Vencido</base-button>
                                 </a-tooltip>
@@ -520,7 +520,7 @@ moment.locale('es');
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
-            console.log(this.auth)
+            
         },
         getOrders(){
             axios.get(endPoint.endpointTarget+'/pedidos/findPending')
@@ -529,9 +529,9 @@ moment.locale('es');
                 for (let i = 0; i < res.data.length; i++) {
                     const element = res.data[i];
                     var remp = element.total.replace('.', "")
-                    var remp1 = remp.replace(',', "")
-                    var remp2 = remp1.replace('$ ', "")
-                    console.log(remp2)
+                    
+                    var remp2 = remp.replace('$ ', "")
+                    
                     this.totalPending = parseFloat(this.totalPending)+parseFloat(remp2)
                 }
             })
@@ -545,7 +545,7 @@ moment.locale('es');
             })
         },
         registerClients(){
-            console.log(this.registerClient.recommender)
+            
             var ifCheck = this.registerClient.discount ? 0 : 1
             axios.post(endPoint.endpointTarget+'/pedidos', {
                 nombre:this.registerClient.name,
@@ -656,6 +656,12 @@ moment.locale('es');
 
             return moment(dateFormat).format("DD-MM-YYYY")
         },
+        formatDates(date){
+            let dateFormat = new Date(date)
+            
+
+            return moment(dateFormat).format("DD-MM-YYYY")
+        },
         deleteClient(id){
 			this.$swal({
 				title: '¿Está seguro de borrar el cliente?',
@@ -723,7 +729,7 @@ moment.locale('es');
                 instagramClienteEditar: this.registerClient.contactTwo,
             })
             .then(res => {
-                console.log(res)
+                
                 if (res.data.status == 'Servicio actualizado') {
                     this.modals = {
                         modal2: true,
