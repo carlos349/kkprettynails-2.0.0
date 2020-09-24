@@ -26,7 +26,7 @@
             <li class="nav-item dropdown">
               
                 <a v-on:click="validateNotifications()" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="ni ni-bell-55" style="font-size:18px;z-index:1;"></i>
+                  <i class="ni ni-bell-55" :class="pxSep" style="font-size:18px;z-index:1;"></i>
                   <badge v-if="activeNotifications > 0" class="notifyNumber text-white" type="primary" style="font-size:14px;z-index:0;">{{activeNotifications}}</badge>
                 </a>
               <div style="z-index:10000" class="dropdown-menu dDeste  dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
@@ -187,7 +187,8 @@
         imgEndpoint: endPoint.imgEndpoint,
         notifications: [],
         count:0,
-        all: true
+        all: true,
+        pxSep: ''
       };
     },
     beforeCreate() {
@@ -212,7 +213,14 @@
         axios.get(endPoint.endpointTarget+'/notifications/noViews/'+this.idUser) 
         .then(res => {
           this.notifications = res.data
-          this.activeNotifications = this.notifications.length
+          this.activeNotifications = res.data.length
+          if (this.activeNotifications < 10) {
+            this.pxSep = "pxSix"
+          }else if (this.activeNotifications < 100) {
+            this.pxSep = "pxSixPlus"
+          }else if (this.activeNotifications < 999) {
+            this.pxSep = "pxSixPlusTwo"
+          }
           this.all = true
         })
       },
@@ -257,3 +265,8 @@
     }
   };
 </script>
+<style lang="scss">
+  .pxSix{margin-right: 6px}
+  .pxSixPlus{margin-right: 10px}
+  .pxSixPlusTwo{margin-right: 16px}
+</style>

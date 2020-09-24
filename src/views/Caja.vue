@@ -240,6 +240,9 @@ import jwtDecode from 'jwt-decode'
 import io from 'socket.io-client';
 // COMPONENTS
 import VueBootstrap4Table from 'vue-bootstrap4-table'
+import * as moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 export default {
     components: {
         VueBootstrap4Table 
@@ -376,7 +379,7 @@ export default {
         },
         formatDate(date) {
             let dateFormat = new Date(date)
-            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
+            return moment(dateFormat).format('DD-MM-YYYY');
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')

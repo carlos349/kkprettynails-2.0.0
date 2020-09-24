@@ -46,7 +46,7 @@
                                     addon-left-icon="ni ni-single-02"
                                     addon-right-icon="fa fa-asterisk text-danger"   >
                         </base-input>
-                        <base-input type="file" id="file" ref="file" v-on:change="handleFileUpload()" addon-right-icon="fa fa-asterisk text-danger" class=" mb-3"></base-input>
+                        <input type="file" id="fileProfile" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
                         <base-input alternative
                                     type="text"
                                     placeholder="Correo"
@@ -728,7 +728,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             }
         },
         handleFileUpload(){
-			this.file = this.$refs.file.files[0]
+            this.file = this.$refs.file.files[0]
+            console.log(this.file)
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
