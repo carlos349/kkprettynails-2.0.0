@@ -13,6 +13,9 @@ import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import router from '../router'
 import io from 'socket.io-client';
+import * as moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 export default {
     data(){
         return {
@@ -47,7 +50,7 @@ export default {
         formatDateTwo(date) {
             let dateFormat = new Date(date)
             console.log(dateFormat)
-            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
+            return moment(dateFormat).format("DD-MM-YYYY")
         },
     }
 }
