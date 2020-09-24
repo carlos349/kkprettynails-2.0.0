@@ -199,20 +199,7 @@
             <template slot="localGain" slot-scope="props">
                 {{formatPrice(props.row.ganancialocal)}}
             </template>
-            <template slot="client" slot-scope="props">
-                <div v-if="props.row.cliente.length == 1">{{props.row.cliente[0]}}</div>
-                <div v-else>
-                    <center>
-                        <base-dropdown>
-                            <base-button slot="title" type="secondary" class="dropdown-toggle">
-                            Ver clientes
-                            </base-button>
-                            <div v-for="client of props.row.cliente" class="dropdown-item">{{client}}</div>
-                        </base-dropdown>
-                    </center>
-                    
-                </div>
-            </template>
+            
             <template slot="totalGain" slot-scope="props">
                 {{formatPrice(props.row.total)}}
             </template>
@@ -275,6 +262,8 @@ import XLSX from 'xlsx'
 import VueMoment from 'vue-moment'
 var moment = require('moment'); // require
 const dateNew = new Date()
+
+
 export default {
     components: {
         flatPicker,
@@ -294,7 +283,7 @@ export default {
                 type:''
             },
             dates: {
-                range: dateNew,
+                range:   dateNew.getDate()+ "-" +  (dateNew.getMonth()+ 1) +"-"+dateNew.getFullYear(),
                 rangeExcel: dateNew
             },
             configDatePicker: {
@@ -434,7 +423,7 @@ export default {
             })
         },
         async filterSale(){
-            
+            console.log(this.dates.range)
             this.progress = false
             this.inspectorFilter = true
             const splitDate = this.dates.range.split(' a ')
@@ -471,11 +460,15 @@ export default {
                     console.log(error)
                 }
             }else{
-                const dateDesde = new Date(this.dates.range)
+                
+                var f1 = this.dates.range.split("-")
+                var newsD = f1[1]+"-"+f1[0]+"-"+f1[2]
+                var dateDesde = new Date(newsD)
                 const formatDesde =(dateDesde.getMonth() + 1) + "-" + dateDesde.getDate()+"-"+dateDesde.getFullYear() 
                 dateDesde.setDate(dateDesde.getDate() + 1)
                 const formatHasta = (dateDesde.getMonth() + 1)+"-" + dateDesde.getDate()+"-"+dateDesde.getFullYear()
                 const Dates = formatDesde+':'+formatHasta
+                console.log(Dates)
                 try {
                     const sales = await axios.get(endPoint.endpointTarget+'/ventas/findSalesByDay/'+Dates)
                     if (sales.data.status == 'no Sales') {
@@ -514,18 +507,8 @@ export default {
             axios.get(endPoint.endpointTarget+'/ventas', config)
             .then(res => {
                 this.sales = res.data
-                for (let i = 0; i < this.sales.length; i++) {
-                    const datas = this.sales[i].cliente
-                    this.sales[i].cliente = []
-                    if (datas.includes('-')) {
-                        const sp = datas.split("-")
-                        this.sales[i].cliente = sp
-                    }
-                    else{
-                        this.sales[i].cliente.push(datas)
-                    }
-                }
-                console.log(this.sales)
+                
+                
                 this.progress = true
             }).catch(err => {
                 this.modals = {
@@ -549,7 +532,7 @@ export default {
         },
         formatDate(date) {
             let dateFormat = new Date(date)
-			return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
+			return moment(dateFormat).format("DD-MM-YYYY")
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
@@ -668,7 +651,8 @@ export default {
         generateExcel(){
             console.log(this.dates.rangeExcel.length)
             var valid = this.dates.rangeExcel
-            var dates = this.dates.rangeExcel+':not'
+            var f = this.dates.rangeExcel.split("-")
+            var dates = f[1]+"-"+f[0]+"-"+f[2]+':not'
             if (this.dates.rangeExcel.length > 12) {
                 const split = this.dates.rangeExcel.split(' a ')
                 var f1 = split[0].split("-")
