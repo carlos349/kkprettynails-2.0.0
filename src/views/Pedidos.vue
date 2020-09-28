@@ -45,6 +45,19 @@
                             :options="clientsNames"
                             placeholder="Comprador"
                         ></vue-single-select>
+                        <template>
+                            <a-select
+                                mode="multiple"
+                                :default-value="['a1', 'b2']"
+                                style="width: 100%"
+                                placeholder="Please select"
+                                @change="handleChange"
+                            >
+                                <a-select-option v-for="i in services" :key="i.nombre">
+                                {{ i.nombre }}
+                                </a-select-option>
+                            </a-select>
+                        </template>
                         <base-input alternative
                                     type="text"
                                     placeholder="Contacto"
@@ -69,8 +82,8 @@
                         </base-input>
                         
                         <div class="text-center">
-                            <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
-                            <base-button type="primary" v-on:click="registerClients()" v-else class="my-4">{{tipeForm}}</base-button>
+                            
+                            <base-button type="primary" v-on:click="registerClients()" class="my-4">Registrar pedido</base-button>
                         </div>
                         
                     </form>
@@ -253,6 +266,7 @@ moment.locale('es');
         successRegister:false,
         clientsNames: [],
         tipeForm: '',
+        services:'',
         registerClient: {
             name:'',
             id:'',
@@ -513,7 +527,8 @@ moment.locale('es');
     },
     created(){
 		this.getOrders();
-        this.getToken()
+        this.getToken();
+        this.getServices()
     },
     methods: {
         getToken(){
@@ -521,6 +536,13 @@ moment.locale('es');
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
             
+        },
+        getServices(){
+            
+            axios.get(endPoint.endpointTarget+'/servicios')
+            .then(res => {
+				this.services = res.data
+            })
         },
         getOrders(){
             axios.get(endPoint.endpointTarget+'/pedidos/findPending')

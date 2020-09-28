@@ -3289,6 +3289,7 @@
             this.selectedDates.closedArray[pos].comision = 0
             this.selectedDates.design = 0
             let design = this.selectedDates.closedArray[pos].design
+            let comisionDesign = (parseFloat(design) / parseFloat(2))
             
             this.selectedDates.closedArray[pos].total = 0
             this.selectedDates.total = 0
@@ -3297,6 +3298,8 @@
                 if (!this.selectedDates.closedArray[pos].services[index].descuento) {
                         
                         if (discount == 0) {
+                            const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(this.selectedDates.closedArray[pos].services[index].precio)) / 100
+                            this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision) 
                             this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
                         }
                         else{
@@ -3306,17 +3309,20 @@
                             
                             const precioConDescuento = parseFloat(this.selectedDates.closedArray[pos].services[index].precio) * parseFloat(porcentaje)
                             const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(precioConDescuento)) / 100
-                            this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision)
+                            this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision) 
                     
                             this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(precioConDescuento)
                         }
                 }
                 else{ 
+                    const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(this.selectedDates.closedArray[pos].services[index].precio)) / 100
+                    this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision) 
                     this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
                     
                 }
                 
             } 
+            this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comisionDesign)
             this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(design)  
             
             for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
@@ -3325,7 +3331,7 @@
             }
             
             
-            
+            console.log(this.selectedDates.closedArray[pos])
             this.loading = false
         },
         cleanDiscount(i){

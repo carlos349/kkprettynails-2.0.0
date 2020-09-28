@@ -30,7 +30,7 @@
                   class="border-0">
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                       <h3>Datos del servicio</h3> 
+                       <h3>Datos del servicio </h3> 
                     </div>
                 </template>
                 <template>
@@ -798,7 +798,7 @@ export default {
                         }
                     }, 1500);
                 }else{
-                    var ifCheck = this.addDiscount ? false : true
+                    
                     axios.post(endPoint.endpointTarget+'/servicios', {
                         nombreServicio: this.serviceRegister,
                         precioServicio: this.priceRegister,
@@ -807,7 +807,7 @@ export default {
                         prestadores: this.lenderSelecteds,
                         productos:this.itemSelected,
                         categoryRegister: this.categoryRegister,
-                        descuento: ifCheck
+                        descuento: this.addDiscount
                     }).then(res => {
                         if (res.data.status == 'Servicio creado') {
                             this.modals = {
