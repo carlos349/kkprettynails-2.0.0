@@ -278,7 +278,7 @@
                                 <base-input v-on:keyup="validRegister()" placeholder="Correo" v-model="dateClient.id" addon-left-icon="ni ni-key-25"></base-input>
                             </div>
                             <div class="col-md-6">
-                                <base-input placeholder="Correo" v-model="dateClient.infoOne" addon-left-icon="ni ni-fat-add"></base-input>
+                                <base-input placeholder="Teléfono" v-model="dateClient.infoOne" addon-left-icon="ni ni-fat-add"></base-input>
                             </div>
                             <div class="col-md-6">
                                 <base-input placeholder="Instagram" v-model="dateClient.infoTwo" addon-left-icon="ni ni-fat-add"></base-input>

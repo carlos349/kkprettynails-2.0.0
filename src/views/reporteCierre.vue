@@ -230,6 +230,9 @@ import endPoint from '../../config-endpoint/endpoint.js'
 import jwtDecode from 'jwt-decode'
 // COMPONENTS
 import VueBootstrap4Table from 'vue-bootstrap4-table'
+import * as moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 export default {
     components: {
         VueBootstrap4Table 
@@ -324,7 +327,7 @@ export default {
                     systemEgress:res.data.sistema.egreso,
                     closeId:res.data.identificacionCierre,
                     code:res.data._id,
-                    date:date.getDate()+"-"+(date.getMonth() + 1)+"-"+date.getFullYear()
+                    date: moment(date).format('DD-MM-YYYY')
                 } 
                 console.log(this.closedInfo.date)
             })
