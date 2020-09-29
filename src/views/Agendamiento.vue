@@ -622,7 +622,7 @@
                         <tr class="pt-2">
                             <th style="border-radius:5px !important;border:none" class="text-left pl-4 text-white pt-2">
                                 
-                                <input autocomplete="off" style="outline:none !important;background-color:white !important" type="text" id="myInput" v-on:keyup="myFunction()" class="inputFind" placeholder="Filtrar servicios"/>
+                                <input autocomplete="off" style="outline:none !important;background-color:white !important;color:black !important" type="text" id="myInput" v-on:keyup="myFunction()" class="inputFind" placeholder="Filtrar servicios"/>
                             </th>
                             <th style="color:white;border:none" class="text-center pl-5 pt-2">
                                 Precio 
@@ -2460,10 +2460,11 @@
             this.selectedDates.total = 0      
             for (let index = 0; index < this.selectedDates.closedArray.length; index++) {
                 const position = this.selectedDates.closedArray[index]
+                const des = parseFloat(this.selectedDates.closedArray[index].design) / parseFloat(2)
                 position.total = position.descuento > 0 ? position.total - (position.total / 100 * position.descuento) : position.total
-                position.totalLocal = position.descuento > 0 ? position.totalLocal - (position.totalLocal / 100 * position.descuento) : position.totalLocal
+                position.totalLocal = position.descuento > 0 ? position.totalLocal - (position.totalLocal / 100 * position.descuento) + parseFloat(des) : parseFloat(position.totalLocal) + parseFloat(des)
                 position.ifrecomend= position.descuento == 15 ? 1 : 0
-                position.comision = position.descuento > 0 ? position.comision - (position.comision / 100 * position.descuento) : position.comision
+                position.comision = position.descuento > 0 ? position.comision - (position.comision / 100 * position.descuento) + parseFloat(des) : parseFloat(position.comision) + parseFloat(des)
             }
             for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
                 this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)
@@ -2471,6 +2472,8 @@
             }  
             
             this.dateModals.modal5 = true
+            
+            console.log(this.selectedDates.closedArray)
         },
         hundredPorcent(tipo){
         
@@ -3333,7 +3336,7 @@
             }
             
             
-            console.log(this.selectedDates.closedArray[pos])
+            
             this.loading = false
         },
         cleanDiscount(i){

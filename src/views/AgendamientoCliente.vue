@@ -376,14 +376,11 @@
                 </template>
             </card>
         </modal>
-        <modal :show.sync="modals.modal4"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-lg">
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-4 py-lg-4"
-                  class="border-0">
-                <template>
+        <a-modal v-model="modals.modal4" class="modalFinal" :footer="null" @cancel="location" :closable="false" >
+            <template slot="footer">
+                <br><br><br>
+            </template>
+            <template>
                     <div class="text-muted text-center">
                         <h3>Formulario de compra</h3>
                     </div>
@@ -401,14 +398,29 @@
                             </p>
                             <hr>
                             <p class="text-center">+56 9 7262 8949</p>
+                            <base-button class="mb-5" style="width:200px;float:right;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="location">
+                                Finalizar
+                            </base-button>
                         </div>
+                        
                     </div>
-                    <base-button style="width:200px;float:right;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="location">
-                        Finalizar
-                    </base-button>
+                    
+                    
                 </template>
+                
+        </a-modal>
+        <modal :show.sync="modals.modal45"
+               body-classes="p-0"
+               ref="modalFinal"
+               modal-classes="modal-dialog-centered modal-lg">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-4 py-lg-4"
+                  class="border-0">
+                
             </card>
         </modal>
+        
         <modal :show.sync="modals.modal5"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
@@ -592,7 +604,7 @@
         methods: {
             handleFileUpload(){
                 this.file = this.$refs.file.files[0]
-                console.log(this.file)
+                
             },
             location(){
                 this.modals = {
@@ -732,7 +744,7 @@
             finallyAgend(){
                 this.ifDisabled = true
                 const phone = '+56 '+this.registerUser.phone
-                console.log(phone)
+                
                 if (this.registerUser.pay == 'Transferencia' && this.file == '') {
                     this.modals = {
                         modal3: true,
@@ -796,6 +808,8 @@
                                         this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
                                         this.modals.modal2 = false
                                         this.modals.modal4 = true
+                                        
+                                        $("#overlay").toggle()
                                         this.ifDisabled = false
                                     }    
                                 })   
@@ -814,6 +828,7 @@
                                     this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
                                     this.modals.modal2 = false
                                     this.modals.modal4 = true
+                                    $("#overlay").toggle()
                                 }    
                             })
                         }
@@ -839,6 +854,7 @@
                 }
             },
             async getLenders(){
+                
                 try{
                     const Lenders = await axios.get(endPoint.endpointTarget+'/manicuristas') 
                     this.lenders = Lenders.data 
@@ -851,7 +867,7 @@
                 this.registerDate.employeSelect = ''
                 this.validSchedule = false
                 this.noOneLender = true
-                console.log(this.registerDate.serviceSelectds[index])
+                
                 this.selectHourService(index, lender, time, resTime)
             },
             insertData(index, lender, restTime, Class, duration, check, lenders){
@@ -912,7 +928,7 @@
                 }
             },
             selectHourService(index, lender, time, resTime){
-                console.log(lender+'--'+ time+'--'+ resTime+'--'+index)
+                
                 const finalTime =  this.registerDate.design == 'si' ? time + 15 : time
                 this.registerDate.serviceSelectds[index].lenderSelectData = {
                     employe: lender,
@@ -954,14 +970,14 @@
                     const q = index - 1 
                     for (let j = 0; j <= q; j++) {
                         const element = this.registerDate.serviceSelectds[j];
-                        console.log(element.realLender +' == '+ lender)
+                        
                         if (element.realLender == lender) {
                             editBlock = true
                             indexEdit = j
                         }
                     }
                     if (editBlock) {
-                        console.log(this.arrayLendersSelect)
+                        
                         this.registerDate.serviceSelectds[index].blocks = this.registerDate.serviceSelectds[indexEdit].blocks
                         axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
                             array: this.registerDate.serviceSelectds[index].blocks,
@@ -975,7 +991,7 @@
                     }else{
                         this.registerDate.serviceSelectds[index].blocks = res.data
                         this.arrayLendersSelect.push({index: index, lender: lender}) 
-                        console.log(this.arrayLendersSelect)
+                        
                         this.registerDate.serviceSelectds[index].validAfter = true
                     }
                     
@@ -1059,7 +1075,7 @@
                         }
                     }  
                 }
-                console.log(lendersName)
+                
                 if (this.posibleLenders.length > 0) {
                     for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                         var verify = 0
@@ -1110,7 +1126,7 @@
                 this.registerDate.sort = '' 
                 this.validHour = false
                 this.totalPrice = this.totalPrice - precio
-                console.log(this.registerDate.serviceSelectds)
+                
             },
             plusService(index, service, time, comision, precio, lenders, card){
                 $('#'+card).css({'border-bottom': 'solid 8px #174c8e'})
@@ -1126,7 +1142,7 @@
                         }
                     }  
                 }
-                console.log(lendersName)
+                
                 if (this.posibleLenders.length > 0) {
                     for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                         var verify = 0
@@ -1176,7 +1192,7 @@
                 this.registerDate.sort = '' 
                 this.validHour = false
                 this.totalPrice = this.totalPrice - precio
-                console.log(this.registerDate.serviceSelectds)
+                
             },
             generateLender(){
                 this.finalyLenders = []
@@ -1218,14 +1234,14 @@
                 setTimeout(() => {
                     $('#'+open).toggle('slow')
                 }, 500);
-                console.log(indexService)
+                
                 var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].Horario.split(":") 
                 this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
                 this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
-                console.log(this.registerDate.serviceSelectds[indexService])
+                
                 axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDate.serviceSelectds[indexService].lenderSelectData)
                 .then(res => {
-                    console.log(res)
+                    
                     var editBlock = false
                     if (indexService > 0) {
                         for (let i = 0; i < this.arrayLendersSelect.length; i++) {
@@ -1236,8 +1252,7 @@
                         }
                     }
                     if (editBlock) {
-                        console.log('entre en el edit')
-                        console.log(this.arrayLendersSelect)
+                        
                         axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
                             array: this.registerDate.serviceSelectds[indexService].blocks,
                             time: this.registerDate.serviceSelectds[indexService].lenderSelectData.time
@@ -1252,7 +1267,7 @@
                             var valid = 0 
                             for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                                 const element = this.registerDate.serviceSelectds[index];
-                                console.log(element.start)
+                                
                                 if (element.start == "") {
                                     valid = 1
                                 }
@@ -1263,7 +1278,7 @@
                             $('#'+check).addClass('fa-check')
                         })
                     }else{
-                        console.log('NO entre en el edit')
+                        
                         for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
                             res.data[i].validator = 'select'
                             this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
@@ -1274,7 +1289,7 @@
                         var valid = 0 
                         for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                             const element = this.registerDate.serviceSelectds[index];
-                            console.log(element.start)
+                            
                             if (element.start == "") {
                                 valid = 1
                             }
@@ -1357,7 +1372,7 @@
             },
             validateLastStep() {
                 window.scrollTo(0, 0);
-                console.log(this.validHour)
+                
                 if (this.validHour) {
                     this.validWizard = true
                     return this.validHour
@@ -1368,7 +1383,7 @@
                 
             },
             openCalendar(){ 
-                console.log(this.dates.simple)
+                
                 this.configDate.inline = false
                 setTimeout(() => {
                     const split = this.dates.simple.split('-')
@@ -1409,7 +1424,7 @@
                             setTimeout(() => {
                                 axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                                 .then(res => {
-                                    console.log(res)
+                                    
                                     var counter = 0
                                     var validCounter = false
                                     for (let i = 0; i < res.data.array.length; i++) {
@@ -1426,12 +1441,12 @@
                                             break
                                         }
                                     }
-                                    console.log(validCounter)
+                                    
                                     if (validCounter) {
                                         const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
                                         const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
                                         this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
-                                        console.log(finalLender)
+                                        
                                         this.registerDate.serviceSelectds[0].valid = true
                                         this.registerDate.serviceSelectds[0].realLender = finalLender
                                         this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
@@ -1464,7 +1479,7 @@
                             setTimeout(() => {
                                 axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                                 .then(res => {
-                                    console.log(res)
+                                    
                                     for (let j = 0; j < 3; j++) {
                                         for (let index = 0; index < res.data.array.length; index++) {
                                             const element = res.data.array[index];
@@ -1487,12 +1502,12 @@
                                             break
                                         }
                                     }
-                                    console.log(validCounter)
+                                    
                                     if (validCounter) {
                                         const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
                                         const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
                                         this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
-                                        console.log(finalLender)
+                                        
                                         this.registerDate.serviceSelectds[0].valid = true
                                         this.registerDate.serviceSelectds[0].realLender = finalLender
                                         this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
@@ -1615,7 +1630,7 @@
                     const service = await axios.get(endPoint.endpointTarget+'/servicios/getServiceInfo/'+id)
                     if (service.data.status == 'ok') {
                         service.data.service.set = false
-                        console.log(service.data.service)
+                        
                         this.serviceSelected.unshift(service.data.service)
                         this.servicePhoneCount.unshift({count: 0})
                     }else{
@@ -1641,6 +1656,12 @@
                 }catch(err){
                     console.log(err)
                 }
+            },
+            proba(){
+                console.log("yes")
+            },
+            noop(){
+                console.log("yes")
             }
         }
     }
@@ -2033,5 +2054,22 @@ color: #174c8e;
     .borderRight{
         border:none;
     }
+}
+#overlay {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.modalFinal .ant-modal-body{
+    height: 430px;
 }
 </style>

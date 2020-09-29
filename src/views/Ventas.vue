@@ -109,9 +109,9 @@
                                     </a-descriptions>
                                 </template> -->
                                 <div class="text-muted text-left">
-                                    <h3><strong>Servicio(s): </strong><span v-for="services of arreglo.servicios" :key="services">{{services.servicio}} </span></h3> 
+                                    <h3><strong>Servicio(s): </strong><span v-for="services of arreglo.servicios" :key="services"> <br> {{services.servicio}}  </span></h3> 
                                      <h3><strong class="text-left">Diseño: </strong><span >{{formatPrice(arreglo.design)}} </span></h3>
-                                     <h3><strong class="text-left">Descuento: </strong><span v-for="discounts of arreglo.descuento" :key="discounts" >{{discounts.split(" / ")[1]}}<br> </span></h3> 
+                                     <h3><strong class="text-left">Descuento: </strong><span v-for="discounts of arreglo.descuento" :key="discounts" >{{discounts}}%<br> </span></h3> 
                                 </div>
                                 <div class="text-muted">
                                     <h2 class="text-center">Montos</h2>
