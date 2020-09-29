@@ -3287,6 +3287,7 @@
             this.loading = true
             let discount = this.selectedDates.closedArray[pos].descuento
             this.selectedDates.closedArray[pos].comision = 0
+            this.selectedDates.closedArray[pos].totalLocal = 0
             this.selectedDates.design = 0
             let design = this.selectedDates.closedArray[pos].design
             let comisionDesign = (parseFloat(design) / parseFloat(2))
@@ -3324,6 +3325,7 @@
             } 
             this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comisionDesign)
             this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(design)  
+            this.selectedDates.closedArray[pos].totalLocal = parseFloat(this.selectedDates.closedArray[pos].total) - parseFloat(this.selectedDates.closedArray[pos].comision)
             
             for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
                 this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)

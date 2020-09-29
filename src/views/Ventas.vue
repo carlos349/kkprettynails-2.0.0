@@ -48,13 +48,14 @@
                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  body-classes="py-lg-5"
                   class="border-0">
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
                        <h3>Detalle de la venta</h3> 
                     </div>
                 </template>
+                
                 <template>
                     <tabs fill class="flex-column flex-md-row">
                         <card shadow>
@@ -70,20 +71,20 @@
                                     <h3><strong>N° de Venta: </strong>V-{{arreglo.count}}</h3> 
                                 </div>
                                 <div class="text-muted text-left">
-                                    <h3><strong>Prestador/es: <br/></strong><span v-for="lender of arreglo.EmployeComision" :key="lender">({{lender.employe}} - {{formatPrice(lender.comision)}}) <br/></span></h3> 
+                                    <h3><strong>Prestador/es: <br/></strong><span v-for="lender of arreglo.EmployeComision" :key="lender">{{lender.employe}}  <br/></span></h3> 
                                 </div>
                                 <div class="text-muted text-left">
-                                    <h3><strong>Cliente/s: <br/></strong><span v-for="client of arreglo.cliente" :key="client">({{client}}) <br/></span></h3> 
+                                    <h3><strong>Cliente/s: <br/></strong><span v-for="client of arreglo.cliente" :key="client">{{client}} <br/></span></h3> 
                                 </div>
                                 <hr>
                                 <div class="text-muted mt-2">
                                     <h2 class="text-center">Metodos de pago</h2>
-                                    <h3 v-if="arreglo.pagoEfectivo > 0"><strong class="text-left pl-5">Efectivo: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoEfectivo)}} </span></h3> 
-                                    <h3 v-if="arreglo.pagoRedCDebito > 0"><strong class="text-left pl-5">Débito: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoRedCDebito)}} </span></h3>
-                                    <h3 v-if="arreglo.pagoRedCCredito > 0"><strong class="text-left pl-5">Crédito: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoRedCCredito)}} </span></h3>
-                                    <h3 v-if="arreglo.pagoTransf > 0"><strong class="text-left pl-5">Transferencia: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoTransf)}} </span></h3>
-                                    <h3 v-if="arreglo.pagoOtros > 0"><strong class="text-left pl-5">Otros: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoOtros)}} </span></h3>
-                                    <h3 v-if="arreglo.pagoOrder > 0"><strong class="text-left pl-5">Pago por pedido: </strong><span class="float-right pr-5">{{formatPrice(arreglo.pagoOrder)}} </span></h3>
+                                    <h3 v-if="arreglo.pagoEfectivo > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Efectivo</badge></strong><span class="float-right pr-5"> </span></h3> 
+                                    <h3 v-if="arreglo.pagoRedCDebito > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Débito</badge> </strong><span class="float-right pr-5"> </span></h3>
+                                    <h3 v-if="arreglo.pagoRedCCredito > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Crédito</badge></strong><span class="float-right pr-5"> </span></h3>
+                                    <h3 v-if="arreglo.pagoTransf > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Transferencia</badge> </strong><span class="float-right pr-5"></span></h3>
+                                    <h3 v-if="arreglo.pagoOtros > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Otros</badge></strong><span class="float-right pr-5"> </span></h3>
+                                    <h3 v-if="arreglo.pagoOrder > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Pago por pedido</badge> </strong><span class="float-right pr-5"> </span></h3>
                                 </div>
                             </tab-pane>
                             <tab-pane>
@@ -91,14 +92,32 @@
                                     <i class="ni ni-bell-55 mr-2"></i>
                                     Avanzados
                                 </span>
+                                <!-- <template>
+                                    <a-descriptions title="Detalles avanzados" :column="5" size="small" layout="vertical" bordered>
+                                        <a-descriptions-item label="Servicio">
+                                            <span v-for="services of arreglo.servicios" :key="services">-{{services.servicio}} <br> </span>
+                                        </a-descriptions-item>
+                                        <a-descriptions-item label="Precio">
+                                            <span v-for="services of arreglo.servicios" :key="services">{{formatPrice(services.precio)}} <br> </span>
+                                        </a-descriptions-item>
+                                        <a-descriptions-item label="%">
+                                            <span v-for="discounts of arreglo.descuento" :key="discounts" >{{discounts.split(" / ")[1]}}<br> </span>
+                                        </a-descriptions-item>
+                                        <a-descriptions-item label="Total">
+                                        $60.00
+                                        </a-descriptions-item>
+                                    </a-descriptions>
+                                </template> -->
                                 <div class="text-muted text-left">
-                                    <h3><strong>Servicios: </strong><span v-for="services of arreglo.servicios" :key="services">({{services.servicio}}) </span></h3> 
+                                    <h3><strong>Servicio(s): </strong><span v-for="services of arreglo.servicios" :key="services">{{services.servicio}} </span></h3> 
+                                     <h3><strong class="text-left">Diseño: </strong><span >{{formatPrice(arreglo.design)}} </span></h3>
+                                     <h3><strong class="text-left">Descuento: </strong><span v-for="discounts of arreglo.descuento" :key="discounts" >{{discounts.split(" / ")[1]}}<br> </span></h3> 
                                 </div>
                                 <div class="text-muted">
                                     <h2 class="text-center">Montos</h2>
-                                    <h3><strong class="text-left">Descuentos <br></strong><span v-for="discounts of arreglo.descuento" :key="discounts" >({{discounts}})<br> </span></h3> 
+                                    
                                     <h3><strong class="text-left">Comisión total: </strong><span class="float-right">{{formatPrice(arreglo.comision)}} </span></h3> 
-                                    <h3><strong class="text-left">Diseño: </strong><span class="float-right">{{formatPrice(arreglo.design)}} </span></h3>
+                                   
                                     <h3><strong class="text-left">Local: </strong><span class="float-right">{{formatPrice(arreglo.ganancialocal)}} </span></h3>
                                     <h3><strong class="text-left">Total: </strong><span class="float-right">{{formatPrice(arreglo.total)}} </span></h3>
                                 </div>
@@ -125,7 +144,7 @@
                   class="border-0">
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                       <h3>Aplica filtros para tu reporte</h3> 
+                       <h3>Aplica filtros para tu reporte {{dates.rangeExcel}}</h3> 
                     </div>
                 </template>
                 <template>
@@ -284,7 +303,7 @@ export default {
             },
             dates: {
                 range:   dateNew.getDate()+ "-" +  (dateNew.getMonth()+ 1) +"-"+dateNew.getFullYear(),
-                rangeExcel: dateNew
+                rangeExcel: dateNew.getDate()+ "-" +  (dateNew.getMonth()+ 1) +"-"+dateNew.getFullYear()
             },
             configDatePicker: {
                 allowInput: true, 
