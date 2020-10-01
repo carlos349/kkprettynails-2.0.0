@@ -726,17 +726,148 @@
                                 <template slot="total" slot-scope="text">
                                     <p>{{formatPrice(text)}} $</p>
                                 </template>
-                                <template slot="expandedRowRender" slot-scope="record">
-                                    <div class="row">
+                                <template slot="expandedRowRender" slot-scope="record, index">
+                                    <div class="row mb-4">
                                         <dt>Servicio(s): </dt>
                                         <div  v-for="(service, index) of record.services" class="row ml-3" :key="service.servicio"> 
                                             <div v-if="index == 0">
-                                                {{' '+service.servicio}}
+                                                {{' '+service.servicio}} 
                                             </div>
                                             <div v-else>
                                                 , {{service.servicio}}
                                             </div>
                                         </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <a-tooltip placement="top">
+                                            <template slot="title">
+                                            <span>Efectivo </span>
+                                            </template>
+                                            <div class="col-3">
+                                                <div class="input-group mb-2">
+                                                    <div v-on:click="hundredPorcent('efectivo',index)" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
+                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                                            <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
+                                                        <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
+                                                        </span>
+                                                        
+                                                    </div>
+                                                    <currency-input
+                                                        v-model="record.payCash"
+                                                        locale="de"
+                                                        placeholder="Efectivo"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </a-tooltip>
+                                        <a-tooltip placement="top">
+                                            <template slot="title">
+                                            <span>Transferencia</span>
+                                            </template>
+                                            <div class="col-3">
+                                                <div  class="input-group mb-2">
+                                                    <div  v-on:click="hundredPorcent('trasnferencia',index)" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
+                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                                            <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
+                                                        <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
+                                                        </span>
+                                                    </div>
+                                                    <currency-input
+                                                        v-model="record.payTransfer"
+                                                        locale="de"
+                                                        placeholder="Transferencia"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </a-tooltip>
+                                        <a-tooltip placement="top">
+                                            <template slot="title">
+                                            <span>Otros</span>
+                                            </template>
+                                            <div class="col-3">
+                                                <div  class="input-group mb-2">
+                                                    <div v-on:click="hundredPorcent('others',index)" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
+                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                                            <b class="others" style="font-size:0.6em;display:none">100%</b>
+                                                        <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
+                                                        </span>
+                                                    </div>
+                                                    <currency-input
+                                                        v-model="record.payOthers"
+                                                        locale="de"
+                                                        placeholder="Otros"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </a-tooltip>
+                                        <a-tooltip placement="top">
+                                            <template slot="title">
+                                            <span>Código de pedido</span>
+                                            </template>
+                                            <div class="col-3">
+                                                <div  class="input-group mb-2">
+                                                    <div class="input-group-prepend w-25 text-center ">
+                                                        <span style="background-color: #e9ecef;" class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                                            <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="shopping-cart"/>	
+                                                        </span>
+                                                    </div>
+                                                    <currency-input
+                                                        v-model="record.payOrder"
+                                                        locale="de"
+                                                        readonly
+                                                        placeholder="Código de pedido"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </a-tooltip>
+                                        <a-tooltip placement="top">
+                                            <template slot="title">
+                                            <span>Débito</span>
+                                            </template>
+                                            <div class="col-4 mx-auto">
+                                                <div class="input-group mb-2">
+                                                    <div v-on:click="hundredPorcent('debit',index)" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
+                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                                            <b class="debit" style="font-size:0.6em;display:none">100%</b>
+                                                            <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
+                                                        </span>
+                                                    </div>
+                                                    <currency-input
+                                                        v-model="record.payDebit"
+                                                        locale="de"
+                                                        placeholder="Débito"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </a-tooltip>
+                                        <a-tooltip placement="top">
+                                            <template slot="title">
+                                            <span>Crédito</span>
+                                            </template>
+                                            <div class="col-4 mx-auto">
+                                                <div class="input-group mb-2">
+                                                    <div v-on:click="hundredPorcent('credit',index)" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
+                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
+                                                            <b class="credit" style="font-size:0.6em;display:none">100%</b>
+                                                            <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
+                                                        </span>
+                                                    </div>
+                                                    <currency-input
+                                                        v-model="record.payCredit"
+                                                        locale="de"
+                                                        placeholder="Crédito"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </a-tooltip>
+                                        
                                     </div>
                                     
                                 </template>
@@ -767,128 +898,85 @@
                     <div class="row">
                         <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Efectivo</span>
+                            <span>Todo efectivo</span>
                             </template>
-                            <div class="col-3">
+                            <div class="col-2">
                                 <div class="input-group mb-2">
-                                    <div v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
-                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                            <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
-                                        <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
+                                    <div v-on:click="hundredPorcent('allEfectivo',0)" class="input-group-prepend text-center w-100 hundred">
+                                        <span style="border-radius:0.375rem !important" class="inputsVenta allEfectivo w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <font-awesome-icon  class="" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>
+                                         <dt class="ml-2"> Todo efectivo </dt>	
                                         </span>
                                         
                                     </div>
-                                    <currency-input
-                                        v-model="payCash"
-                                        locale="de"
-                                        placeholder="Efectivo"
-                                        class="form-control"
-                                    />
+                                    
                                 </div>
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Transferencia</span>
+                            <span>Todo transferencia</span>
                             </template>
-                            <div class="col-3">
+                            <div class="col-2">
                                 <div  class="input-group mb-2">
-                                    <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
-                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                            <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
-                                        <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
+                                    <div  v-on:click="hundredPorcent('allTrasnferencia',0)" class="input-group-prepend text-center w-100 hundred">
+                                        <span style="border-radius:0.375rem !important" class="inputsVenta allTransferencia w-100 input-group-text" id="inputGroup-sizing-lg">
+                                        <font-awesome-icon  class="" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>
+                                        <dt class="ml-1"> Todo transferencia </dt>	
                                         </span>
                                     </div>
-                                    <currency-input
-                                        v-model="payTransfer"
-                                        locale="de"
-                                        placeholder="Transferencia"
-                                        class="form-control"
-                                    />
+                                    
                                 </div>
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Otros</span>
+                            <span>Todo otros</span>
                             </template>
-                            <div class="col-3">
+                            <div class="col-2">
                                 <div  class="input-group mb-2">
-                                    <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
-                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                            <b class="others" style="font-size:0.6em;display:none">100%</b>
-                                        <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
+                                    <div v-on:click="hundredPorcent('allOthers',0)" class="input-group-prepend text-center w-100 hundred">
+                                        <span style="border-radius:0.375rem !important" class="inputsVenta allOthers w-100 input-group-text" id="inputGroup-sizing-lg">
+                                            
+                                        <font-awesome-icon  class="" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>
+                                        <dt class="ml-3"> Todo otros </dt>		
                                         </span>
                                     </div>
-                                    <currency-input
-                                        v-model="payOthers"
-                                        locale="de"
-                                        placeholder="Otros"
-                                        class="form-control"
-                                    />
+                                    
                                 </div>
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Código de pedido</span>
+                            <span>Todo débito</span>
                             </template>
-                            <div class="col-3">
-                                <div  class="input-group mb-2">
-                                    <div class="input-group-prepend w-25 text-center ">
-                                        <span style="background-color: #e9ecef;" class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                            <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="shopping-cart"/>	
-                                        </span>
-                                    </div>
-                                    <currency-input
-                                        v-model="payOrder"
-                                        locale="de"
-                                        readonly
-                                        placeholder="Código de pedido"
-                                        class="form-control"
-                                    />
-                                </div>
-                            </div>
-                        </a-tooltip>
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Débito</span>
-                            </template>
-                            <div class="col-4 mx-auto">
+                            <div class="col-3 mx-auto">
                                 <div class="input-group mb-2">
-                                    <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
-                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                            <b class="debit" style="font-size:0.6em;display:none">100%</b>
-                                            <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
+                                    <div v-on:click="hundredPorcent('allDebit',0)" class="input-group-prepend text-center w-100 hundred">
+                                        <span style="border-radius:0.375rem !important" class="inputsVenta allDebit w-100 input-group-text" id="inputGroup-sizing-lg">
+                                            
+                                            <img style="width:15%;padding-left:1px" class=""  src="../assets/trans1.png" alt="">	
+                                            <dt class="ml-5"> Todo débito </dt>	
                                         </span>
                                     </div>
-                                    <currency-input
-                                        v-model="payDebit"
-                                        locale="de"
-                                        placeholder="Débito"
-                                        class="form-control"
-                                    />
+                                    
                                 </div>
                             </div>
                         </a-tooltip>
                         <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Crédito</span>
+                            <span>Todo crédito</span>
                             </template>
-                            <div class="col-4 mx-auto">
+                            <div class="col-3 mx-auto">
                                 <div class="input-group mb-2">
-                                    <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
-                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                            <b class="credit" style="font-size:0.6em;display:none">100%</b>
-                                            <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
+                                    <div v-on:click="hundredPorcent('allCredit',0)" class="input-group-prepend text-center w-100 hundred">
+                                        <span style="border-radius:0.375rem !important" class="inputsVenta allCredit w-100 input-group-text" id="inputGroup-sizing-lg">
+                                            
+                                            <img class="" style="width:15%;padding-left:1px"  src="../assets/trans1.png" alt="">
+                                            <dt class="ml-5"> Todo crédito </dt>	
                                         </span>
                                     </div>
-                                    <currency-input
-                                        v-model="payCredit"
-                                        locale="de"
-                                        placeholder="Crédito"
-                                        class="form-control"
-                                    />
+                                    	
                                 </div>
                             </div>
                         </a-tooltip>
@@ -2459,6 +2547,14 @@
             this.dateModals.modal4 = false 
             this.selectedDates.total = 0      
             for (let index = 0; index < this.selectedDates.closedArray.length; index++) {
+                this.selectedDates.closedArray[index].payCash = 0
+                this.selectedDates.closedArray[index].payTransfer = 0
+                this.selectedDates.closedArray[index].payOthers = 0
+                this.selectedDates.closedArray[index].payCredit = 0
+                this.selectedDates.closedArray[index].payDebit = 0
+                this.selectedDates.closedArray[index].payOrder = 0
+                this.selectedDates.closedArray[index].porqueSi = []
+                this.selectedDates.closedArray[index].porqueSi.push({NoEntendi:"Bueh"})
                 const position = this.selectedDates.closedArray[index]
                 const des = parseFloat(this.selectedDates.closedArray[index].design) / parseFloat(2)
                 position.total = position.descuento > 0 ? position.total - (position.total / 100 * position.descuento) : position.total
@@ -2475,48 +2571,121 @@
             
             console.log(this.selectedDates.closedArray)
         },
-        hundredPorcent(tipo){
-        
+        hundredPorcent(tipo, index){
+            var service = this.selectedDates.closedArray[index].services[0].servicio
+            this.selectedDates.closedArray[index].services[0].servicio = " "
+            console.log(this.selectedDates.closedArray[index])
             if (tipo == "efectivo") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payCash = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
+                this.selectedDates.closedArray[index].payCash = 0
+                this.selectedDates.closedArray[index].payTransfer = 0
+                this.selectedDates.closedArray[index].payOthers = 0
+                this.selectedDates.closedArray[index].payCredit = 0
+                this.selectedDates.closedArray[index].payDebit = 0
+                this.selectedDates.closedArray[index].payCash = parseFloat(this.selectedDates.closedArray[index].total) - parseFloat(this.selectedDates.closedArray[index].payOrder)
+                $(".inputsVenta").removeClass("allSelected")
             }
             if (tipo == "trasnferencia") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payTransfer = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
+                this.selectedDates.closedArray[index].payCash = 0
+                this.selectedDates.closedArray[index].payTransfer = 0
+                this.selectedDates.closedArray[index].payOthers = 0
+                this.selectedDates.closedArray[index].payCredit = 0
+                this.selectedDates.closedArray[index].payDebit = 0
+                this.selectedDates.closedArray[index].payTransfer = parseFloat(this.selectedDates.closedArray[index].total) - parseFloat(this.selectedDates.closedArray[index].payOrder)
+                $(".inputsVenta").removeClass("allSelected")
             }
             if (tipo == "others") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payOthers = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
+                this.selectedDates.closedArray[index].payCash = 0
+                this.selectedDates.closedArray[index].payTransfer = 0
+                this.selectedDates.closedArray[index].payOthers = 0
+                this.selectedDates.closedArray[index].payCredit = 0
+                this.selectedDates.closedArray[index].payDebit = 0
+                this.selectedDates.closedArray[index].payOthers = parseFloat(this.selectedDates.closedArray[index].total) - parseFloat(this.selectedDates.closedArray[index].payOrder)
+                $(".inputsVenta").removeClass("allSelected")
             }
             if (tipo == "credit") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payCredit = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
+                this.selectedDates.closedArray[index].payCash = 0
+                this.selectedDates.closedArray[index].payTransfer = 0
+                this.selectedDates.closedArray[index].payOthers = 0
+                this.selectedDates.closedArray[index].payCredit = 0
+                this.selectedDates.closedArray[index].payDebit = 0
+                this.selectedDates.closedArray[index].payCredit = parseFloat(this.selectedDates.closedArray[index].total) - parseFloat(this.selectedDates.closedArray[index].payOrder)
+                $(".inputsVenta").removeClass("allSelected")
             }
             if (tipo == "debit") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payDebit = parseFloat(this.selectedDates.total) - parseFloat(this.payOrder)
+                this.selectedDates.closedArray[index].payCash = 0
+                this.selectedDates.closedArray[index].payTransfer = 0
+                this.selectedDates.closedArray[index].payOthers = 0
+                this.selectedDates.closedArray[index].payCredit = 0
+                this.selectedDates.closedArray[index].payDebit = 0
+                this.selectedDates.closedArray[index].payDebit = parseFloat(this.selectedDates.closedArray[index].total) - parseFloat(this.selectedDates.closedArray[index].payOrder)
+                $(".inputsVenta").removeClass("allSelected")
             }
+            if (tipo == "allEfectivo") {
+                for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
+                    this.selectedDates.closedArray[i].payCash = 0
+                    this.selectedDates.closedArray[i].payTransfer = 0
+                    this.selectedDates.closedArray[i].payOthers = 0
+                    this.selectedDates.closedArray[i].payCredit = 0
+                    this.selectedDates.closedArray[i].payDebit = 0
+                    this.selectedDates.closedArray[i].payCash = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                }
+                $(".inputsVenta").removeClass("allSelected")
+                $("."+tipo).addClass("allSelected")
+                
+            }
+            if (tipo == "allTransferencia") {
+                for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
+                    this.selectedDates.closedArray[i].payCash = 0
+                    this.selectedDates.closedArray[i].payTransfer = 0
+                    this.selectedDates.closedArray[i].payOthers = 0
+                    this.selectedDates.closedArray[i].payCredit = 0
+                    this.selectedDates.closedArray[i].payDebit = 0
+                    this.selectedDates.closedArray[i].payTransfer = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                }
+                $(".inputsVenta").removeClass("allSelected")
+                $("."+tipo).addClass("allSelected")
+                
+            }
+            if (tipo == "allOthers") {
+                for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
+                    this.selectedDates.closedArray[i].payCash = 0
+                    this.selectedDates.closedArray[i].payTransfer = 0
+                    this.selectedDates.closedArray[i].payOthers = 0
+                    this.selectedDates.closedArray[i].payCredit = 0
+                    this.selectedDates.closedArray[i].payDebit = 0
+                    this.selectedDates.closedArray[i].payOthers = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                }
+                $(".inputsVenta").removeClass("allSelected")
+                $("."+tipo).addClass("allSelected")
+                
+            }
+            if (tipo == "allCredit") {
+                for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
+                    this.selectedDates.closedArray[i].payCash = 0
+                    this.selectedDates.closedArray[i].payTransfer = 0
+                    this.selectedDates.closedArray[i].payOthers = 0
+                    this.selectedDates.closedArray[i].payCredit = 0
+                    this.selectedDates.closedArray[i].payDebit = 0
+                    this.selectedDates.closedArray[i].payDebit = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                }
+                $(".inputsVenta").removeClass("allSelected")
+                $("."+tipo).addClass("allSelected")
+                
+            }
+            if (tipo == "allDebit") {
+                for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
+                    this.selectedDates.closedArray[i].payCash = 0
+                    this.selectedDates.closedArray[i].payTransfer = 0
+                    this.selectedDates.closedArray[i].payOthers = 0
+                    this.selectedDates.closedArray[i].payCredit = 0
+                    this.selectedDates.closedArray[i].payDebit = 0
+                    this.selectedDates.closedArray[i].payTransfer = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                }
+                $(".inputsVenta").removeClass("allSelected")
+                $("."+tipo).addClass("allSelected")
+                
+            }
+            this.selectedDates.closedArray[index].services[0].servicio = service
         },
         hundredMouseOver(tipo){
 			$("."+tipo).toggle()
@@ -2525,41 +2694,42 @@
 			$("."+tipo).toggle()
         },
         processSelected(){
-            if (this.payCash == '') {
-				this.payCash = 0
-			}
-			if (this.payOthers == '') {
-				this.payOthers = 0
-			}
-			if (this.payTransfer == '') {
-				this.payTransfer = 0
-			}
-			if (this.payDebit == '') {
-				this.payDebit = 0
-			}
-			if (this.payCredit == '') {
-				this.payCredit = 0
+            let totalFormadePago = 0
+            for (let e = 0; e < this.selectedDates.closedArray.length; e++) {
+                const element = this.selectedDates.closedArray[e];
+                if (element.payCash == '') {
+				    element.payCash = 0
+                }
+                if (element.payOthers == '') {
+                    element.payOthers = 0
+                }
+                if (element.payTransfer == '') {
+                    element.payTransfer = 0
+                }
+                if (element.payDebit == '') {
+                    element.payDebit = 0
+                }
+                if (element.payCredit == '') {
+                    element.payCredit = 0
+                }
+                if (element.payOrder == '') {
+                    element.payOrder = 0
+                }
+                totalFormadePago = parseFloat(totalFormadePago)+ parseFloat(element.payCash) + parseFloat(element.payOthers) + parseFloat(element.payTransfer) + parseFloat(element.payDebit) + parseFloat(element.payCredit) + parseFloat(element.payOrder)
             }
-            if (this.payOrder == '') {
-				this.payOrder = 0
-			}
+            
             if (this.selectedDates.discount == '') {
             this.selectedDates.discount = 0
             }
             if (this.selectedDates.design == '') {
             this.selectedDates.design = 0
             }
-            const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit) + parseFloat(this.payOrder)
+            
 
             if (this.selectedDates.total == totalFormadePago) {
                 axios.post(endPoint.endpointTarget+'/ventas/processEndDates', {
                     arrayClosedDates:this.selectedDates.closedArray,
-                    pagoEfectivo: this.payCash,
-                    pagoOtros: this.payOthers,
-                    pagoRedCDebito: this.payDebit,
-                    pagoRedCCredito: this.payCredit,
-                    pagoTransf: this.payTransfer,
-                    pagoOrder: this.payOrder
+                    
                     
                 })
                 .then(res => {
@@ -2619,7 +2789,7 @@
             else{
                 this.$swal({
                     type: 'error',
-                    title: 'Total no coincide, con los montos en medios de pago',
+                    title: 'Total no coincide, asegurate de seleccionar bien los montos en cada servicio',
                     showConfirmButton: false,
                     timer: 2000
                 })
@@ -3336,7 +3506,7 @@
             }
             
             
-            
+            console.log(this.selectedDates.closedArray)
             this.loading = false
         },
         cleanDiscount(i){
@@ -3749,5 +3919,7 @@
     .borderOnly .modal-content{
         border-radius: 0 0.4375rem 0.4375rem 0.4375rem !important;
     }
-    
+    .allSelected{
+        background-color: #263c59;
+    }
 </style>

@@ -78,13 +78,22 @@
                                 </div>
                                 <hr>
                                 <div class="text-muted mt-2">
-                                    <h2 class="text-center">Metodos de pago</h2>
-                                    <h3 v-if="arreglo.pagoEfectivo > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Efectivo</badge></strong><span class="float-right pr-5"> </span></h3> 
-                                    <h3 v-if="arreglo.pagoRedCDebito > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Débito</badge> </strong><span class="float-right pr-5"> </span></h3>
-                                    <h3 v-if="arreglo.pagoRedCCredito > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Crédito</badge></strong><span class="float-right pr-5"> </span></h3>
-                                    <h3 v-if="arreglo.pagoTransf > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Transferencia</badge> </strong><span class="float-right pr-5"></span></h3>
-                                    <h3 v-if="arreglo.pagoOtros > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Otros</badge></strong><span class="float-right pr-5"> </span></h3>
-                                    <h3 v-if="arreglo.pagoOrder > 0"><strong class="text-left pl-5"><badge type="success" class="text-default">Pago por pedido</badge> </strong><span class="float-right pr-5"> </span></h3>
+                                    <h2 class="text-center">Metodos de pago </h2>
+                                    <div class="row">
+                                       <h3 class="col-4 mx-auto" v-if="arreglo.pagoEfectivo >0"><strong class="text-left"><base-button class="col-12" type="secondary">Efectivo <badge type="success" class="text-default">{{formatPrice(arreglo.pagoEfectivo)}}</badge></base-button></strong><span class="float-right pr-5"> </span></h3> 
+
+                                        <h3 class="col-4 mx-auto" v-if="arreglo.pagoRedCDebito > 0"><strong class="text-left"><base-button class="col-12" type="secondary">Débito <badge type="success" class="text-default">{{formatPrice(arreglo.pagoRedCDebito)}}</badge></base-button> </strong><span class="float-right pr-5"> </span></h3>
+
+                                        <h3 class="col-4 mx-auto" v-if="arreglo.pagoRedCCredito > 0"><strong class="text-left"><base-button class="col-12" type="secondary">Crédito <badge type="success" class="text-default">{{formatPrice(arreglo.pagoRedCCredito)}}</badge></base-button></strong><span class="float-right pr-5"> </span></h3>
+
+
+                                        <h3 class="col-4 mx-auto" v-if="arreglo.pagoOtros > 0"><strong class="text-left"><base-button class="col-12" type="secondary">Otras <badge type="success" class="text-default">{{formatPrice(arreglo.pagoOtros)}}</badge></base-button></strong><span class="float-right pr-5"> </span></h3>
+
+                                        <h3 class="col-6 mx-auto" v-if="arreglo.pagoTransf > 0"><strong class="text-left"><base-button class="col-12" type="secondary">Transferencia <br> <badge type="success" class="text-default">{{formatPrice(arreglo.pagoTransf)}}</badge></base-button> </strong><span class="float-right pr-5"></span></h3>
+
+                                        <h3 class="col-6 mx-auto" v-if="arreglo.pagoOrder > 0"><strong class="text-left"><base-button class="col-12" type="secondary">Pago por pedido <badge type="success" class="text-default">{{formatPrice(arreglo.pagoOrder)}}</badge> </base-button></strong><span class="float-right pr-5"> </span></h3> 
+                                    </div>
+                                    
                                 </div>
                             </tab-pane>
                             <tab-pane>
@@ -116,10 +125,11 @@
                                 <div class="text-muted">
                                     <h2 class="text-center">Montos</h2>
                                     
-                                    <h3><strong class="text-left">Comisión total: </strong><span class="float-right">{{formatPrice(arreglo.comision)}} </span></h3> 
-                                   
-                                    <h3><strong class="text-left">Local: </strong><span class="float-right">{{formatPrice(arreglo.ganancialocal)}} </span></h3>
-                                    <h3><strong class="text-left">Total: </strong><span class="float-right">{{formatPrice(arreglo.total)}} </span></h3>
+                                    <base-button class="w-100 text-left" type="secondary"><span class="text-left">Comisión total:</span><badge type="success" class="text-default float-right">{{formatPrice(arreglo.comision)}}</badge></base-button>
+
+                                    <base-button class="w-100 text-left" type="secondary"><span class="text-left">Local:</span><badge type="success" class="text-default float-right">{{formatPrice(arreglo.ganancialocal)}}</badge></base-button>
+
+                                    <base-button class="w-100 text-left" type="secondary"><span class="text-left">Total:</span><badge type="success" class="text-default float-right">{{formatPrice(arreglo.total)}}</badge></base-button>
                                 </div>
                             </tab-pane>
                         </card>
