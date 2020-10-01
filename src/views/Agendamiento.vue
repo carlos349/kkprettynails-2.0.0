@@ -687,7 +687,7 @@
                   header-classes="bg-white pb-5"
                   body-classes=""
                   class="border-0">
-                  <div v-bind:style="{  'height': '42px', 'z-index' : '1000' }" v-on:click="dateModals.modal6 = true, codeArticulo = ''" class="p-2 menuVerRedoAgenda navSCodeAgenda" >
+                  <!-- <div v-bind:style="{  'height': '42px', 'z-index' : '1000' }" v-on:click="dateModals.modal6 = true, codeArticulo = ''" class="p-2 menuVerRedoAgenda navSCodeAgenda" >
                         <div class="row">
                             <div class="col-2 pt-1">
                                 <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="pager" />
@@ -696,7 +696,7 @@
                                 <b style="font-size:14px;">Validar código</b>	
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                   <div v-on:click="noBlank">
                     <div class="row">
                         <div class="col-sm-12 tbCell">
@@ -919,7 +919,7 @@
                             </template>
                             <div class="col-2">
                                 <div  class="input-group mb-2">
-                                    <div  v-on:click="hundredPorcent('allTrasnferencia',0)" class="input-group-prepend text-center w-100 hundred">
+                                    <div  v-on:click="hundredPorcent('allTransferencia',0)" class="input-group-prepend text-center w-100 hundred">
                                         <span style="border-radius:0.375rem !important" class="inputsVenta allTransferencia w-100 input-group-text" id="inputGroup-sizing-lg">
                                         <font-awesome-icon  class="" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>
                                         <dt class="ml-1"> Todo transferencia </dt>	
