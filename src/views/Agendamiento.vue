@@ -2666,7 +2666,7 @@
                     this.selectedDates.closedArray[i].payOthers = 0
                     this.selectedDates.closedArray[i].payCredit = 0
                     this.selectedDates.closedArray[i].payDebit = 0
-                    this.selectedDates.closedArray[i].payDebit = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                    this.selectedDates.closedArray[i].payCredit = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
                 }
                 $(".inputsVenta").removeClass("allSelected")
                 $("."+tipo).addClass("allSelected")
@@ -2679,7 +2679,7 @@
                     this.selectedDates.closedArray[i].payOthers = 0
                     this.selectedDates.closedArray[i].payCredit = 0
                     this.selectedDates.closedArray[i].payDebit = 0
-                    this.selectedDates.closedArray[i].payTransfer = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                    this.selectedDates.closedArray[i].payDebit = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
                 }
                 $(".inputsVenta").removeClass("allSelected")
                 $("."+tipo).addClass("allSelected")

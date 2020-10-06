@@ -262,7 +262,7 @@ export default {
                 systemEgress:0,
                 closeId:0,
                 code:0,
-                date:'maldito'
+                date:'Error de fecha'
             },
             modals: {
                 modal1:false,
