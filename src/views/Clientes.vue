@@ -48,7 +48,7 @@
                                                 class="mb-3"
                                                 placeholder="Nombre"
                                                 v-model="registerClient.name"
-                                                v-on:change="validRegister()"
+                                                v-on:keyup="validRegister()"
                                                 addon-left-icon="ni ni-single-02"
                                                 addon-right-icon="fa fa-asterisk text-danger">
                                     </base-input>
@@ -56,7 +56,7 @@
                                                 type="text"
                                                 placeholder="Correo"
                                                 v-model="registerClient.id"
-                                                v-on:change="validRegister()"
+                                                v-on:keyup="validRegister()"
                                                 addon-left-icon="fa fa-address-card"
                                                 addon-right-icon="fa fa-asterisk text-danger">
                                     </base-input>
@@ -117,7 +117,7 @@
                                     class="mb-3"
                                     placeholder="Nombre"
                                     v-model="registerClient.name"
-                                    v-on:change="validRegister()"
+                                    v-on:keyup="validRegister()"
                                     addon-left-icon="ni ni-single-02"
                                     addon-right-icon="fa fa-asterisk text-danger"
                                     >
@@ -126,13 +126,15 @@
                                     type="text"
                                     placeholder="Correo"
                                     v-model="registerClient.id"
-                                    v-on:change="validRegister()"
+                                    v-on:keyup="validRegister()"
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto adicional"
+                                    placeholder="Teléfono"
+                                    v-on:input="formatPhone"
+                                    maxlength="9"
                                     v-model="registerClient.contactOne"
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fas fa-plus text-default">
@@ -443,13 +445,13 @@ import XLSX from 'xlsx'
                     } 
                 }
             }
-            
+            const phone = this.registerClient.contactOne.length > 0 ? '+56 '+this.registerClient.contactOne : ''
             axios.post(endPoint.endpointTarget+'/clients', {
                 nombre:this.registerClient.name,
                 identidad:this.registerClient.id,
                 recomendador:this.registerClient.recommender,
                 idRecomender:idRecomender,
-                correoCliente:this.registerClient.contactOne,
+                correoCliente:phone,
                 instagramCliente:this.registerClient.contactTwo,
                 ifCheck: ifCheck
             })
@@ -497,11 +499,28 @@ import XLSX from 'xlsx'
         },
         validRegister(){
             if (this.registerClient.name != '' && this.registerClient.id != '') {
-                this.registerClient.valid = true
+                if (this.registerClient.id.split('@').length == 2) {
+                    if (this.registerClient.id.split('@')[1].split('.').length == 2) {
+                        this.registerClient.valid = true
+                    }else{
+                        this.registerClient.valid = false
+                    }
+                }else{
+                    this.registerClient.valid = false
+                }
             }
             else {
                 this.registerClient.valid = false
             }
+        },
+        formatPhone(){
+            var number = this.registerClient.contactOne.replace(/[^\d]/g, '')
+            if (number.length == 9) {
+                number = number.replace(/(\d{1})(\d{4})/, "$1-$2-");
+            } else if (number.length == 10) {
+                number = number.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+            }
+            this.registerClient.contactOne = number
         },
         MaysPrimera(string){
 			return string.charAt(0).toUpperCase() + string.slice(1);

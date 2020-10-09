@@ -160,7 +160,7 @@
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
-                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && lenders.restDay != getDay" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.resTime, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
+                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
                                                     </base-dropdown>
                                                 </div>
                                             </div>
@@ -556,7 +556,7 @@
                     <base-button slot="title" type="default" class="dropdown-toggle col-12">
                             {{dateData.lenderEdit}}
                     </base-button>
-                    <li v-for="data in employeShow" v-if="data.restDay != new Date(registerDate.date).getDay()" v-on:click="selectEmployeEdit(data.name)">
+                    <li v-for="data in employeShow" v-if="findDayEdit(data.days, dateData.fechaEditPick)" v-on:click="selectEmployeEdit(data.name, dateData.fechaEditPick)">
                         <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
                             <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
                         </base-button>
@@ -1562,7 +1562,7 @@
                     for (let i = 0; i < this.users.length; i++) {
                         console.log()
                         if (this.employes[index].nombre + " / " + this.employes[index].documento == this.users[i].linkLender && this.users[i].userImage.length > 1) {
-                            this.employeShow.push({name:this.employes[index].nombre, img:endPoint.imgEndpoint+this.users[i].userImage,restDay:this.employes[index].restDay, restTime:this.employes[index].restTime, class:this.employes[index].class})
+                            this.employeShow.push({name:this.employes[index].nombre, img:endPoint.imgEndpoint+this.users[i].userImage,days: this.employes[index].days, class:this.employes[index].class})
                             insp = false
                             break
                         }
@@ -1572,7 +1572,7 @@
                         
                     }
                     if (insp == true) {
-                        this.employeShow.push({name:this.employes[index].nombre,img:'no',restDay:this.employes[index].restDay, restTime:this.employes[index].restTime,class:this.employes[index].class})
+                        this.employeShow.push({name:this.employes[index].nombre,img:'no',restDay:this.employes[index].restDay, days:this.employes[index].days,class:this.employes[index].class})
                     }
                 }
   			})
@@ -1675,17 +1675,17 @@
             this.ifServices = true
             this.countServices[index].count++
             this.registerDae.duration = this.registerDae.duration + parseFloat(time)
-            var lendersName = [{lender: 'Primera disponible', resTime: '', restDay: '', class: '', valid:true}]
+            var lendersName = [{lender: 'Primera disponible', days: '', restDay: '', class: '', valid:true}]
             for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                 for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
                     if (this.lenders[indexThree]._id == lenders[indexTwo]) {
-                        lendersName.push({lender: this.lenders[indexThree].nombre, resTime: this.lenders[indexThree].restTime, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
+                        lendersName.push({lender: this.lenders[indexThree].nombre, days: this.lenders[indexThree].days, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
                         break
                     }
                 }  
             }
             
-            this.registerDae.serviceSelectds.push({comision: comision, precio: precio, discount:discount, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false }) 
+            this.registerDae.serviceSelectds.push({comision: comision, precio: precio, discount:discount, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false }) 
             this.validHour = false  
             this.totalPrice = parseFloat(this.totalPrice) + parseFloat(precio)
             
@@ -2261,20 +2261,27 @@
             this.dateData.classFinalEdit = classDate
             this.dateData.duracionEdit = TotalMinutes
             this.dateData.dateEditId = id
-            this.selectEmployeEdit(empleada)
+            this.selectEmployeEdit(empleada, this.dateData.fechaEditPick)
         },
-        selectEmployeEdit(name){
+        selectEmployeEdit(name, date){
+            console.log(this.employes)
+            const getDay = new Date(date+' 10:00').getDay()
             for (let index = 0; index < this.employes.length; index++) {
-                
-            if (this.employes[index].nombre == name) {
-                
-                this.dateData.lenderEdit = this.employes[index].nombre
-                this.dateData.classFinalEdit = this.employes[index].class
-                this.dateData.resTimeFinalEdit = this.employes[index].restTime
-                this.insertDateTwo()
-                break
-            }
-            
+                if (this.employes[index].nombre == name) {
+                    var rest = ''
+                    console.log(this.employes[index].days)
+                    for (let j = 0; j < this.employes[index].days.length; j++) {
+                        const element = this.employes[index].days[j];
+                        if (element.day == getDay) {
+                            rest = element.hours[0]+'/'+element.hours[1]
+                        }
+                    }
+                    this.dateData.lenderEdit = this.employes[index].nombre
+                    this.dateData.classFinalEdit = this.employes[index].class
+                    this.dateData.resTimeFinalEdit = rest
+                    this.insertDateTwo()
+                    break
+                }
             }
               
         },
@@ -2693,6 +2700,45 @@
 		hundredMouseNonOver(tipo){
 			$("."+tipo).toggle()
         },
+        findDay(days, lender){
+            console.log(days)
+            if (lender != 'Primera disponible') {
+                if (days.length > 0) {
+                    var entry = 0
+                    for (let index = 0; index < days.length; index++) {
+                        const element = days[index];
+                        if (element.day == this.getDay ) {
+                            entry = 1
+                            return true
+                            break
+                        }
+                    }
+                    return false
+                }else{
+                    return false
+                }
+            }else{
+                return true
+            }
+            
+        },
+        findDayEdit(days, date){
+            const getDay = new Date(date+' 10:00').getDay()
+            if (days.length > 0) {
+                var entry = 0
+                for (let index = 0; index < days.length; index++) {
+                    const element = days[index];
+                    if (element.day == getDay ) {
+                        entry = 1
+                        return true
+                        break
+                    }
+                }
+                return false
+            }else{
+                return false
+            }
+        },
         processSelected(){
             let totalFormadePago = 0
             for (let e = 0; e < this.selectedDates.closedArray.length; e++) {
@@ -3089,7 +3135,7 @@
                             
                             if (validCounter) {
                                 const finalLender = this.registerDae.serviceSelectds[0].lenders[counter].lender
-                                const finalRestime = this.registerDae.serviceSelectds[0].lenders[counter].resTime
+                                const finalRestime = this.registerDae.serviceSelectds[0].lenders[counter].days
                                 this.registerDae.serviceSelectds[0].class = this.registerDae.serviceSelectds[0].lenders[counter].class
                                 
                                 this.registerDae.serviceSelectds[0].valid = true
@@ -3145,7 +3191,7 @@
                             
                             if (validCounter) {
                                 const finalLender = this.registerDae.serviceSelectds[0].lenders[counter].lender
-                                const finalRestime = this.registerDae.serviceSelectds[0].lenders[counter].resTime
+                                const finalRestime = this.registerDae.serviceSelectds[0].lenders[counter].days
                                 this.registerDae.serviceSelectds[0].class = this.registerDae.serviceSelectds[0].lenders[counter].class
                                 
                                 this.registerDae.serviceSelectds[0].valid = true
@@ -3180,8 +3226,14 @@
             this.registerDae.employeSelect = ''
             this.validSchedule = false
             this.noOneLender = true
-            
-            this.selectHourService(index, lender, time, resTime)
+            var rest = ''
+            for (let index = 0; index < resTime.length; index++) {
+                const element = resTime[index];
+                if (element.day == this.getDay) {
+                    rest = element.hours[0]+'/'+element.hours[1]
+                }
+            }
+            this.selectHourService(index, lender, time, rest)
         },
         selectHourService(index, lender, time, resTime){
            
@@ -3204,7 +3256,7 @@
                         element.sort = ''
                         element.realLender = ''
                         element.blocks = []
-                        element.restTime = ''
+                        element.days = ''
                         element.class = ''
                         element.valid = false
                         this.arrayLendersSelect = []
@@ -3346,7 +3398,7 @@
                         }
                     }
                     const finalLender = this.registerDae.serviceSelectds[finalIndex].lenders[counter].lender
-                    const finalRestime = this.registerDae.serviceSelectds[finalIndex].lenders[counter].resTime
+                    const finalRestime = this.registerDae.serviceSelectds[finalIndex].lenders[counter].days
                     this.registerDae.serviceSelectds[finalIndex].class = this.registerDae.serviceSelectds[finalIndex].lenders[counter].class
                     this.registerDae.serviceSelectds[finalIndex].realLender = finalLender
                     this.validMultiLender(finalIndex, finalLender, this.registerDae.serviceSelectds[finalIndex].duration, finalRestime)
@@ -3388,26 +3440,26 @@
                     this.registerDae.serviceSelectds[index].end = ''
                     this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
                     this.registerDae.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                    this.registerDae.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                    this.registerDae.serviceSelectds[index].days = lenders[lenderSelect].days
                     this.registerDae.serviceSelectds[index].class = lenders[lenderSelect].class
                     this.validHour = false 
-                    this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                    this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].days, check)
                 }else{
                     this.registerDae.serviceSelectds[index].start = ''
                     this.registerDae.serviceSelectds[index].end = ''
                     this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
                     this.registerDae.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                    this.registerDae.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                    this.registerDae.serviceSelectds[index].days = lenders[lenderSelect].days
                     this.registerDae.serviceSelectds[index].class = lenders[lenderSelect].class
                     this.validHour = false 
-                    this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                    this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].days, check)
                 }
             }else{
                 this.registerDae.serviceSelectds[index].start = ''
                 this.registerDae.serviceSelectds[index].end = ''
                 this.registerDae.serviceSelectds[index].lender = lender
                 this.registerDae.serviceSelectds[index].realLender = lender
-                this.registerDae.serviceSelectds[index].restTime = restTime
+                this.registerDae.serviceSelectds[index].days = restTime
                 this.registerDae.serviceSelectds[index].class = Class
                 this.validHour = false 
                 this.validMultiLender(index, lender, duration, restTime, check) 
@@ -3632,6 +3684,9 @@
         background-color: rgba(23, 43, 77, 0.7);
     }
     .vuecal__cell--selected{
+        z-index: 0 !important;
+    }
+    .vuecal__cell--selected .vuecal__cell-content{
         z-index: 0 !important;
     }
     .vuecal__body{

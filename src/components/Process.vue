@@ -293,19 +293,21 @@
                                         class="mb-3"
                                         placeholder="Nombre"
                                         v-model="registerClient.name"
-                                        v-on:change="validRegister(2)"
+                                        v-on:keyup="validRegister(2)"
                                         addon-left-icon="ni ni-single-02">
                             </base-input>
                             <base-input alternative
                                         type="text"
                                         placeholder="Contacto principal"
                                         v-model="registerClient.id"
-                                        v-on:change="validRegister(2)"
+                                        v-on:keyup="validRegister(2)"
                                         addon-left-icon="fa fa-address-card">
                             </base-input>
                             <base-input alternative
                                         type="text"
                                         placeholder="Contacto adicional"
+                                        v-on:input="formatPhone"
+                                        maxlength="9"
                                         v-model="registerClient.contactOne"
                                         addon-left-icon="fa fa-address-card">
                             </base-input>
@@ -771,10 +773,31 @@ export default {
             if (valid == 1) {
                 this.registerService.valid = this.registerService.lenderSelecteds.length > 0 && this.registerService.serviceRegister != '' && this.registerService.priceRegister > 0 && this.registerService.timeRegister != 'Seleccione el tiempo' && this.registerService.comissionRegister != '' ? true : false
             }else if (valid == 2) {
-                this.registerClient.valid = this.registerClient.name != '' && this.registerClient.id != '' ? true : false
+                if (this.registerClient.name != '' && this.registerClient.id != '') {
+                    if (this.registerClient.id.split('@').length == 2) {
+                        if (this.registerClient.id.split('@')[1].split('.').length == 2) {
+                            this.registerClient.valid = true
+                        }else{
+                            this.registerClient.valid = false
+                        }
+                    }else{
+                        this.registerClient.valid = false
+                    }
+                }else{
+                    this.registerClient.valid = false
+                }
             }else{
                 this.cashFunds.valid = this.cashFunds.cashName != '' && this.cashFunds.cashAmount > 0 ? true : false
             }
+        },
+        formatPhone(){
+            var number = this.registerClient.contactOne.replace(/[^\d]/g, '')
+            if (number.length == 9) {
+                number = number.replace(/(\d{1})(\d{4})/, "$1-$2-");
+            } else if (number.length == 10) {
+                number = number.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+            }
+            this.registerClient.contactOne = number
         },
         registerFund(){
 			axios.post(endPoint.endpointTarget+'/ventas/registerFund', {
@@ -862,11 +885,12 @@ export default {
         },
         registerClients(){
             var ifCheck = this.registerClient.discount ? 0 : 1
+            const phone = this.registerClient.contactOne.length > 0 ? '+56 '+this.registerClient.contactOne : ''
             axios.post(endPoint.endpointTarget+'/clients', {
                 nombre:this.registerClient.name,
                 identidad:this.registerClient.id,
                 recomendador:this.registerClient.recommender,
-                correoCliente:this.registerClient.contactOne,
+                correoCliente:phone,
                 instagramCliente:this.registerClient.contactTwo,
                 ifCheck: ifCheck
             })

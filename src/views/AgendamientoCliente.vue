@@ -38,7 +38,7 @@
                                                                 <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.nombre, service.tiempo, 'cardS'+index, service.precio)"></i></button>
                                                                 <span class="span-button-service">{{serviceCount[index].count}}</span>
                                                                 <button class="button-service-right" 
-                                                                v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores, 'cardS'+index)"
+                                                                v-on:click="plusService(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores, 'cardS'+index, service.descuento)"
                                                                 ><i class="fa fa-plus"></i></button>
                                                             </div>
                                                             
@@ -79,7 +79,7 @@
                                                     <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessServicePhone(index, service.nombre, service.tiempo, 'cardSP'+index, service.precio)"></i></button>
                                                     <span class="span-button-service">{{servicePhoneCount[index].count}}</span>
                                                     <button class="button-service-right" 
-                                                    v-on:click="plusServicePhone(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores, 'cardSP'+index)"
+                                                    v-on:click="plusServicePhone(index, service.nombre, service.tiempo, service.comision, service.precio, service.prestadores, 'cardSP'+index, service.descuento)"
                                                     ><i class="fa fa-plus"></i></button>
                                                 </div>
                                                 
@@ -140,7 +140,7 @@
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
-                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && lenders.restDay != getDay" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.resTime, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
+                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
                                                     </base-dropdown>
                                                 </div>
                                             </div>
@@ -321,7 +321,7 @@
                                 </base-input>
                             </div>
                             <div class="col-md-6">
-                                <label v-if="registerUser.pay == 'Transferencia'" for="pay">Comprobante de pago <span style="color:red;">*</span></label>
+                                <label v-if="registerUser.pay == 'Transferencia'" for="pay">Comprobante de pago</label>
                                 <input alternative
                                     v-if="registerUser.pay == 'Transferencia'"
                                     type="file"
@@ -687,7 +687,7 @@
                     splitTwo = split[1].split('.')
                 }
                 if (this.registerUser.pay == 'Transferencia') {
-                    if (this.file != '', this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
+                    if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
                         if (split.length == 2) {
                             if (splitTwo.length == 2) {
                                 this.validRegister = true
@@ -744,97 +744,75 @@
             finallyAgend(){
                 this.ifDisabled = true
                 const phone = '+56 '+this.registerUser.phone
-                
-                if (this.registerUser.pay == 'Transferencia' && this.file == '') {
-                    this.modals = {
-                        modal3: true,
-                        message: "Por favor, agregue el comprobante de pago.",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.ifDisabled = false
-                        this.modals = {
-                            modal1:false,
-                            modal2:true,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 3000);
-                }else{
-                    const name = this.registerUser.name+' '+this.registerUser.lastName
-                    axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
-                        name: name,
-                        mail: this.registerUser.mail,
-                        number: phone,
-                        referidoId: ''
-                    })
-                    .then(res => {
-                        this.client = res.data.data.nombre+' / '+res.data.data.identidad
-                        var lenderFinal = ''
-                        var hourFinal = ''
-                        for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                            const element = this.registerDate.serviceSelectds[index];
-                            if (index > 0){
-                                lenderFinal = lenderFinal+' - '+element.realLender
-                                hourFinal = hourFinal+' - '+element.start+'Hrs'
-                            }else{
-                                lenderFinal = element.realLender
-                                hourFinal = element.start+'Hrs'
-                            }
-                        }
-                        if (this.registerUser.pay == 'Transferencia') {
-                            let formData = new FormData();
-                            formData.append('file', this.file)
-                            axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                }
-                            })
-                            .then(res => {
-                                axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
-                                    dataDate: this.registerDate,
-                                    date: this.finalDate,
-                                    client: this.registerUser,
-                                    pdf: res.data.nameFile,
-                                    ifClient: true
-                                })
-                                .then(res => {
-                                    if (res.data.status == "cita creada") {
-                                        this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
-                                        this.modals.modal2 = false
-                                        this.modals.modal4 = true
-                                        
-                                        $("#overlay").toggle()
-                                        this.ifDisabled = false
-                                    }    
-                                })   
-                            })
+                const name = this.registerUser.name+' '+this.registerUser.lastName
+                axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
+                    name: name,
+                    mail: this.registerUser.mail,
+                    number: phone,
+                    referidoId: ''
+                })
+                .then(res => {
+                    this.client = res.data.data.nombre+' / '+res.data.data.identidad
+                    var lenderFinal = ''
+                    var hourFinal = ''
+                    for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                        const element = this.registerDate.serviceSelectds[index];
+                        if (index > 0){
+                            lenderFinal = lenderFinal+' - '+element.realLender
+                            hourFinal = hourFinal+' - '+element.start+'Hrs'
                         }else{
+                            lenderFinal = element.realLender
+                            hourFinal = element.start+'Hrs'
+                        }
+                    }
+                    if (this.file != '') {
+                        let formData = new FormData();
+                        formData.append('file', this.file)
+                        axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                        .then(res => {
                             axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
                                 dataDate: this.registerDate,
                                 date: this.finalDate,
                                 client: this.registerUser,
-                                pdf: 'not',
+                                pdf: res.data.nameFile,
                                 ifClient: true
                             })
                             .then(res => {
                                 if (res.data.status == "cita creada") {
-                                    this.ifDisabled = false
                                     this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
                                     this.modals.modal2 = false
                                     this.modals.modal4 = true
+                                    
                                     $("#overlay").toggle()
+                                    this.ifDisabled = false
                                 }    
-                            })
-                        }
-                        
-                    })
-                }
+                            })   
+                        })
+                    }else{
+                        axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                            dataDate: this.registerDate,
+                            date: this.finalDate,
+                            client: this.registerUser,
+                            pdf: 'not',
+                            ifClient: true
+                        })
+                        .then(res => {
+                            if (res.data.status == "cita creada") {
+                                this.ifDisabled = false
+                                this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                this.modals.modal2 = false
+                                this.modals.modal4 = true
+                                $("#overlay").toggle()
+                            }    
+                        })
+                    }
+                    
+                })
+                
             },
             async getServices(){
                 try{
@@ -867,8 +845,15 @@
                 this.registerDate.employeSelect = ''
                 this.validSchedule = false
                 this.noOneLender = true
-                
-                this.selectHourService(index, lender, time, resTime)
+                console.log(resTime)
+                var rest = ''
+                for (let index = 0; index < resTime.length; index++) {
+                    const element = resTime[index];
+                    if (element.day == this.getDay) {
+                        rest = element.hours[0]+'/'+element.hours[1]
+                    }
+                }
+                this.selectHourService(index, lender, time, rest)
             },
             insertData(index, lender, restTime, Class, duration, check, lenders){
                 if (lender == 'Primera disponible') {
@@ -902,26 +887,26 @@
                         this.registerDate.serviceSelectds[index].end = ''
                         this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
                         this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                        this.registerDate.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                        this.registerDate.serviceSelectds[index].days = lenders[lenderSelect].days
                         this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
                         this.validHour = false 
-                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].days, check)
                     }else{
                         this.registerDate.serviceSelectds[index].start = ''
                         this.registerDate.serviceSelectds[index].end = ''
                         this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
                         this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                        this.registerDate.serviceSelectds[index].restTime = lenders[lenderSelect].resTime
+                        this.registerDate.serviceSelectds[index].days = lenders[lenderSelect].days
                         this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
                         this.validHour = false 
-                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].resTime, check)
+                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].days, check)
                     }
                 }else{
                     this.registerDate.serviceSelectds[index].start = ''
                     this.registerDate.serviceSelectds[index].end = ''
                     this.registerDate.serviceSelectds[index].lender = lender
                     this.registerDate.serviceSelectds[index].realLender = lender
-                    this.registerDate.serviceSelectds[index].restTime = restTime
+                    this.registerDate.serviceSelectds[index].days = restTime
                     this.registerDate.serviceSelectds[index].class = Class
                     this.validHour = false 
                     this.validMultiLender(index, lender, duration, restTime, check) 
@@ -1058,19 +1043,18 @@
                     })
                     .catch(err => { console.log(err) })
                 }
-                
             },
-            plusServicePhone(index, service, time, comision, precio, lenders, card){
+            plusServicePhone(index, service, time, comision, precio, lenders, card, discount){
                 $('#'+card).css({'border-bottom': 'solid 8px #174c8e'})
                 this.ifServices = true
                 this.servicePhoneCount[index].count++
                 this.serviceSelected[index].set = true
                 this.registerDate.duration = this.registerDate.duration + parseFloat(time)
-                var lendersName = [{lender: 'Primera disponible', resTime: '', restDay: '', class: '', valid:true}]
+                var lendersName = [{lender: 'Primera disponible', days: '', restDay: '', class: '', valid:true}]
                 for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                     for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
                         if (this.lenders[indexThree]._id == lenders[indexTwo]) {
-                            lendersName.push({lender: this.lenders[indexThree].nombre, resTime: this.lenders[indexThree].restTime, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
+                            lendersName.push({lender: this.lenders[indexThree].nombre, days: this.lenders[indexThree].days, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
                             break
                         }
                     }  
@@ -1093,7 +1077,7 @@
                         this.posibleLenders.push(lenders[index]) 
                     } 
                 } 
-                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false })
+                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false, discount: discount })
                 this.registerDate.start = ''  
                 this.registerDate.end = '' 
                 this.registerDate.sort = ''    
@@ -1128,16 +1112,16 @@
                 this.totalPrice = this.totalPrice - precio
                 
             },
-            plusService(index, service, time, comision, precio, lenders, card){
+            plusService(index, service, time, comision, precio, lenders, card, discount){
                 $('#'+card).css({'border-bottom': 'solid 8px #174c8e'})
                 this.ifServices = true
                 this.serviceCount[index].count++
                 this.registerDate.duration = this.registerDate.duration + parseFloat(time)
-                var lendersName = [{lender: 'Primera disponible', resTime: '', restDay: '', class: '', valid:true}]
+                var lendersName = [{lender: 'Primera disponible', days: '', restDay: '', class: '', valid:true}]
                 for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                     for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
                         if (this.lenders[indexThree]._id == lenders[indexTwo]) {
-                            lendersName.push({lender: this.lenders[indexThree].nombre, resTime: this.lenders[indexThree].restTime, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
+                            lendersName.push({lender: this.lenders[indexThree].nombre, days: this.lenders[indexThree].days, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
                             break
                         }
                     }  
@@ -1160,12 +1144,13 @@
                         this.posibleLenders.push(lenders[index]) 
                     } 
                 } 
-                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, restTime: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false })
+                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false, discount: discount})
                 this.registerDate.start = ''  
                 this.registerDate.end = '' 
                 this.registerDate.sort = ''    
                 this.validHour = false  
                 this.totalPrice = this.totalPrice + precio
+                console.log(this.registerDate)
             },
             lessService(index, service, time, card, precio){
                 if (this.serviceCount[index].count > 0) {
@@ -1321,7 +1306,7 @@
                             }
                         }
                         const finalLender = this.registerDate.serviceSelectds[finalIndex].lenders[counter].lender
-                        const finalRestime = this.registerDate.serviceSelectds[finalIndex].lenders[counter].resTime
+                        const finalRestime = this.registerDate.serviceSelectds[finalIndex].lenders[counter].days
                         this.registerDate.serviceSelectds[finalIndex].class = this.registerDate.serviceSelectds[finalIndex].lenders[counter].class
                         this.registerDate.serviceSelectds[finalIndex].realLender = finalLender
                         this.validMultiLender(finalIndex, finalLender, this.registerDate.serviceSelectds[finalIndex].duration, finalRestime)
@@ -1379,6 +1364,28 @@
                 }else{
                     this.validWizard = false
                     return this.validHour
+                }
+                
+            },
+            findDay(days, lender){
+                console.log(days)
+                if (lender != 'Primera disponible') {
+                   if (days.length > 0) {
+                       var entry = 0
+                        for (let index = 0; index < days.length; index++) {
+                            const element = days[index];
+                            if (element.day == this.getDay ) {
+                                entry = 1
+                                return true
+                                break
+                            }
+                        }
+                        return false
+                    }else{
+                        return false
+                    }
+                }else{
+                    return true
                 }
                 
             },
@@ -1444,7 +1451,7 @@
                                     
                                     if (validCounter) {
                                         const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
-                                        const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
+                                        const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].days
                                         this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
                                         
                                         this.registerDate.serviceSelectds[0].valid = true
@@ -1505,7 +1512,7 @@
                                     
                                     if (validCounter) {
                                         const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
-                                        const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].resTime
+                                        const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].days
                                         this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
                                         
                                         this.registerDate.serviceSelectds[0].valid = true

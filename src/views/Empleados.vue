@@ -48,51 +48,62 @@
                                      addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
                         <template>
-                            <div class="text-muted text-center mb-3">Horario libre</div>
+                            <div class="text-muted text-center mb-3">Tabla de días</div>
                         </template>
-                        <div class="row">
-                            <template>
-                                <div class="text-muted col-6 text-center">Desde <i style="font-size:.5em;color:#f5365c;position:absolute;top:18%;left:65%" class="fa fa-asterisk"></i> </div>
-                                <div class="text-muted col-6 text-center mb-3">Hasta<i style="font-size:.5em;color:#f5365c;position:absolute;top:30%;left:64%" class="fa fa-asterisk"></i></div>
-                            </template >
-                            <select v-on:change="validRegister()" class="form-control mb-3 mx-auto col-5" v-model="registerEmploye.timeRestOne">
-                                <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
-                                <option style="color:black;" value="12:00">12:00</option>
-                                <option style="color:black;" value="12:30">12:30</option>
-                                <option style="color:black;" value="13:00">13:00</option>
-                                <option style="color:black;" value="13:30">13:30</option>
-                                <option style="color:black;" value="14:00">14:00</option>
-                            </select>
-                            <select v-on:change="validRegister()" class="form-control mb-3 mx-auto col-5" v-model="registerEmploye.timeRestTwo">
-                                <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
-                                <option style="color:black;" value="12:30">12:30</option>
-                                <option style="color:black;" value="13:00">13:00</option>
-                                <option style="color:black;" value="13:30">13:30</option>
-                                <option style="color:black;" value="14:00">14:00</option>
-                                <option style="color:black;" value="14:30">14:30</option>
-                            </select>
-                        </div>
-                        <template>
-                            <div class="text-muted text-center mb-3">
-                                Día libre <i style="font-size:.5em;color:#f5365c;position:absolute;left:58%;bottom:43%" class="fa fa-asterisk"></i>
-                            </div>
-                        </template>
-                        <select v-on:change="validRegister()" class="form-control mb-3 mx-auto" v-model="registerEmploye.dayFree">
-                            <option style="color:black;" selected value="Seleccione el día">Seleccione el día</option>
-                            <option style="color:black;" value="1">Lunes</option>
-                            <option style="color:black;" value="2">Martes</option>
-                            <option style="color:black;" value="3">Miercoles</option>
-                            <option style="color:black;" value="4">Jueves</option>
-                            <option style="color:black;" value="5">Viernes</option>
-                            <option style="color:black;" value="6">Sabado</option>
-                            <option style="color:black;" value="10">Ninguno</option>
-                        </select>
+                        <vue-bootstrap4-table class="text-left styleDays" :rows="days" :columns="columnsDays" :classes="classes" :config="configDays">
+                            <template slot="name" slot-scope="props">
+                                <b class="text-uppercase ml-2">{{props.row.name}}</b>
+                            </template>
+                            <template slot="validation" slot-scope="props">
+                                <center>
+                                    <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
+                                    </base-button>
+                                    <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
+                                    <base-button class="w-50" size="sm" type="success" v-if="props.row.valid" v-on:click="selectHour(props.row.vbt_id)">Horarios</base-button>
+                                    <base-button class="w-50" disabled size="sm" type="danger" v-else v-on:click="selectHour(props.row.vbt_id)">Horarios</base-button>
+                                </center>
+                            </template>
+                        </vue-bootstrap4-table>
                         <div class="text-center">
                             <base-button type="primary" v-if="registerEmploye.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
                             <base-button type="primary" v-on:click="proccess()" v-else class="my-4">{{tipeForm}}</base-button>
                         </div>
                         
                     </form>
+            </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal3"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                        Horarios a bloquear
+                    </div>
+                </template>
+                <template>
+                    <div class="row">
+                        <div class="col-6">
+                            <a-select class="w-100" v-model="from">
+                                <a-select-option v-for="i in fromArray" :key="i">
+                                    {{i}}
+                                </a-select-option>
+                            </a-select>
+                        </div>
+                        <div class="col-6">                
+                            <a-select class="w-100" v-model="to">
+                                <a-select-option v-for="i in toArray" :key="i">
+                                    {{i}}
+                                </a-select-option>
+                            </a-select>
+                        </div>
+                        <base-button type="primary" v-on:click="selectHourFinaly()" class="mt-4 mx-auto">Seleccionar horas</base-button>
+                    </div>
             </template>
             </card>
         </modal>
@@ -114,7 +125,7 @@
                             <template slot="title">
                             <span>Detalles</span>
                             </template>
-                            <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.documento, props.row.restTime, props.row.restDay, props.row._id,props.row.comision)" icon="ni ni-bullet-list-67"></base-button>
+                            <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.documento, props.row.days, props.row._id,props.row.comision)" icon="ni ni-bullet-list-67"></base-button>
                             <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
                         </a-tooltip>
                         
@@ -191,9 +202,7 @@ import jwtDecode from 'jwt-decode'
         registerEmploye: {
             name:'',
             id:'',
-            timeRestOne:"Seleccione el tiempo",
-            timeRestTwo:"Seleccione el tiempo",
-            dayFree:"Seleccione el día",
+            days: [],
             _id:'',
             comision:'',
             valid:false,
@@ -202,10 +211,74 @@ import jwtDecode from 'jwt-decode'
         modals: {
             modal1: false,
             modal2: false,
+            modal3: false,
             message: "",
             icon: '',
             type:''
         },
+        columnsDays: [
+            {
+                label: "Día",
+                name: "name",
+                slot_name:"name",
+                sort: false,
+            },
+            {
+                label: "Acciones",
+                name: "valid",
+                slot_name:"validation",
+                sort: false,
+            }
+        ],
+        configDays: {
+            card_title: "Tabla de días",
+            checkbox_rows: false,
+            rows_selectable : false,
+            highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+            global_search: {
+                placeholder: "Filtre por día",
+                visibility: true,
+                case_sensitive: false
+            },
+            show_refresh_button: false,
+            show_reset_button: false,  
+            selected_rows_info: false,
+            preservePageOnDataChange : false,
+            pagination_info : false,
+            pagination:false
+        },
+        days: [
+            {
+                name: 'Lunes',
+                value: 1,
+                valid: false
+            },
+            {
+                name: 'Martes',
+                value: 2,
+                valid: false
+            },
+            {
+                name: 'Miercoles',
+                value: 3,
+                valid: false
+            },
+            {
+                name: 'Jueves',
+                value: 4,
+                valid: false
+            },
+            {
+                name: 'Viernes',
+                value: 5,
+                valid: false
+            },
+            {
+                name: 'Sabado',
+                value: 6,
+                valid: false
+            }
+        ],
         employes: [],
         columns: [{
                 label: "Nombre",
@@ -288,7 +361,45 @@ import jwtDecode from 'jwt-decode'
         },
         classes: {
             table: "table-bordered table-striped"
-        }     
+        },
+        selectedDays: [],
+        from: 'Seleccione un horario',
+        to: 'Seleccione un horario',
+        fromArray: [
+            '10:00',
+            '10:30',
+            '11:00',
+            '11:30',
+            '12:00',
+            '12:30',
+            '13:00',
+            '13:30',
+            '14:00',
+            '14:30',
+            '15:00',
+            '15:30',
+            '16:00',
+            '16:30',
+            '17:00',
+        ],
+        toArray: [
+            '10:30',
+            '11:00',
+            '11:30',
+            '12:00',
+            '12:30',
+            '13:00',
+            '13:30',
+            '14:00',
+            '14:30',
+            '15:00',
+            '15:30',
+            '16:00',
+            '16:30',
+            '17:00',
+            '17:30'
+        ],
+        editHourIndex: 0
       };
     },
     beforeCreate(){
@@ -308,6 +419,39 @@ import jwtDecode from 'jwt-decode'
         console.log(this.auth)
     },
     methods: {
+        addDay(id, value, valid){
+            if (valid) {
+                this.days[id - 1].valid = false
+                for (let index = 0; index < this.days.length; index++) {
+                    const element = this.days[index];
+                    for (let indexTwo = 0; indexTwo < this.selectedDays.length; indexTwo++) {
+                        const elementTwo = this.selectedDays[indexTwo];
+                        if (value == elementTwo.day) {
+                            this.selectedDays.splice(indexTwo, 1)
+                        }
+                    }
+                }
+                console.log(this.selectedDays)
+                this.validRegister()
+            }else{
+                this.days[id - 1].valid = true
+                this.selectedDays.push({day: value, hours: []})
+            }
+        },
+        selectHour(id){
+            this.modals.modal1 = false
+            this.modals.modal3 = true
+            this.editHourIndex = id - 1
+        },
+        selectHourFinaly(){
+            this.selectedDays[this.editHourIndex].hours = [this.from, this.to]
+            this.modals.modal3 = false
+            this.modals.modal1 = true
+            this.from  = "Seleccione un horario"
+            this.to = "Seleccione un horario"
+            this.validRegister()
+            console.log(this.selectedDays)
+        },
         getEmployes(){
 			axios.get(endPoint.endpointTarget+'/manicuristas')
 			.then(res => {
@@ -335,12 +479,10 @@ import jwtDecode from 'jwt-decode'
         registerEmployes(){
 			const nombre = this.registerEmploye.name.replace(/\s*$/,"");
 			const documento = this.registerEmploye.id.replace(/\s*$/,"");
-			const restTime = this.registerEmploye.timeRestOne+"/"+this.registerEmploye.timeRestTwo	
-				axios.post(endPoint.endpointTarget+'/manicuristas', {
+			axios.post(endPoint.endpointTarget+'/manicuristas', {
 				nombreManicurista: nombre,
 				documentoManicurista:documento,
-				restTime: restTime,
-                restDay: this.registerEmploye.dayFree
+				days: this.selectedDays
 			})
 			.then(res => {
 				if(res.data.status == 'Manicurista ingresada'){
@@ -378,12 +520,10 @@ import jwtDecode from 'jwt-decode'
         updateEmploye(){
 			const nombre = this.registerEmploye.name.replace(/\s*$/,"");
 			const documento = this.registerEmploye.id.replace(/\s*$/,"");
-			const restTime = this.registerEmploye.timeRestOne+"/"+this.registerEmploye.timeRestTwo	
 				axios.put(endPoint.endpointTarget+'/manicuristas/' + this.registerEmploye._id, {
 					nombre: nombre,
 					documento: documento,
-					restTime: restTime,
-					restDay: this.registerEmploye.dayFree,
+					days: this.selectedDays,
 					comision: this.registerEmploye.comision
 				})
 				.then(res => {
@@ -450,16 +590,23 @@ import jwtDecode from 'jwt-decode'
                 }
             })	
 		},
-        pushData(nombre,id,restTime,restDay,_id,comision){
-            var sp = restTime.split("/")
+        pushData(nombre,id,days,_id,comision){
             this.registerEmploye= {
                 name:nombre,
                 id:id,
-                timeRestOne:sp[0],
-                timeRestTwo:sp[1],
-                dayFree:restDay,
+                days: days,
                 _id:_id,
                 comision:comision
+            }
+            this.selectedDays = days
+            for (let index = 0; index < this.days.length; index++) {
+                const element = this.days[index];
+                for (let j = 0; j < days.length; j++) {
+                    const elementTwo = days[j];
+                    if (element.value == elementTwo.day) {
+                        element.valid = true
+                    }
+                }
             }
         },
         validFields(field){
@@ -489,11 +636,15 @@ import jwtDecode from 'jwt-decode'
                 id:'',
                 timeRestOne:"Seleccione el tiempo",
                 timeRestTwo:"Seleccione el tiempo",
-                dayFree:"Seleccione el día",
+                dayFree:[],
                 _id:'',
                 comision:'',
                 valid:false,
                 valid2:false,
+            }
+            this.selectedDays = []
+            for (let index = 0; index < this.days.length; index++) {
+                this.days[index].valid = false
             }
             if (val == 1) {
                 this.modals = {
@@ -512,8 +663,9 @@ import jwtDecode from 'jwt-decode'
             }
         },
         validRegister(){
-            if (this.registerEmploye.name != '' && this.registerEmploye.id != '' && this.registerEmploye.timeRestOne != "Seleccione el tiempo" &&  this.registerEmploye.timeRestTwo != "Seleccione el tiempo" &&  this.registerEmploye.dayFree != "Seleccione el día") {
-                this.registerEmploye.valid = true
+            if (this.registerEmploye.name != '' && this.registerEmploye.id != '' && this.selectedDays.length > 0) {
+                console.log('entre aqui')
+                this.registerEmploye.valid = this.selectedDays[0].hours.length > 0 ? true : false
             }
             else{
                 this.registerEmploye.valid = false
@@ -560,5 +712,14 @@ import jwtDecode from 'jwt-decode'
     }
     .cursor-pointer{
         cursor: pointer;
+    }
+    .styleDays .card-header{
+        display: none;
+    }
+    .styleDays .footer-header{
+        display: none;
+    }
+    .styleDays .vbt-table-tools{
+        display: none;
     }
 </style>
