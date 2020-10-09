@@ -946,7 +946,7 @@
                             element.sort = ''
                             element.realLender = ''
                             element.blocks = []
-                            element.restTime = ''
+                            element.days = ''
                             element.class = ''
                             element.valid = false
                             this.arrayLendersSelect = []
@@ -1067,12 +1067,12 @@
                 for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                     for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
                         if (this.lenders[indexThree]._id == lenders[indexTwo]) {
-                            lendersName.push({lender: this.lenders[indexThree].nombre, days: this.lenders[indexThree].days, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
+                            lendersName.push({lender: this.lenders[indexThree].nombre, days: this.lenders[indexThree].days, class: this.lenders[indexThree].class, valid: true})
                             break
                         }
                     }  
                 }
-                
+                console.log(lendersName)
                 if (this.posibleLenders.length > 0) {
                     for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                         var verify = 0
@@ -1134,7 +1134,7 @@
                 for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
                     for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
                         if (this.lenders[indexThree]._id == lenders[indexTwo]) {
-                            lendersName.push({lender: this.lenders[indexThree].nombre, days: this.lenders[indexThree].days, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
+                            lendersName.push({lender: this.lenders[indexThree].nombre, days: this.lenders[indexThree].days, class: this.lenders[indexThree].class, valid: true})
                             break
                         }
                     }  
@@ -1157,7 +1157,7 @@
                         this.posibleLenders.push(lenders[index]) 
                     } 
                 } 
-                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false, discount: discount})
+                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [], lenderSelectData: {}, valid: false, validAfter: false, discount: discount})
                 this.registerDate.start = ''  
                 this.registerDate.end = '' 
                 this.registerDate.sort = ''    
@@ -1444,7 +1444,7 @@
                             setTimeout(() => {
                                 axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                                 .then(res => {
-                                    
+                                    this.getDay = res.data.day
                                     var counter = 0
                                     var validCounter = false
                                     for (let i = 0; i < res.data.array.length; i++) {
@@ -1477,6 +1477,7 @@
                                         this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
                                         this.readyChange = true
                                     }else{
+                                        console.log(counter+' '+validCounter)
                                         this.modals = {
                                             modal3: true,
                                             message: "No contamos con profesionales disponibles para la fecha seleccionada.",
@@ -1504,7 +1505,7 @@
                             setTimeout(() => {
                                 axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                                 .then(res => {
-                                    
+                                    this.getDay = res.data.day
                                     for (let j = 0; j < 3; j++) {
                                         for (let index = 0; index < res.data.array.length; index++) {
                                             const element = res.data.array[index];
@@ -1513,13 +1514,14 @@
                                     }
                                     var counter = 0
                                     var validCounter = false
+                                    console.log(this.getDay)
                                     for (let i = 0; i < res.data.array.length; i++) {
                                         const element = res.data.array[i];
                                         for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
                                             const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
                                             if (element.name == elementTwo.lender) {
                                                 for (let c = 0; c < elementTwo.days.length; c++) {
-                                                    const elementThree= elementTwo.days[c];
+                                                    const elementThree = elementTwo.days[c];
                                                     if (elementThree.day == this.getDay) {
                                                         counter = j
                                                         validCounter = true
@@ -1544,9 +1546,10 @@
                                         this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
                                         this.readyChange = true
                                     }else{
+                                        console.log(counter+' '+validCounter)
                                         this.modals = {
                                             modal3: true,
-                                            message: "No tenemos hay prestadores disponibles, para la fecha.",
+                                            message: "No contamos con prestadores disponibles, para la fecha.",
                                             icon: 'ni ni-fat-remove ni-5x',
                                             type: 'danger'
                                         }
@@ -1562,9 +1565,7 @@
                                                 type: ''
                                             }
                                         }, 3000);
-                                    }
-                                    
-                                    
+                                    }  
                                 })
                             }, 200); 
                         }
