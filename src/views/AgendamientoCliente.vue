@@ -846,6 +846,7 @@
                 this.validSchedule = false
                 this.noOneLender = true
                 console.log(resTime)
+                console.log(this.getDay)
                 var rest = ''
                 for (let index = 0; index < resTime.length; index++) {
                     const element = resTime[index];
@@ -853,6 +854,7 @@
                         rest = element.hours[0]+'/'+element.hours[1]
                     }
                 }
+                console.log(rest)
                 this.selectHourService(index, lender, time, rest)
             },
             insertData(index, lender, restTime, Class, duration, check, lenders){
@@ -864,9 +866,14 @@
                         for (let x = 0; x < lenders.length; x++) {
                             const elementTwo = lenders[x];
                             if (element.name == elementTwo.lender) {
-                                lenderSelect = x
-                                validCounter = true
-                                break
+                                for (let c = 0; c < elementTwo.days.length; c++) {
+                                    const elementThree = elementTwo.days[c];
+                                    if (elementThree.day == this.getDay) {
+                                        lenderSelect = x
+                                        validCounter = true
+                                        break
+                                    }
+                                }  
                             }
                         }
                         if (validCounter) {
@@ -879,7 +886,13 @@
                             for (let x = 0; x < lenders.length; x++) {
                                 const elementTwo = lenders[x];
                                 if (element.name == elementTwo.lender) {
-                                    lenderSelect = x
+                                    for (let c = 0; c < elementTwo.days.length; c++) {
+                                        const elementThree = elementTwo.days[c];
+                                        if (elementThree.day == this.getDay) {
+                                            lenderSelect = x
+                                            break
+                                        }
+                                    }   
                                 }
                             }
                         }
@@ -1439,9 +1452,14 @@
                                         for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
                                             const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
                                             if (element.name == elementTwo.lender) {
-                                                counter = j
-                                                validCounter = true
-                                                break
+                                                for (let c = 0; c < elementTwo.days.length; c++) {
+                                                    const elementThree= elementTwo.days[c];
+                                                    if (elementThree.day == this.getDay) {
+                                                        counter = j
+                                                        validCounter = true
+                                                        break
+                                                    }
+                                                }  
                                             }
                                         }
                                         if (validCounter) {
@@ -1500,9 +1518,14 @@
                                         for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
                                             const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
                                             if (element.name == elementTwo.lender) {
-                                                counter = j
-                                                validCounter = true
-                                                break
+                                                for (let c = 0; c < elementTwo.days.length; c++) {
+                                                    const elementThree= elementTwo.days[c];
+                                                    if (elementThree.day == this.getDay) {
+                                                        counter = j
+                                                        validCounter = true
+                                                        break
+                                                    }
+                                                }  
                                             }
                                         }
                                         if (validCounter) {
@@ -1517,6 +1540,7 @@
                                         
                                         this.registerDate.serviceSelectds[0].valid = true
                                         this.registerDate.serviceSelectds[0].realLender = finalLender
+                                        console.log(finalRestime)
                                         this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
                                         this.readyChange = true
                                     }else{

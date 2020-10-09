@@ -3123,9 +3123,14 @@
                                 for (let j = 0; j <  this.registerDae.serviceSelectds[0].lenders.length; j++) {
                                     const elementTwo =  this.registerDae.serviceSelectds[0].lenders[j];
                                     if (element.name == elementTwo.lender) {
-                                        counter = j
-                                        validCounter = true
-                                        break
+                                        for (let c = 0; c < elementTwo.days.length; c++) {
+                                            const elementThree= elementTwo.days[c];
+                                            if (elementThree.day == this.getDay) {
+                                                counter = j
+                                                validCounter = true
+                                                break
+                                            }
+                                        }  
                                     }
                                 }
                                 if (validCounter) {
@@ -3179,9 +3184,14 @@
                                 for (let j = 0; j <  this.registerDae.serviceSelectds[0].lenders.length; j++) {
                                     const elementTwo =  this.registerDae.serviceSelectds[0].lenders[j];
                                     if (element.name == elementTwo.lender) {
-                                        counter = j
-                                        validCounter = true
-                                        break
+                                        for (let c = 0; c < elementTwo.days.length; c++) {
+                                            const elementThree= elementTwo.days[c];
+                                            if (elementThree.day == this.getDay) {
+                                                counter = j
+                                                validCounter = true
+                                                break
+                                            }
+                                        }  
                                     }
                                 }
                                 if (validCounter) {
@@ -3417,9 +3427,14 @@
                     for (let x = 0; x < lenders.length; x++) {
                         const elementTwo = lenders[x];
                         if (element.name == elementTwo.lender) {
-                            lenderSelect = x
-                            validCounter = true
-                            break
+                            for (let c = 0; c < elementTwo.days.length; c++) {
+                                const elementThree = elementTwo.days[c];
+                                if (elementThree.day == this.getDay) {
+                                    lenderSelect = x
+                                    validCounter = true
+                                    break
+                                }
+                            } 
                         }
                     }
                     if (validCounter) {
@@ -3432,7 +3447,13 @@
                         for (let x = 0; x < lenders.length; x++) {
                             const elementTwo = lenders[x];
                             if (element.name == elementTwo.lender) {
-                                lenderSelect = x
+                                for (let c = 0; c < elementTwo.days.length; c++) {
+                                    const elementThree = elementTwo.days[c];
+                                    if (elementThree.day == this.getDay) {
+                                        lenderSelect = x
+                                        break
+                                    }
+                                }
                             }
                         }
                     }
