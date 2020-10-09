@@ -59,8 +59,8 @@
                                     <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
                                     </base-button>
                                     <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
-                                    <base-button class="w-50" size="sm" type="success" v-if="props.row.valid" v-on:click="selectHour(props.row.vbt_id)">Horarios</base-button>
-                                    <base-button class="w-50" disabled size="sm" type="danger" v-else v-on:click="selectHour(props.row.vbt_id)">Horarios</base-button>
+                                    <base-button class="w-50" size="sm" type="success" v-if="props.row.valid" v-on:click="selectHour(props.row.vbt_id, props.row.value)">Horarios</base-button>
+                                    <base-button class="w-50" disabled size="sm" type="danger" v-else v-on:click="selectHour(props.row.vbt_id, props.row.value)">Horarios</base-button>
                                 </center>
                             </template>
                         </vue-bootstrap4-table>
@@ -438,10 +438,22 @@ import jwtDecode from 'jwt-decode'
                 this.selectedDays.push({day: value, hours: []})
             }
         },
-        selectHour(id){
+        selectHour(id, value){
+            console.log(this.selectedDays)
             this.modals.modal1 = false
             this.modals.modal3 = true
-            this.editHourIndex = id - 1
+            for (let j = 0; j < this.selectedDays.length; j++) {
+                const elementTwo = this.selectedDays[j];
+                if (value == elementTwo.day) {
+                    this.editHourIndex = j
+                }
+            }
+            console.log(this.selectedDays)
+            if (this.selectedDays[this.editHourIndex].hours.length > 0) {
+                console.log(this.selectedDays[this.editHourIndex].hours)
+                this.from = this.selectedDays[this.editHourIndex].hours[0]
+                this.to = this.selectedDays[this.editHourIndex].hours[1]    
+            }
         },
         selectHourFinaly(){
             this.selectedDays[this.editHourIndex].hours = [this.from, this.to]
