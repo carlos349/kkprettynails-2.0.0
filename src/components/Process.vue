@@ -298,14 +298,14 @@
                             </base-input>
                             <base-input alternative
                                         type="text"
-                                        placeholder="Contacto principal"
+                                        placeholder="Correo"
                                         v-model="registerClient.id"
                                         v-on:keyup="validRegister(2)"
                                         addon-left-icon="fa fa-address-card">
                             </base-input>
                             <base-input alternative
                                         type="text"
-                                        placeholder="Contacto adicional"
+                                        placeholder="Teléfono"
                                         v-on:input="formatPhone"
                                         maxlength="9"
                                         v-model="registerClient.contactOne"

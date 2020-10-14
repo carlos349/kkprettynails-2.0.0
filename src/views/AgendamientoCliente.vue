@@ -159,7 +159,7 @@
                                                     </base-button>
                                                     <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
                                                         <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
-                                                            <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.Horario, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
+                                                            <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.lenders, block.Horario, index, indexService,'block'+indexService,'check'+indexService)" size="sm" class="col-12" type="success">
                                                                 <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
                                                                 <span>Disponible</span>
                                                             </base-button>
@@ -845,8 +845,6 @@
                 this.registerDate.employeSelect = ''
                 this.validSchedule = false
                 this.noOneLender = true
-                console.log(resTime)
-                console.log(this.getDay)
                 var rest = ''
                 for (let index = 0; index < resTime.length; index++) {
                     const element = resTime[index];
@@ -859,61 +857,30 @@
             },
             insertData(index, lender, restTime, Class, duration, check, lenders){
                 if (lender == 'Primera disponible') {
-                    var lenderSelect = ''
-                    var validCounter = false
-                    for (let j = index; j < this.availableslenders.length; j++) {
-                        const element = this.availableslenders[j];
-                        for (let x = 0; x < lenders.length; x++) {
-                            const elementTwo = lenders[x];
-                            if (element.name == elementTwo.lender) {
-                                for (let c = 0; c < elementTwo.days.length; c++) {
-                                    const elementThree = elementTwo.days[c];
-                                    if (elementThree.day == this.getDay) {
-                                        lenderSelect = x
-                                        validCounter = true
-                                        break
-                                    }
-                                }  
-                            }
-                        }
-                        if (validCounter) {
-                            break
-                        }
-                    }
-                    if (lenderSelect == '') {
-                        for (let j = 0; j < this.availableslenders.length; j++) {
-                            const element = this.availableslenders[j];
-                            for (let x = 0; x < lenders.length; x++) {
-                                const elementTwo = lenders[x];
-                                if (element.name == elementTwo.lender) {
-                                    for (let c = 0; c < elementTwo.days.length; c++) {
-                                        const elementThree = elementTwo.days[c];
-                                        if (elementThree.day == this.getDay) {
-                                            lenderSelect = x
-                                            break
-                                        }
-                                    }   
-                                }
-                            }
-                        }
+                    axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                        date: this.finalDate,
+                        lenders: this.availableslenders,
+                        time: this.registerDate.serviceSelectds[index].duration
+                    })
+                    .then(res => {
                         this.registerDate.serviceSelectds[index].start = ''
                         this.registerDate.serviceSelectds[index].end = ''
+                        this.registerDate.serviceSelectds[index].sort = ''
+                        this.readyChange = true
                         this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
-                        this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                        this.registerDate.serviceSelectds[index].days = lenders[lenderSelect].days
-                        this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
-                        this.validHour = false 
-                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].days, check)
-                    }else{
-                        this.registerDate.serviceSelectds[index].start = ''
-                        this.registerDate.serviceSelectds[index].end = ''
-                        this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
-                        this.registerDate.serviceSelectds[index].realLender = lenders[lenderSelect].lender
-                        this.registerDate.serviceSelectds[index].days = lenders[lenderSelect].days
-                        this.registerDate.serviceSelectds[index].class = lenders[lenderSelect].class
-                        this.validHour = false 
-                        this.validMultiLender(index, lenders[lenderSelect].lender, duration, lenders[lenderSelect].days, check)
-                    }
+                        this.registerDate.serviceSelectds[index].valid = true
+                        this.registerDate.serviceSelectds[index].blocks = res.data.blocks
+                        for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
+                            const element = this.registerDate.serviceSelectds[j];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.blocks = []
+                            element.valid = false
+                            element.lender = 'Primera disponible'
+                            element.realLender = ''
+                        }
+                    })
                 }else{
                     this.registerDate.serviceSelectds[index].start = ''
                     this.registerDate.serviceSelectds[index].end = ''
@@ -1228,40 +1195,114 @@
                     console.log(err)
                 })
             },
-            selectBloqMulti(hora, i, indexService, open, check){
+            selectBloqMulti(lenders, hora, i, indexService, open, check){
                 setTimeout(() => {
                     $('#'+open).toggle('slow')
                 }, 500);
-                
-                var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].Horario.split(":") 
-                this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
-                this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
-                
-                axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDate.serviceSelectds[indexService].lenderSelectData)
-                .then(res => {
-                    
-                    var editBlock = false
-                    if (indexService > 0) {
-                        for (let i = 0; i < this.arrayLendersSelect.length; i++) {
-                            const element = this.arrayLendersSelect[i];
-                            if (element.lender == this.registerDate.serviceSelectds[indexService].realLender) {
-                                editBlock = true
-                            }
+                if (lenders) {
+                    var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].Horario.split(":") 
+                    this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
+                    this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
+
+                    this.registerDate.serviceSelectds[indexService].realLender = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[0]
+                    this.registerDate.serviceSelectds[indexService].lender = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[0]
+
+                    for (let j = 0; j < this.registerDate.serviceSelectds[indexService].lenders.length; j++) {
+                        const element = this.registerDate.serviceSelectds[indexService].lenders[j];
+                        if (element.lender == this.registerDate.serviceSelectds[indexService].realLender) {
+                            this.registerDate.serviceSelectds[indexService].class = element.class
+                            break
                         }
                     }
-                    if (editBlock) {
-                        
-                        axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
+                
+                    for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].duration / 15; index++) {
+                        this.registerDate.serviceSelectds[indexService].blocks[i].validator = 'select'
+                        this.registerDate.serviceSelectds[indexService].end = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
+                        i++
+                    }
+                    
+                    const finalIndex = parseFloat(indexService) + parseFloat(1)
+                    if (this.registerDate.serviceSelectds[finalIndex]) {
+                        console.log('hola')
+                        axios.post(endPoint
+                        .endpointTarget+'/citas/editBlocksFirst', {
                             array: this.registerDate.serviceSelectds[indexService].blocks,
-                            time: this.registerDate.serviceSelectds[indexService].lenderSelectData.time
+                            time: this.registerDate.serviceSelectds[finalIndex].duration,
+                            lender: this.registerDate.serviceSelectds[indexService].lender
                         })
                         .then(res => {
+                            this.registerDate.serviceSelectds[finalIndex].blocks = res.data
+                            this.registerDate.serviceSelectds[finalIndex].valid = true
+                            
+                        })
+                    }
+                    var valid = 0 
+                    for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                        const element = this.registerDate.serviceSelectds[index];
+                        if (element.start == "") {
+                            valid = 1
+                        }
+                    }
+                    if (valid == 0) {
+                        this.validHour = true
+                    }
+                    setTimeout(() => {
+                        $('#'+check).addClass('fa-check')
+                    }, 500);
+                    
+                    console.log(this.registerDate)
+                }else{
+                    var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].Horario.split(":") 
+                    this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
+                    this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
+                    
+                    axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDate.serviceSelectds[indexService].lenderSelectData)
+                    .then(res => {
+                        
+                        var editBlock = false
+                        if (indexService > 0) {
+                            for (let i = 0; i < this.arrayLendersSelect.length; i++) {
+                                const element = this.arrayLendersSelect[i];
+                                if (element.lender == this.registerDate.serviceSelectds[indexService].realLender) {
+                                    editBlock = true
+                                }
+                            }
+                        }
+                        if (editBlock) {
+                            
+                            axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
+                                array: this.registerDate.serviceSelectds[indexService].blocks,
+                                time: this.registerDate.serviceSelectds[indexService].lenderSelectData.time
+                            })
+                            .then(res => {
+                                for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
+                                    res.data[i].validator = 'select'
+                                    this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
+                                    i++
+                                }
+                                this.registerDate.serviceSelectds[indexService].blocks = res.data
+                                var valid = 0 
+                                for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                                    const element = this.registerDate.serviceSelectds[index];
+                                    
+                                    if (element.start == "") {
+                                        valid = 1
+                                    }
+                                }
+                                if (valid == 0) {
+                                    this.validHour = true
+                                }
+                                $('#'+check).addClass('fa-check')
+                            })
+                        }else{
+                            
                             for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
                                 res.data[i].validator = 'select'
                                 this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
                                 i++
                             }
                             this.registerDate.serviceSelectds[indexService].blocks = res.data
+                            this.blockHour = res.data
                             var valid = 0 
                             for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                                 const element = this.registerDate.serviceSelectds[index];
@@ -1273,61 +1314,30 @@
                             if (valid == 0) {
                                 this.validHour = true
                             }
+                            this.registerDate.serviceSelectds[indexService].blocks = res.data
                             $('#'+check).addClass('fa-check')
-                        })
-                    }else{
+                        }
                         
-                        for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
-                            res.data[i].validator = 'select'
-                            this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
-                            i++
+                        const finalIndex = parseFloat(indexService) + parseFloat(1)
+                        if (this.registerDate.serviceSelectds[finalIndex]) {
+                            axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                date: this.finalDate,
+                                lenders: this.availableslenders,
+                                time: this.registerDate.serviceSelectds[finalIndex].duration
+                            })
+                            .then(res => {
+                                console.log(res)
+                                this.readyChange = true
+                                this.registerDate.serviceSelectds[finalIndex].valid = true
+                                this.registerDate.serviceSelectds[finalIndex].blocks = res.data.blocks
+                            })
                         }
-                        this.registerDate.serviceSelectds[indexService].blocks = res.data
-                        this.blockHour = res.data
-                        var valid = 0 
-                        for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                            const element = this.registerDate.serviceSelectds[index];
-                            
-                            if (element.start == "") {
-                                valid = 1
-                            }
-                        }
-                        if (valid == 0) {
-                            this.validHour = true
-                        }
-                        this.registerDate.serviceSelectds[indexService].blocks = res.data
-                        $('#'+check).addClass('fa-check')
-                    }
-                    
-                    const finalIndex = parseFloat(indexService) + parseFloat(1)
-                    if (this.registerDate.serviceSelectds[finalIndex]) {
-                        this.registerDate.serviceSelectds[finalIndex].valid = true
-                        var counter = 0
-                        var validCounter = false
-                        for (let i = finalIndex; i < this.availableslenders.length; i++) {
-                            const element = this.availableslenders[i];
-                            for (let j = 0; j <  this.registerDate.serviceSelectds[finalIndex].lenders.length; j++) {
-                                const elementTwo =  this.registerDate.serviceSelectds[finalIndex].lenders[j];
-                                if (element.name == elementTwo.lender) {
-                                    counter = j
-                                    validCounter = true
-                                    break
-                                }
-                            }
-                            if (validCounter) {
-                                break
-                            }
-                        }
-                        const finalLender = this.registerDate.serviceSelectds[finalIndex].lenders[counter].lender
-                        const finalRestime = this.registerDate.serviceSelectds[finalIndex].lenders[counter].days
-                        this.registerDate.serviceSelectds[finalIndex].class = this.registerDate.serviceSelectds[finalIndex].lenders[counter].class
-                        this.registerDate.serviceSelectds[finalIndex].realLender = finalLender
-                        this.validMultiLender(finalIndex, finalLender, this.registerDate.serviceSelectds[finalIndex].duration, finalRestime)
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }
+                
             },
             validateFirstStep() {
                 window.scrollTo(0, 0);
@@ -1439,64 +1449,78 @@
                                 element.sort = ''
                                 element.blocks = []
                                 element.valid = false
+                                element.lender = 'Primera disponible'
+                                element.realLender = ''
                             }
                             this.validHour = false
                             setTimeout(() => {
                                 axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                                 .then(res => {
                                     this.getDay = res.data.day
-                                    var counter = 0
-                                    var validCounter = false
-                                    for (let i = 0; i < res.data.array.length; i++) {
-                                        const element = res.data.array[i];
-                                        for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
-                                            const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
-                                            if (element.name == elementTwo.lender) {
-                                                for (let c = 0; c < elementTwo.days.length; c++) {
-                                                    const elementThree= elementTwo.days[c];
-                                                    if (elementThree.day == this.getDay) {
-                                                        counter = j
-                                                        validCounter = true
-                                                        break
-                                                    }
-                                                }  
-                                            }
-                                        }
-                                        if (validCounter) {
-                                            break
-                                        }
-                                    }
-                                    
-                                    if (validCounter) {
-                                        const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
-                                        const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].days
-                                        this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
-                                        
-                                        this.registerDate.serviceSelectds[0].valid = true
-                                        this.registerDate.serviceSelectds[0].realLender = finalLender
-                                        this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
+                                    this.availableslenders = res.data.array
+                                    axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                        date: this.finalDate,
+                                        lenders: res.data.array,
+                                        time: this.registerDate.serviceSelectds[0].duration
+                                    })
+                                    .then(res => {
+                                        console.log(res)
                                         this.readyChange = true
-                                    }else{
-                                        console.log(counter+' '+validCounter)
-                                        this.modals = {
-                                            modal3: true,
-                                            message: "No contamos con profesionales disponibles para la fecha seleccionada.",
-                                            icon: 'ni ni-fat-remove ni-5x',
-                                            type: 'danger'
-                                        }
-                                        setTimeout(() => {
-                                            this.modals = {
-                                                modal1:false,
-                                                modal2:false,
-                                                modal3: false,
-                                                modal4: false,
-                                                modal5: false,
-                                                message: "",
-                                                icon: '',
-                                                type: ''
-                                            }
-                                        }, 3000);
-                                    }
+                                        this.registerDate.serviceSelectds[0].valid = true
+                                        this.registerDate.serviceSelectds[0].blocks = res.data.blocks
+                                    })
+                                //     var counter = 0
+                                //     var validCounter = false
+                                //     for (let i = 0; i < res.data.array.length; i++) {
+                                //         const element = res.data.array[i];
+                                //         for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
+                                //             const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
+                                //             if (element.name == elementTwo.lender) {
+                                //                 for (let c = 0; c < elementTwo.days.length; c++) {
+                                //                     const elementThree= elementTwo.days[c];
+                                //                     if (elementThree.day == this.getDay) {
+                                //                         counter = j
+                                //                         validCounter = true
+                                //                         break
+                                //                     }
+                                //                 }  
+                                //             }
+                                //         }
+                                //         if (validCounter) {
+                                //             break
+                                //         }
+                                //     }
+                                    
+                                //     if (validCounter) {
+                                //         const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
+                                //         const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].days
+                                //         this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
+                                        
+                                //         this.registerDate.serviceSelectds[0].valid = true
+                                //         this.registerDate.serviceSelectds[0].realLender = finalLender
+                                //         this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
+                                //         this.readyChange = true
+                                //     }else{
+                                //         console.log(counter+' '+validCounter)
+                                //         this.modals = {
+                                //             modal3: true,
+                                //             message: "No contamos con profesionales disponibles para la fecha seleccionada.",
+                                //             icon: 'ni ni-fat-remove ni-5x',
+                                //             type: 'danger'
+                                //         }
+                                //         setTimeout(() => {
+                                //             this.modals = {
+                                //                 modal1:false,
+                                //                 modal2:false,
+                                //                 modal3: false,
+                                //                 modal4: false,
+                                //                 modal5: false,
+                                //                 message: "",
+                                //                 icon: '',
+                                //                 type: ''
+                                //             }
+                                //         }, 3000);
+                                //     }
                                     
                                     
                                 })
@@ -1506,66 +1530,79 @@
                                 axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                                 .then(res => {
                                     this.getDay = res.data.day
-                                    for (let j = 0; j < 3; j++) {
-                                        for (let index = 0; index < res.data.array.length; index++) {
-                                            const element = res.data.array[index];
-                                            this.availableslenders.push(element)
-                                        }
-                                    }
-                                    var counter = 0
-                                    var validCounter = false
-                                    console.log(this.getDay)
-                                    for (let i = 0; i < res.data.array.length; i++) {
-                                        const element = res.data.array[i];
-                                        for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
-                                            const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
-                                            if (element.name == elementTwo.lender) {
-                                                for (let c = 0; c < elementTwo.days.length; c++) {
-                                                    const elementThree = elementTwo.days[c];
-                                                    if (elementThree.day == this.getDay) {
-                                                        counter = j
-                                                        validCounter = true
-                                                        break
-                                                    }
-                                                }  
-                                            }
-                                        }
-                                        if (validCounter) {
-                                            break
-                                        }
-                                    }
-                                    
-                                    if (validCounter) {
-                                        const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
-                                        const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].days
-                                        this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
-                                        
-                                        this.registerDate.serviceSelectds[0].valid = true
-                                        this.registerDate.serviceSelectds[0].realLender = finalLender
-                                        console.log(finalRestime)
-                                        this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
+                                    this.availableslenders = res.data.array
+                                    axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                        date: this.finalDate,
+                                        lenders: res.data.array,
+                                        time: this.registerDate.serviceSelectds[0].duration
+                                    })
+                                    .then(res => {
+                                        console.log(res)
                                         this.readyChange = true
-                                    }else{
-                                        console.log(counter+' '+validCounter)
-                                        this.modals = {
-                                            modal3: true,
-                                            message: "No contamos con prestadores disponibles, para la fecha.",
-                                            icon: 'ni ni-fat-remove ni-5x',
-                                            type: 'danger'
-                                        }
-                                        setTimeout(() => {
-                                            this.modals = {
-                                                modal1:false,
-                                                modal2:false,
-                                                modal3: false,
-                                                modal4: false,
-                                                modal5: false,
-                                                message: "",
-                                                icon: '',
-                                                type: ''
-                                            }
-                                        }, 3000);
-                                    }  
+                                        this.registerDate.serviceSelectds[0].valid = true
+                                        this.registerDate.serviceSelectds[0].blocks = res.data.blocks
+                                    })
+                                    // this.getDay = res.data.day
+                                    // for (let j = 0; j < 3; j++) {
+                                    //     for (let index = 0; index < res.data.array.length; index++) {
+                                    //         const element = res.data.array[index];
+                                    //         this.availableslenders.push(element)
+                                    //     }
+                                    // }
+                                    // var counter = 0
+                                    // var validCounter = false
+                                    // console.log(this.getDay)
+                                    // for (let i = 0; i < res.data.array.length; i++) {
+                                    //     const element = res.data.array[i];
+                                    //     for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
+                                    //         const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
+                                    //         if (element.name == elementTwo.lender) {
+                                    //             for (let c = 0; c < elementTwo.days.length; c++) {
+                                    //                 const elementThree = elementTwo.days[c];
+                                    //                 if (elementThree.day == this.getDay) {
+                                    //                     counter = j
+                                    //                     validCounter = true
+                                    //                     break
+                                    //                 }
+                                    //             }  
+                                    //         }
+                                    //     }
+                                    //     if (validCounter) {
+                                    //         break
+                                    //     }
+                                    // }
+                                    
+                                    // if (validCounter) {
+                                    //     const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
+                                    //     const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].days
+                                    //     this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
+                                        
+                                    //     this.registerDate.serviceSelectds[0].valid = true
+                                    //     this.registerDate.serviceSelectds[0].realLender = finalLender
+                                    //     console.log(finalRestime)
+                                    //     this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
+                                    //     this.readyChange = true
+                                    // }else{
+                                    //     console.log(counter+' '+validCounter)
+                                    //     this.modals = {
+                                    //         modal3: true,
+                                    //         message: "No contamos con prestadores disponibles, para la fecha.",
+                                    //         icon: 'ni ni-fat-remove ni-5x',
+                                    //         type: 'danger'
+                                    //     }
+                                    //     setTimeout(() => {
+                                    //         this.modals = {
+                                    //             modal1:false,
+                                    //             modal2:false,
+                                    //             modal3: false,
+                                    //             modal4: false,
+                                    //             modal5: false,
+                                    //             message: "",
+                                    //             icon: '',
+                                    //             type: ''
+                                    //         }
+                                    //     }, 3000);
+                                    // }  
                                 })
                             }, 200); 
                         }
