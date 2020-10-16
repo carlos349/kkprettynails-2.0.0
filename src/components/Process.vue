@@ -317,6 +317,17 @@
                                         v-model="registerClient.contactTwo"
                                         addon-left-icon="fa fa-address-card">
                             </base-input>
+                            <base-input addon-left-icon="ni ni-calendar-grid-58">
+                                <flat-picker 
+                                        slot-scope="{focus, blur}"
+                                        @on-open="focus"
+                                        @on-close="blur"
+                                        :config="configDate"
+                                        class="form-control datepicker"
+                                        placeholder="Seleccione una fecha"
+                                        v-model="registerClient.birthday">
+                                </flat-picker>
+                            </base-input>
                             <base-checkbox v-if="!ifEdit" v-model="registerClient.discount" class="mb-3">
                                 Descuento de nuevo cliente
                             </base-checkbox>
@@ -622,11 +633,16 @@ export default {
                 icon: '',
                 type:''
             },
+            configDate: {
+                allowInput: true, 
+                dateFormat: 'd-m-Y',
+            },
             registerClient: {
                 name: '',
                 id: '',
                 contactOne: '',
                 contactTwo: '',
+                birthday: '',
                 discount: false,
                 recommender: '',
                 valid: false,
@@ -884,6 +900,11 @@ export default {
             })
         },
         registerClients(){
+            var date = this.registerClient.birthday
+            if (this.registerClient.birthday.split('-')[1]) {
+                var split = this.registerClient.birthday.split('-')
+                date = split[1]+'-'+split[0]+'-'+split[2]
+            }
             var ifCheck = this.registerClient.discount ? 0 : 1
             const phone = this.registerClient.contactOne.length > 0 ? '+56 '+this.registerClient.contactOne : ''
             axios.post(endPoint.endpointTarget+'/clients', {
@@ -891,6 +912,7 @@ export default {
                 identidad:this.registerClient.id,
                 recomendador:this.registerClient.recommender,
                 correoCliente:phone,
+                birthday: date,
                 instagramCliente:this.registerClient.contactTwo,
                 ifCheck: ifCheck
             })
@@ -1274,12 +1296,20 @@ export default {
                     this.validRegister(2)
                     this.clientRecomends = res.data[0].recomendaciones
                     this.clientAtentions = res.data[0].participacion
-                    if (res.data[0].recomendaciones > 0) {
+                    console.log(res.data[0].birthday)
+                    if(res.data[0].birthday){
+                        var birthday = new Date(res.data[0].birthday).getMonth()
+                        var monthNow = new Date().getMonth()
+                        if (birthday == monthNow) {
+                            this.discount = 10
+                        }
+                    }else if (res.data[0].recomendaciones > 0) {
                         this.discount = 15
                         this.ifrecomend = true
                     }else if (res.data[0].participacion == 0) {
                         this.discount = 10
                     }
+                    
                     console.log(this.ifrecomend)
                 })
                 .catch(err => {

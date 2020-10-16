@@ -88,6 +88,10 @@
                                     Avanzados
                                 </span>
                                 <div class="row">
+                                    <base-button v-if="registerClient.birthday" class="col-12 mt-1" type="primary">
+                                        <span class="text-left">Fecha de nacimiento</span>
+                                        <badge class="text-default" type="secondary">{{formatDateTwo(registerClient.birthday)}}</badge>
+                                    </base-button>
                                     <base-button class="col-12 mt-1" type="primary">
                                         <span>Participación</span>
                                         <badge class="text-default" type="secondary">{{registerClient.participation}}</badge>
@@ -145,6 +149,17 @@
                                     v-model="registerClient.contactTwo"
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fas fa-plus text-default">
+                        </base-input>
+                        <base-input addon-left-icon="ni ni-calendar-grid-58">
+                            <flat-picker 
+                                    slot-scope="{focus, blur}"
+                                    @on-open="focus"
+                                    @on-close="blur"
+                                    :config="configDate"
+                                    class="form-control datepicker"
+                                    placeholder="Seleccione una fecha"
+                                    v-model="registerClient.birthday">
+                            </flat-picker>
                         </base-input>
                         <base-checkbox v-model="registerClient.discount" class="mb-3">
                             Descuento de nuevo cliente
@@ -234,7 +249,7 @@
                             <template slot="title">
                             <span>Detalles / Editar</span>
                             </template>
-                            <base-button v-if="validRoute('clientes', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id)" icon="ni ni-bullet-list-67"></base-button>
+                            <base-button v-if="validRoute('clientes', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id, props.row.birthday)" icon="ni ni-bullet-list-67"></base-button>
                             <base-button disabled v-else size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
                         </a-tooltip>
                         
@@ -249,6 +264,10 @@
                     </center>
                     
                 </b>
+            </template>
+            <template slot="birthday-format" slot-scope="props">
+                <span v-if="props.row.birthday">{{formatDateTwo(props.row.birthday)}}</span>
+                <span v-else>Sin fecha de nacimiento</span>
             </template>
             <template slot="pagination-info" slot-scope="props">
                 Actuales {{props.currentPageRowsLength}} | 
@@ -284,11 +303,16 @@ import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
 import router from '../router'
 import XLSX from 'xlsx'
+import flatPicker from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
+import VueMoment from 'vue-moment'
+var moment = require('moment');
 // COMPONENTS
 
   export default {
     components: {
-        VueBootstrap4Table 
+        VueBootstrap4Table,
+        flatPicker
     },
     data() {
       return {
@@ -298,11 +322,16 @@ import XLSX from 'xlsx'
         clientsNames: [],
         clientIds:[],
         tipeForm: '',
+        configDate: {
+            allowInput: true, 
+            dateFormat: 'd-m-Y',
+        },
         registerClient: {
             name:'',
             id:'',
             contactOne:'',
             contactTwo:'',
+            birthday: '',
             recommender:null,
             discount:false,
             valid:false,
@@ -345,8 +374,9 @@ import XLSX from 'xlsx'
                 sort: true,
             },
             {
-                label: "Contacto adicional",
-                name: "instagramCliente",
+                label: "Fecha de cumpleaños",
+                name: "birthday",
+                slot_name: 'birthday-format',
                 sort: true,
                 // filter: {
                 //     type: "simple",
@@ -445,6 +475,11 @@ import XLSX from 'xlsx'
                     } 
                 }
             }
+            var date = this.registerClient.birthday
+            if (this.registerClient.birthday.split('-')[1]) {
+                var split = this.registerClient.birthday.split('-')
+                date = split[1]+'-'+split[0]+'-'+split[2]
+            }
             const phone = this.registerClient.contactOne.length > 0 ? '+56 '+this.registerClient.contactOne : ''
             axios.post(endPoint.endpointTarget+'/clients', {
                 nombre:this.registerClient.name,
@@ -452,6 +487,7 @@ import XLSX from 'xlsx'
                 recomendador:this.registerClient.recommender,
                 idRecomender:idRecomender,
                 correoCliente:phone,
+                birthday: date,
                 instagramCliente:this.registerClient.contactTwo,
                 ifCheck: ifCheck
             })
@@ -531,6 +567,7 @@ import XLSX from 'xlsx'
                 id:'',
                 contactOne:'',
                 discount:false,
+                birthday: '',
                 contactTwo:'',
                 recommender:null,
                 valid:false
@@ -549,13 +586,14 @@ import XLSX from 'xlsx'
                 this.tipeForm = 'Editar'
             }
         },
-        pushData(nombre,id,correo,ig,participacion,recomendacion,recomendaciones,ultimaFecha,fecha,_id){
+        pushData(nombre,id,correo,ig,participacion,recomendacion,recomendaciones,ultimaFecha,fecha,_id, birthday){
             this.registerClient= {
                 name:nombre,
                 id:id,
                 contactOne:correo,
                 discount:false,
                 contactTwo:ig,
+                birthday: birthday,
                 recommender:recomendacion,
                 valid:true,
                 valid2:true,
@@ -569,7 +607,11 @@ import XLSX from 'xlsx'
         },
         formatDate(date) {
             let dateFormat = new Date(date)
-            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+" "+" ("+ dateFormat.getHours()+":"+ dateFormat.getMinutes()+")"
+			return moment(dateFormat).format("DD-MM-YYYY HH:mm")
+        },
+        formatDateTwo(date) {
+            let dateFormat = new Date(date)
+			return moment(dateFormat).format("MMMM Do YYYY")
         },
         deleteClient(id){
 			this.$swal({

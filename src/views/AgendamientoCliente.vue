@@ -1204,15 +1204,17 @@
                     this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
                     this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
 
-                    this.registerDate.serviceSelectds[indexService].realLender = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[0]
-                    this.registerDate.serviceSelectds[indexService].lender = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[0]
-
                     for (let j = 0; j < this.registerDate.serviceSelectds[indexService].lenders.length; j++) {
                         const element = this.registerDate.serviceSelectds[indexService].lenders[j];
-                        if (element.lender == this.registerDate.serviceSelectds[indexService].realLender) {
-                            this.registerDate.serviceSelectds[indexService].class = element.class
-                            break
-                        }
+                        for (let r = 0; r < this.registerDate.serviceSelectds[indexService].blocks[i].lenders.length; r++) {
+                            const elementTwo = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[r];
+                            if (element.lender == elementTwo) {
+                                this.registerDate.serviceSelectds[indexService].class = element.class
+                                this.registerDate.serviceSelectds[indexService].realLender = elementTwo
+                                this.registerDate.serviceSelectds[indexService].lender = elementTwo
+                                break
+                            }
+                        } 
                     }
                 
                     for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].duration / 15; index++) {
@@ -1468,61 +1470,8 @@
                                         this.readyChange = true
                                         this.registerDate.serviceSelectds[0].valid = true
                                         this.registerDate.serviceSelectds[0].blocks = res.data.blocks
+                                        $('#block0').toggle('slow')
                                     })
-                                //     var counter = 0
-                                //     var validCounter = false
-                                //     for (let i = 0; i < res.data.array.length; i++) {
-                                //         const element = res.data.array[i];
-                                //         for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
-                                //             const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
-                                //             if (element.name == elementTwo.lender) {
-                                //                 for (let c = 0; c < elementTwo.days.length; c++) {
-                                //                     const elementThree= elementTwo.days[c];
-                                //                     if (elementThree.day == this.getDay) {
-                                //                         counter = j
-                                //                         validCounter = true
-                                //                         break
-                                //                     }
-                                //                 }  
-                                //             }
-                                //         }
-                                //         if (validCounter) {
-                                //             break
-                                //         }
-                                //     }
-                                    
-                                //     if (validCounter) {
-                                //         const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
-                                //         const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].days
-                                //         this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
-                                        
-                                //         this.registerDate.serviceSelectds[0].valid = true
-                                //         this.registerDate.serviceSelectds[0].realLender = finalLender
-                                //         this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
-                                //         this.readyChange = true
-                                //     }else{
-                                //         console.log(counter+' '+validCounter)
-                                //         this.modals = {
-                                //             modal3: true,
-                                //             message: "No contamos con profesionales disponibles para la fecha seleccionada.",
-                                //             icon: 'ni ni-fat-remove ni-5x',
-                                //             type: 'danger'
-                                //         }
-                                //         setTimeout(() => {
-                                //             this.modals = {
-                                //                 modal1:false,
-                                //                 modal2:false,
-                                //                 modal3: false,
-                                //                 modal4: false,
-                                //                 modal5: false,
-                                //                 message: "",
-                                //                 icon: '',
-                                //                 type: ''
-                                //             }
-                                //         }, 3000);
-                                //     }
-                                    
-                                    
                                 })
                             }, 200); 
                         }else{
@@ -1542,67 +1491,6 @@
                                         this.registerDate.serviceSelectds[0].valid = true
                                         this.registerDate.serviceSelectds[0].blocks = res.data.blocks
                                     })
-                                    // this.getDay = res.data.day
-                                    // for (let j = 0; j < 3; j++) {
-                                    //     for (let index = 0; index < res.data.array.length; index++) {
-                                    //         const element = res.data.array[index];
-                                    //         this.availableslenders.push(element)
-                                    //     }
-                                    // }
-                                    // var counter = 0
-                                    // var validCounter = false
-                                    // console.log(this.getDay)
-                                    // for (let i = 0; i < res.data.array.length; i++) {
-                                    //     const element = res.data.array[i];
-                                    //     for (let j = 0; j <  this.registerDate.serviceSelectds[0].lenders.length; j++) {
-                                    //         const elementTwo =  this.registerDate.serviceSelectds[0].lenders[j];
-                                    //         if (element.name == elementTwo.lender) {
-                                    //             for (let c = 0; c < elementTwo.days.length; c++) {
-                                    //                 const elementThree = elementTwo.days[c];
-                                    //                 if (elementThree.day == this.getDay) {
-                                    //                     counter = j
-                                    //                     validCounter = true
-                                    //                     break
-                                    //                 }
-                                    //             }  
-                                    //         }
-                                    //     }
-                                    //     if (validCounter) {
-                                    //         break
-                                    //     }
-                                    // }
-                                    
-                                    // if (validCounter) {
-                                    //     const finalLender = this.registerDate.serviceSelectds[0].lenders[counter].lender
-                                    //     const finalRestime = this.registerDate.serviceSelectds[0].lenders[counter].days
-                                    //     this.registerDate.serviceSelectds[0].class = this.registerDate.serviceSelectds[0].lenders[counter].class
-                                        
-                                    //     this.registerDate.serviceSelectds[0].valid = true
-                                    //     this.registerDate.serviceSelectds[0].realLender = finalLender
-                                    //     console.log(finalRestime)
-                                    //     this.validMultiLender(0, finalLender, this.registerDate.serviceSelectds[0].duration, finalRestime)
-                                    //     this.readyChange = true
-                                    // }else{
-                                    //     console.log(counter+' '+validCounter)
-                                    //     this.modals = {
-                                    //         modal3: true,
-                                    //         message: "No contamos con prestadores disponibles, para la fecha.",
-                                    //         icon: 'ni ni-fat-remove ni-5x',
-                                    //         type: 'danger'
-                                    //     }
-                                    //     setTimeout(() => {
-                                    //         this.modals = {
-                                    //             modal1:false,
-                                    //             modal2:false,
-                                    //             modal3: false,
-                                    //             modal4: false,
-                                    //             modal5: false,
-                                    //             message: "",
-                                    //             icon: '',
-                                    //             type: ''
-                                    //         }
-                                    //     }, 3000);
-                                    // }  
                                 })
                             }, 200); 
                         }

@@ -10,7 +10,7 @@
                     <div class="col-12">
                         <h1  class="display-2 text-white w-100">Sección de servicios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección de servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
-                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true,clean()"  type="success">Ingrese un servicio</base-button>
+                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()"  type="success">Ingrese un servicio</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-else disabled  type="success">Ingrese un servicio</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorias</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-else disabled  type="default">Categorias</base-button>
@@ -97,10 +97,6 @@
                                 <base-radio name="true" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
                             </div>
                         </div>
-                        	
-                        
-                        
-                        
                         <tabs fill class="flex-column flex-md-row">
                             <tab-pane>
                                 <span slot="title">
@@ -109,7 +105,15 @@
                                     </i>
                                 </span>
                                 <vue-custom-scrollbar ref="tableC" class="maxHeight">
-                                    <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
+                                    <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" >
+                                        <template slot="validationnnn" slot-scope="props">
+                                            <center>
+                                                <base-button v-on:click="unSelected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid == true">
+                                                </base-button>
+                                                <base-button v-on:click="selected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else>
+                                                </base-button>
+                                            </center>
+                                         </template>
                                     </vue-bootstrap4-table>
                                 </vue-custom-scrollbar >
                             </tab-pane>
@@ -219,7 +223,15 @@
                                     </i>
                                 </span>
                                 <vue-custom-scrollbar ref="table" class="maxHeight">
-                                    <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
+                                    <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" >
+                                        <template slot="validationnnn" slot-scope="props">
+                                            <center>
+                                                <base-button v-on:click="unSelected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
+                                                </base-button>
+                                                <base-button v-on:click="selected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
+                                            </center>
+                                         </template>
+                                        <!-- <base-button v-on:click="addService(props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else></base-button> -->
                                     </vue-bootstrap4-table>
                                 </vue-custom-scrollbar >
                             </tab-pane>
@@ -440,15 +452,23 @@ export default {
             comissionRegister: '',
             timeRegister: 'Seleccione el tiempo',
             services: [],
-            columnsLender: [{
-                label: "Nombre",
-                name: "nombre",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "id"
-                // },
-                sort: true,
-            }],
+            columnsLender: [
+                {
+                    label: "Nombre",
+                    name: "nombre",
+                    // filter: {
+                    //     type: "simple",
+                    //     placeholder: "id"
+                    // },
+                    sort: true,
+                },
+                {
+                    label: "Acciones",
+                    name: "valid",
+                    slot_name:"validationnnn",
+                    sort: false,
+                }
+            ],
             columnsItem: [{
                 label: "Nombre",
                 name: "producto",
@@ -552,8 +572,8 @@ export default {
                 pagination: false
             },
             configLender: {
-                checkbox_rows: true,
-                rows_selectable : true,
+                checkbox_rows: false,
+                rows_selectable : false,
                 highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
                 rows_selectable: true,
                 per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
@@ -651,30 +671,12 @@ export default {
         getLenders(){
             axios.get(endPoint.endpointTarget+'/manicuristas')
             .then(res => {
+                for (let index = 0; index < res.data.length; index++) {
+                    res.data[index].valid = false
+                }
                 this.lenders = res.data
             })
         },
-        selected(value){
-            console.log(this.$refs.table.$children[0].$data)
-            this.lenderSelecteds.push(value.selected_item._id)
-            this.EditlenderSelecteds.push(value.selected_item._id)
-            console.log(value)
-        },
-        unSelected(value){
-            for (let i = 0; i < this.lenderSelecteds.length; i++) {
-                if (this.lenderSelecteds[i] == value.unselected_item._id) {
-                    this.lenderSelecteds.splice(i, 1)
-                    break
-                }
-            }
-            for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
-                if (this.EditlenderSelecteds[i] == value.unselected_item._id) {
-                    this.EditlenderSelecteds.splice(i, 1)
-                    break
-                }
-            }
-        },
-        
         selectedAll(value){
             for (let index = 0; index < value.selected_items.length; index++) {
                 this.lenderSelecteds.push(value.selected_items[index]._id)
@@ -868,6 +870,28 @@ export default {
             $('.maxHeight  thead .vbt-checkbox').click()
             $('.maxHeight  thead .vbt-checkbox').prop('checked', false)
         },
+        selected(value, id){
+            this.lenders[id - 1].valid = true
+            console.log(this.lenders)
+            this.lenderSelecteds.push(value)
+            this.EditlenderSelecteds.push(value)
+            console.log(this.lenderSelecteds)
+        },
+        unSelected(value, id){
+            this.lenders[id - 1].valid = false
+            for (let i = 0; i < this.lenderSelecteds.length; i++) {
+                if (this.lenderSelecteds[i] == value) {
+                    this.lenderSelecteds.splice(i, 1)
+                    break
+                }
+            }
+            for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
+                if (this.EditlenderSelecteds[i] == value) {
+                    this.EditlenderSelecteds.splice(i, 1)
+                    break
+                }
+            }
+        },
         dataEdit(id, lenders, name, time, discount, comission, price,items, category){
             console.log(items)
             this.itemsBox = []
@@ -887,32 +911,29 @@ export default {
             this.timeEdit = time
             this.addDiscountEdit = discount
             this.modals.modal2 = true
-            let data = this.$refs.table.$children[0].$data.vbt_rows
-            let selected = this.$refs.table.$children[0].$data.selected_items
-            for (let c = 0; c <= selected.length; c++) {
-                selected.shift()
+            this.EditlenderSelecteds = []
+            console.log(lenders)
+            for (let index = 0; index < this.lenders.length; index++) {
+                const element = this.lenders[index];
+                this.lenders[index].valid = false
+                for (let j = 0; j < lenders.length; j++) {
+                    const elementTwo = lenders[j];
+                    if (elementTwo == element._id) {
+                        this.EditlenderSelecteds.push(element._id)
+                        this.lenders[index].valid = true
+                    }
+                }
             }
-
-            setTimeout(() => {
-                for (let index = 0; index < data.length; index++) {
-                    for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
-                        if (this.EditlenderSelecteds[i] == data[index]._id ) {
-                            selected.push(data[index])
-                        }
-                    }
-                }
-                for (let indexx = 0; indexx < this.rowsItems.length; indexx++) {
-                    for (let i = 0; i < this.EdititemSelected.length; i++) {
-                        if (this.EdititemSelected[i].id == this.rowsItems[indexx]._id ) {
-                            this.itemsBox[indexx].check = true
-                            this.itemsBox[indexx].count = this.EdititemSelected[i].count
-                        }
-                    }
-                }
-            }, 100);
+            console.log(this.lenders)
+            console.log(this.EditlenderSelecteds)
         },
         clean(){
-            this.$refs.tableC.$children[0].unSelectAllItems()
+            this.lenderSelecteds = []
+            this.EditlenderSelecteds = []
+            for (let index = 0; index < this.lenders.length; index++) {
+                const element = this.lenders[index];
+                element.valid = false
+            }
         },
         editService(){
             if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {

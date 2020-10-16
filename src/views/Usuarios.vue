@@ -88,32 +88,6 @@
             </template>
             </card>
         </modal>
-        <modal :show.sync="modals.modal2"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                <template>
-                    <div class="text-muted text-center mb-3">
-                        <h3>Vincular prestador</h3>
-                    </div>
-                </template>
-                <template>
-                    <form role="form">
-                        <vue-single-select
-                            v-model="linkLender"
-                            :options="lenderNames"
-                            placeholder="Prestadores"
-                        ></vue-single-select>
-                        <base-button type="default" v-on:click="estatusEdit(idSelect, 3, 'no-prestador')">
-                            Vincular
-                        </base-button>  
-                    </form>
-            </template>
-            </card>
-        </modal>
         <modal :show.sync="modals.modal3"
                :gradient="modals.type"
                modal-classes="modal-danger modal-dialog-centered">
@@ -156,6 +130,32 @@
                             Realizar cambios
                         </base-button>
                     </center>
+                </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal2"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Vincular prestador</h3>
+                    </div>
+                </template>
+                <template>
+                    <form role="form">
+                        <vue-single-select
+                            v-model="linkLender"
+                            :options="lenderNames"
+                            placeholder="Prestadores"
+                        ></vue-single-select>
+                        <base-button type="default" v-on:click="estatusEdit(idSelect, 3, 'no-prestador')">
+                            Vincular
+                        </base-button>  
+                    </form>
                 </template>
             </card>
         </modal>
@@ -818,28 +818,16 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                 password: this.registerUser.password,
             }, configToken)
             .then(res => {
-                this.modals = {
-                    modal1: false,
-                    modal2: false,
-                    modal3: true,
-                    modal4: false,
-                    modal5: false,
-                    message: '¡Usuario registrado con exito!',
-                    icon: 'ni ni-check-bold ni-5x',
-                    type: 'success'
-                }
+                this.modals.modal1 = false
+                this.modals.modal3 = true
+                this.modals.message = '¡Usuario registrado con exito!',
+                this.modals.icon = 'ni ni-check-bold ni-5x',
+                this.modals.type = 'success'
                 setTimeout(() => {
-                    console.log(this.modals.modal3)
-                    this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: false,
-                        modal4: false,
-                        modal5: false,
-                        message: "",
-                        icon: '',
-                        type: ''
-                    }
+                    this.modals.modal3 = false
+                    this.modals.message = '',
+                    this.modals.icon = '',
+                    this.modals.type = ''
                     this.initialState(1)
                     this.getUsers()
                     const id = res.data.status
@@ -908,9 +896,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                 p:null
             }
             if (val == 1) {
-                this.modals = {
-                    modal1: false
-                }
+                this.modals.modal1 = false
             }
             if (val == 2) {
                 this.tipeForm = 'Registrar'
@@ -1081,6 +1067,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 				})
 			}else{
 				if (type == 'prestador') {
+                    console.log('entre aqui')
 					this.modals.modal2 = true
 					this.idSelect = id
 				}else{
