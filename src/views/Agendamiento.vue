@@ -382,14 +382,6 @@
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.cliente)}}</badge>
                             </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
-                                <span >Contacto:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatContact(selectedEvent.cliente)}}</badge>
-                            </base-button>
-                            <base-button class="mt-1 col-12" size="sm" type="secondary">
-                                <span >Empleado(s):</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.empleada)}}</badge>
-                            </base-button>
-                            <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span >Entrada:</span>
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
                                 <span >Salida:</span>
@@ -412,13 +404,6 @@
                                     No lleva descuento 
                                     <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
                                 </span>
-                            </base-button>
-                            <dt class="mt-3 text-center">Confirmación de cita</dt>
-                            <base-button v-if="selectedEvent.confirmation" class="mt-1 col-12" size="sm" type="success">
-                                Confirmada
-                            </base-button>
-                            <base-button v-else class="mt-1 col-12" size="sm" type="default" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
-                                Enviar confirmación
                             </base-button>
                             <base-button v-if="selectedEvent.typepay == 'Transferencia'" class="mt-1 col-12" size="sm" type="default">
                                 <a :href="imgEndpoint+'/static/designs/'+selectedEvent.paypdf" target="_blank" download>Descargar comprobante</a>
@@ -455,32 +440,46 @@
                             <div class="row">
                                 <div v-if="validRoute('agendamiento', 'editar')" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-md-6 mx-auto mt-2"><center>
 
-                                   <base-button icon="fa fa-edit" class="mx-auto col-10" type="default">Editar</base-button> 
+                                   <base-button icon="fa fa-edit" class="mx-auto col-12" type="default">Editar</base-button> 
                                 </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
                                     <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-md-6 mx-auto mt-2"><center>
 
-                                        <base-button icon="fa fa-check-square" class="mx-auto col-10" type="default">Finalizar</base-button> 
+                                        <base-button icon="fa fa-check-square" class="mx-auto col-12" type="default">Finalizar</base-button> 
                                     </center>
                                     </div>
                                 </template>
                                 <template v-if="validRoute('agendamiento', 'cerrar')">
                                     <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2"><center>
 
-                                        <base-button icon="fa fa-times" class=" col-10 mx-auto" type="danger">Cerrar</base-button> 
+                                        <base-button icon="fa fa-times" class=" col-12 mx-auto" type="danger">Cerrar</base-button> 
                                     </center>
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2"><center>
-
-                                   <base-button icon="fa fa-trash-alt" class=" col-10 mx-auto" type="danger">Borrar</base-button> 
-                                </center>
+                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2">
+                                    <center>
+                                        <base-button icon="fa fa-trash-alt" class=" col-12 mx-auto" type="danger">Borrar</base-button> 
+                                    </center>
                                 </div>
+
+                                <div class="col-md-6 mx-auto mt-2">
+                                    <center>
+                                        <base-button v-if="selectedEvent.confirmation" type="success" icon="ni ni-check-bold" class="mx-auto col-12">
+                                            Confirmada
+                                        </base-button>
+
+                                        <base-button v-else class="mx-auto col-12" type="default" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                            Enviar confirmación
+                                        </base-button>
+                                    </center>
+                                </div>
+                                
+                                
                                 <template v-if="validRoute('agendamiento', 'procesar')">
-                                    <div v-if="selectedEvent.process == true" class="col-12 text-center mt-2">
-                                        <base-button icon="fa fa-calendar-check" class=" col-10 mx-auto" type="success" v-on:click="processDate(selectedEvent.id, 'process')">Procesar</base-button> 
+                                    <div v-if="selectedEvent.process == true" class="col-md-6 mx-auto mt-2">
+                                        <base-button icon="fa fa-calendar-check" class="mx-auto col-12" type="success" v-on:click="processDate(selectedEvent.id, 'process')">Procesar</base-button> 
                                     </div>
                                 </template>
                                 
