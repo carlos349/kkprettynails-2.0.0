@@ -3297,17 +3297,17 @@
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
                 this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
 
-                for (let j = 0; j < this.registerDae.serviceSelectds[indexService].lenders.length; j++) {
-                    const element = this.registerDae.serviceSelectds[indexService].lenders[j];
-                    for (let r = 0; r < this.registerDae.serviceSelectds[indexService].blocks[i].lenders.length; r++) {
-                        const elementTwo = this.registerDae.serviceSelectds[indexService].blocks[i].lenders[r];
-                        if (element.lender == elementTwo) {
-                            this.registerDae.serviceSelectds[indexService].class = element.class
-                            this.registerDae.serviceSelectds[indexService].realLender = elementTwo
-                            this.registerDae.serviceSelectds[indexService].lender = elementTwo
+                for (let j = 0; j < this.registerDate.serviceSelectds[indexService].lenders.length; j++) {
+                    const element = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[j];
+                    for (let r = 0; r < this.registerDate.serviceSelectds[indexService].blocks[i].lenders.length; r++) {
+                        const elementTwo = this.registerDate.serviceSelectds[indexService].lenders[r];
+                        if (element == elementTwo.lender) {
+                            this.registerDate.serviceSelectds[indexService].class = elementTwo.class
+                            this.registerDate.serviceSelectds[indexService].realLender = element
+                            this.registerDate.serviceSelectds[indexService].lender = element
                             break
                         }
-                    } 
+                    }
                 }
             
                 for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].duration / 15; index++) {

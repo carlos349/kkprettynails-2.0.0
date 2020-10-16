@@ -119,7 +119,6 @@
                                                 v-model="dates.simple">
                                         </flat-picker>
                                     </base-input>
-                                    
                                 </div>
                             </div>
                             <div class="col-md-8">
@@ -1205,16 +1204,16 @@
                     this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
 
                     for (let j = 0; j < this.registerDate.serviceSelectds[indexService].lenders.length; j++) {
-                        const element = this.registerDate.serviceSelectds[indexService].lenders[j];
+                        const element = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[j];
                         for (let r = 0; r < this.registerDate.serviceSelectds[indexService].blocks[i].lenders.length; r++) {
-                            const elementTwo = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[r];
-                            if (element.lender == elementTwo) {
-                                this.registerDate.serviceSelectds[indexService].class = element.class
-                                this.registerDate.serviceSelectds[indexService].realLender = elementTwo
-                                this.registerDate.serviceSelectds[indexService].lender = elementTwo
+                            const elementTwo = this.registerDate.serviceSelectds[indexService].lenders[r];
+                            if (element == elementTwo.lender) {
+                                this.registerDate.serviceSelectds[indexService].class = elementTwo.class
+                                this.registerDate.serviceSelectds[indexService].realLender = element
+                                this.registerDate.serviceSelectds[indexService].lender = element
                                 break
                             }
-                        } 
+                        }
                     }
                 
                     for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].duration / 15; index++) {
