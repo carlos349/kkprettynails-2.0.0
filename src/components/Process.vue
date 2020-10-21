@@ -76,16 +76,16 @@
                         <div class="input-group">
                             <a-tooltip v-if="validRoute('procesar', 'descuento')" placement="topLeft">
                                 <template slot="title">
-                                <span>Descuento</span>
+                                    <span>{{discountSelect}}</span>
                                 </template>
                                 <base-input  alternative
-                                type="text"
-                                class="align"
-                                placeholder="0%"
-                                addon-left-icon="ni ni-tag"
-                                v-on:change="descuentoFunc(true)"
-                                v-model="discount"
-                            ></base-input>
+                                    type="text"
+                                    class="align"
+                                    placeholder="0%"
+                                    addon-left-icon="ni ni-tag"
+                                    v-on:change="descuentoFunc(true)"
+                                    v-model="discount"
+                                ></base-input>
                             </a-tooltip>
                             
                             <base-input v-else disabled 
@@ -721,6 +721,7 @@ export default {
             haveCode:false,
             subTotal: 0,
             total: 0,
+            discountSelect: "Descuento",
             totalSinFormato:0,           
             serviciosSelecionados:[],
             resto: 0,
@@ -1281,6 +1282,9 @@ export default {
             }
         },
         chooseClient(){
+            this.discount = ''
+            this.discountSelect = 'Descuento'
+            this.ifrecomend = false
             if (this.clientSelect) {
                 const split = this.clientSelect.split(' / ')
                 axios.get(endPoint.endpointTarget+'/clients/dataDiscount/' + split[1])
@@ -1302,12 +1306,22 @@ export default {
                         var monthNow = new Date().getMonth()
                         if (birthday == monthNow) {
                             this.discount = 10
+                            this.discountSelect = 'Descuento por cumpleaños'
+                        }else if (res.data[0].recomendaciones > 0) {
+                            this.discount = 15
+                            this.ifrecomend = true
+                            this.discountSelect = 'Descuento por recomendacion'
+                        }else if (res.data[0].participacion == 0) {
+                            this.discount = 10
+                            this.discountSelect = 'Descuento por primera atención'
                         }
                     }else if (res.data[0].recomendaciones > 0) {
                         this.discount = 15
                         this.ifrecomend = true
+                        this.discountSelect = 'Descuento por recomendacion'
                     }else if (res.data[0].participacion == 0) {
                         this.discount = 10
+                        this.discountSelect = 'Descuento por primera atención'
                     }
                     
                     console.log(this.ifrecomend)

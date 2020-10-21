@@ -1,7 +1,7 @@
 self.__precacheManifest = [
   {
-    "revision": "50dd5fdc839dfc16739b15370650485c",
-    "url": "/img/theme/react.jpg"
+    "revision": "2300fe007d5a1d67cb00c281b16319c5",
+    "url": "/img/theme/profile-default.png"
   },
   {
     "revision": "6fb59a1b94cc43776f270e1de6622cf8",
@@ -24,20 +24,20 @@ self.__precacheManifest = [
     "url": "/img/theme/reportes.jpg"
   },
   {
-    "revision": "896b811dd209d08870e7",
-    "url": "/js/chunk-6bcdc2aa.9b29dc45.js"
+    "revision": "3692a01347ed8e1df76d",
+    "url": "/js/chunk-6bcdc2aa.5426075e.js"
   },
   {
-    "revision": "99b0a83cf1b0b1e2cb16041520e87641",
-    "url": "/jquery-3.3.1.slim.min.js"
+    "revision": "66618a418175ddf2ac8c47a241d327a8",
+    "url": "/img/theme/team-4-800x800.jpg"
   },
   {
     "revision": "d0e56e42b3608bbfd4a1",
     "url": "/js/chunk-vendors.4064a1f5.js"
   },
   {
-    "revision": "be997d5226b992ffad34816870c6b7aa",
-    "url": "/img/theme/team-2-800x800.jpg"
+    "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
+    "url": "/img/theme/users.jpg"
   },
   {
     "revision": "2cddb5eb2f42b33c30ff",
@@ -48,20 +48,20 @@ self.__precacheManifest = [
     "url": "/img/template-6.d272b05f.png"
   },
   {
-    "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
-    "url": "/img/theme/users.jpg"
-  },
-  {
     "revision": "db1039af1a43f2ad9d499468459fcd9c",
     "url": "/img/theme/inventario.jpg"
   },
   {
-    "revision": "6383a57baa1479e8490a42f4184b7f0b",
-    "url": "/popper.min.js"
+    "revision": "be997d5226b992ffad34816870c6b7aa",
+    "url": "/img/theme/team-2-800x800.jpg"
   },
   {
     "revision": "fe57650882e307346421eb5f579d8138",
     "url": "/img/brand/syswa-isotipo.png"
+  },
+  {
+    "revision": "6383a57baa1479e8490a42f4184b7f0b",
+    "url": "/popper.min.js"
   },
   {
     "revision": "46abbc4a676739dbd61f8a305cb63fd8",
@@ -72,12 +72,12 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "eb59d3eadd08ab12ddbfc0aea92c8ed7",
+    "revision": "ffa3b17f74a46e8e5c10045eea599192",
     "url": "/index.html"
   },
   {
-    "revision": "66618a418175ddf2ac8c47a241d327a8",
-    "url": "/img/theme/team-4-800x800.jpg"
+    "revision": "93929da7ae1722429c7e9d894761dc41",
+    "url": "/img/brand/syswa-gestion.png"
   },
   {
     "revision": "1f533d2fdc40493ee834dd8e4288220c",
@@ -88,12 +88,12 @@ self.__precacheManifest = [
     "url": "/img/theme/bootstrap.jpg"
   },
   {
-    "revision": "2300fe007d5a1d67cb00c281b16319c5",
-    "url": "/img/theme/profile-default.png"
+    "revision": "50dd5fdc839dfc16739b15370650485c",
+    "url": "/img/theme/react.jpg"
   },
   {
-    "revision": "9144f652732dcaaae4dd",
-    "url": "/js/app.55a78773.js"
+    "revision": "22306c26d16b2e5eb6e1",
+    "url": "/js/app.72f8298b.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -108,12 +108,16 @@ self.__precacheManifest = [
     "url": "/img/theme/vue.jpg"
   },
   {
-    "revision": "93929da7ae1722429c7e9d894761dc41",
-    "url": "/img/brand/syswa-gestion.png"
-  },
-  {
     "revision": "4567c9af4dfa454a6e3a9bf30a34fe80",
     "url": "/img/theme/clients.jpg"
+  },
+  {
+    "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
+    "url": "/img/theme/profile-defaultt.png"
+  },
+  {
+    "revision": "99b0a83cf1b0b1e2cb16041520e87641",
+    "url": "/jquery-3.3.1.slim.min.js"
   },
   {
     "revision": "edc7106b21ec12e57022b2ebd534cd2d",
@@ -132,15 +136,11 @@ self.__precacheManifest = [
     "url": "/img/theme/agenda.jpg"
   },
   {
-    "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
-    "url": "/img/theme/profile-defaultt.png"
-  },
-  {
     "revision": "426439788ec5ba772cdf94057f6f4659",
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "9144f652732dcaaae4dd",
+    "revision": "22306c26d16b2e5eb6e1",
     "url": "/css/app.6216b854.css"
   },
   {
@@ -172,7 +172,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-vendors.4ca9948d.css"
   },
   {
-    "revision": "896b811dd209d08870e7",
+    "revision": "3692a01347ed8e1df76d",
     "url": "/css/chunk-6bcdc2aa.7c4c4c5c.css"
   },
   {

@@ -377,10 +377,15 @@
                                 Basicos
                             </span>
                             <dt class="text-center">Detalles de la cita</dt>
-                            <base-button class="mt-2 col-12" size="sm" type="secondary">
-                                <span >Cliente:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.cliente)}}</badge>
-                            </base-button>
+                            <a-tooltip placement="top">
+                                <template slot="title">
+                                <span>{{formatContact(selectedEvent.cliente)}}</span>
+                                </template>
+                                <base-button class="mt-2 col-12" size="sm" type="secondary">
+                                    <span >Cliente:</span>
+                                    <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.cliente)}}</badge>
+                                </base-button>
+                            </a-tooltip>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span >Entrada:</span>
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
@@ -704,7 +709,7 @@
                                     <a-tooltip placement="top">
                                         <template slot="title">
                                         <span v-if="discPerEmploye(index)">Su servicio no permite descuentos</span>
-                                        <span v-else>Descuento</span>
+                                        <span v-else>{{record.typeDiscount}}</span>
                                         </template>
                                         <base-input 
                                             type="text"
@@ -2007,7 +2012,7 @@
                     name: this.dateClient.name,
                     mail: this.dateClient.id,
                     lastName: '',
-                    phone: '',
+                    phone: this.dateClient.infoOne,
                     pay: 'No especificado',
                     pdf: ''
                 }
@@ -2224,10 +2229,13 @@
         },
         formatContact(contact){
             if (contact) {
-            var sp = contact.split(" / ")
-            return sp[1]
+                var sp = contact.split(" / ")
+                if (sp[2]) {
+                    return sp[1]+' / '+sp[2]
+                }else{
+                    return sp[1]
+                }
             }
-            
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
@@ -2991,7 +2999,8 @@
                 total: value.selected_item.total,
                 descuento: value.selected_item.descuento,
                 date: value.selected_item.date,
-                ifrecomend:0
+                ifrecomend:0,
+                typeDiscount: 'Descuento'
             }
             if (selectArray.services[0].discount == false) {
                 const split = selectArray.client.split(' / ')
@@ -3002,11 +3011,20 @@
                         var monthNow = new Date().getMonth()
                         if (birthday == monthNow) {
                             selectArray.descuento = 10
+                            selectArray.typeDiscount = 'Descuento por mes de cumpleaños'
+                        }else if (res.data[0].recomendaciones > 0) {
+                            selectArray.descuento = 15
+                            selectArray.typeDiscount = 'Descuento por recomendación'
+                        }else if (res.data[0].participacion == 0) {
+                            selectArray.descuento = 10
+                            selectArray.typeDiscount = 'Descuento por primera atención'
                         }
                     }else if (res.data[0].recomendaciones > 0) {
                         selectArray.descuento = 15
+                        selectArray.typeDiscount = 'Descuento por recomendación'
                     }else if (res.data[0].participacion == 0) {
                         selectArray.descuento = 10
+                        selectArray.typeDiscount = 'Descuento por primera atención'
                     }
                     this.selectedDates.closedArray.push(selectArray)
                     console.log(this.selectedDates.closedArray)
@@ -3166,7 +3184,8 @@
                                 axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                     date: this.finalDate,
                                     lenders: res.data.array,
-                                    time: this.registerDae.serviceSelectds[0].duration
+                                    time: this.registerDae.serviceSelectds[0].duration,
+                                    lendersService: this.registerDae.serviceSelectds[0].lenders
                                 })
                                 .then(res => {
                                     console.log(res)
@@ -3187,7 +3206,8 @@
                                 axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                     date: this.finalDate,
                                     lenders: res.data.array,
-                                    time: this.registerDae.serviceSelectds[0].duration
+                                    time: this.registerDae.serviceSelectds[0].duration,
+                                    lendersService: this.registerDae.serviceSelectds[0].lenders
                                 })
                                 .then(res => {
                                     console.log(res)
@@ -3296,14 +3316,21 @@
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
                 this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
 
-                for (let j = 0; j < this.registerDate.serviceSelectds[indexService].lenders.length; j++) {
-                    const element = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[j];
-                    for (let r = 0; r < this.registerDate.serviceSelectds[indexService].blocks[i].lenders.length; r++) {
-                        const elementTwo = this.registerDate.serviceSelectds[indexService].lenders[r];
-                        if (element == elementTwo.lender) {
-                            this.registerDate.serviceSelectds[indexService].class = elementTwo.class
-                            this.registerDate.serviceSelectds[indexService].realLender = element
-                            this.registerDate.serviceSelectds[indexService].lender = element
+                var valid = false
+                for (let j = 0; j < this.registerDae.serviceSelectds[indexService].blocks[i].lenders.length; j++) {
+                    const element = this.registerDae.serviceSelectds[indexService].blocks[i].lenders[j];
+                    if (element.valid == true) {
+                        for (let r = 0; r < this.registerDae.serviceSelectds[indexService].lenders.length; r++) {
+                            const elementTwo = this.registerDae.serviceSelectds[indexService].lenders[r];
+                            if (element.name == elementTwo.lender) {
+                                this.registerDae.serviceSelectds[indexService].class = elementTwo.class
+                                this.registerDae.serviceSelectds[indexService].realLender = element.name
+                                this.registerDae.serviceSelectds[indexService].lender = element.name
+                                valid = true
+                                break
+                            }
+                        }
+                        if (valid) {
                             break
                         }
                     }
@@ -3322,7 +3349,8 @@
                     .endpointTarget+'/citas/editBlocksFirst', {
                         array: this.registerDae.serviceSelectds[indexService].blocks,
                         time: this.registerDae.serviceSelectds[finalIndex].duration,
-                        lender: this.registerDae.serviceSelectds[indexService].lender
+                        lender: this.registerDae.serviceSelectds[indexService].lender,
+                        lendersService: this.registerDae.serviceSelectds[finalIndex].lenders
                     })
                     .then(res => {
                         this.registerDae.serviceSelectds[finalIndex].blocks = res.data
@@ -3417,7 +3445,8 @@
                         axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                             date: this.finalDate,
                             lenders: this.availableslenders,
-                            time: this.registerDae.serviceSelectds[finalIndex].duration
+                            time: this.registerDae.serviceSelectds[finalIndex].duration,
+                            lendersService: this.registerDae.serviceSelectds[finalIndex].lenders
                         })
                         .then(res => {
                             console.log(res)
@@ -3438,7 +3467,8 @@
                 axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                     date: this.finalDate,
                     lenders: this.availableslenders,
-                    time: this.registerDae.serviceSelectds[index].duration
+                    time: this.registerDae.serviceSelectds[index].duration,
+                    lendersService: this.registerDae.serviceSelectds[index].lenders
                 })
                 .then(res => {
                     this.registerDae.serviceSelectds[index].start = ''

@@ -859,7 +859,8 @@
                     axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                         date: this.finalDate,
                         lenders: this.availableslenders,
-                        time: this.registerDate.serviceSelectds[index].duration
+                        time: this.registerDate.serviceSelectds[index].duration,
+                        lendersService: this.registerDate.serviceSelectds[index].lenders
                     })
                     .then(res => {
                         this.registerDate.serviceSelectds[index].start = ''
@@ -1203,14 +1204,21 @@
                     this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
                     this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
 
-                    for (let j = 0; j < this.registerDate.serviceSelectds[indexService].lenders.length; j++) {
+                    var valid = false
+                    for (let j = 0; j < this.registerDate.serviceSelectds[indexService].blocks[i].lenders.length; j++) {
                         const element = this.registerDate.serviceSelectds[indexService].blocks[i].lenders[j];
-                        for (let r = 0; r < this.registerDate.serviceSelectds[indexService].blocks[i].lenders.length; r++) {
-                            const elementTwo = this.registerDate.serviceSelectds[indexService].lenders[r];
-                            if (element == elementTwo.lender) {
-                                this.registerDate.serviceSelectds[indexService].class = elementTwo.class
-                                this.registerDate.serviceSelectds[indexService].realLender = element
-                                this.registerDate.serviceSelectds[indexService].lender = element
+                        if (element.valid == true) {
+                            for (let r = 0; r < this.registerDate.serviceSelectds[indexService].lenders.length; r++) {
+                                const elementTwo = this.registerDate.serviceSelectds[indexService].lenders[r];
+                                if (element.name == elementTwo.lender) {
+                                    this.registerDate.serviceSelectds[indexService].class = elementTwo.class
+                                    this.registerDate.serviceSelectds[indexService].realLender = element.name
+                                    this.registerDate.serviceSelectds[indexService].lender = element.name 
+                                    valid = true
+                                    break
+                                }
+                            }
+                            if (valid) {
                                 break
                             }
                         }
@@ -1224,12 +1232,11 @@
                     
                     const finalIndex = parseFloat(indexService) + parseFloat(1)
                     if (this.registerDate.serviceSelectds[finalIndex]) {
-                        console.log('hola')
-                        axios.post(endPoint
-                        .endpointTarget+'/citas/editBlocksFirst', {
+                        axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
                             array: this.registerDate.serviceSelectds[indexService].blocks,
                             time: this.registerDate.serviceSelectds[finalIndex].duration,
-                            lender: this.registerDate.serviceSelectds[indexService].lender
+                            lender: this.registerDate.serviceSelectds[indexService].lender,
+                            lendersService: this.registerDate.serviceSelectds[finalIndex].lenders
                         })
                         .then(res => {
                             this.registerDate.serviceSelectds[finalIndex].blocks = res.data
@@ -1324,7 +1331,8 @@
                             axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                 date: this.finalDate,
                                 lenders: this.availableslenders,
-                                time: this.registerDate.serviceSelectds[finalIndex].duration
+                                time: this.registerDate.serviceSelectds[finalIndex].duration,
+                                lendersService: this.registerDate.serviceSelectds[finalIndex].lenders
                             })
                             .then(res => {
                                 console.log(res)
@@ -1414,8 +1422,7 @@
                 
             },
             openCalendar(){ 
-                
-                this.configDate.inline = false
+                // this.configDate.inline = false
                 setTimeout(() => {
                     const split = this.dates.simple.split('-')
                     this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
@@ -1462,7 +1469,8 @@
                                     axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                         date: this.finalDate,
                                         lenders: res.data.array,
-                                        time: this.registerDate.serviceSelectds[0].duration
+                                        time: this.registerDate.serviceSelectds[0].duration,
+                                        lendersService: this.registerDate.serviceSelectds[0].lenders
                                     })
                                     .then(res => {
                                         console.log(res)
@@ -1482,7 +1490,8 @@
                                     axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                         date: this.finalDate,
                                         lenders: res.data.array,
-                                        time: this.registerDate.serviceSelectds[0].duration
+                                        time: this.registerDate.serviceSelectds[0].duration,
+                                        lendersService: this.registerDate.serviceSelectds[0].lenders
                                     })
                                     .then(res => {
                                         console.log(res)
