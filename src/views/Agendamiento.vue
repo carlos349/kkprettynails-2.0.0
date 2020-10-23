@@ -2007,61 +2007,118 @@
                     hourFinal = element.start+'Hrs'
                 }
             }
-            if (this.registerDate.client) {
-                const User = {
-                    name: this.dateClient.name,
-                    mail: this.dateClient.id,
-                    lastName: '',
-                    phone: this.dateClient.infoOne,
-                    pay: 'No especificado',
-                    pdf: ''
-                }
-                axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
-                    dataDate: this.registerDae,
-                    date: this.finalDate,
-                    client: User,
-                    pdf: 'not',
-                    ifClient: false
-                })
-                .then(res => {
-                    if (res.data.status == "cita creada") {
-                        this.sendConfirmationn(res.data.id, User.name, User.mail, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, lenderFinal)
-                        this.modals.modal1 = false
+            axios.post(endPoint.endpointTarget+'/citas/verifyDate', {
+                dataDate: this.registerDae,
+                date: this.finalDate,
+            }).then(res => {
+                 if(res.data.status == true){
+                     this.modals.modal1 = false
+                    this.modalsDialog = {
+                        modal2: true,
+                        message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar la cita.",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
                         this.modalsDialog = {
-                            modal2: true,
-                            type: 'success',
-                            icon: 'ni ni-check-bold ni-5x',
-                            message: '¡Agendamiento exitoso!', 
+                            modal2: false,
+                            message: "",
+                            icon: '',
+                            type: ''
                         }
-                        this.getDates()
-                        if (this.employeByDate != 'Filtrar por empleado') {
-                            this.getCitasByEmploye()
+                        this.modals.modal1 = true
+                        this.$refs.wizard.prevTab()
+                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                            const element = this.registerDae.serviceSelectds[index];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.blocks = []
+                            element.valid = false
+                            element.lender = 'Primera disponible'
+                            element.realLender = ''
                         }
-                        axios.post(endPoint.endpointTarget+'/notifications', {
-                            userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                            userImage:localStorage.getItem('imageUser'),
-                            detail:'Creo una cita',
-                            link: 'agendamiento'
+                        this.validHour = false
+                        setTimeout(() => {
+                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                            .then(res => {
+                                this.getDay = res.data.day
+                                this.availableslenders = res.data.array
+                                axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                    date: this.finalDate,
+                                    lenders: res.data.array,
+                                    time: this.registerDae.serviceSelectds[0].duration,
+                                    lendersService: this.registerDae.serviceSelectds[0].lenders
+                                })
+                                .then(res => {
+                                    console.log(res)
+                                    this.readyChange = true
+                                    this.registerDae.serviceSelectds[0].valid = true
+                                    this.registerDae.serviceSelectds[0].blocks = res.data.blocks
+                                    $('#block0').toggle('slow')
+                                })
+                            })
+                        }, 200); 
+                    }, 5000);
+                }else{
+                    if (this.registerDate.client) {
+                        const User = {
+                            name: this.dateClient.name,
+                            mail: this.dateClient.id,
+                            lastName: '',
+                            phone: this.dateClient.infoOne,
+                            pay: 'No especificado',
+                            pdf: ''
+                        }
+                        axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                            dataDate: this.registerDae,
+                            date: this.finalDate,
+                            client: User,
+                            pdf: 'not',
+                            ifClient: false
                         })
                         .then(res => {
-                            this.socket.emit('sendNotification', res.data)
-                        })
-                        setTimeout(() => {
-                            this.initialState()
-                            this.modals.modal1 = true
-                            this.modalsDialog = {
-                                modal2: false,
-                                type: '',
-                                icon: '',
-                                message: '', 
-                            }
-                        }, 1500);
-                    }    
-                }) 
-            }else{
-                this.registerDae.valid = false
-            }
-            
+                            if (res.data.status == "cita creada") {
+                                this.sendConfirmationn(res.data.id, User.name, User.mail, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, lenderFinal)
+                                this.modals.modal1 = false
+                                this.modalsDialog = {
+                                    modal2: true,
+                                    type: 'success',
+                                    icon: 'ni ni-check-bold ni-5x',
+                                    message: '¡Agendamiento exitoso!', 
+                                }
+                                this.getDates()
+                                if (this.employeByDate != 'Filtrar por empleado') {
+                                    this.getCitasByEmploye()
+                                }
+                                axios.post(endPoint.endpointTarget+'/notifications', {
+                                    userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                                    userImage:localStorage.getItem('imageUser'),
+                                    detail:'Creo una cita',
+                                    link: 'agendamiento'
+                                })
+                                .then(res => {
+                                    this.socket.emit('sendNotification', res.data)
+                                })
+                                setTimeout(() => {
+                                    this.initialState()
+                                    this.modals.modal1 = true
+                                    this.modalsDialog = {
+                                        modal2: false,
+                                        type: '',
+                                        icon: '',
+                                        message: '', 
+                                    }
+                                }, 1500);
+                            }    
+                        }) 
+                    }else{
+                        this.registerDae.valid = false
+                    }
+                }
+            }).catch(err => {
+                console.log(err)
+            })        
         },
         newClient(){
             const name = this.dateClient.name.split(' ')

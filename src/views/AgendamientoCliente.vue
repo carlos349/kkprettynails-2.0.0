@@ -7,7 +7,7 @@
         </nav>
         <div class="container-fluid" style="margin-top:8rem;">
             <card shadow>
-                <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!"> 
+                <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!" ref="wizard"> 
                     <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
                     <tab-content title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
@@ -764,54 +764,112 @@
                             hourFinal = element.start+'Hrs'
                         }
                     }
-                    if (this.file != '') {
-                        let formData = new FormData();
-                        formData.append('file', this.file)
-                        axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
+                    axios.post(endPoint.endpointTarget+'/citas/verifyDate', {
+                        dataDate: this.registerDate,
+                        date: this.finalDate,
+                    }).then(res => {
+                        if(res.data.status == true){
+                            this.modals = {
+                                modal3: true,
+                                message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.",
+                                icon: 'ni ni-fat-remove ni-5x',
+                                type: 'danger'
                             }
-                        })
-                        .then(res => {
-                            axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
-                                dataDate: this.registerDate,
-                                date: this.finalDate,
-                                client: this.registerUser,
-                                pdf: res.data.nameFile,
-                                ifClient: true
-                            })
-                            .then(res => {
-                                if (res.data.status == "cita creada") {
-                                    this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
-                                    this.modals.modal2 = false
-                                    this.modals.modal4 = true
-                                    
-                                    $("#overlay").toggle()
-                                    this.ifDisabled = false
-                                }    
-                            })   
-                        })
-                    }else{
-                        axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
-                            dataDate: this.registerDate,
-                            date: this.finalDate,
-                            client: this.registerUser,
-                            pdf: 'not',
-                            ifClient: true
-                        })
-                        .then(res => {
-                            if (res.data.status == "cita creada") {
-                                this.ifDisabled = false
-                                this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
-                                this.modals.modal2 = false
-                                this.modals.modal4 = true
-                                $("#overlay").toggle()
-                            }    
-                        })
-                    }
-                    
-                })
-                
+                            setTimeout(() => {
+                                this.modals = {
+                                    modal1:false,
+                                    modal2:false,
+                                    modal3: false,
+                                    modal4: false,
+                                    modal5: false,
+                                    message: "",
+                                    icon: '',
+                                    type: ''
+                                }
+                                this.$refs.wizard.prevTab()
+                                for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                                    const element = this.registerDate.serviceSelectds[index];
+                                    element.start = ''
+                                    element.end = ''
+                                    element.sort = ''
+                                    element.blocks = []
+                                    element.valid = false
+                                    element.lender = 'Primera disponible'
+                                    element.realLender = ''
+                                }
+                                this.validHour = false
+                                setTimeout(() => {
+                                    axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                                    .then(res => {
+                                        this.getDay = res.data.day
+                                        this.availableslenders = res.data.array
+                                        axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                            date: this.finalDate,
+                                            lenders: res.data.array,
+                                            time: this.registerDate.serviceSelectds[0].duration,
+                                            lendersService: this.registerDate.serviceSelectds[0].lenders
+                                        })
+                                        .then(res => {
+                                            console.log(res)
+                                            this.readyChange = true
+                                            this.registerDate.serviceSelectds[0].valid = true
+                                            this.registerDate.serviceSelectds[0].blocks = res.data.blocks
+                                            $('#block0').toggle('slow')
+                                        })
+                                    })
+                                }, 200); 
+                            }, 5000);
+                        }else{
+                            if (this.file != '') {
+                                let formData = new FormData();
+                                formData.append('file', this.file)
+                                axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data'
+                                    }
+                                })
+                                .then(res => {
+                                    axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                                        dataDate: this.registerDate,
+                                        date: this.finalDate,
+                                        client: this.registerUser,
+                                        pdf: res.data.nameFile,
+                                        ifClient: true
+                                    })
+                                    .then(res => {
+                                        if (res.data.status == "cita creada") {
+                                            this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                            this.modals.modal2 = false
+                                            this.modals.modal4 = true
+                                            
+                                            $("#overlay").toggle()
+                                            this.ifDisabled = false
+                                        }    
+                                    })   
+                                })
+                            }else{
+                                axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                                    dataDate: this.registerDate,
+                                    date: this.finalDate,
+                                    client: this.registerUser,
+                                    pdf: 'not',
+                                    ifClient: true
+                                })
+                                .then(res => {
+                                    if (res.data.status == "cita creada") {
+                                        this.ifDisabled = false
+                                        this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                        this.modals.modal2 = false
+                                        this.modals.modal4 = true
+                                        $("#overlay").toggle()
+                                    }    
+                                })
+                            }
+                        }
+                    }).catch(err => {
+                        console.log(err)
+                    })
+                }) 
             },
             async getServices(){
                 try{

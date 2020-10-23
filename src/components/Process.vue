@@ -1263,7 +1263,7 @@ export default {
             if (this.lenderSelect != '') {
                 axios.get(endPoint.endpointTarget+'/manicuristas/justone/' + this.lenderSelect)
                 .then(res => {
-                    this.docLender = res.data.documento
+                    this.docLender = res.data._id
                     this.nombreManicurista = this.lenderSelect
                     
                 })
