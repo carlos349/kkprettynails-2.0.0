@@ -278,15 +278,28 @@
                                 <base-input v-on:keyup="validRegister()" placeholder="Correo" v-model="dateClient.id" addon-left-icon="ni ni-key-25"></base-input>
                             </div>
                             <div class="col-md-6">
-                                <base-input placeholder="Teléfono" v-model="dateClient.infoOne" addon-left-icon="ni ni-fat-add"></base-input>
+                                <base-input placeholder="Teléfono" v-model="dateClient.infoOne" v-on:input="formatPhone" maxlength="9" addon-left-icon="ni ni-fat-add"></base-input>
                             </div>
                             <div class="col-md-6">
                                 <base-input placeholder="Instagram" v-model="dateClient.infoTwo" addon-left-icon="ni ni-fat-add"></base-input>
                             </div>
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-3 col-sm-12">
                                 <base-checkbox v-model="dateClient.discount" class="mt-2">
                                     Descuento de nuevo cliente
                                 </base-checkbox>
+                            </div>
+                            <div class="col-md-3 col-sm-12">
+                                <base-input addon-left-icon="ni ni-calendar-grid-58 w-100">
+                                    <flat-picker 
+                                            slot-scope="{focus, blur}"
+                                            @on-open="focus"
+                                            @on-close="blur"
+                                            :config="configDate"
+                                            class="form-control datepicker"
+                                            placeholder="Seleccione una fecha"
+                                            v-model="dateClient.birthday">
+                                    </flat-picker>
+                                </base-input>
                             </div>
                             <div class="col-md-6 col-sm-12">
                                 <vue-single-select
@@ -1244,17 +1257,22 @@
         dateClient: {
             name:'',
             id:'',
-            infoOne:null,
+            infoOne:'',
             infoTwo:null,
             partipation:null,
             recommender:null,
             recommenders:null,
+            birthday: '',
             lastDate:null,
             discount:null,
             date:null,
             _id:null,
             valid:false,
             valid2:false
+        },
+        configDate: {
+            allowInput: true, 
+            dateFormat: 'd-m-Y',
         },
         configDatePicker: {
         allowInput: true,
@@ -1609,6 +1627,15 @@
                 }
             })
         },
+        formatPhone(){
+            var number = this.dateClient.infoOne.replace(/[^\d]/g, '')
+            if (number.length == 9) {
+                number = number.replace(/(\d{1})(\d{4})/, "$1-$2-");
+            } else if (number.length == 10) {
+                number = number.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+            }
+            this.dateClient.infoOne = number
+        },
         clientEdit(){
 			const name = this.dateClient.name.split(' ')
 			var firstName, lastName, fullName
@@ -1838,7 +1865,7 @@
             this.dateClient = {
                 name:'',
                 id:'',
-                infoOne:null,
+                infoOne:'',
                 infoTwo:null,
                 partipation:null,
                 recommender:null,
@@ -1867,6 +1894,7 @@
                             infoOne:this.clients[index].correoCliente,
                             infoTwo:this.clients[index].instagramCliente,
                             partipation:this.clients[index].participacion,
+                            birthday: this.clients[index].birthday,
                             recommender:this.clients[index].recomendacion,
                             recommenders:this.clients[index].recomendaciones,
                             lastDate:this.clients[index].ultimaFecha,
@@ -1885,11 +1913,12 @@
                 this.dateClient = {
                     name:'',
                     id:'',
-                    infoOne:null,
+                    infoOne:'',
                     infoTwo:null,
                     partipation:null,
                     recommender:null,
                     recommenders:null,
+                    birthday: null,
                     lastDate:null,
                     discount:null,
                     date:null,
@@ -2137,11 +2166,18 @@
             else{
                 ifCheck = 1
             }
+            var date = this.dateClient.birthday
+            if (this.dateClient.birthday.split('-')[1]) {
+                var split = this.dateClient.birthday.split('-')
+                date = split[1]+'-'+split[0]+'-'+split[2]
+            }
+            const phone = this.dateClient.infoOne.length > 0 ? '+56 '+ this.dateClient.infoOne : ''
             axios.post(endPoint.endpointTarget+'/clients', {
                 nombre:fullName,
                 identidad:this.dateClient.id,
                 recomendador:this.dateClient.recommender,
-                correoCliente:this.dateClient.infoOne,
+                correoCliente:phone,
+                birthday: date,
                 instagramCliente:this.dateClient.infoTwo,
                 ifCheck: ifCheck
             })
