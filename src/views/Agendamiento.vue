@@ -2961,7 +2961,7 @@
             const conteo = $("#"+index+esto).text()
             const conteoTotal = parseFloat(conteo) + 1
             $("#"+index+esto).text(conteoTotal)
-            const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'descuento': discount}
+            const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'discount': discount}
             this.serviciosSelecionadosDates.push(servicios)
             this.EndDateServices.push({name: servicio, id: esto, index: index,valid: true})
         },
@@ -3095,16 +3095,26 @@
                 ifrecomend:0,
                 typeDiscount: 'Descuento'
             }
-            if (selectArray.services[0].discount == false) {
+            console.log(selectArray.services[0].discount)
+            if (selectArray.services[0].discount === false) {
+                console.log('entree coño')
                 const split = selectArray.client.split(' / ')
                 axios.get(endPoint.endpointTarget+'/clients/dataDiscount/' + split[1])
                 .then(res => {
-                    if(res.data[0].birthday){
-                        var birthday = new Date(res.data[0].birthday).getMonth()
-                        var monthNow = new Date().getMonth()
-                        if (birthday == monthNow) {
-                            selectArray.descuento = 10
-                            selectArray.typeDiscount = 'Descuento por mes de cumpleaños'
+                    if (selectArray.services[0].discount == false) {
+                        if(res.data[0].birthday){
+                            var birthday = new Date(res.data[0].birthday).getMonth()
+                            var monthNow = new Date().getMonth()
+                            if (birthday == monthNow) {
+                                selectArray.descuento = 10
+                                selectArray.typeDiscount = 'Descuento por mes de cumpleaños'
+                            }else if (res.data[0].recomendaciones > 0) {
+                                selectArray.descuento = 15
+                                selectArray.typeDiscount = 'Descuento por recomendación'
+                            }else if (res.data[0].participacion == 0) {
+                                selectArray.descuento = 10
+                                selectArray.typeDiscount = 'Descuento por primera atención'
+                            }
                         }else if (res.data[0].recomendaciones > 0) {
                             selectArray.descuento = 15
                             selectArray.typeDiscount = 'Descuento por recomendación'
@@ -3112,12 +3122,6 @@
                             selectArray.descuento = 10
                             selectArray.typeDiscount = 'Descuento por primera atención'
                         }
-                    }else if (res.data[0].recomendaciones > 0) {
-                        selectArray.descuento = 15
-                        selectArray.typeDiscount = 'Descuento por recomendación'
-                    }else if (res.data[0].participacion == 0) {
-                        selectArray.descuento = 10
-                        selectArray.typeDiscount = 'Descuento por primera atención'
                     }
                     this.selectedDates.closedArray.push(selectArray)
                     console.log(this.selectedDates.closedArray)
@@ -3126,6 +3130,7 @@
                     console.log(err)
                 })
             }else{
+                selectArray.descuento = 0
                 this.selectedDates.closedArray.push(selectArray)
                 console.log(this.selectedDates.closedArray)
             }
