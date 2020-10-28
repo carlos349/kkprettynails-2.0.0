@@ -1930,15 +1930,20 @@
             
         },
         validRegister(){
-            setTimeout(() => {
-                if (this.dateClient.name != '' && this.dateClient.id != '') {
-                    this.dateClient.valid2 = true
-                }
-                else{
+            if (this.dateClient.name != '' && this.dateClient.id != '') {
+                if (this.dateClient.id.split('@').length == 2) {
+                    if (this.dateClient.id.split('@')[1].split('.').length == 2) {
+                        this.dateClient.valid2 = true
+                    }else{
+                        this.dateClient.valid2 = false
+                    }
+                }else{
                     this.dateClient.valid2 = false
                 }
-            }, 200);
-            
+            }
+            else{
+                this.dateClient.valid2 = false
+            }  
         },
         formatDate(date) {
             let dateFormat = new Date(date)
@@ -2310,8 +2315,8 @@
             return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
         },
         dateSplitHours(value){
-            const date = new Date(value)
-            var formatTime = date.getHours()+':'+date.getMinutes()  
+            const date = new Date(value).format('DD-MM-YYYY HH:mm')
+            var formatTime = date.split(' ')[1]
             return formatTime
         },
         formatName(name){

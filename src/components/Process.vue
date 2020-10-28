@@ -1,23 +1,43 @@
 <template>
     <a-spin size="large" :spinning="spinning">
         <div class="row spin-content">
-            <div class="col-6">
-                <div v-on:click="chooseClient">
-                <vue-single-select
-                    v-model="clientSelect"
-                    :options="clientNames"
+            <div class="col-6 mb-3">
+                <a-select
+                    show-search
                     placeholder="Clientes"
-                    ></vue-single-select>  
-                </div>
+                    option-filter-prop="children"
+                    style="width: 100%"
+                    :filter-option="filterOption"
+                    :allowClear="true"
+                    :value="clientSelect"
+                    @change="chooseClient">
+                    <a-select-option v-for="client of clients" :key="client._id" :value="client.identidad">
+                        {{client.nombre}} / {{client.identidad}}
+                    </a-select-option>
+                </a-select>
             </div>
-            <div class="col-6">
-                <div v-on:click="chooseLender"> 
+            <div class="col-6 mb-3">
+                <!-- <div v-on:click="chooseLender"> 
                     <vue-single-select
                     v-model="lenderSelect"
                     :options="lenderNames"
                     placeholder="Prestadoras"
                     ></vue-single-select> 
-                </div>
+                </div> -->
+                <a-select
+                    show-search
+                    placeholder="Prestadoras"
+                    option-filter-prop="children"
+                    style="width: 100%"
+                    :filter-option="filterOption"
+                    :allowClear="true"
+                    :value="lenderSelect"
+                    ref="lenderRef"
+                    @change="chooseLender">
+                    <a-select-option v-for="lender of registerService.lenders" :key="lender._id" :value="lender._id+'/'+lender.nombre">
+                        {{lender.nombre}}
+                    </a-select-option>
+                </a-select>
             </div>
             <div class="col-12">
                 <table class="table" v-bind:style="{ 'background-color': '#172b4d', 'border-radius' : '10px', 'border':'none !important'}" >
@@ -703,9 +723,10 @@ export default {
                 table: "table-bordered table-striped"
             },
             clientNames: [],
-            clientSelect: null,
+            clients: [],
+            clientSelect: '',
             lenderNames: [],
-            lenderSelect: null,
+            lenderSelect: '',
             services: [],
             inspector: false,
             countServices: [],
@@ -753,6 +774,9 @@ export default {
         this.getLenders()
         this.getServices()
         this.getToken()
+        setTimeout(() => {
+            $('.anticon-close-circle').click()
+        }, 1000);
     },
     methods: {
         getToken(){
@@ -1042,6 +1066,7 @@ export default {
         getClient(){
             axios.get(endPoint.endpointTarget+'/clients')
             .then(res => {
+                this.clients = res.data
                 this.clientNames = []
                 for (let index = 0; index < res.data.length; index++) {
                     
@@ -1053,9 +1078,7 @@ export default {
             axios.get(endPoint.endpointTarget+'/manicuristas')
             .then(res => {
                 this.registerService.lenders = res.data
-                for (let index = 0; index < res.data.length; index++) {
-                    this.lenderNames.push(res.data[index].nombre)
-                }
+                
             })
         },
         getServices(){
@@ -1259,37 +1282,53 @@ export default {
             }
 			
         },
-        chooseLender(){
-            if (this.lenderSelect != '') {
-                axios.get(endPoint.endpointTarget+'/manicuristas/justone/' + this.lenderSelect)
-                .then(res => {
-                    this.docLender = res.data._id
-                    this.nombreManicurista = this.lenderSelect
-                    
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+        chooseLender(value){
+            this.lenderSelect = value
+            if (this.lenderSelect) {
+                this.docLender = this.lenderSelect.split('/')[0]
+                this.nombreManicurista = this.lenderSelect.split('/')[1]
             }
-            if (this.clientSelect != null && this.lenderSelect != null) {
+            if (this.clientSelect != '' && this.lenderSelect != '') {
                 this.validator = false
                 this.validatorBtn = false
             }
             else{
                 this.validator = true
                 this.validatorBtn = true
-
             }
         },
-        chooseClient(){
+        chooseLenderByDataToDate(lender){
+            console.log(this.$refs.lenderRef.select)
+            for (let i = 0; i < this.registerService.lenders.length; i++) {
+                const element = this.registerService.lenders[i];
+                if (lender == element.nombre) {
+                    this.docLender = element._id
+                    this.nombreManicurista = element.nombre
+                    break
+                }
+            }
+            if (this.clientSelect != '' && this.lenderSelect != '') {
+                this.validator = false
+                this.validatorBtn = false
+            }
+            else{
+                this.validator = true
+                this.validatorBtn = true
+            }
+        },
+        handleChange(value) {
+            console.log(`selected ${value}`);
+        },
+        chooseClient(value){
             this.discount = ''
             this.discountSelect = 'Descuento'
             this.ifrecomend = false
+            console.log(value)
+            this.clientSelect = value
             if (this.clientSelect) {
-                const split = this.clientSelect.split(' / ')
-                axios.get(endPoint.endpointTarget+'/clients/dataDiscount/' + split[1])
+                axios.get(endPoint.endpointTarget+'/clients/dataDiscount/' + this.clientSelect)
                 .then(res => {
-                    console.log(res)
+                    // console.log(res)
                     this.newClient.text = "Editar cliente"
                     this.ifEdit = true
                     this.editClientId = res.data[0]._id
@@ -1338,7 +1377,7 @@ export default {
                 this.registerClient.contactTwo = ""
                 this.validRegister(2)
             }
-            if (this.clientSelect != null && this.lenderSelect != null) {
+            if (this.clientSelect != '' && this.lenderSelect != '') {
                 this.validator = false
                 this.validatorBtn = false
             }
@@ -1358,7 +1397,7 @@ export default {
 				this.clientSelect = res.data.client
 				this.lenderSelect = res.data.employe
 				this.servicesProcess = res.data.services
-				this.chooseLender()
+				this.chooseLenderByDataToDate(this.lenderSelect)
 				const split = res.data.client.split('/')
 				const splitTwo = split[1].split(' ')
 				axios.get(endPoint.endpointTarget+'/clients/dataDiscount/'+splitTwo[1])
@@ -1416,11 +1455,13 @@ export default {
 			this.payDebit = 0
             this.payCredit = 0
             this.payOrder = 0
+            this.docLender = ''
 			this.payTransfer = 0
 			this.lenderSelect = null
 			this.clientSelect = null
 			this.resto  = 0
-			this.subTotal = 0
+            this.subTotal = 0
+            this.nombreManicurista = ''
             this.inspector = false
             this.ifEdit = false
             this.newClient.text = "Nuevo cliente"
@@ -1429,6 +1470,12 @@ export default {
             this.ifrecomend = false
             this.validRegister()
             this.haveCode = false
+            $('.anticon-close-circle').click()
+        },
+        filterOption(input, option) {
+            return (
+                option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            );
         },
         processSale() {
             
