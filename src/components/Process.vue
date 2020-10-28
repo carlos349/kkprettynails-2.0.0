@@ -1523,7 +1523,7 @@ export default {
                     .then(res => {})
 					axios.post(endPoint.endpointTarget+'/ventas/procesar', {
 						cliente: this.clientSelect,
-						manicurista: this.lenderSelect,
+						manicurista: this.nombreManicurista,
 						servicios: this.serviciosSelecionados,
 						pagoEfectivo:this.payCash,
 						pagoOtros:this.payOthers,
