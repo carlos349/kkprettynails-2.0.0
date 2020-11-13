@@ -5,7 +5,7 @@ const portClient = '3389'
 const endpointTarget = `http://${server}`
 const imgEndpoint = `${endpointTarget}/static/users/`
 
-const endPoint =  { 
+const endPoint = { 
     imgEndpoint: imgEndpoint, 
     portClient:portClient, 
     endpointTarget:endpointTarget, 
