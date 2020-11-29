@@ -913,40 +913,85 @@
                 this.selectHourService(index, lender, time, rest)
             },
             insertData(index, lender, restTime, Class, duration, check, lenders){
+                console.log(this.registerDate)
                 if (lender == 'Primera disponible') {
                     if (index > 0) {
                         const finalIndex = index - 1
                         var arrayLenders = []
-                        for (let i = 0; i < this.registerDate.serviceSelectds[index].lenders.length; i++) {
-                            const element = this.registerDate.serviceSelectds[index].lenders[i];
-                            if (element.lender != 'Primera disponible') {
-                                arrayLenders.push(element)
+                        if (this.registerDate.serviceSelectds[finalIndex].itFirst) {
+                            for (let i = 0; i < this.registerDate.serviceSelectds[index].lenders.length; i++) {
+                                const element = this.registerDate.serviceSelectds[index].lenders[i];
+                                if (element.lender != 'Primera disponible') {
+                                    arrayLenders.push(element)
+                                }
                             }
+                            axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
+                                array: this.registerDate.serviceSelectds[finalIndex].blocks,
+                                time: this.registerDate.serviceSelectds[index].duration,
+                                lender: this.registerDate.serviceSelectds[finalIndex].lender,
+                                lendersService: arrayLenders
+                            })
+                            .then(res => {
+                                this.registerDate.serviceSelectds[index].start = ''
+                                this.registerDate.serviceSelectds[index].end = ''
+                                this.registerDate.serviceSelectds[index].sort = ''
+                                this.readyChange = true
+                                this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
+                                this.registerDate.serviceSelectds[index].valid = true
+                                this.registerDate.serviceSelectds[index].blocks = res.data
+                                for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
+                                    const element = this.registerDate.serviceSelectds[j];
+                                    element.start = ''
+                                    element.end = ''
+                                    element.sort = ''
+                                    element.blocks = []
+                                    element.valid = false
+                                    element.lender = 'Primera disponible'
+                                    element.itFirst = true
+                                }
+                            })
+                        }else{
+                            axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                date: this.finalDate,
+                                lenders: this.availableslenders,
+                                time: this.registerDate.serviceSelectds[index].duration,
+                                lendersService: this.registerDate.serviceSelectds[index].lenders
+                            })
+                            .then(res => {
+                                for (let i = 0; i < this.registerDate.serviceSelectds[index].lenders.length; i++) {
+                                    const element = this.registerDate.serviceSelectds[index].lenders[i];
+                                    if (element.lender != 'Primera disponible') {
+                                        arrayLenders.push(element)
+                                    }
+                                }
+                                console.log()
+                                axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
+                                    array: res.data.blocks,
+                                    time: this.registerDate.serviceSelectds[index].duration,
+                                    lender: this.registerDate.serviceSelectds[finalIndex].lender,
+                                    lendersService: arrayLenders
+                                })
+                                .then(res => {
+                                    this.registerDate.serviceSelectds[index].start = ''
+                                    this.registerDate.serviceSelectds[index].end = ''
+                                    this.registerDate.serviceSelectds[index].sort = ''
+                                    this.readyChange = true
+                                    this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
+                                    this.registerDate.serviceSelectds[index].valid = true
+                                    this.registerDate.serviceSelectds[index].blocks = res.data
+                                    for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
+                                        const element = this.registerDate.serviceSelectds[j];
+                                        element.start = ''
+                                        element.end = ''
+                                        element.sort = ''
+                                        element.blocks = []
+                                        element.valid = false
+                                        element.lender = 'Primera disponible'
+                                        element.itFirst = true
+                                    }
+                                })
+                            })
                         }
-                        axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
-                            array: this.registerDate.serviceSelectds[finalIndex].blocks,
-                            time: this.registerDate.serviceSelectds[index].duration,
-                            lender: this.registerDate.serviceSelectds[finalIndex].lender,
-                            lendersService: arrayLenders
-                        })
-                        .then(res => {
-                            this.registerDate.serviceSelectds[index].start = ''
-                            this.registerDate.serviceSelectds[index].end = ''
-                            this.registerDate.serviceSelectds[index].sort = ''
-                            this.readyChange = true
-                            this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
-                            this.registerDate.serviceSelectds[index].valid = true
-                            this.registerDate.serviceSelectds[index].blocks = res.data
-                            for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
-                                const element = this.registerDate.serviceSelectds[j];
-                                element.start = ''
-                                element.end = ''
-                                element.sort = ''
-                                element.blocks = []
-                                element.valid = false
-                                element.lender = 'Primera disponible'
-                            }
-                        })
                     }else{
                         axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                             date: this.finalDate,
@@ -962,6 +1007,7 @@
                             this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
                             this.registerDate.serviceSelectds[index].valid = true
                             this.registerDate.serviceSelectds[index].blocks = res.data.blocks
+                            this.registerDate.serviceSelectds[indexService].itFirst = false
                             for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
                                 const element = this.registerDate.serviceSelectds[j];
                                 element.start = ''
@@ -971,16 +1017,29 @@
                                 element.valid = false
                                 element.lender = 'Primera disponible'
                                 element.realLender = ''
+                                element.itFirst = true
                             }
                         })
                     }
                 }else{
+                    for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
+                        const element = this.registerDate.serviceSelectds[j];
+                        element.start = ''
+                        element.end = ''
+                        element.sort = ''
+                        element.blocks = []
+                        element.valid = false
+                        element.lender = 'Primera disponible'
+                        element.realLender = ''
+                        element.itFirst = true
+                    }
                     this.registerDate.serviceSelectds[index].start = ''
                     this.registerDate.serviceSelectds[index].end = ''
                     this.registerDate.serviceSelectds[index].lender = lender
                     this.registerDate.serviceSelectds[index].realLender = lender
                     this.registerDate.serviceSelectds[index].days = restTime
                     this.registerDate.serviceSelectds[index].class = Class
+                    this.registerDate.serviceSelectds[index].itFirst = false
                     this.validHour = false 
                     this.validMultiLender(index, lender, duration, restTime, check) 
                 }
@@ -1150,7 +1209,7 @@
                         this.posibleLenders.push(lenders[index]) 
                     } 
                 } 
-                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [],lenderSelectData: {}, valid: false, validAfter: false, discount: discount })
+                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [], lenderSelectData: {}, valid: false, validAfter: false, discount: discount, itFirst: true})
                 this.registerDate.start = ''  
                 this.registerDate.end = '' 
                 this.registerDate.sort = ''    
@@ -1217,7 +1276,7 @@
                         this.posibleLenders.push(lenders[index]) 
                     } 
                 } 
-                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [], lenderSelectData: {}, valid: false, validAfter: false, discount: discount})
+                this.registerDate.serviceSelectds.push({comision: comision, precio: precio, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [], lenderSelectData: {}, valid: false, validAfter: false, discount: discount, itFirst: true})
                 this.registerDate.start = ''  
                 this.registerDate.end = '' 
                 this.registerDate.sort = ''    
@@ -1306,7 +1365,7 @@
                                 if (element.name == elementTwo.lender) {
                                     this.registerDate.serviceSelectds[indexService].class = elementTwo.class
                                     this.registerDate.serviceSelectds[indexService].realLender = element.name
-                                    this.registerDate.serviceSelectds[indexService].lender = element.name 
+                                    this.registerDate.serviceSelectds[indexService].lender = element.name
                                     valid = true
                                     break
                                 }
@@ -1382,6 +1441,7 @@
                                     i++
                                 }
                                 this.registerDate.serviceSelectds[indexService].blocks = res.data
+                                this.registerDate.serviceSelectds[indexService].itFirst = false
                                 var valid = 0 
                                 for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                                     const element = this.registerDate.serviceSelectds[index];
@@ -1404,6 +1464,7 @@
                             }
                             this.registerDate.serviceSelectds[indexService].blocks = res.data
                             this.blockHour = res.data
+                            this.registerDate.serviceSelectds[indexService].itFirst = false
                             var valid = 0 
                             for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                                 const element = this.registerDate.serviceSelectds[index];
