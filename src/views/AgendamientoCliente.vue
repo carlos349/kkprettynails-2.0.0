@@ -964,14 +964,18 @@
                                         arrayLenders.push(element)
                                     }
                                 }
-                                console.log()
-                                axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
+                                console.log(this.registerDate.serviceSelectds[finalIndex])
+                                axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
                                     array: res.data.blocks,
+                                    prevBlocks:this.registerDate.serviceSelectds[finalIndex].blocks,
                                     time: this.registerDate.serviceSelectds[index].duration,
                                     lender: this.registerDate.serviceSelectds[finalIndex].lender,
-                                    lendersService: arrayLenders
+                                    lendersService: arrayLenders,
+                                    start:this.registerDate.serviceSelectds[finalIndex].start,
+                                    end:this.registerDate.serviceSelectds[finalIndex].end
                                 })
                                 .then(res => {
+                                    console.log(res.data)
                                     this.registerDate.serviceSelectds[index].start = ''
                                     this.registerDate.serviceSelectds[index].end = ''
                                     this.registerDate.serviceSelectds[index].sort = ''
@@ -1481,6 +1485,7 @@
                         }
                         
                         const finalIndex = parseFloat(indexService) + parseFloat(1)
+                        var arrayLenders = []
                         if (this.registerDate.serviceSelectds[finalIndex]) {
                             axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                 date: this.finalDate,
@@ -1489,10 +1494,40 @@
                                 lendersService: this.registerDate.serviceSelectds[finalIndex].lenders
                             })
                             .then(res => {
-                                console.log(res)
-                                this.readyChange = true
-                                this.registerDate.serviceSelectds[finalIndex].valid = true
-                                this.registerDate.serviceSelectds[finalIndex].blocks = res.data.blocks
+                                for (let i = 0; i < this.registerDate.serviceSelectds[indexService].lenders.length; i++) {
+                                    const element = this.registerDate.serviceSelectds[indexService].lenders[i];
+                                    if (element.lender != 'Primera disponible') {
+                                        arrayLenders.push(element)
+                                    }
+                                }
+                                console.log(this.registerDate.serviceSelectds[finalIndex])
+                                axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
+                                    array: res.data.blocks,
+                                    prevBlocks:this.registerDate.serviceSelectds[indexService].blocks,
+                                    time: this.registerDate.serviceSelectds[finalIndex].duration,
+                                    lender: this.registerDate.serviceSelectds[indexService].lender,
+                                    lendersService: arrayLenders
+                                })
+                                .then(res => {
+                                    console.log(res.data)
+                                    this.registerDate.serviceSelectds[finalIndex].start = ''
+                                    this.registerDate.serviceSelectds[finalIndex].end = ''
+                                    this.registerDate.serviceSelectds[finalIndex].sort = ''
+                                    this.readyChange = true
+                                    this.registerDate.serviceSelectds[finalIndex].lender = 'Primera disponible'
+                                    this.registerDate.serviceSelectds[finalIndex].valid = true
+                                    this.registerDate.serviceSelectds[finalIndex].blocks = res.data
+                                    for (let j = finalIndex + 1; j < this.registerDate.serviceSelectds.length; j++) {
+                                        const element = this.registerDate.serviceSelectds[j];
+                                        element.start = ''
+                                        element.end = ''
+                                        element.sort = ''
+                                        element.blocks = []
+                                        element.valid = false
+                                        element.lender = 'Primera disponible'
+                                        element.itFirst = true
+                                    }
+                                })
                             })
                         }
                     })
