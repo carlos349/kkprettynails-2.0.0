@@ -488,7 +488,7 @@
                                             Confirmada
                                         </base-button>
 
-                                        <base-button v-else class="mx-auto col-12" type="default" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                        <base-button v-else class="mx-auto col-12" style="padding-left:10px;padding-right:10px" type="default" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
                                             Enviar confirmación
                                         </base-button>
                                     </center>
@@ -2029,6 +2029,7 @@
             })
         },
         register(){
+            console.log("entro en agenda")
             var lenderFinal = ''
             var hourFinal = ''
             for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
@@ -2096,6 +2097,7 @@
                     }, 5000);
                 }else{
                     if (this.registerDate.client) {
+                        this.modals.modal1 = false
                         const User = {
                             name: this.dateClient.name,
                             mail: this.dateClient.id,
@@ -3247,25 +3249,14 @@
                 const restDay = new Date(this.finalDate+' 10:00')
                 this.getDay = restDay.getDay()
                 if (this.getDay == 0) {
-                    this.modals = {
-                        modal3: true,
-                        message: "Disculpa, No laboramos Sábados y Domingos.",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1:false,
-                            modal2:false,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                        this.dates.simple = ''
-                    }, 3000);
+                    console.log("entra en la vaina")
+                    this.$swal({
+                        type: 'error',
+                        title: 'No laboramos los domingos',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.registerDae.date = ''
                 }else{
                     if (this.readyChange) {
                         for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {

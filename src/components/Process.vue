@@ -1122,11 +1122,7 @@ export default {
 					timer: 1500
 				})
 			})
-			axios.put(endPoint.endpointTarget+'/ventas/updateProviderMonth/' + this.lenderSelect)
-			.catch(err => {
-				console.log(err)
-            })
-            console.log(this.serviciosSelecionados)
+			
         },
         borrarServicio(nombre, index, _id, precio, descuento){
             for (var i = 0; i < this.serviciosSelecionados.length; i++) {

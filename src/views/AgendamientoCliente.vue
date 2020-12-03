@@ -219,8 +219,8 @@
                             <div class="col-md-4 col-sm-12 pt-5">
                                 <center>
                                 <base-dropdown class="mt-1 responsiveButtonsPercent mx-auto styleDropdown">
-                                    <base-button slot="title" type="default" class="dropdown-toggle w-100 dropdownPay" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                        Tipo de pago
+                                    <base-button slot="title" type="primary" class="dropdown-toggle w-100 dropdownPay" style="border-radius:14px">
+                                        Selecciona un tipo de pago
                                     </base-button>
                                     <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
                                     <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
@@ -746,7 +746,7 @@
                 const name = this.registerUser.name+' '+this.registerUser.lastName
                 axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
                     name: name,
-                    mail: this.registerUser.mail,
+                    mail: this.registerUser.mail.toLowerCase(),
                     number: phone,
                     referidoId: ''
                 })
