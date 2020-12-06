@@ -119,6 +119,21 @@
                                                 v-model="dates.simple">
                                         </flat-picker>
                                     </base-input>
+
+                                    <h4 class="text-center text-uppercase">¡Domingos especiales!</h4>
+
+                                    <base-radio v-if="new Date().getMonth() == 11 && new Date().getDate() <= 13" name="13-12-2020" class="mb-3" v-model="dates.simple">
+                                        Domingo, 13 de Diciembre del 2020.
+                                    </base-radio>
+                                    <base-radio v-else name="13-12-2020" class="mb-3" v-model="radioDomingos.radio1" disabled>
+                                        Domingo, 13 de Diciembre del 2020.
+                                    </base-radio>
+                                    <base-radio v-if="new Date().getMonth() == 11 && new Date().getDate() <= 20" name="20-12-2020" class="mb-3" v-model="dates.simple">
+                                        Domingo, 20 de Diciembre del 2020.
+                                    </base-radio>
+                                    <base-radio v-else name="20-12-2020" class="mb-3" v-model="radioDomingos.radio1" disabled>
+                                        Domingo, 20 de Diciembre del 2020.
+                                    </base-radio>
                                 </div>
                             </div>
                             <div class="col-md-8">
@@ -299,16 +314,29 @@
                                     v-model="registerUser.mail"
                                     addon-left-icon="ni ni-email-83">
                                 </base-input>
-                                <span style="color:blue;position:absolute;right:20px;top:200px;z-index:1;">+</span>
-                                <base-input alternative
-                                    type="text"
-                                    v-on:input="formatPhone"
-                                    maxlength="9"
-                                    class="text-lowercase"
-                                    placeholder="Escriba su número de teléfono"
-                                    v-model="registerUser.phone"
-                                    addon-left-icon="fa fa-phone">
-                                </base-input>
+                                <span style="color:red;position:absolute;right:20px;top:200px;z-index:1;">*</span>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <base-input alternative
+                                            type="text"
+                                            value="+56"
+                                            class="p-0 codigoNum"
+                                            readonly="true">
+                                        </base-input>
+                                    </div>
+                                    <div class="col-md-9 pl-0">
+                                        <base-input alternative
+                                            type="text"
+                                            v-on:input="formatPhone() ,validFields()"
+                                            maxlength="9"
+                                            class="text-lowercase"
+                                            placeholder="Número de teléfono"
+                                            v-model="registerUser.phone"
+                                            addon-left-icon="fa fa-phone">
+                                        </base-input>
+                                    </div>
+                                </div>
+                                
                                 <base-input alternative
                                     type="text"
                                     v-on:keyup="validFields()"
@@ -509,13 +537,7 @@
                     dateFormat: 'd-m-Y',
                     locale: Spanish, // locale for this instance only
                     minDate: new Date(),
-                    "disable": [
-                        function(date) {
-                            // return true to disable
-                            return (date.getDay() === 0 );
-
-                        }
-                    ]        
+                           
                 },
                 validPay:false,
                 progress:false,
@@ -534,6 +556,10 @@
                     phone: '',
                     pay: 'Presencial efectivo',
                     pdf: 'danger'
+                },
+                radioDomingos:{
+                    radio1:'rad1',
+                    radio2:'rad2'
                 },
                 totalPrice: 0,
                 validWizard: true,
@@ -679,14 +705,14 @@
             validFields(){
                 const split = this.registerUser.mail.split('@')
                 var splitTwo = ''
-                if (this.registerUser.mail.length == 1) {
+                
                     this.registerUser.mail = this.registerUser.mail.toLowerCase()
-                }
+                
                 if (split.length == 2) {
                     splitTwo = split[1].split('.')
                 }
                 if (this.registerUser.pay == 'Transferencia') {
-                    if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
+                    if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '' && this.registerUser.phone.length == 11) {
                         if (split.length == 2) {
                             if (splitTwo.length == 2) {
                                 this.validRegister = true
@@ -700,7 +726,7 @@
                         this.validRegister = false
                     }
                 }else{
-                    if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '') {
+                    if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '' && this.registerUser.phone.length == 11) {
                         if (split.length == 2) {
                             if (splitTwo.length == 2) {
                                 this.validRegister = true
@@ -744,9 +770,10 @@
                 this.ifDisabled = true
                 const phone = '+56 '+this.registerUser.phone
                 const name = this.registerUser.name+' '+this.registerUser.lastName
+                const mail = this.registerUser.mail.toLowerCase()
                 axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
                     name: name,
-                    mail: this.registerUser.mail.toLowerCase(),
+                    mail: mail,
                     number: phone,
                     referidoId: ''
                 })
@@ -1617,7 +1644,8 @@
                     this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
                     const restDay = new Date(this.finalDate+' 10:00')
                     this.getDay = restDay.getDay()
-                    if (this.getDay == 0) {
+                    var onlySunday = split[0]+'-'+split[1]
+                    if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
                         this.modals = {
                             modal3: true,
                             message: "Disculpa, No laboramos Sábados y Domingos.",
@@ -2225,5 +2253,8 @@ color: #174c8e;
 
 .modalFinal .ant-modal-body{
     height: 430px;
+}
+.codigoNum .form-control{
+     padding: 5px;
 }
 </style>

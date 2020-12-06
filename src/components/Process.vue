@@ -323,14 +323,26 @@
                                         v-on:keyup="validRegister(2)"
                                         addon-left-icon="fa fa-address-card">
                             </base-input>
-                            <base-input alternative
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <base-input alternative
+                                        type="text"
+                                        value="+56"
+                                        readonly="true">
+                                    </base-input>
+                                </div>
+                                <div class="col-md-9">
+                                    <base-input alternative
                                         type="text"
                                         placeholder="Teléfono"
                                         v-on:input="formatPhone"
                                         maxlength="9"
                                         v-model="registerClient.contactOne"
                                         addon-left-icon="fa fa-address-card">
-                            </base-input>
+                                    </base-input>
+                                </div>
+                            </div>
+                            
                             <base-input alternative
                                         type="text"
                                         placeholder="Contacto adicional"

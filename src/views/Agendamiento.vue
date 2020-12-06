@@ -139,6 +139,20 @@
                                                 placeholder="Seleccione una fecha">
                                     </flat-picker>
                                 </base-input>
+                                <h4 class="text-center text-uppercase">¡Domingos especiales!</h4>
+
+                                <base-radio v-if="new Date().getMonth() == 11 && new Date().getDate() <= 13" name="13-12-2020" class="mb-3" v-model="registerDae.date">
+                                    Domingo, 13 de Diciembre del 2020.
+                                </base-radio>
+                                <base-radio v-else name="13-12-2020" class="mb-3" v-model="radioDomingos.radio1" disabled>
+                                    Domingo, 13 de Diciembre del 2020.
+                                </base-radio>
+                                <base-radio v-if="new Date().getMonth() == 11 && new Date().getDate() <= 20" name="20-12-2020" class="mb-3" v-model="registerDae.date">
+                                    Domingo, 20 de Diciembre del 2020.
+                                </base-radio>
+                                <base-radio v-else name="20-12-2020" class="mb-3" v-model="radioDomingos.radio1" disabled>
+                                    Domingo, 20 de Diciembre del 2020.
+                                </base-radio>
                             </div>
                             
                             <div class="col-md-8">
@@ -278,7 +292,20 @@
                                 <base-input v-on:keyup="validRegister()" placeholder="Correo" v-model="dateClient.id" addon-left-icon="ni ni-key-25"></base-input>
                             </div>
                             <div class="col-md-6">
-                                <base-input placeholder="Teléfono" v-model="dateClient.infoOne" v-on:input="formatPhone" maxlength="9" addon-left-icon="ni ni-fat-add"></base-input>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <base-input alternative
+                                            type="text"
+                                            value="+56"
+                                            readonly="true">
+                                        </base-input>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <base-input placeholder="Teléfono" v-model="dateClient.infoOne" v-on:input="formatPhone" maxlength="9" addon-left-icon="ni ni-fat-add"></base-input>
+                                    </div>
+                                </div>
+                                
+                                
                             </div>
                             <div class="col-md-6">
                                 <base-input placeholder="Instagram" v-model="dateClient.infoTwo" addon-left-icon="ni ni-fat-add"></base-input>
@@ -380,7 +407,7 @@
                   body-classes=""
                   class="border-0 pt-0">
                 <div class="text-center">
-                    <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}}</base-button>
+                    <base-button type="primary" style="margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}}</base-button>
                 </div>
                 <tabs fill class="flex-column flex-md-row">
                     <card shadow>
@@ -554,7 +581,7 @@
                         class="mx-auto mt-1"
                     ></vue-single-select> 
                 </div>
-                <dd v-if="dateData.fechaEditPick == ''" class="text-danger text-center">Fecha caducada</dd>
+                <dd v-if="dateData.fechaEditPick == ''" class="text-danger text-center">Debe seleccionar una fecha</dd>
                 <div class="col-12 mx-auto">
                     <base-input addon-left-icon="ni ni-calendar-grid-58">
                         <flat-picker  slot-scope="{focus, blur}"
@@ -629,9 +656,9 @@
                     />
                 </div>
                 <template v-for="servicesEnding of EndDateServices" >
-                   <button v-if="servicesEnding.valid" :key="servicesEnding.name" v-on:click="discountServiceDate(servicesEnding.id, servicesEnding.index, servicesEnding.name)" type="button" class="btn btn-default btn-sm mr-1 mb-2">
+                   <button v-if="servicesEnding.valid" :key="servicesEnding.name"  type="button" class="btn btn-default btn-sm mr-1 mb-2">
                         <span>{{servicesEnding.name}}</span>
-                        <span class="badge badge-primary text-white">X</span>
+                        <span v-on:click="discountServiceDate(servicesEnding.id, servicesEnding.index, servicesEnding.name)" class="badge badge-primary text-white">X</span>
                     </button> 
                 </template>
                 <table class="table" v-bind:style="{ 'background-color': '#6BB2E5', 'border-radius' : '5px', 'border':'none !important'}" >
@@ -1169,6 +1196,10 @@
             end: '',
             valid: true
         },
+        radioDomingos:{
+            radio1:'rad1',
+            radio2:'rad2'
+        },
         ifServices: false,
         validWizard: false,
         registerDate: {
@@ -1281,7 +1312,7 @@
         minDate: new Date(),         
         },
         configDatePickerEdit: {
-            lowInput: true,
+            allowInput: true,
             dateFormat: 'm-d-Y',
             locale: Spanish, // locale for this instance only
             minDate: new Date(), 
@@ -2965,28 +2996,52 @@
             }
         },
         conteoServicioDate(esto, servicio, precio, comision, discount, index){
+            
             const conteo = $("#"+index+esto).text()
             const conteoTotal = parseFloat(conteo) + 1
+            let valid = true
             $("#"+index+esto).text(conteoTotal)
             const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'discount': discount}
             this.serviciosSelecionadosDates.push(servicios)
-            this.EndDateServices.push({name: servicio, id: esto, index: index,valid: true})
+            for (let c = 0; c < this.EndDateServices.length; c++) {
+                const element = this.EndDateServices[c];
+                if (element.name == servicio) {
+                    valid = false
+                }
+            }
+            if (valid) {
+                this.EndDateServices.push({name: servicio, id: esto, index: index,valid: true})
+            }
+            console.log(this.EndDateServices)
         },
         discountServiceDate(esto, index, nombre){
-            const conteo = $("#"+index+esto).text()
+            console.log(esto +"-"+ index +"-"+ nombre)
+            let conteo = $("#"+index+esto).text()
+            let conteoTotal = conteo
+            let forLenght = this.serviciosSelecionadosDates
             if (parseFloat(conteo) > 0) {
-                const conteoTotal = parseFloat(conteo) - 1
-                $("#"+index+esto).text(conteoTotal)
-                for (let index = 0; index < this.serviciosSelecionadosDates.length; index++) {
-                    if (this.serviciosSelecionadosDates[index].servicio == nombre) {
-                        this.serviciosSelecionadosDates.splice(index, 1)
-                        break
+                console.log(this.serviciosSelecionadosDates)
+                for (let d = 0; d < 20; d++) {
+                    for (let c = 0; c < forLenght.length; c++) {
+                        console.log(forLenght)
+                        if (this.serviciosSelecionadosDates[c].servicio == nombre) {
+                            this.serviciosSelecionadosDates.splice(c, 1)
+                            conteoTotal = parseFloat(conteoTotal) - 1
+                        }
+                        
                     }
                 }
+                
+                
+                    console.log(this.serviciosSelecionadosDates)
+                
+                
+                $("#"+index+esto).text(conteoTotal)
                 for (let i = 0; i < this.EndDateServices.length; i++) {
                     const element = this.EndDateServices[i];
                     if (element.name == nombre) {
-                        element.valid = false
+                        this.EndDateServices.splice(i, 1)
+                        
                     }
                 }
             }
@@ -3248,8 +3303,9 @@
                 this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
                 const restDay = new Date(this.finalDate+' 10:00')
                 this.getDay = restDay.getDay()
-                if (this.getDay == 0) {
-                    console.log("entra en la vaina")
+                var onlySunday = split[0]+'-'+split[1]
+                console.log(this.finalDate)
+                if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
                     this.$swal({
                         type: 'error',
                         title: 'No laboramos los domingos',
@@ -3402,6 +3458,18 @@
             .catch(err => { console.log(err) })
         },
         selectBloqMulti(lenders, hora, i, indexService, open, check){
+            for (let j = indexService + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                console.log("Entre al for")
+                const element = this.registerDae.serviceSelectds[j];
+                element.start = ''
+                element.end = ''
+                element.sort = ''
+                element.blocks = []
+                element.valid = false
+                element.lender = 'Primera disponible'
+                element.realLender = ''
+                element.itFirst = true
+            }
             setTimeout(() => {
                 $('#'+open).toggle('slow')
             }, 500);
@@ -3671,6 +3739,7 @@
                         })
                     }
                 }else{
+                    console.log("Entre criminal")
                     axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                         date: this.finalDate,
                         lenders: this.availableslenders,
@@ -3678,15 +3747,9 @@
                         lendersService: this.registerDae.serviceSelectds[index].lenders
                     })
                     .then(res => {
-                        this.registerDae.serviceSelectds[index].start = ''
-                        this.registerDae.serviceSelectds[index].end = ''
-                        this.registerDae.serviceSelectds[index].sort = ''
-                        this.readyChange = true
-                        this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
-                        this.registerDae.serviceSelectds[index].valid = true
-                        this.registerDae.serviceSelectds[index].blocks = res.data.blocks
-                        this.registerDae.serviceSelectds[indexService].itFirst = false
+                        console.log(res.data)
                         for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                            console.log("Entre al for")
                             const element = this.registerDae.serviceSelectds[j];
                             element.start = ''
                             element.end = ''
@@ -3697,6 +3760,15 @@
                             element.realLender = ''
                             element.itFirst = true
                         }
+                        this.registerDae.serviceSelectds[index].start = ''
+                        this.registerDae.serviceSelectds[index].end = ''
+                        this.registerDae.serviceSelectds[index].sort = ''
+                        this.readyChange = true
+                        this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
+                        this.registerDae.serviceSelectds[index].valid = true
+                        this.registerDae.serviceSelectds[index].blocks = res.data.blocks
+                        this.registerDae.serviceSelectds[index].itFirst = false
+                        
                     })
                 }
             }else{
@@ -4228,5 +4300,8 @@
     }
     .allSelected{
         background-color: #263c59;
+    }
+    .ps__rail-y{
+        z-index: 10000000 !important;
     }
 </style>

@@ -134,7 +134,16 @@
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
-                        <base-input alternative
+                        <div class="row">
+                            <div class="col-md-3">
+                                <base-input alternative
+                                    type="text"
+                                    value="+56"
+                                    readonly="true">
+                                </base-input>
+                            </div>
+                            <div class="col-md-9">
+                                <base-input alternative
                                     type="text"
                                     placeholder="Teléfono"
                                     v-on:input="formatPhone"
@@ -142,7 +151,10 @@
                                     v-model="registerClient.contactOne"
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fas fa-plus text-default">
-                        </base-input>
+                                </base-input>
+                            </div>
+                        </div>
+                        
                         <base-input alternative
                                     type="text"
                                     placeholder="Contacto adicional"

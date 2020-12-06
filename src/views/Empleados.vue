@@ -277,6 +277,11 @@ import jwtDecode from 'jwt-decode'
                 name: 'Sabado',
                 value: 6,
                 valid: false
+            },
+            {
+                name: 'Domingo',
+                value: 0,
+                valid: false
             }
         ],
         employes: [],
