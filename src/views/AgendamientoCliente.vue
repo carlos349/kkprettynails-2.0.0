@@ -15,16 +15,16 @@
                             <div class="showDevice col-md-12 row">
                                 <div style="width:auto;" class="mx-auto" >
                                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                        <li v-for="(category, index) of categories" :key="category._id" class="nav-item responsiveItem" role="presentation">
+                                        <li v-for="(category, index) of categories"  class="nav-item responsiveItem" role="presentation">
                                             <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
                                         </li>
                                     </ul>   
                                 </div>
                                 <div class="col-md-12">
                                     <div class="tab-content" id="pills-tabContent">
-                                        <div v-for="category of categories" :key="category._id" class="tab-pane fade " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                        <div v-for="category of categories" class="tab-pane fade " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row mt-2">
-                                                <div v-for="(service, index) of services" :key="service" class="col-xl-3 col-md-6 px-4" v-if="service.category == category.name && service.active == true">
+                                                <div v-for="(service, index) of services"  class="col-xl-3 col-md-6 px-4" v-if="service.category == category.name && service.active == true">
                                                     <div class="card-service row mt-2" :id="'cardS'+index">
                                                         <h3 class="name-service"> {{service.nombre}}</h3>
                                                         <div class="col-12"><img src="img/brand/calendar.png" alt=""></div>
@@ -56,16 +56,16 @@
                                     <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
                                         {{CatSelected}}
                                     </base-button>
-                                    <b v-for="category of categories" :key="category._id" v-on:click="selectCategoryPhone(category.name)" class="dropdown-item w-100" style="color:#fff;"> {{category.name}} </b>
+                                    <b v-for="category of categories"  v-on:click="selectCategoryPhone(category.name)" class="dropdown-item w-100" style="color:#fff;"> {{category.name}} </b>
                                 </base-dropdown>
                                 <base-dropdown class="w-100 mx-auto styleDropdown" v-if="servicesPhoneShow">
                                     <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
                                         Servicios 
                                     </base-button>
-                                    <b v-for="service of servicesCat" :key="service" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.nombre}} </b>
+                                    <b v-for="service of servicesCat" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.nombre}} </b>
                                 </base-dropdown>
                                 <div v-if="validObject()">
-                                    <div v-for="(service, index) of serviceSelected" :key="service" class="w-100 mx-auto">
+                                    <div v-for="(service, index) of serviceSelected"  class="w-100 mx-auto">
                                         <div class="card-service row m-0 mt-2" :id="'cardSP'+index">
                                             <h3 class="name-service"> {{service.nombre}}</h3>
                                             <div class="col-12"><img src="img/brand/calendar.png" alt=""></div>
@@ -120,25 +120,12 @@
                                         </flat-picker>
                                     </base-input>
 
-                                    <h4 class="text-center text-uppercase">¡Domingos especiales!</h4>
-
-                                    <base-radio v-if="new Date().getMonth() == 11 && new Date().getDate() <= 13" name="13-12-2020" class="mb-3" v-model="dates.simple">
-                                        Domingo, 13 de Diciembre del 2020.
-                                    </base-radio>
-                                    <base-radio v-else name="13-12-2020" class="mb-3" v-model="radioDomingos.radio1" disabled>
-                                        Domingo, 13 de Diciembre del 2020.
-                                    </base-radio>
-                                    <base-radio v-if="new Date().getMonth() == 11 && new Date().getDate() <= 20" name="20-12-2020" class="mb-3" v-model="dates.simple">
-                                        Domingo, 20 de Diciembre del 2020.
-                                    </base-radio>
-                                    <base-radio v-else name="20-12-2020" class="mb-3" v-model="radioDomingos.radio1" disabled>
-                                        Domingo, 20 de Diciembre del 2020.
-                                    </base-radio>
+                                    
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <div class="row mb-3">
-                                    <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDate.serviceSelectds" :key="servicesSelect">
+                                    <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDate.serviceSelectds" >
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="py-1" style="background-color:#f8fcfd;">
@@ -154,7 +141,7 @@
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
-                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
+                                                        <b v-for="lenders of servicesSelect.lenders"  v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
                                                     </base-dropdown>
                                                 </div>
                                             </div>
@@ -203,7 +190,7 @@
                         <div class="row">
                             <div class="col-md-8 col-sm-12" >
                                 <div class="row">
-                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDate.serviceSelectds" :key="data">
+                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDate.serviceSelectds" >
                                         <div class="p-3">
                                             <center>
                                             <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
@@ -537,6 +524,18 @@
                     dateFormat: 'd-m-Y',
                     locale: Spanish, // locale for this instance only
                     minDate: new Date(),
+                    "disable": [
+                        function(date) {
+                            // return true to disable
+                            return (date.getDay() === 0 );
+
+                        },
+                        function(date) {
+                            // return true to disable
+                            return (date.getDay() === 6);
+
+                        }
+                    ] 
                            
                 },
                 validPay:false,
@@ -942,6 +941,7 @@
             insertData(index, lender, restTime, Class, duration, check, lenders){
                 console.log(this.registerDate)
                 if (lender == 'Primera disponible') {
+                    var durationFirst = this.registerDate.design == 'si' ? duration + 15 : duration 
                     if (index > 0) {
                         const finalIndex = index - 1
                         var arrayLenders = []
@@ -954,7 +954,7 @@
                             }
                             axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
                                 array: this.registerDate.serviceSelectds[finalIndex].blocks,
-                                time: this.registerDate.serviceSelectds[index].duration,
+                                time: durationFirst,
                                 lender: this.registerDate.serviceSelectds[finalIndex].lender,
                                 lendersService: arrayLenders
                             })
@@ -981,7 +981,7 @@
                             axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                 date: this.finalDate,
                                 lenders: this.availableslenders,
-                                time: this.registerDate.serviceSelectds[index].duration,
+                                time: durationFirst,
                                 lendersService: this.registerDate.serviceSelectds[index].lenders
                             })
                             .then(res => {
@@ -995,7 +995,7 @@
                                 axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
                                     array: res.data.blocks,
                                     prevBlocks:this.registerDate.serviceSelectds[finalIndex].blocks,
-                                    time: this.registerDate.serviceSelectds[index].duration,
+                                    time: durationFirst,
                                     lender: this.registerDate.serviceSelectds[finalIndex].lender,
                                     lendersService: arrayLenders,
                                     start:this.registerDate.serviceSelectds[finalIndex].start,
@@ -1027,7 +1027,7 @@
                         axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                             date: this.finalDate,
                             lenders: this.availableslenders,
-                            time: this.registerDate.serviceSelectds[index].duration,
+                            time: durationFirst,
                             lendersService: this.registerDate.serviceSelectds[index].lenders
                         })
                         .then(res => {
@@ -1071,7 +1071,8 @@
                     this.registerDate.serviceSelectds[index].days = restTime
                     this.registerDate.serviceSelectds[index].class = Class
                     this.registerDate.serviceSelectds[index].itFirst = false
-                    this.validHour = false 
+                    this.validHour = false
+                    var durationDesign = this.registerDate.design == 'si' ? duration + 15 : duration 
                     this.validMultiLender(index, lender, duration, restTime, check) 
                 }
             },
@@ -1379,9 +1380,27 @@
                 })
             },
             selectBloqMulti(lenders, hora, i, indexService, open, check){
+                for (let j = indexService + 1; j < this.registerDate.serviceSelectds.length; j++) {
+                    const element = this.registerDate.serviceSelectds[j];
+                    element.start = ''
+                    element.end = ''
+                    element.sort = ''
+                    element.blocks = []
+                    element.valid = false
+                    element.lender = 'Primera disponible'
+                    element.itFirst = true
+                }
                 setTimeout(() => {
                     $('#'+open).toggle('slow')
                 }, 500);
+                var designMulti = this.registerDate.design == 'si' ? this.registerDate.serviceSelectds[indexService].duration + 15 : this.registerDate.serviceSelectds[indexService].duration
+                const finalIndexPrev = parseFloat(indexService) + parseFloat(1)
+                var designNext = ''
+                if (this.registerDate.serviceSelectds[finalIndexPrev]) {
+                    designNext = this.registerDate.design == 'si' ? this.registerDate.serviceSelectds[finalIndexPrev].duration + 15 : this.registerDate.serviceSelectds[finalIndexPrev].duration
+                }
+                console.log(designMulti)
+                console.log(designNext)
                 if (lenders) {
                     var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].Horario.split(":") 
                     this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
@@ -1407,7 +1426,7 @@
                         }
                     }
                 
-                    for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].duration / 15; index++) {
+                    for (let index = 0 ; index <= designMulti / 15; index++) {
                         this.registerDate.serviceSelectds[indexService].blocks[i].validator = 'select'
                         this.registerDate.serviceSelectds[indexService].end = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
                         i++
@@ -1417,7 +1436,7 @@
                     if (this.registerDate.serviceSelectds[finalIndex]) {
                         axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
                             array: this.registerDate.serviceSelectds[indexService].blocks,
-                            time: this.registerDate.serviceSelectds[finalIndex].duration,
+                            time: designNext,
                             lender: this.registerDate.serviceSelectds[indexService].lender,
                             lendersService: this.registerDate.serviceSelectds[finalIndex].lenders
                         })
@@ -1645,6 +1664,7 @@
                     const restDay = new Date(this.finalDate+' 10:00')
                     this.getDay = restDay.getDay()
                     var onlySunday = split[0]+'-'+split[1]
+                    var durationOpen = this.registerDate.design == 'si' ? this.registerDate.serviceSelectds[0].duration + 15 : this.registerDate.serviceSelectds[0].duration
                     if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
                         this.modals = {
                             modal3: true,
@@ -1686,7 +1706,7 @@
                                     axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                         date: this.finalDate,
                                         lenders: res.data.array,
-                                        time: this.registerDate.serviceSelectds[0].duration,
+                                        time: durationOpen,
                                         lendersService: this.registerDate.serviceSelectds[0].lenders
                                     })
                                     .then(res => {
@@ -1707,7 +1727,7 @@
                                     axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                         date: this.finalDate,
                                         lenders: res.data.array,
-                                        time: this.registerDate.serviceSelectds[0].duration,
+                                        time: durationOpen,
                                         lendersService: this.registerDate.serviceSelectds[0].lenders
                                     })
                                     .then(res => {

@@ -27,7 +27,7 @@
                                             <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
                                         </base-button>
                                     </li>
-                                    <li v-for="data in employeShow" :key="data"  v-on:click="getCitasByEmploye(data.name,data.img)">
+                                    <li v-for="data in employeShow"   v-on:click="getCitasByEmploye(data.name,data.img)">
                                         <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
                                             <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
                                         </base-button>
@@ -88,17 +88,17 @@
                             <div class="row col-md-12">
                                 <div style="width:auto;" class="mx-auto">
                                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                        <li v-for="(category, index) of categories" :key="category._id" class="nav-item responsiveItem" role="presentation">
+                                        <li v-for="(category, index) of categories" class="nav-item responsiveItem" role="presentation">
                                             <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
                                         </li>
                                     </ul>   
                                 </div>
                                 <vue-custom-scrollbar class="w-100" v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                                     <div class="tab-content" id="pills-tabContent">
-                                        <div v-for="category of categories" :key="category._id" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                        <div v-for="category of categories" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row">
                                                 <template v-for="(name, index) of services" >
-                                                    <div class="col-lg-6 mt-2" :key="name" v-if="name.category == category.name && name.active == true">
+                                                    <div class="col-lg-6 mt-2" v-if="name.category == category.name && name.active == true">
                                                         <base-button  class="w-100" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores, name.descuento)"  type="default">
                                                             <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
                                                                 <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
@@ -139,26 +139,13 @@
                                                 placeholder="Seleccione una fecha">
                                     </flat-picker>
                                 </base-input>
-                                <h4 class="text-center text-uppercase">¡Domingos especiales!</h4>
-
-                                <base-radio v-if="new Date().getMonth() == 11 && new Date().getDate() <= 13" name="13-12-2020" class="mb-3" v-model="registerDae.date">
-                                    Domingo, 13 de Diciembre del 2020.
-                                </base-radio>
-                                <base-radio v-else name="13-12-2020" class="mb-3" v-model="radioDomingos.radio1" disabled>
-                                    Domingo, 13 de Diciembre del 2020.
-                                </base-radio>
-                                <base-radio v-if="new Date().getMonth() == 11 && new Date().getDate() <= 20" name="20-12-2020" class="mb-3" v-model="registerDae.date">
-                                    Domingo, 20 de Diciembre del 2020.
-                                </base-radio>
-                                <base-radio v-else name="20-12-2020" class="mb-3" v-model="radioDomingos.radio1" disabled>
-                                    Domingo, 20 de Diciembre del 2020.
-                                </base-radio>
+                                
                             </div>
                             
                             <div class="col-md-8">
                                 <vue-custom-scrollbar class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                                 <div class="row mb-3">
-                                    <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" :key="servicesSelect">
+                                    <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" >
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="py-1" style="background-color:#f8fcfd;">
@@ -174,7 +161,7 @@
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
-                                                        <b v-for="lenders of servicesSelect.lenders" :key="lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
+                                                        <b v-for="lenders of servicesSelect.lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
                                                     </base-dropdown>
                                                 </div>
                                             </div>
@@ -226,7 +213,7 @@
                         <div class="row">
                             <div class="col-md-8 col-sm-12" >
                                 <div class="row">
-                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDae.serviceSelectds" :key="data">
+                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDae.serviceSelectds" >
                                         <div class="p-3">
                                             <center>
                                             <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
@@ -379,8 +366,8 @@
                 class="calen"
                 :locale="locale"
                 :events="events"
-                :time-from="600"
-                :time-to="1275"
+                :time-from="540"
+                :time-to="1240"
                 :time-step="15"
                 active-view="month"
                 :disable-views="['years', 'year', 'week']" 
@@ -489,7 +476,7 @@
                                 </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-md-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true" v-on:click="serviciosSelecionadosDates='',endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-md-6 mx-auto mt-2"><center>
 
                                         <base-button icon="fa fa-check-square" class="mx-auto col-12" type="default">Finalizar</base-button> 
                                     </center>
@@ -656,9 +643,9 @@
                     />
                 </div>
                 <template v-for="servicesEnding of EndDateServices" >
-                   <button v-if="servicesEnding.valid" :key="servicesEnding.name"  type="button" class="btn btn-default btn-sm mr-1 mb-2">
+                   <button v-if="servicesEnding.valid"   type="button" class="btn btn-default btn-sm mr-1 mb-2">
                         <span>{{servicesEnding.name}}</span>
-                        <span v-on:click="discountServiceDate(servicesEnding.id, servicesEnding.index, servicesEnding.name)" class="badge badge-primary text-white">X</span>
+                        <span v-on:click="discountServiceDate(servicesEnding.id, servicesEnding.index, servicesEnding.name,false)" class="badge badge-primary text-white">X</span>
                     </button> 
                 </template>
                 <table class="table" v-bind:style="{ 'background-color': '#6BB2E5', 'border-radius' : '5px', 'border':'none !important'}" >
@@ -682,7 +669,7 @@
                                     <base-button outline  size="sm" type="default" class="w-75 btn procesar text-left" v-on:click="conteoServicioDate(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, index)">
                                         {{servicio.nombre}} <span class="badge badge-dark conteoServ mt-1 float-right" :class="servicio._id" v-bind:id="index+servicio._id">0</span>
                                     </base-button>
-                                    <base-button v-on:click="discountServiceDate(servicio._id, index, servicio.nombre)" outline size="sm" type="default" class="w-20 btn btn-back  text-left" >
+                                    <base-button v-on:click="discountServiceDate(servicio._id, index, servicio.nombre,true)" outline size="sm" type="default" class="w-20 btn btn-back  text-left" >
                                         <font-awesome-icon icon="times"/>
                                     </base-button>
                                 </td>
@@ -773,7 +760,7 @@
                                 <template slot="expandedRowRender" slot-scope="record, index">
                                     <div class="row mb-4">
                                         <dt>Servicio(s): </dt>
-                                        <div  v-for="(service, index) of record.services" class="row ml-3" :key="service.servicio"> 
+                                        <div  v-for="(service, index) of record.services" class="row ml-3" > 
                                             <div v-if="index == 0">
                                                 {{' '+service.servicio}} 
                                             </div>
@@ -1309,13 +1296,37 @@
         allowInput: true,
         dateFormat: 'd-m-Y',
         locale: Spanish, // locale for this instance only
-        minDate: new Date(),         
+        minDate: new Date(),
+        "disable": [
+                function(date) {
+                    // return true to disable
+                    return (date.getDay() === 0 );
+
+                },
+                function(date) {
+                    // return true to disable
+                    return (date.getDay() === 6);
+
+                }
+            ]          
         },
         configDatePickerEdit: {
             allowInput: true,
             dateFormat: 'm-d-Y',
             locale: Spanish, // locale for this instance only
             minDate: new Date(), 
+            "disable": [
+                function(date) {
+                    // return true to disable
+                    return (date.getDay() === 0 );
+
+                },
+                function(date) {
+                    // return true to disable
+                    return (date.getDay() === 6);
+
+                }
+            ] 
         },
         dateData: {
         history:[],
@@ -2605,15 +2616,22 @@
             }
             
         },
+        addThefuckingServices(services){
+            
+        },
         endDate(id, client, employe, services){
+            console.log("aqui viene services")
+            console.log(services)
             this.endId = ''
             this.endServices = []
             this.endClient = ''
             this.endEmploye = ''
             this.dateModals.modal3 = true
             this.endId = id
-            this.serviciosSelecionadosDates = services
+            this.serviciosSelecionadosDates = []
+            
             this.endClient = client
+            this.EndDateServices = ''
             this.endEmploye = employe
             $('.inputFind').val('')
             this.myFunction()
@@ -2630,6 +2648,7 @@
                             let sumaVal = parseFloat(valSpan) + 1
                             $(`.${res.data[indexTwo]._id}`).text(sumaVal)
                             this.EndDateServices.push({name: services[index].servicio, id: res.data[indexTwo]._id, index: indexTwo, valid: true})
+                            this.serviciosSelecionadosDates.push({comision:services[index].comision, discount:services[index].discount, precio:services[index].precio, servicio:services[index].servicio})
                         }
                     } 
                 }
@@ -3003,30 +3022,33 @@
             $("#"+index+esto).text(conteoTotal)
             const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'discount': discount}
             this.serviciosSelecionadosDates.push(servicios)
-            for (let c = 0; c < this.EndDateServices.length; c++) {
-                const element = this.EndDateServices[c];
-                if (element.name == servicio) {
-                    valid = false
-                }
-            }
-            if (valid) {
-                this.EndDateServices.push({name: servicio, id: esto, index: index,valid: true})
-            }
+            this.EndDateServices.push({name: servicio, id: esto, index: index,valid: true})
             console.log(this.EndDateServices)
         },
-        discountServiceDate(esto, index, nombre){
+        discountServiceDate(esto, index, nombre, valid){
             console.log(esto +"-"+ index +"-"+ nombre)
             let conteo = $("#"+index+esto).text()
             let conteoTotal = conteo
             let forLenght = this.serviciosSelecionadosDates
             if (parseFloat(conteo) > 0) {
-                console.log(this.serviciosSelecionadosDates)
-                for (let d = 0; d < 20; d++) {
+                
+                if (valid) {
+                   for (let d = 0; d < 20; d++) {
+                        for (let c = 0; c < forLenght.length; c++) {
+                            if (this.serviciosSelecionadosDates[c].servicio == nombre) {
+                                this.serviciosSelecionadosDates.splice(c, 1)
+                                conteoTotal = parseFloat(conteoTotal) - 1
+                            }
+                            
+                        }
+                    } 
+                }
+                else{
                     for (let c = 0; c < forLenght.length; c++) {
-                        console.log(forLenght)
                         if (this.serviciosSelecionadosDates[c].servicio == nombre) {
                             this.serviciosSelecionadosDates.splice(c, 1)
                             conteoTotal = parseFloat(conteoTotal) - 1
+                            break
                         }
                         
                     }
@@ -3037,13 +3059,28 @@
                 
                 
                 $("#"+index+esto).text(conteoTotal)
-                for (let i = 0; i < this.EndDateServices.length; i++) {
-                    const element = this.EndDateServices[i];
-                    if (element.name == nombre) {
-                        this.EndDateServices.splice(i, 1)
-                        
+                if (valid) {
+                    for (let t = 0; t < 15; t++) {
+                        for (let i = 0; i < this.EndDateServices.length; i++) {
+                            const element = this.EndDateServices[i];
+                            if (element.name == nombre) {
+                                this.EndDateServices.splice(i, 1)
+                            }
+                        } 
                     }
                 }
+                else{
+                    
+                    for (let i = 0; i < this.EndDateServices.length; i++) {
+                        const element = this.EndDateServices[i];
+                        if (element.name == nombre) {
+                            this.EndDateServices.splice(i, 1)
+                            
+                            break
+                        }
+                    }
+                }
+                console.log(this.EndDateServices)
             }
         },
         handleFileUpload(){
@@ -3298,6 +3335,7 @@
             })
         },
         openCalendar(){ 
+            
             setTimeout(() => {
                 const split = this.registerDae.date.split('-')
                 this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
@@ -3305,6 +3343,7 @@
                 this.getDay = restDay.getDay()
                 var onlySunday = split[0]+'-'+split[1]
                 console.log(this.finalDate)
+                var durationOpen = this.registerDae.design == 'si' ? this.registerDae.serviceSelectds[0].duration + 15 : this.registerDae.serviceSelectds[0].duration
                 if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
                     this.$swal({
                         type: 'error',
@@ -3334,7 +3373,7 @@
                                 axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                     date: this.finalDate,
                                     lenders: res.data.array,
-                                    time: this.registerDae.serviceSelectds[0].duration,
+                                    time: durationOpen,
                                     lendersService: this.registerDae.serviceSelectds[0].lenders
                                 })
                                 .then(res => {
@@ -3356,7 +3395,7 @@
                                 axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                     date: this.finalDate,
                                     lenders: res.data.array,
-                                    time: this.registerDae.serviceSelectds[0].duration,
+                                    time: durationOpen,
                                     lendersService: this.registerDae.serviceSelectds[0].lenders
                                 })
                                 .then(res => {
@@ -3364,12 +3403,19 @@
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
                                     this.registerDae.serviceSelectds[0].blocks = res.data.blocks
+                                    $('#block0').toggle('slow')
                                 })  
                             })
                         }, 200); 
                     }
                 }
+                $('#block0').toggle('slow')
             }, 200);
+            setTimeout(() => {
+                var d = document.getElementById("block0");
+                d.className += "ps--active-y";
+                $("#block0").addClass("ps--active-y")
+            }, 800);
         },
         validMultiLender(index, lender, time, resTime, check){
             $('#'+check).removeClass('fa-check')
@@ -3459,7 +3505,6 @@
         },
         selectBloqMulti(lenders, hora, i, indexService, open, check){
             for (let j = indexService + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                console.log("Entre al for")
                 const element = this.registerDae.serviceSelectds[j];
                 element.start = ''
                 element.end = ''
@@ -3467,12 +3512,19 @@
                 element.blocks = []
                 element.valid = false
                 element.lender = 'Primera disponible'
-                element.realLender = ''
                 element.itFirst = true
             }
             setTimeout(() => {
                 $('#'+open).toggle('slow')
             }, 500);
+            var designMulti = this.registerDae.design == 'si' ? this.registerDae.serviceSelectds[indexService].duration + 15 : this.registerDae.serviceSelectds[indexService].duration
+            const finalIndexPrev = parseFloat(indexService) + parseFloat(1)
+            var designNext = ''
+            if (this.registerDae.serviceSelectds[finalIndexPrev]) {
+                designNext = this.registerDae.design == 'si' ? this.registerDae.serviceSelectds[finalIndexPrev].duration + 15 : this.registerDae.serviceSelectds[finalIndexPrev].duration
+            }
+            console.log(designMulti)
+            console.log(designNext)
             if (lenders) {
                 var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].Horario.split(":") 
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
@@ -3498,7 +3550,7 @@
                     }
                 }
             
-                for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].duration / 15; index++) {
+                for (let index = 0 ; index <= designMulti / 15; index++) {
                     this.registerDae.serviceSelectds[indexService].blocks[i].validator = 'select'
                     this.registerDae.serviceSelectds[indexService].end = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
                     i++
@@ -3508,7 +3560,7 @@
                 if (this.registerDae.serviceSelectds[finalIndex]) {
                     axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
                         array: this.registerDae.serviceSelectds[indexService].blocks,
-                        time: this.registerDae.serviceSelectds[finalIndex].duration,
+                        time: designNext,
                         lender: this.registerDae.serviceSelectds[indexService].lender,
                         lendersService: this.registerDae.serviceSelectds[finalIndex].lenders
                     })
@@ -3652,11 +3704,13 @@
                 .catch(err => {
                     console.log(err)
                 })
-            } 
+            }
+            
         },
         insertData(index, lender, restTime, Class, duration, check, lenders){
             console.log(this.registerDae)
             if (lender == 'Primera disponible') {
+                var durationFirst = this.registerDae.design == 'si' ? duration + 15 : duration 
                 if (index > 0) {
                     const finalIndex = index - 1
                     var arrayLenders = []
@@ -3669,7 +3723,7 @@
                         }
                         axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
                             array: this.registerDae.serviceSelectds[finalIndex].blocks,
-                            time: this.registerDae.serviceSelectds[index].duration,
+                            time: durationFirst,
                             lender: this.registerDae.serviceSelectds[finalIndex].lender,
                             lendersService: arrayLenders
                         })
@@ -3696,7 +3750,7 @@
                         axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                             date: this.finalDate,
                             lenders: this.availableslenders,
-                            time: this.registerDae.serviceSelectds[index].duration,
+                            time: durationFirst,
                             lendersService: this.registerDae.serviceSelectds[index].lenders
                         })
                         .then(res => {
@@ -3710,7 +3764,7 @@
                             axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
                                 array: res.data.blocks,
                                 prevBlocks:this.registerDae.serviceSelectds[finalIndex].blocks,
-                                time: this.registerDae.serviceSelectds[index].duration,
+                                time: durationFirst,
                                 lender: this.registerDae.serviceSelectds[finalIndex].lender,
                                 lendersService: arrayLenders,
                                 start:this.registerDae.serviceSelectds[finalIndex].start,
@@ -3739,17 +3793,22 @@
                         })
                     }
                 }else{
-                    console.log("Entre criminal")
                     axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                         date: this.finalDate,
                         lenders: this.availableslenders,
-                        time: this.registerDae.serviceSelectds[index].duration,
+                        time: durationFirst,
                         lendersService: this.registerDae.serviceSelectds[index].lenders
                     })
                     .then(res => {
-                        console.log(res.data)
+                        this.registerDae.serviceSelectds[index].start = ''
+                        this.registerDae.serviceSelectds[index].end = ''
+                        this.registerDae.serviceSelectds[index].sort = ''
+                        this.readyChange = true
+                        this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
+                        this.registerDae.serviceSelectds[index].valid = true
+                        this.registerDae.serviceSelectds[index].blocks = res.data.blocks
+                        this.registerDae.serviceSelectds[indexService].itFirst = false
                         for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                            console.log("Entre al for")
                             const element = this.registerDae.serviceSelectds[j];
                             element.start = ''
                             element.end = ''
@@ -3760,15 +3819,6 @@
                             element.realLender = ''
                             element.itFirst = true
                         }
-                        this.registerDae.serviceSelectds[index].start = ''
-                        this.registerDae.serviceSelectds[index].end = ''
-                        this.registerDae.serviceSelectds[index].sort = ''
-                        this.readyChange = true
-                        this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
-                        this.registerDae.serviceSelectds[index].valid = true
-                        this.registerDae.serviceSelectds[index].blocks = res.data.blocks
-                        this.registerDae.serviceSelectds[index].itFirst = false
-                        
                     })
                 }
             }else{
@@ -3790,7 +3840,8 @@
                 this.registerDae.serviceSelectds[index].days = restTime
                 this.registerDae.serviceSelectds[index].class = Class
                 this.registerDae.serviceSelectds[index].itFirst = false
-                this.validHour = false 
+                this.validHour = false
+                var durationDesign = this.registerDate.design == 'si' ? duration + 15 : duration 
                 this.validMultiLender(index, lender, duration, restTime, check) 
             }
         },
@@ -4304,4 +4355,9 @@
     .ps__rail-y{
         z-index: 10000000 !important;
     }
+    .ps__thumb-y{
+        height: 44px !important;
+    }
+    
+    
 </style>
