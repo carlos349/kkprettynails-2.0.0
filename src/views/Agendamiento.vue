@@ -84,8 +84,8 @@
                                 </base-button>
                             </center>
                         </div>
-                        <div class="row mt-2">
-                            <div class="row col-md-12">
+                        <div class="row p-0 mt-2">
+                            <div class="row col-md-12 pl-5">
                                 <div style="width:auto;" class="mx-auto">
                                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                         <li v-for="(category, index) of categories" class="nav-item responsiveItem" role="presentation">
@@ -99,7 +99,7 @@
                                             <div class="row">
                                                 <template v-for="(name, index) of services" >
                                                     <div class="col-lg-6 mt-2" v-if="name.category == category.name && name.active == true">
-                                                        <base-button  class="w-100" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores, name.descuento)"  type="default">
+                                                        <base-button  class="w-100 px-1" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores, name.descuento)"  type="default">
                                                             <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
                                                                 <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
                                                                 <i class="far fa-clock ml-1"></i> {{name.tiempo}}Min
@@ -161,7 +161,7 @@
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
-                                                        <b v-for="lenders of servicesSelect.lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
+                                                        <b v-for="lenders of servicesSelect.lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders,servicesSelect)">{{lenders.lender}}  </b>
                                                     </base-dropdown>
                                                 </div>
                                             </div>
@@ -470,7 +470,7 @@
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="validRoute('agendamiento', 'editar')" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-md-6 mx-auto mt-2"><center>
+                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-md-6 mx-auto mt-2"><center>
 
                                    <base-button icon="fa fa-edit" class="mx-auto col-12" type="default">Editar</base-button> 
                                 </center>
@@ -490,7 +490,7 @@
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent.id,selectedEvent.cliente)" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button icon="fa fa-trash-alt" class=" col-12 mx-auto" type="danger">Borrar</base-button> 
                                     </center>
@@ -498,13 +498,16 @@
 
                                 <div class="col-md-6 mx-auto mt-2">
                                     <center>
-                                        <base-button v-if="selectedEvent.confirmation" type="success" icon="ni ni-check-bold" class="mx-auto col-12">
-                                            Confirmada
-                                        </base-button>
+                                        <div v-if="selectedEvent.process == true">
+                                            <base-button v-if="selectedEvent.confirmation" type="success" icon="ni ni-check-bold" class="mx-auto col-12">
+                                                Confirmada
+                                            </base-button>
 
-                                        <base-button v-else class="mx-auto col-12" style="padding-left:10px;padding-right:10px" type="default" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
-                                            Enviar confirmación
-                                        </base-button>
+                                            <base-button v-else class="mx-auto col-12" style="padding-left:10px;padding-right:10px" type="default" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                                Enviar confirmación
+                                            </base-button>
+                                        </div>
+                                        
                                     </center>
                                 </div>
                                 
@@ -1183,6 +1186,8 @@
             end: '',
             valid: true
         },
+        blockCountValid:0,
+        blockCountArray:[],
         radioDomingos:{
             radio1:'rad1',
             radio2:'rad2'
@@ -1472,7 +1477,7 @@
                 const Lenders = await axios.get(endPoint.endpointTarget+'/manicuristas') 
                 this.lenders = Lenders.data 
                 
-                console.log(this.splitDays)
+                
             }catch(err){
                 console.log(err)
             }
@@ -1483,7 +1488,6 @@
         },
         validatorLendersDaysSplit(change, event){
             this.splitDays = []
-            console.log(this.employeShow)
             if (event.view == 'day') {
                 for (let index = 0; index < this.employeShow.length; index++) {
                     const name = this.employeShow[index];
@@ -1496,7 +1500,6 @@
                         }
                     }
                 }
-                console.log(this.splitDays)
             }
         },
         validatorLender(){
@@ -1505,8 +1508,6 @@
             const split = decoded.linkLender.split("/")
             this.lender = split[0]
             this.status = decoded.status
-            
-            console.log(this.lender)
         },
         handleScroll(event){
             if (event.target.documentElement.scrollTop > 140){
@@ -1603,8 +1604,6 @@
                 this.lengthClosedDates = 0
                 let date = new Date()
                 let dates = date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear()
-                console.log(dates)
-                console.log(res.data.length)
                 for (let i = 0; i < res.data.length; i++) {
                     let dateF = new Date(res.data[i].date)
                     let datesF = (dateF.getDate())+"-"+(dateF.getMonth()+1)+"-"+dateF.getFullYear()
@@ -1612,7 +1611,6 @@
                         this.closedDates.push(res.data[i])
                     }
                 }
-                console.log(this.closedDates)
                 this.lengthClosedDates = this.closedDates.length
                 this.loadingEnds = false
             })
@@ -1624,7 +1622,6 @@
                 var insp = false
                 for (let index = 0; index < this.employes.length; index++) {
                     for (let i = 0; i < this.users.length; i++) {
-                        console.log()
                         if (this.employes[index].nombre + " / " + this.employes[index].documento == this.users[i].linkLender && this.users[i].userImage.length > 1) {
                             this.employeShow.push({name:this.employes[index].nombre, img:endPoint.imgEndpoint+this.users[i].userImage,days: this.employes[index].days, class:this.employes[index].class})
                             insp = false
@@ -1745,7 +1742,6 @@
             $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
         }, 
         plusService(index, service, time, comision, precio, lenders, discount){
-            console.log(discount)
             this.ifServices = true
             this.countServices[index].count++
             this.registerDae.duration = this.registerDae.duration + parseFloat(time)
@@ -2071,7 +2067,6 @@
             })
         },
         register(){
-            console.log("entro en agenda")
             var lenderFinal = ''
             var hourFinal = ''
             for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
@@ -2128,7 +2123,6 @@
                                     lendersService: this.registerDae.serviceSelectds[0].lenders
                                 })
                                 .then(res => {
-                                    console.log(res)
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
                                     this.registerDae.serviceSelectds[0].blocks = res.data.blocks
@@ -2330,7 +2324,6 @@
         },
         onEventClick(event, e){
             this.selectedEvent = event
-            console.log(event)
             this.dateModals.modal1 = true
             const split = event.cliente.split('/')
             const splitTwo = split[1].split(' ')
@@ -2401,7 +2394,6 @@
             const SumHours  = ((parseFloat(separEnd[0]) - parseFloat(separStart[0])) * 60)
             const SumMinutes = parseFloat(separEnd[1]) - parseFloat(separStart[1])
             const TotalMinutes = SumHours + SumMinutes
-            console.log(dateForPicker)
             this.dateData.clientEdit = cliente
             this.dateData.fechaEdit = dateForPicker
             this.dateData.fechaEditPick = dateForPicker
@@ -2414,12 +2406,10 @@
             this.selectEmployeEdit(empleada, this.dateData.fechaEditPick)
         },
         selectEmployeEdit(name, date){
-            console.log(this.employes)
             const getDay = new Date(date+' 10:00').getDay()
             for (let index = 0; index < this.employes.length; index++) {
                 if (this.employes[index].nombre == name) {
                     var rest = ''
-                    console.log(this.employes[index].days)
                     for (let j = 0; j < this.employes[index].days.length; j++) {
                         const element = this.employes[index].days[j];
                         if (element.day == getDay) {
@@ -2446,7 +2436,6 @@
                         resTime:this.dateData.resTimeFinalEdit
                     })
                     .then(res => {
-                        console.log(res)
                         this.blockHourEdit = res.data
                     })
                     .catch(err => {
@@ -2620,8 +2609,6 @@
             
         },
         endDate(id, client, employe, services){
-            console.log("aqui viene services")
-            console.log(services)
             this.endId = ''
             this.endServices = []
             this.endClient = ''
@@ -2661,7 +2648,7 @@
             
             // }
         },
-        deleteDate(id){
+        deleteDate(id,cliente){
             this.$swal({
                 title: '¿Está seguro de borrar la cita?',
                 text: 'No puedes revertir esta acción',
@@ -2676,6 +2663,7 @@
                 if(result.value) {
                     axios.delete(endPoint.endpointTarget+'/citas/' + id)
                     .then(res => {
+                        console.log(cliente)
                         if(res.data.status == 'Cita Eliminada'){
                         this.$swal({
                             type: 'success',
@@ -2683,6 +2671,17 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
+                        var actualMoment = 
+                        axios.post(endPoint.endpointTarget+'/notifications', {
+                            userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                            userImage:localStorage.getItem('imageUser'),
+                            detail:`Eliminó la cita de: ${cliente.split(' / ')[0]} (${cliente.split(' / ')[1]}) ~
+                            el: ${this.formatDate(new Date())}`,
+                            link: 'agendamiento'
+                        })
+                        .then(res => {
+                            this.socket.emit('sendNotification', res.data)
+                        }) 
                         this.events = []
                         this.dateModals.modal1 = false
                         this.getDates();
@@ -2733,13 +2732,10 @@
             }  
             
             this.dateModals.modal5 = true
-            
-            console.log(this.selectedDates.closedArray)
         },
         hundredPorcent(tipo, index){
             var service = this.selectedDates.closedArray[index].services[0].servicio
             this.selectedDates.closedArray[index].services[0].servicio = " "
-            console.log(this.selectedDates.closedArray[index])
             if (tipo == "efectivo") {
                 this.selectedDates.closedArray[index].payCash = 0
                 this.selectedDates.closedArray[index].payTransfer = 0
@@ -2859,7 +2855,6 @@
 			$("."+tipo).toggle()
         },
         findDay(days, lender){
-            console.log(days)
             if (lender != 'Primera disponible') {
                 if (days.length > 0) {
                     var entry = 0
@@ -3023,10 +3018,8 @@
             const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'discount': discount}
             this.serviciosSelecionadosDates.push(servicios)
             this.EndDateServices.push({name: servicio, id: esto, index: index,valid: true})
-            console.log(this.EndDateServices)
         },
         discountServiceDate(esto, index, nombre, valid){
-            console.log(esto +"-"+ index +"-"+ nombre)
             let conteo = $("#"+index+esto).text()
             let conteoTotal = conteo
             let forLenght = this.serviciosSelecionadosDates
@@ -3053,11 +3046,6 @@
                         
                     }
                 }
-                
-                
-                    console.log(this.serviciosSelecionadosDates)
-                
-                
                 $("#"+index+esto).text(conteoTotal)
                 if (valid) {
                     for (let t = 0; t < 15; t++) {
@@ -3080,7 +3068,6 @@
                         }
                     }
                 }
-                console.log(this.EndDateServices)
             }
         },
         handleFileUpload(){
@@ -3132,7 +3119,6 @@
         },
         endingDate(){
             const id = this.endId
-            console.log(this.designEndDate)
             if (this.designEndDate == null) {
                 
                 this.designEndDate = 0
@@ -3194,9 +3180,7 @@
                 ifrecomend:0,
                 typeDiscount: 'Descuento'
             }
-            console.log(selectArray.services[0].discount)
             if (selectArray.services[0].discount === false) {
-                console.log('entree coño')
                 const split = selectArray.client.split(' / ')
                 axios.get(endPoint.endpointTarget+'/clients/dataDiscount/' + split[1])
                 .then(res => {
@@ -3223,7 +3207,6 @@
                         }
                     }
                     this.selectedDates.closedArray.push(selectArray)
-                    console.log(this.selectedDates.closedArray)
                 })
                 .catch(err => {
                     console.log(err)
@@ -3231,7 +3214,6 @@
             }else{
                 selectArray.descuento = 0
                 this.selectedDates.closedArray.push(selectArray)
-                console.log(this.selectedDates.closedArray)
             }
         },
         unSelected(value){
@@ -3334,15 +3316,13 @@
                 console.log(err)
             })
         },
-        openCalendar(){ 
-            
+        openCalendar(){
             setTimeout(() => {
                 const split = this.registerDae.date.split('-')
                 this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
                 const restDay = new Date(this.finalDate+' 10:00')
                 this.getDay = restDay.getDay()
                 var onlySunday = split[0]+'-'+split[1]
-                console.log(this.finalDate)
                 var durationOpen = this.registerDae.design == 'si' ? this.registerDae.serviceSelectds[0].duration + 15 : this.registerDae.serviceSelectds[0].duration
                 if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
                     this.$swal({
@@ -3377,7 +3357,6 @@
                                     lendersService: this.registerDae.serviceSelectds[0].lenders
                                 })
                                 .then(res => {
-                                    console.log(res)
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
                                     this.registerDae.serviceSelectds[0].blocks = res.data.blocks
@@ -3387,7 +3366,6 @@
                         }, 200); 
                     }else{
                         setTimeout(() => {
-                            console.log(this.finalDate)
                             axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                             .then(res => {
                                 this.getDay = res.data.day
@@ -3399,7 +3377,6 @@
                                     lendersService: this.registerDae.serviceSelectds[0].lenders
                                 })
                                 .then(res => {
-                                    console.log(res)
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
                                     this.registerDae.serviceSelectds[0].blocks = res.data.blocks
@@ -3523,8 +3500,6 @@
             if (this.registerDae.serviceSelectds[finalIndexPrev]) {
                 designNext = this.registerDae.design == 'si' ? this.registerDae.serviceSelectds[finalIndexPrev].duration + 15 : this.registerDae.serviceSelectds[finalIndexPrev].duration
             }
-            console.log(designMulti)
-            console.log(designNext)
             if (lenders) {
                 var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].Horario.split(":") 
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
@@ -3549,7 +3524,14 @@
                         }
                     }
                 }
-            
+                for (let t = 0; t < this.registerDae.serviceSelectds[indexService].blocks.length; t++) {
+                    const element = this.registerDae.serviceSelectds[indexService].blocks[t];
+                    if (element.validator == 'select') {
+                        this.registerDae.serviceSelectds[indexService].blocks[t].validator = true
+                        this.registerDae.serviceSelectds[indexService].blocks[t].lenders.push({name:this.registerDae.serviceSelectds[indexService].lender,valid:true})
+                    }
+                }
+
                 for (let index = 0 ; index <= designMulti / 15; index++) {
                     this.registerDae.serviceSelectds[indexService].blocks[i].validator = 'select'
                     this.registerDae.serviceSelectds[indexService].end = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
@@ -3583,8 +3565,6 @@
                 setTimeout(() => {
                     $('#'+check).addClass('fa-check')
                 }, 500);
-                
-                console.log(this.registerDae)
             }else{
                 var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].Horario.split(":") 
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
@@ -3609,8 +3589,16 @@
                             time: this.registerDae.serviceSelectds[indexService].lenderSelectData.time
                         })
                         .then(res => {
+                            for (let t = 0; t < res.data.length; t++) {
+                                const element = res.data[t];
+                                if (element.validator == 'select') {
+                                    res.data.validator = true
+                                    res.data.lenders.push({name:this.registerDae.serviceSelectds[indexService].lender,valid:true})
+                                }
+                            }
                             for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
                                 res.data[i].validator = 'select'
+                                res.data[i].validatores = 'select'
                                 this.registerDae.serviceSelectds[indexService].end = res.data[i].Horario
                                 i++
                             }
@@ -3631,6 +3619,13 @@
                         })
                     }else{
                         
+                        for (let t = 0; t < res.data.length; t++) {
+                            const element = res.data[t];
+                            if (element.validator == 'select') {
+                                res.data.validator = true
+                                res.data.lenders.push({name:this.registerDae.serviceSelectds[indexService].lender,valid:true})
+                            }
+                        }
                         for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
                             res.data[i].validator = 'select'
                             this.registerDae.serviceSelectds[indexService].end = res.data[i].Horario
@@ -3670,16 +3665,38 @@
                                     arrayLenders.push(element)
                                 }
                             }
-                            console.log(this.registerDae.serviceSelectds[finalIndex])
+                            var blocksNFirst = []
+                            var trueLastBlock = ''
+                            var trueLender = ''
+                            for (let k = 0; k < this.registerDae.serviceSelectds.length; k++) {
+                                const element = this.registerDae.serviceSelectds[indexService-k];
+                                console.log(element)
+                                if (element) {
+                                    if (element.itFirst) {
+                                        trueLastBlock = element.blocks
+                                        console.log("aqui con"+element.lender)
+                                        trueLender = element.lender
+                                        break
+                                    }else{
+                                        blocksNFirst.push({block:element.blocks,lender:element.lender})
+                                    }
+                                }
+                            }
+                            if (trueLastBlock == '') {
+                                trueLastBlock = res.data.blocks
+                            }
+                            if (trueLender == '') {
+                                trueLender = this.registerDae.serviceSelectds[indexService].lender
+                            }
                             axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
                                 array: res.data.blocks,
-                                prevBlocks:this.registerDae.serviceSelectds[indexService].blocks,
+                                prevBlocks:trueLastBlock,
+                                blocksNFirst:blocksNFirst,
                                 time: this.registerDae.serviceSelectds[finalIndex].duration,
-                                lender: this.registerDae.serviceSelectds[indexService].lender,
+                                lender: trueLender,
                                 lendersService: arrayLenders
                             })
                             .then(res => {
-                                console.log(res.data)
                                 this.registerDae.serviceSelectds[finalIndex].start = ''
                                 this.registerDae.serviceSelectds[finalIndex].end = ''
                                 this.registerDae.serviceSelectds[finalIndex].sort = ''
@@ -3707,8 +3724,24 @@
             }
             
         },
-        insertData(index, lender, restTime, Class, duration, check, lenders){
-            console.log(this.registerDae)
+        insertData(index, lender, restTime, Class, duration, check, lenders, servicesSelect){
+            var validIndex = true
+            for (let c = 0; c < this.blockCountArray.length; c++) {
+                const element = this.blockCountArray[c];
+                if (element.index == index) {
+                    validIndex = false
+                }
+            }
+            if (validIndex) {
+                this.blockCountArray.push({index:index})
+                this.blockCountValid++
+            }
+            if (index == 0) {
+                this.blockCountValid = 0
+                this.blockCountArray = []
+            }
+            
+            console.log(index)
             if (lender == 'Primera disponible') {
                 var durationFirst = this.registerDae.design == 'si' ? duration + 15 : duration 
                 if (index > 0) {
@@ -3720,6 +3753,11 @@
                             if (element.lender != 'Primera disponible') {
                                 arrayLenders.push(element)
                             }
+                        }
+                        var finalIndexTrue = 0
+                        for (let p = 0; p < this.registerDae.serviceSelectds.length; p++) {
+                            const element = array[p];
+                            
                         }
                         axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
                             array: this.registerDae.serviceSelectds[finalIndex].blocks,
@@ -3736,6 +3774,13 @@
                             this.registerDae.serviceSelectds[index].valid = true
                             this.registerDae.serviceSelectds[index].blocks = res.data
                             for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                                for (let c = 0; c < this.blockCountArray.length; c++) {
+                                    const element = this.blockCountArray[c];
+                                    if (element.index == j) {
+                                        this.blockCountArray.splice(c,1)
+                                        this.blockCountValid--
+                                    }
+                                }
                                 const element = this.registerDae.serviceSelectds[j];
                                 element.start = ''
                                 element.end = ''
@@ -3760,7 +3805,6 @@
                                     arrayLenders.push(element)
                                 }
                             }
-                            console.log(this.registerDae.serviceSelectds[finalIndex])
                             axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
                                 array: res.data.blocks,
                                 prevBlocks:this.registerDae.serviceSelectds[finalIndex].blocks,
@@ -3771,7 +3815,6 @@
                                 end:this.registerDae.serviceSelectds[finalIndex].end
                             })
                             .then(res => {
-                                console.log(res.data)
                                 this.registerDae.serviceSelectds[index].start = ''
                                 this.registerDae.serviceSelectds[index].end = ''
                                 this.registerDae.serviceSelectds[index].sort = ''
@@ -3780,6 +3823,13 @@
                                 this.registerDae.serviceSelectds[index].valid = true
                                 this.registerDae.serviceSelectds[index].blocks = res.data
                                 for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                                    for (let c = 0; c < this.blockCountArray.length; c++) {
+                                        const element = this.blockCountArray[c];
+                                        if (element.index == j) {
+                                            this.blockCountArray.splice(c,1)
+                                            this.blockCountValid--
+                                        }
+                                    }
                                     const element = this.registerDae.serviceSelectds[j];
                                     element.start = ''
                                     element.end = ''
@@ -3809,6 +3859,13 @@
                         this.registerDae.serviceSelectds[index].blocks = res.data.blocks
                         this.registerDae.serviceSelectds[indexService].itFirst = false
                         for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                            for (let c = 0; c < this.blockCountArray.length; c++) {
+                                const element = this.blockCountArray[c];
+                                if (element.index == j) {
+                                    this.blockCountArray.splice(c,1)
+                                    this.blockCountValid--
+                                }
+                            }
                             const element = this.registerDae.serviceSelectds[j];
                             element.start = ''
                             element.end = ''
@@ -3823,6 +3880,13 @@
                 }
             }else{
                 for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                    for (let c = 0; c < this.blockCountArray.length; c++) {
+                        const element = this.blockCountArray[c];
+                        if (element.index == j) {
+                            this.blockCountArray.splice(c,1)
+                            this.blockCountValid--
+                        }
+                    }
                     const element = this.registerDae.serviceSelectds[j];
                     element.start = ''
                     element.end = ''
@@ -3844,11 +3908,16 @@
                 var durationDesign = this.registerDate.design == 'si' ? duration + 15 : duration 
                 this.validMultiLender(index, lender, duration, restTime, check) 
             }
+            console.log(this.blockCountValid)
+            console.log(this.blockCountArray)
         },
         openBlocks(open){
             $('#'+open).toggle('slow')
         },
         validateFirstStep() {
+            if (this.registerDae.date != '') {
+                this.openCalendar()
+            }
             if (this.registerDae.design != 'nada' && this.ifServices) {
                 this.validWizard = true
                 if (this.registerDae.date != '') {
@@ -3866,8 +3935,7 @@
             }else{
                 this.registerDae.valid = false
                 return false
-            }
-            
+            } 
         },
         validateLastStep() {
             
@@ -3933,7 +4001,7 @@
             }
             
             
-            console.log(this.selectedDates.closedArray)
+            
             this.loading = false
         },
         cleanDiscount(i){

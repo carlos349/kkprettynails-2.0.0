@@ -625,7 +625,7 @@ export default {
                 }
                 setTimeout(() => {
                     this.modals = {
-                        modal1: true,
+                        modal1: false,
                         modal2: false,
                         modal3:false,
                         message: "",

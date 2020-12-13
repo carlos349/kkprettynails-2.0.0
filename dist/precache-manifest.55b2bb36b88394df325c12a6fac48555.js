@@ -24,15 +24,15 @@ self.__precacheManifest = [
     "url": "/img/theme/reportes.jpg"
   },
   {
-    "revision": "52668302c34a4179ffac",
-    "url": "/js/chunk-6bcdc2aa.b4fba4e8.js"
+    "revision": "fefecb25ee2baf588798",
+    "url": "/js/chunk-6bcdc2aa.121d7ade.js"
   },
   {
     "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
     "url": "/img/theme/users.jpg"
   },
   {
-    "revision": "72faeaf5f0a5edaf81ec",
+    "revision": "18fb3fe08572f0819770",
     "url": "/js/chunk-vendors.5926650d.js"
   },
   {
@@ -40,8 +40,8 @@ self.__precacheManifest = [
     "url": "/img/theme/inventario.jpg"
   },
   {
-    "revision": "5e5ba2cbdcfbe2be5ef6",
-    "url": "/js/demo.de85be53.js"
+    "revision": "f420f148d9c4fe4ab60a",
+    "url": "/js/demo.a0779a23.js"
   },
   {
     "revision": "d272b05fa09aaad4cb84463d148cef01",
@@ -72,7 +72,7 @@ self.__precacheManifest = [
     "url": "/img/template-4.9c22984e.png"
   },
   {
-    "revision": "73420a47c1d40c2cceb98af4269b86b1",
+    "revision": "262039df26a68fa9beee6f8e28eac619",
     "url": "/index.html"
   },
   {
@@ -92,8 +92,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "2215582d83f26f24be1f",
-    "url": "/js/app.e2fef122.js"
+    "revision": "4c42f34d1722ab5cc2ae",
+    "url": "/js/app.84fe4944.js"
   },
   {
     "revision": "3b8c576082e5ca27bae21a839f1290f6",
@@ -136,11 +136,11 @@ self.__precacheManifest = [
     "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "2215582d83f26f24be1f",
+    "revision": "4c42f34d1722ab5cc2ae",
     "url": "/css/app.2dea199a.css"
   },
   {
@@ -156,23 +156,23 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.c1733565.eot"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
     "revision": "1f6be708cc845491dec6",
     "url": "/css/chunk-5a4b6d44.86b784c2.css"
   },
   {
-    "revision": "5e5ba2cbdcfbe2be5ef6",
+    "revision": "f420f148d9c4fe4ab60a",
     "url": "/css/demo.7eedaf8b.css"
   },
   {
-    "revision": "72faeaf5f0a5edaf81ec",
-    "url": "/css/chunk-vendors.4ca9948d.css"
+    "revision": "18fb3fe08572f0819770",
+    "url": "/css/chunk-vendors.8d8fb4fe.css"
   },
   {
-    "revision": "52668302c34a4179ffac",
+    "revision": "fefecb25ee2baf588798",
     "url": "/css/chunk-6bcdc2aa.8e9ab1e8.css"
   },
   {

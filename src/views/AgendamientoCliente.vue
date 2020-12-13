@@ -129,10 +129,10 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="py-1" style="background-color:#f8fcfd;">
-                                                    <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1">
+                                                    <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1 mx-4">
                                                         <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
                                                         <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.servicio}} </span>
-                                                    </badge>
+                                                    </badge> 
                                                     <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
                                                     <base-dropdown class="responsiveButtonsPercent styleDropdown">
                                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid" slot="title" type="default" class="dropdown-toggle w-100">
@@ -147,8 +147,8 @@
                                             </div>
                                             <div class="col-md-6 pb-2">
                                                 <div class="py-1" style="background-color:#f8fcfd;">
-                                                    <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1">
-                                                    <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> <br>  
+                                                    <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2">
+                                                    <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> 
                                                     </badge>
                                                     <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
                                                         <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i></span>
@@ -262,7 +262,7 @@
         </nav>
         <modal :show.sync="modals.modal2"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-lg">
+               modal-classes="modal-dialog-centered modal-xl">
                <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
@@ -1425,6 +1425,14 @@
                             }
                         }
                     }
+
+                    for (let t = 0; t < this.registerDate.serviceSelectds[indexService].blocks.length; t++) {
+                        const element = this.registerDate.serviceSelectds[indexService].blocks[t];
+                        if (element.validator == 'select') {
+                            this.registerDate.serviceSelectds[indexService].blocks[t].validator = true
+                            this.registerDate.serviceSelectds[indexService].blocks[t].lenders.push({name:this.registerDate.serviceSelectds[indexService].lender,valid:true})
+                        }
+                    }
                 
                     for (let index = 0 ; index <= designMulti / 15; index++) {
                         this.registerDate.serviceSelectds[indexService].blocks[i].validator = 'select'
@@ -1485,6 +1493,13 @@
                                 time: this.registerDate.serviceSelectds[indexService].lenderSelectData.time
                             })
                             .then(res => {
+                                for (let t = 0; t < res.data.length; t++) {
+                                    const element = res.data[t];
+                                    if (element.validator == 'select') {
+                                        res.data.validator = true
+                                        res.data.lenders.push({name:this.registerDate.serviceSelectds[indexService].lender,valid:true})
+                                    }
+                                }
                                 for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
                                     res.data[i].validator = 'select'
                                     this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
@@ -1506,7 +1521,13 @@
                                 $('#'+check).addClass('fa-check')
                             })
                         }else{
-                            
+                            for (let t = 0; t < res.data.length; t++) {
+                                const element = res.data[t];
+                                if (element.validator == 'select') {
+                                    res.data.validator = true
+                                    res.data.lenders.push({name:this.registerDae.serviceSelectds[indexService].lender,valid:true})
+                                }
+                            }
                             for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
                                 res.data[i].validator = 'select'
                                 this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
@@ -1546,12 +1567,37 @@
                                         arrayLenders.push(element)
                                     }
                                 }
+
+                                var blocksNFirst = []
+                                var trueLastBlock = ''
+                                var trueLender = ''
+                                for (let k = 0; k < this.registerDate.serviceSelectds.length; k++) {
+                                    const element = this.registerDate.serviceSelectds[indexService-k];
+                                    console.log(element)
+                                    if (element) {
+                                        if (element.itFirst) {
+                                            trueLastBlock = element.blocks
+                                            console.log("aqui con"+element.lender)
+                                            trueLender = element.lender
+                                            break
+                                        }else{
+                                            blocksNFirst.push({block:element.blocks,lender:element.lender})
+                                        }
+                                    }
+                                }
+                                if (trueLastBlock == '') {
+                                    trueLastBlock = res.data.blocks
+                                }
+                                if (trueLender == '') {
+                                    trueLender = this.registerDate.serviceSelectds[indexService].lender
+                                }
                                 console.log(this.registerDate.serviceSelectds[finalIndex])
                                 axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
                                     array: res.data.blocks,
-                                    prevBlocks:this.registerDate.serviceSelectds[indexService].blocks,
+                                    prevBlocks:trueLastBlock,
+                                    blocksNFirst:blocksNFirst,
                                     time: this.registerDate.serviceSelectds[finalIndex].duration,
-                                    lender: this.registerDate.serviceSelectds[indexService].lender,
+                                    lender: trueLender,
                                     lendersService: arrayLenders
                                 })
                                 .then(res => {
@@ -1584,6 +1630,9 @@
                 
             },
             validateFirstStep() {
+                if (this.registerDate.date != '') {
+                    this.openCalendar()
+                }
                 window.scrollTo(0, 0);
                 if (this.registerDate.design != 'nada' && this.ifServices) {
                     this.validWizard = true

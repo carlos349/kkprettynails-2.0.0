@@ -52,7 +52,7 @@
                               <small>{{momentTime(notification.date)}}</small>
                             </div>
                           </div>
-                          <p class="text-sm mb-0">{{notification.detail}}</p>
+                          <p class="text-sm mb-0">{{formatDetail(notification.detail)}} <br> {{notification.detail.split('~')[1]}}</p>
                         </div>
                       </div>
                     </router-link>
@@ -185,6 +185,7 @@
         haveImage: localStorage.imageUser,
         idUser: localStorage._id,
         imgEndpoint: endPoint.imgEndpoint,
+        secondDetail:'',
         notifications: [],
         count:0,
         all: true,
@@ -204,6 +205,14 @@
       hideSidebar() {
         this.$sidebar.displaySidebar(false);
         
+      },
+      formatDetail(detail,notification){
+        if (detail.includes('~')) {
+          return detail.split('~')[0]
+        }
+        else{
+          return detail
+        }
       },
       toggleMenu() {
         this.showMenu = !this.showMenu;
