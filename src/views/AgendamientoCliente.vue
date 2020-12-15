@@ -1575,15 +1575,12 @@
                                     const element = this.registerDate.serviceSelectds[indexService-k];
                                     console.log(element)
                                     if (element) {
-                                        if (element.itFirst) {
-                                            trueLastBlock = element.blocks
-                                            console.log("aqui con"+element.lender)
-                                            trueLender = element.lender
-                                            break
-                                        }else{
-                                            blocksNFirst.push({block:element.blocks,lender:element.lender})
-                                        }
+                                        blocksNFirst.push({block:element.blocks,lender:element.lender})
                                     }
+                                }
+                                if (this.registerDate.serviceSelectds[0].itFirst) {
+                                    trueLastBlock = this.registerDate.serviceSelectds[0].blocks
+                                    trueLender = this.registerDate.serviceSelectds[0].lender      
                                 }
                                 if (trueLastBlock == '') {
                                     trueLastBlock = res.data.blocks
@@ -1630,9 +1627,7 @@
                 
             },
             validateFirstStep() {
-                if (this.registerDate.date != '') {
-                    this.openCalendar()
-                }
+                
                 window.scrollTo(0, 0);
                 if (this.registerDate.design != 'nada' && this.ifServices) {
                     this.validWizard = true
@@ -1645,6 +1640,12 @@
                                     break
                                 }
                         }
+                    }
+                    if (this.dates.simple != '') {
+                        setTimeout(() => {
+                            this.openCalendar()
+                        }, 1000);
+                        
                     }
                     return this.ifServices
                 }else{

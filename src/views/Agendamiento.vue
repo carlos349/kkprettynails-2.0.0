@@ -2675,8 +2675,8 @@
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
                             userImage:localStorage.getItem('imageUser'),
-                            detail:`Eliminó la cita de: ${cliente.split(' / ')[0]} (${cliente.split(' / ')[1]}) ~
-                            el: ${this.formatDate(new Date())}`,
+                            detail:`Eliminó la cita de ${cliente.split(' / ')[0]} (${cliente.split(' / ')[1]}) ~
+                            el ${this.formatDate(new Date())}`,
                             link: 'agendamiento'
                         })
                         .then(res => {
@@ -3668,19 +3668,17 @@
                             var blocksNFirst = []
                             var trueLastBlock = ''
                             var trueLender = ''
+
                             for (let k = 0; k < this.registerDae.serviceSelectds.length; k++) {
                                 const element = this.registerDae.serviceSelectds[indexService-k];
-                                console.log(element)
+                                console.log(this.registerDae.serviceSelectds)
                                 if (element) {
-                                    if (element.itFirst) {
-                                        trueLastBlock = element.blocks
-                                        console.log("aqui con"+element.lender)
-                                        trueLender = element.lender
-                                        break
-                                    }else{
-                                        blocksNFirst.push({block:element.blocks,lender:element.lender})
-                                    }
+                                    blocksNFirst.push({block:element.blocks,lender:element.lender})
                                 }
+                            }
+                            if (this.registerDae.serviceSelectds[0].itFirst) {
+                                trueLastBlock = this.registerDae.serviceSelectds[0].blocks
+                                trueLender = this.registerDae.serviceSelectds[0].lender      
                             }
                             if (trueLastBlock == '') {
                                 trueLastBlock = res.data.blocks
@@ -3754,11 +3752,7 @@
                                 arrayLenders.push(element)
                             }
                         }
-                        var finalIndexTrue = 0
-                        for (let p = 0; p < this.registerDae.serviceSelectds.length; p++) {
-                            const element = array[p];
-                            
-                        }
+                        
                         axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
                             array: this.registerDae.serviceSelectds[finalIndex].blocks,
                             time: durationFirst,
@@ -3915,9 +3909,7 @@
             $('#'+open).toggle('slow')
         },
         validateFirstStep() {
-            if (this.registerDae.date != '') {
-                this.openCalendar()
-            }
+            
             if (this.registerDae.design != 'nada' && this.ifServices) {
                 this.validWizard = true
                 if (this.registerDae.date != '') {
@@ -3929,6 +3921,11 @@
                                 break
                             }
                     }
+                }
+                if (this.registerDae.date != '') {
+                    setTimeout(() => {
+                        this.openCalendar()
+                    }, 1000);
                 }
                 this.registerDae.valid = true
                 return this.ifServices
