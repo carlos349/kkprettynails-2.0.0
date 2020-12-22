@@ -130,7 +130,7 @@
                                 <h4 class="text-center text-uppercase">Fechas disponibles</h4>
                                 <base-input addon-left-icon="ni ni-calendar-grid-58">
                                     <flat-picker slot-scope="{focus, blur}"
-                                                @on-change="openCalendar"
+                                                @on-change="openCalendar(),load1 = true"
                                                 @on-open="focus"
                                                 @on-close="blur"
                                                 :config="configDatePicker"
@@ -142,69 +142,81 @@
                                 
                             </div>
                             
-                            <div class="col-md-8">
-                                <vue-custom-scrollbar class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                <div class="row mb-3">
-                                    <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" >
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="py-1" style="background-color:#f8fcfd;">
-                                                    <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1">
-                                                        <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
-                                                        <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.servicio}} </span>
-                                                    </badge>
-                                                    <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
-                                                    <base-dropdown class="responsiveButtonsPercent styleDropdown">
-                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid" slot="title" type="default" class="dropdown-toggle w-100">
-                                                            {{servicesSelect.lender}} 
-                                                        </base-button>
-                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                            {{servicesSelect.lender}} 
-                                                        </base-button>
-                                                        <b v-for="lenders of servicesSelect.lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders,servicesSelect)">{{lenders.lender}}  </b>
-                                                    </base-dropdown>
+                                <div class="col-md-8">
+                                    <a-spin :spinning="load1">
+                                    <vue-custom-scrollbar class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                    <div class="row mb-3">
+                                        <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" >
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="py-1" style="background-color:#f8fcfd;">
+                                                        <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1">
+                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> {{servicesSelect.valid}} <br>
+                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.servicio}} </span>
+                                                        </badge>
+                                                        <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
+                                                        <base-dropdown class="responsiveButtonsPercent styleDropdown">
+                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == true" slot="title" type="default" class="dropdown-toggle w-100">
+                                                                {{servicesSelect.lender}} 
+                                                            </base-button>
+                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == 'none'" disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                                <span style="color:red">Horarios ocupados</span>
+                                                            </base-button>
+                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == false" disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                                {{servicesSelect.lender}} 
+                                                            </base-button>
+                                                            <b v-for="lenders of servicesSelect.lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders,servicesSelect)">{{lenders.lender}}  </b>
+                                                        </base-dropdown>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6 pb-2">
-                                                <div class="py-1" style="background-color:#f8fcfd;">
-                                                    <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1">
-                                                    <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> <br>  
-                                                    </badge>
-                                                    <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
-                                                        <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i></span>
+                                                <div class="col-md-6 pb-2">
+                                                    <div class="py-1" style="background-color:#f8fcfd;">
+                                                        <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1">
+                                                        <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> <br>  
+                                                        </badge>
+                                                        <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
+                                                            <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i></span>
 
-                                                        <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
-                                                    </base-button>
-                                                    <base-button class="responsiveButtonsPercent" v-else style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
-                                                    Seleccione una hora
-                                                    </base-button>
-                                                    <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
-                                                        <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
-                                                            <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.lenders , block.Horario, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
-                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                                <span>Disponible</span>
-                                                            </base-button>
-                                                            <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                                <span>Ocupado</span>
-                                                            </base-button>
-                                                            <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                                <span>Seleccionado</span>
-                                                            </base-button>
-                                                            <base-button v-else size="sm" disabled class="col-12" type="secondary">
-                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                                                                <span>No seleccionable</span>
-                                                            </base-button>
-                                                        </div>
-                                                    </vue-custom-scrollbar>
-                                                </div>
-                                            </div>   
+                                                            <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
+                                                        </base-button>
+                                                        <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == 'none'" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
+                                                        <span style="color:red">Horarios ocupados</span>
+                                                        </base-button>
+                                                        <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == false" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
+                                                        Seleccione una hora
+                                                        </base-button>
+                                                        <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
+                                                            <a-spin :spinning="load2">
+                                                                <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
+                                                                    <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.lenders , block.Horario, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                        <span>Disponible</span>
+                                                                    </base-button>
+                                                                    <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                        <span>Ocupado</span>
+                                                                    </base-button>
+                                                                    <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                        <span>Seleccionado</span>
+                                                                    </base-button>
+                                                                    <base-button v-else size="sm" disabled class="col-12" type="secondary">
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                        <span>No seleccionable</span>
+                                                                    </base-button>
+                                                                </div>
+                                                            </a-spin>
+                                                        </vue-custom-scrollbar>
+                                                    </div>
+                                                </div>   
+                                            </div>
                                         </div>
                                     </div>
+                                    </vue-custom-scrollbar>
+                                    </a-spin>
                                 </div>
-                                </vue-custom-scrollbar>
-                            </div>
+                            
+                            
                             
                         </div> 
                     </tab-content>
@@ -1303,6 +1315,7 @@
         locale: Spanish, // locale for this instance only
         minDate: new Date(),
         "disable": [
+                "25-12-2020",
                 function(date) {
                     // return true to disable
                     return (date.getDay() === 0 );
@@ -1312,7 +1325,11 @@
                     // return true to disable
                     return (date.getDay() === 6);
 
-                }
+                },
+                {
+                    from: "01-01-2021",
+                    to: "06-01-2021"
+                },
             ]          
         },
         configDatePickerEdit: {
@@ -1437,7 +1454,13 @@
         stickySplitLabels: true,
         minCellWidth: 400,
         minSplitWidth: 0,
-        splitDays: []
+        splitDays: [],
+        load1:false,
+        load2:false,
+        load3:false,
+        load4:false,
+        load5:false,
+        delay:1500
       };
     },
     beforeCreate(){
@@ -3317,6 +3340,7 @@
             })
         },
         openCalendar(){
+            
             setTimeout(() => {
                 const split = this.registerDae.date.split('-')
                 this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
@@ -3332,6 +3356,7 @@
                         timer: 1500
                     })
                     this.registerDae.date = ''
+                    this.load1 = false
                 }else{
                     if (this.readyChange) {
                         for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
@@ -3360,6 +3385,7 @@
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
                                     this.registerDae.serviceSelectds[0].blocks = res.data.blocks
+                                    this.load1 = false
                                     $('#block0').toggle('slow')
                                 })
                             })
@@ -3380,6 +3406,7 @@
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
                                     this.registerDae.serviceSelectds[0].blocks = res.data.blocks
+                                    this.load1 = false
                                     $('#block0').toggle('slow')
                                 })  
                             })
@@ -3548,8 +3575,20 @@
                     })
                     .then(res => {
                         this.registerDae.serviceSelectds[finalIndex].blocks = res.data
-                        this.registerDae.serviceSelectds[finalIndex].valid = true
-                        
+                        var none = true
+                        for (let n = 0; n < res.data.length; n++) {
+                            const element = res.data[n];
+                            if (element.validator == true) {
+                                this.registerDae.serviceSelectds[finalIndex].valid = true
+                                none = false
+                                break
+                            }
+                        }
+                        if (none) {
+                            this.registerDae.serviceSelectds[finalIndex].valid = "none"
+                            $('#block'+finalIndex).toggle('slow')
+                        }
+                        console.log(this.registerDae.serviceSelectds[finalIndex].valid)
                     })
                 }
                 var valid = 0 
@@ -3590,10 +3629,10 @@
                         })
                         .then(res => {
                             for (let t = 0; t < res.data.length; t++) {
-                                const element = res.data[t];
-                                if (element.validator == 'select') {
-                                    res.data.validator = true
-                                    res.data.lenders.push({name:this.registerDae.serviceSelectds[indexService].lender,valid:true})
+                                const elementTor = res.data[t];
+                                if (elementTor.validatores && elementTor.validatores == 'select') {
+                                    res.data[t].validator = true
+                                    elementTor.validatores = ''
                                 }
                             }
                             for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
@@ -3620,10 +3659,10 @@
                     }else{
                         
                         for (let t = 0; t < res.data.length; t++) {
-                            const element = res.data[t];
-                            if (element.validator == 'select') {
-                                res.data.validator = true
-                                res.data.lenders.push({name:this.registerDae.serviceSelectds[indexService].lender,valid:true})
+                            const elementTor = res.data[t];
+                            if (elementTor.validatores && elementTor.validatores == 'select') {
+                                res.data[t].validator = true
+                                elementTor.validatores = ''
                             }
                         }
                         for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
@@ -3765,16 +3804,20 @@
                             this.registerDae.serviceSelectds[index].sort = ''
                             this.readyChange = true
                             this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
-                            this.registerDae.serviceSelectds[index].valid = true
                             this.registerDae.serviceSelectds[index].blocks = res.data
-                            for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                                for (let c = 0; c < this.blockCountArray.length; c++) {
-                                    const element = this.blockCountArray[c];
-                                    if (element.index == j) {
-                                        this.blockCountArray.splice(c,1)
-                                        this.blockCountValid--
-                                    }
+                            var none = true
+                            for (let n = 0; n < res.data.length; n++) {
+                                const element = res.data[n];
+                                if (element.validator) {
+                                    this.registerDae.serviceSelectds[index].valid = true
+                                    none = false
+                                    break
                                 }
+                            }
+                            if (none) {
+                                this.registerDae.serviceSelectds[index].valid = "none"
+                            }
+                            for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
                                 const element = this.registerDae.serviceSelectds[j];
                                 element.start = ''
                                 element.end = ''
@@ -3784,6 +3827,8 @@
                                 element.lender = 'Primera disponible'
                                 element.itFirst = true
                             }
+                            this.load1 = false
+                            console.log("maldita sea" + this.load1)
                         })
                     }else{
                         axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
@@ -3833,6 +3878,11 @@
                                     element.lender = 'Primera disponible'
                                     element.itFirst = true
                                 }
+                                setTimeout(() => {
+                                    this.load1 = false
+                                }, 1000);
+                                
+                                console.log("maldita sea" + this.load1)
                             })
                         })
                     }
@@ -3851,15 +3901,9 @@
                         this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
                         this.registerDae.serviceSelectds[index].valid = true
                         this.registerDae.serviceSelectds[index].blocks = res.data.blocks
-                        this.registerDae.serviceSelectds[indexService].itFirst = false
+                        this.registerDae.serviceSelectds[index].itFirst = false
                         for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                            for (let c = 0; c < this.blockCountArray.length; c++) {
-                                const element = this.blockCountArray[c];
-                                if (element.index == j) {
-                                    this.blockCountArray.splice(c,1)
-                                    this.blockCountValid--
-                                }
-                            }
+                            console.log("si lllegue aqui y entonce")
                             const element = this.registerDae.serviceSelectds[j];
                             element.start = ''
                             element.end = ''
@@ -3870,6 +3914,8 @@
                             element.realLender = ''
                             element.itFirst = true
                         }
+                        console.log("maldita sea" + this.load1)
+                        this.load1 = false
                     })
                 }
             }else{
@@ -3900,10 +3946,12 @@
                 this.registerDae.serviceSelectds[index].itFirst = false
                 this.validHour = false
                 var durationDesign = this.registerDate.design == 'si' ? duration + 15 : duration 
-                this.validMultiLender(index, lender, duration, restTime, check) 
+                this.validMultiLender(index, lender, duration, restTime, check)
+                console.log("maldita sea" + this.load1) 
+                this.load1 = false
             }
-            console.log(this.blockCountValid)
-            console.log(this.blockCountArray)
+            console.log("maldita sea2" + this.load1)
+            this.load1 = false
         },
         openBlocks(open){
             $('#'+open).toggle('slow')
@@ -4423,6 +4471,10 @@
     .ps__thumb-y{
         height: 44px !important;
     }
-    
+    .spin-content {
+        border: 1px solid #91d5ff;
+        background-color: #e6f7ff;
+        padding: 30px;
+    }
     
 </style>

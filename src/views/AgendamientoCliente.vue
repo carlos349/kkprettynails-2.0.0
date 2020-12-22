@@ -135,11 +135,14 @@
                                                     </badge> 
                                                     <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
                                                     <base-dropdown class="responsiveButtonsPercent styleDropdown">
-                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid" slot="title" type="default" class="dropdown-toggle w-100">
+                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == true" slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
                                                         </base-button>
-                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == false" disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                             {{servicesSelect.lender}} 
+                                                        </base-button>
+                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == 'none'" disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                            <span style="color:red">Horarios ocupados</span>
                                                         </base-button>
                                                         <b v-for="lenders of servicesSelect.lenders"  v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders)">{{lenders.lender}}  </b>
                                                     </base-dropdown>
@@ -150,13 +153,17 @@
                                                     <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2">
                                                     <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> 
                                                     </badge>
-                                                    <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
+                                                    <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
                                                         <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i></span>
 
                                                         <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
                                                     </base-button>
-                                                    <base-button class="responsiveButtonsPercent" v-else style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
+                                                    <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == false" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
                                                     Seleccione una hora
+                                                    </base-button>
+                                                    <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == 'none'" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
+                                                    <span style="color:red">Horarios ocupados</span>
+                                                    
                                                     </base-button>
                                                     <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
                                                         <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
@@ -525,6 +532,7 @@
                     locale: Spanish, // locale for this instance only
                     minDate: new Date(),
                     "disable": [
+                        "25-12-2020",
                         function(date) {
                             // return true to disable
                             return (date.getDay() === 0 );
@@ -534,7 +542,11 @@
                             // return true to disable
                             return (date.getDay() === 6);
 
-                        }
+                        },
+                        {
+                            from: "01-01-2021",
+                            to: "06-01-2021"
+                        },
                     ] 
                            
                 },
@@ -1038,7 +1050,7 @@
                             this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
                             this.registerDate.serviceSelectds[index].valid = true
                             this.registerDate.serviceSelectds[index].blocks = res.data.blocks
-                            this.registerDate.serviceSelectds[indexService].itFirst = false
+                            this.registerDate.serviceSelectds[index].itFirst = false
                             for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
                                 const element = this.registerDate.serviceSelectds[j];
                                 element.start = ''
@@ -1450,7 +1462,19 @@
                         })
                         .then(res => {
                             this.registerDate.serviceSelectds[finalIndex].blocks = res.data
-                            this.registerDate.serviceSelectds[finalIndex].valid = true
+                            var none = true
+                            for (let n = 0; n < res.data.length; n++) {
+                                const element = res.data[n];
+                                if (element.validator == true) {
+                                    this.registerDate.serviceSelectds[finalIndex].valid = true
+                                    none = false
+                                    break
+                                }
+                            }
+                            if (none) {
+                                this.registerDate.serviceSelectds[finalIndex].valid = "none"
+                                $('#block'+finalIndex).toggle('slow')
+                            }
                             
                         })
                     }
@@ -1494,14 +1518,15 @@
                             })
                             .then(res => {
                                 for (let t = 0; t < res.data.length; t++) {
-                                    const element = res.data[t];
-                                    if (element.validator == 'select') {
-                                        res.data.validator = true
-                                        res.data.lenders.push({name:this.registerDate.serviceSelectds[indexService].lender,valid:true})
+                                    const elementTor = res.data[t];
+                                    if (elementTor.validatores && elementTor.validatores == 'select') {
+                                        res.data[t].validator = true
+                                        elementTor.validatores = ''
                                     }
                                 }
                                 for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
                                     res.data[i].validator = 'select'
+                                    res.data[i].validatores= 'select'
                                     this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
                                     i++
                                 }
@@ -1522,14 +1547,15 @@
                             })
                         }else{
                             for (let t = 0; t < res.data.length; t++) {
-                                const element = res.data[t];
-                                if (element.validator == 'select') {
-                                    res.data.validator = true
-                                    res.data.lenders.push({name:this.registerDae.serviceSelectds[indexService].lender,valid:true})
+                                const elementTor = res.data[t];
+                                if (elementTor.validatores && elementTor.validatores == 'select') {
+                                    res.data[t].validator = true
+                                    elementTor.validatores = ''
                                 }
                             }
                             for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
                                 res.data[i].validator = 'select'
+                                res.data[i].validatores= 'select'
                                 this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
                                 i++
                             }

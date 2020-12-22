@@ -43,7 +43,10 @@ import 'ant-design-vue/dist/antd.css';
 import * as moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
- 
+import vuescroll from 'vuescroll';
+
+// You can set global config here.
+Vue.use(vuescroll)
 
 /* STYLES */
 import VueFormWizard from 'vue-form-wizard'
