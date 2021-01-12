@@ -3489,7 +3489,7 @@
                     this.registerDae.serviceSelectds[index].blocks = this.registerDae.serviceSelectds[indexEdit].blocks
                     axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
                         array: this.registerDae.serviceSelectds[index].blocks,
-                        time: parseFloat(time)
+                        time: this.registerDae.serviceSelectds[index].lenderSelectData.time
                     })
                     .then(res => {
                         this.arrayLendersSelect.push({index: index, lender: lender}) 
