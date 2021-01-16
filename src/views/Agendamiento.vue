@@ -151,7 +151,7 @@
                                                 <div class="col-md-6">
                                                     <div class="py-1" style="background-color:#f8fcfd;">
                                                         <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1">
-                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> {{servicesSelect.valid}} <br>
+                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
                                                             <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.servicio}} </span>
                                                         </badge>
                                                         <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
@@ -174,7 +174,7 @@
                                                         <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1">
                                                         <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> <br>  
                                                         </badge>
-                                                        <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
+                                                        <base-button v-on:click="openBlocks('block'+indexService),insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders,servicesSelect)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
                                                             <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i></span>
 
                                                             <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
@@ -3953,8 +3953,9 @@
             console.log("maldita sea2" + this.load1)
             this.load1 = false
         },
-        openBlocks(open){
+        openBlocks(open,indexService){
             $('#'+open).toggle('slow')
+            
         },
         validateFirstStep() {
             

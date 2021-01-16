@@ -371,6 +371,8 @@ import jwtDecode from 'jwt-decode'
         from: 'Seleccione un horario',
         to: 'Seleccione un horario',
         fromArray: [
+            '9:00',
+            '9:30',
             '10:00',
             '10:30',
             '11:00',
@@ -388,6 +390,8 @@ import jwtDecode from 'jwt-decode'
             '17:00',
         ],
         toArray: [
+            '9:30',
+            '10:00',
             '10:30',
             '11:00',
             '11:30',

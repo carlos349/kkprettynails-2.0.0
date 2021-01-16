@@ -310,7 +310,7 @@
                                 </base-input>
                                 <span style="color:red;position:absolute;right:20px;top:200px;z-index:1;">*</span>
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-3 col-md-3">
                                         <base-input alternative
                                             type="text"
                                             value="+56"
@@ -318,7 +318,7 @@
                                             readonly="true">
                                         </base-input>
                                     </div>
-                                    <div class="col-md-9 pl-0">
+                                    <div class="col-9 col-md-9 pl-0">
                                         <base-input alternative
                                             type="text"
                                             v-on:input="formatPhone() ,validFields()"
@@ -1142,7 +1142,7 @@
                         this.registerDate.serviceSelectds[index].blocks = this.registerDate.serviceSelectds[indexEdit].blocks
                         axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
                             array: this.registerDate.serviceSelectds[index].blocks,
-                            time: parseFloat(time)
+                            time: this.registerDate.serviceSelectds[index].lenderSelectData.time
                         })
                         .then(res => {
                             this.arrayLendersSelect.push({index: index, lender: lender}) 
