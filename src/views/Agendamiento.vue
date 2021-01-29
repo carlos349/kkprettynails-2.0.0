@@ -1321,11 +1321,6 @@
                     return (date.getDay() === 0 );
 
                 },
-                function(date) {
-                    // return true to disable
-                    return (date.getDay() === 6);
-
-                },
                 {
                     from: "01-01-2021",
                     to: "06-01-2021"
@@ -1343,11 +1338,7 @@
                     return (date.getDay() === 0 );
 
                 },
-                function(date) {
-                    // return true to disable
-                    return (date.getDay() === 6);
-
-                }
+                
             ] 
         },
         dateData: {
@@ -2672,6 +2663,7 @@
             // }
         },
         deleteDate(id,cliente){
+            console.log(id)
             this.$swal({
                 title: '¿Está seguro de borrar la cita?',
                 text: 'No puedes revertir esta acción',
@@ -2684,7 +2676,7 @@
             })
             .then((result) => {
                 if(result.value) {
-                    axios.delete(endPoint.endpointTarget+'/citas/' + id)
+                    axios.delete(endPoint.endpointTarget+'/citas/' + '6006cdc4a47e530b2f8c789b')
                     .then(res => {
                         console.log(cliente)
                         if(res.data.status == 'Cita Eliminada'){
