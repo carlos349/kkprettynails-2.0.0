@@ -2676,7 +2676,7 @@
             })
             .then((result) => {
                 if(result.value) {
-                    axios.delete(endPoint.endpointTarget+'/citas/' + "601f0281e2b8bc1cbf4383f3")
+                    axios.delete(endPoint.endpointTarget+'/citas/' + id)
                     .then(res => {
                         console.log(cliente)
                         if(res.data.status == 'Cita Eliminada'){
