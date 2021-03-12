@@ -98,31 +98,31 @@
                 <div class="col-2 mx-auto">
                     <dt class="" type="warning">Diferencia</dt>
                     <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(closedInfo.manual - closedInfo.foundEntrySystem)}}</badge>
+                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manual) - parseInt(closedInfo.foundEntrySystem))}}</badge>
                     </base-button>
                     <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(closedInfo.manualCash - closedInfo.systemCash)}}</badge>
+                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualCash) - parseInt(closedInfo.systemCash))}}</badge>
                     </base-button>
                     <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(closedInfo.manualEgress - closedInfo.systemEgress)}}</badge>
+                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualEgress) - parseInt(closedInfo.systemEgress))}}</badge>
                     </base-button>
                     <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(closedInfo.totalManualCash - closedInfo.totalSystemCash)}}</badge>
+                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.totalManualCash) - parseInt(closedInfo.totalSystemCash))}}</badge>
                     </base-button>
                     <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(closedInfo.manualCredit - closedInfo.systemCredit)}}</badge>
+                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualCredit) - parseInt(closedInfo.systemCredit))}}</badge>
                     </base-button>
                     <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(closedInfo.manualDebit - closedInfo.systemDebit)}}</badge>
+                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualDebit) - parseInt(closedInfo.systemDebit))}}</badge>
                     </base-button>
                     <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(closedInfo.manualTransfer - closedInfo.systemTransfer)}}</badge>
+                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualTransfer) - parseInt(closedInfo.systemTransfer))}}</badge>
                     </base-button>
                     <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(closedInfo.manualOthers - closedInfo.systemOther)}}</badge>
+                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualOthers) - parseInt(closedInfo.systemOther))}}</badge>
                     </base-button>
                     <base-button class="col-12 mt-1" type="default">
-                        <badge style="font-size:1em !important" class="" type="white">$ {{formatPrice(closedInfo.manualTotal - closedInfo.systemTotal)}}</badge>
+                        <badge style="font-size:1em !important" class="" type="white">$ {{formatPrice(parseInt(closedInfo.manualTotal) - parseInt(closedInfo.systemTotal))}}</badge>
                     </base-button>
                 </div>
             </div>
