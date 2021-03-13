@@ -312,7 +312,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             {route: 'gastos', valid: false},
             {route: 'agendamiento', valid: false},
             {route: 'caja', valid: false},
-            {route: 'pedidos', valid: false}
+            {route: 'pedidos', valid: false},
+            {route: 'prueba', valid: false}
         ],
         functions: [],
         linkLender:'',
@@ -545,7 +546,8 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                 {route: 'gastos', valid: false},
                 {route: 'agendamiento', valid: false},
                 {route: 'caja', valid: false},
-                {route: 'pedidos', valid: false}
+                {route: 'pedidos', valid: false},
+                {route: 'prueba', valid: false}
             ]
             this.mail = mail 
             this.idAccess = id
