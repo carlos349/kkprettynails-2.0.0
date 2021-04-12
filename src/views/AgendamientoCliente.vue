@@ -11,7 +11,14 @@
                     <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
                     <tab-content title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
-                        <div class="row">
+                        <div v-if="desactive">
+                            <center>
+                                <h1 class="text-center w-50 mt-4">
+                                    Por motivos de fuerza mayor, no estamos atendiendo en nuestro loca. Una vez se levante la cuarentena retomaremos  los agendamientos.
+                                </h1>
+                            </center>
+                        </div>  
+                        <div v-else class="row">
                             <div class="showDevice col-md-12 row">
                                 <div style="width:auto;" class="mx-auto" >
                                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -525,6 +532,7 @@
         data(){
             return {
                 socket: io(endPoint.endpointTarget),
+                desactive: true,
                 configDate: {
                     inline:false,
                     allowInput: false,
