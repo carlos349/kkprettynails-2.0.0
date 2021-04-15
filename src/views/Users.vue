@@ -285,6 +285,9 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         radio: {
             radio1: false
         },
+        configHeader: {
+            headers:{"x-database-connect": endPoint.database, "x-access-token": localStorage.userToken}
+        },
         auth: [],
         registerUser: {
             name:null,
@@ -746,11 +749,10 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             }
         },
         editRoutesAccess(){
-            const configToken = {headers: {'x-access-token': localStorage.userToken}}
             axios.put(endPoint.endpointTarget+'/users/editAccess/'+this.idAccess,{
                 access: this.routesSelecteds,
                 email: this.mail
-            }, configToken)
+            }, this.configHeader)
             .then(res => {
                 if (res.data.status == 'ok') {
                     this.getUsers();
@@ -812,13 +814,12 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         registerUsers(){
             let formData = new FormData();
             formData.append('image', this.file)
-            const configToken = {headers: {'x-access-token': localStorage.userToken}}
             axios.post(endPoint.endpointTarget+'/users/register',{
                 first_name: this.registerUser.name,
                 last_name: this.registerUser.lastname,
                 email: this.registerUser.correo,
                 password: this.registerUser.password,
-            }, configToken)
+            }, this.configHeader)
             .then(res => {
                 this.modals.modal1 = false
                 this.modals.modal3 = true
@@ -845,8 +846,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             })
         },
         getUsers(){
-			const config = {headers: {'x-access-token': localStorage.userToken}}
-			axios.get(endPoint.endpointTarget+'/users', config)
+			axios.get(endPoint.endpointTarget+'/users', this.configHeader)
 			.then(res => {
 			    this.users = res.data
 			})
@@ -861,7 +861,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 			})
         },
         getLenders(){
-            axios.get(endPoint.endpointTarget+'/manicuristas')
+            axios.get(endPoint.endpointTarget+'/manicuristas', this.configHeader)
             .then(res => {
                 console.log(res.data)
                 for (let index = 0; index < res.data.length; index++) {
@@ -947,8 +947,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
                             }
                         }, 1500);
 					}else{
-						const configToken = {headers: {'x-access-token': localStorage.userToken}}
-						axios.delete(endPoint.endpointTarget+'/users/' + id, configToken)
+						axios.delete(endPoint.endpointTarget+'/users/' + id, this.configHeader)
 						.then(res => {
                             this.modals = {
                                 modal1: false,
@@ -1031,11 +1030,10 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 							this.modals.modal2 = true
 							this.idSelect = id
 						}else{
-							const config = {headers: {'x-access-token': localStorage.userToken}}
 							axios.put(endPoint.endpointTarget+'/users/'+id, {
 								status: status,
 								employe: this.linkLender
-							}, config)
+							}, this.configHeader)
 							.then(res => {
 								// if (idDecoded == id) {
 								// 	EventBus.$emit('change-status', status)
@@ -1073,11 +1071,10 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 					this.modals.modal2 = true
 					this.idSelect = id
 				}else{
-					const config = {headers: {'x-access-token': localStorage.userToken}}
 					axios.put(endPoint.endpointTarget+'/users/'+id, {
 						status: status,
 						employe: this.linkLender
-					}, config)
+					}, this.configHeader)
 					.then(res => {
 						if (idDecoded == id) {
 							EventBus.$emit('change-status', status)

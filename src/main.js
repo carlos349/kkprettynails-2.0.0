@@ -58,7 +58,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 /* I DO NOT KNOW */
 Vue.config.productionTip = false
-const pluginOptions = {globalOptions: { currency: {'prefix':'$ '},precision: 0, distractionFree:false, autoDecimalMode:false}}
+const pluginOptions = {globalOptions: { currency: {'prefix':'$ '}, precision: 0, distractionFree: false, autoDecimalMode:false}}
 
 /* USES*/
 Vue.use(Antd);

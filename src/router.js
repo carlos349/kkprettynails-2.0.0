@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import DashboardLayout from '@/layout/DashboardLayout'
 import AuthLayout from '@/layout/AuthLayout'
-import AgendLayout from '@/views/AgendamientoCliente'
-import ConfirmLayout from '@/views/agendamientoConfirm'
+import AgendLayout from '@/views/DatesClient'
+import ConfirmLayout from '@/views/DatesConfirm'
 Vue.use(Router)
 
 export default new Router({
@@ -17,7 +17,7 @@ export default new Router({
         {
           path: '/Agendamientocliente',
           name: '',
-          component: () => import('./views/AgendamientoCliente.vue')
+          component: () => import('./views/DatesClient.vue')
         }
       ] 
     },
@@ -29,7 +29,7 @@ export default new Router({
         {
           path: '/ConfirmacionAgenda',
           name: '',
-          component: () => import('./views/agendamientoConfirm.vue')
+          component: () => import('./views/DatesConfirm.vue')
         }
       ] 
     },
@@ -46,7 +46,7 @@ export default new Router({
         {
           path: '/Pedidos',
           name: '',
-          component: () => import('./views/Pedidos.vue')
+          component: () => import('./views/Orders.vue')
         },
         {
           path: '/icons',
@@ -61,7 +61,7 @@ export default new Router({
         {
           path: '/reporteCierre',
           name: '',
-          component: () => import('./views/reporteCierre.vue')
+          component: () => import('./views/reportClosure.vue')
         },
         {
           path: '/tables',
@@ -71,32 +71,32 @@ export default new Router({
         {
           path: '/Empleados',
           name: '',
-          component: () => import('./views/Empleados.vue')
+          component: () => import('./views/Employes.vue')
         },
         {
           path: '/Usuarios',
           name: '',
-          component: () => import('./views/Usuarios.vue')
+          component: () => import('./views/Users.vue')
         },
         {
           path: '/Ventas',
           name: '',
-          component: () => import('./views/Ventas.vue')
+          component: () => import('./views/Sales.vue')
         },
         {
           path: '/Servicios',
           name: '',
-          component: () => import('./views/Servicios.vue')
+          component: () => import('./views/Services.vue')
         },
         {
           path: '/Clientes',
           name: '',
-          component: () => import('./views/Clientes.vue')
+          component: () => import('./views/Clients.vue')
         },
         {
           path: '/Inventario',
           name: '',
-          component: () => import('./views/Inventario.vue')
+          component: () => import('./views/Inventory.vue')
         },
         {
           path: '/Correo',
@@ -106,12 +106,12 @@ export default new Router({
         {
           path: '/Gastos',
           name: '',
-          component: () => import('./views/Gastos.vue')
+          component: () => import('./views/Expenses.vue')
         },
         {
           path: '/Caja',
           name: '',
-          component: () => import('./views/Caja.vue')
+          component: () => import('./views/Box.vue')
         },
         {
           path: '/reporteEmpleado',
@@ -121,7 +121,7 @@ export default new Router({
         {
           path: '/Agendamiento',
           name: '',
-          component: () => import('./views/Agendamiento.vue')
+          component: () => import('./views/Dates.vue')
         }
       ]
     },

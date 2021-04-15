@@ -136,10 +136,10 @@
                             <i class="ni ni-single-02"></i>
                             <span>Mi perfil</span>
                         </router-link>
-                        <!-- <router-link to="/profile" class="dropdown-item">
+                        <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-settings-gear-65"></i>
-                            <span>Ajustes</span>
-                        </router-link> -->
+                            <span>Configuración</span>
+                        </router-link>
                         <!-- <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-calendar-grid-58"></i>
                             <span>Actividad</span>
@@ -180,7 +180,7 @@
         activeNotifications: 0,
         showMenu: false,
         searchQuery: '',
-        nombre: localStorage.nombre + ' ' + localStorage.apellido,
+        nombre: localStorage.firstname + ' ' + localStorage.lastname,
         imgUser: endPoint.imgEndpoint + localStorage.imageUser,
         haveImage: localStorage.imageUser,
         idUser: localStorage._id,
