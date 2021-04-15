@@ -29,7 +29,13 @@
                             </h1>
                             <div class="row mt-5">
                                 <div class="col-md-6 col-sm-12">
-                                    <a-icon v-on:click="alertsMessages('Este sería el nombre de su primera sucursal, de tener mas puede registrarla ya pasado este registro inicial.')" style="cursor: pointer;" type="question-circle" />
+                                    <a-tooltip placement="topLeft">
+                                        <template slot="title">
+                                            <span>Este sería el nombre de su primera sucursal, de tener mas puede registrarla ya pasado este registro inicial.</span>
+                                        </template>
+                                        <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.05em;" type="question-circle" />
+                                    </a-tooltip>
+
                                     <label class="ml-2" for="credentials">
                                         Nombre de la sucursal
                                     </label>
@@ -41,7 +47,7 @@
                                     </base-input>
                                 </div>
                                 <div class="col-md-6 col-sm-12 row pr-0">
-                                    <label class="ml-2 w-100" for="credentials">
+                                    <label class="ml-4 w-100" for="credentials">
                                         Número de contacto
                                     </label>
                                     <div class="col-3">
@@ -106,7 +112,14 @@
                                 Configura tu agenda
                             </h1>
                             <hr class="w-50">
+                            
                             <h3 class="text-weigth-bold text-center">
+                                <a-tooltip placement="topLeft">
+                                    <template slot="title">
+                                        <span>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorem reiciendis in labore voluptatibus tempora, amet cum culpa cupiditate laborum consequatur voluptate repudiandae modi dolorum fuga necessitatibus dolores eum consectetur dolore?</span>
+                                    </template>
+                                    <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                                </a-tooltip>
                                 Configura tu agenda
                             </h3>
                             <div class="row">
@@ -212,6 +225,9 @@
                                     </a-select>
                                 </div>
                             </div>
+                            <base-button outline type="default" class="float-left mt-2" v-on:click="prevStep('date')">
+                                Anterior
+                            </base-button>
                             <base-button outline type="default" class="float-right mt-3" v-on:click="nextStep('date')">
                                 Siguiente
                             </base-button>
@@ -256,17 +272,33 @@
                                         </a-select-option>
                                     </a-select>
                                 </div>
-                                <div class="col-md-8" style="overflow: hidden; max-height: 200px;">
-                                    <a-list bordered :data-source="modelStart.typesPay">
-                                        <a-list-item slot="renderItem" slot-scope="item, index">
-                                            {{ item }} 
-                                            <base-button outline type="default" size="sm" class="float-right" v-on:click="removeTypePay(index)">
-                                                <i class="fa fa-times"></i>
-                                            </base-button>
-                                        </a-list-item>
-                                    </a-list>
-                                </div>
+                                <a-config-provider>
+                                    <template  #renderEmpty>
+                                        <div style="text-align: center">
+                                            <a-icon type="warning" style="font-size: 20px" />
+                                            <p>No se han agregado metodos de pago</p>
+                                        </div>
+                                    </template>
+                                    <a-tooltip placement="top">
+                                        <template slot="title">
+                                        <span>Para ingresar un método de pago debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
+                                        </template>
+                                        <div class="col-md-8" style="overflow: hidden;overflow-y:scroll; max-height: 200px;">
+                                            <a-list bordered :data-source="modelStart.typesPay">
+                                                <a-list-item slot="renderItem" slot-scope="item, index">
+                                                    {{ item }} 
+                                                    <base-button outline type="default" size="sm" class="float-right" v-on:click="removeTypePay(index)">
+                                                        <i class="fa fa-times"></i>
+                                                    </base-button>
+                                                </a-list-item>
+                                            </a-list>
+                                        </div>
+                                    </a-tooltip>
+                                </a-config-provider>
                             </div>
+                            <base-button outline type="default" class="float-left mt-2" v-on:click="prevStep('sale')">
+                                Anterior
+                            </base-button>
                             <base-button outline type="default" class="float-right mt-3" v-on:click="nextStep('sale')">
                                 Siguiente
                             </base-button>
@@ -279,13 +311,13 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label for="first_name">
-                                        Nombre completo
+                                        Nombres
                                     </label>
                                     <base-input class="input-group-alternative"
-                                        placeholder="Nombre completo"
+                                        placeholder="Nombres"
                                         addon-left-icon="ni ni-circle-08"
                                         v-model="modelStart.first_name"
-                                        :valid="modelStart.first_name.length >= 4 ? true : false">
+                                        :valid="modelStart.first_name.length >= 3 ? true : false">
                                     </base-input>
                                 </div>
                                 <div class="col-md-4">
@@ -296,11 +328,16 @@
                                         placeholder="Apellidos"
                                         addon-left-icon="ni ni-circle-08"
                                         v-model="modelStart.last_name"
-                                        :valid="modelStart.last_name.length >= 4 ? true : false">
+                                        :valid="modelStart.last_name.length >= 3 ? true : false">
                                     </base-input>
                                 </div>
                                 <div class="col-md-4">
-                                    <a-icon v-on:click="alertsMessages('Debe introducir las credenciales otorgadas para el ingreso al sistema, de no saber cuales son, por favor comunicarse con el soporte técnico.')" style="cursor: pointer;" type="question-circle" />
+                                    <a-tooltip placement="topLeft">
+                                        <template slot="title">
+                                            <span>Debe introducir las credenciales otorgadas para el ingreso al sistema, de no saber cuales son, por favor comunicarse con el soporte técnico.</span>
+                                        </template>
+                                        <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                                    </a-tooltip>
                                     <label class="ml-2" for="credentials">
                                         Credencial de ingreso
                                     </label>
@@ -338,6 +375,9 @@
                                     </base-input>
                                 </div>
                             </div>
+                            <base-button outline type="default" class="float-left mt-2" v-on:click="prevStep('final')">
+                                Anterior
+                            </base-button>
                             <base-button outline type="default" class="float-right mt-3" v-on:click="finishProcess()">
                                 Finalizar
                             </base-button>
@@ -593,13 +633,15 @@ import jwtDecode from 'jwt-decode'
             );
         },
         async finishProcess(){
-            if (this.modelStart.first_name.length >= 4 && this.modelStart.last_name.length >= 4 && this.modelStart.credential.length == 20 && validEmail() && this.modelStart.password.length > 8) {
+            if (this.modelStart.first_name.length >= 4 && this.modelStart.last_name.length >= 4 && this.modelStart.credential.length == 20 && this.validEmail() && this.modelStart.password.length > 8) {
                 try {
                     const registerBranch = await axios.post(endPoint.endpointTarget+'/branches/createBranchCertificate', {
                         branch: this.modelStart.businessName,
                         secretKey: this.modelStart.credential
-                    })
+                    }, this.configHeader)
+                    console.log(registerBranch.data.status)
                     if (registerBranch.data.status == 'ok') {
+                        console.log("entro")
                         try {
                             const registerConf = await axios.post(endPoint.endpointTarget+'/configurations/createConfigCertificate', {
                                 branch: registerBranch.data.data._id,
@@ -611,7 +653,7 @@ import jwtDecode from 'jwt-decode'
                                 businessLocation: this.modelStart.businessLocation,
                                 typesPay: this.modelStart.typesPay,
                                 currency: this.modelStart.currency
-                            })
+                            }, this.configHeader)
                             if (registerConf.data.status == 'ok') {
                                 const registerUser = await axios.post(endPoint.endpointTarget+'/users/createUserCertificate', {
                                     branch: registerBranch.data.data._id,
@@ -620,9 +662,18 @@ import jwtDecode from 'jwt-decode'
                                     last_name: this.modelStart.last_name,
                                     email: this.modelStart.email,
                                     password: this.modelStart.password
-                                })
+                                }, this.configHeader)
                                 if (registerUser) {
-                                    
+                                    this.$swal({
+                                        type: 'success',
+                                        icon: 'success',
+                                        title: 'Registro exitoso, por favor ingrese.',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    setTimeout(() => {
+                                        location.reload()
+                                    }, 2000);
                                 }
                             }
                         }catch(err){console.log(err)}
@@ -630,6 +681,7 @@ import jwtDecode from 'jwt-decode'
                 }catch(err){console.log(err)}
             }else{
                 this.$swal({
+                    type: 'error',
                     icon: 'error',
                     title: 'Debe llenar los campos correctamente.',
                     showConfirmButton: false,
@@ -653,6 +705,13 @@ import jwtDecode from 'jwt-decode'
             if (this.typePay.length > 4) {
                 this.modelStart.typesPay.push(this.typePay)
                 this.typePay = ''
+            }else if (this.typePay.length < 4) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'El método de pago debe estar compuesto por mas de 4 caracteres',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }else{
                 this.$swal({
                     icon: 'error',
@@ -742,6 +801,21 @@ import jwtDecode from 'jwt-decode'
                 this.status.branch = 'finish'
             }
         },
+        prevStep(step){
+            if (step == 'date') {
+                this.status.branch = 'process'
+                this.status.date = 'wait'
+                this.process = 'branch'
+            }else if(step == 'sale'){
+                this.status.date = 'process'
+                this.status.sale = 'wait'
+                this.process = 'date'
+            }else if(step == 'final'){
+                this.status.sale = 'process'
+                this.status.final = 'wait'
+                this.process = 'sale'
+            }
+        },
         async getBranches(){
             try {
                 const getBranches = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
@@ -755,7 +829,7 @@ import jwtDecode from 'jwt-decode'
             axios.post(endPoint.endpointTarget+'/users/login', {
                 email: this.model.email,
                 password: this.model.password
-            }).then(res => {
+            }, this.configHeader).then(res => {
                 if(res.data.error == 'pass incorrecto'){
                     this.$swal({
                         type: 'error',

@@ -1170,6 +1170,12 @@
     },
     data() {
       return {
+        configHeader: {
+            headers:{
+                "x-database-connect": endPoint.database,
+                'x-access-token':localStorage.userToken
+            }
+        },
         imgEndpoint: endPoint.endpointTarget,
         auth:[],
         socket : io(endPoint.endpointTarget),
@@ -2319,8 +2325,7 @@
             }
         },
         getUsers(){
-			const config = {headers: {'x-access-token': localStorage.userToken}}
-			axios.get(endPoint.endpointTarget+'/users', config)
+			axios.get(endPoint.endpointTarget+'/users', this.configHeader)
 			.then(res => {
                 this.users = res.data
                 
