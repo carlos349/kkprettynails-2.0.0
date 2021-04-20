@@ -33,7 +33,15 @@
                         <base-input alternative
                                     class="mb-3"
                                     placeholder="Nombre del empleado"
-                                    v-model="registerEmploye.name"
+                                    v-model="registerEmploye.firstName"
+                                    v-on:keyup="validRegister()"
+                                    addon-left-icon="ni ni-single-02"
+                                    addon-right-icon="fa fa-asterisk text-danger">
+                        </base-input>
+                        <base-input alternative
+                                    class="mb-3"
+                                    placeholder="Apellido del empleado"
+                                    v-model="registerEmploye.lastName"
                                     v-on:keyup="validRegister()"
                                     addon-left-icon="ni ni-single-02"
                                     addon-right-icon="fa fa-asterisk text-danger">
@@ -41,9 +49,9 @@
                         <base-input alternative
                                     class="mb-3"
                                     placeholder="Documento"
-                                    v-model="registerEmploye.id"
+                                    v-model="registerEmploye.document"
                                     v-on:keyup="validRegister()"
-                                    v-on:change="registerEmploye.id = formatRut(registerEmploye.id)"
+                                    v-on:change="registerEmploye.document = formatRut(registerEmploye.document)"
                                     addon-left-icon="ni ni-key-25"
                                      addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
@@ -116,7 +124,22 @@
             </div>
         </modal>
         <!-- TABLA DE CLIENTES -->
-
+        <template>
+            <div>
+                <div class="table-operations">
+                    <a-button @click="setAgeSort">
+                        Sort age
+                    </a-button>
+                    <a-button @click="clearFilters">
+                        Clear filters
+                    </a-button>
+                    <a-button @click="clearAll">
+                        Clear filters and sorters
+                    </a-button>
+                </div>
+                <a-table :columns="columns" :data-source="data" @change="handleChange" />
+            </div>
+        </template>
         <vue-bootstrap4-table :rows="employes" :columns="columns" :classes="classes" :config="config">
             <template slot="Administrar" slot-scope="props">
                 <b>
@@ -200,13 +223,18 @@ import jwtDecode from 'jwt-decode'
         auth: [],
         tipeForm:'',
         registerEmploye: {
-            name:'',
+            branch:'',
+            firstName:'',
+            lastName:'',
+            document:'',
             id:'',
             days: [],
             _id:'',
-            comision:'',
             valid:false,
             valid2:false,
+        },
+        configHeader: {
+            headers:{"x-database-connect": endPoint.database}
         },
         modals: {
             modal1: false,
@@ -285,67 +313,56 @@ import jwtDecode from 'jwt-decode'
             }
         ],
         employes: [],
-        columns: [{
-                label: "Nombre",
-                name: "nombre",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "id"
-                // },
-                sort: true,
+        columns: [
+            {
+                title: 'Nombre',
+                dataIndex: 'firstName',
+                key: 'firstName',
+                ellipsis: true,
             },
             {
-                label: "Identidad",
-                name: "documento",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "id"
-                // },
-                sort: true,
+                title: 'Apellido',
+                dataIndex: 'lastName',
+                key: 'lastName',
+                ellipsis: true,
             },
             {
-                label: "Comisión",
-                name: "comision",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter first name"
-                // },
-                sort: true,
-                slot_name : "comision"
+                title: 'Sucursal',
+                dataIndex: 'branch',
+                key: 'branch',
+                ellipsis: true,
             },
             {
-                label: "Bonos",
-                name: "bonus",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter first name"
-                // },
-                sort: true,
-                slot_name : "bono"
+                title: 'Documento',
+                dataIndex: 'document',
+                key: 'document',
+                ellipsis: true,
             },
             {
-                label: "Avances",
-                name: "advancement",
-                sort: true,
-                slot_name: "advancement"
+                title: 'Apellido',
+                dataIndex: 'lastName',
+                key: 'lastName',
+                ellipsis: true,
             },
             {
-                label: "Total",
-                name: "status",
-                sort: true,
-                slot_name: "total"
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter country"
-                // },
+                title: 'Comisión',
+                dataIndex: 'commission',
+                key: 'commission',
+                ellipsis: true,
             },
             {
-                label: "Administrar",
-                name: "_id",
-                sort: false,
-                slot_name: "Administrar"
+                title: 'Bonos',
+                dataIndex: 'bonus',
+                key: 'bonus',
+                ellipsis: true,
             },
-            ],
+            {
+                title: 'Avances',
+                dataIndex: 'advancement',
+                key: 'advancement',
+                ellipsis: true,
+            }
+                                     ],
         config: {
             card_title: "Tabla de empleados",
             checkbox_rows: false,
@@ -424,6 +441,17 @@ import jwtDecode from 'jwt-decode'
         console.log(this.auth)
     },
     methods: {
+        async getEmployes(){
+            try{
+                const getAllEmployes = axios.get(endPoint.endpointTarget+'/employes', this.configHeader)
+                if (getAllEmployes) {
+                    console.log(getAllEmployes                       )
+                    this.employes = getAllEmployes.data
+                }
+            }catch(err){
+                res.send(err)
+            }
+        },
         addDay(id, value, valid){
             if (valid) {
                 this.days[id - 1].valid = false
@@ -469,13 +497,6 @@ import jwtDecode from 'jwt-decode'
             this.validRegister()
             console.log(this.selectedDays)
         },
-        getEmployes(){
-			axios.get(endPoint.endpointTarget+'/manicuristas')
-			.then(res => {
-                this.employes = res.data
-                
-			})
-        },
         getToken(){
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
@@ -494,15 +515,16 @@ import jwtDecode from 'jwt-decode'
             }
         },
         registerEmployes(){
-			const nombre = this.registerEmploye.name.replace(/\s*$/,"");
-			const documento = this.registerEmploye.id.replace(/\s*$/,"");
-			axios.post(endPoint.endpointTarget+'/manicuristas', {
-				nombreManicurista: nombre,
-				documentoManicurista:documento,
-				days: this.selectedDays
-			})
+			axios.post(endPoint.endpointTarget+'/employes', {
+                branch: '',
+                days: this.selectedDays,
+                firstName: this.registerEmploye.firstName,
+                lastName: this.registerEmploye.lastName,
+                document: this.registerEmploye.document,
+				
+			}, this.configHeader)
 			.then(res => {
-				if(res.data.status == 'Manicurista ingresada'){
+				if(res.data.status == 'employe created'){
                     this.modals = {
                         modal2: true,
                         message: "¡Empleado registrado con exito!",
@@ -680,7 +702,7 @@ import jwtDecode from 'jwt-decode'
             }
         },
         validRegister(){
-            if (this.registerEmploye.name != '' && this.registerEmploye.id != '' && this.selectedDays.length > 0) {
+            if (this.registerEmploye.firstName != '' && this.registerEmploye.document != '' && this.selectedDays.length > 0) {
                 console.log('entre aqui')
                 this.registerEmploye.valid = this.selectedDays[0].hours.length > 0 ? true : false
             }
