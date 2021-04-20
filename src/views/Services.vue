@@ -14,6 +14,11 @@
                         <base-button v-tooltip="'You have new messages.'" v-else disabled  type="success">Ingrese un servicio</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorias</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-else disabled  type="default">Categorias</base-button>
+                        <a-select v-if="branches.length > 1" class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione la sucursal"  @change="selectBranch" size="large">
+                            <a-select-option v-for="branchh of branches" :key="branchh._id" :value="branchh">
+                                {{branchh.name}}
+                            </a-select-option>
+                        </a-select>
                     </div>
                 </div>
             </div>
@@ -364,7 +369,7 @@
                   class="border-0">
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                       <h3>Categorias</h3> 
+                       <h3>Categorias - {{this.branchName}}</h3> 
                     </div>
                 </template>
                 <template>
@@ -434,6 +439,12 @@ export default {
             countModal:'',
             typeItemModal:'',
             itemUses:'',
+            configHeader: {
+                headers: {
+                    "x-database-connect": endPoint.database, 
+                    "x-access-token": localStorage.userToken
+                }
+            },
             modals: {
                 modal1: false,
                 modal2: false,
@@ -478,7 +489,8 @@ export default {
                 // },
                 sort: true,
             }],
-            columnsCategories: [{
+            columnsCategories: [
+                {
                     label: "Nombre",
                     name: "name",
                     sort: true,
@@ -611,7 +623,10 @@ export default {
             EdititemSelected:[],
             itemsBox:[],
             itemIndex:'',
-            editCategoryServicer:''
+            editCategoryServicer:'',
+            branch: '',
+            branchName: '',
+            branches: []
         }
     },
     beforeCreate(){
@@ -626,11 +641,8 @@ export default {
 		}
     },
     created(){
-        this.getServices();
-        this.getLenders()
-        this.getProducts()
         this.getToken()
-        this.getCategories()
+        this.getBranches()
         $(document).ready(function(){
             setTimeout(() => {
                $("input[placeholder='Go to page']").hide(); 
@@ -643,39 +655,93 @@ export default {
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+            console.log(decoded)
+            this.branch = decoded.branch
         },
-        getServices(){
-            
-            axios.get(endPoint.endpointTarget+'/servicios')
-            .then(res => {
-				this.services = res.data
-            })
-        },
-        getProducts() {
-            
-            axios.get(endPoint.endpointTarget+'/inventario')
-            .then(res => {
-                this.rowsItems = res.data 
-                for (let index = 0; index < this.rowsItems.length; index++) {
-                    this.itemsBox.push({check:false,count:''})
-                    
+        async getBranches(){
+            try {
+                const getBranches = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
+                if (getBranches.data.status == 'ok') {
+                    this.branches = getBranches.data.data 
+                    if (this.branches.length == 1) {
+                        this.branchName = this.branches[0].name
+                        this.getServices()
+                        this.getEmployes()
+                        this.getProducts()
+                        this.getCategories()
+                    }
                 }
-            })
-            
-            console.log(this.itemsBox)
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
+        },
+        selectBranch(value){
+
+        },
+        async getServices(){
+            console.log(this.branch)
+            try {
+                const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
+                if (services.data.status) {
+                    this.services = services.data.data   
+                }
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
+        },
+        async getProducts() {
+            try {
+                const inventory = await axios.get(endPoint.endpointTarget+'/stores/getinventorybybranch/'+this.branch, this.configHeader)
+                if (inventory.data.status == 'ok') {
+                    this.rowsItems = inventory.data.data 
+                    for (let index = 0; index < this.rowsItems.length; index++) {
+                        this.itemsBox.push({check: false, count: ''})
+                    }
+                }
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
-        getLenders(){
-            axios.get(endPoint.endpointTarget+'/manicuristas')
-            .then(res => {
-                for (let index = 0; index < res.data.length; index++) {
-                    res.data[index].valid = false
+        async getEmployes(){
+            try {
+                const employes = await axios.get(endPoint.endpointTarget+'/employes', this.configHeader)
+                if(employes.data.status == 'ok'){
+                    for (let index = 0; index < employes.data.data.length; index++) {
+                        employes.data.data[index].valid = false
+                    }
+                    this.lenders = employes.data.data
                 }
-                this.lenders = res.data
-            })
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
         },
         selectedAll(value){
             for (let index = 0; index < value.selected_items.length; index++) {
@@ -1070,22 +1136,39 @@ export default {
             }
         },
         async getCategories(){
-            const categories = await axios.get(endPoint.endpointTarget+'/servicios/getCategory')
-            console.log(categories)
-            if (categories.data.length > 0) {
-                this.categories = categories.data
+            try {
+                const categories = await axios.get(endPoint.endpointTarget+'/services/getCategories', this.configHeader)
+                if (categories.data.status == 'ok') {
+                    this.categories = categories.data.data
+                }
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
             }
         },
         newCategory(){
-            axios.post(endPoint.endpointTarget+'/servicios/newCategory', {
+            axios.post(endPoint.endpointTarget+'/services/newCategory', {
+                branch: this.branch,
                 name: this.nameCategory
-            })
+            }, this.configHeader)
             .then(res => {
-                console.log(res)
                 if (res.data.status == 'ok') {
                     this.getCategories()
                     this.nameCategory = ''
                     this.modals.modal6 = false
+                }else{
+                    this.nameCategory = ''
+                     this.$swal({
+                        icon: 'info',
+                        title: 'Esta categoría ya esta creada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             })
         },

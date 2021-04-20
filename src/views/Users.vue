@@ -30,6 +30,11 @@
                 </template>
                 <template>
                     <form role="form">
+                        <a-select class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione la sucursal"  @change="selectBranch" size="large">
+                            <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
+                                {{branch.name}}
+                            </a-select-option>
+                        </a-select>
                         <base-input alternative
                                     class="mb-3"
                                     placeholder="Nombre"
@@ -50,7 +55,7 @@
                         <base-input alternative
                                     type="text"
                                     placeholder="Correo"
-                                    v-model="registerUser.correo"
+                                    v-model="registerUser.email"
                                     addon-left-icon="ni ni-email-83"
                                     addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
@@ -59,7 +64,7 @@
                                     :valid="registerUser.c"
                                     v-on:keyup="validFields('c')"
                                     placeholder="Confirmar correo"
-                                    v-model="registerUser.correoConfirm"
+                                    v-model="registerUser.emailConfirm"
                                     addon-right-icon="fa fa-asterisk text-danger"
                                     >
                         </base-input>
@@ -192,7 +197,7 @@
         <!-- TABLA DE CLIENTES -->
         <vue-bootstrap4-table class="text-left" :rows="users" :columns="columns" :classes="classes" :config="config">
             <template slot="date-format" class="text-left" slot-scope="props">
-                {{formatDate(props.row.LastAccess)}}
+                {{formatDate(props.row.lastAccess)}}
             </template>
             <template slot="status-format" slot-scope="props">
                 <base-dropdown class="w-100" v-if="validRoute('usuarios', 'editar')">
@@ -219,9 +224,9 @@
                     <base-button disabled size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle w-100">
                         Prestadora
                     </base-button>
-                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 1, 'no-prestador')">Gerencia</a>
-                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 2, 'no-prestador')">Personal de caja</a>
-                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 3, 'prestador')">Prestador</a>
+                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 1, 'no-employe')">Gerencia</a>
+                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 2, 'no-employe')">Personal de caja</a>
+                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 3, 'employe')">Prestador</a>
                 </base-dropdown>
             </template>
             <template slot="access" class="text-left" slot-scope="props" >
@@ -247,7 +252,7 @@
                         <template slot="title">
                         <span>Eliminar</span>
                         </template>
-                        <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteClient(props.row._id, props.row.status)" type="warning" icon="fas fa-trash"></base-button>     
+                        <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteUser(props.row._id, props.row.status)" type="warning" icon="fas fa-trash"></base-button>     
                         <base-button v-else size="sm" slot="title" type="warning" icon="fas fa-trash" disabled>
                             
                         </base-button> 
@@ -275,6 +280,9 @@ import EventBus from '../components/EventBus'
 // COMPONENTS
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
+import * as moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
   export default {
     components: {
         VueBootstrap4Table,
@@ -285,18 +293,23 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         radio: {
             radio1: false
         },
+        branches: [],
         configHeader: {
-            headers:{"x-database-connect": endPoint.database, "x-access-token": localStorage.userToken}
+            headers:{
+                "x-database-connect": endPoint.database, 
+                "x-access-token": localStorage.userToken
+            }
         },
         auth: [],
         registerUser: {
             name:null,
             lastname:null,
             image:null,
-            correo:null,
-            correoConfirm:null,
+            email:null,
+            emailConfirm:null,
             password:null,
             passwordConfirm:null,
+            branch: null,
             valid:false,
             valid2:false,
             date:null,
@@ -510,7 +523,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
     beforeCreate(){
         if (!localStorage.getItem('userToken')) {
           this.$swal({ 
-              type: 'error',
+              icon: 'error',
               title: 'URL restringida',
               showConfirmButton: false,
               timer: 1500
@@ -520,8 +533,9 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
     },
     created(){
 		this.getUsers();
-        this.getLenders()
+        this.getEmployes()
         this.getToken()
+        this.getBranches()
         $(document).ready(function(){
             setTimeout(() => {
                $("input[placeholder='Go to page']").hide(); 
@@ -535,6 +549,25 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
             this.emailUser = decoded.email
+        },
+        selectBranch(value){
+            this.registerUser.branch = value
+        },
+        async getBranches(){
+            try {
+                const getBranches = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
+                if (getBranches.data.status == 'ok') {
+                    this.branches = getBranches.data.data  
+                }
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
         },
         dataEdit(access, id, mail){ 
             this.routes = [
@@ -756,28 +789,12 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             .then(res => {
                 if (res.data.status == 'ok') {
                     this.getUsers();
-                    this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: true,
-                        modal4: false,
-                        modal5: false,
-                        message: "Accesos actualizados con exito",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 2000);
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Accesos actualizados con éxito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     const token = localStorage.userToken
                     const decoded = jwtDecode(token)
                     if (this.mail == decoded.email) {
@@ -814,67 +831,81 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
         registerUsers(){
             let formData = new FormData();
             formData.append('image', this.file)
-            axios.post(endPoint.endpointTarget+'/users/register',{
-                first_name: this.registerUser.name,
-                last_name: this.registerUser.lastname,
-                email: this.registerUser.correo,
-                password: this.registerUser.password,
-            }, this.configHeader)
+            formData.append('first_name', this.registerUser.name)
+            formData.append('last_name', this.registerUser.lastname)
+            formData.append('email', this.registerUser.email)
+            formData.append('password', this.registerUser.password)
+            formData.append('branch', this.registerUser.branch)
+            const config = {headers: {'Content-Type': 'multipart/form-data', 'x-access-token': localStorage.userToken, "x-database-connect": endPoint.database }}
+            axios.post(endPoint.endpointTarget+'/users/registerUser', formData, config)
             .then(res => {
-                this.modals.modal1 = false
-                this.modals.modal3 = true
-                this.modals.message = '¡Usuario registrado con exito!',
-                this.modals.icon = 'ni ni-check-bold ni-5x',
-                this.modals.type = 'success'
-                setTimeout(() => {
-                    this.modals.modal3 = false
-                    this.modals.message = '',
-                    this.modals.icon = '',
-                    this.modals.type = ''
+                if (res.data.status == 'ok') {
+                    this.$swal({
+                        icon: 'success',
+                        title: '¡Usuario registrado con éxito!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.modals.modal1 = false
                     this.initialState(1)
                     this.getUsers()
-                    const id = res.data.status
-                    const config = {headers: {'Content-Type': 'multipart/form-data', 'x-access-token': localStorage.userToken}}
-                    axios.post(endPoint.endpointTarget+`/users/registerImage/${id}`, formData, config)
-                    .then(resData => {
-                        console.log(resData)
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: '¡Usuario ya existe use otro correo!',
+                        showConfirmButton: false,
+                        timer: 2000
                     })
-                    .catch(err => {
-                        console.log(err)
-                    })
-                }, 1500);
-            })
-        },
-        getUsers(){
-			axios.get(endPoint.endpointTarget+'/users', this.configHeader)
-			.then(res => {
-			    this.users = res.data
-			})
-			.catch(err => {
-				this.$swal({
-					type: 'error',
+                }
+            }).catch(err => {
+                this.$swal({
+					icon: 'error',
 					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
 					showConfirmButton: false,
 					timer: 2500
 				})
-				router.push({name: 'Login'})
-			})
-        },
-        getLenders(){
-            axios.get(endPoint.endpointTarget+'/manicuristas', this.configHeader)
-            .then(res => {
-                console.log(res.data)
-                for (let index = 0; index < res.data.length; index++) {
-                    this.lenderNames.push(res.data[index].nombre + " / " + res.data[index].documento)
-                }
+				router.push({name: 'login'})
             })
+        },
+        async getUsers(){
+            try {
+                const getUsers = await axios.get(endPoint.endpointTarget+'/users', this.configHeader)
+                this.users = getUsers.data.data
+                localStorage.setItem('userToken', getUsers.data.token)
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
+        },
+        async getEmployes(){
+            try {
+                const getEmployes = await axios.get(endPoint.endpointTarget+'/employes', this.configHeader)
+                if (getEmployes.data.status == 'ok') {
+                    for (let index = 0; index < getEmployes.data.data.length; index++) {
+                        this.lenderNames.push(getEmployes.data.data[index].firstName + " / " + getEmployes.data.data[index].document)
+                    }  
+                }
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
         },
         validRegister(){
             this.registerUser.valid = this.registerUser.name != '' && this.registerUser.lastname && this.registerUser.c == true && this.registerUser.p == true ? true : false
         },
         validFields(field){
             if (field == 'c') {
-                this.registerUser.c = this.registerUser.correo == this.registerUser.correoConfirm ? true : false
+                this.registerUser.c = this.registerUser.email == this.registerUser.emailConfirm ? true : false
                 this.validRegister()
             }
             if (field == 'p') {
@@ -908,14 +939,15 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
             }
         },
         formatDate(date) {
+            console.log(date)
             let dateFormat = new Date(date)
-			return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+' ('+dateFormat.getHours()+":"+('0'+dateFormat.getMinutes()).slice(-2)+")"
+            return moment(dateFormat).format('DD-MM-YYYY HH:mm');
         },
-        deleteClient(id, admin){
+        deleteUser(id, admin){
 			this.$swal({
 				title: '\n¿Está seguro de borrar usuario?',
 				text: 'No puedes revertir esta acción',
-				type: 'warning',
+				icon: 'warning',
 				showCancelButton: true,
 				confirmButtonText: 'Estoy seguro',
 				cancelButtonText: 'No, evitar acción',
@@ -924,58 +956,26 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 			}).then((result) => {
 				if(result.value) {
 					if(admin == 1){
-						this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: true,
-                            modal4: false,
-                            modal5: false,
-                            message: "No puede borrar un gerente",
-                            icon: 'ni ni-fat-remove ni-5x',
-                            type: 'danger'
-                        }
-                        setTimeout(() => {
-                            this.modals = {
-                                modal1: false,
-                                modal2: false,
-                                modal3: false,
-                                modal4: false,
-                                modal5: false,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            }
-                        }, 1500);
+                        this.$swal({
+                            icon: 'error',
+                            title: 'No puede borrar un gerente',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
 					}else{
-						axios.delete(endPoint.endpointTarget+'/users/' + id, this.configHeader)
+						axios.delete(endPoint.endpointTarget+'/users/'+id, this.configHeader)
 						.then(res => {
-                            this.modals = {
-                                modal1: false,
-                                modal2: false,
-                                modal3: true,
-                                modal4: false,
-                                modal5: false,
-                                message: res.data.first_name+' '+res.data.last_name+' ha sido Borrado',
-                                icon: 'ni ni-check-bold ni-5x',
-                                type: 'success'
-                            }
-                            setTimeout(() => {
-                                this.modals = {
-                                    modal1: false,
-                                    modal2: false,
-                                    modal3: false,
-                                    modal4: false,
-                                    modal5: false,
-                                    message: "",
-                                    icon: '',
-                                    type: ''
-                                }
-                            }, 1500);
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Usuario borrado con éxito',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
 							this.getUsers()
 						})
 						.catch(err => {
 							this.$swal({
-								type: 'error',
+								icon: 'error',
 								title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
 								showConfirmButton: false,
 								timer: 2500
@@ -984,28 +984,12 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 						})
 					}
 				} else {
-					this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: true,
-                        modal4: false,
-                        modal5: false,
-                        message: "Acción cancelada",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+					this.$swal({
+                        icon: 'info',
+                        title: 'Acción',
+                        showConfirmButton: false,
+                        timer: 2500
+                    })
 				}
 			})
 		},
@@ -1018,7 +1002,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 				this.$swal({
 					title: '¿Está seguro de cambiarse el estado?',
 					text: '¡Si no hay otro gerente registrado, no podrás regresar tu estado!',
-					type: 'warning',
+					icon: 'warning',
 					showCancelButton: true,
 					confirmButtonText: 'Estoy seguro',
 					cancelButtonText: 'No, evitar acción',
@@ -1030,25 +1014,24 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 							this.modals.modal2 = true
 							this.idSelect = id
 						}else{
-							axios.put(endPoint.endpointTarget+'/users/'+id, {
+							axios.put(endPoint.endpointTarget+'/users/changestatus/'+id, {
 								status: status,
 								employe: this.linkLender
 							}, this.configHeader)
 							.then(res => {
-								// if (idDecoded == id) {
-								// 	EventBus.$emit('change-status', status)
-								// 	localStorage.setItem('logged-in', status)
-								// 	setTimeout(() => {
-								// 		router.push({name: 'Agendamiento'})
-								// 	}, 1000);
-								// }
+                                this.$swal({
+                                    icon: 'success',
+                                    title: 'Estatus editado con éxito',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
 								this.getUsers()
 								this.linkLender = ''
 								this.modals.modal2 = false
 							})
 							.catch(err => {
 								this.$swal({
-									type: 'error',
+									icon: 'error',
 									title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
 									showConfirmButton: false,
 									timer: 2500
@@ -1058,7 +1041,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 						}
 					}else{
 						this.$swal({
-							type: 'info',
+							icon: 'info',
 							title: 'Acción cancelada',
 							showConfirmButton: false,
 							timer: 1500
@@ -1066,16 +1049,21 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 					}
 				})
 			}else{
-				if (type == 'prestador') {
-                    console.log('entre aqui')
+				if (type == 'employe') {
 					this.modals.modal2 = true
 					this.idSelect = id
 				}else{
-					axios.put(endPoint.endpointTarget+'/users/'+id, {
+					axios.put(endPoint.endpointTarget+'/users/changestatus/'+id, {
 						status: status,
 						employe: this.linkLender
 					}, this.configHeader)
 					.then(res => {
+                        this.$swal({
+                            icon: 'success',
+                            title: 'Estatus editado con éxito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
 						if (idDecoded == id) {
 							EventBus.$emit('change-status', status)
 							localStorage.setItem('logged-in', status)
@@ -1087,7 +1075,7 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 					})
 					.catch(err => {
 						this.$swal({
-							type: 'error',
+							icon: 'error',
 							title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
 							showConfirmButton: false,
 							timer: 2500
