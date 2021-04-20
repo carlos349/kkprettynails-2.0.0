@@ -60,6 +60,11 @@
                                     addon-left-icon="ni ni-key-25"
                                      addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
+                        <a-select size="large" default-value="Seleccione una sucursal" style="width: 100%;vertical-align: -0.1em;" v-model="registerEmploye.branch">
+                            <a-select-option v-for="data in branch.data" :key="data" :value="data">
+                                {{data.name}}
+                            </a-select-option>
+                        </a-select>
                         <template>
                             <div class="text-muted text-center mb-3">Tabla de días</div>
                         </template>
@@ -184,7 +189,7 @@ import jwtDecode from 'jwt-decode'
         auth: [],
         tipeForm:'',
         registerEmploye: {
-            branch:'',
+            branch:'Seleccione una sucursal',
             firstName:'',
             lastName:'',
             document:'',
@@ -492,7 +497,7 @@ import jwtDecode from 'jwt-decode'
         },
         registerEmployes(){
 			axios.post(endPoint.endpointTarget+'/employes', {
-                branch: '',
+                branch: this.registerEmploye.branch,
                 days: this.selectedDays,
                 firstName: this.registerEmploye.firstName,
                 lastName: this.registerEmploye.lastName,
