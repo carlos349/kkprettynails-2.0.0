@@ -637,7 +637,7 @@ export default {
             const date = new Date()
             this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
             console.log(this.fecha)
-            axios.get(endPoint.endpointTarget+'/manicuristas/justOneById/'+this.id)
+            axios.get(endPoint.endpointTarget+'/employe/justOneById/'+this.id)
             .then(resData => {
                 
                 this.code = resData.data._id

@@ -11,7 +11,10 @@
                         <h1 class="display-2 text-white">Sección de empleados</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus empleados, aquí podrás registrar, editar y visualizar todos tus empleados.</p>
                         <base-button v-if="validRoute('empleados', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un empleado</base-button>
-                        <a-select size="large" :default-value="branch.state" style="width: 30%;vertical-align: -0.1em;" :loading="branch.loading">
+                        <a-select @change="findBranch" size="large" :default-value="branch.state" style="width: 30%;vertical-align: -0.1em;" :loading="branch.loading">
+                            <a-select-option :value="'Todas'">
+                                Todas
+                            </a-select-option>
                             <a-select-option v-for="data in branch.data" :key="data" :value="data">
                                 {{data.name}}
                             </a-select-option>
@@ -35,36 +38,43 @@
                 </template>
                 <template>
                     <form role="form">
-                        <base-input alternative
-                                    class="mb-3"
-                                    placeholder="Nombre del empleado"
+                        <div class="row">
+                            <base-input alternative
+                                    class="mb-3 col-6"
+                                    placeholder="Nombre"
                                     v-model="registerEmploye.firstName"
                                     v-on:keyup="validRegister()"
                                     addon-left-icon="ni ni-single-02"
                                     addon-right-icon="fa fa-asterisk text-danger">
-                        </base-input>
-                        <base-input alternative
-                                    class="mb-3"
-                                    placeholder="Apellido del empleado"
-                                    v-model="registerEmploye.lastName"
-                                    v-on:keyup="validRegister()"
-                                    addon-left-icon="ni ni-single-02"
-                                    addon-right-icon="fa fa-asterisk text-danger">
-                        </base-input>
+                            </base-input>
+                            <base-input alternative
+                                        class="mb-3 col-6"
+                                        placeholder="Apellido"
+                                        v-model="registerEmploye.lastName"
+                                        v-on:keyup="validRegister()"
+                                        addon-left-icon="ni ni-single-02"
+                                        addon-right-icon="fa fa-asterisk text-danger">
+                            </base-input>
+                            </div>
+                        
                         <base-input alternative
                                     class="mb-3"
                                     placeholder="Documento"
                                     v-model="registerEmploye.document"
-                                    v-on:keyup="validRegister()"
-                                    v-on:change="registerEmploye.document = formatRut(registerEmploye.document)"
+                                    v-on:keyup="validRegister(), formatRut(registerEmploye.document)"
                                     addon-left-icon="ni ni-key-25"
                                      addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
-                        <a-select size="large" default-value="Seleccione una sucursal" style="width: 100%;vertical-align: -0.1em;" v-model="registerEmploye.branch">
+                        <a-select size="large" v-if="registerEmploye.show == false" default-value="Seleccione una sucursal" style="width: 100%;vertical-align: -0.1em;" @change="selectBranchForCreate">
                             <a-select-option v-for="data in branch.data" :key="data" :value="data">
                                 {{data.name}}
                             </a-select-option>
                         </a-select>
+                        <div class="ml-2" v-else>
+                           <h3>
+                               Sucursal: {{registerEmploye.branch}}
+                            </h3> 
+                        </div>
                         <template>
                             <div class="text-muted text-center mb-3">Tabla de días</div>
                         </template>
@@ -136,35 +146,87 @@
         <!-- TABLA DE CLIENTES -->
         <template>
             <div class="p-2">
-                <a-table :columns="columns" :data-source="employes" @change="handleChange">
-                    <template slot="name" slot-scope="record, column">
-                        <b>
-                            <a-tooltip placement="top">
-                                <template slot="title">
-                                <span>Detalles</span>
-                                </template>
-                                <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.document, column.days, column._id,column.commission)" icon="ni ni-bullet-list-67"></base-button>
-                                <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
-                            </a-tooltip>
-                            
-                            <a-tooltip placement="top">
-                                <template slot="title">
-                                <span>Reporte</span>
-                                </template>
-                                <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
-                                <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
-                            </a-tooltip>
-                            
-                            <a-tooltip placement="top">
-                                <template slot="title">
-                                <span>Eliminar</span>
-                                </template>
-                                <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="warning" icon="fas fa-trash"></base-button>
-                                <base-button v-else size="sm" disabled type="warning" icon="fas fa-trash"></base-button>
-                            </a-tooltip>
-                        </b>
+                <a-config-provider>
+                    <template #renderEmpty>
+                        <div style="text-align: center">
+                            <a-icon type="warning" style="font-size: 20px" />
+                            <h2>Selecciona un filtro en la parte superior</h2>
+                        </div>
                     </template>
-                </a-table>    
+                    <a-table :columns="columns" :loading="employeState" :data-source="employes">
+                        <div
+                        slot="filterDropdown"
+                        slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                        style="padding: 8px"
+                        >
+                        <a-input
+                            v-ant-ref="c => (searchInput = c)"
+                            :placeholder="`Search ${column.dataIndex}`"
+                            :value="selectedKeys[0]"
+                            style="width: 188px; margin-bottom: 8px; display: block;"
+                            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                            @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                        />
+                        <a-button
+                            type="primary"
+                            icon="search"
+                            size="small"
+                            style="width: 90px; margin-right: 8px"
+                            @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                        >
+                            Buscar
+                        </a-button>
+                        <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                            Restablecer
+                        </a-button>
+                        </div>
+                        <a-icon
+                            slot="filterIcon"
+                            slot-scope="filtered"
+                            type="search"
+                            :style="{ color: filtered ? '#108ee9' : undefined }"
+                        />
+                        <template slot="total" slot-scope="record,column">
+                            {{formatPrice((parseFloat(column.commission) + parseFloat(column.bonus)) - parseFloat(column.advancement))}}
+                        </template>
+                        <template slot="bonus" slot-scope="record">
+                            {{formatPrice(record)}}
+                        </template>
+                        <template slot="advancement" slot-scope="record">
+                            {{formatPrice(record)}}
+                        </template>
+                        <template slot="commission" slot-scope="record">
+                            {{formatPrice(record)}}
+                        </template>
+                        <template slot="name" slot-scope="record, column">
+                            <b>
+                                <a-tooltip placement="top">
+                                    <template slot="title">
+                                    <span>Detalles</span>
+                                    </template>
+                                    <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch)" icon="ni ni-bullet-list-67"></base-button>
+                                    <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
+                                </a-tooltip>
+                                
+                                <a-tooltip placement="top">
+                                    <template slot="title">
+                                    <span>Reporte</span>
+                                    </template>
+                                    <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
+                                    <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
+                                </a-tooltip>
+                                
+                                <a-tooltip placement="top">
+                                    <template slot="title">
+                                    <span>Eliminar</span>
+                                    </template>
+                                    <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="warning" icon="fas fa-trash"></base-button>
+                                    <base-button v-else size="sm" disabled type="warning" icon="fas fa-trash"></base-button>
+                                </a-tooltip>
+                            </b>
+                        </template>
+                    </a-table>
+                </a-config-provider>    
             </div>
         </template>
     </div>
@@ -188,17 +250,19 @@ import jwtDecode from 'jwt-decode'
       return {
         auth: [],
         tipeForm:'',
+        employeState:false,
         registerEmploye: {
             branch:'Seleccione una sucursal',
             firstName:'',
             lastName:'',
             document:'',
-            id:'',
             days: [],
             _id:'',
+            show:false,
             valid:false,
             valid2:false,
         },
+        filter:'',
         branch:{
             data:[],
             state:'Seleccione una sucursal',
@@ -287,48 +351,122 @@ import jwtDecode from 'jwt-decode'
             }
         ],
         employes: [],
+        searchText: '',
+      searchInput: null,
+      searchedColumn: '',
         columns: [
             {
                 title: 'Nombre',
                 dataIndex: 'firstName',
                 key: 'firstName',
                 ellipsis: true,
+                sorter: (a, b) => {
+                     if (a.firstName > b.firstName) {
+                        return -1;
+                    }
+                    if (b.firstName > a.firstName) {
+                        return 1;
+                    }
+                    return 0;
+                },
+                sortDirections: ['descend', 'ascend'],
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.firstName.toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
             },
             {
                 title: 'Apellido',
                 dataIndex: 'lastName',
                 key: 'lastName',
                 ellipsis: true,
+                sorter: (a, b) => {
+                     if (a.lastName > b.lastName) {
+                        return -1;
+                    }
+                    if (b.lastName > a.lastName) {
+                        return 1;
+                    }
+                    return 0;
+                },
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.lastName.toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
             },
             {
                 title: 'Documento',
                 dataIndex: 'document',
                 key: 'document',
                 ellipsis: true,
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.document.replace(/[-.]/g,'').toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
             },
             {
                 title: 'Comisión',
                 dataIndex: 'commission',
                 key: 'commission',
                 ellipsis: true,
+                scopedSlots: { customRender: 'commission' },
+                sorter: (a, b) => a.commission - b.commission,
             },
             {
                 title: 'Bonos',
                 dataIndex: 'bonus',
                 key: 'bonus',
                 ellipsis: true,
+                scopedSlots: { customRender: 'bonus' },
+                sorter: (a, b) => a.bonus - b.bonus,
             },
             {
                 title: 'Avances',
                 dataIndex: 'advancement',
                 key: 'advancement',
                 ellipsis: true,
+                scopedSlots: { customRender: 'advancement' },
+                sorter: (a, b) => a.advancement - b.advancement,
+            },
+            {
+                title: 'Total',
+                key: '_id',
+                ellipsis: true,
+                scopedSlots: { customRender: 'total' },
+                sorter: (a, b) => (a.commission + a.bonus - a.advancement) - (b.commission + b.bonus - b.advancement),
             },
             {
                 title: 'Acciones',
                 dataIndex: '_id',
                 key: '_id',
-                scopedSlots: { customRender: 'name' },
+                scopedSlots: { customRender: 'name' }
             }
                                      ],
         config: {
@@ -404,16 +542,19 @@ import jwtDecode from 'jwt-decode'
 		}
     },
     created(){
-        this.getEmployes();
         this.getToken()
         this.getBranch()
     },
     methods: {
         async getEmployes(){
+            this.employeState = true
             try{
                 const getAllEmployes = await axios.get(endPoint.endpointTarget+'/employes', this.configHeader)
                 if (getAllEmployes) {
                     this.employes = getAllEmployes.data.data
+                    setTimeout(() => {
+                        this.employeState = false
+                    }, 1000);
                 }
             }catch(err){
                 res.send(err)
@@ -432,6 +573,40 @@ import jwtDecode from 'jwt-decode'
             }catch(err){
                 res.send(err)
             }
+        },
+        async findBranch(value){
+            this.employeState = true
+            if (value == 'Todas') {
+                this.filter = 'Todas'
+                this.getEmployes()
+            }else{
+                this.filter = value._id
+                try{
+                    const getByBranch = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+value._id, this.configHeader)
+                    if (getByBranch) {
+                        this.employes = getByBranch.data.data
+                        setTimeout(() => {
+                            this.employeState = false
+                        }, 1000);
+                    }
+                }catch(err){
+                    res.send(err)
+                }
+            }
+            
+        },
+        selectBranchForCreate(value){
+            this.registerEmploye.branch = value._id
+            this.validRegister()
+        },
+        handleSearch(selectedKeys, confirm, dataIndex) {
+            confirm();
+            this.searchText = selectedKeys[0];
+            this.searchedColumn = dataIndex;
+        },
+        handleReset(clearFilters) {
+            clearFilters();
+            this.searchText = '';
         },
         addDay(id, value, valid){
             if (valid) {
@@ -485,7 +660,7 @@ import jwtDecode from 'jwt-decode'
         },
         reportEmploye(id){
             localStorage.setItem('idReportEmploye', id)
-            router.push({path: '/reporteEmpleado'})
+            router.push({path: '/reportEmploye'})
         },
         proccess(){
             if (this.tipeForm == "Registrar") {
@@ -513,8 +688,16 @@ import jwtDecode from 'jwt-decode'
                         type: 'success'
                     }
                     setTimeout(() => {
+                        if (this.filter == 'Todas') {
+                            this.getEmployes()
+                        }if (this.filter != 'Todas' && this.filter != '') {
+                            const sendBranch = {
+                                _id:this.filter
+                            }
+                            this.findBranch(sendBranch)
+                        }
+                        
                         this.initialState(1)
-                        this.getEmployes()
                         EventBus.$emit('reloadLenders', 'reload')
                     }, 1500);
 				}else{
@@ -538,16 +721,15 @@ import jwtDecode from 'jwt-decode'
 			
         },
         updateEmploye(){
-			const nombre = this.registerEmploye.name.replace(/\s*$/,"");
-			const documento = this.registerEmploye.id.replace(/\s*$/,"");
-				axios.put(endPoint.endpointTarget+'/manicuristas/' + this.registerEmploye._id, {
-					nombre: nombre,
-					documento: documento,
+				axios.put(endPoint.endpointTarget+'/employes', {
+                    id:this.registerEmploye._id,
+					firstName: this.registerEmploye.firstName,
+					document: this.registerEmploye.document,
 					days: this.selectedDays,
-					comision: this.registerEmploye.comision
-				})
+					lastName: this.registerEmploye.lastName
+				}, this.configHeader)
 				.then(res => {
-					if(res.data.status == "Manicurista Editada"){
+					if(res.data.status == "employe edited"){
 						this.modals = {
                             modal2: true,
                             message: "¡Empleado editado con exito!",
@@ -555,14 +737,21 @@ import jwtDecode from 'jwt-decode'
                             type: 'success'
                         }
                         setTimeout(() => {
+                            if (this.filter == 'Todas') {
+                                this.getEmployes()
+                            }if (this.filter != 'Todas' && this.filter != '') {
+                                const sendBranch = {
+                                    _id:this.filter
+                                }
+                                this.findBranch(sendBranch)
+                            }
                             this.initialState(1)
-                            this.getEmployes()
                             EventBus.$emit('reloadLenders', 'reload')
                         }, 2000);
-						// this.emitMethod()
 					}else{
 						this.$swal({
 							type: 'error',
+                            icon: 'error',
 							title: 'Prestador ya existe',
 							showConfirmButton: false,
 							timer: 1500
@@ -583,9 +772,9 @@ import jwtDecode from 'jwt-decode'
             })
             .then(result => {
                 if (result.value) {
-                    axios.delete(endPoint.endpointTarget+'/manicuristas/' + id)
+                    axios.delete(endPoint.endpointTarget+'/employes/' + id, this.configHeader)
                     .then(res => {
-                        if(res.data.status = 'Prestador borrado'){
+                        if(res.data.status = 'employe deleted'){
                             this.modals = {
                                 modal2: true,
                                 message: "¡Empleado eliminado!",
@@ -593,8 +782,15 @@ import jwtDecode from 'jwt-decode'
                                 type: 'success'
                             }
                             setTimeout(() => {
+                                if (this.filter == 'Todas') {
+                                    this.getEmployes()
+                                }if (this.filter != 'Todas' && this.filter != '') {
+                                    const sendBranch = {
+                                        _id:this.filter
+                                    }
+                                    this.findBranch(sendBranch)
+                                }
                                 this.initialState(1)
-                                this.getEmployes()
                                 EventBus.$emit('reloadLenders', 'reload')
                             }, 2000);
                             // this.emitMethod()
@@ -611,14 +807,20 @@ import jwtDecode from 'jwt-decode'
                 }
             })	
 		},
-        pushData(nombre,id,days,_id,comision){
-            this.registerEmploye= {
-                name:nombre,
-                id:id,
-                days: days,
-                _id:_id,
-                comision:comision
+        pushData(firstName,days,_id,document,lastName,branch){
+            for (let i = 0; i < this.branch.data.length; i++) {
+                const element = this.branch.data[i];
+                if (element._id == branch) {
+                    branch = element.name
+                }
             }
+            this.registerEmploye.firstName = firstName
+            this.registerEmploye.lastName = lastName
+            this.registerEmploye.document = document
+            this.registerEmploye.branch = branch
+            this.registerEmploye.days = days
+            this.registerEmploye.show = true
+            this.registerEmploye._id = _id
             this.selectedDays = days
             for (let index = 0; index < this.days.length; index++) {
                 const element = this.days[index];
@@ -653,13 +855,15 @@ import jwtDecode from 'jwt-decode'
         },
         initialState(val){
             this.registerEmploye = {
-                name:'',
-                id:'',
+                firsName:'',
+                lastName:'',
+                branch: '',
+                document:'',
                 timeRestOne:"Seleccione el tiempo",
                 timeRestTwo:"Seleccione el tiempo",
                 dayFree:[],
+                show:false,
                 _id:'',
-                comision:'',
                 valid:false,
                 valid2:false,
             }
@@ -684,8 +888,7 @@ import jwtDecode from 'jwt-decode'
             }
         },
         validRegister(){
-            if (this.registerEmploye.firstName != '' && this.registerEmploye.document != '' && this.selectedDays.length > 0) {
-                console.log('entre aqui')
+            if (this.registerEmploye.firstName != '' && this.registerEmploye.lastName != '' && this.registerEmploye.branch != '' && this.registerEmploye.document != '' && this.selectedDays.length > 0) {
                 this.registerEmploye.valid = this.selectedDays[0].hours.length > 0 ? true : false
             }
             else{
@@ -700,17 +903,20 @@ import jwtDecode from 'jwt-decode'
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
-        formatRut(value) {
-			let around = value.length - 2
-			let concat = ''
-			for (let index = 0; index < value.length; index++) {
-				concat = concat + value[index]
-				if (around == index) {
-					concat = concat + '.'
-				}
-			} 
-			let val = concat.replace('.', '-')
-            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        formatRut(rut) {
+            rut.replace(/[-.]/g,'')
+            const newRut = rut.replace(/\./g,'').replace(/\-/g, '').trim().toLowerCase();
+            const lastDigit = newRut.substr(-1, 1);
+            const rutDigit = newRut.substr(0, newRut.length-1)
+            let format = '';
+            for (let i = rutDigit.length; i > 0; i--) {
+            const e = rutDigit.charAt(i-1);
+            format = e.concat(format);
+            if (i % 3 === 0){
+                format = '.'.concat(format);
+            }
+            }
+            this.registerEmploye.document = format.concat('-').concat(lastDigit);
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
@@ -742,5 +948,14 @@ import jwtDecode from 'jwt-decode'
     }
     .styleDays .vbt-table-tools{
         display: none;
+    }
+    .styleDays .table td{
+        padding: 2px !important;
+    }
+    .styleDays .card-footer{
+        display: none !important;
+    }
+    .styleDays .card-body{
+        padding: 0 !important;
     }
 </style>
