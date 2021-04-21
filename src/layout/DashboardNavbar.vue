@@ -181,7 +181,7 @@
         showMenu: false,
         searchQuery: '',
         nombre: localStorage.firstname + ' ' + localStorage.lastname,
-        imgUser: endPoint.imgEndpoint + localStorage.imageUser,
+        imgUser: localStorage.imageUser,
         haveImage: localStorage.imageUser,
         idUser: localStorage._id,
         imgEndpoint: endPoint.imgEndpoint,
@@ -262,7 +262,7 @@
         console.log(status)
         this.nombre = status.nombre + ' ' + status.apellido
         if (status.image != "") {
-          this.imgUser = endPoint.imgEndpoint + status.image
+          this.imgUser = status.image
         }
         console.log(this.imgUser)
       })
