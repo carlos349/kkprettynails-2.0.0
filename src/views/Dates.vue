@@ -4216,6 +4216,11 @@
     .vuecal__cell-split.class8Split {background-color: rgb(255, 214, 214, 0.6);}
     .vuecal__cell-split.class9Split {background-color: rgb(255, 209, 186, 0.6);}
     .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.6);}
+    .class0 {
+        background:#eb755e;
+        border: 1px solid #eb755e;
+        color: #343633;
+    }
     .class1 {
         background:#EAC5BE;
         border: 1px solid #EAC5BE;
