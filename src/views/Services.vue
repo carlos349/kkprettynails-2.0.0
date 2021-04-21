@@ -41,19 +41,27 @@
                 <template>
                     <form role="form">
                         <div class="row m-0">
-                            <base-input alternative
-                                class="col-sm-12 mb-3"
-                                placeholder="Nombre"
-                                addon-left-icon="ni ni-single-copy-04"
-                                v-model="serviceRegister"
-                                addon-right-icon="fa fa-asterisk text-danger" >
-                            </base-input>
+                            <div class="col-md-6">
+                                <base-input alternative
+                                    class="w-100"
+                                    placeholder="Nombre"
+                                    addon-left-icon="fa fa-font"
+                                    v-model="serviceRegister"
+                                    addon-right-icon="fa fa-asterisk text-danger" >
+                                </base-input>
+                            </div>
+                            <div class="col-md-6">
+                                <a-select class="form-control w-100" default-value="Seleccione la sucursal"  @change="selectBranchRegister" size="large">
+                                    <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
+                                        {{branch.name}}
+                                    </a-select-option>
+                                </a-select>
+                            </div>
                             <div class="col-md-4">
                                 <base-input alternative
-                                    v-on:keyup="pruebameEste()"
                                     max-count="100"
                                     placeholder="Comisión (%)"
-                                    addon-left-icon="ni ni-money-coins"
+                                    addon-left-icon="fa fa-percent"
                                     v-model="comissionRegister"
                                     addon-right-icon="fa fa-asterisk text-danger" >
                                 </base-input>
@@ -63,8 +71,7 @@
                                     v-model="priceRegister"
                                     locale="de"
                                     placeholder="Costo"
-                                    class="form-control w-100   "
-                                    style=""
+                                    class="form-control w-100"
                                 />
 
                             </div>
@@ -131,7 +138,7 @@
                                 </span>
                                 <vue-custom-scrollbar class="maxHeight">
                                     <div class="p-4">
-                                        <base-button v-for="(data , index) in rowsItems" v-on:click="elegirCantidad(index,1)" class="col-12 mb-1" type="secondary">
+                                        <base-button v-for="(data, index) in rowsItems" :key="data" v-on:click="elegirCantidad(index, 1)" class="col-12 mb-1" type="secondary">
                                             <div class="row">
                                                 <div class="col-8">
                                                     <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.producto}}</base-checkbox>
@@ -167,34 +174,50 @@
                 </template>
                 <template>
                     <form role="form">
-                        <base-input alternative
-                            class="mb-3"
-                            placeholder="Nombre"
-                            addon-left-icon="ni ni-single-copy-04"
-                            v-model="serviceEdit"
-                            addon-right-icon="fa fa-asterisk text-danger" >
-                        </base-input>
-                        <div class="row">
-                            <base-input alternative
-                                type="text"
-                                placeholder="Comisión"
-                                class="col-sm-4 "
-                                addon-left-icon="ni ni-money-coins"
-                                v-model="comissionEdit"
-                                addon-right-icon="fa fa-asterisk text-danger" >
-                            </base-input>
-                            <currency-input 
-                                v-model="priceEdit"
-                                locale="de"
-                                addon-left-icon="ni ni-time-alarm"
-                                class="form-control mx-auto col-sm-3 mb-3"
-                                
-                                addon-right-icon="fa fa-asterisk text-danger" 
-                            />	
-                            <select class="form-control mb-3 col-sm-4 mx-auto" v-model="editCategoryServicer">
-                                <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
-                            </select>
-                            <select class="form-control col-sm-5 mx-auto mb-3" v-model="timeEdit">
+                        <div class="row m-0">
+                            <div class="col-md-6">
+                                <label for="branch">Nombre del servicio</label>
+                                <base-input alternative
+                                    class="w-100 mb-2"
+                                    placeholder="Nombre"
+                                    addon-left-icon="fa fa-font"
+                                    v-model="serviceEdit"
+                                >
+                                </base-input>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="branch">Sucursal {{branchName}}</label>
+                                <a-select class="form-control mb-2 w-100" default-value="Seleccione una sucursal"  @change="selectBranchEdit" size="large">
+                                    <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
+                                        {{branch.name}}
+                                    </a-select-option>
+                                </a-select>
+                            </div>
+                            <div class="col-md-4">
+                                <base-input alternative
+                                    type="text"
+                                    placeholder="Comisión"
+                                    class="w-100"
+                                    addon-left-icon="fa fa-percent"
+                                    v-model="comissionEdit"
+                                    addon-right-icon="fa fa-asterisk text-danger" >
+                                </base-input>
+                            </div>
+                            <div class="col-md-4">
+                                <currency-input 
+                                    v-model="priceEdit"
+                                    locale="de"
+                                    addon-left-icon="ni ni-time-alarm"
+                                    class="form-control mx-auto w-100"
+                                    addon-right-icon="fa fa-asterisk text-danger" 
+                                />
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-control mx-auto" v-model="editCategoryServicer">
+                                    <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
+                                </select>
+                            </div>
+                            <select class="form-control col-md-5 mx-auto mb-3" v-model="timeEdit">
                                 <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
                                     <option style="color:black;" value="15">15 Minutos</option>
                                     <option style="color:black;" value="30">30 Minutos</option>
@@ -213,7 +236,7 @@
                                     <option style="color:black;" value="225">225 Minutos (3:45 Hr)</option>
                                     <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
                             </select>
-                            <div class="row mx-auto col-sm-6" style="margin-top:-2%">
+                            <div class="row mx-auto col-md-6" style="margin-top:-2%">
                                 <h3 class="w-100 text-center">¿Aplica descuento?</h3>
                                 <base-radio name="false"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
                                 <base-radio name="true"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>No</b> </base-radio> 
@@ -250,7 +273,7 @@
 
                                 <vue-custom-scrollbar class="maxHeight">
                                     <div class="p-4">
-                                        <base-button v-for="(data , index) in rowsItems" v-on:click="elegirCantidad(index,2)" class="col-12 mb-1" type="secondary">
+                                        <base-button v-for="(data, index) in rowsItems" :key="data" v-on:click="elegirCantidad(index,2)" class="col-12 mb-1" type="secondary">
                                             <div class="row">
                                                 <div class="col-8">
                                                     <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.producto}}</base-checkbox>
@@ -274,14 +297,67 @@
                 </template>
             </card>
         </modal>
-        <vue-bootstrap4-table :rows="services" :columns="columns" :classes="classes" :config="config">
-            <template slot="actionButtons" class="mx-auto" slot-scope="props">
+        <a-table :columns="columns" :data-source="services" :scroll="getScreen">
+            <div
+                slot="filterDropdown"
+                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                style="padding: 8px"
+                >
+                <a-input
+                    v-ant-ref="c => (searchInput = c)"
+                    :placeholder="`Buscar por nombre`"
+                    :value="selectedKeys[0]"
+                    style="width: 188px; margin-bottom: 8px; display: block;"
+                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                />
+                <a-button
+                    type="primary"
+                    icon="search"
+                    size="small"
+                    style="width: 90px; margin-right: 8px"
+                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                >
+                    Buscar
+                </a-button>
+                <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                    resetear
+                </a-button>
+            </div>
+            <a-icon
+                slot="filterIcon"
+                slot-scope="filtered"
+                type="search"
+                :style="{ color: filtered ? '#108ee9' : undefined }"
+            />
+            <template slot="customRender" slot-scope="text, record, index, column">
+                <span v-if="searchText && searchedColumn === column.dataIndex">
+                    <template
+                    v-for="(fragment, i) in text
+                        .toString()
+                        .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                    >
+                    <mark
+                        v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                        :key="i"
+                        class="highlight"
+                        >{{ fragment }}</mark
+                    >
+                    <template v-else>{{ fragment }}</template>
+                    </template>
+                </span>
+                <template v-else>
+                    {{ text }}
+                </template>
+            </template>
+            
+            <template slot="actionButtons" class="mx-auto" slot-scope="record, column">
                 <center>
                     <a-tooltip placement="top">
                         <template slot="title">
                         <span>Editar</span>
                         </template>
-                        <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(props.row._id, props.row.prestadores, props.row.nombre, props.row.tiempo, props.row.descuento, props.row.comision, props.row.precio,props.row.productos,props.row.category)"></base-button>
+                        <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch)"></base-button>
                         <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" ></base-button>
                     </a-tooltip>
     
@@ -290,35 +366,28 @@
                         <span>Activar / Desactivar</span>
                         </template>
                         <template v-if="validRoute('servicios', 'activaciones')">
-                             <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(props.row._id)"></base-button>
-                            <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(props.row._id)"></base-button> 
+                            <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(column._id)"></base-button>
+                            <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(column._id)"></base-button> 
                   
                         </template>
                         <template v-else>
-                            <base-button class="text-center" v-if="props.row.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
+                            <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
                             <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled></base-button> 
                         </template>
                     </a-tooltip>
                     
                 </center>
             </template>
-            <template slot="price" slot-scope="props">
-                {{formatPrice(props.row.precio)}}
+            <template slot="format-price" slot-scope="record, column">
+                {{formatPrice(column.price)}}
             </template>
-            <template slot="time" slot-scope="props">
-                {{props.row.tiempo}}Min
+            <template slot="format-time" slot-scope="record, column">
+                {{column.duration}}Min
             </template>
-            <template slot="comission" slot-scope="props">
-                {{props.row.comision}}%
+            <template slot="format-commission" slot-scope="record, column">
+                {{column.commission}}%
             </template>
-            <template slot="pagination-info" slot-scope="props">
-                Actuales {{props.currentPageRowsLength}} | 
-                Registros totales {{props.originalRowsLength}}
-            </template>
-            <template slot="selected-rows-info" slot-scope="props">
-                Total Number of rows selected : {{props.selectedItemsCount}}
-            </template>
-        </vue-bootstrap4-table>
+        </a-table>
         <modal :show.sync="modals.modal3"
                :gradient="modals.type"
                modal-classes="modal-danger modal-dialog-centered">
@@ -466,7 +535,7 @@ export default {
             columnsLender: [
                 {
                     label: "Nombre",
-                    name: "nombre",
+                    name: "firstName",
                     // filter: {
                     //     type: "simple",
                     //     placeholder: "id"
@@ -502,50 +571,63 @@ export default {
                     sort: false,
                 },
             ],
-            columns: [{
-                label: "Nombre",
-                name: "nombre",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "id"
-                // },
-                sort: true,
-            },
-            {
-                label: "Costo",
-                name: "precio",
-                slot_name: "price",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter first name"
-                // },
-                sort: true,
-            },
-            {
-                label: "Tiempo",
-                name: "tiempo",
-                slot_name: "time",
-                sort: true,
-            },
-            {
-                label: "Comisión",
-                name: "comision",
-                slot_name: "comission",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter country"
-                // },
-            },
-            {
-                label: "Acciones",
-                name: "_id",
-                slot_name: "actionButtons",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter first name"
-                // },
-                sort: true,
-            }],
+            columns: [
+                {
+                    title: 'Nombre',
+                    dataIndex: 'name',
+                    key: 'name',
+                    ellipsis: true,
+                    scopedSlots: {
+                        filterDropdown: 'filterDropdown',
+                        filterIcon: 'filterIcon',
+                        customRender: 'customRender',
+                    },
+                    onFilter: (value, record) =>
+                        record.name
+                        .toString()
+                        .toLowerCase()
+                        .includes(value.toLowerCase()),
+                    onFilterDropdownVisibleChange: visible => {
+                        if (visible) {
+                        setTimeout(() => {
+                            this.searchInput.focus();
+                        }, 0);
+                        }
+                    },
+                },
+                {
+                    title: 'Costo',
+                    dataIndex: 'price',
+                    key: 'price',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'format-price' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => a.price - b.price
+                },
+                {
+                    title: 'Duración',
+                    dataIndex: 'duration',
+                    key: 'duration',
+                    scopedSlots: { customRender: 'format-time' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => a.duration - b.duration,
+                    ellipsis: true,
+                },
+                {
+                    title: 'Comisión',
+                    dataIndex: 'commission',
+                    key: 'commission',
+                    scopedSlots: { customRender: 'format-commission' },
+                    ellipsis: true,
+                },
+                {
+                    title: 'Acciones',
+                    dataIndex: '_id',
+                    key: '_id',
+                    scopedSlots: { customRender: 'actionButtons' },
+                    ellipsis: true,
+                }
+            ],
             config: {
                 card_title: "Tabla de servicios",
                 checkbox_rows: false,
@@ -626,7 +708,12 @@ export default {
             editCategoryServicer:'',
             branch: '',
             branchName: '',
-            branches: []
+            branches: [],
+            branchRegister: '',
+            branchEdit: '',
+            searchText: '',
+            searchInput: null,
+            searchedColumn: '',
         }
     },
     beforeCreate(){
@@ -658,6 +745,16 @@ export default {
             console.log(decoded)
             this.branch = decoded.branch
         },
+        handleSearch(selectedKeys, confirm, dataIndex) {
+            confirm();
+            this.searchText = selectedKeys[0];
+            this.searchedColumn = dataIndex;
+        },
+
+        handleReset(clearFilters) {
+            clearFilters();
+            this.searchText = '';
+        },
         async getBranches(){
             try {
                 const getBranches = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
@@ -683,6 +780,12 @@ export default {
         },
         selectBranch(value){
 
+        },
+        selectBranchRegister(value){
+            this.branchRegister = value
+        },
+        selectBranchEdit(value){
+            this.branchEdit = value
         },
         async getServices(){
             console.log(this.branch)
@@ -726,7 +829,7 @@ export default {
         },
         async getEmployes(){
             try {
-                const employes = await axios.get(endPoint.endpointTarget+'/employes', this.configHeader)
+                const employes = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+this.branch, this.configHeader)
                 if(employes.data.status == 'ok'){
                     for (let index = 0; index < employes.data.data.length; index++) {
                         employes.data.data[index].valid = false
@@ -763,39 +866,20 @@ export default {
                 if (this.typeItemModal == 2) {
                     this.EdititemSelected.push({id:this.rowsItems[this.itemIndex]._id,count:this.itemsBox[this.itemIndex].count})
                 }
-                
-                    this.modals.modal4 =false
-                    this.modals.modal3 = true
-                    this.modals.message = "Registro existoso"
-                    this.modals.icon = 'ni ni-check-bold ni-5x'
-                    this.modals.type = 'success'
-                setTimeout(() => {
-                        this.modals.modal3 = false
-                        this.modals.message = ""
-                        this.modals.icon = ''
-                        this.modals.type = ''
-                }, 1500);
+                this.$swal({
+                    icon: 'success',
+                    title: 'Registro exitoso',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }
             else{
-                this.modals = {
-                    modal3: true,
-                    message: "Debe rellenar los datos",
-                    icon: 'ni ni-fat-remove ni-5x',
-                    type: 'danger'
-                }
-                setTimeout(() => {
-                    this.modals = {
-                        modal1:false,
-                        modal2:false,
-                        modal3: false,
-                        modal4:false,
-                        modal5: false,
-                        modal6: false,
-                        message: "",
-                        icon: '',
-                        type: ''
-                    }
-                }, 1500);
+                this.$swal({
+                    icon: 'error',
+                    title: 'Debe rellenar los datos',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }
         },
         unSelectedItem(value){
@@ -825,101 +909,49 @@ export default {
         },
         registerService(){
             if (this.serviceRegister == '' || this.priceRegister == 0 || this.timeRegister == '' || this.comissionRegister == '') {
-                this.modals = {
-                    modal3: true,
-                    message: "Debe rellenar los datos",
-                    icon: 'ni ni-fat-remove ni-5x',
-                    type: 'danger'
-                }
-                setTimeout(() => {
-                    this.modals = {
-                        modal1:true,
-                        modal2:false,
-                        modal3: false,
-                        modal4: false,
-                        modal5: false,
-                        modal6: false,
-                        message: "",
-                        icon: '',
-                        type: ''
-                    }
-                }, 1500);
+                this.$swal({
+                    icon: 'info',
+                    title: 'Debe rellenar los datos',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }else{
                 if (this.lenderSelecteds.length == 0) {
-                    this.modals = {
-                        modal3: true,
-                        message: "Debe seleccionar almenos un prestador",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1:true,
-                            modal2:false,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
-                            modal6: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+                    this.$swal({
+                        icon: 'info',
+                        title: 'Debe seleccionar almenos un empleado',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }else{
-                    
-                    axios.post(endPoint.endpointTarget+'/servicios', {
-                        nombreServicio: this.serviceRegister,
-                        precioServicio: this.priceRegister,
-                        comisionServicio: this.comissionRegister,
-                        tiempoServicio: this.timeRegister,
-                        prestadores: this.lenderSelecteds,
-                        productos:this.itemSelected,
-                        categoryRegister: this.categoryRegister,
-                        descuento: this.addDiscount
-                    }).then(res => {
-                        if (res.data.status == 'Servicio creado') {
-                            this.modals = {
-                                modal3: true,
-                                message: "El servicio se registro con exito",
-                                icon: 'ni ni-check-bold ni-5x',
-                                type: 'success'
-                            }
-                            setTimeout(() => {
-                                this.modals = {
-                                    modal1:false,
-                                    modal2:false,
-                                    modal3: false,
-                                    modal4: false,
-                                    modal5: false,
-                                    modal6: false,
-                                    message: "",
-                                    icon: '',
-                                    type: ''
-                                }
-                            }, 1500);
+                    axios.post(endPoint.endpointTarget+'/services', {
+                        branch: this.branchRegister,
+                        name: this.serviceRegister,
+                        price: this.priceRegister,
+                        commission: this.comissionRegister,
+                        duration: this.timeRegister,
+                        employes: this.lenderSelecteds,
+                        products:this.itemSelected,
+                        category: this.categoryRegister,
+                        discount: this.addDiscount
+                    }, this.configHeader).then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Servicios creados',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                             this.initialState()
                             this.getServices()
                             EventBus.$emit('reloadServices', 'reload')
                         }else{
-                            this.modals = {
-                                modal3: true,
-                                message: "El servicio ya existe",
-                                icon: 'ni ni-fat-remove ni-5x',
-                                type: 'danger'
-                            }
-                            setTimeout(() => {
-                                this.modals = {
-                                    modal1:false,
-                                    modal2:false,
-                                    modal3: false,
-                                    modal4: false,
-                                    modal5: false,
-                                    modal6: false,
-                                    message: "",
-                                    icon: '',
-                                    type: ''
-                                }
-                            }, 1500);
+                            this.$swal({
+                                icon: 'error',
+                                title: 'El servicio ya existe',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                         }
                     })
                 }
@@ -928,7 +960,7 @@ export default {
         initialState(){
             this.serviceRegister = ''
             this.priceRegister = 0
-            this.comissionRegister = ''
+            this.comissionRegister = 0
             this.timeRegister = 'Seleccione el tiempo'
             this.lenderSelecteds = []
             this.addDiscount = false
@@ -958,8 +990,7 @@ export default {
                 }
             }
         },
-        dataEdit(id, lenders, name, time, discount, comission, price,items, category){
-            console.log(items)
+        dataEdit(id, lenders, name, time, discount, comission, price, items, category, branch){
             this.itemsBox = []
             for (let index = 0; index < this.rowsItems.length; index++) {
                 this.itemsBox.push({check:false,count:''})
@@ -971,6 +1002,7 @@ export default {
             this.EditlenderSelecteds = lenders
             this.EdititemSelected = items
             this.serviceEdit = name
+            this.branchEdit = branch
             this.priceEdit = price
             this.editCategoryServicer = category
             this.comissionEdit = comission
@@ -978,7 +1010,6 @@ export default {
             this.addDiscountEdit = discount
             this.modals.modal2 = true
             this.EditlenderSelecteds = []
-            console.log(lenders)
             for (let index = 0; index < this.lenders.length; index++) {
                 const element = this.lenders[index];
                 this.lenders[index].valid = false
@@ -990,8 +1021,6 @@ export default {
                     }
                 }
             }
-            console.log(this.lenders)
-            console.log(this.EditlenderSelecteds)
         },
         clean(){
             this.lenderSelecteds = []
@@ -1003,97 +1032,64 @@ export default {
         },
         editService(){
             if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {
-                this.modals = {
-                    modal3: true,
-                    message: "Debe rellenar los datos",
-                    icon: 'ni ni-fat-remove ni-5x',
-                    type: 'danger'
-                }
-                setTimeout(() => {
-                    this.modals = {
-                        modal1:false,
-                        modal2:false,
-                        modal3: false,
-                        modal4: false,
-                        modal5: false,
-                        modal6: false,
-                        message: "",
-                        icon: '',
-                        type: ''
-                    }
-                }, 1500);
+                this.$swal({
+                    icon: 'error',
+                    title: 'Debe rellenar los datos',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }else{
                 if (this.EditlenderSelecteds.length == 0) {
-                    this.modals = {
-                        modal3: true,
-                        message: "Debe seleccionar almenos un prestador",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1:false,
-                            modal2:false,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
-                            modal6: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Debe seleccionar almenos un prestador',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }else{
-                    console.log(this.EdititemSelected)
                     var ifCheck = this.addDiscountEdit ? false : true
 					const id = this.idServiceEdit
-					axios.put(endPoint.endpointTarget+'/servicios/' + id, {
-						nombreServicio: this.serviceEdit,
-						tiempoServicio: this.timeEdit,
-						precioServicio: this.priceEdit,
-						comisionServicio: this.comissionEdit,
-                        prestadores: this.EditlenderSelecteds,
-                        productos: this.EdititemSelected,
-                        descuento: this.addDiscountEdit,
-                        editCategoryServicer: this.editCategoryServicer
-					}).then(res => {
-                        this.modals = {
-                            modal3: true,
-                            message: "¡Servicio actualizado!",
-                            icon: 'ni ni-check-bold ni-5x',
-                            type: 'success'
-                        }
-                        setTimeout(() => {
+					axios.put(endPoint.endpointTarget+'/services/'+id, {
+                        branch: this.branchEdit,
+                        name: this.serviceEdit,
+                        price: this.priceEdit,
+                        commission: this.comissionEdit,
+                        duration: this.timeEdit,
+                        employes: this.EditlenderSelecteds,
+                        products:this.EdititemSelected,
+                        category: this.editCategoryServicer,
+                        discount: this.addDiscountEdit
+					}, this.configHeader).then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Servicio actualizado',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.modals.modal2 = false
                             this.getServices();
-                            this.modals = {
-                                modal1: false,
-                                modal2: false,
-                                modal3: false,
-                                modal4: false,
-                                modal5: false,
-                                modal6: false,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            }
-                        }, 1500);
-                        EventBus.$emit('reloadServices', 'reload')
+                            EventBus.$emit('reloadServices', 'reload')
+                        }
                     })
                 }
             }
         },
         changeStatus(id){
-            axios.put(endPoint.endpointTarget+'/servicios/changeActive/' + id)
+            axios.put(endPoint.endpointTarget+'/services/changeActive/'+id, {
+                id: id
+            }, this.configHeader)
             .then(res => {
                 this.getServices();
                 // this.emitMethod()
             })
             .catch(err => {
-                this.messageError = 'Error con la consulta'
-                this.errorAlert = true
-                setTimeout(() => {
-                    this.errorAlert = false
-                }, 1500);
+                this.$swal({
+                    icon: 'error',
+                    title: 'Debe rellenar los datos',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             })
         },
         validRoute(route, type){
@@ -1132,12 +1128,11 @@ export default {
                         break
                     }
                 }
-                console.log(this.EdititemSelected)
             }
         },
         async getCategories(){
             try {
-                const categories = await axios.get(endPoint.endpointTarget+'/services/getCategories', this.configHeader)
+                const categories = await axios.get(endPoint.endpointTarget+'/services/getCategories/'+this.branch, this.configHeader)
                 if (categories.data.status == 'ok') {
                     this.categories = categories.data.data
                 }
@@ -1173,15 +1168,17 @@ export default {
             })
         },
         deleteCategory(id){
-            axios.delete(endPoint.endpointTarget+'/servicios/deleteCategory/'+id)
+            axios.delete(endPoint.endpointTarget+'/services/deleteCategory/'+id, this.configHeader)
             .then(res => {
                 if (res.data.status == 'ok') {
                     this.getCategories()
                 }
             })
-        },
-        pruebameEste(e){
-            
+        }
+    },
+    computed: {
+        getScreen: () => {
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 240 }
         }
     }
 }

@@ -151,16 +151,14 @@
                     </div>
                 </template>
                 <template>
-                    <form role="form">
-                        <vue-single-select
-                            v-model="linkLender"
-                            :options="lenderNames"
-                            placeholder="Prestadores"
-                        ></vue-single-select>
-                        <base-button type="default" v-on:click="estatusEdit(idSelect, 3, 'no-prestador')">
-                            Vincular
-                        </base-button>  
-                    </form>
+                    <a-select class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione la sucursal"  @change="selectEmploye" size="large">
+                        <a-select-option v-for="lender of lenderNames" :key="lender._id" :value="lender._id">
+                            {{lender.firstName}} / {{lender.document}}
+                        </a-select-option>
+                    </a-select>
+                    <base-button type="default" v-on:click="estatusEdit(idSelect, 3, 'no-prestador')">
+                        Vincular
+                    </base-button>  
                 </template>
             </card>
         </modal>
@@ -195,50 +193,84 @@
             </card>
         </modal>
         <!-- TABLA DE CLIENTES -->
-        <vue-bootstrap4-table class="text-left" :rows="users" :columns="columns" :classes="classes" :config="config">
-            <template slot="date-format" class="text-left" slot-scope="props">
-                {{formatDate(props.row.lastAccess)}}
+        <a-table :columns="columns" :data-source="users" :scroll="getScreen">
+            <div
+                slot="filterDropdown"
+                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                style="padding: 8px"
+                >
+                <a-input
+                    v-ant-ref="c => (searchInput = c)"
+                    :placeholder="`Buscar por nombre`"
+                    :value="selectedKeys[0]"
+                    style="width: 188px; margin-bottom: 8px; display: block;"
+                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                />
+                <a-button
+                    type="primary"
+                    icon="search"
+                    size="small"
+                    style="width: 90px; margin-right: 8px"
+                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                >
+                    Buscar
+                </a-button>
+                <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                    resetear
+                </a-button>
+            </div>
+            <a-icon
+                slot="filterIcon"
+                slot-scope="filtered"
+                type="search"
+                :style="{ color: filtered ? '#108ee9' : undefined }"
+            />
+            <template slot="customRender" slot-scope="text, record, index, column">
+                <span v-if="searchText && searchedColumn === column.dataIndex">
+                    <template
+                    v-for="(fragment, i) in text
+                        .toString()
+                        .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                    >
+                    <mark
+                        v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                        :key="i"
+                        class="highlight"
+                        >{{ fragment }}</mark
+                    >
+                    <template v-else>{{ fragment }}</template>
+                    </template>
+                </span>
+                <template v-else>
+                    {{ text }}
+                </template>
+                </template>
+            <template slot="date-format" class="text-left" slot-scope="record, column">
+                {{formatDate(column.lastAccess)}}
             </template>
-            <template slot="status-format" slot-scope="props">
-                <base-dropdown class="w-100" v-if="validRoute('usuarios', 'editar')">
-                    <base-button size="sm" v-if="props.row.status == 1" slot="title" type="primary" class="dropdown-toggle w-100">
-                        Gerente
-                    </base-button>
-                    <base-button size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle w-100">
-                        Cajero (a)
-                    </base-button>
-                    <base-button size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle w-100">
-                        Prestadora
-                    </base-button>
-                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 1, 'no-prestador')">Gerencia</a>
-                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 2, 'no-prestador')">Personal de caja</a>
-                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 3, 'prestador')">Prestador</a>
-                </base-dropdown>
-                <base-dropdown v-else class="w-100" >
-                    <base-button disabled size="sm" v-if="props.row.status == 1" slot="title" type="primary" class="dropdown-toggle w-100">
-                        Gerente
-                    </base-button>
-                    <base-button disabled size="sm" v-if="props.row.status == 2" slot="title" type="success" class="dropdown-toggle w-100">
-                        Cajero (a)
-                    </base-button>
-                    <base-button disabled size="sm" v-if="props.row.status == 3" slot="title" type="default" class="dropdown-toggle w-100">
-                        Prestadora
-                    </base-button>
-                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 1, 'no-employe')">Gerencia</a>
-                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 2, 'no-employe')">Personal de caja</a>
-                    <a class="dropdown-item" v-on:click="estatusEdit(props.row._id, 3, 'employe')">Prestador</a>
-                </base-dropdown>
+            <template slot="status-format" slot-scope="record, column">
+                <a-dropdown>
+                    <a-menu slot="overlay" >
+                        <a-menu-item v-on:click="estatusEdit(column._id, 1, 'no-prestador')" key="1"> <a-icon type="user" />Gerencia </a-menu-item>
+                        <a-menu-item v-on:click="estatusEdit(column._id, 2, 'no-prestador')" key="2"> <a-icon type="user" />Cajera (o) </a-menu-item>
+                        <a-menu-item v-on:click="estatusEdit(column._id, 3, 'employe')" key="3"> <a-icon type="user" />Empleada (o) </a-menu-item>
+                    </a-menu>
+                    <a-button class="w-100" style="margin-left: 8px" v-if="column.status == 1"> Gerente <a-icon type="down" /> </a-button>
+                    <a-button class="w-100" style="margin-left: 8px" v-if="column.status == 2"> Cajera (o) <a-icon type="down" /> </a-button>
+                    <a-button class="w-100" style="margin-left: 8px" v-if="column.status == 3"> Prestadora <a-icon type="down" /> </a-button>
+                </a-dropdown>
             </template>
-            <template slot="access" class="text-left" slot-scope="props" >
+            <template slot="access" class="text-left" slot-scope="record, column" >
                 <center>
                     <a-tooltip placement="top">
                         <template slot="title">
-                        <span>Agregar accesos</span>
+                            <span>Agregar accesos</span>
                         </template>
-                        <base-button v-if="validRoute('usuarios', 'editar')" icon="ni ni-fat-add" v-on:click="dataEdit(props.row.access, props.row._id, props.row.email)" size="sm"  type="success" class="mx-auto">
+                        <base-button v-if="validRoute('usuarios', 'editar')" icon="ni ni-fat-add" v-on:click="dataEdit(column.access, column._id, column.email)" size="sm"  type="success" >
                             
                         </base-button>
-                        <base-button v-else size="sm"  type="success" disabled class="mx-auto">
+                        <base-button v-else size="sm"  type="success" disabled>
                             
                         </base-button>
                     </a-tooltip>
@@ -246,13 +278,13 @@
                 
                 
             </template>
-            <template slot="Administrar" slot-scope="props">
+            <template slot="Administrar" slot-scope="record, column">
                 <center>
                     <a-tooltip placement="top">
                         <template slot="title">
                         <span>Eliminar</span>
                         </template>
-                        <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteUser(props.row._id, props.row.status)" type="warning" icon="fas fa-trash"></base-button>     
+                        <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteUser(column._id, column.status)" type="warning" icon="fas fa-trash"></base-button>     
                         <base-button v-else size="sm" slot="title" type="warning" icon="fas fa-trash" disabled>
                             
                         </base-button> 
@@ -260,14 +292,34 @@
                 </center>
                 
             </template>
-            <template slot="pagination-info" slot-scope="props">
-                Actuales {{props.currentPageRowsLength}} |  
-                Registros totales {{props.originalRowsLength}}
+            <template slot="name" slot-scope="record, column">
+                <b>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Detalles</span>
+                        </template>
+                        <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.document, column.days, column._id,column.commission)" icon="ni ni-bullet-list-67"></base-button>
+                        <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
+                    </a-tooltip>
+                    
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Reporte</span>
+                        </template>
+                        <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
+                        <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
+                    </a-tooltip>
+                    
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Eliminar</span>
+                        </template>
+                        <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="warning" icon="fas fa-trash"></base-button>
+                        <base-button v-else size="sm" disabled type="warning" icon="fas fa-trash"></base-button>
+                    </a-tooltip>
+                </b>
             </template>
-            <template slot="selected-rows-info" slot-scope="props">
-                Total Number of rows selected : {{props.selectedItemsCount}}
-            </template>
-        </vue-bootstrap4-table>
+        </a-table>
     </div>
 </template>
 <script>
@@ -316,6 +368,9 @@ moment.locale('es');
             c:null,
             p:null
         },
+        searchText: '',
+        searchInput: null,
+        searchedColumn: '',
         routes: [
             {route: 'procesar', valid: false},
             {route: 'metricas', valid: false},
@@ -345,65 +400,88 @@ moment.locale('es');
             type:''
         },
         users: [],
-        columns: [{
-                label: "Nombre",
-                name: "first_name",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "id"
-                // },
-                sort: true,
+        columns: [
+            {
+                title: 'Nombre',
+                dataIndex: 'first_name',
+                key: 'first_name',
+                ellipsis: true,
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) =>
+                    record.first_name
+                    .toString()
+                    .toLowerCase()
+                    .includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
             },
             {
-                label: "Apellido",
-                name: "last_name",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "id"
-                // },
-                sort: true,
+                title: 'Apellido',
+                dataIndex: 'last_name',
+                key: 'last_name',
+                ellipsis: true,
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) =>
+                    record.last_name
+                    .toString()
+                    .toLowerCase()
+                    .includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
             },
             {
-                label: "Correo",
-                name: "email",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter first name"
-                // },
-                sort: true,
+                title: 'Correo',
+                dataIndex: 'email',
+                key: 'email',
+                ellipsis: true,
             },
             {
-                label: "Ultimo acceso",
-                name: "LastAccess",
-                slot_name:'date-format',
-                sort: true,
+                title: 'Último acceso',
+                dataIndex: 'LastAccess',
+                key: 'LastAccess',
+                scopedSlots: { customRender: 'date-format' },
+                defaultSortOrder: 'descend',
+                sorter: (a, b) => new Date(a.lastAccess).getTime() - new Date(b.lastAccess).getTime(),
+                ellipsis: true,
             },
             {
-                label: "Estado",
-                name: "status",
-                slot_name:"status-format",
-                sort: false,
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter country"
-                // },
+                title: 'Estado',
+                dataIndex: 'status',
+                key: 'status',
+                scopedSlots: { customRender: 'status-format' },
+                ellipsis: true,
             },
             {
-                label: "Accesos",
-                name: "Accesos",
-                slot_name:"access",
-                sort: false,
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter country"
-                // },
+                title: 'Accesos',
+                dataIndex: 'access',
+                key: 'access',
+                scopedSlots: { customRender: 'access' },
+                ellipsis: true,
             },
             {
-                label: "Eliminar",
-                name: "_id",
-                sort: false,
-                slot_name: "Administrar"
-            },
+                title: 'Elimina',
+                dataIndex: '_id',
+                key: '_id',
+                scopedSlots: { customRender: 'Administrar' },
+            }
         ],
         config: {
             card_title: "Tabla de usuarios",
@@ -552,6 +630,9 @@ moment.locale('es');
         },
         selectBranch(value){
             this.registerUser.branch = value
+        },
+        selectEmploye(value){
+            this.linkLender = value
         },
         async getBranches(){
             try {
@@ -765,6 +846,15 @@ moment.locale('es');
                 this.routesSelecteds[this.position].validaciones.push(func)
             }
         },
+        handleSearch(selectedKeys, confirm, dataIndex) {
+            confirm();
+            this.searchText = selectedKeys[0];
+            this.searchedColumn = dataIndex;
+        },
+        handleReset(clearFilters) {
+            clearFilters();
+            this.searchText = '';
+        },
         handleFileUpload(){
             this.file = this.$refs.file.files[0]
             console.log(this.file)
@@ -886,9 +976,7 @@ moment.locale('es');
             try {
                 const getEmployes = await axios.get(endPoint.endpointTarget+'/employes', this.configHeader)
                 if (getEmployes.data.status == 'ok') {
-                    for (let index = 0; index < getEmployes.data.data.length; index++) {
-                        this.lenderNames.push(getEmployes.data.data[index].firstName + " / " + getEmployes.data.data[index].document)
-                    }  
+                    this.lenderNames = getEmployes.data.data
                 }
             }catch(err){
                 this.$swal({
@@ -1010,7 +1098,7 @@ moment.locale('es');
 					showLoaderOnConfirm: true
 				}).then(result => {
 					if (result.value) {
-						if (type == 'prestador') {
+						if (type == 'employe') {
 							this.modals.modal2 = true
 							this.idSelect = id
 						}else{
@@ -1085,6 +1173,11 @@ moment.locale('es');
 				}
 			}
 		},
+    },
+    computed: {
+        getScreen: () => {
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 240 }
+        }
     }
   };
 </script>
@@ -1107,5 +1200,12 @@ moment.locale('es');
     }
     .maxHeightRoutes .card-footer{
         display:none;
+    }
+    .dropdown-menu{
+        z-index: 10000 !important;
+    }
+    .highlight {
+        background-color: rgb(255, 192, 105);
+        padding: 0px;
     }
 </style>
