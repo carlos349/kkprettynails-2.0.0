@@ -856,10 +856,8 @@ import jwtDecode from 'jwt-decode'
                     localStorage.setItem('lastname', decoded.last_name)
                     localStorage.setItem('imageUser', decoded.userImage)
                     localStorage.setItem('showNav', true)
-                    localStorage.setItem('_id', decoded._id)
                     localStorage.setItem('status', decoded.status)
                     router.push({path: '/Agendamiento'})
-                    console.log(decoded.access)
                     this.emitMethod(decoded.status)
                 }
             })
@@ -873,8 +871,18 @@ import jwtDecode from 'jwt-decode'
                 this.loading = false
             })
         },
-        emitMethod(status) {
-            console.log(status)
+        async emitMethod(status) {
+            const configHeader = {
+                headers: {
+                    "x-database-connect": endPoint.database, 
+                    "x-access-token": localStorage.userToken
+                }
+            }
+            try {
+                const getBranches = await axios.get(endPoint.endpointTarget+'/branches', configHeader)
+                localStorage.setItem('branch', getBranches.data.data[0]._id)
+                localStorage.setItem('branchName', getBranches.data.data[0].name)
+            }catch(err){console.log(err)}
             EventBus.$emit('loggedin', status)
             localStorage.setItem('logged-in', status)
         },
