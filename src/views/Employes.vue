@@ -65,7 +65,7 @@
                                     addon-left-icon="ni ni-key-25"
                                      addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
-                        <a-select size="large" v-if="registerEmploye.show == false" default-value="Seleccione una sucursal" style="width: 100%;vertical-align: -0.1em;" @change="selectBranchForCreate">
+                        <a-select size="large" placeholder="Seleccione una sucursal" :allowClear="true" v-if="registerEmploye.show == false" style="width: 100%;vertical-align: -0.1em;" @change="selectBranchForCreate">
                             <a-select-option v-for="data in branch.data" :key="data" :value="data">
                                 {{data.name}}
                             </a-select-option>
@@ -153,7 +153,7 @@
                             <h2>Selecciona un filtro en la parte superior</h2>
                         </div>
                     </template>
-                    <a-table :columns="columns" :loading="employeState" :data-source="employes">
+                    <a-table :columns="columns" :loading="employeState" :data-source="employes" :scroll="getScreen">
                         <div
                         slot="filterDropdown"
                         slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
@@ -550,10 +550,21 @@ import jwtDecode from 'jwt-decode'
             this.employeState = true
             try{
                 const getAllEmployes = await axios.get(endPoint.endpointTarget+'/employes', this.configHeader)
-                if (getAllEmployes) {
+                if (getAllEmployes.data.status == 'ok') {
                     this.employes = getAllEmployes.data.data
                     setTimeout(() => {
                         this.employeState = false
+                    }, 1000);
+                }if(getAllEmployes.data.status == 'There is not employes'){
+                    setTimeout(() => {
+                        this.employeState = false
+                        this.$swal({ 
+                            type: 'error',
+                            icon: 'error',
+                            title: 'No se encontraron empleados',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                     }, 1000);
                 }
             }catch(err){
@@ -583,10 +594,21 @@ import jwtDecode from 'jwt-decode'
                 this.filter = value._id
                 try{
                     const getByBranch = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+value._id, this.configHeader)
-                    if (getByBranch) {
+                    if (getByBranch.data.data.length > 0) {
                         this.employes = getByBranch.data.data
                         setTimeout(() => {
                             this.employeState = false
+                        }, 1000);
+                    }else{
+                        setTimeout(() => {
+                            this.employeState = false
+                            this.$swal({ 
+                                type: 'error',
+                                icon: 'error',
+                                title: 'No se encontraron empleados',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                         }, 1000);
                     }
                 }catch(err){
@@ -881,6 +903,10 @@ import jwtDecode from 'jwt-decode'
                     }
             }
             if (val == 2) {
+                this.registerEmploye.show = true
+                setTimeout(() => {
+                    this.registerEmploye.show = false
+                }, 10);
                 this.tipeForm = 'Registrar'
             }
             if (val == 3) {
@@ -929,6 +955,11 @@ import jwtDecode from 'jwt-decode'
                     }
                 }
             }
+        }
+    },
+    computed: {
+        getScreen: () => {
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 240 }
         }
     }
   };
