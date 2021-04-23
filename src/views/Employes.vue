@@ -161,7 +161,7 @@
                         >
                         <a-input
                             v-ant-ref="c => (searchInput = c)"
-                            :placeholder="`Search ${column.dataIndex}`"
+                            :placeholder="`Buscar por ${column.title.toLowerCase()}`"
                             :value="selectedKeys[0]"
                             style="width: 188px; margin-bottom: 8px; display: block;"
                             @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
@@ -352,8 +352,8 @@ import jwtDecode from 'jwt-decode'
         ],
         employes: [],
         searchText: '',
-      searchInput: null,
-      searchedColumn: '',
+        searchInput: null,
+        searchedColumn: '',
         columns: [
             {
                 title: 'Nombre',
@@ -469,27 +469,6 @@ import jwtDecode from 'jwt-decode'
                 scopedSlots: { customRender: 'name' }
             }
                                      ],
-        config: {
-            card_title: "Tabla de empleados",
-            checkbox_rows: false,
-            rows_selectable : true,
-            highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
-            rows_selectable: true,
-            per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
-            global_search: {
-                placeholder: "Enter custom Search text",
-                visibility: false,
-                case_sensitive: false
-            },
-            show_refresh_button: false,
-            show_reset_button: false,  
-            selected_rows_info: true,
-            preservePageOnDataChange : true,
-            pagination_info : true
-        },
-        classes: {
-            table: "table-bordered table-striped"
-        },
         selectedDays: [],
         from: 'Seleccione un horario',
         to: 'Seleccione un horario',
@@ -615,7 +594,6 @@ import jwtDecode from 'jwt-decode'
                     res.send(err)
                 }
             }
-            
         },
         selectBranchForCreate(value){
             this.registerEmploye.branch = value._id

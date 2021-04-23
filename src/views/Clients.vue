@@ -12,7 +12,6 @@
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus clientes, aquí podrás registrar, editar y visualizar todos tus clientes.</p>
                         <base-button v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un cliente</base-button>
                         <base-button icon="ni ni-email-83" v-if="validRoute('clientes', 'correos')" type="success" @click="modals.modal3 = true">Enviar correos</base-button>
-                        <base-button v-if="validRoute('clientes', 'filtrar')" @click="showFilter" type="default">Filtrar</base-button>
                         <base-button @click="generateExcel" type="default" icon="ni ni-book-bookmark"></base-button>
                     </div>
                 </div>
@@ -44,39 +43,52 @@
                                     Basicos
                                 </span>
                                 <form role="form">
-                                    <base-input alternative
-                                                class="mb-3"
-                                                placeholder="Nombre"
-                                                v-model="registerClient.name"
-                                                v-on:keyup="validRegister()"
-                                                addon-left-icon="ni ni-single-02"
-                                                addon-right-icon="fa fa-asterisk text-danger">
-                                    </base-input>
+                                    <div class="row mt-4">
+                                        <base-input alternative
+                                            class="mb-2 col-6"
+                                            placeholder="Nombre"
+                                            v-model="registerClient.firstName"
+                                            v-on:keyup="validRegister()"
+                                            addon-left-icon="ni ni-single-02"
+                                            addon-right-icon="fa fa-asterisk text-danger">
+                                        </base-input>
+                                        <base-input alternative
+                                            class="mb-2 col-6"
+                                            placeholder="Nombre"
+                                            v-model="registerClient.lastName"
+                                            v-on:keyup="validRegister()"
+                                            addon-left-icon="ni ni-single-02"
+                                            addon-right-icon="fa fa-asterisk text-danger">
+                                        </base-input>
+                                    </div>
+                                    
                                     <base-input alternative
                                                 type="text"
+                                                class="mb-2"
                                                 placeholder="Correo"
-                                                v-model="registerClient.id"
+                                                v-model="registerClient.email"
                                                 v-on:keyup="validRegister()"
                                                 addon-left-icon="fa fa-address-card"
                                                 addon-right-icon="fa fa-asterisk text-danger">
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
-                                                placeholder="Contacto adicional"
-                                                v-model="registerClient.contactOne"
+                                                class="mb-2"
+                                                placeholder="Número de teléfono"
+                                                v-model="registerClient.phone"
                                                 addon-left-icon="fa fa-address-card"
                                                 addon-right-icon="fas fa-plus text-default">
                                     </base-input>
                                     <base-input alternative
                                                 type="text"
-                                                placeholder="Contacto adicional"
-                                                v-model="registerClient.contactTwo"
+                                                placeholder="Instagram"
+                                                v-model="registerClient.instagram"
                                                 addon-left-icon="fa fa-address-card"
                                                 addon-right-icon="fas fa-plus text-default">
                                     </base-input>
                                     <div class="text-center">
-                                        <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
-                                        <base-button type="primary" v-on:click="clientEdit()" v-else class="my-4">{{tipeForm}}</base-button>
+                                        <base-button type="primary" v-if="registerClient.valid == false" disabled class="my-1">{{tipeForm}}</base-button>
+                                        <base-button type="primary" v-on:click="clientEdit()" v-else class="my-1">{{tipeForm}}</base-button>
                                     </div>
                                     
                                 </form>                                
@@ -88,48 +100,57 @@
                                     Avanzados
                                 </span>
                                 <div class="row">
-                                    <base-button v-if="registerClient.birthday" class="col-12 mt-1" type="primary">
+                                    <base-button v-if="registerClient.birthday" class="col-12 mt-3" type="secondary">
                                         <span class="text-left">Fecha de nacimiento</span>
-                                        <badge class="text-default" type="secondary">{{formatDateTwo(registerClient.birthday)}}</badge>
+                                        <badge class="text-default" type="success">{{formatDateTwo(registerClient.birthday)}}</badge>
                                     </base-button>
-                                    <base-button class="col-12 mt-1" type="primary">
+                                    <base-button class="col-12 mt-1" type="secondary">
                                         <span>Participación</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.participation}}</badge>
+                                        <badge class="text-default" type="success">{{registerClient.attends}}</badge>
                                     </base-button>
-                                    <base-button class="col-12 mt-1" type="primary">
+                                    <base-button class="col-12 mt-1" type="secondary">
                                         <span class="text-left">Recomendaciones</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.recommenders}}</badge>
+                                        <badge class="text-default" type="success">{{registerClient.recommendations}}</badge>
                                     </base-button>
-                                    <base-button class="col-12 mt-1" type="primary">
+                                    <base-button class="col-12 mt-1" type="secondary">
                                         <span class="text-left">Recomendador</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.recommender}}</badge>
+                                        <badge class="text-default" type="success">{{registerClient.recommender}}</badge>
                                     </base-button>
-                                    <base-button class="col-12 mt-1" type="primary">
+                                    <base-button class="col-12 mt-1" type="secondary">
                                         <span>Cliente desde</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.date}}</badge>
+                                        <badge class="text-default" type="success">{{formatDate(registerClient.createdAt)}}</badge>
                                     </base-button>
-                                    <base-button class="col-12 mt-1" type="primary">
+                                    <base-button class="col-12 mt-1" type="secondary">
                                         <span>Ultima atención</span>
-                                        <badge class="text-default" type="secondary">{{registerClient.lastDate}}</badge>
+                                        <badge class="text-default" type="success">{{formatDate(registerClient.lastAttend)}}</badge>
                                     </base-button>
                                 </div>
                             </tab-pane>
                         </card>
                     </tabs>
                     <form v-else role="form">
-                        <base-input alternative
-                                    class="mb-3"
-                                    placeholder="Nombre"
-                                    v-model="registerClient.name"
-                                    v-on:keyup="validRegister()"
-                                    addon-left-icon="ni ni-single-02"
-                                    addon-right-icon="fa fa-asterisk text-danger"
-                                    >
-                        </base-input>
+                        <div class="row">
+                            <base-input alternative
+                                class="mb-3 col-6"
+                                placeholder="Nombre"
+                                v-model="registerClient.firstName"
+                                v-on:keyup="validRegister()"
+                                addon-left-icon="ni ni-single-02"
+                                addon-right-icon="fa fa-asterisk text-danger">
+                            </base-input>
+                            <base-input alternative
+                                class="mb-3 col-6"
+                                placeholder="Apellido"
+                                v-model="registerClient.lastName"
+                                v-on:keyup="validRegister()"
+                                addon-left-icon="ni ni-single-02"
+                                addon-right-icon="fa fa-asterisk text-danger">
+                            </base-input>
+                        </div>
                         <base-input alternative
                                     type="text"
                                     placeholder="Correo"
-                                    v-model="registerClient.id"
+                                    v-model="registerClient.email"
                                     v-on:keyup="validRegister()"
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fa fa-asterisk text-danger">
@@ -148,7 +169,7 @@
                                     placeholder="Teléfono"
                                     v-on:input="formatPhone"
                                     maxlength="9"
-                                    v-model="registerClient.contactOne"
+                                    v-model="registerClient.phone"
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fas fa-plus text-default">
                                 </base-input>
@@ -157,8 +178,8 @@
                         
                         <base-input alternative
                                     type="text"
-                                    placeholder="Contacto adicional"
-                                    v-model="registerClient.contactTwo"
+                                    placeholder="Instagram"
+                                    v-model="registerClient.instagram"
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fas fa-plus text-default">
                         </base-input>
@@ -169,7 +190,7 @@
                                     @on-close="blur"
                                     :config="configDate"
                                     class="form-control datepicker"
-                                    placeholder="Seleccione una fecha"
+                                    placeholder="Seleccione una fecha de nacimiento"
                                     v-model="registerClient.birthday">
                             </flat-picker>
                         </base-input>
@@ -252,7 +273,75 @@
         </base-alert>
 
         <!-- TABLA DE CLIENTES -->
-
+        <template>
+            <div class="p-2">
+                <a-config-provider>
+                    <template #renderEmpty>
+                        <div style="text-align: center">
+                            <a-icon type="warning" style="font-size: 20px" />
+                            <h2>No hay ningun cliente registrado</h2>
+                        </div>
+                    </template>
+                    <a-table :columns="columns" :loading="clientState" :data-source="clients" :scroll="getScreen">
+                        <div
+                        slot="filterDropdown"
+                        slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                        style="padding: 8px"
+                        >
+                        <a-input
+                            v-ant-ref="c => (searchInput = c)"
+                            :placeholder="`Buscar por ${column.title.toLowerCase()}`"
+                            :value="selectedKeys[0]"
+                            style="width: 188px; margin-bottom: 8px; display: block;"
+                            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                            @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                        />
+                        <a-button
+                            type="primary"
+                            icon="search"
+                            size="small"
+                            style="width: 90px; margin-right: 8px"
+                            @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                        >
+                            Buscar
+                        </a-button>
+                        <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                            Restablecer
+                        </a-button>
+                        </div>
+                        <a-icon
+                            slot="filterIcon"
+                            slot-scope="filtered"
+                            type="search"
+                            :style="{ color: filtered ? '#108ee9' : undefined }"
+                        />
+                        <template slot="birthday" slot-scope="record">
+                            <span v-if="record">{{formatDateTwo(record)}}</span>
+                            <span v-else>Sin fecha de nacimiento</span>
+                        </template>
+                        <template slot="actions" slot-scope="record, column">
+                            <b>
+                                <a-tooltip placement="top">
+                                    <template slot="title">
+                                    <span>Detalles / Editar</span>
+                                    </template>
+                                    <base-button v-if="validRoute('clientes', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.lastName, column.email, column.phone, column.instagram, column.attends, column.recommender, column.recommendations, column.lastAttend, column.createdAt, column._id, column.birthday)" icon="ni ni-bullet-list-67"></base-button>
+                                    <base-button disabled v-else size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
+                                </a-tooltip>
+                                
+                                <a-tooltip placement="top">
+                                    <template slot="title">
+                                    <span>Eliminar</span>
+                                    </template>
+                                    <base-button v-if="validRoute('clientes', 'eliminar')" size="sm" v-on:click="deleteClient(column._id)" type="warning" icon="fas fa-trash"></base-button>
+                                    <base-button disabled v-else size="sm" type="warning" icon="fas fa-trash"></base-button>
+                                </a-tooltip>
+                            </b>
+                        </template>
+                    </a-table>
+                </a-config-provider>    
+            </div>
+        </template>
         <vue-bootstrap4-table v-if="progress" class="tableClient" :rows="rows" :columns="columns" :classes="classes" :config="config">
             <template slot="Administrar" slot-scope="props">
                 <b>
@@ -317,8 +406,9 @@ import router from '../router'
 import XLSX from 'xlsx'
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import VueMoment from 'vue-moment'
-var moment = require('moment');
+import * as moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 // COMPONENTS
 
   export default {
@@ -338,20 +428,23 @@ var moment = require('moment');
             allowInput: true, 
             dateFormat: 'd-m-Y',
         },
+        clientState: true,
         registerClient: {
-            name:'',
-            id:'',
-            contactOne:'',
-            contactTwo:'',
+            firstName:'',
+            lastName:'',
+            email:'',
+            phone:'',
+            instagram:'',
             birthday: '',
             recommender:null,
             discount:false,
             valid:false,
             valid2:false,
-            recommenders:'',
-            lastDate:'',
-            date:'',
-            participation:0
+            recommendations: '',
+            lastAttend: '',
+            createdAt: '',
+            attends: 0,
+            _id: ''
         },
         modals: {
             modal1: false,
@@ -361,68 +454,126 @@ var moment = require('moment');
             icon: '',
             type:''
         },
-        rows: [],
-        columns: [{
-                label: "Nombre",
-                name: "nombre",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "id"
-                // },
-                sort: true,
-            },
-            {
-                label: "Contacto principal",
-                name: "identidad",
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter first name"
-                // },
-                sort: true,
-            },
-            {
-                label: "Contacto adicional",
-                name: "correoCliente",
-                sort: true,
-            },
-            {
-                label: "Fecha de cumpleaños",
-                name: "birthday",
-                slot_name: 'birthday-format',
-                sort: true,
-                // filter: {
-                //     type: "simple",
-                //     placeholder: "Enter country"
-                // },
-            },
-            {
-                label: "Administrar",
-                name: "_id",
-                sort: false,
-                slot_name: "Administrar"
-            },
-            ],
-        config: {
-            card_title: "Tabla de clientes",
-            checkbox_rows: false,
-            rows_selectable : true,
-            highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
-            rows_selectable: true,
-            per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
-            global_search: {
-                placeholder: "Filtre sus clientes",
-                visibility: true,
-                case_sensitive: false
-            },
-            show_refresh_button: false,
-            show_reset_button: false,  
-            selected_rows_info: true,
-            preservePageOnDataChange : true,
-            pagination_info : true
+        configHeader: {
+            headers:{
+                "x-database-connect": endPoint.database,
+                'x-access-token':localStorage.userToken
+            }
         },
-        classes: {
-            table: "table-bordered table-striped"
-        }     
+        clients: [],
+        searchText: '',
+        searchInput: null,
+        searchedColumn: '',
+        columns: [
+            {
+                title: 'Nombre',
+                dataIndex: 'firstName',
+                key: 'firstName',
+                ellipsis: true,
+                sorter: (a, b) => {
+                     if (a.firstName > b.firstName) {
+                        return -1;
+                    }
+                    if (b.firstName > a.firstName) {
+                        return 1;
+                    }
+                    return 0;
+                },
+                sortDirections: ['descend', 'ascend'],
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.firstName.toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
+            },
+            {
+                title: 'Apellido',
+                dataIndex: 'lastName',
+                key: 'lastName',
+                ellipsis: true,
+                sorter: (a, b) => {
+                     if (a.lastName > b.lastName) {
+                        return -1;
+                    }
+                    if (b.lastName > a.lastName) {
+                        return 1;
+                    }
+                    return 0;
+                },
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.lastName.toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
+            },
+            {
+                title: 'Correo electrónico',
+                dataIndex: 'email',
+                key: 'email',
+                ellipsis: true,
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.email.toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
+            },
+            {
+                title: 'Número telefónico',
+                dataIndex: 'phone',
+                key: 'phone',
+                ellipsis: true,
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.phone.split(' ')[1].toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
+            },
+            {
+                title: 'Fecha de cumpleaños',
+                dataIndex: 'birthday',
+                key: 'birthday',
+                ellipsis: true,
+                scopedSlots: { customRender: 'birthday' }
+            },
+            {
+                title: 'Acciones',
+                dataIndex: '_id',
+                key: '_id',
+                scopedSlots: { customRender: 'actions' }
+            }
+                                     ],  
       };
     },
     beforeCreate(){
@@ -440,11 +591,10 @@ var moment = require('moment');
 		this.getClients();
         this.getToken();
         $(document).ready(function(){
-    $(".page-link").click(function(){
-      console.log("asdasd")
-      $("html, body").animate({ scrollTop: 0 }, "slow");
-    });
-  });
+            $(".page-link").click(function(){
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+            });
+        });
     },
     methods: {
         getToken(){
@@ -452,24 +602,42 @@ var moment = require('moment');
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
         },
-        getClients(){
+        async getClients(){
             this.progress = false
-            axios.get(endPoint.endpointTarget+'/clients')
-            .then(res => {
-				
-                this.rows = res.data
-                for (let index = 0; index < res.data.length; index++) {
-                    this.clientsNames.push(res.data[index].nombre + " / " + res.data[index].identidad)
-                    this.clientIds.push(res.data[index].nombre + " / " + res.data[index].identidad + "-" + res.data[index]._id)
-                }
-                this.progress = true
-            })
+            try {
+                const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
+                if (getAllClients.data.data.length > 0) {
+                    this.clients = getAllClients.data.data
+
+                    for (let index = 0; index < getAllClients.data.data.length; index++) {
+                        this.clientsNames.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email)
+                        this.clientIds.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email + "-" + getAllClients.data.data[index]._id)
+                    }
+
+                    this.progress = true
+                    setTimeout(() => {
+                        this.clientState = false
+                    }, 1000);
+                    }
+            }catch (err) {
+                res.send(err)
+            }
+        },
+        handleSearch(selectedKeys, confirm, dataIndex) {
+            confirm();
+            this.searchText = selectedKeys[0];
+            this.searchedColumn = dataIndex;
+        },
+        handleReset(clearFilters) {
+            clearFilters();
+            this.searchText = '';
         },
         generateExcel(){
+            console.log('gola')
             var Data = []
-            for (let index = 0; index < this.rows.length; index++) {
-                const element = this.rows[index];
-                Data.push({Nombre: element.nombre, 'Contacto principal': element.identidad, 'Contacto adicional': element.correoCliente,'Contacto adicional 2°': element.instagramCliente, Atenciones: element.participacion, Recomendador: element.recomendacion, Recomendaciones: element.recomendaciones, 'Ultima atencion': this.formatDate(element.ultimaFecha), Fecha: this.formatDate(element.fecha)})
+            for (let index = 0; index < this.clients.length; index++) {
+                const element = this.clients[index];
+                Data.push({Nombre: element.firstName, Apellido: element.lastName, Email: element.email, 'Número de teléfono': element.phone, 'Instagram': element.instagram, Atenciones: element.attends, Recomendador: element.recommender, Recomendaciones: element.recommendations, 'Ultima atencion': this.formatDate(element.lastAttend), 'Cliente desde': this.formatDate(element.createdAt)})
             }
             var Datos = XLSX.utils.json_to_sheet(Data) 
             var wb = XLSX.utils.book_new() 
@@ -492,19 +660,20 @@ var moment = require('moment');
                 var split = this.registerClient.birthday.split('-')
                 date = split[1]+'-'+split[0]+'-'+split[2]
             }
-            const phone = this.registerClient.contactOne.length > 0 ? '+56 '+this.registerClient.contactOne : ''
+            const phone = this.registerClient.phone.length > 0 ? '+56 '+this.registerClient.phone : ''
             axios.post(endPoint.endpointTarget+'/clients', {
-                nombre:this.registerClient.name,
-                identidad:this.registerClient.id,
-                recomendador:this.registerClient.recommender,
+                firstName:this.registerClient.firstName,
+                lastName: this.registerClient.lastName,
+                email:this.registerClient.email,
+                recommender:this.registerClient.recommender,
                 idRecomender:idRecomender,
-                correoCliente:phone,
+                phone:phone,
                 birthday: date,
-                instagramCliente:this.registerClient.contactTwo,
+                instagram:this.registerClient.instagram,
                 ifCheck: ifCheck
-            })
+            }, this.configHeader)
             .then(res => {
-                if (res.data.status == 'Registrado') {
+                if (res.data.status == 'client create') {
                     this.modals = {
                         modal2: true,
                         message: "Se registro el cliente con exito",
@@ -534,7 +703,7 @@ var moment = require('moment');
                     }
                     setTimeout(() => {
                         this.modals = {
-                            modal1: false,
+                            modal1: true,
                             modal2: false,
                             modal3:false,
                             message: "",
@@ -546,9 +715,9 @@ var moment = require('moment');
             })
         },
         validRegister(){
-            if (this.registerClient.name != '' && this.registerClient.id != '') {
-                if (this.registerClient.id.split('@').length == 2) {
-                    if (this.registerClient.id.split('@')[1].split('.').length == 2) {
+            if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '') {
+                if (this.registerClient.email.split('@').length == 2) {
+                    if (this.registerClient.email.split('@')[1].split('.').length == 2) {
                         this.registerClient.valid = true
                     }else{
                         this.registerClient.valid = false
@@ -574,19 +743,26 @@ var moment = require('moment');
 			return string.charAt(0).toUpperCase() + string.slice(1);
         },
         initialState(val){
-            this.registerClient= {
-                name:'',
-                id:'',
-                contactOne:'',
-                discount:false,
+            this.registerClient = {
+                firstName:'',
+                lastName:'',
+                email:'',
+                phone:'',
+                instagram:'',
                 birthday: '',
-                contactTwo:'',
                 recommender:null,
-                valid:false
+                discount:false,
+                valid:false,
+                valid2:false,
+                recommendations: '',
+                lastAttend: '',
+                createdAt: '',
+                attends: 0,
+                _id: ''
             }
             if (val == 1) {
                 this.modals = {
-                    modal1: false,
+                    modal1:false,
                     modal2:false,
                     modal3:false,
                 }
@@ -598,28 +774,29 @@ var moment = require('moment');
                 this.tipeForm = 'Editar'
             }
         },
-        pushData(nombre,id,correo,ig,participacion,recomendacion,recomendaciones,ultimaFecha,fecha,_id, birthday){
-            this.registerClient= {
-                name:nombre,
-                id:id,
-                contactOne:correo,
-                discount:false,
-                contactTwo:ig,
-                birthday: birthday,
-                recommender:recomendacion,
-                valid:true,
-                valid2:true,
-                recommenders:recomendaciones,
-                lastDate:this.formatDate(ultimaFecha),
-                date:this.formatDate(fecha),
-                participation:participacion,
-                _id:_id
+        pushData(firstName,lastName,email,phone,instagram,attends,recommender,recommendations,lastAttend,createdAt,_id, birthday){
+            console.log('entro')
+            this.registerClient =  {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                phone: phone,
+                instagram: instagram,
+                birthday:  birthday,
+                recommender: recommender,
+                valid: true,
+                valid2: true,
+                recommendations: recommendations,
+                lastAttend: lastAttend,
+                createdAt: createdAt,
+                attends: attends,
+                _id: _id
             }
-
+            console.log(this.registerClient)
         },
         formatDate(date) {
             let dateFormat = new Date(date)
-			return moment(dateFormat).format("DD-MM-YYYY HH:mm")
+			return moment(dateFormat).format("DD-MM-YYYY")
         },
         formatDateTwo(date) {
             let dateFormat = new Date(date)
@@ -630,6 +807,7 @@ var moment = require('moment');
 				title: '¿Está seguro de borrar el cliente?',
 				text: 'No puedes revertir esta acción',
 				type: 'warning',
+                icon: 'warning',
 				showCancelButton: true,
 				confirmButtonText: 'Estoy seguro',
 				cancelButtonText: 'No, evitar acción',
@@ -637,7 +815,7 @@ var moment = require('moment');
 				showLoaderOnConfirm: true
 			}).then((result) => {
 				if(result.value) {
-					axios.put(endPoint.endpointTarget+'/clients/deleteClient/'+id)
+					axios.delete(endPoint.endpointTarget+'/clients/'+id, this.configHeader)
 					.then(res => {
                         if (res.data.status == 'ok') {
                             this.modals = {
@@ -658,9 +836,6 @@ var moment = require('moment');
                                 this.getClients()
                                 EventBus.$emit('reloadClients', 'reload')
                             }, 1500);
-							// this.getClientsThree()
-							// this.ServicesQuantityChartFunc();
-							// this.emitMethodTwo()
 						}
 					})
 				}
@@ -686,17 +861,17 @@ var moment = require('moment');
         },
         clientEdit(){
             axios.put(endPoint.endpointTarget+'/clients/'+this.registerClient._id, {
-                nombreClienteEditar: this.registerClient.name,
-                identidadClienteEditar: this.registerClient.id,
-                correoClienteEditar: this.registerClient.contactOne,
-                instagramClienteEditar: this.registerClient.contactTwo,
-            })
+                firstName: this.registerClient.firstName,
+                lastName: this.registerClient.lastName,
+                email: this.registerClient.email,
+                phone: this.registerClient.phone,
+                instagram: this.registerClient.instagram,
+            },this.configHeader)
             .then(res => {
-                console.log(res)
-                if (res.data.status == 'Servicio actualizado') {
+                if (res.data.status == 'update client') {
                     this.modals = {
                         modal2: true,
-                        message: "el cliente editó con exito",
+                        message: "El cliente ha sido editado con exito",
                         icon: 'ni ni-check-bold ni-5x',
                         type: 'success'
                     }
@@ -716,13 +891,13 @@ var moment = require('moment');
                 }else{
                     this.modals = {
                         modal2: true,
-                        message: "El cliente ya existe",
+                        message: "El email ya existe",
                         icon: 'ni ni-fat-remove ni-5x',
                         type: 'danger'
                     }
                     setTimeout(() => {
                         this.modals = {
-                            modal1: false,
+                            modal1: true,
                             modal2: false,
                             modal3:false,
                             message: "",
@@ -763,6 +938,11 @@ var moment = require('moment');
             }, 200);
 			
 		}
+    },
+    computed: {
+        getScreen: () => {
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 240 }
+        }
     }
   };
 </script>

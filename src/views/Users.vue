@@ -1027,7 +1027,6 @@ moment.locale('es');
             }
         },
         formatDate(date) {
-            console.log(date)
             let dateFormat = new Date(date)
             return moment(dateFormat).format('DD-MM-YYYY HH:mm');
         },
