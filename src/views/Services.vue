@@ -14,11 +14,6 @@
                         <base-button v-tooltip="'You have new messages.'" v-else disabled  type="success">Ingrese un servicio</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorias</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-else disabled  type="default">Categorias</base-button>
-                        <a-select v-if="branches.length > 1" class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione la sucursal"  @change="selectBranch" size="large">
-                            <a-select-option v-for="branchh of branches" :key="branchh._id" :value="branchh">
-                                {{branchh.name}}
-                            </a-select-option>
-                        </a-select>
                     </div>
                 </div>
             </div>
@@ -41,7 +36,7 @@
                 <template>
                     <form role="form">
                         <div class="row m-0">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <base-input alternative
                                     class="w-100"
                                     placeholder="Nombre"
@@ -49,13 +44,6 @@
                                     v-model="serviceRegister"
                                     addon-right-icon="fa fa-asterisk text-danger" >
                                 </base-input>
-                            </div>
-                            <div class="col-md-6">
-                                <a-select class="form-control w-100" default-value="Seleccione la sucursal"  @change="selectBranchRegister" size="large">
-                                    <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
-                                        {{branch.name}}
-                                    </a-select-option>
-                                </a-select>
                             </div>
                             <div class="col-md-4">
                                 <base-input alternative
@@ -175,7 +163,7 @@
                 <template>
                     <form role="form">
                         <div class="row m-0">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label for="branch">Nombre del servicio</label>
                                 <base-input alternative
                                     class="w-100 mb-2"
@@ -184,14 +172,6 @@
                                     v-model="serviceEdit"
                                 >
                                 </base-input>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="branch">Sucursal {{branchName}}</label>
-                                <a-select class="form-control mb-2 w-100" default-value="Seleccione una sucursal"  @change="selectBranchEdit" size="large">
-                                    <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
-                                        {{branch.name}}
-                                    </a-select-option>
-                                </a-select>
                             </div>
                             <div class="col-md-4">
                                 <base-input alternative
@@ -297,97 +277,105 @@
                 </template>
             </card>
         </modal>
-        <a-table :columns="columns" :data-source="services" :scroll="getScreen">
-            <div
-                slot="filterDropdown"
-                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                style="padding: 8px"
-                >
-                <a-input
-                    v-ant-ref="c => (searchInput = c)"
-                    :placeholder="`Buscar por nombre`"
-                    :value="selectedKeys[0]"
-                    style="width: 188px; margin-bottom: 8px; display: block;"
-                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+        <a-config-provider>
+            <template #renderEmpty>
+                <div style="text-align: center">
+                    <a-icon type="warning" style="font-size: 20px" />
+                    <h2>{{alertTable}}</h2>
+                </div>
+            </template>
+            <a-table :columns="columns" :loading="serviceState" :data-source="services" :scroll="getScreen">
+                <div
+                    slot="filterDropdown"
+                    slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                    style="padding: 8px"
+                    >
+                    <a-input
+                        v-ant-ref="c => (searchInput = c)"
+                        :placeholder="`Buscar por nombre`"
+                        :value="selectedKeys[0]"
+                        style="width: 188px; margin-bottom: 8px; display: block;"
+                        @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                        @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    />
+                    <a-button
+                        type="primary"
+                        icon="search"
+                        size="small"
+                        style="width: 90px; margin-right: 8px"
+                        @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    >
+                        Buscar
+                    </a-button>
+                    <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                        resetear
+                    </a-button>
+                </div>
+                <a-icon
+                    slot="filterIcon"
+                    slot-scope="filtered"
+                    type="search"
+                    :style="{ color: filtered ? '#108ee9' : undefined }"
                 />
-                <a-button
-                    type="primary"
-                    icon="search"
-                    size="small"
-                    style="width: 90px; margin-right: 8px"
-                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                >
-                    Buscar
-                </a-button>
-                <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
-                    resetear
-                </a-button>
-            </div>
-            <a-icon
-                slot="filterIcon"
-                slot-scope="filtered"
-                type="search"
-                :style="{ color: filtered ? '#108ee9' : undefined }"
-            />
-            <template slot="customRender" slot-scope="text, record, index, column">
-                <span v-if="searchText && searchedColumn === column.dataIndex">
-                    <template
-                    v-for="(fragment, i) in text
-                        .toString()
-                        .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
-                    >
-                    <mark
-                        v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                        :key="i"
-                        class="highlight"
-                        >{{ fragment }}</mark
-                    >
-                    <template v-else>{{ fragment }}</template>
+                <template slot="customRender" slot-scope="text, record, index, column">
+                    <span v-if="searchText && searchedColumn === column.dataIndex">
+                        <template
+                        v-for="(fragment, i) in text
+                            .toString()
+                            .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                        >
+                        <mark
+                            v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                            :key="i"
+                            class="highlight"
+                            >{{ fragment }}</mark
+                        >
+                        <template v-else>{{ fragment }}</template>
+                        </template>
+                    </span>
+                    <template v-else>
+                        {{ text }}
                     </template>
-                </span>
-                <template v-else>
-                    {{ text }}
                 </template>
-            </template>
-            
-            <template slot="actionButtons" class="mx-auto" slot-scope="record, column">
-                <center>
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Editar</span>
-                        </template>
-                        <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch)"></base-button>
-                        <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" ></base-button>
-                    </a-tooltip>
-    
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Activar / Desactivar</span>
-                        </template>
-                        <template v-if="validRoute('servicios', 'activaciones')">
-                            <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(column._id)"></base-button>
-                            <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(column._id)"></base-button> 
-                  
-                        </template>
-                        <template v-else>
-                            <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
-                            <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled></base-button> 
-                        </template>
-                    </a-tooltip>
+                
+                <template slot="actionButtons" class="mx-auto" slot-scope="record, column">
+                    <center>
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Editar</span>
+                            </template>
+                            <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch)"></base-button>
+                            <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" ></base-button>
+                        </a-tooltip>
+        
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Activar / Desactivar</span>
+                            </template>
+                            <template v-if="validRoute('servicios', 'activaciones')">
+                                <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(column._id)"></base-button>
+                                <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(column._id)"></base-button> 
                     
-                </center>
-            </template>
-            <template slot="format-price" slot-scope="record, column">
-                {{formatPrice(column.price)}}
-            </template>
-            <template slot="format-time" slot-scope="record, column">
-                {{column.duration}}Min
-            </template>
-            <template slot="format-commission" slot-scope="record, column">
-                {{column.commission}}%
-            </template>
-        </a-table>
+                            </template>
+                            <template v-else>
+                                <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
+                                <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled></base-button> 
+                            </template>
+                        </a-tooltip>
+                        
+                    </center>
+                </template>
+                <template slot="format-price" slot-scope="record, column">
+                    {{formatPrice(column.price)}}
+                </template>
+                <template slot="format-time" slot-scope="record, column">
+                    {{column.duration}}Min
+                </template>
+                <template slot="format-commission" slot-scope="record, column">
+                    {{column.commission}}%
+                </template>
+            </a-table>
+        </a-config-provider> 
         <modal :show.sync="modals.modal3"
                :gradient="modals.type"
                modal-classes="modal-danger modal-dialog-centered">
@@ -508,12 +496,14 @@ export default {
             countModal:'',
             typeItemModal:'',
             itemUses:'',
+            serviceState: true,
             configHeader: {
                 headers: {
                     "x-database-connect": endPoint.database, 
                     "x-access-token": localStorage.userToken
                 }
             },
+            alertTable: 'Selecciona un filtro en la parte superior',
             modals: {
                 modal1: false,
                 modal2: false,
@@ -714,6 +704,7 @@ export default {
             searchText: '',
             searchInput: null,
             searchedColumn: '',
+            status: 0
         }
     },
     beforeCreate(){
@@ -729,7 +720,7 @@ export default {
     },
     created(){
         this.getToken()
-        this.getBranches()
+        this.getBranch()
         $(document).ready(function(){
             setTimeout(() => {
                $("input[placeholder='Go to page']").hide(); 
@@ -742,7 +733,6 @@ export default {
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
-            console.log(decoded)
             this.branch = decoded.branch
         },
         handleSearch(selectedKeys, confirm, dataIndex) {
@@ -755,44 +745,24 @@ export default {
             clearFilters();
             this.searchText = '';
         },
-        async getBranches(){
-            try {
-                const getBranches = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
-                if (getBranches.data.status == 'ok') {
-                    this.branches = getBranches.data.data 
-                    if (this.branches.length == 1) {
-                        this.branchName = this.branches[0].name
-                        this.getServices()
-                        this.getEmployes()
-                        this.getProducts()
-                        this.getCategories()
-                    }
-                }
-            }catch(err){
-                this.$swal({
-					icon: 'error',
-					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-					showConfirmButton: false,
-					timer: 2500
-				})
-				router.push({name: 'login'})
-            }
-        },
-        selectBranch(value){
-
-        },
-        selectBranchRegister(value){
-            this.branchRegister = value
-        },
-        selectBranchEdit(value){
-            this.branchEdit = value
+        getBranch(){
+            this.branchName = localStorage.branchName  
+            this.branch = localStorage.branch
+            this.getServices()
+            this.getEmployes()
+            this.getProducts()
+            this.getCategories()
         },
         async getServices(){
-            console.log(this.branch)
+            this.serviceState = true
             try {
                 const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
-                if (services.data.status) {
+                if (services.data.status == 'ok') {
                     this.services = services.data.data   
+                    this.serviceState = false
+                }else{
+                    this.services = []
+                    this.alertTable = 'Sucursal sin servicios creados'
                 }
             }catch(err){
                 this.$swal({
@@ -835,6 +805,8 @@ export default {
                         employes.data.data[index].valid = false
                     }
                     this.lenders = employes.data.data
+                }else{
+                    this.lenders = []
                 }
             }catch(err){
                 this.$swal({
@@ -1135,6 +1107,8 @@ export default {
                 const categories = await axios.get(endPoint.endpointTarget+'/services/getCategories/'+this.branch, this.configHeader)
                 if (categories.data.status == 'ok') {
                     this.categories = categories.data.data
+                }else{
+                    this.categories = []
                 }
             }catch(err){
                 this.$swal({
@@ -1180,6 +1154,11 @@ export default {
         getScreen: () => {
             return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 240 }
         }
+    },
+    mounted() {
+        EventBus.$on('changeBranch', status => {
+            this.getBranch()
+        })
     }
 }
 </script>
