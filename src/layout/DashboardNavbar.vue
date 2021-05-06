@@ -136,9 +136,13 @@
                             <i class="ni ni-single-02"></i>
                             <span>Mi perfil</span>
                         </router-link>
-                        <router-link to="/profile" class="dropdown-item">
+                        <router-link to="/configuration" class="dropdown-item">
                             <i class="ni ni-settings-gear-65"></i>
                             <span>Configuración</span>
+                        </router-link>
+                        <router-link to="/store" class="dropdown-item">
+                            <i class="ni ni-box-2"></i>
+                            <span>Bodega</span>
                         </router-link>
                         <!-- <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-calendar-grid-58"></i>

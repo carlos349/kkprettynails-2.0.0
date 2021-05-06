@@ -854,6 +854,7 @@ import jwtDecode from 'jwt-decode'
                     const decoded = jwtDecode(token)
                     localStorage.setItem('firstname', decoded.first_name)
                     localStorage.setItem('lastname', decoded.last_name)
+                    localStorage.setItem('email', decoded.email)
                     localStorage.setItem('imageUser', decoded.userImage)
                     localStorage.setItem('showNav', true)
                     localStorage.setItem('status', decoded.status)

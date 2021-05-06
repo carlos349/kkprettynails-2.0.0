@@ -11,14 +11,6 @@
                         <h1 class="display-2 text-white">Sección de empleados</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus empleados, aquí podrás registrar, editar y visualizar todos tus empleados.</p>
                         <base-button v-if="validRoute('empleados', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un empleado</base-button>
-                        <a-select @change="findBranch" size="large" :default-value="branch.state" style="width: 30%;vertical-align: -0.1em;" :loading="branch.loading">
-                            <a-select-option :value="'Todas'">
-                                Todas
-                            </a-select-option>
-                            <a-select-option v-for="data in branch.data" :key="data" :value="data">
-                                {{data.name}}
-                            </a-select-option>
-                        </a-select>
                     </div>
                 </div>
             </div>
@@ -65,16 +57,6 @@
                                     addon-left-icon="ni ni-key-25"
                                      addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
-                        <a-select size="large" placeholder="Seleccione una sucursal" :allowClear="true" v-if="registerEmploye.show == false" style="width: 100%;vertical-align: -0.1em;" @change="selectBranchForCreate">
-                            <a-select-option v-for="data in branch.data" :key="data" :value="data">
-                                {{data.name}}
-                            </a-select-option>
-                        </a-select>
-                        <div class="ml-2" v-else>
-                           <h3>
-                               Sucursal: {{registerEmploye.branch}}
-                            </h3> 
-                        </div>
                         <template>
                             <div class="text-muted text-center mb-3">Tabla de días</div>
                         </template>
@@ -263,11 +245,8 @@ import jwtDecode from 'jwt-decode'
             valid2:false,
         },
         filter:'',
-        branch:{
-            data:[],
-            state:'Seleccione una sucursal',
-            loading:true
-        },
+        branch:'',
+        branchName:'',
         configHeader: {
             headers:{
                 "x-database-connect": endPoint.database,
@@ -468,7 +447,7 @@ import jwtDecode from 'jwt-decode'
                 key: '_id',
                 scopedSlots: { customRender: 'name' }
             }
-                                     ],
+        ],
         selectedDays: [],
         from: 'Seleccione un horario',
         to: 'Seleccione un horario',
@@ -525,74 +504,23 @@ import jwtDecode from 'jwt-decode'
         this.getBranch()
     },
     methods: {
+        getBranch(){
+            this.branchName = localStorage.branchName  
+            this.branch = localStorage.branch
+            this.getEmployes()
+        },
         async getEmployes(){
             this.employeState = true
             try{
-                const getAllEmployes = await axios.get(endPoint.endpointTarget+'/employes', this.configHeader)
-                if (getAllEmployes.data.status == 'ok') {
-                    this.employes = getAllEmployes.data.data
+                const getByBranch = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+this.branch, this.configHeader)
+                if (getByBranch.data.data.length > 0) {
+                    this.employes = getByBranch.data.data
                     setTimeout(() => {
                         this.employeState = false
-                    }, 1000);
-                }if(getAllEmployes.data.status == 'There is not employes'){
-                    setTimeout(() => {
-                        this.employeState = false
-                        this.$swal({ 
-                            type: 'error',
-                            icon: 'error',
-                            title: 'No se encontraron empleados',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
                     }, 1000);
                 }
             }catch(err){
                 res.send(err)
-            }
-        },
-        async getBranch(){
-            try{
-                const getBranch = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
-                if (getBranch) {
-                    this.branch.data = getBranch.data.data
-                    setTimeout(() => {
-                        this.branch.state = 'Seleccione una sucursal'
-                        this.branch.loading = false
-                    }, 1000);
-                }
-            }catch(err){
-                res.send(err)
-            }
-        },
-        async findBranch(value){
-            this.employeState = true
-            if (value == 'Todas') {
-                this.filter = 'Todas'
-                this.getEmployes()
-            }else{
-                this.filter = value._id
-                try{
-                    const getByBranch = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+value._id, this.configHeader)
-                    if (getByBranch.data.data.length > 0) {
-                        this.employes = getByBranch.data.data
-                        setTimeout(() => {
-                            this.employeState = false
-                        }, 1000);
-                    }else{
-                        setTimeout(() => {
-                            this.employeState = false
-                            this.$swal({ 
-                                type: 'error',
-                                icon: 'error',
-                                title: 'No se encontraron empleados',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }, 1000);
-                    }
-                }catch(err){
-                    res.send(err)
-                }
             }
         },
         selectBranchForCreate(value){
@@ -808,12 +736,6 @@ import jwtDecode from 'jwt-decode'
             })	
 		},
         pushData(firstName,days,_id,document,lastName,branch){
-            for (let i = 0; i < this.branch.data.length; i++) {
-                const element = this.branch.data[i];
-                if (element._id == branch) {
-                    branch = element.name
-                }
-            }
             this.registerEmploye.firstName = firstName
             this.registerEmploye.lastName = lastName
             this.registerEmploye.document = document
@@ -939,6 +861,11 @@ import jwtDecode from 'jwt-decode'
         getScreen: () => {
             return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 240 }
         }
+    },
+    mounted() {
+        EventBus.$on('changeBranch', status => {
+            this.getBranch()
+        })
     }
   };
 </script>

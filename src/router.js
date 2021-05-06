@@ -59,9 +59,19 @@ export default new Router({
           component: () => import('./views/UserProfile.vue')
         },
         {
+          path: '/configuration',
+          name: '',
+          component: () => import('./views/Configuration.vue')
+        },
+        {
           path: '/reporteCierre',
           name: '',
           component: () => import('./views/reportClosure.vue')
+        },
+        {
+          path: '/store',
+          name: '',
+          component: () => import('./views/Store.vue')
         },
         {
           path: '/tables',
