@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white">Reporte del cierre ({{closedInfo.date}})</h1>
+                        <h1 class="display-2 text-white">Reporte del cierre ({{formatDate(closes.createdAt)}})</h1>
                         <base-button v-if="validRoute('caja', 'editar')" @click="modals.modal1 = true" type="success">Editar montos manuales</base-button> <br>
                         <a v-on:click="back" class="btn btn-primary text-white cursor-pointer mt-1">Regresar</a>
                     </div>
@@ -18,111 +18,23 @@
         <div class="col-12 mt-3 mx-auto">
             <div class="row mx-auto text-center">
                 <div class="col-4 mx-auto">
-                    <dt class="" type="success">Ingresos mensuales</dt>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Fondo de caja</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.manual)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Efectivo</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.manualCash)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Egreso de caja</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.manualEgress)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Total efectivo</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.totalManualCash)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Crédito</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.manualCredit)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Débito</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.manualDebit)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Transferencia</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.manualTransfer)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Otros</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.manualOthers)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="default">
-                        <span class="float-left">Total</span>
-                        <badge style="font-size:1em !important" class="float-right" type="white">$ {{formatPrice(closedInfo.manualTotal)}}</badge>
+                    <dt class="" type="success">Ingresos manuales</dt>
+                    <base-button v-for="close in closes.manual" :key="close.type" class="col-12 mt-1" type="secondary">
+                        <span class="float-left">{{close.type}}</span>
+                        <badge style="font-size:1em !important" class="float-right text-default" type="success">{{formatPrice(close.total)}}</badge>
                     </base-button>
                 </div>
                 <div class="col-4 mx-auto">
                     <dt class="" type="default">Ingresos sistema</dt>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Fondo de caja</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.foundEntrySystem)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Efectivo</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.systemCash)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Egreso de caja</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.systemEgress)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Total efectivo</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.totalSystemCash)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Crédito</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.systemCredit)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Débito</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.systemDebit)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Transferencia</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.systemTransfer)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <span class="float-left">Otros</span>
-                        <badge style="font-size:1em !important" class="float-right text-default" type="success">$ {{formatPrice(closedInfo.systemOther)}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="default">
-                        <span class="float-left">Total</span>
-                        <badge style="font-size:1em !important" class="float-right" type="white">$ {{formatPrice(closedInfo.systemTotal)}}</badge>
+                    <base-button v-for="closed in closes.system" :key="closed.type" class="col-12 mt-1" type="secondary">
+                        <span class="float-left">{{closed.type}}</span>
+                        <badge style="font-size:1em !important" class="float-right text-default" type="success">{{formatPrice(closed.total)}}</badge>
                     </base-button>
                 </div>
                 <div class="col-2 mx-auto">
                     <dt class="" type="warning">Diferencia</dt>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manual) - parseInt(closedInfo.foundEntrySystem))}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualCash) - parseInt(closedInfo.systemCash))}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualEgress) - parseInt(closedInfo.systemEgress))}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.totalManualCash) - parseInt(closedInfo.totalSystemCash))}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualCredit) - parseInt(closedInfo.systemCredit))}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualDebit) - parseInt(closedInfo.systemDebit))}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualTransfer) - parseInt(closedInfo.systemTransfer))}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="secondary">
-                        <badge style="font-size:1em !important" class="text-default" type="success">$ {{formatPrice(parseInt(closedInfo.manualOthers) - parseInt(closedInfo.systemOther))}}</badge>
-                    </base-button>
-                    <base-button class="col-12 mt-1" type="default">
-                        <badge style="font-size:1em !important" class="" type="white">$ {{formatPrice(parseInt(closedInfo.manualTotal) - parseInt(closedInfo.systemTotal))}}</badge>
+                    <base-button v-for="(close, index) in closes.system" :key="close.type" class="col-12 mt-1" type="secondary">
+                        <badge style="font-size:1em !important" class="text-default" type="success">{{formatPrice(parseInt(close.total) - parseInt(closes.manual[index].total))}}</badge>
                     </base-button>
                 </div>
             </div>
@@ -136,76 +48,22 @@
                   body-classes=""
                   class="border-0">
                 <template>
-                    <div style="margin-top:-20% !important" class="text-center text-muted mb-2">
+                    <div style="margin-top:-15% !important" class="text-center text-muted mb-2">
                         <small>Ingresos manuales</small>
                     </div>
-                    <div class="text-left text-muted">
-                        <small>Fondo de caja</small>
-                    </div>
-                    <currency-input
-                        v-model="closedInfo.manual"
-                        locale="de"
-                        class="form-control"
-                        v-on:keyup="totalCash()"
-                    />
-                    <div class="text-left text-muted">
-                        <small>Efectivo</small>
-                    </div>
-                    <currency-input
-                        v-model="closedInfo.manualCash"
-                        locale="de"
-                        class="form-control"
-                        v-on:keyup="totalCash()"
-                    />
-                    <div class="text-left text-muted">
-                        <small>Egreso de caja</small>
-                    </div>
-                    <currency-input
-                        v-model="closedInfo.manualEgress"
-                        locale="de"
-                        class="form-control"
-                        v-on:keyup="totalCash()"
-                    />
-                    <div class="text-left text-muted">
-                        <small>Total efectivo</small>
-                    </div>
-                    <currency-input
-                        v-model="closedInfo.totalManualCash"
-                        locale="de"
-                        class="form-control "
-                    />
-                    <div class="text-left text-muted">
-                        <small>Crédito</small>
-                    </div>
-                    <currency-input
-                        v-model="closedInfo.manualCredit"
-                        locale="de"
-                        class="form-control "
-                    />
-                    <div class="text-left text-muted">
-                        <small>Débito</small>
-                    </div>
-                    <currency-input
-                        v-model="closedInfo.manualDebit"
-                        locale="de"
-                        class="form-control "
-                    />
-                    <div class="text-left text-muted">
-                        <small>Transferencia</small>
-                    </div>
-                    <currency-input
-                        v-model="closedInfo.manualTransfer"
-                        locale="de"
-                        class="form-control "
-                    />
-                    <div class="text-left text-muted">
-                        <small>Otros</small>
-                    </div>
-                    <currency-input
-                        v-model="closedInfo.manualOthers"
-                        locale="de"
-                        class="form-control "
-                    />
+                    <template v-for="close of closes.manual">
+                        <div :key="close.type" v-if="close.type != 'Total'" class="text-left text-muted">
+                            <small>{{close.type}}</small>
+                        </div>
+                        <currency-input
+                            v-if="close.type != 'Total'"
+                            :key="close.type"
+                            v-model="close.total"
+                            locale="de"
+                            class="form-control"
+                            v-on:keyup="cashTotal()"
+                        />
+                    </template>
                     <div class="text-center">
                         <base-button type="default" v-on:click="editEntry" class="my-2">Editar</base-button>
                     </div>
@@ -241,33 +99,17 @@ export default {
         return {
             auth:[],
             id: localStorage.getItem('reportID'),
-            closedInfo:{
-                manual:0,
-                manualCash:0,
-                totalManualCash:0,
-                manualDebit:0,
-                manualCredit:0,
-                manualTransfer:0,
-                manualOthers:0,
-                manualTotal:0,
-                manualEgress:0,
-                foundEntrySystem:0,
-                systemCash:0,
-                totalSystemCash:0,
-                systemDebit:0,
-                systemCredit:0,
-                systemTransfer:0,
-                systemOther:0,
-                systemTotal:0,
-                systemEgress:0,
-                closeId:0,
-                code:0,
-                date:'Error de fecha'
-            },
             modals: {
                 modal1:false,
                 modal2:false
-            }
+            },
+            closes: {},
+            configHeader: {
+                headers:{
+                    "x-database-connect": endPoint.database, 
+                    "x-access-token": localStorage.userToken
+                }
+            },
         }
     },
     beforeCreate(){
@@ -300,66 +142,62 @@ export default {
         back(){
             window.history.go(-1);
         },
-        getClosing(){
-            const id = this.id
-            axios.get(endPoint.endpointTarget+'/ventas/getClosing/'+id)
-            .then(res => {
-                const date = new Date(res.data.fecha)    
-                console.log(date)
-                this.closedInfo = {
-                    manual:res.data.manual.ingresoFondo,
-                    manualCash:res.data.manual.efectivo,
-                    totalManualCash:res.data.manual.totalEfectivo,
-                    manualDebit:res.data.manual.debito,
-                    manualCredit:res.data.manual.credito,
-                    manualTransfer:res.data.manual.transferencia,
-                    manualOthers:res.data.manual.otros,
-                    manualTotal:res.data.manual.total,
-                    manualEgress:res.data.manual.egreso,
-                    foundEntrySystem:res.data.sistema.ingresoFondo,
-                    systemCash:res.data.sistema.efectivo,
-                    totalSystemCash:res.data.sistema.totalEfectivo,
-                    systemDebit:res.data.sistema.debito,
-                    systemCredit:res.data.sistema.credito,
-                    systemTransfer:res.data.sistema.transferencia,
-                    systemOther:res.data.sistema.otros,
-                    systemTotal:res.data.sistema.total,
-                    systemEgress:res.data.sistema.egreso,
-                    closeId:res.data.identificacionCierre,
-                    code:res.data._id,
-                    date: moment(date).format('DD-MM-YYYY')
-                } 
-                console.log(this.closedInfo.date)
-            })
+        async getClosing(){
+            try {
+                const closing = await axios.get(endPoint.endpointTarget+'/sales/getClosing/'+this.id, this.configHeader)
+                this.closes = closing.data.data
+                console.log(this.closes)
+            }catch(err){
+                console.log(err)
+            }
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
-            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+            return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
-        totalCash(){
-            this.closedInfo.totalManualCash = this.closedInfo.manual + this.closedInfo.manualCash - this.closedInfo.manualEgress
+        formatDate(date) {
+            return moment(date).format('DD-MM-YYYY');
+        },
+        cashTotal(){
+            var total = 0
+            for (let i = 0; i <= 2; i++) {
+                const element = this.closes.manual[i];
+                if (i == 0 || i == 1) {
+                    total = total + element.total
+                }else if (i == 2) {
+                    total = total - element.total
+                }
+            }
+            this.closes.manual[3].total = total
         },
         editEntry(){
-            console.log(this.closedInfo.date)
-            axios.put(endPoint.endpointTarget+'/ventas/editarIngManual/'+this.closedInfo.code, {
-                fondo:this.closedInfo.manual,
-                efectivo:this.closedInfo.manualCash,
-                egreso:this.closedInfo.manualEgress,
-                totalEfectivo:this.closedInfo.totalManualCash,
-                credito:this.closedInfo.manualCredit,
-                debito: this.closedInfo.manualDebit,
-                transferencia: this.closedInfo.manualTransfer,
-                otros:this.closedInfo.manualOthers,
-                total: this.closedInfo.manualTotal
-            })
+            var total = 0
+            var dict = {
+                'Egreso de caja': 'si',
+                'Fondo de caja': 'si',
+                'Total efectivo': 'si'
+            }
+            for (let i = 0; i < this.closes.manual.length - 1; i++) {
+                const element = this.closes.manual[i];
+                if (element.type in dict) {
+                    total = total
+                }else{
+                    total = total + element.total
+                }
+            }
+            this.closes.manual[this.closes.manual.length - 1].total = total
+            axios.put(endPoint.endpointTarget+'/sales/editclosedmanualamounts/'+this.id, {
+                manual: this.closes.manual
+            }, this.configHeader)
             .then(res => {
                 if (res.data.status == 'ok') {
-                    this.modals.modal2 = true
-                    setTimeout(() => {
-                        this.modals.modal1 = false
-                        this.modals.modal2 = false
-                        this.getClosing()
-                    }, 1000); 
+                    this.modals.modal1 = false
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Totales editados.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             })
         },
