@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                             <hr class="my-4" />
-                            <p>{{model.email}} — {{model.about}}</p>
+                            <p>{{model.email}} <template v-if="model.about != ''">—</template> {{model.about}}</p>
                         </div>
                     </div>
                     <card v-if="model.status == 3" class="mt-3" shadow type="secondary">
@@ -99,52 +99,52 @@
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <base-input v-if="inspector"
-                                                        alternative=""
-                                                        label="Nombre"
-                                                        placeholder="Username"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.first_name"
+                                                alternative=""
+                                                label="Nombre"
+                                                placeholder="Username"
+                                                input-classes="form-control-alternative"
+                                                v-model="model.first_name"
                                             />
                                             <base-input v-else
-                                                        disabled alternative=""
-                                                        label="Nombre"
-                                                        placeholder="Username"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.first_name"
+                                                disabled alternative=""
+                                                label="Nombre"
+                                                placeholder="Username"
+                                                input-classes="form-control-alternative"
+                                                v-model="model.first_name"
                                             />
                                         </div>
                                         <div class="col-lg-6">
                                             <base-input v-if="inspector"
-                                                        alternative=""
-                                                        label="Apellido"
-                                                        placeholder="jesse@example.com"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.last_name"
+                                                alternative=""
+                                                label="Apellido"
+                                                placeholder="jesse@example.com"
+                                                input-classes="form-control-alternative"
+                                                v-model="model.last_name"
                                             />
                                             <base-input v-else
-                                                        disabled alternative=""
-                                                        label="Apellido"
-                                                        placeholder="jesse@example.com"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.last_name"
+                                                disabled alternative=""
+                                                label="Apellido"
+                                                placeholder="jesse@example.com"
+                                                input-classes="form-control-alternative"
+                                                v-model="model.last_name"
                                             />
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <base-input v-if="inspector"
-                                                        alternative=""
-                                                        label="Correo"
-                                                        placeholder="First name"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.email"
+                                                alternative=""
+                                                label="Correo"
+                                                placeholder="First name"
+                                                input-classes="form-control-alternative"
+                                                v-model="model.email"
                                             />
                                             <base-input v-else
-                                                        disabled alternative=""
-                                                        label="Correo"
-                                                        placeholder="Last name"
-                                                        input-classes="form-control-alternative"
-                                                        v-model="model.email"
+                                                disabled alternative=""
+                                                label="Correo"
+                                                placeholder="Last name"
+                                                input-classes="form-control-alternative"
+                                                v-model="model.email"
                                             />
                                         </div>
                                         <div class="col-lg-6 form-group">
@@ -177,17 +177,17 @@
                             <span>{{formatDate(props.row.fecha)}}</span>
                         </template>
                         <template slot="format-services" slot-scope="props">
-                            <template v-for="(service, index) of props.row.servicios">
+                            <template v-for="(service, index) of props.row.services">
                                 <span v-if="index == 0" :key="service">
-                                    {{service.servicio}}
+                                    {{service.service}}
                                 </span>
                                 <span v-else :key="service">
-                                    - {{service.servicio}} 
+                                    - {{service.service}} 
                                 </span>
                             </template>
                         </template>
                         <template slot="format-amount" slot-scope="props">
-                            <span>{{formatPrice(props.row.comision)}}</span>
+                            <span>{{formatPrice(props.row.commission)}}</span>
                         </template>
                     </vue-bootstrap4-table>
                 </div>
@@ -308,7 +308,7 @@
                 columnsLender: [
                     {
                         label: "Fecha",
-                        name: "fecha",
+                        name: "createdAt",
                         // filter: {
                         //     type: "simple",
                         //     placeholder: "id"
@@ -318,13 +318,13 @@
                     },
                     {
                         label: "Servicios",
-                        name: "servicios",
+                        name: "services",
                         slot_name: "format-services",
                         sort: false,
                     },
                     {
                         label: "Ingreso",
-                        name: "comision",
+                        name: "commission",
                         slot_name: "format-amount",
                         sort: false,
                     }
@@ -352,7 +352,13 @@
                 },
                 classes: {
                     table: "table-bordered table-striped"
-                }
+                },
+                configHeader: {
+                    headers:{
+                        "x-database-connect": endPoint.database, 
+                        "x-access-token": localStorage.userToken
+                    }
+                },
             }
         },
         beforeCreate(){
@@ -367,8 +373,8 @@
             }
         },
         created(){
-            this.getData();
-            this.getYourSales();
+            this.getData()
+            this.getYourSales()
             this.getDataLender()
         },
         methods: {
@@ -380,17 +386,17 @@
                 this.pass.validAll = this.pass.lastPass && this.pass.valid == true ? true : false
             },
             async getData() {
-				const config = {headers: {'x-access-token': localStorage.userToken}}
 				try{
-					const data = await axios.get(endPoint.endpointTarget+'/users/data/'+this.id, config)
-					this.model.first_name = data.data.first_name
-					this.model.last_name = data.data.last_name
-					this.model.email = data.data.email
-					this.model.status = data.data.status
-                    this.model.access = data.data.LastAccess
-                    this.model.about = data.data.about
-					this.model.image = endPoint.imgEndpoint+data.data.userImage
-                    this.haveImage = data.data.userImage
+					const user = await axios.get(endPoint.endpointTarget+'/users/'+this.id, this.configHeader)
+                    console.log(user)
+					this.model.first_name = user.data.data.first_name
+					this.model.last_name = user.data.data.last_name
+					this.model.email = user.data.data.email
+					this.model.status = user.data.data.status
+                    this.model.access = user.data.data.LastAccess
+                    this.model.about = user.data.data.about
+					this.model.image = user.data.data.userImage
+                    this.haveImage = user.data.data.userImage
 				}catch(err) {
 					this.$swal({
 						type: 'error',
@@ -404,50 +410,34 @@
             },
             async EditPass(){
 				if (this.pass.newPassVerify == this.pass.newPass) {
-					const config = {headers: {'x-access-token': localStorage.userToken}}
 					try{
 						const pass = await axios.put(endPoint.endpointTarget+'/users/changePass/'+this.id, {
 							newPass:this.pass.newPass,
 							lastPass: this.pass.lastPass
-						}, config)
+						}, this.configHeader)
 						if (pass.data.status == 'ok') {
-							this.modals = {
-                                modal2:false,
-                                modal1: true,
-                                message: '¡Contraseña cambiada con exito!',
-                                icon: 'ni ni-check-bold ni-5x',
-                                type: 'success'
-                            }
-                            setTimeout(() => {
-                                this.modals = {
-                                    modal1: false,
-                                    message: "",
-                                    icon: '',
-                                    type: ''
-                                }
-                            }, 1500);
+							this.$swal({
+                                type: 'success',
+                                title: 'Contraseña editada con éxito.',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
 							this.pass.newPass = ''
 							this.pass.lastPass = ''
                             this.pass.newPassVerify = ''
+                            this.modals.modal2 = false
                             this.inspector = false
 						}else{
-							this.modals = {
-                                modal2:false,
-                                modal1: true,
-                                message: 'Contraseña incorrecta',
-                                icon: 'ni ni-fat-remove ni-5x',
-                                type: 'danger'
-                            }
-                            setTimeout(() => {
-                                this.modals = {
-                                    modal1: false,
-                                    message: "",
-                                    icon: '',
-                                    type: ''
-                                }
-                            }, 1500);
+							this.$swal({
+                                type: 'error',
+                                title: 'Contraseña incorrecta.',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
 							this.pass.newPass = ''
 							this.pass.lastPass = ''
+                            this.pass.newPassVerify = ''
+                            
 						}
 					}catch(err)  {
                         console.log(err)
@@ -461,30 +451,34 @@
 						// router.push({name: 'login'})
 					}
 				}else{
-						this.$swal({
-							type: 'error',
-							title: 'Las contraseñas deben conincidir',
-							showConfirmButton: false,
-							timer: 2500
-						})
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Las contraseñas deben conincidir',
+                        showConfirmButton: false,
+                        timer: 2500
+                    })
 				}
 				
 			},
             async getYourSales(){
+                console.log('hola')
 				const ident = localStorage.userToken
 				const decoded = jwtDecode(ident)
 				const link = decoded.linkLender
                 this.link = decoded.linkLender
 				if (link != '') {
-					const split = link.split(" / ")
-                    const sales = await axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+split[0]+":"+split[1])
-                    this.sales = sales.data
-                    this.monthLender = sales.data.length
-                    for (let index = 0; index < sales.data.length; index++) {
-                        for (let indexTwo = 0; indexTwo < sales.data[index].EmployeComision.length; indexTwo++) {
-                            this.gainLender = sales.data[index].EmployeComision[indexTwo].employe == split[0] ? this.gainLender + sales.data[index].EmployeComision[indexTwo].comision : this.gainLender + 0
+                    try {
+                        const sales = await axios.get(endPoint.endpointTarget+'/employes/salesbyemploye/'+link, this.configHeader)
+                        console.log(sales)
+                        this.sales = sales.data.data
+                        this.monthLender = sales.data.data.length
+                        for (let index = 0; index < sales.data.data.length; index++) {
+                            this.gainLender = this.gainLender + sales.data.data[index].commission
                         }
+                    }catch(err){
+                        console.log(err)
                     }
+                    
 				}
             }, 
             async getDataLender(){
@@ -493,12 +487,12 @@
 				const link = decoded.linkLender
                 this.link = decoded.linkLender 
                 if (link != '') {
-                    const split = link.split(" / ")
                     try {
-                        const data = await axios.get(endPoint.endpointTarget+'/manicuristas/advancementsProfile/'+split[1])
-                        this.advancement = data.data[0].advancement
-                        this.lenderBonus = data.data[0].bonus
-                        this.comision = data.data[0].comision
+                        const employe = await axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+link, this.configHeader)
+                        console.log(employe)
+                        this.advancement = employe.data.data.advancement
+                        this.lenderBonus = employe.data.data.bonus
+                        this.comision = employe.data.data.commission
                         const plus = this.advancement + this.lenderBonus
                         this.totalForLender = this.comision - plus
                     }catch(err) {
@@ -526,36 +520,29 @@
                 formData.append('email', this.model.email)
                 formData.append('about', this.model.about)
 				var dataChange = {
-					nombre: this.model.first_name,
-                    apellido: this.model.last_name,
+					name: this.model.first_name,
+                    lastname: this.model.last_name,
                     image: ''
 				}
 				try {
 					const image = await axios.post(endPoint.endpointTarget+'/users/editData/'+this.id, formData, {
 						headers: {
 							'Content-Type': 'multipart/form-data',
-							'x-access-token': localStorage.userToken
+							"x-access-token": localStorage.userToken,
+                            "x-database-connect": endPoint.database
 						}
                     })
                     console.log(image)
-					this.modals = {
-                        modal1: true,
-                        message: '¡Usuario editado con exito!',
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+					this.$swal({
+                        type: 'success',
+                        title: 'Usuario editado con éxito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     this.inspector = false
 					// this.emitMethod(image.data.status)
-					localStorage.setItem('nombre', dataChange.nombre)
-                    localStorage.setItem('apellido', dataChange.apellido)
+					localStorage.setItem('firstname', dataChange.name)
+                    localStorage.setItem('lastname', dataChange.lastname)
                     if (image.data.image != '') {
                         localStorage.setItem('imageUser', image.data.image)
                         dataChange.image = image.data.image

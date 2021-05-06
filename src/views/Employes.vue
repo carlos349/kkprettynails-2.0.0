@@ -859,7 +859,7 @@ import jwtDecode from 'jwt-decode'
     },
     computed: {
         getScreen: () => {
-            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 240 }
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 'auto' }
         }
     },
     mounted() {

@@ -9,10 +9,9 @@
                     style="width: 100%"
                     :filter-option="filterOption"
                     :allowClear="true"
-                    :value="clientSelect"
                     @change="chooseClient">
-                    <a-select-option v-for="client of clients" :key="client._id" :value="client.identidad">
-                        {{client.nombre}} / {{client.identidad}}
+                    <a-select-option v-for="client of clients" :key="client._id" :value="client._id">
+                        {{client.firstName}} / {{client.email}}
                     </a-select-option>
                 </a-select>
             </div>
@@ -31,11 +30,10 @@
                     style="width: 100%"
                     :filter-option="filterOption"
                     :allowClear="true"
-                    :value="lenderSelect"
                     ref="lenderRef"
                     @change="chooseLender">
-                    <a-select-option v-for="lender of registerService.lenders" :key="lender._id" :value="lender._id+'/'+lender.nombre">
-                        {{lender.nombre}}
+                    <a-select-option v-for="(lender, index) of registerService.lenders" :key="lender._id" :value="lender._id+'/'+index">
+                        {{lender.firstName}}
                     </a-select-option>
                 </a-select>
             </div>
@@ -54,23 +52,20 @@
                 </table>
                 <vue-custom-scrollbar ref="scroll" class="ps-container ListaProcesar p-2 ps ps--active-y">
                     <table class="table tableBg" id="myTableProcess">
-                        
-                            <tr v-for="(servicio, index) in services" class="soy" v-bind:key="servicio._id">
-                                <td style="border:none;padding:5px;" v-if="servicio.active" class="font-weight-bold" >
-                                    <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="conteoServicio(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, servicio.productos), countServices[index].count++">
-                                        <span class="float-left">{{servicio.nombre}}</span>
-                                        <badge class="badgeClass badgeServices float-right" style="font-size: .9em;color:#4b4b4b" type="secondary" :id="servicio._id">{{countServices[index].count}}</badge>
-                                    </base-button>
-                                    <base-button size="sm" type="default" v-on:click="borrarServicio(servicio.nombre,index,servicio._id,servicio.precio, servicio.descuento)">
-                                        <font-awesome-icon icon="times"/>
-                                    </base-button>
-                                </td>
-                                <td style="border:none" v-if="servicio.active" class="font-weight-bold text-center">
-                                    {{formatPrice(servicio.precio)}}
-                                </td>
-                            </tr>
-                            
-                        
+                        <tr v-for="(service, index) in services" class="soy" v-bind:key="service._id">
+                            <td style="border:none;padding:5px;" v-if="service.active" class="font-weight-bold" >
+                                <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="addService(service.name, service.price, service.commission, service.discount, service.products), countServices[index].count++">
+                                    <span class="float-left">{{service.name}}</span>
+                                    <badge class="badgeClass badgeServices float-right" style="font-size: .9em;color:#4b4b4b" type="secondary" :id="service._id">{{countServices[index].count}}</badge>
+                                </base-button>
+                                <base-button size="sm" type="default" v-on:click="removeService(service.name, index,service._id, service.price, service.discount)">
+                                    <font-awesome-icon icon="times"/>
+                                </base-button>
+                            </td>
+                            <td style="border:none" v-if="service.active" class="font-weight-bold text-center">
+                                {{formatPrice(service.price)}}
+                            </td>
+                        </tr>  
                     </table>
                 </vue-custom-scrollbar>
                 <div class="row pt-3 shadowTop">
@@ -139,141 +134,28 @@
                     Medios de pago
                 </div>
                 <div class="row">
-                    <div class="col-6">
+                    <div v-for="(pays, index) in typesPay" :key="pays._id" class="col-6">
                         <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Efectivo</span>
+                            <span>{{pays.type}}</span>
                             </template>
                             <div class="input-group mb-2">
-                                <div  v-on:click="hundredPorcent('efectivo')" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
+                                <div v-on:click="hundredPercent(index)" class="input-group-prepend text-center w-25 hundred">
                                     <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
                                         <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
-                                    <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
+                                        <a-icon type="credit-card" style="font-size:1em; color:#6BB2E5" />
                                     </span>
                                     
                                 </div>
                                 <currency-input
-                                    v-model="payCash"
+                                    v-model="pays.total"
                                     locale="de"
-                                    placeholder="Efectivo"
+                                    :placeholder="pays.type"
                                     class="form-control"
                                 />
                             </div>
                         </a-tooltip>
-                        
                     </div>
-                    <div class="col-6">
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Transferencia</span>
-                            </template>
-                            <div class="input-group mb-2">
-                                <div  v-on:click="hundredPorcent('trasnferencia')" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
-                                    <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
-                                    </span>
-                                </div>
-                                <currency-input
-                                    v-model="payTransfer"
-                                    locale="de"
-                                    placeholder="Transferencia"
-                                    class="form-control"
-                                />
-                            </div>
-                        </a-tooltip>
-                        
-                    </div>
-                    <div class="col-6">
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Otros</span>
-                            </template>
-                            <div  class="input-group mb-2">
-                                <div v-on:click="hundredPorcent('others')" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="others" style="font-size:0.6em;display:none">100%</b>
-                                    <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
-                                    </span>
-                                </div>
-                                <currency-input
-                                    v-model="payOthers"
-                                    locale="de"
-                                    placeholder="Otros"
-                                    class="form-control"
-                                />
-                            </div>
-                        </a-tooltip>
-                        
-                    </div>
-                    <div class="col-6">
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Código de pedido</span>
-                            </template>
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend w-25 text-center hundred">
-                                    <span style="background-color: #e9ecef;" class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="shopping-cart"/>	
-                                    </span>
-                                </div>
-                                <currency-input
-                                    v-model="payOrder"
-                                    locale="de"
-                                    readonly
-                                    placeholder="Código pedido"
-                                    class="form-control pl-1"
-                                />
-                            </div>
-                        </a-tooltip>
-                        
-                    </div>
-                    <div class="col-6">
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Débito</span>
-                            </template>
-                            <div class="input-group mb-2">
-                                <div v-on:click="hundredPorcent('debit')" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="debit" style="font-size:0.6em;display:none">100%</b>
-                                        <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
-                                    </span>
-                                </div>
-                                <currency-input
-                                    v-model="payDebit"
-                                    locale="de"
-                                    placeholder="Débito"
-                                    class="form-control"
-                                />
-                            </div>
-                        </a-tooltip>
-                        
-                    </div>
-                    <div class="col-6">
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Crédito</span>
-                            </template>
-                            <div class="input-group mb-2">
-                                <div v-on:click="hundredPorcent('credit')" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="credit" style="font-size:0.6em;display:none">100%</b>
-                                        <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
-                                    </span>
-                                </div>
-                                <currency-input
-                                    v-model="payCredit"
-                                    locale="de"
-                                    placeholder="Crédito"
-                                    class="form-control"
-                                />
-                            </div>
-                        </a-tooltip>
-                        
-                    </div>
-                    
-                    
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -310,18 +192,25 @@
                 <template>
                     <form role="form">
                             <base-input alternative
-                                        class="mb-3"
-                                        placeholder="Nombre"
-                                        v-model="registerClient.name"
-                                        v-on:keyup="validRegister(2)"
-                                        addon-left-icon="ni ni-single-02">
+                                class="mb-3"
+                                placeholder="Nombre"
+                                v-model="registerClient.firstName"
+                                v-on:keyup="validRegister(2)"
+                                addon-left-icon="ni ni-single-02">
                             </base-input>
                             <base-input alternative
-                                        type="text"
-                                        placeholder="Correo"
-                                        v-model="registerClient.id"
-                                        v-on:keyup="validRegister(2)"
-                                        addon-left-icon="fa fa-address-card">
+                                class="mb-3"
+                                placeholder="Nombre"
+                                v-model="registerClient.lastName"
+                                v-on:keyup="validRegister(2)"
+                                addon-left-icon="ni ni-single-02">
+                            </base-input>
+                            <base-input alternative
+                                type="text"
+                                placeholder="Correo"
+                                v-model="registerClient.email"
+                                v-on:keyup="validRegister(2)"
+                                addon-left-icon="fa fa-address-card">
                             </base-input>
                             <div class="row">
                                 <div class="col-md-3">
@@ -337,19 +226,18 @@
                                         placeholder="Teléfono"
                                         v-on:input="formatPhone"
                                         maxlength="9"
-                                        v-model="registerClient.contactOne"
+                                        v-model="registerClient.phone"
                                         addon-left-icon="fa fa-address-card">
                                     </base-input>
                                 </div>
                             </div>
-                            
                             <base-input alternative
-                                        type="text"
-                                        placeholder="Contacto adicional"
-                                        v-model="registerClient.contactTwo"
-                                        addon-left-icon="fa fa-address-card">
+                                type="text"
+                                placeholder="Instagram"
+                                v-model="registerClient.instagram"
+                                addon-left-icon="fa fa-address-card">
                             </base-input>
-                            <base-input addon-left-icon="ni ni-calendar-grid-58">
+                            <base-input v-if="!ifEdit" addon-left-icon="ni ni-calendar-grid-58">
                                 <flat-picker 
                                         slot-scope="{focus, blur}"
                                         @on-open="focus"
@@ -521,48 +409,44 @@
             <modal :show.sync="modals.modal6"
                 body-classes="p-0"
                 modal-classes="modal-dialog-centered modal-md">
-                
                 <card type="secondary" shadow
                     header-classes="bg-white pb-5"
                     body-classes="px-lg-5 py-lg-5"
                     class="border-0">
-                    
                     <template>
                         <div class="col-sm-12">
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Comprador <br> </span>
-                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{compradorArticulo}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Medio de pago <br> </span>
-                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{medioPagoArticulo}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Articulo <br> </span>
-                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Monto del pedido <br> </span>
-                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{totalArticulo}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Estado <br> </span>
-                                        <badge v-if="estadoArticulo == 'Nconfirmado'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
-                                        <badge v-else-if="estadoArticulo == 'confirmado'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
-                                        <badge v-else style="font-size:0.8em !important" type="default" class="text-default mt-2">Usado</badge>
-                                    </base-button>
-                                    
-                                </div>
-                                <center>
-                                    <base-button v-if="estadoArticulo == 'confirmado'" type="success" class="mt-5" v-on:click="verifyCode()">
-                                        Validar
-                                    </base-button>
-                                    <base-button v-else type="default" disabled class="mt-5">
-                                        Validar
-                                    </base-button> 
-                                </center>
-                                
-                </template>
+                            <base-button class="col-12  p-2 mt-1" type="secondary">
+                                <span class="text-center"> Comprador <br> </span>
+                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{compradorArticulo}}</badge>
+                            </base-button>
+                            <base-button class="col-12  p-2 mt-1" type="secondary">
+                                <span class="text-center"> Medio de pago <br> </span>
+                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{medioPagoArticulo}}</badge>
+                            </base-button>
+                            <base-button class="col-12  p-2 mt-1" type="secondary">
+                                <span class="text-center"> Articulo <br> </span>
+                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
+                            </base-button>
+                            <base-button class="col-12  p-2 mt-1" type="secondary">
+                                <span class="text-center"> Monto del pedido <br> </span>
+                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{totalArticulo}}</badge>
+                            </base-button>
+                            <base-button class="col-12  p-2 mt-1" type="secondary">
+                                <span class="text-center"> Estado <br> </span>
+                                <badge v-if="estadoArticulo == 'Nconfirmado'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
+                                <badge v-else-if="estadoArticulo == 'confirmado'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
+                                <badge v-else style="font-size:0.8em !important" type="default" class="text-default mt-2">Usado</badge>
+                            </base-button>
+                        </div>
+                        <center>
+                            <base-button v-if="estadoArticulo == 'confirmado'" type="success" class="mt-5" v-on:click="verifyCode()">
+                                Validar
+                            </base-button>
+                            <base-button v-else type="default" disabled class="mt-5">
+                                Validar
+                            </base-button> 
+                        </center>
+                    </template>
                 </card>
             </modal>
             <div v-if="validRoute('procesar', 'nuevo_cliente')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
@@ -665,15 +549,23 @@ export default {
                 icon: '',
                 type:''
             },
+            typesPay: [],
+            configHeader: {
+                headers: {
+                    "x-database-connect": endPoint.database, 
+                    "x-access-token": localStorage.userToken
+                }
+            },
             configDate: {
                 allowInput: true, 
                 dateFormat: 'd-m-Y',
             },
             registerClient: {
-                name: '',
-                id: '',
-                contactOne: '',
-                contactTwo: '',
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                instagram: '',
                 birthday: '',
                 discount: false,
                 recommender: '',
@@ -703,7 +595,7 @@ export default {
             },
             columnsLender: [{
                 label: "Nombre",
-                name: "nombre",
+                name: "firstName",
                 // filter: {
                 //     type: "simple",
                 //     placeholder: "id"
@@ -735,10 +627,11 @@ export default {
                 table: "table-bordered table-striped"
             },
             clientNames: [],
+            clientIds: [],
             clients: [],
-            clientSelect: '',
+            clientSelect: null,
             lenderNames: [],
-            lenderSelect: '',
+            lenderSelect: null,
             services: [],
             inspector: false,
             countServices: [],
@@ -778,14 +671,14 @@ export default {
             ifEdit: false, 
             inspectorDate: false,
             editClientId: '',
-            ifrecomend: false
+            ifrecomend: false,
+            branchName: '',
+            branch: ''
         }
     },
     created(){
-        this.getClient()
-        this.getLenders()
-        this.getServices()
         this.getToken()
+        this.getBranch()
         setTimeout(() => {
             $('.anticon-close-circle').click()
         }, 1000);
@@ -802,6 +695,37 @@ export default {
         selected(value){
             this.registerService.lenderSelecteds.push(value.selected_item._id)
             this.validRegister(1)
+        },
+        async getTypesPay(){
+            try {
+                const pays = await axios.get(endPoint.endpointTarget+'/configurations/'+this.branch, this.configHeader)
+                if (pays.data.status == 'ok') {
+                    
+                    for (let i = 0; i < pays.data.data.typesPay.length; i++) {
+                        const element = pays.data.data.typesPay[i];
+                        this.typesPay.push({
+                            type: element,
+                            total: 0
+                        })
+                    }
+                }
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
+        },
+        getBranch(){
+            this.branchName = localStorage.branchName  
+            this.branch = localStorage.branch
+            this.getClient()
+            this.getLenders()
+            this.getServices()
+            this.getTypesPay()
         },
         unSelected(value){
             for (let i = 0; i < this.registerService.lenderSelecteds.length; i++) {
@@ -826,9 +750,9 @@ export default {
             if (valid == 1) {
                 this.registerService.valid = this.registerService.lenderSelecteds.length > 0 && this.registerService.serviceRegister != '' && this.registerService.priceRegister > 0 && this.registerService.timeRegister != 'Seleccione el tiempo' && this.registerService.comissionRegister != '' ? true : false
             }else if (valid == 2) {
-                if (this.registerClient.name != '' && this.registerClient.id != '') {
-                    if (this.registerClient.id.split('@').length == 2) {
-                        if (this.registerClient.id.split('@')[1].split('.').length == 2) {
+                if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '') {
+                    if (this.registerClient.email.split('@').length == 2) {
+                        if (this.registerClient.email.split('@')[1].split('.').length == 2) {
                             this.registerClient.valid = true
                         }else{
                             this.registerClient.valid = false
@@ -853,28 +777,18 @@ export default {
             this.registerClient.contactOne = number
         },
         registerFund(){
-			axios.post(endPoint.endpointTarget+'/ventas/registerFund', {
+			axios.post(endPoint.endpointTarget+'/sales/registerFund', {
 				userRegister: this.cashFunds.cashName,
-				amount: this.cashFunds.cashAmount
-			}).then(res => {
+				amount: this.cashFunds.cashAmount,
+                branch: this.branch
+			}, this.configHeader).then(res => {
 				if (res.data.status == 'ok') {
-					this.modals = {
-                        modal1: true,
-                        message: "Cliente registrado",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Monto de caja registrado.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     this.cashFunds.cashName = ''
                     this.cashFunds.cashAmount = ''
                     this.cashFunds.valid = false
@@ -882,57 +796,30 @@ export default {
 			})
         },
         editClient(){
+            const phone = this.registerClient.phone.length > 0 ? '+56 '+this.registerClient.phone : ''
             axios.put(endPoint.endpointTarget+'/clients/'+this.editClientId, {
-                nombreClienteEditar: this.registerClient.name,
-                identidadClienteEditar: this.registerClient.id,
-                correoClienteEditar: this.registerClient.contactOne,
-                instagramClienteEditar: this.registerClient.contactTwo,
-            })
+                firstName: this.registerClient.firstName,
+                lastName: this.registerClient.lastName,
+                email: this.registerClient.email,
+                phone: phone,
+                instagram: this.registerClient.instagram
+            }, this.configHeader)
             .then(res => {
-                if (res.data.status == 'Servicio actualizado') {
-                    this.modals = {
-                        modal1: true,
-                        message: "el cliente editó con exito",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            message: "",
-                            icon: '',
-                            type:''
-                        }
-                        this.clientSelect = this.registerClient.name+ ' / '+this.registerClient.id
-                        this.registerClient.name = ''
-                        this.registerClient.id = ''
-                        this.registerClient.contactOne = ''
-                        this.registerClient.contactTwo = ''
-                        this.ifEdit = false
-                        this.newClient.text = "Nuevo cliente"
-                        this.getClient()
-                    }, 1500);
+                if (res.data.status == 'update client') {
+                    this.$swal({
+                        icon: 'success',
+                        title: 'El cliente se editó con éxito.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getClient()
                 }else{
-                    this.modals = {
-                        modal1: true,
-                        message: "El cliente ya existe",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+                    this.$swal({
+                        icon: 'error',
+                        title: 'El cliente ya existe.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             })
         },
@@ -942,37 +829,36 @@ export default {
                 var split = this.registerClient.birthday.split('-')
                 date = split[1]+'-'+split[0]+'-'+split[2]
             }
+            if (this.registerClient.recommender != '') {
+                for (let i = 0; i < this.clientIds.length; i++) {
+                    const spId = this.clientIds[i].split("-")
+                    if (spId[0] == this.registerClient.recommender) {
+                        idRecomender = spId[1]
+                    } 
+                }
+            }
             var ifCheck = this.registerClient.discount ? 0 : 1
-            const phone = this.registerClient.contactOne.length > 0 ? '+56 '+this.registerClient.contactOne : ''
+            const phone = this.registerClient.phone.length > 0 ? '+56 '+this.registerClient.phone : ''
             axios.post(endPoint.endpointTarget+'/clients', {
-                nombre:this.registerClient.name,
-                identidad:this.registerClient.id,
-                recomendador:this.registerClient.recommender,
-                correoCliente:phone,
+                firstName: this.registerClient.firstName,
+                lastName: this.registerClients.lastName,
+                email: this.registerClient.email,
+                recommender: this.registerClient.recommender,
+                idRecommender: idRecomender,
+                phone: phone,
                 birthday: date,
-                instagramCliente:this.registerClient.contactTwo,
+                instagram: this.registerClient.instagram,
                 ifCheck: ifCheck
             })
             .then(res => {
-                if (res.data.status == 'Registrado') {
-                    this.modals = {
-                        modal1: true,
-                        message: "Cliente registrado",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                        this.getClient()
-                    }, 1500);
+                if (res.data.status == 'client create') {
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Cliente registrado.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getClient()
                     this.registerClient = {
                         name: '',
                         id: '',
@@ -983,23 +869,12 @@ export default {
                         valid: false,
                     }
                 }else{
-                    this.modals = {
-                        modal1: true,
-                        message: "El cliente ya existe",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+                    this.$swal({
+                        icon: 'error',
+                        title: 'El cliente ya existe.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             })
         },
@@ -1014,34 +889,24 @@ export default {
 		},
         registerServiceProcess(){
             var ifCheck = this.registerService.addDiscount ? false : true
-            axios.post(endPoint.endpointTarget+'/servicios', {
-                nombreServicio: this.registerService.serviceRegister,
-                precioServicio: this.registerService.priceRegister,
-                comisionServicio: this.registerService.comissionRegister,
-                tiempoServicio: this.registerService.timeRegister,
-                prestadores: this.registerService.lenderSelecteds,
-                descuento: ifCheck
-
-            })
+            axios.post(endPoint.endpointTarget+'/services', {
+                branch: this.branch,
+                name: this.registerService.serviceRegister,
+                price: this.registerService.priceRegister,
+                commission: this.registerService.comissionRegister,
+                duration: this.registerService.timeRegister,
+                employes: this.registerService.lenderSelecteds,
+                descuento: ifCheck,
+                products: []
+            }, this.configHeader)
             .then(res => {
-                if(res.data.status == 'Servicio creado'){
-                    this.modals = {
-                        modal1: true,
-                        message: "Servicio registrado",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+                if(res.data.status == 'ok'){
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Servicio registrado.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     this.registerService = {
                         serviceRegister: '',
                         comissionRegister: '',
@@ -1055,117 +920,118 @@ export default {
                     this.getServices();
                     
                 }else{
-                    this.modals = {
-                        modal1: true,
-                        message: "El servicio ya existe",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+                    this.$swal({
+                        icon: 'error',
+                        title: 'El servicio ya existe.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             })
 		},
-        getClient(){
-            axios.get(endPoint.endpointTarget+'/clients')
-            .then(res => {
-                this.clients = res.data
-                this.clientNames = []
-                for (let index = 0; index < res.data.length; index++) {
-                    
-                    this.clientNames.push(res.data[index].nombre+ ' / ' +res.data[index].identidad)
+        async getClient(){
+            try {
+                const getClient = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
+                if (getClient.data.status == 'ok') {
+                    this.clients = getClient.data.data
+                    this.clientNames = []
+                    for (let index = 0; index < getClient.data.data.length; index++) {
+                        this.clientNames.push(getClient.data.data[index].firstName+ ' / ' +getClient.data.data[index].email)
+                        this.clientIds.push(getClient.data.data[index].firstName + " / " + getClient.data.data[index].email + "-" + getClient.data.data[index]._id)
+                    }
                 }
-            })
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
         },
-        getLenders(){
-            axios.get(endPoint.endpointTarget+'/manicuristas')
-            .then(res => {
-                this.registerService.lenders = res.data
-                
-            })
-        },
-        getServices(){
-            axios.get(endPoint.endpointTarget+'/servicios')
-            .then(res => {
-                this.services = res.data
-                this.countServices = []
-                for (let index = 0; index < this.services.length; index++) {
-                    this.countServices.push({count: 0})
+        async getLenders(){
+            try {
+                const employes = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+this.branch, this.configHeader)
+                if (employes.data.status == 'ok') {
+                    this.registerService.lenders = employes.data.data
                 }
-            })
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
         },
-        conteoServicio(_id, nombre, precio, comision, discount, items){
-            console.log(discount)
+        async getServices(){
+            try {
+                const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
+                if (services.data.status == 'ok') {
+                    this.services = services.data.data
+                    this.countServices = []
+                    for (let index = 0; index < this.services.length; index++) {
+                        this.countServices.push({count: 0})
+                    }
+                }
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
+        },
+        addService(name, price, commission, discount, items){
+            console.log(name, price, commission, discount, items)
             const descuento = parseFloat(this.discount) / 100
 			const porcentaje = 1 - parseFloat(descuento)
-            const precioTotal = parseFloat(this.subTotal) + parseFloat(precio)
-            const totalWithoutFormat = parseFloat(this.totalSinFormato) + parseFloat(precio)
-			this.price = this.formatPrice(precioTotal)
-			this.subTotal = precioTotal
-			
+            const priceTotal = parseFloat(this.subTotal) + parseFloat(price)
+            const totalWithoutFormat = parseFloat(this.totalSinFormato) + parseFloat(price)
+			this.price = this.formatPrice(priceTotal)
+			this.subTotal = priceTotal
+			console.log(this.price)
 			
 			if(this.discount == '' || discount == true){
-                this.total = this.formatPrice(totalWithoutFormat+ this.design)
-                this.totalSinFormato = totalWithoutFormat+ this.design
+                this.total = this.formatPrice(totalWithoutFormat)
+                this.totalSinFormato = totalWithoutFormat
             }
             else{
-                const precioConDescuento = parseFloat(precio) * parseFloat(porcentaje)
-                const totalConDescuento = parseFloat(this.totalSinFormato) + parseFloat(precioConDescuento) 
-                this.total =  this.formatPrice(totalConDescuento + this.design)
-                this.totalSinFormato = totalConDescuento + this.design
+                const priceConDescuento = parseFloat(price) * parseFloat(porcentaje)
+                const totalConDescuento = parseFloat(this.totalSinFormato) + parseFloat(priceConDescuento) 
+                this.total =  this.formatPrice(totalConDescuento)
+                this.totalSinFormato = totalConDescuento
 			}
-			const servicios = {'servicio': nombre, 'comision': comision, 'precio': precio, 'descuento': discount, productos:items}
+			const servicios = {'service': name, 'commission': commission, 'price': price, 'discount': discount, 'products': items}
 			this.serviciosSelecionados.push(servicios)
-			axios.put(endPoint.endpointTarget+'/ventas/updateServicesMonth/' + nombre)
-			.catch(err => {
-				this.$swal({
-					type: 'error',
-					title: 'experimentamos problemas :(',
-					showConfirmButton: false,
-					timer: 1500
-				})
-			})
-			
         },
-        borrarServicio(nombre, index, _id, precio, descuento){
+        removeService(name, index, _id, price, descuento){
             for (var i = 0; i < this.serviciosSelecionados.length; i++) {
-				if (this.serviciosSelecionados[i].servicio == nombre ) {
+				if (this.serviciosSelecionados[i].service == name ) {
 					this.serviciosSelecionados.splice(i, 1)
 					break
 				}
             }
 			if (this.countServices[index].count != 0) {
                 this.countServices[index].count--
-				const subTotal = parseFloat(this.subTotal) - parseFloat(precio) 
+				const subTotal = parseFloat(this.subTotal) - parseFloat(price) 
 				this.price = this.formatPrice(subTotal)
                 this.subTotal = subTotal
                 if (descuento == true || this.discount == '') {
-                    this.totalSinFormato = this.totalSinFormato - precio
+                    this.totalSinFormato = this.totalSinFormato - price
                     this.total = this.formatPrice(this.totalSinFormato)
-                    console.log("si entro aqui")
                 }
                 else{
-                    console.log("no debo entrar aqui")
                     const descuento = parseFloat(this.discount) / 100
                     const porcentaje = 1 - parseFloat(descuento)
-                    const precioConDescuento = precio * porcentaje
-                    this.totalSinFormato = this.totalSinFormato - precioConDescuento
+                    const priceConDescuento = price * porcentaje
+                    this.totalSinFormato = this.totalSinFormato - priceConDescuento
                     this.total = this.formatPrice(this.totalSinFormato)
                 }
-                
-				axios.put(endPoint.endpointTarget+'/ventas/updateServicesMonthDiscount/' + nombre)
-				.catch(err => {
-					console.log(err)
-				})
 			}
         },
         addDesign(){
@@ -1221,12 +1087,6 @@ export default {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
-        hundredMouseOver(tipo){
-			$("."+tipo).toggle()
-		},
-		hundredMouseNonOver(tipo){
-			$("."+tipo).toggle()
-		},
         myFunction() {
             console.log("hola")
 			var input, filter, table, tr, td, i, txtValue;
@@ -1246,55 +1106,17 @@ export default {
 			}
 			}
         },
-        hundredPorcent(tipo){
-        
-            if (tipo == "efectivo") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payCash = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
-            }
-            if (tipo == "trasnferencia") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payTransfer = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
-            }
-            if (tipo == "others") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payOthers = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
-            }
-            if (tipo == "credit") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payCredit = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
-            }
-            if (tipo == "debit") {
-                this.payCash = 0
-                this.payTransfer = 0
-                this.payOthers = 0
-                this.payCredit = 0
-                this.payDebit = 0
-                this.payDebit = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
-            }
-			
+        hundredPercent(index){
+            this.typesPay.forEach(element => {
+                element.total = 0
+            });
+            this.typesPay[index].total = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
         },
         chooseLender(value){
-            this.lenderSelect = value
-            if (this.lenderSelect) {
-                this.docLender = this.lenderSelect.split('/')[0]
-                this.nombreManicurista = this.lenderSelect.split('/')[1]
+            this.lenderSelect = {
+                id: this.registerService.lenders[value.split('/')[1]]._id,
+                name: this.registerService.lenders[value.split('/')[1]].firstName,
+                document: this.registerService.lenders[value.split('/')[1]].document
             }
             if (this.clientSelect != '' && this.lenderSelect != '') {
                 this.validator = false
@@ -1334,44 +1156,44 @@ export default {
             console.log(value)
             this.clientSelect = value
             if (this.clientSelect) {
-                axios.get(endPoint.endpointTarget+'/clients/dataDiscount/' + this.clientSelect)
+                axios.get(endPoint.endpointTarget+'/clients/findOne/'+this.clientSelect, this.configHeader)
                 .then(res => {
-                    // console.log(res)
+                    console.log(res)
                     this.newClient.text = "Editar cliente"
                     this.ifEdit = true
-                    this.editClientId = res.data[0]._id
-                    this.registerClient.name = res.data[0].nombre
-                    this.registerClient.id = res.data[0].identidad
-                    this.registerClient.contactOne = res.data[0].correoCliente
-                    this.registerClient.contactTwo = res.data[0].instagramCliente
+                    this.editClientId = res.data.data._id
+                    this.registerClient.firstName = res.data.data.firstName
+                    this.registerClient.lastName = res.data.data.lastName
+                    this.registerClient.email = res.data.data.email
+                    this.registerClient.phone = res.data.data.phone.split(' ')[1]
+                    this.registerClient.instagram = res.data.data.instagram
                     this.validRegister(2)
-                    this.clientRecomends = res.data[0].recomendaciones
-                    this.clientAtentions = res.data[0].participacion
-                    console.log(res.data[0].birthday)
-                    if(res.data[0].birthday){
-                        var birthday = new Date(res.data[0].birthday).getMonth()
+                    if(res.data.data.birthday){
+                        var birthday = new Date(res.data.data.birthday).getMonth()
                         var monthNow = new Date().getMonth()
                         if (birthday == monthNow) {
                             this.discount = 10
                             this.discountSelect = 'Descuento por cumpleaños'
-                        }else if (res.data[0].recomendaciones > 0) {
+                        }else if (res.data.data.recommendations > 0) {
                             this.discount = 15
                             this.ifrecomend = true
                             this.discountSelect = 'Descuento por recomendacion'
-                        }else if (res.data[0].participacion == 0) {
+                        }else if (res.data.data.attends == 0) {
                             this.discount = 10
                             this.discountSelect = 'Descuento por primera atención'
                         }
-                    }else if (res.data[0].recomendaciones > 0) {
+                    }else if (res.data.data.recommendations > 0) {
                         this.discount = 15
                         this.ifrecomend = true
                         this.discountSelect = 'Descuento por recomendacion'
-                    }else if (res.data[0].participacion == 0) {
+                    }else if (res.data.data.attends == 0) {
                         this.discount = 10
                         this.discountSelect = 'Descuento por primera atención'
                     }
-                    
-                    console.log(this.ifrecomend)
+                    this.clientSelect = {
+                        name: res.data.data.firstName,
+                        email:res.data.data.email
+                    }
                 })
                 .catch(err => {
                     console.log(err)
@@ -1379,10 +1201,11 @@ export default {
             }else{
                 this.newClient.text = "Nuevo cliente"
                 this.ifEdit = false
-                this.registerClient.name = ""
-                this.registerClient.id = ""
-                this.registerClient.contactOne = ""
-                this.registerClient.contactTwo = ""
+                this.registerClient.firstName = ""
+                this.registerClient.lastName = ""
+                this.registerClient.email = ""
+                this.registerClient.phone = ""
+                this.registerClient.instagram = ""
                 this.validRegister(2)
             }
             if (this.clientSelect != '' && this.lenderSelect != '') {
@@ -1458,11 +1281,9 @@ export default {
 			this.total = 0;
 			this.totalSinFormato = 0;
 			this.design = 0
-			this.payCash = 0
-			this.payOthers = 0
-			this.payDebit = 0
-            this.payCredit = 0
-            this.payOrder = 0
+			this.typesPay.forEach(element => {
+                element.total = 0
+            });
             this.docLender = ''
 			this.payTransfer = 0
 			this.lenderSelect = null
@@ -1488,39 +1309,22 @@ export default {
         processSale() {
             
             this.spinning = true
-			if (this.payCash == '') {
-				this.payCash = 0
-			}
-			if (this.payOthers == '') {
-				this.payOthers = 0
-			}
-			if (this.payTransfer == '') {
-				this.payTransfer = 0
-			}
-			if (this.payDebit == '') {
-				this.payDebit = 0
-			}
-			if (this.payCredit == '') {
-				this.payCredit = 0
-			}
-			if (this.discount == '') {
-				this.discount = 0
-			}
-			if (this.design == '') {
-				this.design = 0
-            }
-            if (this.payOrder == '') {
-				this.payOrder = 0
-            }
-            const totalFormadePago = parseFloat(this.payCash) + parseFloat(this.payOthers) + parseFloat(this.payTransfer) + parseFloat(this.payDebit) + parseFloat(this.payCredit) + parseFloat(this.payOrder)
-            console.log(totalFormadePago)
-            if (this.clientSelect && this.lenderSelect != '') {
-				if (Math.round(this.totalSinFormato) == Math.round(totalFormadePago)) {
+            var totalPay = 0
+            var payType = ''
+			this.typesPay.forEach(element => {
+                if (element.total == '') {
+                    element.total = 0
+                }
+                totalPay = totalPay + element.total
+                payType = element.total > 0 ? element.type : ''
+            });
+            if (this.clientSelect != null && this.lenderSelect != null) {
+				if (Math.round(this.totalSinFormato) == Math.round(totalPay)) {
                     const itemList = []
                     for (let index = 0; index < this.serviciosSelecionados.length; index++) {
-                        if (this.serviciosSelecionados[index].productos) {
-                            for (let i = 0; i < this.serviciosSelecionados[index].productos.length; i++) {
-                                itemList.push(this.serviciosSelecionados[index].productos[i])
+                        if (this.serviciosSelecionados[index].products) {
+                            for (let i = 0; i < this.serviciosSelecionados[index].products.length; i++) {
+                                itemList.push(this.serviciosSelecionados[index].products[i])
                             }
                         }
                         
@@ -1529,52 +1333,36 @@ export default {
                         array:itemList
                     })
                     .then(res => {})
-					axios.post(endPoint.endpointTarget+'/ventas/procesar', {
-						cliente: this.clientSelect,
-						manicurista: this.nombreManicurista,
-						servicios: this.serviciosSelecionados,
-						pagoEfectivo:this.payCash,
-						pagoOtros:this.payOthers,
-						pagoRedCDebito:this.payDebit,
-						pagoRedCCredito:this.payCredit,
-                        pagoTransf:this.payTransfer,
-                        pagoOrder:this.payOrder,
-                        descuento:this.discount,
+					axios.post(endPoint.endpointTarget+'/sales/process', {
+						client: this.clientSelect,
+						employe: this.lenderSelect,
+						services: this.serviciosSelecionados,
+						typesPay: this.typesPay,
+                        branch: this.branch,
+                        payType: payType,
+                        purchaseOrder: this.payOrder,
+                        discount: this.discount,
                         processDate: this.inspectorDate,
-						fecha:this.dates.dateSale,
+						date: this.dates.dateSale,
 						total: this.totalSinFormato,
 						ifProcess: this.idProcess,
-						diseno: this.design,
-						totalSinDesign: this.subTotal,
-                        documentoManicurista: this.docLender,
+						design: this.design,
                         ifrecomend: this.ifrecomend
-					})
+					}, this.configHeader)
 					.then(res => {
-						if (res.data.status == "Venta registrada") {
-
-                            this.modals = {
-                                modal1: true,
-                                message: "Venta procesada",
-                                icon: 'ni ni-check-bold ni-5x',
-                                type: 'success'
-                            }
+                        console.log(res)
+						if (res.data.status == "Sale register") {
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Venta procesada.',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                             if (this.haveCode == true) {
                                 axios.get(endPoint.endpointTarget+'/pedidos/useCode/'+this.idArticulo)
                                 .then( res =>{})
                             }
-                            
-                            setTimeout(() => {
-                                this.modals = {
-                                    modal1: false,
-                                    modal2: false,
-                                    modal3: false,
-                                    modal4: false,
-                                    message: "",
-                                    icon: '',
-                                    type: ''
-                                }
-                                this.haveCode = false
-                            }, 1500);
+                            this.haveCode = false
                             this.alertProducts()
 							this.servicios =''
 							this.initialState()
@@ -1582,23 +1370,12 @@ export default {
                             EventBus.$emit('reloadSales', 'process')
                             this.spinning = false
 						}else if(res.data.status == "no-cash"){
-							this.modals = {
-                                modal1: true,
-                                message: "Primero debe registrar un fondo de caja",
-                                icon: 'ni ni-fat-remove ni-5x',
-                                type: 'danger'
-                            }
-                            setTimeout(() => {
-                                this.modals = {
-                                    modal1: false,
-                                    modal2: false,
-                                    modal3: false,
-                                    modal4: true,
-                                    message: "",
-                                    icon: '',
-                                    type: ''
-                                }
-                            }, 1500);
+							this.$swal({
+                                icon: 'info',
+                                title: 'Primero debe registrar un fondo de caja.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
                             this.spinning = false
 						}
 					}).catch(err => {
@@ -1611,24 +1388,13 @@ export default {
                         this.spinning = false
 					})
 				}else{
-                    this.modals = {
-                        modal1: true,
-                        message: "Total no coincide, con los montos en medios de pago",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3: false,
-                            modal4: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                        this.spinning = false
-                    }, 1500);
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Los montos no coinciden.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.spinning = false
 					if (this.pagoEfectivo == 0) {
 						this.pagoEfectivo = ''
 					}
@@ -1646,24 +1412,13 @@ export default {
 					}
 				}	
 			}else{
-                this.modals = {
-                    modal1: true,
-                    message: "Complete los datos necesarios",
-                    icon: 'ni ni-fat-remove ni-5x',
-                    type: 'danger'
-                }
-                setTimeout(() => {
-                    this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: false,
-                        modal4: false,
-                        message: "",
-                        icon: '',
-                        type: ''
-                    }
-                    this.spinning = false
-                }, 1500);
+                this.$swal({
+                    icon: 'error',
+                    title: 'Complete los datos necesarios.',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                this.spinning = false
 			}
         },
         alertProducts(){
@@ -1722,7 +1477,7 @@ export default {
                 }
                 else{
                     this.$swal({
-                        type: 'error',
+                        icon: 'error',
                         title: 'Código no existe',
                         showConfirmButton: false,
                         timer: 1500
@@ -1732,7 +1487,7 @@ export default {
         },
         verifyCode(){
             this.$swal({
-					type: 'warning',
+					icon: 'warning',
 					title: '¿Seguro que desea verificar el código?',
 					showConfirmButton: true,
                     showCancelButton: true,
@@ -1742,14 +1497,13 @@ export default {
                     cancelButtonText: 'No'
 				}).then((result) => {
                     if (result.value) {
-                            var remp = this.totalArticulo.replace('.', "")
-                            var remp1 = remp.replace(',00', "")
-                            var remp2 = remp1.replace('$ ', "")
-                            this.payOrder = remp2
-                            this.haveCode = true
-                            this.modals.modal5 = false
-                            this.modals.modal6 = false
-                            
+                        var remp = this.totalArticulo.replace('.', "")
+                        var remp1 = remp.replace(',00', "")
+                        var remp2 = remp1.replace('$ ', "")
+                        this.payOrder = remp2
+                        this.haveCode = true
+                        this.modals.modal5 = false
+                        this.modals.modal6 = false
                     }
                 })
         }
@@ -1768,7 +1522,9 @@ export default {
             this.initialState()
             this.getDataToDate(status)
         })
-        
+        EventBus.$on('changeBranch', status => {
+            this.getBranch()
+        })
     }
 }
 </script>
