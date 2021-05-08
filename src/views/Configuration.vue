@@ -1,1351 +1,664 @@
 <template>
-  <div>
-    <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center" style="min-height: 50px; background-image: url(img/theme/inventario.jpg); background-size: cover; background-position: center top;">
-        <!-- Mask -->
-        <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
-        <!-- Header container -->
-        <div class="container-fluid d-flex align-items-center">
+    <div>
+        <base-header class="header pb-7 pt-5  d-flex align-items-center"
+                     style="min-height: 400px; background-image: url(img/theme/syswa-gestion.png); background-size: cover; background-position: center;">
+            <!-- Mask -->
+            <span class="mask bg-gradient-success opacity-8"></span>
+            <!-- Header container -->
+            <div class="container-fluid d-flex align-items-center">
+                <div class="row">
+                    <div class="col-lg-7 col-md-10">
+                        <h1 class="display-2 text-white">Configuración</h1>
+                    </div>
+                </div>
+            </div>
+        </base-header>
+
+        <div class="container-fluid mt--7">
             <div class="row">
-                <div class="col-12">
-                    <h1 class="display-2 text-white">Sección de configuración</h1>
-                    <p class="text-white mt-0 mb-2">Esta es la sección de configuración donde podra configurar todo tu sistema.</p>
-                    <a @click="modals.modal1 = true ,validForm = 1, initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un producto</a>
-                    <a @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un provedor</a>
-                    <a @click="modals.modal4 = true" class="btn btn-danger text-white cursor-pointer">Cerrar inventario</a>
+                <div class="col-xl-8 order-xl-2 mb-5 mb-xl-0">
+                    <div class="card card-profile shadow">
+                      <a-config-provider>
+                        <template #renderEmpty>
+                          <div style="text-align: center">
+                            <a-icon type="info-circle" style="font-size: 60px" />
+                            <h1>Selecciona una seccion para configurar</h1>
+                          </div>
+                        </template>
+                        <a-list v-if="selectedConfig == ''">
+                        </a-list>
+                      </a-config-provider>
+                      <div v-if="selectedConfig == 'typePay'" class="row p-4">
+                          <div class="w-100 mb-3">
+                            <h1 class=" text-center w-100 my-2">
+                                Tipos de pago
+                            </h1>
+                            <hr class="w-50 mb-0 mt-0">
+                          </div>
+                          <div class="col-md-4">
+                              <base-input class="input-group-alternative"
+                                  placeholder="Efectivo"
+                                  addon-left-icon="fa fa-plus"
+                                  v-model="typePay"
+                                  v-on:keyup.enter="insertTypePay">
+                              </base-input>
+                              <base-button outline type="default" size="sm" class="w-50" v-on:click="insertTypePay">
+                                  Ingresar
+                              </base-button>
+                              <label class="mt-4" for="currency">
+                                  Seleccione su moneda local
+                              </label>
+                              <a-select v-if="selectedConfig == 'typePay'" class="input-group-alternative" :default-value="configData.currency" style="width: 100%" size="large" @change="selectCurrency">
+                                  <a-select-option value="USD">
+                                      USD
+                                  </a-select-option>
+                                  <a-select-option value="EUR">
+                                      EUR
+                                  </a-select-option>
+                                  <a-select-option value="CLP" >
+                                      CLP
+                                  </a-select-option>
+                                  <a-select-option value="COP">
+                                      COP
+                                  </a-select-option>
+                                  <a-select-option value="ARG">
+                                      ARG
+                                  </a-select-option>
+                                  <a-select-option value="VES">
+                                      VES
+                                  </a-select-option>
+                              </a-select>
+                          </div>
+                          <a-config-provider>
+                              <template  #renderEmpty>
+                                  <div style="text-align: center">
+                                      <a-icon type="warning" style="font-size: 20px"/>
+                                      <p>No se han agregado metodos de pago</p>
+                                  </div>
+                              </template>
+                              <a-tooltip placement="top">
+                                  <template slot="title">
+                                  <span v-if="configData.typesPay.lenght == 0">Para ingresar un método de pago debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
+                                  </template>
+                                  <div class="col-md-8" >
+                                      <a-list bordered :data-source="configData.typesPay">
+                                          <a-list-item slot="renderItem" slot-scope="item, index">
+                                              {{ item }} 
+                                              <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeTypePay(index)">
+                                                  <i class="fa fa-times"></i>
+                                              </base-button>
+                                          </a-list-item>
+                                      </a-list>
+                                  </div>
+                              </a-tooltip>
+                          </a-config-provider>
+                      </div>
+                      <div v-if="selectedConfig == 'agend'">
+                        <h1 class=" text-center my-2">
+                            Configura tu agenda
+                        </h1>
+                        <hr class="w-50 mb-0 mt-0">
+                        <div class="row p-4 pt-0 pl-5">
+                          <div class="col-12 row mb-3">
+                            <a-switch class="mx-auto" :checked="configData.datesPolitics.onlineDates" @click="changeDatePolitic('onlineDates')" checked-children="Agendamiento online" un-checked-children="Agendamiento online" />
+                            <a-switch class="mx-auto" :checked="configData.datesPolitics.editDates" @click="changeDatePolitic('editDates')" checked-children="Permitir editar citas" un-checked-children="Permitir editar citas" />
+                            <a-switch class="mx-auto" :checked="configData.datesPolitics.microServices" @click="changeDatePolitic('microServices')" checked-children="Microservicios" un-checked-children="Microservicios" />
+                            <a-switch class="mx-auto" :checked="configData.datesPolitics.deleteDates" @click="changeDatePolitic('deleteDates')" checked-children="Permitir eliminar citas" un-checked-children="Permitir eliminar citas" />
+                          </div>
+                          <div class="col-4">
+                              <base-button :type="configData.blockHour[1].status == true ? 'success' : 'danger'" size="sm" class="mt-2 w-100" v-on:click="salectDay('monday')">
+                                  Lunes
+                              </base-button>
+                              <base-button :type="configData.blockHour[2].status == true ? 'success' : 'danger'" size="sm" class="mt-2 w-100" v-on:click="salectDay('tuesday')">
+                                  Martes
+                              </base-button>
+                              <base-button :type="configData.blockHour[3].status == true ? 'success' : 'danger'" size="sm" class="mt-2 w-100" v-on:click="salectDay('wednesday')">
+                                  Miércoles
+                              </base-button>
+                              <base-button :type="configData.blockHour[4].status == true ? 'success' : 'danger'" size="sm" class="mt-2 w-100" v-on:click="salectDay('thursday')">
+                                  Jueves
+                              </base-button>
+                              <base-button :type="configData.blockHour[5].status == true ? 'success' : 'danger'" size="sm" class="mt-2 w-100" v-on:click="salectDay('friday')">
+                                  Viernes
+                              </base-button>
+                              <base-button :type="configData.blockHour[6].status == true ? 'success' : 'danger'" size="sm" class="mt-2 w-100" v-on:click="salectDay('saturday')">
+                                  Sábado
+                              </base-button>
+                              <base-button :type="configData.blockHour[0].status == true ? 'success' : 'danger'" size="sm" class="mt-2 w-100" v-on:click="salectDay('sunday')">
+                                  Domingo
+                              </base-button>
+                          </div>
+                          <div class="col-8 row">
+                              <a-select :disabled="configData.blockHour[1].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[1].start">
+                                  <a-select-option v-for="i in fromArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+                              <a-select :disabled="configData.blockHour[1].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[1].end">
+                                  <a-select-option v-for="i in toArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+
+                              <a-select :disabled="configData.blockHour[2].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[2].start">
+                                  <a-select-option v-for="i in fromArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+                              <a-select :disabled="configData.blockHour[2].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[2].end">
+                                  <a-select-option v-for="i in toArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+                              
+                              <a-select :disabled="configData.blockHour[3].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[3].start">
+                                  <a-select-option v-for="i in fromArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+                              <a-select :disabled="configData.blockHour[3].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[3].end">
+                                  <a-select-option v-for="i in toArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+
+                              <a-select :disabled="configData.blockHour[4].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[4].start">
+                                  <a-select-option v-for="i in fromArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+                              <a-select :disabled="configData.blockHour[4].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[4].end">
+                                  <a-select-option v-for="i in toArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+
+                              <a-select :disabled="configData.blockHour[5].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[5].start">
+                                  <a-select-option v-for="i in fromArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+                              <a-select :disabled="configData.blockHour[5].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[5].end">
+                                  <a-select-option v-for="i in toArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+
+                              <a-select :disabled="configData.blockHour[6].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[6].start">
+                                  <a-select-option v-for="i in fromArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+                              <a-select :disabled="configData.blockHour[6].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[6].end">
+                                  <a-select-option v-for="i in toArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+
+                              <a-select :disabled="configData.blockHour[0].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[0].start">
+                                  <a-select-option v-for="i in fromArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+                              <a-select :disabled="configData.blockHour[0].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[0].end">
+                                  <a-select-option v-for="i in toArray" :key="i">
+                                      {{i}}
+                                  </a-select-option>
+                              </a-select>
+                          </div>
+                          <div class="col-12 row mt-4">
+                            <div class="col-4">
+                              <h4 class="text-center">
+                                Recordatorio <br> <small class="text-muted text-center mx-auto">Dias antes para recordar una cita</small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.reminderDate" v-on:keyup="changeTime" />
+                            </div>
+                            <div class="col-4">
+                              <h4 class="text-center">
+                                Limite de reserva <br> <small class="text-muted text-center mx-auto">Horas antes para poder reservar</small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minTypeDate" v-on:keyup="changeTime"/>
+                            </div>
+                            <div class="col-4">
+                              <h4 class="text-center">
+                                Maximo tiempo de reserva <br> <small class="text-muted text-center mx-auto">Limite de meses futuros para reservar </small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.limitTimeDate" v-on:keyup="changeTime"/>
+                            </div>
+                            <div class="col-4">
+                              <h4 class="text-center">
+                                Limite de edición <br> <small class="text-muted text-center mx-auto">Horas previas para editar una cita</small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minEditDate" v-on:keyup="changeTime"/>
+                            </div>
+                            <div class="col-4">
+                              <h4 class="text-center">
+                                Cantidad de edición <br> <small class="text-muted text-center mx-auto">Veces que se puede editar una cita</small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.editQuantity" v-on:keyup="changeTime"/>
+                            </div>
+                          </div>
+                          <div class="col-12 mt-2 mb-0">
+                            <p class="text-center mx-auto mb-0">
+                              <small class="text-muted">Los valores no pueden ser mayores a 20</small>
+                            </p>
+                          </div>
+                      </div>
+                      </div>
+                      <div v-if="selectedConfig == 'blackList'" class="row p-3">
+                          <div class="w-100 mb-3">
+                            <h1 class=" text-center w-100 my-2">
+                                Lista negra de clientes
+                            </h1>
+                            <hr class="w-50 mb-0 mt-0">
+                          </div>
+                          <div class="col-md-4">
+                              <a-select v-if="selectedConfig == 'blackList'" class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione un cliente" size="large">
+                                  <a-select-option v-for="client of clients" :key="client._id" @click="selectClient(client)" :value="client.firstName + ' ' + client.lastName + ' - ' + client.email">
+                                      {{client.firstName + ' ' + client.lastName + ' - ' + client.email}}
+                                  </a-select-option>
+                              </a-select>
+                              <base-button outline type="default" size="sm" class="w-50" v-on:click="insertClient">
+                                  Ingresar
+                              </base-button>
+                          </div>
+                          <a-config-provider>
+                              <template  #renderEmpty>
+                                  <div style="text-align: center">
+                                      <a-icon type="warning" style="font-size: 20px"/>
+                                      <p>No se han agregado clientes a la lista negra</p>
+                                  </div>
+                              </template>
+                              <a-tooltip placement="top">
+                                  <template slot="title">
+                                  <span v-if="configData.typesPay.lenght == 0">Para ingresar un cliente a la lista debes seleccionarlo en la izquierda y darle click en <b>Ingresar</b></span>
+                                  </template>
+                                  <div class="col-md-8" >
+                                      <a-list bordered :data-source="configData.blackList">
+                                          <a-list-item slot="renderItem" slot-scope="item, index">
+                                              {{ item.name + ' - ' + item.email }} 
+                                              <base-button outline type="default" size="sm" class="float-right" v-on:click="removeClient(index)">
+                                                  <i class="fa fa-times"></i>
+                                              </base-button>
+                                          </a-list-item>
+                                      </a-list>
+                                  </div>
+                              </a-tooltip>
+                          </a-config-provider>
+                      </div>
+                      <div v-if="selectedConfig == 'information'">
+                        <div class="w-100 mb-3">
+                          <h1 class=" text-center w-100 my-2">
+                              Información de la sucursal
+                          </h1>
+                          <hr class="w-50 mb-0 mt-0">
+                        </div>
+                        <div class="row p-4">
+                            <div class="col-md-6 col-sm-12">
+                                <label class="ml-2" for="credentials">
+                                    Nombre de la sucursal
+                                </label>
+                                <base-input class="input-group-alternative"
+                                    placeholder="Nombre de la sucursal"
+                                    addon-left-icon="ni ni-shop"
+                                    v-model="configData.businessName"
+                                    :valid="configData.businessName.length >= 4 ? true : false">
+                                </base-input>
+                            </div>
+                            <div class="col-md-6 col-sm-12 row pr-0">
+                                <label class="ml-4 w-100" for="credentials">
+                                    Número de contacto
+                                </label>
+                                <div class="col-3">
+                                    <base-input class="input-group-alternative"
+                                        placeholder="+56"
+                                        v-model="configData.businessPhoneCode"
+                                    >
+                                    </base-input>
+                                </div>
+                                <div class="col-9 px-0">
+                                    <base-input class="input-group-alternative"
+                                        placeholder="Teléfono"
+                                        type='number'
+                                        addon-left-icon="fa fa-phone"
+                                        v-model="configData.businessPhone">
+                                    </base-input>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label class="ml-2 w-100" for="credentials">
+                                    Dirección del local
+                                </label>
+                                <base-input class="input-group-alternative"
+                                    placeholder="Dirección"
+                                    addon-left-icon="fa fa-location-arrow"
+                                    v-model="configData.businessLocation"
+                                    :valid="configData.businessLocation.length >= 4 ? true : false">
+                                </base-input>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label class="ml-2 w-100" for="credentials">
+                                    Tipo de negocio
+                                </label>
+                                <a-select
+                                        show-search
+                                        placeholder="Seleccionar negocio"
+                                        option-filter-prop="children"
+                                        style="width: 100%"
+                                        class="input-group-alternative"
+                                        size="large"
+                                        :defaultValue="configData.businessType"
+                                        :filter-option="filterOption"
+                                        @change="handleChange"
+                                    >
+                                    <a-select-option value="Spa de uñas">
+                                        Spa de uñas
+                                    </a-select-option>
+                                    <a-select-option value="Barberia">
+                                        Barberia
+                                    </a-select-option>
+                                    <a-select-option value="Peluqueria">
+                                        Peluquería
+                                    </a-select-option>
+                                </a-select>
+                            </div>
+                            <base-button class="mx-auto mt-2" v-on:click="updateconfig" :disabled="configData.businessName.length < 4 && configData.businessPhone != '' && configData.businessPhone != 0 && configData.businessPhone != null && configData.businessLocation != '' ? true : false" outline type="default">Actualizar información</base-button>
+                        </div>
+                      </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </base-header>
-    <tabs fill class="flex-column flex-md-row inventory inventoryTabs">
-        <card shadow>
-            <tab-pane>
-                <span class="p-2" slot="title">
-                    <i class="fa fa-box-open"></i>
-                    Tabla de productos
-                </span>
-                <vue-bootstrap4-table class="tableClient" card_title="Hola" :rows="rows" :columns="columns" :classes="classes" :config="config">
-                  <template slot="edit" slot-scope="props">
-                      <b>
-                        <center>
-                          <a-tooltip placement="top">
-                            <template slot="title">
-                              <span>Anexar productos</span>
-                            </template>
-                            <base-button  title="Compras" size="sm" type="success" @click="modals.modal1 = true,validForm = 3,dataProduct.entry = '',unit = props.row.type, dataProduct.name = props.row.producto,initialState(1,props.row._id)" icon="fa fa-plus"></base-button>
-                          </a-tooltip>
 
-                          <a-tooltip placement="top">
-                            <template slot="title">
-                              <span>Alerta de productos</span>
-                            </template>
-                            <base-button v-if="parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume) <= props.row.alertTotal" title="Alerta producto" size="sm" type="danger" icon="ni ni-bell-55" @click="dataStock(props.row._id, props.row.alertTotal, props.row.type)"></base-button>
-                            <base-button v-else title="Alerta producto" size="sm" type="success" icon="ni ni-bell-55" @click="dataStock(props.row._id, props.row.alertTotal, props.row.type)"></base-button>
-                          </a-tooltip>  
-
-                          <a-tooltip placement="top">
-                            <template slot="title">
-                              <span>Eliminar</span>
-                            </template>
-                            <base-button  title="Eliminar" size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash"></base-button>
-                          </a-tooltip>  
-                            
-                        </center>
-                      </b>
-                  </template>
-                  <template slot="totalIdeal" slot-scope="props">
-                    <span v-if="parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume) <= props.row.alertTotal" style="color:#f5365c">
-                      {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
-                    </span>
-                    <span v-else>
-                      {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
-                    </span>
-                  </template>
-                  <template slot="price" slot-scope="props">
-                    $ {{formatPrice(props.row.monto)}}
-                  </template>
-                  <template slot="pagination-info" slot-scope="props">
-                      Actuales {{props.currentPageRowsLength}} | 
-                         
-                      Registros totales {{props.originalRowsLength}}
-                  </template>
-                  <template slot="selected-rows-info" slot-scope="props">
-                      Total Number of rows selected : {{props.selectedItemsCount}}
-                  </template>
-              </vue-bootstrap4-table>
-            </tab-pane>
-
-            <tab-pane title="Profile">
-                <span id="provedorBtn" slot="title">
-                    <i class="fa fa-user-tie"></i>
-                    Tabla de provedores
-                </span>
-                <vue-bootstrap4-table class="tableClient" :rows="providerTable" :columns="columProvider" :classes="classes" :config="config">
-                  <template slot="edit" slot-scope="props">
-                      <b>
-                        <center>
-                          <a-tooltip placement="top">
-                            <template slot="title">
-                              <span>Editar</span>
-                            </template>
-                            <base-button size="sm" type="default" @click="modals.modal3 = true, providerSup.typeProvider = 'Editar', pushDataProvider(props.row.nombre, props.row.rut, props.row.contacto,props.row.contactoAdicional,props.row.ubicacion,props.row._id)" icon="fas fa-edit"></base-button>
-                            
-                          </a-tooltip>
-
-                          <a-tooltip placement="top">
-                            <template slot="title">
-                              <span>Eliminar</span>
-                            </template>
-                            <base-button size="sm" type="danger" @click="deleteProvider(props.row._id)" icon="fa fa-trash"></base-button>
-                          </a-tooltip>
-                            
-                        </center>
-                      </b>
-                  </template>
-                  <template slot="totalIdeal" slot-scope="props">
-                    {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
-                  </template>
-                  <template slot="price" slot-scope="props">
-                    $ {{formatPrice(props.row.monto)}}
-                  </template>
-                  
-                  <template slot="pagination-info" slot-scope="props">
-                      Actuales {{props.currentPageRowsLength}} | 
-                         
-                      Registros totales {{props.originalRowsLength}}
-                  </template>
-                  <template slot="selected-rows-info" slot-scope="props">
-                      Total Number of rows selected : {{props.selectedItemsCount}}
-                  </template>
-              </vue-bootstrap4-table>
-            </tab-pane>
-
-            <tab-pane>
-                <span slot="title">
-                  <i class="ni ni-calendar-grid-58"></i>
-                  Historial
-                </span>
-                <tabs fill class="flex-column flex-md-row">
-                    <card shadow>
-                        <tab-pane>
-                            <span slot="title">
-                                <i class="fa fa-money-check-alt"></i>
-                                Historial de compras
-                            </span>
-                            <vue-bootstrap4-table class="tableClient" card_title="Hola" :rows="history" :columns="columHistory" :classes="classes" :config="config">
-                              <!-- <template slot="edit" slot-scope="props">
-                                  <b>
-                                    <center>
-                                        <base-button size="sm" type="default" @click="deleteSale(props.row.id,props.row.entry)" icon="fa fa-ban">Anular</base-button>
-                                    </center>
-                                  </b>
-                              </template> -->
-                              <template slot="totalIdeal" slot-scope="props">
-                                {{parseFloat(props.row.cantidad) + parseFloat(props.row.entry) - parseFloat(props.row.consume)}}
-                              </template>
-                              <template slot="costo" slot-scope="props">
-                                $ {{formatPrice(props.row.precio)}}
-                              </template>
-                              
-                              <template slot="pagination-info" slot-scope="props">
-                                  Actuales {{props.currentPageRowsLength}} | 
-                                     
-                                  Registros totales {{props.originalRowsLength}}
-                              </template>
-                              <template slot="selected-rows-info" slot-scope="props">
-                                  Total Number of rows selected : {{props.selectedItemsCount}}
-                              </template>
-                          </vue-bootstrap4-table>
-                        </tab-pane>
-
-                        <tab-pane title="Profile">
-                            <span slot="title">
-                                <i class="fa fa-file-contract"></i>
-                                Historial de cierres
-                            </span>
-                            <vue-bootstrap4-table class="tableClient" :rows="historyClosed" :columns="columHistoryClosed" :classes="classes" :config="config">
-                              <template slot="edit" slot-scope="props">
-                                  <b>
-                                    <center>
-                                      <a-tooltip placement="top">
-                                        <template slot="title">
-                                          <span>Ver informe</span>
-                                        </template>
-                                        <base-button size="sm" type="default" @click="modals.modal5 = true ,validForm = 2, reports = props.row.array" icon="ni ni-bullet-list-67"></base-button>
-                                      </a-tooltip>
-                                        
-                                        <!-- <base-button size="sm" type="danger" @click="deleteItem(props.row._id)" icon="fa fa-trash">Anular</base-button> -->
-                                    </center>
-                                  </b>
-                              </template>
-                              <template slot="date" slot-scope="props">
-                                {{formatDate(props.row.fecha)}}
-                              </template>
-                              
-                              <template slot="pagination-info" slot-scope="props">
-                                  Actuales {{props.currentPageRowsLength}} | 
-                                     
-                                  Registros totales {{props.originalRowsLength}}
-                              </template>
-                              <template slot="selected-rows-info" slot-scope="props">
-                                  Total Number of rows selected : {{props.selectedItemsCount}}
-                              </template>
-                          </vue-bootstrap4-table>
-                        </tab-pane>
+                <div class="col-xl-2 order-xl-1">
+                    <card shadow type="secondary">
+                        <div slot="header" class="bg-white border-0">
+                            <div class="row align-items-center">
+                                <h3 class="mb-2 w-100 text-center">Secciones</h3>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'typePay' ? false : true" type="primary" v-on:click="fixed('typePay'), getConfiguration()">Tipos de pago</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'agend' ? false : true" type="primary" v-on:click="selectedConfig = 'agend', getConfiguration()">Agendamiento</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'blackList' ? false : true" type="primary" v-on:click="fixed('blackList'), getConfiguration()">Lista negra</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'information' ? false : true" type="primary" v-on:click="selectedConfig = 'information', getConfiguration()">Informacion</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'profiles' ? false : true" type="primary" v-on:click="selectedConfig = 'profiles', getConfiguration()">Perfiles de acceso</base-button>
+                            </div>
+                        </div>
                     </card>
-                </tabs>
-            </tab-pane>
-        </card>
-    </tabs>
-    <modal :show.sync="modals.modal1"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-sm">
-        <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-        <card type="secondary" shadow
-              header-classes="bg-white pb-5"
-              body-classes="px-lg-5 py-lg-5"
-              class="border-0">
-            <template>
-            </template>
-            <template>
-                <div v-if="validForm != 3" style="margin-top:-30%" class="text-center text-muted mb-4">
-                    <small>Datos del producto</small>
                 </div>
-                <div v-else style="margin-top:-30%" class="text-center text-muted mb-4">
-                    <small>Anexa mas productos a {{dataProduct.name}}</small>
-                </div>
-                <form role="form">
-                   <div class="row" v-if="validForm == 3">
-                     <div class="col-7">
-                        <base-input v-on:keyup="valid"  alternative
-                                placeholder="Cantidad"
-                                v-model="dataProduct.entry"
-                                addon-left-icon="fa fa-box-open">
-                        </base-input>
-                      </div>
-                      <div class="col-5 mt-2">
-                        {{unit}}
-                      </div>
-                   </div>
-                    
-                    <base-input v-on:change="valid" v-if="validForm == 3" addon-left-icon="ni ni-calendar-grid-58">
-                        <flat-picker slot-scope="{focus, blur}"
-                                    @on-open="focus"
-                                    @on-close="blur"
-                                    :config="configDatePicker"
-                                    class="form-control datepicker"
-                                    v-model="dateAdd"
-                                    placeholder="Seleccione una fecha de compra">
-                        </flat-picker>
-                    </base-input>
-                    
-                    <base-input v-if="validForm != 3" alternative
-                                class="mb-3"
-                                placeholder="Nombre"
-                                v-model="dataProduct.name"
-                                addon-left-icon="fa fa-edit">
-                    </base-input>
-                    <select v-if="validForm != 3" class="form-control mb-3"  v-model="unit">
-                      <option style="color:black;" selected value="">Seleccione el tipo de medida</option>
-                      <option style="color:black;" value="Gramo(s)">Gramo(s)</option>
-                      <option style="color:black;" value="Kilogramo(s)">Kilogramo(s)</option>
-                      <option style="color:black;" value="Litro(s)">Litro(s)</option>
-                      <option style="color:black;" value="Mililitro(s)">Mililitro(s)</option>
-                      <option style="color:black;" value="Unidad">Unidad</option>
-                    </select>
-                    <base-input v-if="validForm != 3" alternative
-                                placeholder="Cantidad"
-                                v-model="dataProduct.initial"
-                                addon-left-icon="fa fa-box-open">
-                    </base-input>
-                    <base-input v-if="validForm == 1" alternative
-                          placeholder="Numero para alerta"
-                          v-model="dataProduct.alert"
-                          addon-left-icon="fa fa-bell">
-                    </base-input>
-                    <currency-input
-                        v-on:keyup="valid"
-                        locale="de"
-                        placeholder="Precio por unidad"
-                        addon-left-icon="ni ni-money-coins"
-                        v-model="dataProduct.price"
-                        class="form-control mb-3"
-                        style="margin-top:-10px;"
-                    />	
-                    <base-button icon="fa fa-plus" @click="modals.modal3 = true" v-if="validForm == 3" class="mb-2" size="sm" type="success">Registrar provedor</base-button>
-                    <div v-on:click="valid" v-on:keyup="valid">
-                      <vue-single-select
-                        v-if="validForm == 3"
-                        v-model="provider"
-                        :options="providers"
-                      placeholder="Provedor"
-                      ></vue-single-select>
-                    </div>
-                    
-                    <div class="text-center">
-                        <base-button v-on:click="addProduct()" v-if="validForm == 1" type="default">Registrar</base-button>
-                        <base-button v-on:click="updateProducts()" v-if="validForm == 2" type="default">Editar</base-button>
-                        <base-button  v-on:click="addMore(dataProduct.id)" v-if="validForm == 3" type="success">Agregar</base-button>
-                    </div>
-                </form>
-            </template>
-        </card>
-    </modal>
-    <modal :show.sync="modals.modal6"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-sm">
-        <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-        <card type="secondary" shadow
-              header-classes="bg-white pb-5"
-              body-classes="px-lg-5 py-lg-5"
-              class="border-0">
-            <template>
-                <div style="margin-top:-30%" class="text-center text-muted mb-4">
-                    <small>Edite el total para que le sistema alerte cuando este próximo a acabarse ({{typeStock}})</small>
-                </div>
-                <form role="form">
-                    <base-input alternative
-                      placeholder="Total alarma"
-                      v-model="stockTotal"
-                      addon-left-icon="fa fa-bell">
-                    </base-input>
-                </form>
-            </template>
-            <div class="text-center">
-              <base-button v-on:click="editStock()" type="default">Editar</base-button>
             </div>
-        </card>
-    </modal>
-    <modal :show.sync="modals.modal3"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-sm">
-        <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-        <card type="secondary" shadow
-              header-classes="bg-white pb-5"
-              body-classes="px-lg-5 py-lg-5"
-              class="border-0">
-            <template>
-                <div style="margin-top:-30%" class="text-center text-muted mb-4">
-                    <small>Datos del provedor</small>
-                </div>
-                <form role="form">
-                    <base-input  alternative
-                                placeholder="Nombre de la empresa"
-                                v-model="provider.name"
-                                v-on:keyup="validProviders()"
-                                addon-left-icon="fa fa-user-tie"
-                                addon-right-icon="fa fa-asterisk text-danger">
-                    </base-input>
-                    <base-input  alternative
-                                placeholder="RUT de la empresa"
-                                v-model="provider.rut"
-                                v-on:change="provider.rut = formatRut(provider.rut)"
-                                addon-left-icon="fa fa-key"
-                                addon-right-icon="fas fa-plus text-default">
-                    </base-input>
-                    <base-input  alternative
-                                placeholder="Contacto de la empresa"
-                                v-model="provider.contact"
-                                v-on:keyup="validProviders()"
-                                addon-left-icon="fa fa-address-book"
-                                addon-right-icon="fa fa-asterisk text-danger"
-                                >
-                    </base-input>
-                    <base-input  alternative
-                                placeholder="Contacto adicional"
-                                v-model="provider.contactPlus"
-                                addon-left-icon="fa fa-address-book"
-                                addon-right-icon="fas fa-plus text-default">
-                    </base-input>
-                    <base-input  alternative
-                                placeholder="Dirección de la empresa"
-                                v-model="provider.direction"
-                                v-on:keyup="validProviders()"
-                                addon-left-icon="fas fa-route"
-                                addon-right-icon="fa fa-asterisk text-danger">
-                    </base-input>
-                </form>
-            </template>
-            <div class="text-center">
-              <base-button v-on:click="providerFunction()"  :disabled="providerSup.validProvider" type="default">{{providerSup.typeProvider}}</base-button>
-            </div>
-        </card>
-    </modal>
-    <modal :show.sync="modals.modal2"
-               :gradient="modals.type"
-               modal-classes="modal-danger modal-dialog-centered">
-        <div class="py-3 text-center">
-            <i :class="modals.icon"></i>
-            <h1 class="heading mt-5">{{modals.message}}</h1>
         </div>
-    </modal>
-    <modal :show.sync="modals.modal4" modal-classes="modal-dialog-centered modal-lg">
-      <h6 slot="header" class="modal-title" id="modal-title-default">Cierre de inventario</h6>
-      <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-        <div class="row p-2 m-2">
-          <div class="col-7">
-            Nombre del producto
-          </div>
-          <div class="col-5 text-left">
-            Total real
-          </div>
-        </div> 
-        <div v-for="(data, index) in rows" class="row p-2 m-2">
-          <dt class="col-7 mt-2">{{data.producto}}</dt>
-
-          <base-input class="col-5" v-model="countProduct[index].count" :placeholder="'Ingrese cantidad en '+data.type"></base-input>
-        </div>
-      </vue-custom-scrollbar> 
-      
-      <template slot="footer">
-          <base-button v-on:click="closeInventory" type="default">Cerrar inventario</base-button>
-          <base-button type="link" class="ml-auto" @click="modals.modal4 = false">Salir
-          </base-button>
-      </template>
-    </modal>
-    <modal  modal-classes="modal-dialog-centered modal-xl" :show.sync="modals.modal5">
-        <h6 slot="header" class="modal-title" id="modal-title-default">Informe de cierre</h6>
-
-        <vue-bootstrap4-table class="tableClient" :rows="reports" :columns="columHistoryReport" :classes="classes" :config="config">
-            <template slot="pagination-info" slot-scope="props">
-                Actuales {{props.currentPageRowsLength}} | 
-                   
-                Registros totales {{props.originalRowsLength}}
-            </template>
-            <template slot="selected-rows-info" slot-scope="props">
-                Total Number of rows selected : {{props.selectedItemsCount}}
-            </template>
-        </vue-bootstrap4-table>
-
-        <template slot="footer">
-            
-            <base-button type="link" class="ml-auto" @click="modals.modal5 = false">Cerrar
-            </base-button>
-        </template>
-    </modal>
-
-  </div>
+    </div>
 </template>
 <script>
-//Back - End 
-import axios from 'axios'
-import endPoint from '../../config-endpoint/endpoint.js'
-import VueBootstrap4Table from 'vue-bootstrap4-table'
-import vueCustomScrollbar from 'vue-custom-scrollbar'
-import EventBus from '../components/EventBus'
-import flatPicker from "vue-flatpickr-component";
-import "flatpickr/dist/flatpickr.css";
-import {Spanish} from 'flatpickr/dist/l10n/es.js';
-// COMPONENTS
-
-  export default {
-    components: {
-        VueBootstrap4Table,
-        flatPicker,
-        vueCustomScrollbar
-    },
-    data() {
-      return {
-        countProduct:[],
-        reports:[],
-        usuario: localStorage.nombre + ' ' + localStorage.apellido,
-        myId:null,
-        historyClosed:[],
-        validForm:0,
-        providerSup:{
-          validProvider:false,
-          typeProvider:'',
-        }, 
-        history:[],
-        provider:{
-          name:'',
-          rut:'',
-          contact:'',
-          contactPlus:'',
-          direction:'',
-        },
-        providers:[],
-        providerTable:[],
-        unit:"",
-        dateAdd:'',
-        stockTotal: '',
-        idToStock: '',
-        typeStock: '',
-        addValid:true,
-        configDatePicker: {
-          allowInput: true,
-          dateFormat: 'm-d-Y',
-          locale: Spanish, // locale for this instance only
-          minDate: new Date(),         
-        },
-        modals: {
-          modal1: false,
-          modal2: false,
-          modal3: false,
-          modal4: false,
-          modal5: false,
-          modal6: false,
-          message: "",
-          icon: '',
-          type:''
-        },
-        dataProduct:{
-          name:'',
-          price:0,
-          initial:'',
-          entry:'',
-          alert:'',
-          id:null
-        },
-        rows: [],
-        columns: [
-          {
-            label: "Producto",
-            name: "producto",
-            sort: true,
+    import axios from 'axios'
+    import router from '../router'
+    import endPoint from '../../config-endpoint/endpoint.js'
+    import jwtDecode from 'jwt-decode'
+    import EventBus from '../components/EventBus'
+    import * as moment from 'moment';
+    import 'moment/locale/es';
+    moment.locale('es');
+    export default {
+      data() {
+        return {
+          selectedConfig: '',
+          selectedClient: '',
+          clients:[],
+          configData: {},
+          typePay: '',
+          validTime: false,
+          configHeader: {
+            headers:{
+              "x-database-connect": endPoint.database, 
+              "x-access-token": localStorage.userToken
+            }
           },
-          {
-            label: "precio",
-            name: "monto",
-            slot_name: "price",
-            sort: true
-          },
-          {
-            label: "Tipo de medida",
-            name: "type",
-            sort: true,
-          },
-          {
-            label: "Cantidad inicial",
-            name: "cantidad",
-            sort: true,
-          },
-          {
-            label: "Cantidad ingresada",
-            name: "entry",
-            sort: false,
-            
-          },
-          {
-            label: "Consumo",
-            name: "consume",
-            sort: false,
-            
-          },
-          {
-            label: "Total",
-            name: "",
-            sort: false,
-            slot_name: "totalIdeal"
-          },
-          {
-            label: "Administrar",
-            name: "_id",
-            sort: false,
-            slot_name: "edit"
-          },
-        ],
-        columProvider:[
-          {
-            label: "Nombre de la empresa",
-            name: "nombre",
-            sort: true
-          },
-          {
-            label: "RUT",
-            name: "rut",
-            sort: true
-          },
-          {
-            label: "Contacto",
-            name: "contacto",
-            sort: true
-          },
-          {
-            label: "Contacto adicional",
-            name: "contactoAdicional",
-            sort: true
-          },
-          {
-            label: "Ubicación",
-            name: "ubicacion",
-            sort: true
-          },
-          {
-            label: "Administrar",
-            name: "_id",
-            sort: false,
-            slot_name: "edit"
-          },
-        ],
-        columHistory:[
-          {
-            label: "Fecha",
-            name: "fecha",
-            sort: true
-          },
-          {
-            label: "Producto",
-            name: "producto",
-            sort: true
-          },
-          {
-            label: "Anexado",
-            name: "entry",
-            sort: true
-          },
-          {
-            label: "Medida",
-            name: "unit",
-            sort: true
-          },
-          {
-            label: "Costo",
-            name: "precio",
-            sort: true,
-            slot_name: "costo"
-          },
-          {
-            label: "Provedor",
-            name: "provedor",
-            sort: true
-          },
-          // {
-          //   label: "Administrar",
-          //   name: "_id",
-          //   sort: false,
-          //   slot_name: "edit"
-          // },
-        ],
-        columHistoryClosed:[
-          {
-            label: "Fecha",
-            name: "fecha",
-            sort: true,
-            slot_name: "date"
-          },
-          {
-            label: "Encargado del cierre",
-            name: "user",
-            sort: true,
-            slot_name: "costo"
-          },
-          {
-            label: "Productos totales",
-            name: "totalProduct",
-            sort: true
-          },
-          {
-            label: "Administrar",
-            name: "_id",
-            sort: false,
-            slot_name: "edit"
-          },
-        ],
-        columHistoryReport:[
-          {
-            label: "Producto",
-            name: "name",
-            sort: true,
-            slot_name: "date"
-          },
-          {
-            label: "Medida",
-            name: "medida",
-            sort: true,
-            slot_name: "costo"
-          },
-          {
-            label: "Total ideal",
-            name: "ideal",
-            sort: true
-          },
-          {
-            label: "Total real",
-            name: "count",
-            sort: true
-          },
-          {
-            label: "Diferencia",
-            name: "diferencia",
-            sort: true
-          },
-        ],
-        config: {
-          checkbox_rows: false,
-          rows_selectable : true,
-          highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
-          rows_selectable: true,
-          per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
-          global_search: {
-              placeholder: "Filtrar productos",
-              visibility: true,
-              case_sensitive: false
-          },
-          show_refresh_button: false,
-          show_reset_button: false,  
-          selected_rows_info: true,
-          preservePageOnDataChange : true,
-          pagination_info : true
-        },
-        classes: {
-          table: "table-bordered table-striped"
-        }     
-      };
-    },
-    beforeCreate(){
+          fromArray: [
+              '10:00',
+              '10:30',
+              '11:00',
+              '11:30',
+              '12:00',
+              '12:30',
+              '13:00',
+              '13:30',
+              '14:00',
+              '14:30',
+              '15:00',
+              '15:30',
+              '16:00',
+              '16:30',
+              '17:00',
+          ],
+            toArray: [
+              '10:30',
+              '11:00',
+              '11:30',
+              '12:00',
+              '12:30',
+              '13:00',
+              '13:30',
+              '14:00',
+              '14:30',
+              '15:00',
+              '15:30',
+              '16:00',
+              '16:30',
+              '17:00',
+              '17:30'
+          ],
+        }
+      },
+      beforeCreate(){
         if (!localStorage.getItem('userToken')) {
-          this.$swal({ 
-              type: 'error',
-              title: 'URL restringida',
-              showConfirmButton: false,
-              timer: 1500
-          })
-            router.push({name: 'login'})
-		    }
-    },
-    created(){
-      this.getProducts();
-      this.getProviders();
-      this.getHistoryClosed();
-    },
-    methods: {
-      getProducts() {
-        this.countProduct = []
-        axios.get(endPoint.endpointTarget+'/inventario')
-        .then(res => {
-          this.rows = res.data
-          this.history = []
-          for (let i = 0; i < res.data.length; i++) {
-            for (let e = 0; e < res.data[i].history.length; e++) {
-              
-              this.history.push(res.data[i].history[e])
-            }
-          }
-          for (let index = 0; index < this.rows.length; index++) {
-              var ideal = (this.rows[index].cantidad + this.rows[index].entry) - this.rows[index].consume
-              this.countProduct.push({id:this.rows[index]._id,count:'',ideal:ideal,medida:this.rows[index].type,name:this.rows[index].producto,diferencia:''})
-          } 
+        this.$swal({ 
+          type: 'error',
+          title: 'URL restringida',
+          showConfirmButton: false,
+          timer: 1500
         })
+          router.push({name: 'login'})
+        }
       },
-      getProviders() {
-        axios.get(endPoint.endpointTarget+'/inventario/getProvider')
-        .then(res => {
-          this.providerTable = res.data
-          for (let i = 0; i < res.data.length; i++) {
-            this.providers.push(res.data[i].nombre)
-          }
-        })
+      created(){
+        this.getBranch()
+        this.getClients()
       },
-      getHistoryClosed() {
-        axios.get(endPoint.endpointTarget+'/inventario/getHistory')
-        .then(res => {
-          this.historyClosed = res.data
-        })
-      },
-      addProduct(){
-        axios.post(endPoint.endpointTarget+'/inventario', {
-          product: this.dataProduct.name,
-          type: this.unit,
-          quantity: this.dataProduct.initial,
-          price: this.dataProduct.price,
-          alert:this.dataProduct.alert
-        })
-        .then(res => {
-          if (res.data.status === 'ok') {
-            this.modals = {
-                    modal2: true,
-                    message: "¡Producto registrado con exito!",
-                    icon: 'ni ni-check-bold ni-5x',
-                    type: 'success'
-                }
-                setTimeout(() => {
-                    this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: false,
-                        modal4: false,
-                        modal5: false,
-                        modal6: false,
-                        message: "",
-                        icon: '',
-                        type:''
-                    }
-                    this.getProducts();
-                    this.initialState(3)
-                }, 1500);
-            
-          }else{
-            this.modals = {
-                modal2: true,
-                message: "¡Producto ya existe!",
-                icon: 'ni ni-fat-remove ni-5x',
-                type: 'danger'
+      methods: {
+        getBranch(){
+          this.branchName = localStorage.branchName  
+          this.branch = localStorage.branch;
+          this.getConfiguration()
+        },
+        async getClients(){
+            try {
+              const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
+              if (getAllClients.data.data.length > 0) {
+                this.clients = getAllClients.data.data
+              }
+            }catch (err) {
+                console.log(err)
             }
-            setTimeout(() => {
-                this.modals = {
-                    modal1: true,
-                    modal2: false,
-                    modal3: false,
-                    modal4: false,
-                    modal5: false,
-                    modal6: false,
-                    message: "",
-                    icon: '',
-                    type:''
-                }
-                this.getProducts();
-            }, 1500);
-          }
-        })
-        .catch(err => {
-          this.$swal({
-            type: 'error',
-            title: 'Problemas con el servidor',
-            showConfirmButton: false,
-            timer: 1500
-          })
-          console.log(err)
-        })
-      },
-      addProvider(){
-        axios.post(endPoint.endpointTarget+'/inventario/addProvider', {
-          name: this.provider.name,
-          rut:this.provider.rut,
-          contacto:this.provider.contact,
-          contactoPlus:this.provider.contactPlus,
-          direccion:this.provider.direction
-        })
-        .then(res => {
-          if (res.data.status === 'ok') {
-            this.$swal({
-              type: 'success',
-              title: 'Provedor registrado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-            this.provider = {
-              name:'',
-              rut:'',
-              contact:'',
-              contactPlus:'',
-              direction:'',
+        },
+        async getConfiguration() {
+          try{
+            const getConfig = await axios.get(endPoint.endpointTarget+'/configurations/'+this.branch, this.configHeader)
+            if (getConfig.data.status == 'ok') {
+              this.configData = getConfig.data.data
+              console.log(this.configData)
             }
-            this.modals = {
-              modal1: false,
-              modal2: false,
-              modal3: false,
-              modal4: false,
-              modal5: false,
-              modal6: false,
-              message: "",
-              icon: '',
-              type:''
-            }
-            document.getElementById("provedorBtn").click()
-            this.getProducts();
-            this.getProviders();
-          }else{
+          }catch(err){
             this.$swal({
               type: 'error',
-              title: 'Provedor existe',
+              icon: 'error',
+              title: 'Problemas con el servidor',
               showConfirmButton: false,
               timer: 1500
             })
+            console.log(err)
           }
-        })
-        .catch(err => {
-          this.$swal({
-            type: 'error',
-            title: 'Problemas con el servidor',
-            showConfirmButton: false,
-            timer: 1500
+        },
+        changeDatePolitic(valid){
+          if (valid == 'onlineDates') {
+            this.configData.datesPolitics.onlineDates = this.configData.datesPolitics.onlineDates == true ? false : true
+          }else if (valid == 'microServices') {
+            this.configData.datesPolitics.microServices = this.configData.datesPolitics.microServices == true ? false : true
+          }else if (valid == 'editDates') {
+            this.configData.datesPolitics.editDates = this.configData.datesPolitics.editDates == true ? false : true
+          }else if (valid == 'deleteDates') {
+            this.configData.datesPolitics.deleteDates = this.configData.datesPolitics.deleteDates == true ? false : true
+          }
+          this.updateconfig()
+        },
+        handleChange(value){
+          this.configData.businessType = value
+        },
+        updateconfig(){
+          axios.post(endPoint.endpointTarget+'/configurations/editConfiguration/'+this.configData._id, {
+            blockHour: this.configData.blockHour,
+            blackList: this.configData.blackList,
+            businessName:  this.configData.businessName,
+            businessPhone: this.configData.businessPhone,
+            businessType: this.configData.businessType,
+            businessLocation: this.configData.businessLocation,
+            currency:  this.configData.currency,
+            typesPay: this.configData.typesPay,
+            datesPolitics: this.configData.datesPolitics
+          }, this.configHeader)
+          .then(res => {
+            if (res.data.status == 'ok') {
+              this.$swal({
+                type: 'success',
+                icon: 'success',
+                toast: true,
+                position: 'top-end',
+                title: 'Cambio exitoso',
+                showConfirmButton: false,
+                timer: 1500
+              })
+            }
+          }).catch(err => {
+            this.$swal({
+                type: 'error',
+                title: 'Problemas tecnicos intente nuevamente',
+                showConfirmButton: false,
+                timer: 1500
+              })
+              console.log(err)
           })
-          console.log(err)
-        })
-      },
-      initialState(type,id){
-        if (type == 1) {
-          this.myId = id
-          this.provider = ''
-          this.dateAdd = ''
-          this.dataProduct.price = ''
-          console.log(this.myId)
-        }
-        if (type == 2) {
-          this.provider = {
-            name:'',
-            rut:'',
-            contact:'',
-            contactPlus:'',
-            direction:'',
-          }
-          this.providerSup.validProvider = true
-        }
-        if(type == 3){
-          console.log("No entre aqui")
-          this.dataProduct = {
-            name:'',
-            price:0,
-            initial:'',
-            add:'',
-            alert: '',
-            id:''
-          }
-          this.unit = ''
-        }
-      },
-      pushData(name,cantidad,precio,id,type){
-        this.validForm = 2
-        this.unit = ''
-        this.dataProduct = {
-          name:name,
-          price:precio,
-          initial:cantidad,
-          id:id
-        }
-        this.unit = type
-      },
-      formatDate(date) {
-        let dateFormat = new Date(date)
-        return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
-      },
-      formatPrice(value) {
-          let val = (value/1).toFixed(2).replace('.', ',')
-          return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-      },
-      updateProducts(){
-        axios.put(endPoint.endpointTarget+'/inventario/'+this.dataProduct.id, {
-          product:this.dataProduct.name,
-          type: this.unit,
-          cantidad:this.dataProduct.initial,
-          monto:this.dataProduct.price,
-        })
-        .then(res => {
-          this.modals = {
-                    modal2: true,
-                    message: "¡Producto actualizado con exito!",
-                    icon: 'ni ni-check-bold ni-5x',
-                    type: 'success'
-                }
-                setTimeout(() => {
-                    this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: false,
-                        modal4: false,
-                        modal5: false,
-                        modal6: false,
-                        message: "",
-                        icon: '',
-                        type:''
-                    }
-                    this.getProducts();
-                    this.initialState(2)
-                }, 1500);
-        })
-        .catch(err => {
-          this.modals = {
-              modal2: true,
-              message: "¡Error al actualizar el producto!",
-              icon: 'ni ni-fat-remove ni-5x',
-              type: 'danger'
-          }
-          setTimeout(() => {
-              this.modals = {
-                  modal1: true,
-                  modal2: false,
-                  modal3: false,
-                  modal4: false,
-                  modal5: false,
-                  modal6: false,
-                  message: "",
-                  icon: '',
-                  type:''
+        },
+        removeTypePay(index){
+            this.configData.typesPay.splice(index, 1)
+            this.updateconfig()
+        },
+        removeClient(index){
+            this.configData.blackList.splice(index, 1)
+            this.updateconfig()
+        },
+        insertTypePay(){
+          var valid = true
+            this.configData.typesPay.forEach(element => {
+              if (element == this.typePay) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Este tipo de pago ya se encuentra registrado',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                valid = false
               }
-          }, 1500);
-        })
-      },
-      updateProvider(){
-        axios.put(endPoint.endpointTarget+'/inventario/updateProvider/'+this.provider.id, {
-          name:this.provider.name,
-          rut: this.provider.rut,
-          contact:this.provider.contact,
-          contactoPlus:this.provider.contactPlus,
-          ubicacion:this.provider.direction
-        })
-        .then(res => {
-          this.$swal({
-              type: 'success',
-              title: 'Provedor Actualizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-            this.getProviders();
-        })
-        .catch(err => {
-          this.$swal({
-              type: 'error',
-              title: 'El provedor no fue actualizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-        })
-      },
-      addMore(){
-        
-        axios.put(endPoint.endpointTarget+'/inventario/add/'+this.myId, {
-          entry:this.dataProduct.entry,
-          history:{id:this.myId,fecha:this.dateAdd,producto:this.dataProduct.name,entry:this.dataProduct.entry,unit:this.unit,precio:this.dataProduct.price,provedor:this.provider, status:true}
-        })
-        .then(res => {
-          this.modals = {
-              modal2: true,
-              message: "¡Producto actualizado con exito!",
-              icon: 'ni ni-check-bold ni-5x',
-              type: 'success'
-          }
-          setTimeout(() => {
-              this.modals = {
-                  modal1: false,
-                  modal2: false,
-                  modal3: false,
-                  modal4: false,
-                  modal5: false,
-                  modal6: false,
-                  message: "",
-                  icon: '',
-                  type:''
+            });
+            if (valid) {
+              if (this.typePay.length > 4) {
+                  this.configData.typesPay.push(this.typePay)
+                  this.typePay = ''
+                  this.updateconfig()
+              }else if (this.typePay.length <= 4) {
+                  this.$swal({
+                      icon: 'error',
+                      title: 'El método de pago debe estar compuesto por mas de 4 caracteres',
+                      showConfirmButton: false,
+                      timer: 1500
+                  })
+              }else{
+                  this.$swal({
+                      icon: 'error',
+                      title: 'Debe llenar el tipo de pago',
+                      showConfirmButton: false,
+                      timer: 1500
+                  })
               }
-              this.getProducts();
-          }, 1500);
+            }
+        },
+        selectCurrency(value){
+            this.configData.currency = value
+            this.updateconfig()
+        },
+        salectDay(day){
+          if (day == 'monday') {
+              this.configData.blockHour[1].status = this.configData.blockHour[1].status == true ? false : true
+          }else if (day == 'tuesday') {
+              this.configData.blockHour[2].status = this.configData.blockHour[2].status == true ? false : true
+          }else if (day == 'wednesday') {
+              this.configData.blockHour[3].status = this.configData.blockHour[3].status == true ? false : true
+          }else if (day == 'thursday') {
+              this.configData.blockHour[4].status = this.configData.blockHour[4].status == true ? false : true
+          }else if (day == 'friday') {
+              this.configData.blockHour[5].status = this.configData.blockHour[5].status == true ? false : true
+          }else if (day == 'saturday') {
+              this.configData.blockHour[6].status = this.configData.blockHour[6].status == true ? false : true
+          }else if (day == 'sunday') {
+              this.configData.blockHour[0].status = this.configData.blockHour[0].status == true ? false : true
+          }
+          this.updateconfig()
+        },
+        changeTime(){
+          if (this.configData.datesPolitics.editQuantity > 20) {
+            this.configData.datesPolitics.editQuantity = 20
+          }if (this.configData.datesPolitics.reminderDate > 20) {
+            this.configData.datesPolitics.reminderDate = 20
+          }if (this.configData.datesPolitics.minTypeDate > 20) {
+            this.configData.datesPolitics.minTypeDate = 20
+          }if (this.configData.datesPolitics.limitTimeDate > 20) {
+            this.configData.datesPolitics.limitTimeDate = 20
+          }if (this.configData.datesPolitics.minEditDate > 20) {
+            this.configData.datesPolitics.minEditDate = 20
+          }
 
-        })
-        .catch(err => {
-          this.$swal({
-              type: 'error',
-              title: 'El producto no fue actualizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-        })
-      },
-      valid(){
-        if (this.unit != '' && this.dateAdd != '' && this.dataProduct.price != '' && this.provider != '') {
-          this.addValid = false
-        }
-        else{
-          this.addValid = true
-        }
-      },
-      deleteProvider(id){
-        this.$swal({
-          title: '¿Está seguro de borrar el provedor?',
-          text: 'No puedes revertir esta acción',
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Estoy seguro',
-          cancelButtonText: 'No, evitar acción',
-          showCloseButton: true,
-          showLoaderOnConfirm: true
-        }).then((result) => {
-          if(result.value) {
-            axios.delete(endPoint.endpointTarget+'/inventario/deleteProvider/'+id)
-            .then(res => {
-              if (res.data.status == 'ok') {
-                this.modals = {
-                    modal2: true,
-                    message: "Provedor borrado con exito",
-                    icon: 'ni ni-check-bold ni-5x',
-                    type: 'success'
-                }
-                setTimeout(() => {
-                    this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: false,
-                        modal4: false,
-                        modal5: false,
-                        modal6: false,
-                        message: "",
-                        icon: '',
-                        type:''
-                    }
-                    this.getProviders()
-                }, 1500);
-              }
-            })
-          }
-          else{
-            this.modals = {
-                modal2: true,
-                message: "Acción cancelada",
-                icon: 'ni ni-check-bold ni-5x',
-                type: 'success'
-            }
+          if (this.validTime == false) {
+            this.validTime = true
             setTimeout(() => {
-                this.modals = {
-                    modal1: false,
-                    modal2: false,
-                    modal3: false,
-                    modal4: false,
-                    modal5: false,
-                    modal6: false,
-                    message: "",
-                    icon: '',
-                    type:''
-                }
-            }, 1500);
+              this.updateconfig()
+              this.validTime = false
+            }, 3000);
           }
-        })
-      },
-      deleteItem(id){
-        this.$swal({
-          title: '¿Está seguro de borrar el producto?',
-          text: 'No puedes revertir esta acción',
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Estoy seguro',
-          cancelButtonText: 'No, evitar acción',
-          showCloseButton: true,
-          showLoaderOnConfirm: true
-        }).then((result) => {
-          if(result.value) {
-            axios.put(endPoint.endpointTarget+'/inventario/deleteItem/'+id)
-            .then(res => {
-              if (res.data.status == 'ok') {
-                this.modals = {
-                    modal2: true,
-                    message: "Producto borrado con exito",
-                    icon: 'ni ni-check-bold ni-5x',
-                    type: 'success'
-                }
-                setTimeout(() => {
-                    this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: false,
-                        modal4: false,
-                        modal5: false,
-                        modal6: false,
-                        message: "",
-                        icon: '',
-                        type:''
-                    }
-                    this.getProducts()
-                }, 1500);
-              }
-            })
-          }
-          else{
-            this.modals = {
-                modal2: true,
-                message: "Acción cancelada",
-                icon: 'ni ni-check-bold ni-5x',
-                type: 'success'
+        },
+        selectClient(value){
+          this.selectedClient = value
+        },
+        insertClient(){
+          var valid = true
+          this.configData.blackList.forEach(element => {
+            if (element.clientId == this.selectedClient._id) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Este cliente ya se encuentra en la lista negra',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              valid = false
             }
-            setTimeout(() => {
-                this.modals = {
-                    modal1: false,
-                    modal2: false,
-                    modal3: false,
-                    modal4: false,
-                    modal5: false,
-                    modal6: false,
-                    message: "",
-                    icon: '',
-                    type:''
-                }
-            }, 1500);
+          });
+          if (valid) {
+            this.configData.blackList.push({clientId: this.selectedClient._id, name: this.selectedClient.firstName + ' ' + this.selectedClient.lastName, email: this.selectedClient.email})
+            this.updateconfig()
           }
-        })
-      },
-      closeInventory(){
-        console.log(this.countProduct)
-        axios.post(endPoint.endpointTarget+'/inventario/closeInventory', {
-          user:this.usuario,
-          array:this.countProduct
-        })
-        .then(res => {
-          if (res.data.status === 'ok') {
-            this.modals = {
-              modal2: true,
-              message: "¡Cierre realizado!",
-              icon: 'ni ni-check-bold ni-5x',
-              type: 'success'
-          }
+          
+        },
+        fixed(value){
+          this.selectedConfig = ''
           setTimeout(() => {
-              this.modals = {
-                  modal1: false,
-                  modal2: false,
-                  modal3: false,
-                  modal4: false,
-                  modal5: false,
-                  modal6: false,
-                  message: "",
-                  icon: '',
-                  type:''
-              }
-              this.getProducts();
-            this.getHistoryClosed()
-          }, 1500);
-            
-          }
-          else{
-            this.$swal({
-              type: 'success',
-              title: 'Ya se hizo un cierre este mes',
-              showConfirmButton: false,
-              timer: 1500
-            })
-          }
-        })
-        .catch(err => {
-          this.$swal({
-              type: 'error',
-              title: 'Cierre NO realizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-        })
-      },
-      validProviders(){
-        if (this.provider.name == '' || this.provider.contact == '' || this.provider.direction == '') {
-          this.providerSup.validProvider = true
+            this.selectedConfig = value
+          }, 100);
         }
-        else{
-          this.providerSup.validProvider = false
-        }
-      },
-      pushDataProvider(name,rut,contact,contactPlus,direccion,id){
-        this.provider = {
-          name:name,
-          rut:rut,  
-          contact:contact,
-          contactPlus:contactPlus,
-          direction:direccion,
-          id:id
-        }
-      },
-      providerFunction(){
-        if (this.providerSup.typeProvider == 'Registrar') {
-          this.addProvider()
-        }
-        else{
-          this.updateProvider()
-        }
-      },
-      deleteSale(id,entry){
-        axios.post(endPoint.endpointTarget+'/inventario/deleteSale/'+id, {
-          user:this.usuario,
-          array:this.countProduct
-        })
-        .then(res => {
-          if (res.data.status === 'ok') {
-            this.$swal({
-              type: 'success',
-              title: 'Cierre realizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-            this.getProducts();
-            this.getHistoryClosed()
-          }
-          else{
-            this.$swal({
-              type: 'success',
-              title: 'Ya se hizo un cierre este mes',
-              showConfirmButton: false,
-              timer: 1500
-            })
-          }
-        })
-        .catch(err => {
-          this.$swal({
-              type: 'error',
-              title: 'Cierre NO realizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-        })
-      },
-      dataStock(id, alert, type){
-        this.modals.modal6 = true
-        this.idToStock = id
-        this.typeStock = type
-        this.stockTotal = alert
-      },
-      editStock(){
-        axios.put(endPoint.endpointTarget+'/inventario/editStockAlarm/'+this.idToStock, {
-          stockTotal:this.stockTotal
-        })
-        .then(res => {
-          if (res.data.status == 'ok') {
-            this.modals = {
-                modal2: true,
-                message: "Alarma actualizada",
-                icon: 'ni ni-check-bold ni-5x',
-                type: 'success'
-            }
-            setTimeout(() => {
-                this.modals = {
-                    modal1: false,
-                    modal2: false,
-                    modal3: false,
-                    modal4: false,
-                    modal5: false,
-                    modal6: false,
-                    message: "",
-                    icon: '',
-                    type:''
-                }
-                this.getProducts();
-            }, 1500);
-          }else{
-            this.$swal({
-              type: 'error',
-              title: 'Hubo un problema',
-              showConfirmButton: false,
-              timer: 1500
-            })
-          }
-        })
-      },
-      formatRut(value) {
-			let around = value.length - 2
-			let concat = ''
-			for (let index = 0; index < value.length; index++) {
-				concat = concat + value[index]
-				if (around == index) {
-					concat = concat + '.'
-				}
-			} 
-			let val = concat.replace('.', '-')
-            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-        }
-    }
-  }
+      }
+    };
 </script>
-<style lang="scss">
-  .card-header{
-    font-size: 2.5vw;
-  }
-  .cursor-pointer{
-    cursor: pointer;
-  }
-  .inventory .nav-item .active{
-    background-color:#172b4d !important;
-    color: white !important;
-  }
-  .inventory .nav-link {
-    color: #172b4d !important;
-  }
-  .inventory .card-header{
-    display:none;
-  }
-  .nav-item{
-    padding-left: 1rem;
-  }
-  .inventoryTabs .nav-item:last-child{
-    padding-right: 1rem !important;
-  }
-</style>
+<style></style>

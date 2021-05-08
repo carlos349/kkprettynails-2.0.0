@@ -91,13 +91,13 @@
                                             :filter-option="filterOption"
                                             @change="handleChange"
                                         >
-                                        <a-select-option value="nails">
+                                        <a-select-option value="Spa de uñas">
                                             Spa de uñas
                                         </a-select-option>
-                                        <a-select-option value="barber">
+                                        <a-select-option value="Barberia">
                                             Barberia
                                         </a-select-option>
-                                        <a-select-option value="stylish">
+                                        <a-select-option value="Peluqueria">
                                             Peluquería
                                         </a-select-option>
                                     </a-select>
