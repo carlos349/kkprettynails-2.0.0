@@ -205,6 +205,7 @@ import endPoint from '../../config-endpoint/endpoint.js'
 import jwtDecode from 'jwt-decode'
 import io from 'socket.io-client';
 // COMPONENTS
+import EventBus from '../components/EventBus'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -267,8 +268,8 @@ export default {
                 },
                 {
                     title: 'Diferencia',
-                    dataIndex: '_id',
-                    key: '_id',
+                    dataIndex: 'branch',
+                    key: 'branch',
                     scopedSlots: { customRender: 'diff-total' },
                     sorter: (a, b) => (this.totalFind(a.system) - this.totalFind(a.manual)) - (this.totalFind(b.system) - this.totalFind(b.manual)),
                     ellipsis: true,

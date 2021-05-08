@@ -65,9 +65,8 @@
   import Procesar from "../components/Process"
   import axios from 'axios'
   import jwtDecode from 'jwt-decode'
-  import EventBus from '../components/EventBus'
   import endPoint from '../../config-endpoint/endpoint.js'
-  // import EventBus from '../components/EventBus'
+  import EventBus from '../components/EventBus'
   
   export default {
     components: {
@@ -152,6 +151,9 @@
       })
       EventBus.$on('loggedin-user', status => {
         this.changeAccess(status)
+      })
+      EventBus.$on('newBranch', status => {
+        this.getBranches()
       })
     }
   };

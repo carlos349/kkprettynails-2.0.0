@@ -74,6 +74,11 @@ export default new Router({
           component: () => import('./views/Store.vue')
         },
         {
+          path: '/sucursales',
+          name: '',
+          component: () => import('./views/Branch.vue')
+        },
+        {
           path: '/tables',
           name: '',
           component: () => import('./views/Tables.vue')
