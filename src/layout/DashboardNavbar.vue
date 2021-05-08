@@ -140,6 +140,10 @@
                             <i class="ni ni-settings-gear-65"></i>
                             <span>Configuración</span>
                         </router-link>
+                        <router-link to="/sucursales" class="dropdown-item">
+                            <a-icon type="shop" style="vertical-align:1px;" />
+                            <span>Sucursales</span>
+                        </router-link>
                         <router-link to="/store" class="dropdown-item">
                             <i class="ni ni-box-2"></i>
                             <span>Bodega</span>
