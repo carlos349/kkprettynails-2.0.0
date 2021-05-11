@@ -8,11 +8,81 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-lg-7 col-md-10">
-                        <h1 class="display-2 text-white">Configuración</h1>
+                        <h1 class="display-2 text-white">Configuración de {{configData.businessName}}</h1>
                     </div>
                 </div>
             </div>
         </base-header>
+
+        <modal :show.sync="modals.modal1"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Administre las rutas de acceso</h3>
+                        <a-switch class="mx-auto my-1" :checked="commission" @click="changeCommission()" checked-children="Recibe comisiones" un-checked-children="Recibe comisiones" />
+                    </div>
+                    
+                </template>
+                <template>
+                    <vue-custom-scrollbar ref="tableItem" class="maxHeightRoutes">
+                        <vue-bootstrap4-table class="text-left" :rows="routes" :columns="columnsRoutes" :classes="classes" :config="configRoutes">
+                            <template slot="name" slot-scope="props">
+                                <b class="text-uppercase">{{props.row.route}}</b>
+                            </template>
+                            <template slot="validation" slot-scope="props">
+                                <base-button class="w-100" size="sm" :disabled="props.row.valid == true ? false : true" :type="props.row.valid == true ? 'success' : 'danger'" v-on:click="editFunctions(props.row.route, props.row.functions)">Editar</base-button>
+                            </template>
+                            <template slot="active" slot-scope="props">
+                                <base-button v-on:click="removeRoute(props.row.route, props.row.valid = false)" class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
+                                </base-button>
+                                <base-button v-on:click="addRoute(props.row.route, props.row.valid = true)" class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
+                            </template>
+                        </vue-bootstrap4-table>
+                    </vue-custom-scrollbar>
+                    <center>
+                        <base-button class="mt-4" type="default" v-on:click="modals.modal1 = false">
+                            Listo
+                        </base-button>
+                    </center>
+                </template>
+            </card>
+        </modal>
+
+        <modal :show.sync="modals.modal2"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Habilite las funciones de la ruta</h3>
+                    </div>
+                </template>
+                <template>
+                    <vue-custom-scrollbar class="maxHeightRoutes">
+                        <vue-bootstrap4-table class="text-left" :rows="functions" :columns="columnsFunctions" :classes="classes" :config="configFunctions">
+                            <template slot="validation" slot-scope="props">
+                                <base-button class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid" v-on:click="removeFunction(props.row.function), props.row.valid = false">
+                                </base-button>
+                                <base-button class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else v-on:click="addFunction(props.row.function), props.row.valid = true"></base-button>
+                            </template>
+                        </vue-bootstrap4-table>
+                    </vue-custom-scrollbar>
+                    <center>
+                        <base-button class="mt-2" type="default" v-on:click="finalyFunctions(modals.modal2 = false)">
+                            Listo
+                        </base-button>
+                    </center>
+                </template>
+            </card>
+        </modal>
 
         <div class="container-fluid mt--7">
             <div class="row">
@@ -365,6 +435,52 @@
                             <base-button class="mx-auto mt-2" v-on:click="updateconfig" :disabled="configData.businessName.length < 4 && configData.businessPhone != '' && configData.businessPhone != 0 && configData.businessPhone != null && configData.businessLocation != '' ? true : false" outline type="default">Actualizar información</base-button>
                         </div>
                       </div>
+                      <div class="row p-4" v-if="selectedConfig == 'profiles'">
+                        <div class="w-100 mb-3">
+                            <h1 class=" text-center w-100 my-2">
+                                Perfiles de usuarios
+                            </h1>
+                            <hr class="w-50 mb-0 mt-0">
+                          </div>
+                          <div class="col-md-4">
+                              <base-input class="input-group-alternative"
+                                  placeholder="Nombre del perfil de usuario"
+                                  addon-left-icon="fa fa-plus"
+                                  v-model="profile"
+                                  v-on:keyup.enter="insertProfile">
+                              </base-input>
+                              <base-button outline type="default" size="sm" class="w-50" v-on:click="insertProfile">
+                                  Ingresar
+                              </base-button>
+                          </div>
+                          <a-config-provider>
+                              <template  #renderEmpty>
+                                  <div style="text-align: center">
+                                      <a-icon type="warning" style="font-size: 20px"/>
+                                      <p>No se han agregado perfiles de usuario</p>
+                                  </div>
+                              </template>
+                              <a-tooltip placement="top">
+                                  <template slot="title">
+                                  <span v-if="configData.typesPay.lenght == 0">Para ingresar un perfil de usuario debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
+                                  </template>
+                                  <div class="col-md-8" >
+                                      <a-list bordered :data-source="configData.accessProfiles">
+                                          <a-list-item slot="renderItem" slot-scope="item, index">
+                                              {{ item.profile }}
+                                               
+                                              <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeProfile(index)">
+                                                  <i class="fa fa-times"></i>
+                                              </base-button>
+                                              <base-button outline type="default" size="sm" class="float-right mr-2" v-on:click="editProfiles(item.routes, index)">
+                                                  <i class="fa fa-edit"></i>
+                                              </base-button>
+                                          </a-list-item>
+                                      </a-list>
+                                  </div>
+                              </a-tooltip>
+                          </a-config-provider>
+                      </div>
                     </div>
                 </div>
 
@@ -390,25 +506,268 @@
     import axios from 'axios'
     import router from '../router'
     import endPoint from '../../config-endpoint/endpoint.js'
+    import VueBootstrap4Table from 'vue-bootstrap4-table'
+    import vueCustomScrollbar from 'vue-custom-scrollbar'
     import jwtDecode from 'jwt-decode'
     import EventBus from '../components/EventBus'
     import * as moment from 'moment';
     import 'moment/locale/es';
     moment.locale('es');
     export default {
+      components: {
+          VueBootstrap4Table,
+        vueCustomScrollbar
+      },
       data() {
         return {
+          commission:false,
           selectedConfig: '',
+          selectedProfile: 0,
+          selectedRoute: '',
           selectedClient: '',
           clients:[],
           configData: {},
           typePay: '',
+          profile: '',
           validTime: false,
           configHeader: {
             headers:{
               "x-database-connect": endPoint.database, 
               "x-access-token": localStorage.userToken
             }
+          },
+          modals: {
+            modal1: false,
+            modal2: false
+          },
+          functions:[],
+          routes: [
+              {
+                route: 'procesar', 
+                valid: false,
+                functions: [
+                  {function: 'editar', name:'Editar cliente', valid: false},
+                  {function: 'nuevo_cliente', name:'Registrar cliente', valid: false},
+                  {function: 'nuevo_servicio', name:'Registrar servicio', valid: false},
+                  {function: 'descuento', name:'Ingresar descuento', valid: false}
+                ]
+              },
+              {
+                route: 'metricas',
+                valid: false,
+                functions: [
+                  {function: 'filtrar', name:'Filtrar', valid: false}
+                ]
+              },
+              {
+                route: 'usuarios', 
+                valid: false,
+                functions: [
+                  {function: 'registrar', name:'Registar', valid: false},
+                  {function: 'editar', name:'Editar', valid: false},
+                  {function: 'eliminar', name:'Eliminar', valid: false}
+                ]
+              },
+              {
+                route: 'ventas', 
+                valid: false,
+                functions: [
+                  {function: 'filtrar', name:'Filtrar', valid: false},
+                  {function: 'anular', name:'Anular', valid: false},
+                  {function: 'detalle', name:'Ver detalle', valid: false}
+                ]
+              },
+              {
+                route: 'servicios',
+                valid: false,
+                functions: [
+                  {function: 'ingresar', name:'Registrar', valid: false},
+                  {function: 'editar', name:'Editar', valid: false},
+                  {function: 'activaciones', name:'Activar o Desactivar', valid: false}
+                ]
+              },
+              {
+                route: 'empleados', 
+                valid: false,
+                functions: [
+                  {function: 'registrar', name:'Registrar', valid: false},
+                  {function: 'detalle', name:'Ver detalle', valid: false},
+                  {function: 'editar', name:'Editar', valid: false},
+                  {function: 'reportes', name:'Ver reporte', valid: false},
+                  {function: 'cerrar ventas', name:'Cerrar ventas', valid: false},
+                  {function: 'eliminar', name: 'Eliminar', valid: false},
+                  {function: 'adelantos', name: 'Adelantos o Bonos', valid: false},
+                  {function: 'correos', name: 'Envio de correos', valid: false}
+                ]
+              },
+              {
+                route: 'clientes', 
+                valid: false,
+                functions: [
+                  {function: 'filtrar', name:'Filtrar', valid: false},
+                  {function: 'registrar', name:'Registrar', valid: false},
+                  {function: 'editar', name:'Editar', valid: false},
+                  {function: 'detalle', name:'Ver detalle', valid: false},
+                  {function: 'eliminar', name:'Eliminar', valid: false},
+                  {function: 'correos', name:'Envio de correos', valid: false}
+                ]
+              },
+              {
+                route: 'inventario', 
+                valid: false,
+                functions: [
+                  {function: 'filtrar', name:'Filtrar', valid: false},
+                  {function: 'registrar', name:'Registrar', valid: false},
+                  {function: 'editar', name:'Editar', valid: false},
+                  {function: 'detalle', name:'Ver detalle', valid: false},
+                  {function: 'eliminar', name:'Eliminar', valid: false}
+                ]
+              },
+              {
+                route: 'gastos', 
+                valid: false,
+                functions: [
+                  {function: 'registrar', name:'Registrar', valid: false},
+                ]
+              },
+              {
+                route: 'agendamiento', 
+                valid: false,
+                functions: [
+                  {function: 'filtrar', name:'Filtrar', valid: false},
+                  {function: 'agendar', name:'Agendar', valid: false},
+                  {function: 'todas', name:'Ver todas las agendas', valid: false},
+                  {function: 'editar', name:'Editar cita', valid: false},
+                  {function: 'eliminar', name:'Eliminar cita', valid: false},
+                  {function: 'cerrar', name:'Cerrar cita', valid: false},
+                  {function: 'finalizar', name:'Finalizar cita', valid: false},
+                  {function: 'procesar', name:'Procesar', valid: false}
+                ]
+              },
+              {
+                route: 'caja', 
+                valid: false,
+                functions: [
+                  {function: 'visualizar', name:'Ver cierres', valid: false},
+                  {function: 'filtrar', name:'Filtrar', valid: false},
+                  {function: 'cerrar', name:'hacer cierre', valid: false},
+                  {function: 'fondo', name:'Ingresar fondos', valid: false},
+                  {function: 'reporte', name:'Ver reporte del cierre', valid: false},
+                  {function: 'editar', name:'Editar cierre', valid: false},
+                ]
+              },
+              {
+                route: 'pedidos', 
+                valid: false,
+                functions: [
+                  {function: 'filtrar', name:'Filtrar', valid: false},
+                  {function: 'registrar', name:'Registrar', valid: false},
+                  {function: 'editar', name:'Editar', valid: false},
+                  {function: 'detalle', name:'Ver detalle', valid: false},
+                  {function: 'eliminar', name:'Eliminar', valid: false},
+                  {function: 'correos', name:'Envio de correos', valid: false}
+                ]
+              },
+              {
+                route: 'bodega', 
+                valid: false,
+                functions: []
+              },
+              {
+                route: 'sucursales', 
+                valid: false,
+                functions: []
+              }
+          ],
+          columnsRoutes: [
+              {
+                  label: "Rutas",
+                  name: "route",
+                  slot_name:"name",
+                  // filter: {
+                      //     type: "simple",
+                  //     placeholder: "id"
+                  // },
+                  sort: false,
+              },
+              {
+                  label: "",
+                  name: "valid",
+                  slot_name:"active",
+                  // filter: {
+                      //     type: "simple",
+                  //     placeholder: "id"
+                  // },
+                  sort: false,
+              },
+              {
+                  label: "",
+                  name: "valid",
+                  slot_name:"validation",
+                  // filter: {
+                  //     type: "simple",
+                  //     placeholder: "id"
+                  // },
+                  sort: false,
+              }
+          ],
+          columnsFunctions: [
+            {
+                label: "functions",
+                name: "name",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: false
+            },
+            {
+                label: "",
+                name: "valid",
+                slot_name: "validation",
+                // filter: {
+                //     type: "simple",
+                //     placeholder: "id"
+                // },
+                sort: false
+            }
+        ],
+          configRoutes: {
+              card_title: "Tabla de rutas",
+              checkbox_rows: false,
+              rows_selectable : false,
+              highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+              global_search: {
+                  placeholder: "Filtre por nombre",
+                  visibility: true,
+                  case_sensitive: false
+              },
+              show_refresh_button: false,
+              show_reset_button: false,  
+              selected_rows_info: false,
+              preservePageOnDataChange : false,
+              pagination_info : false,
+              pagination:false
+          },
+          configFunctions: {
+              card_title: "Tabla de funciones",
+              checkbox_rows: false,
+              rows_selectable : false,
+              highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+              global_search: {
+                  placeholder: "Filtre por nombre",
+                  visibility: true,
+                  case_sensitive: false
+              },
+              show_refresh_button: false,
+              show_reset_button: false,  
+              selected_rows_info: false,
+              preservePageOnDataChange : false,
+              pagination_info : false,
+              pagination:false
+          },
+          classes: {
+              table: "table-bordered table-striped"
           },
           fromArray: [
               '10:00',
@@ -464,7 +823,7 @@
       methods: {
         getBranch(){
           this.branchName = localStorage.branchName  
-          this.branch = localStorage.branch;
+          this.branch = this.$route.query.id;
           this.getConfiguration()
         },
         async getClients(){
@@ -507,6 +866,15 @@
           }
           this.updateconfig()
         },
+        changeCommission(){
+          this.configData.accessProfiles[this.selectedProfile].commission = this.configData.accessProfiles[this.selectedProfile].commission == true ? false : true
+          if (this.configData.accessProfiles[this.selectedProfile].commission) {
+            this.commission = true
+          }else{
+            this.commission = false
+          }
+          this.updateconfig()
+        },
         handleChange(value){
           this.configData.businessType = value
         },
@@ -520,7 +888,8 @@
             businessLocation: this.configData.businessLocation,
             currency:  this.configData.currency,
             typesPay: this.configData.typesPay,
-            datesPolitics: this.configData.datesPolitics
+            datesPolitics: this.configData.datesPolitics,
+            accessProfiles: this.configData.accessProfiles
           }, this.configHeader)
           .then(res => {
             if (res.data.status == 'ok') {
@@ -552,6 +921,34 @@
             this.configData.blackList.splice(index, 1)
             this.updateconfig()
         },
+        removeProfile(index){
+          this.$swal({
+            title: '¿Está seguro de borrar el perfil? Se eliminara toda su configuración',
+            text: 'No puedes revertir esta acción',
+            type: 'warning',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Estoy seguro',
+            cancelButtonText: 'No, evitar acción',
+            showCloseButton: true,
+            showLoaderOnConfirm: true
+          }).then((result) => {
+            if(result.value) {
+              this.configData.accessProfiles.splice(index, 1)
+              this.updateconfig()
+            }
+            else{
+              this.$swal({
+                  type: 'error',
+                  icon: 'error',
+                  title: 'Accion cancelada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+            }
+          })
+            
+        },
         insertTypePay(){
           var valid = true
             this.configData.typesPay.forEach(element => {
@@ -581,6 +978,41 @@
                   this.$swal({
                       icon: 'error',
                       title: 'Debe llenar el tipo de pago',
+                      showConfirmButton: false,
+                      timer: 1500
+                  })
+              }
+            }
+        },
+        insertProfile(){
+          var valid = true
+            this.configData.accessProfiles.forEach(element => {
+              if (element == this.profile) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Este perfil ya se encuentra registrado',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                valid = false
+              }
+            });
+            if (valid) {
+              if (this.profile.length > 2) {
+                  this.configData.accessProfiles.push({profile:this.profile, routes:[], commission:false})
+                  this.profile = ''
+                  this.updateconfig()
+              }else if (this.profile.length <= 2) {
+                  this.$swal({
+                      icon: 'error',
+                      title: 'El nombre del perfil debe estar compuesto por mas de 2 caracteres',
+                      showConfirmButton: false,
+                      timer: 1500
+                  })
+              }else{
+                  this.$swal({
+                      icon: 'error',
+                      title: 'Debe llenar el campo',
                       showConfirmButton: false,
                       timer: 1500
                   })
@@ -650,15 +1082,100 @@
             this.configData.blackList.push({clientId: this.selectedClient._id, name: this.selectedClient.firstName + ' ' + this.selectedClient.lastName, email: this.selectedClient.email})
             this.updateconfig()
           }
-          
         },
         fixed(value){
           this.selectedConfig = ''
           setTimeout(() => {
             this.selectedConfig = value
           }, 100);
+        },
+        editProfiles(routes, index){
+          this.routes.forEach(element => {
+            element.valid = false
+            routes.forEach(elementTwo => {
+              if (element.route == elementTwo.ruta) {
+                element.valid = true
+              }
+            });
+          });
+          if (this.configData.accessProfiles[index].commission) {
+            this.commission = true
+          }
+          this.selectedProfile = index
+          this.modals.modal1 = true
+        },
+        addRoute(route){
+          this.configData.accessProfiles[this.selectedProfile].routes.push({ruta:route, validaciones:[]})
+          this.updateconfig()
+        },
+        removeRoute(route){
+          for (let i = 0; i < this.configData.accessProfiles[this.selectedProfile].routes.length; i++) {
+            const element = this.configData.accessProfiles[this.selectedProfile].routes[i];
+            if (element.ruta == route) {
+              this.configData.accessProfiles[this.selectedProfile].routes.splice(i, 1)
+            }
+          }
+          this.updateconfig()
+        },
+        editFunctions(route, functions){
+          for (let i = 0; i < this.configData.accessProfiles[this.selectedProfile].routes.length; i++) {
+            const elementOne = this.configData.accessProfiles[this.selectedProfile].routes[i];
+            if (elementOne.ruta == route) {
+              this.selectedRoute = i
+              functions.forEach(function (elementTwo, index) {
+                functions[index].valid = false
+                elementOne.validaciones.forEach(elementThree => {
+                  if (elementTwo.function == elementThree) {
+                    functions[index].valid = true
+                  }
+                });
+              });
+            }
+          }
+          this.functions = functions
+          this.modals.modal2 = true
+        },
+        addFunction(value){
+          this.configData.accessProfiles[this.selectedProfile].routes[this.selectedRoute].validaciones.push(value)
+          this.updateconfig()
+        },
+        removeFunction(value){
+          for (let i = 0; i < this.configData.accessProfiles[this.selectedProfile].routes[this.selectedRoute].validaciones.length; i++) {
+            const element = this.configData.accessProfiles[this.selectedProfile].routes[this.selectedRoute].validaciones[i];
+            if (element == value) {
+              this.configData.accessProfiles[this.selectedProfile].routes[this.selectedRoute].validaciones.splice(i, 1)
+            }
+          }
+          this.updateconfig()
         }
       }
     };
 </script>
-<style></style>
+<style lang="scss">
+  .card-header{
+      font-size: 2.5vw;
+  }
+  .cursor-pointer{
+      cursor: pointer;
+  }
+  .maxHeightRoutes{
+      max-height: 450px;
+      overflow: scroll;
+  }
+  // .maxHeightRoutes th .custom-checkbox{
+  //     display: none;
+  // }
+  .maxHeightRoutes .card-header{
+      display:none;
+  }
+  .maxHeightRoutes .card-footer{
+      display:none;
+  }
+  .dropdown-menu{
+      z-index: 10000 !important;
+  }
+  .highlight {
+      background-color: rgb(255, 192, 105);
+      padding: 0px;
+  }
+</style>

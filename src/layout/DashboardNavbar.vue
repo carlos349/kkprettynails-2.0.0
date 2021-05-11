@@ -136,10 +136,6 @@
                             <i class="ni ni-single-02"></i>
                             <span>Mi perfil</span>
                         </router-link>
-                        <router-link to="/configuration" class="dropdown-item">
-                            <i class="ni ni-settings-gear-65"></i>
-                            <span>Configuración</span>
-                        </router-link>
                         <router-link to="/sucursales" class="dropdown-item">
                             <a-icon type="shop" style="vertical-align:1px;" />
                             <span>Sucursales</span>
