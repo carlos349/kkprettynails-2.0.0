@@ -281,31 +281,31 @@
                               <h4 class="text-center">
                                 Recordatorio <br> <small class="text-muted text-center mx-auto">Dias antes para recordar una cita</small>
                               </h4>
-                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.reminderDate" v-on:keyup="changeTime" />
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.reminderDate" v-on:change="changeTime" />
                             </div>
                             <div class="col-4">
                               <h4 class="text-center">
                                 Limite de reserva <br> <small class="text-muted text-center mx-auto">Horas antes para poder reservar</small>
                               </h4>
-                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minTypeDate" v-on:keyup="changeTime"/>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minTypeDate" v-on:change="changeTime"/>
                             </div>
                             <div class="col-4">
                               <h4 class="text-center">
                                 Maximo tiempo de reserva <br> <small class="text-muted text-center mx-auto">Limite de meses futuros para reservar </small>
                               </h4>
-                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.limitTimeDate" v-on:keyup="changeTime"/>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.limitTimeDate" v-on:change="changeTime"/>
                             </div>
                             <div class="col-4">
                               <h4 class="text-center">
                                 Limite de edición <br> <small class="text-muted text-center mx-auto">Horas previas para editar una cita</small>
                               </h4>
-                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minEditDate" v-on:keyup="changeTime"/>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minEditDate" v-on:change="changeTime"/>
                             </div>
                             <div class="col-4">
                               <h4 class="text-center">
                                 Cantidad de edición <br> <small class="text-muted text-center mx-auto">Veces que se puede editar una cita</small>
                               </h4>
-                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.editQuantity" v-on:keyup="changeTime"/>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.editQuantity" v-on:change="changeTime"/>
                             </div>
                           </div>
                           <div class="col-12 mt-2 mb-0">

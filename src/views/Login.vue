@@ -287,7 +287,7 @@
                                             <a-list bordered :data-source="modelStart.typesPay">
                                                 <a-list-item slot="renderItem" slot-scope="item, index">
                                                     {{ item }} 
-                                                    <base-button outline type="default" size="sm" class="float-right" v-on:click="removeTypePay(index)">
+                                                    <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeTypePay(index)">
                                                         <i class="fa fa-times"></i>
                                                     </base-button>
                                                 </a-list-item>
@@ -557,7 +557,7 @@ import jwtDecode from 'jwt-decode'
                     }
                 ],
                 currency: 'CLP',
-                typesPay: []
+                typesPay: ['Efectivo']
             },
             fromArray: [
                 '10:00',
@@ -641,14 +641,13 @@ import jwtDecode from 'jwt-decode'
                     }, this.configHeader)
                     console.log(registerBranch.data.status)
                     if (registerBranch.data.status == 'ok') {
-                        console.log("entro")
                         try {
                             const registerConf = await axios.post(endPoint.endpointTarget+'/configurations/createConfigCertificate', {
                                 branch: registerBranch.data.data._id,
                                 secretKey: this.modelStart.credential,
                                 blockHour: this.modelStart.blockHour,
                                 businessName: this.modelStart.businessName,
-                                businessPhone: this.modelStart.businessPhone,
+                                businessPhone: this.modelStart.businessPhoneCode + ' ' + this.modelStart.businessPhone,
                                 businessType: this.modelStart.businessType,
                                 businessLocation: this.modelStart.businessLocation,
                                 typesPay: this.modelStart.typesPay,
@@ -818,8 +817,8 @@ import jwtDecode from 'jwt-decode'
         },
         async getBranches(){
             try {
-                const getBranches = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
-                if (getBranches.data.status == 'bad') {
+                const getBranches = await axios.get(endPoint.endpointTarget+'/branches/count', this.configHeader)
+                if (getBranches.data.data == 0) {
                     this.ifStart = true  
                 }
             }catch(err){console.log(err)}
