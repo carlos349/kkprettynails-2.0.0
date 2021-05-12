@@ -11,6 +11,7 @@
                         <h1 class="display-2 text-white">Sección de usuarios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus usuarios, aquí podrás registrar, editar y visualizar todos tus usuarios.</p>
                         <base-button v-if="validRoute('usuarios', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un usuario</base-button>
+                        <base-button v-if="validRoute('usuarios', 'registrar')" @click="modals.modal8 = true" type="default">Crear perfiles de acceso</base-button>
                     </div>
                 </div>
             </div>
@@ -156,7 +157,7 @@
                             {{lender.firstName}} / {{lender.document}}
                         </a-select-option>
                     </a-select>
-                    <base-button type="default" v-on:click="estatusEdit(idSelect, 3, 'no-prestador')">
+                    <base-button type="default" v-on:click="estatusEdit(profileSelect, false, routesSelect, idSelect)">
                         Vincular
                     </base-button>  
                 </template>
@@ -187,6 +188,137 @@
                     <center>
                         <base-button class="mt-2" type="default" v-on:click="finalyFunctions(modals.modal5 = false)">
                             Finalizar
+                        </base-button>
+                    </center>
+                </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal8"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-xl">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Cree perfiles de usuario</h3>
+                    </div>
+                </template>
+                <template>
+                    <div class="row p-4">
+                        <div class="w-100 mb-3">
+                            <h1 class=" text-center w-100 my-2">
+                                Perfiles de usuarios
+                            </h1>
+                            <hr class="w-50 mb-0 mt-0">
+                          </div>
+                          <div class="col-md-4">
+                              <base-input class="input-group-alternative"
+                                  placeholder="Nombre del perfil de usuario"
+                                  addon-left-icon="fa fa-plus"
+                                  v-model="profile"
+                                  v-on:keyup.enter="insertProfile">
+                              </base-input>
+                              <base-button outline type="default" size="sm" class="w-50" v-on:click="insertProfile">
+                                  Ingresar
+                              </base-button>
+                          </div>
+                          <a-config-provider>
+                              <template  #renderEmpty>
+                                  <div style="text-align: center">
+                                      <a-icon type="warning" style="font-size: 20px"/>
+                                      <p>No se han agregado perfiles de usuario</p>
+                                  </div>
+                              </template>
+                              <a-tooltip placement="top">
+                                  <template slot="title">
+                                  <span v-if="accessProfiles.lenght == 0">Para ingresar un perfil de usuario debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
+                                  </template>
+                                  <div class="col-md-8" >
+                                      <a-list bordered :data-source="accessProfiles">
+                                          <a-list-item slot="renderItem" slot-scope="item, index">
+                                              {{ item.profile }}
+                                               
+                                              <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeProfile(index)">
+                                                  <i class="fa fa-times"></i>
+                                              </base-button>
+                                              <base-button outline type="default" size="sm" class="float-right mr-2" v-on:click="editProfiles(item.routes, index)">
+                                                  <i class="fa fa-edit"></i>
+                                              </base-button>
+                                          </a-list-item>
+                                      </a-list>
+                                  </div>
+                              </a-tooltip>
+                          </a-config-provider>
+                      </div>
+                </template>
+            </card>
+        </modal>
+        <modal :show.sync="modals.modal6"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Administre las rutas de acceso</h3>
+                        <a-switch class="mx-auto my-1" :checked="commission" @click="changeCommission()" checked-children="Recibe comisiones" un-checked-children="Recibe comisiones" />
+                    </div>
+                    
+                </template>
+                <template>
+                    <vue-custom-scrollbar ref="tableItem" class="maxHeightRoutes">
+                        <vue-bootstrap4-table class="text-left" :rows="routesProfiles" :columns="columnsRoutes" :classes="classes" :config="configRoutes">
+                            <template slot="name" slot-scope="props">
+                                <b class="text-uppercase">{{props.row.route}}</b>
+                            </template>
+                            <template slot="validation" slot-scope="props">
+                                <base-button class="w-100" size="sm" :disabled="props.row.valid == true ? false : true" :type="props.row.valid == true ? 'success' : 'danger'" v-on:click="editFunctions(props.row.route, props.row.functions)">Editar</base-button>
+                            </template>
+                            <template slot="active" slot-scope="props">
+                                <base-button v-on:click="removeRoute(props.row.route, props.row.valid = false)" class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
+                                </base-button>
+                                <base-button v-on:click="addRouteProfile(props.row.route, props.row.valid = true)" class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
+                            </template>
+                        </vue-bootstrap4-table>
+                    </vue-custom-scrollbar>
+                    <center>
+                        <base-button class="mt-4" type="default" v-on:click="modals.modal6 = false">
+                            Listo
+                        </base-button>
+                    </center>
+                </template>
+            </card>
+        </modal>
+
+        <modal :show.sync="modals.modal7"
+               body-classes="p-0"
+               modal-classes="modal-dialog-centered modal-md">
+            <card type="secondary" shadow
+                  header-classes="bg-white pb-5"
+                  body-classes="px-lg-5 py-lg-5"
+                  class="border-0">
+                <template>
+                    <div class="text-muted text-center mb-3">
+                        <h3>Habilite las funciones de la ruta</h3>
+                    </div>
+                </template>
+                <template>
+                    <vue-custom-scrollbar class="maxHeightRoutes">
+                        <vue-bootstrap4-table class="text-left" :rows="functionsProfile" :columns="columnsFunctions" :classes="classes" :config="configFunctions">
+                            <template slot="validation" slot-scope="props">
+                                <base-button class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid" v-on:click="removeFunction(props.row.function), props.row.valid = false">
+                                </base-button>
+                                <base-button class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else v-on:click="addFunction(props.row.function), props.row.valid = true"></base-button>
+                            </template>
+                        </vue-bootstrap4-table>
+                    </vue-custom-scrollbar>
+                    <center>
+                        <base-button class="mt-2" type="default" v-on:click="modals.modal7 = false">
+                            Listo
                         </base-button>
                     </center>
                 </template>
@@ -252,45 +384,32 @@
             <template slot="status-format" slot-scope="record, column">
                 <a-dropdown>
                     <a-menu slot="overlay" >
-                        <a-menu-item v-on:click="estatusEdit(column._id, 1, 'no-prestador')" key="1"> <a-icon type="user" />Gerencia </a-menu-item>
-                        <a-menu-item v-on:click="estatusEdit(column._id, 2, 'no-prestador')" key="2"> <a-icon type="user" />Cajera (o) </a-menu-item>
-                        <a-menu-item v-on:click="estatusEdit(column._id, 3, 'employe')" key="3"> <a-icon type="user" />Empleada (o) </a-menu-item>
+                        <a-menu-item v-for="profile of accessProfiles" :key="profile.profile" v-on:click="estatusEdit(profile.profile, profile.commission, profile.routes, column._id)"> <a-icon type="user" />{{profile.profile}} </a-menu-item>
                     </a-menu>
-                    <a-button class="w-100" style="margin-left: 8px" v-if="column.status == 1"> Gerente <a-icon type="down" /> </a-button>
-                    <a-button class="w-100" style="margin-left: 8px" v-if="column.status == 2"> Cajera (o) <a-icon type="down" /> </a-button>
-                    <a-button class="w-100" style="margin-left: 8px" v-if="column.status == 3"> Prestadora <a-icon type="down" /> </a-button>
+                    <a-button class="w-100" style="margin-left: 8px"> {{column.status}} <a-icon type="down" /> </a-button>
                 </a-dropdown>
             </template>
             <template slot="access" class="text-left" slot-scope="record, column" >
-                <center>
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                            <span>Agregar accesos</span>
-                        </template>
-                        <base-button v-if="validRoute('usuarios', 'editar')" icon="ni ni-fat-add" v-on:click="dataEdit(column.access, column._id, column.email)" size="sm"  type="success" >
-                            
-                        </base-button>
-                        <base-button v-else size="sm"  type="success" disabled>
-                            
-                        </base-button>
-                    </a-tooltip>
-                </center>
-                
-                
+                <a-tooltip placement="top">
+                    <template slot="title">
+                        <span>Agregar accesos</span>
+                    </template>
+                    <base-button v-if="validRoute('usuarios', 'editar')" icon="ni ni-badge" v-on:click="dataEdit(column.access, column._id, column.email)" size="sm"  type="success" >
+                    </base-button>
+                    <base-button v-else size="sm" icon="ni ni-badge" type="success" disabled>
+                    </base-button>
+                </a-tooltip>
             </template>
             <template slot="Administrar" slot-scope="record, column">
-                <center>
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Eliminar</span>
-                        </template>
-                        <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteUser(column._id, column.status)" type="warning" icon="fas fa-trash"></base-button>     
-                        <base-button v-else size="sm" slot="title" type="warning" icon="fas fa-trash" disabled>
-                            
-                        </base-button> 
-                    </a-tooltip>
-                </center>
-                
+                <a-tooltip placement="top">
+                    <template slot="title">
+                    <span>Eliminar</span>
+                    </template>
+                    <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteUser(column._id, column.status)" type="warning" icon="fas fa-trash"></base-button>     
+                    <base-button v-else size="sm" slot="title" type="warning" icon="fas fa-trash" disabled>
+                        
+                    </base-button> 
+                </a-tooltip>
             </template>
             <template slot="name" slot-scope="record, column">
                 <b>
@@ -386,6 +505,149 @@ moment.locale('es');
             {route: 'pedidos', valid: false},
             {route: 'prueba', valid: false}
         ],
+        commission:false,
+        selectedProfile: 0,
+        selectedRoute: '',
+        profile: '',
+        functionsProfile: [],
+        routesProfiles: [
+            {
+                route: 'procesar', 
+                valid: false,
+                functions: [
+                    {function: 'editar', name:'Editar cliente', valid: false},
+                    {function: 'nuevo_cliente', name:'Registrar cliente', valid: false},
+                    {function: 'nuevo_servicio', name:'Registrar servicio', valid: false},
+                    {function: 'descuento', name:'Ingresar descuento', valid: false}
+                ]
+            },
+            {
+                route: 'metricas',
+                valid: false,
+                functions: [
+                    {function: 'filtrar', name:'Filtrar', valid: false}
+                ]
+            },
+            {
+                route: 'usuarios', 
+                valid: false,
+                functions: [
+                    {function: 'registrar', name:'Registar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false}
+                ]
+            },
+            {
+                route: 'ventas', 
+                valid: false,
+                functions: [
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'anular', name:'Anular', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false}
+                ]
+            },
+            {
+                route: 'servicios',
+                valid: false,
+                functions: [
+                    {function: 'ingresar', name:'Registrar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'activaciones', name:'Activar o Desactivar', valid: false}
+                ]
+            },
+            {
+                route: 'empleados', 
+                valid: false,
+                functions: [
+                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'reportes', name:'Ver reporte', valid: false},
+                    {function: 'cerrar ventas', name:'Cerrar ventas', valid: false},
+                    {function: 'eliminar', name: 'Eliminar', valid: false},
+                    {function: 'adelantos', name: 'Adelantos o Bonos', valid: false},
+                    {function: 'correos', name: 'Envio de correos', valid: false}
+                ]
+            },
+            {
+                route: 'clientes', 
+                valid: false,
+                functions: [
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false},
+                    {function: 'correos', name:'Envio de correos', valid: false}
+                ]
+            },
+            {
+                route: 'inventario', 
+                valid: false,
+                functions: [
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false}
+                ]
+            },
+            {
+                route: 'gastos', 
+                valid: false,
+                functions: [
+                    {function: 'registrar', name:'Registrar', valid: false},
+                ]
+            },
+            {
+                route: 'agendamiento', 
+                valid: false,
+                functions: [
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'agendar', name:'Agendar', valid: false},
+                    {function: 'todas', name:'Ver todas las agendas', valid: false},
+                    {function: 'editar', name:'Editar cita', valid: false},
+                    {function: 'eliminar', name:'Eliminar cita', valid: false},
+                    {function: 'cerrar', name:'Cerrar cita', valid: false},
+                    {function: 'finalizar', name:'Finalizar cita', valid: false},
+                    {function: 'procesar', name:'Procesar', valid: false}
+                ]
+            },
+            {
+                route: 'caja', 
+                valid: false,
+                functions: [
+                    {function: 'visualizar', name:'Ver cierres', valid: false},
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'cerrar', name:'hacer cierre', valid: false},
+                    {function: 'fondo', name:'Ingresar fondos', valid: false},
+                    {function: 'reporte', name:'Ver reporte del cierre', valid: false},
+                    {function: 'editar', name:'Editar cierre', valid: false},
+                ]
+            },
+            {
+                route: 'pedidos', 
+                valid: false,
+                functions: [
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false},
+                    {function: 'correos', name:'Envio de correos', valid: false}
+                ]
+            },
+            {
+                route: 'bodega', 
+                valid: false,
+                functions: []
+            },
+            {
+                route: 'sucursales', 
+                valid: false,
+                functions: []
+            }
+        ],
         functions: [],
         linkLender:'',
         lenderNames: [],
@@ -395,6 +657,9 @@ moment.locale('es');
             modal3: false,
             modal4: false,
             modal5: false,
+            modal6: false,
+            modal7: false,
+            modal8: false,
             message: "",
             icon: '',
             type:''
@@ -595,7 +860,11 @@ moment.locale('es');
         file: '',
         routesSelecteds: [],
         position:0,
-        mail: ''
+        mail: '',
+        accessProfiles: [],
+        idProfile: '',
+        profileSelect: '',
+        routesSelect: []
       };
     },
     beforeCreate(){
@@ -614,6 +883,7 @@ moment.locale('es');
         this.getEmployes()
         this.getToken()
         this.getBranches()
+        this.getAccessProfile()
         $(document).ready(function(){
             setTimeout(() => {
                $("input[placeholder='Go to page']").hide(); 
@@ -633,6 +903,168 @@ moment.locale('es');
         },
         selectEmploye(value){
             this.linkLender = value
+        },
+        changeCommission(){
+            this.accessProfiles[this.selectedProfile].commission = this.accessProfiles[this.selectedProfile].commission == true ? false : true
+            if (this.accessProfiles[this.selectedProfile].commission) {
+                this.commission = true
+            }else{
+                this.commission = false
+            }
+            this.updateconfig()
+        },
+        editFunctions(route, functions){
+            for (let i = 0; i < this.accessProfiles[this.selectedProfile].routes.length; i++) {
+                const elementOne = this.accessProfiles[this.selectedProfile].routes[i];
+                if (elementOne.ruta == route) {
+                this.selectedRoute = i
+                functions.forEach(function (elementTwo, index) {
+                    functions[index].valid = false
+                    elementOne.validaciones.forEach(elementThree => {
+                        if (elementTwo.function == elementThree) {
+                            functions[index].valid = true
+                        }
+                    });
+                });
+                }
+            }
+            this.functionsProfile = functions
+            this.modals.modal7 = true
+        },
+        removeRoute(route){
+            for (let i = 0; i < this.accessProfiles[this.selectedProfile].routes.length; i++) {
+                const element = this.accessProfiles[this.selectedProfile].routes[i];
+                if (element.ruta == route) {
+                    this.accessProfiles[this.selectedProfile].routes.splice(i, 1)
+                }
+            }
+            this.updateconfig()
+        },
+        insertProfile(){
+          var valid = true
+            this.accessProfiles.forEach(element => {
+              if (element == this.profile) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Este perfil ya se encuentra registrado',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                valid = false
+              }
+            });
+            if (valid) {
+              if (this.profile.length > 2) {
+                  this.accessProfiles.push({profile:this.profile, routes:[], commission:false})
+                  this.profile = ''
+                  this.updateconfig()
+              }else if (this.profile.length <= 2) {
+                  this.$swal({
+                      icon: 'error',
+                      title: 'El nombre del perfil debe estar compuesto por mas de 2 caracteres',
+                      showConfirmButton: false,
+                      timer: 1500
+                  })
+              }else{
+                  this.$swal({
+                      icon: 'error',
+                      title: 'Debe llenar el campo',
+                      showConfirmButton: false,
+                      timer: 1500
+                  })
+              }
+            }
+        },
+        addRouteProfile(route){
+            this.accessProfiles[this.selectedProfile].routes.push({ruta:route, validaciones:[]})
+            this.updateconfig()
+        },
+        removeFunction(value){
+            for (let i = 0; i < this.accessProfiles[this.selectedProfile].routes[this.selectedRoute].validaciones.length; i++) {
+                const element = this.accessProfiles[this.selectedProfile].routes[this.selectedRoute].validaciones[i];
+                if (element == value) {
+                this.accessProfiles[this.selectedProfile].routes[this.selectedRoute].validaciones.splice(i, 1)
+                }
+            }
+            this.updateconfig()
+        },
+        addFunction(value){
+            this.accessProfiles[this.selectedProfile].routes[this.selectedRoute].validaciones.push(value)
+            this.updateconfig()
+        },
+        removeProfile(index){
+            this.$swal({
+                title: '¿Está seguro de borrar el perfil? Se eliminara toda su configuración',
+                text: 'No puedes revertir esta acción',
+                type: 'warning',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Estoy seguro',
+                cancelButtonText: 'No, evitar acción',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
+            }).then((result) => {
+                if(result.value) {
+                    this.accessProfiles.splice(index, 1)
+                    this.updateconfig()
+                }
+                else{
+                    this.$swal({
+                        type: 'error',
+                        icon: 'error',
+                        title: 'Accion cancelada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+        },
+        editProfiles(routes, index){
+            this.routesProfiles.forEach(element => {
+                element.valid = false
+                routes.forEach(elementTwo => {
+                    if (element.route == elementTwo.ruta) {
+                        element.valid = true
+                    }
+                });
+            });
+            if (this.accessProfiles[index].commission) {
+                this.commission = true
+            }
+            this.selectedProfile = index
+            this.modals.modal6 = true
+        },
+        async updateconfig(){
+            try {
+                const changeProfile = await axios.put(endPoint.endpointTarget+'/configurations/editProfiles/'+this.idProfile, {
+                    profiles: this.accessProfiles
+                }, this.configHeader)
+                if(changeProfile.data.status == 'ok'){
+                    this.$swal({
+                        type: 'success',
+                        icon: 'success',
+                        toast: true,
+                        position: 'top-end',
+                        title: 'Cambio exitoso',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            } catch (error) {
+                
+            }
+        },
+        async getAccessProfile(){
+            try {
+                const getProfiles = await axios.get(endPoint.endpointTarget+'/configurations/getProfiles', this.configHeader)
+                if (getProfiles.data.status == 'ok') {
+                    console.log(getProfiles)
+                    this.accessProfiles = getProfiles.data.data[0].profiles
+                    this.idProfile = getProfiles.data.data[0]._id
+                }
+            } catch (error) {
+                console.log(error)
+            }
         },
         async getBranches(){
             try {
@@ -1080,97 +1512,39 @@ moment.locale('es');
 				}
 			})
 		},
-        estatusEdit(id, status, type){
-			const token = localStorage.userToken
-			const decoded = jwtDecode(token)
-			const idDecoded = decoded._id
-			const ifStatus = decoded.status
-			if (idDecoded == id && ifStatus == 1) {
-				this.$swal({
-					title: '¿Está seguro de cambiarse el estado?',
-					text: '¡Si no hay otro gerente registrado, no podrás regresar tu estado!',
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonText: 'Estoy seguro',
-					cancelButtonText: 'No, evitar acción',
-					showCloseButton: true,
-					showLoaderOnConfirm: true
-				}).then(result => {
-					if (result.value) {
-						if (type == 'employe') {
-							this.modals.modal2 = true
-							this.idSelect = id
-						}else{
-							axios.put(endPoint.endpointTarget+'/users/changestatus/'+id, {
-								status: status,
-								employe: this.linkLender
-							}, this.configHeader)
-							.then(res => {
-                                this.$swal({
-                                    icon: 'success',
-                                    title: 'Estatus editado con éxito',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-								this.getUsers()
-								this.linkLender = ''
-								this.modals.modal2 = false
-							})
-							.catch(err => {
-								this.$swal({
-									icon: 'error',
-									title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-									showConfirmButton: false,
-									timer: 2500
-								})
-								router.push({name: 'Login'})
-							})
-						}
-					}else{
-						this.$swal({
-							icon: 'info',
-							title: 'Acción cancelada',
-							showConfirmButton: false,
-							timer: 1500
-						})
-					}
-				})
-			}else{
-				if (type == 'employe') {
-					this.modals.modal2 = true
-					this.idSelect = id
-				}else{
-					axios.put(endPoint.endpointTarget+'/users/changestatus/'+id, {
-						status: status,
-						employe: this.linkLender
-					}, this.configHeader)
-					.then(res => {
-                        this.$swal({
-                            icon: 'success',
-                            title: 'Estatus editado con éxito',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-						if (idDecoded == id) {
-							EventBus.$emit('change-status', status)
-							localStorage.setItem('logged-in', status)
-							router.push({name: 'Citas'})
-						}
-						this.getUsers()
-						this.linkLender = ''
-						this.modals.modal2 = false
-					})
-					.catch(err => {
-						this.$swal({
-							icon: 'error',
-							title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-							showConfirmButton: false,
-							timer: 2500
-						})
-						router.push({name: 'login'})
-					})
-				}
-			}
+        estatusEdit(profile, ifcommission, routes, id){
+            this.profileSelect = profile
+            this.routesSelect = routes
+            if (ifcommission) {
+                this.modals.modal2 = true
+                this.idSelect = id
+            }else{
+                axios.put(endPoint.endpointTarget+'/users/changestatus/'+id, {
+                    status: profile,
+                    routes: routes,
+                    employe: this.linkLender
+                }, this.configHeader)
+                .then(res => {
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Estatus editado con éxito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getUsers()
+                    this.linkLender = ''
+                    this.modals.modal2 = false
+                })
+                .catch(err => {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+                        showConfirmButton: false,
+                        timer: 2500
+                    })
+                    router.push({name: 'Login'})
+                })
+            }
 		},
     },
     computed: {

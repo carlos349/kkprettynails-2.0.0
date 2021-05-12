@@ -76,7 +76,7 @@
                         </vue-bootstrap4-table>
                     </vue-custom-scrollbar>
                     <center>
-                        <base-button class="mt-2" type="default" v-on:click="finalyFunctions(modals.modal2 = false)">
+                        <base-button class="mt-2" type="default" v-on:click="modals.modal2 = false">
                             Listo
                         </base-button>
                     </center>
