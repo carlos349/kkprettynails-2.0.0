@@ -1457,7 +1457,13 @@
         load3:false,
         load4:false,
         load5:false,
-        delay:1500
+        delay:1500,
+        configHeader: {
+            headers: {
+                "x-database-connect": endPoint.database, 
+                "x-access-token": localStorage.userToken
+            }
+        },
       };
     },
     beforeCreate(){
@@ -1494,10 +1500,10 @@
         },
         async getLenders(){
             try{
-                const Lenders = await axios.get(endPoint.endpointTarget+'/manicuristas') 
-                this.lenders = Lenders.data 
-                
-                
+                const Lenders = await axios.get(endPoint.endpointTarget+'/employes/'+this.branch, this.configHeader)
+                if (lenders.data.status == 'ok') {
+                    this.lenders = Lenders.data.data
+                }
             }catch(err){
                 console.log(err)
             }
@@ -1552,23 +1558,25 @@
         getDates() {
             if (this.lender != '' && this.validRoute('agendamiento', 'todas') != true) {
                 this.events = []
-                axios.get(endPoint.endpointTarget+'/citas/' + this.lender)
+                axios.post(endPoint.endpointTarget+'/dates/getDatesByEmployes/'+this.branch, {
+                    lender: this.lender
+                }, this.configHeader)
                 .then(res => {
                     for (let index = 0; index < res.data.length; index++) {
                         let dateNow = new Date(res.data[index].date)
                         let formatDate = dateNow.format('YYYY-MM-DD')+" "+res.data[index].start
                         let formatDateTwo = dateNow.format('YYYY-MM-DD')+" "+res.data[index].end
-                        const split = res.data[index].class.split('class')[1]
+                        const split = res.data[index].employe.class.split('class')[1]
                         let arrayEvents = {
                             start: formatDate,
                             end: formatDateTwo,
-                            title: res.data[index].services[0].servicio+" - "+res.data[index].employe,
-                            content: res.data[index].client,
-                            class: res.data[index].class,
+                            title: res.data[index].services[0].service+" - "+res.data[index].employe.name,
+                            content: res.data[index].client.name,
+                            class: res.data[index].employe.class,
                             cliente: res.data[index].client,
                             services: res.data[index].services,
                             empleada: res.data[index].employe,
-                            id:res.data[index]._id,
+                            id: res.data[index]._id,
                             process: res.data[index].process,
                             image: res.data[index].image,
                             imageLength: res.data[index].image.length,
@@ -1584,7 +1592,7 @@
                 })
             }else{
                 this.events = []
-                axios.get(endPoint.endpointTarget+'/citas')
+                axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
                 .then(res => {
                     for (let index = 0; index < res.data.length; index++) {
                     let dateNow = new Date(res.data[index].date)
@@ -1618,7 +1626,7 @@
             
         },
         getClosed() {
-            axios.get(endPoint.endpointTarget+'/citas/endingdates')
+            axios.get(endPoint.endpointTarget+'/dates/endingdates/'+this.branch, this.configHeader)
             .then(res => {
                 this.closedDates = []
                 this.lengthClosedDates = 0

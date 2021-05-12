@@ -779,6 +779,7 @@ export default {
             }
         },
         async finishProcess(){
+            var phone = this.modelStart.businessPhoneCode + ' ' + this.modelStart.businessPhone
             if (this.modelStart.typesPay.length > 1) {
                 try {
                     const registerBranch = await axios.post(endPoint.endpointTarget+'/branches', {
@@ -790,7 +791,7 @@ export default {
                                 branch: registerBranch.data.data._id,
                                 blockHour: this.modelStart.blockHour,
                                 businessName: this.modelStart.businessName,
-                                businessPhone: this.modelStart.businessPhone,
+                                businessPhone: phone,
                                 businessType: this.modelStart.businessType,
                                 businessLocation: this.modelStart.businessLocation,
                                 typesPay: this.modelStart.typesPay,
