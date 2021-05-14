@@ -14,7 +14,7 @@
             </div>
         </base-header>
 
-        <modal :show.sync="modals.modal1"
+        <modal  :show.sync="modals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
             <card type="secondary" shadow
@@ -23,61 +23,27 @@
                   class="border-0">
                 <template>
                     <div class="text-muted text-center mb-3">
-                        <h3>Administre las rutas de acceso</h3>
-                        <a-switch class="mx-auto my-1" :checked="commission" @click="changeCommission()" checked-children="Recibe comisiones" un-checked-children="Recibe comisiones" />
-                    </div>
-                    
-                </template>
-                <template>
-                    <vue-custom-scrollbar ref="tableItem" class="maxHeightRoutes">
-                        <vue-bootstrap4-table class="text-left" :rows="routes" :columns="columnsRoutes" :classes="classes" :config="configRoutes">
-                            <template slot="name" slot-scope="props">
-                                <b class="text-uppercase">{{props.row.route}}</b>
-                            </template>
-                            <template slot="validation" slot-scope="props">
-                                <base-button class="w-100" size="sm" :disabled="props.row.valid == true ? false : true" :type="props.row.valid == true ? 'success' : 'danger'" v-on:click="editFunctions(props.row.route, props.row.functions)">Editar</base-button>
-                            </template>
-                            <template slot="active" slot-scope="props">
-                                <base-button v-on:click="removeRoute(props.row.route, props.row.valid = false)" class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
-                                </base-button>
-                                <base-button v-on:click="addRoute(props.row.route, props.row.valid = true)" class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
-                            </template>
-                        </vue-bootstrap4-table>
-                    </vue-custom-scrollbar>
-                    <center>
-                        <base-button class="mt-4" type="default" v-on:click="modals.modal1 = false">
-                            Listo
-                        </base-button>
-                    </center>
-                </template>
-            </card>
-        </modal>
-
-        <modal :show.sync="modals.modal2"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                <template>
-                    <div class="text-muted text-center mb-3">
-                        <h3>Habilite las funciones de la ruta</h3>
+                        <h3>Edite el microservicio</h3>
                     </div>
                 </template>
-                <template>
-                    <vue-custom-scrollbar class="maxHeightRoutes">
-                        <vue-bootstrap4-table class="text-left" :rows="functions" :columns="columnsFunctions" :classes="classes" :config="configFunctions">
-                            <template slot="validation" slot-scope="props">
-                                <base-button class="w-100" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid" v-on:click="removeFunction(props.row.function), props.row.valid = false">
-                                </base-button>
-                                <base-button class="w-100" size="sm" type="danger" icon="fa fa-ban" v-else v-on:click="addFunction(props.row.function), props.row.valid = true"></base-button>
-                            </template>
-                        </vue-bootstrap4-table>
-                    </vue-custom-scrollbar>
+                <template v-if="configData.microServices[selectedMicroService]">
+                        <base-input placeholder="Nombre del microservicio"  v-model="configData.microServices[selectedMicroService].microService"></base-input>
+                        <currency-input
+                          v-model="configData.microServices[selectedMicroService].price"
+                          locale="de"
+                          placeholder="Precio del microservicio"
+                          class="form-control w-100"
+                        />
+                        <select class="form-control mt-4" v-model="configData.microServices[selectedMicroService].duration">
+                            <option style="color:black;" :value="0">Seleccione la duración</option>
+                            <option style="color:black;" value="15">15 Minutos</option>
+                            <option style="color:black;" value="30">30 Minutos</option>
+                            <option style="color:black;" value="45">45 Minutos</option>
+                            <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+                        </select>
                     <center>
-                        <base-button class="mt-2" type="default" v-on:click="modals.modal2 = false">
-                            Listo
+                        <base-button class="mt-4" type="default" v-on:click="updateconfig()">
+                            Editar
                         </base-button>
                     </center>
                 </template>
@@ -86,7 +52,7 @@
 
         <div class="container-fluid mt--7">
             <div class="row">
-                <div class="col-xl-8 order-xl-2 mb-5 mb-xl-0">
+                <div class="col-xl-8 col-sm-12 order-xl-2 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
                       <a-config-provider>
                         <template #renderEmpty>
@@ -435,21 +401,21 @@
                             <base-button class="mx-auto mt-2" v-on:click="updateconfig" :disabled="configData.businessName.length < 4 && configData.businessPhone != '' && configData.businessPhone != 0 && configData.businessPhone != null && configData.businessLocation != '' ? true : false" outline type="default">Actualizar información</base-button>
                         </div>
                       </div>
-                      <div class="row p-4" v-if="selectedConfig == 'profiles'">
+                      <div class="row p-4" v-if="selectedConfig == 'microServices'">
                         <div class="w-100 mb-3">
                             <h1 class=" text-center w-100 my-2">
-                                Perfiles de usuarios
+                                Microservicios
                             </h1>
                             <hr class="w-50 mb-0 mt-0">
                           </div>
                           <div class="col-md-4">
                               <base-input class="input-group-alternative"
-                                  placeholder="Nombre del perfil de usuario"
+                                  placeholder="Nombre del microservicio"
                                   addon-left-icon="fa fa-plus"
-                                  v-model="profile"
-                                  v-on:keyup.enter="insertProfile">
+                                  v-model="microService"
+                                  v-on:keyup.enter="insertMicroService">
                               </base-input>
-                              <base-button outline type="default" size="sm" class="w-50" v-on:click="insertProfile">
+                              <base-button outline type="default" size="sm" class="w-50" v-on:click="insertMicroService">
                                   Ingresar
                               </base-button>
                           </div>
@@ -457,22 +423,21 @@
                               <template  #renderEmpty>
                                   <div style="text-align: center">
                                       <a-icon type="warning" style="font-size: 20px"/>
-                                      <p>No se han agregado perfiles de usuario</p>
+                                      <p>No se han agregado microservicios</p>
                                   </div>
                               </template>
                               <a-tooltip placement="top">
                                   <template slot="title">
-                                  <span v-if="configData.typesPay.lenght == 0">Para ingresar un perfil de usuario debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
+                                  <span v-if="configData.typesPay.lenght == 0">Para ingresar un microservicio debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
                                   </template>
                                   <div class="col-md-8" >
-                                      <a-list bordered :data-source="configData.accessProfiles">
-                                          <a-list-item slot="renderItem" slot-scope="item, index">
-                                              {{ item.profile }}
-                                               
-                                              <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeProfile(index)">
+                                      <a-list bordered :data-source="configData.microServices">
+                                          <a-list-item :class="item.price == 0 || item.duration == 0 ? 'text-danger' : ' text-black' " slot="renderItem" slot-scope="item, index">
+                                              {{ item.microService }}
+                                              <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeMicroService(index)">
                                                   <i class="fa fa-times"></i>
                                               </base-button>
-                                              <base-button outline type="default" size="sm" class="float-right mr-2" v-on:click="editProfiles(item.routes, index)">
+                                              <base-button outline type="default" size="sm" class="float-right mr-2" v-on:click="modals.modal1 = true, selectedMicroService = index">
                                                   <i class="fa fa-edit"></i>
                                               </base-button>
                                           </a-list-item>
@@ -484,7 +449,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-2 order-xl-1">
+                <div class="col-xl-2 col-sm-12 order-xl-1">
                     <card shadow type="secondary">
                         <div slot="header" class="bg-white border-0">
                             <div class="row align-items-center">
@@ -493,7 +458,7 @@
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'agend' ? false : true" type="primary" v-on:click="selectedConfig = 'agend', getConfiguration()">Agendamiento</base-button>
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'blackList' ? false : true" type="primary" v-on:click="fixed('blackList'), getConfiguration()">Lista negra</base-button>
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'information' ? false : true" type="primary" v-on:click="selectedConfig = 'information', getConfiguration()">Informacion</base-button>
-                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'profiles' ? false : true" type="primary" v-on:click="selectedConfig = 'profiles', getConfiguration()">Perfiles de acceso</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'microServices' ? false : true" type="primary" v-on:click="selectedConfig = 'microServices', getConfiguration()">Microservicios</base-button>
                             </div>
                         </div>
                     </card>
@@ -522,13 +487,13 @@
         return {
           commission:false,
           selectedConfig: '',
-          selectedProfile: 0,
+          selectedMicroService: 0,
           selectedRoute: '',
           selectedClient: '',
           clients:[],
           configData: {},
           typePay: '',
-          profile: '',
+          microService: '',
           validTime: false,
           configHeader: {
             headers:{
@@ -889,7 +854,7 @@
             currency:  this.configData.currency,
             typesPay: this.configData.typesPay,
             datesPolitics: this.configData.datesPolitics,
-            accessProfiles: this.configData.accessProfiles
+            microServices: this.configData.microServices
           }, this.configHeader)
           .then(res => {
             if (res.data.status == 'ok') {
@@ -902,6 +867,7 @@
                 showConfirmButton: false,
                 timer: 1500
               })
+              this.modals.modal1 = false
             }
           }).catch(err => {
             this.$swal({
@@ -921,9 +887,9 @@
             this.configData.blackList.splice(index, 1)
             this.updateconfig()
         },
-        removeProfile(index){
+        removeMicroService(index){
           this.$swal({
-            title: '¿Está seguro de borrar el perfil? Se eliminara toda su configuración',
+            title: '¿Está seguro de borrar el microservicio? Se eliminara toda su configuración',
             text: 'No puedes revertir esta acción',
             type: 'warning',
             icon: 'warning',
@@ -934,7 +900,7 @@
             showLoaderOnConfirm: true
           }).then((result) => {
             if(result.value) {
-              this.configData.accessProfiles.splice(index, 1)
+              this.configData.microServices.splice(index, 1)
               this.updateconfig()
             }
             else{
@@ -984,13 +950,13 @@
               }
             }
         },
-        insertProfile(){
-          var valid = true
-            this.configData.accessProfiles.forEach(element => {
-              if (element == this.profile) {
+        insertMicroService(){
+          var valid = true 
+            this.configData.microServices.forEach(element => {
+              if (element == this.microService) {
                 this.$swal({
                     icon: 'error',
-                    title: 'Este perfil ya se encuentra registrado',
+                    title: 'Este microservicio ya se encuentra registrado',
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -998,14 +964,14 @@
               }
             });
             if (valid) {
-              if (this.profile.length > 2) {
-                  this.configData.accessProfiles.push({profile:this.profile, routes:[], commission:false})
-                  this.profile = ''
+              if (this.microService.length > 2) {
+                  this.configData.microServices.push({microService:this.microService, price:0, duration:0})
+                  this.microService = ''
                   this.updateconfig()
-              }else if (this.profile.length <= 2) {
+              }else if (this.microService.length <= 2) {
                   this.$swal({
                       icon: 'error',
-                      title: 'El nombre del perfil debe estar compuesto por mas de 2 caracteres',
+                      title: 'El nombre del microservicio debe estar compuesto por mas de 2 caracteres',
                       showConfirmButton: false,
                       timer: 1500
                   })
@@ -1088,21 +1054,6 @@
           setTimeout(() => {
             this.selectedConfig = value
           }, 100);
-        },
-        editProfiles(routes, index){
-          this.routes.forEach(element => {
-            element.valid = false
-            routes.forEach(elementTwo => {
-              if (element.route == elementTwo.ruta) {
-                element.valid = true
-              }
-            });
-          });
-          if (this.configData.accessProfiles[index].commission) {
-            this.commission = true
-          }
-          this.selectedProfile = index
-          this.modals.modal1 = true
         },
         addRoute(route){
           this.configData.accessProfiles[this.selectedProfile].routes.push({ruta:route, validaciones:[]})
