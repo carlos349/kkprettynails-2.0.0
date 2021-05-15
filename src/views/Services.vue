@@ -110,7 +110,7 @@
                                             <center>
                                                 <base-button v-on:click="unSelected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid == true">
                                                 </base-button>
-                                                <base-button v-on:click="selected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else>
+                                                <base-button v-on:click="selected(props.row, props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else>
                                                 </base-button>
                                             </center>
                                          </template>
@@ -236,7 +236,7 @@
                                             <center>
                                                 <base-button v-on:click="unSelected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
                                                 </base-button>
-                                                <base-button v-on:click="selected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
+                                                <base-button v-on:click="selected(props.row, props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
                                             </center>
                                          </template>
                                         <!-- <base-button v-on:click="addService(props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else></base-button> -->
@@ -821,7 +821,7 @@ export default {
         selectedAll(value){
             for (let index = 0; index < value.selected_items.length; index++) {
                 this.lenderSelecteds.push(value.selected_items[index]._id)
-                this.EditlenderSelecteds.push(value.selected_items[index]._id)
+                this.EditlenderSelecteds.push({id: value.selected_items[index]._id, name: value.selected_items[index].firstName+' '+value.selected_items[index].lastName, class: value.selected_items[index].class, days: value.selected_items[index].days})
             }
         },
         unSelectedAll(value){
@@ -942,21 +942,20 @@ export default {
         },
         selected(value, id){
             this.lenders[id - 1].valid = true
-            console.log(this.lenders)
-            this.lenderSelecteds.push(value)
-            this.EditlenderSelecteds.push(value)
-            console.log(this.lenderSelecteds)
+            console.log(value)
+            this.lenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days})
+            this.EditlenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days})
         },
         unSelected(value, id){
             this.lenders[id - 1].valid = false
             for (let i = 0; i < this.lenderSelecteds.length; i++) {
-                if (this.lenderSelecteds[i] == value) {
+                if (this.lenderSelecteds[i].id == value) {
                     this.lenderSelecteds.splice(i, 1)
                     break
                 }
             }
             for (let i = 0; i < this.EditlenderSelecteds.length; i++) {
-                if (this.EditlenderSelecteds[i] == value) {
+                if (this.EditlenderSelecteds[i].id == value) {
                     this.EditlenderSelecteds.splice(i, 1)
                     break
                 }
@@ -987,8 +986,8 @@ export default {
                 this.lenders[index].valid = false
                 for (let j = 0; j < lenders.length; j++) {
                     const elementTwo = lenders[j];
-                    if (elementTwo == element._id) {
-                        this.EditlenderSelecteds.push(element._id)
+                    if (elementTwo.id == element._id) {
+                        this.EditlenderSelecteds.push({id: element._id, name: element.firstName+' '+element.lastName, class: element.class, days: element.days})
                         this.lenders[index].valid = true
                     }
                 }
