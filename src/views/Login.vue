@@ -86,9 +86,10 @@
                                             show-search
                                             placeholder="Seleccionar negocio"
                                             option-filter-prop="children"
-                                            style="width: 100%"
+                                            style="width: 100%;height: 43px;"
                                             class="input-group-alternative"
                                             size="large"
+                                            v-model="this.modelStart.businessType"
                                             :filter-option="filterOption"
                                             @change="handleChange"
                                         >
@@ -108,23 +109,22 @@
                                 Siguiente
                             </base-button>
                         </div>
-                        <div v-else-if="process == 'date'" class="data mt-4">
-                            <h1 class="text-uppercase text-center mb-4">
-                                Configura tu agenda
+                        <div v-else-if="process == 'date'" class="data">
+                            <h1 class="text-uppercase text-center">
+                                Agenda
                             </h1>
                             <hr class="w-50">
-                            
                             <h3 class="text-weigth-bold text-center">
                                 <a-tooltip placement="topLeft">
                                     <template slot="title">
-                                        <span>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorem reiciendis in labore voluptatibus tempora, amet cum culpa cupiditate laborum consequatur voluptate repudiandae modi dolorum fuga necessitatibus dolores eum consectetur dolore?</span>
+                                        <span>Seleccione los días y horarios de apertura y cierre de su negocio.</span>
                                     </template>
                                     <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
                                 </a-tooltip>
                                 Configura tu agenda
                             </h3>
-                            <div class="row">
-                                <div class="col-4">
+                            <div class="row pl-8 pr-4">
+                                <div class="col-2">
                                     <base-button :type="days.monday" size="sm" class="mt-2 w-100" v-on:click="salectDay('monday')">
                                         Lunes
                                     </base-button>
@@ -147,7 +147,7 @@
                                         Domingo
                                     </base-button>
                                 </div>
-                                <div class="col-8">
+                                <div class="col-10">
                                     <a-select :disabled="modelStart.blockHour[1].status == true ? false : true" style="width:40%" class="mx-2 mt-1 input-group-alternative" placeholder="Desde" v-model="modelStart.blockHour[1].start">
                                         <a-select-option v-for="i in fromArray" :key="i">
                                             {{i}}
@@ -226,33 +226,56 @@
                                     </a-select>
                                 </div>
                             </div>
-                            <base-button outline type="default" class="float-left mt-2" v-on:click="prevStep('date')">
+                            <base-button outline type="default" class="float-left mt-3" v-on:click="prevStep('date')">
                                 Anterior
                             </base-button>
                             <base-button outline type="default" class="float-right mt-3" v-on:click="nextStep('date')">
                                 Siguiente
                             </base-button>
                         </div>
-                        <div v-else-if="process == 'sale'" class="data mt-4">
-                            <h1 class="text-uppercase text-center mb-4">
-                                Crea tus tipos de pago
+                        <div v-else-if="process == 'sale'" class="data">
+                            <h1 class="text-uppercase text-center">
+                                Tipos de pago
                             </h1>
                             <hr class="w-50">
+                            <h3 class="text-weigth-bold text-center">
+                                <a-tooltip placement="topLeft">
+                                    <template slot="title">
+                                        <span>Para registrar un método de pago debes escribirlo, darle click en <b>ingresar</b> o presionando la tecla <b>enter</b>.</span>
+                                    </template>
+                                    <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                                </a-tooltip>
+                                Crea tus tipos de pago
+                            </h3>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <base-input class="input-group-alternative"
-                                        placeholder="Efectivo"
-                                        addon-left-icon="fa fa-plus"
-                                        v-model="typePay"
-                                        v-on:keyup.enter="insertTypePay">
-                                    </base-input>
-                                    <base-button outline type="default" size="sm" class="w-50" v-on:click="insertTypePay">
-                                        Ingresar
-                                    </base-button>
+                                    <label for="currency">
+                                        Escriba su tipo de pago
+                                    </label>
+                                    <div class="row pr-2">
+                                        <div class="col-10 pr-0">
+                                            <base-input class="input-group-alternative"
+                                                placeholder="Tipo de pago"
+                                                addon-left-icon="fa fa-plus"
+                                                v-model="typePay"
+                                                v-on:keyup.enter="insertTypePay">
+                                            </base-input>
+                                        </div>
+                                        <div class="col-2">
+                                            <a-tooltip placement="topLeft">
+                                                <template slot="title">
+                                                    <span>Ingresar método de pago.</span>
+                                                </template>
+                                                <base-button outline type="default" class="p-2 px-3 mt-1" v-on:click="insertTypePay">
+                                                    <a-icon style="vertical-align: 1px;" type="plus" />
+                                                </base-button>
+                                            </a-tooltip>
+                                        </div>
+                                    </div>
                                     <label class="mt-4" for="currency">
                                         Seleccione su moneda local
                                     </label>
-                                    <a-select class="input-group-alternative" default-value="CLP" style="width: 100%" @change="selectCurrency" size="large">
+                                    <a-select class="input-group-alternative" default-value="CLP" style="width: 100%;height: 43px;" @change="selectCurrency" size="large">
                                         <a-select-option value="USD">
                                             USD
                                         </a-select-option>
@@ -280,35 +303,39 @@
                                             <p>No se han agregado metodos de pago</p>
                                         </div>
                                     </template>
-                                    <a-tooltip placement="top">
-                                        <template slot="title">
-                                        <span>Para ingresar un método de pago debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
-                                        </template>
-                                        <div class="col-md-8" style="overflow: hidden;overflow-y:scroll; max-height: 200px;">
-                                            <a-list bordered :data-source="modelStart.typesPay">
-                                                <a-list-item slot="renderItem" slot-scope="item, index">
-                                                    {{ item }} 
-                                                    <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeTypePay(index)">
-                                                        <i class="fa fa-times"></i>
-                                                    </base-button>
-                                                </a-list-item>
-                                            </a-list>
-                                        </div>
-                                    </a-tooltip>
+                                    <div class="col-md-8 mt-4" style="overflow: hidden;overflow-y:scroll; max-height: 200px;">
+                                        <a-list size="small" bordered :data-source="modelStart.typesPay">
+                                            <a-list-item slot="renderItem" slot-scope="item, index">
+                                                {{ item }} 
+                                                <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeTypePay(index)" style="margin-top: -3px;">
+                                                    <i class="fa fa-times"></i>
+                                                </base-button>
+                                            </a-list-item>
+                                        </a-list>
+                                    </div>
                                 </a-config-provider>
                             </div>
-                            <base-button outline type="default" class="float-left mt-2" v-on:click="prevStep('sale')">
+                            <base-button outline type="default" class="float-left mt-3" v-on:click="prevStep('sale')">
                                 Anterior
                             </base-button>
                             <base-button outline type="default" class="float-right mt-3" v-on:click="nextStep('sale')">
                                 Siguiente
                             </base-button>
                         </div>
-                        <div v-else-if="process == 'final'" class="data mt-4">
-                            <h1 class="text-uppercase text-center mb-4">
-                                Crea tu usuario de ingreso.
+                        <div v-else-if="process == 'final'" class="data">
+                            <h1 class="text-uppercase text-center">
+                                Usuario de ingreso
                             </h1>
                             <hr class="w-50">
+                            <h3 class="text-weigth-bold text-center">
+                                <a-tooltip placement="topLeft">
+                                    <template slot="title">
+                                        <span>Registra los datos con los que accederas al sistema.</span>
+                                    </template>
+                                    <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                                </a-tooltip>
+                                Crear usuario de ingreso
+                            </h3>
                             <div class="row">
                                 <div class="col-md-4">
                                     <label for="first_name">
@@ -376,7 +403,7 @@
                                     </base-input>
                                 </div>
                             </div>
-                            <base-button outline type="default" class="float-left mt-2" v-on:click="prevStep('final')">
+                            <base-button outline type="default" class="float-left mt-3" v-on:click="prevStep('final')">
                                 Anterior
                             </base-button>
                             <base-button outline type="default" class="float-right mt-3" v-on:click="finishProcess()">
@@ -504,7 +531,7 @@ import jwtDecode from 'jwt-decode'
                 businessName: '',
                 businessPhoneCode: '+56',
                 businessPhone: '',
-                businessType: '',
+                businessType: 'Seleccione',
                 businessLocation: '',
                 blockHour: [
                     {
@@ -716,8 +743,19 @@ import jwtDecode from 'jwt-decode'
         insertTypePay(){
             if (this.modelStart.typesPay.length < 8) {
                 if (this.typePay.length > 4) {
-                    this.modelStart.typesPay.push(this.typePay)
-                    this.typePay = ''
+                    var findType = this.modelStart.typesPay.find(type => type == this.typePay)
+                    console.log(findType)
+                    if (findType == undefined) {
+                        this.modelStart.typesPay.push(this.typePay)
+                        this.typePay = ''
+                    }else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Tipo de pago duplicado.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
                 }else if (this.typePay.length < 4) {
                     this.$swal({
                         icon: 'error',
@@ -778,7 +816,7 @@ import jwtDecode from 'jwt-decode'
         },
         nextStep(step){
             if (step == 'branch') {
-                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhoneCode.length < 5 && this.modelStart.businessPhone.length == 11 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != '') {
+                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhoneCode.length < 5 && this.modelStart.businessPhone.length == 11 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione') {
                     this.status.branch = 'finish'
                     this.status.date = 'process'
                     this.process = 'date'
@@ -790,6 +828,7 @@ import jwtDecode from 'jwt-decode'
                         timer: 1500
                     })
                 }
+                console.log(this.modelStart.businessType)
             }else if(step == 'date'){
                 const findDate = this.modelStart.blockHour.find(status => status.status == true)
                 console.log(findDate)
