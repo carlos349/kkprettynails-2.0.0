@@ -75,8 +75,7 @@
                             </template>
                         </vue-bootstrap4-table>
                         <div class="text-center">
-                            <base-button type="primary" v-if="registerEmploye.valid == false" disabled class="my-4">{{tipeForm}}</base-button>
-                            <base-button type="primary" v-on:click="proccess()" v-else class="my-4">{{tipeForm}}</base-button>
+                            <base-button type="primary" v-on:click="proccess()" class="my-4">{{tipeForm}}</base-button>
                         </div>
                         
                     </form>
@@ -515,9 +514,11 @@ import jwtDecode from 'jwt-decode'
                 const getByBranch = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+this.branch, this.configHeader)
                 if (getByBranch.data.data.length > 0) {
                     this.employes = getByBranch.data.data
+                    this.employeState = false
+                }else{
                     setTimeout(() => {
                         this.employeState = false
-                    }, 1000);
+                    }, 200);
                 }
             }catch(err){
                 res.send(err)
@@ -599,54 +600,48 @@ import jwtDecode from 'jwt-decode'
             }
         },
         registerEmployes(){
-			axios.post(endPoint.endpointTarget+'/employes', {
-                branch: this.registerEmploye.branch,
-                days: this.selectedDays,
-                firstName: this.registerEmploye.firstName,
-                lastName: this.registerEmploye.lastName,
-                document: this.registerEmploye.document,
-				
-			}, this.configHeader)
-			.then(res => {
-				if(res.data.status == 'employe created'){
-                    this.modals = {
-                        modal2: true,
-                        message: "¡Empleado registrado con exito!",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        if (this.filter == 'Todas') {
-                            this.getEmployes()
-                        }if (this.filter != 'Todas' && this.filter != '') {
-                            const sendBranch = {
-                                _id:this.filter
-                            }
-                            this.findBranch(sendBranch)
+            if (this.registerEmploye.firstName.length > 3 && this.registerEmploye.lastName.length > 3 && this.registerEmploye.document.length > 1) {
+                axios.post(endPoint.endpointTarget+'/employes', {
+                    branch: this.branch,
+                    days: this.selectedDays,
+                    firstName: this.registerEmploye.firstName,
+                    lastName: this.registerEmploye.lastName,
+                    document: this.registerEmploye.document,
+                }, this.configHeader)
+                .then(res => {
+                    if(res.data.status == 'employe created'){
+                        this.modals = {
+                            modal2: true,
+                            message: "¡Empleado registrado con exito!",
+                            icon: 'ni ni-check-bold ni-5x',
+                            type: 'success'
                         }
-                        
-                        this.initialState(1)
-                        EventBus.$emit('reloadLenders', 'reload')
-                    }, 1500);
-				}else{
-					this.modals = {
-                        modal2: true,
-                        message: "¡El empleado ya se encuentra registrado!",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
+                        setTimeout(() => {
+                            this.getEmployes()
+                            this.initialState(1)
+                            EventBus.$emit('reloadLenders', 'reload')
+                        }, 1500);
+                    }else{
+                        this.modals = {
+                            modal2: true,
+                            message: "¡El empleado ya se encuentra registrado!",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
+                        }
+                        setTimeout(() => {
+                        this.modals = {
+                            modal2: false,  
+                            modal1: true,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        } 
+                        }, 1500);
                     }
-                    setTimeout(() => {
-                       this.modals = {
-                         modal2: false,  
-                         modal1: true,
-                         message: "",
-                         icon: '',
-                         type: ''
-                       } 
-                    }, 1500);
-				}
-			})
-			
+                })
+            }else{
+
+            }
         },
         updateEmploye(){
 				axios.put(endPoint.endpointTarget+'/employes', {

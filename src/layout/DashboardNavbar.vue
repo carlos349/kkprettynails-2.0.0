@@ -194,9 +194,9 @@
         count:0,
         all: true,
         pxSep: '',
-        branch: '',
+        branches: [],
         branchName: localStorage.branchName,
-        branch: localStorage.branch,
+        branch: localStorage.branch
       };
     },
     beforeCreate() {

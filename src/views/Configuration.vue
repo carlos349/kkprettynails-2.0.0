@@ -142,6 +142,15 @@
                             <a-switch class="mx-auto" :checked="configData.datesPolitics.deleteDates" @click="changeDatePolitic('deleteDates')" checked-children="Permitir eliminar citas" un-checked-children="Permitir eliminar citas" />
                           </div>
                           <div class="col-4">
+                            <h5 class="text-center">Días</h5>
+                          </div>
+                          <div class="col-4">
+                            <h5 class="mr-3 text-center">Apertura</h5>
+                          </div>
+                          <div class="col-4">
+                            <h5 class="mr-5 text-center">Cierre</h5>
+                          </div>
+                          <div class="col-4">
                               <base-button :type="configData.blockHour[1].status == true ? 'success' : 'danger'" size="sm" class="mt-2 w-100" v-on:click="salectDay('monday')">
                                   Lunes
                               </base-button>
@@ -165,78 +174,80 @@
                               </base-button>
                           </div>
                           <div class="col-8 row">
-                              <a-select :disabled="configData.blockHour[1].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[1].start">
+                              
+                              <a-select :disabled="configData.blockHour[1].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[1].start">
                                   <a-select-option v-for="i in fromArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
-                              <a-select :disabled="configData.blockHour[1].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[1].end">
+                              
+                              <a-select :disabled="configData.blockHour[1].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[1].end">
                                   <a-select-option v-for="i in toArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
 
-                              <a-select :disabled="configData.blockHour[2].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[2].start">
+                              <a-select :disabled="configData.blockHour[2].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[2].start">
                                   <a-select-option v-for="i in fromArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
-                              <a-select :disabled="configData.blockHour[2].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[2].end">
+                              <a-select :disabled="configData.blockHour[2].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[2].end">
                                   <a-select-option v-for="i in toArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
                               
-                              <a-select :disabled="configData.blockHour[3].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[3].start">
+                              <a-select :disabled="configData.blockHour[3].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[3].start">
                                   <a-select-option v-for="i in fromArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
-                              <a-select :disabled="configData.blockHour[3].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[3].end">
+                              <a-select :disabled="configData.blockHour[3].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[3].end">
                                   <a-select-option v-for="i in toArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
 
-                              <a-select :disabled="configData.blockHour[4].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[4].start">
+                              <a-select :disabled="configData.blockHour[4].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[4].start">
                                   <a-select-option v-for="i in fromArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
-                              <a-select :disabled="configData.blockHour[4].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[4].end">
+                              <a-select :disabled="configData.blockHour[4].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[4].end">
                                   <a-select-option v-for="i in toArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
 
-                              <a-select :disabled="configData.blockHour[5].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[5].start">
+                              <a-select :disabled="configData.blockHour[5].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[5].start">
                                   <a-select-option v-for="i in fromArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
-                              <a-select :disabled="configData.blockHour[5].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[5].end">
+                              <a-select :disabled="configData.blockHour[5].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[5].end">
                                   <a-select-option v-for="i in toArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
 
-                              <a-select :disabled="configData.blockHour[6].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[6].start">
+                              <a-select :disabled="configData.blockHour[6].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[6].start">
                                   <a-select-option v-for="i in fromArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
-                              <a-select :disabled="configData.blockHour[6].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[6].end">
+                              <a-select :disabled="configData.blockHour[6].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[6].end">
                                   <a-select-option v-for="i in toArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
 
-                              <a-select :disabled="configData.blockHour[0].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[0].start">
+                              <a-select :disabled="configData.blockHour[0].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[0].start">
                                   <a-select-option v-for="i in fromArray" :key="i">
                                       {{i}}
                                   </a-select-option>
                               </a-select>
-                              <a-select :disabled="configData.blockHour[0].status == true ? false : true" @change="updateconfig" style="width:40%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[0].end">
+                              <a-select :disabled="configData.blockHour[0].status == true ? false : true" @change="updateconfig" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Hasta" v-model="configData.blockHour[0].end">
                                   <a-select-option v-for="i in toArray" :key="i">
                                       {{i}}
                                   </a-select-option>

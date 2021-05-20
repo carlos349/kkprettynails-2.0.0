@@ -12,8 +12,8 @@
                         <p class="text-white mt-0 mb-2">Esta es la sección de servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
                         <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()"  type="success">Ingrese un servicio</base-button>
                         <base-button v-tooltip="'You have new messages.'" v-else disabled  type="success">Ingrese un servicio</base-button>
-                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorias</base-button>
-                        <base-button v-tooltip="'You have new messages.'" v-else disabled  type="default">Categorias</base-button>
+                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorías</base-button>
+                        <base-button v-tooltip="'You have new messages.'" v-else disabled  type="default">Categorías</base-button>
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-md-4">
                                 <select class="form-control mb-3" v-model="categoryRegister">
-                                    <option style="color:black;">Categoria</option>
+                                    <option style="color:black;">Categoría</option>
                                     <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
                                 </select>
                             </div>
@@ -421,47 +421,41 @@
                modal-classes="modal-dialog-centered modal-lg">
                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
+                  header-classes="bg-white pb-2"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                       <h3>Categorias - {{this.branchName}}</h3> 
+                       <h3>Categorías - {{this.branchName}}</h3> 
                     </div>
                 </template>
                 <template>
                     <vue-bootstrap4-table :rows="categories" :columns="columnsCategories" class="class_categories" :classes="classes" :config="configCategories">
                         <template slot="deleteCat" slot-scope="props">
-                            <base-button class="text-center float-right mr-2" icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="deleteCategory(props.row._id)">Borrar</base-button> 
+                            <center>
+                                <base-button class="text-center mr-2" size="sm" type="danger" v-on:click="deleteCategory(props.row._id)">
+                                    <a-icon style="vertical-align:2px;font-weight:bold;" type="close" />
+                                </base-button> 
+                            </center>
                         </template>
                     </vue-bootstrap4-table>
-                    <base-button type="success" class="mt-1 float-right" @click="modals.modal6 = true">Nueva categoria
-                    </base-button>
-                </template>
-            </card>
-        </modal>
-        <modal :show.sync="modals.modal6"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-sm">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                       <h3>Registre una categoria</h3> 
+                    <div class="row p-0 mt-2">
+                        <div class="col-10 pr-5">
+                            <base-input  
+                                alternative
+                                class="pl-1"
+                                placeholder="nombre de la Categoría"
+                                id="catFocus"
+                                v-model="nameCategory"
+                                addon-left-icon="fa fa-list-ol">
+                            </base-input>
+                        </div>
+                        <div class="col-2">
+                            <base-button type="success" class="float-right" @click="newCategory">
+                                Agregar
+                            </base-button>
+                        </div>
                     </div>
-                </template>
-                <template>
-                    <base-input  
-                        alternative
-                        placeholder="nombre de la categoria"
-                        v-model="nameCategory"
-                        addon-left-icon="fa fa-list-ol">
-                    </base-input>
-                    <base-button type="success" class="mt-1 float-right" v-on:click="newCategory">Registrar categoria
-                    </base-button>
                 </template>
             </card>
         </modal>
@@ -491,7 +485,7 @@ export default {
     data(){
         return {
             auth: [],
-            categoryRegister: 'Categoria',
+            categoryRegister: 'Categoría',
             unitPerItem: '',
             countModal:'',
             typeItemModal:'',
@@ -762,6 +756,7 @@ export default {
                     this.serviceState = false
                 }else{
                     this.services = []
+                    this.serviceState = false
                     this.alertTable = 'Sucursal sin servicios creados'
                 }
             }catch(err){
@@ -1129,6 +1124,7 @@ export default {
                 if (res.data.status == 'ok') {
                     this.getCategories()
                     this.nameCategory = ''
+                    document.getElementById("catFocus").focus()
                     this.modals.modal6 = false
                 }else{
                     this.nameCategory = ''
@@ -1265,7 +1261,9 @@ export default {
     .tooltip[x-placement^="right"] {
     margin-left: 5px;
     }
-    
+    .card .table td{
+        padding: 0.3rem;
+    }
     .tooltip[x-placement^="right"] .tooltip-arrow {
     border-width: 5px 5px 5px 0;
     border-left-color: transparent !important;
