@@ -32,7 +32,7 @@
                                     <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
                                 </base-button>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <base-button title="Generar excel" icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="modals.modal3 = true"> </base-button>
                             </div>
                         </div>
