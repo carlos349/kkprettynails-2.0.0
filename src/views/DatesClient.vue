@@ -27,12 +27,12 @@
                                         </li>
                                     </ul>   
                                 </div>
-                                <div class="separateService col-md-6">
+                                <div class="separateService col-md-8">
                                     <div class="tab-content" id="pills-tabContent">
                                         <div v-for="category of categories" :key="category.name" class="tab-pane fade " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row mt-2">
                                                 <template v-for="(service, index) of services">
-                                                    <div :key="service.name" class="col-md-6 px-4" v-if="service.category == category.name && service.active == true">
+                                                    <div :key="service.name" class="col-md-4 px-4" v-if="service.category == category.name && service.active == true">
                                                         <div class="card-service row mt-2" :id="'cardS'+index">
                                                             <h3 class="name-service"> {{service.name}}</h3>
                                                             <div class="col-12 pl-0">
@@ -58,7 +58,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <h2 style="margin-top:-50px;">Servicios seleccionados</h2>
                                     <template v-if="registerDate.serviceSelectds[0]">
                                         <div v-for="(service, index) in registerDate.serviceSelectds" :key="service._id+'asda'+index" class="w-100 px-4" >
@@ -70,10 +70,10 @@
                                                             <template slot="title">
                                                                 <span>Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
                                                             </template>
-                                                            <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Microservicios: </span>
-                                                            <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;">
+                                                            <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
+                                                            <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
                                                                 <badge :type="micro.checked ? 'primary' : 'secondary'" class="text-default">
-                                                                    <p class="fs-5 mb-0">{{micro.microService}}</p>
+                                                                    <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
                                                                 </badge>
                                                             </div>
                                                         </a-tooltip>
@@ -81,7 +81,7 @@
                                                     <img src="img/brand/calendar.png" alt="">
                                                 </div>
                                                 
-                                                <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;padding-top: 5px !important;">
+                                                <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
                                                     <div class="price-service ">{{formatPrice(service.price)}} $</div> 
                                                 </div>
                                             </div>
@@ -189,7 +189,7 @@
                                                             <span style="color:red">Horarios ocupados</span>
                                                         </base-button>
                                                         <template v-for="employe of servicesSelect.employes" >
-                                                            <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, 'check'+indexService, servicesSelect.employes)">{{employe.name}}  </b>
+                                                            <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes)">{{employe.name}}  </b>
                                                         </template>
                                                     </base-dropdown>
                                                 </div>
@@ -741,7 +741,8 @@
                 microServices: [],
                 selectedMicro: [],
                 safe: [],
-                ifMicro: false
+                ifMicro: false,
+                itFirst: true
             }
         },
         created(){
@@ -1044,8 +1045,8 @@
                                     element.sort = ''
                                     element.blocks = []
                                     element.valid = false
-                                    element.lender = 'Primera disponible'
-                                    element.realLender = ''
+                                    element.employe = 'Primera disponible'
+                                    element.realEmploye = 'Primera disponible'
                                 }
                                 this.validHour = false
                                 setTimeout(() => {
@@ -1183,7 +1184,7 @@
                 console.log(rest)
                 this.selectHourService(index, lender, time, rest)
             },
-            insertData(index, lender, restTime, Class, duration, check, lenders){
+            insertData(index, lender, restTime, Class, duration, lendeId, check, lenders){
                 console.log(this.registerDate)
                 if (lender == 'Primera disponible') {
                     var durationFirst = this.registerDate.design == 'si' ? duration + 15 : duration 
@@ -1193,7 +1194,7 @@
                         if (this.registerDate.serviceSelectds[finalIndex].itFirst) {
                             for (let i = 0; i < this.registerDate.serviceSelectds[index].lenders.length; i++) {
                                 const element = this.registerDate.serviceSelectds[index].lenders[i];
-                                if (element.lender != 'Primera disponible') {
+                                if (element.employe != 'Primera disponible') {
                                     arrayLenders.push(element)
                                 }
                             }
@@ -1218,7 +1219,8 @@
                                     element.sort = ''
                                     element.blocks = []
                                     element.valid = false
-                                    element.lender = 'Primera disponible'
+                                    element.employe = 'Primera disponible'
+                                    element.realEmploye = 'Primera disponible'
                                     element.itFirst = true
                                 }
                             })
@@ -1232,7 +1234,7 @@
                             .then(res => {
                                 for (let i = 0; i < this.registerDate.serviceSelectds[index].lenders.length; i++) {
                                     const element = this.registerDate.serviceSelectds[index].lenders[i];
-                                    if (element.lender != 'Primera disponible') {
+                                    if (element.employe != 'Primera disponible') {
                                         arrayLenders.push(element)
                                     }
                                 }
@@ -1262,7 +1264,8 @@
                                         element.sort = ''
                                         element.blocks = []
                                         element.valid = false
-                                        element.lender = 'Primera disponible'
+                                        element.employe = 'Primera disponible'
+                                        element.realEmploye = 'Primera disponible'
                                         element.itFirst = true
                                     }
                                 })
@@ -1291,8 +1294,8 @@
                                 element.sort = ''
                                 element.blocks = []
                                 element.valid = false
-                                element.lender = 'Primera disponible'
-                                element.realLender = ''
+                                element.employe = 'Primera disponible'
+                                element.realEmploye = 'Primera disponible'
                                 element.itFirst = true
                             }
                         })
@@ -1305,20 +1308,29 @@
                         element.sort = ''
                         element.blocks = []
                         element.valid = false
-                        element.lender = 'Primera disponible'
-                        element.realLender = ''
+                        element.employe = 'Primera disponible'
+                        element.realEmploye = 'Primera disponible'
                         element.itFirst = true
                     }
                     this.registerDate.serviceSelectds[index].start = ''
                     this.registerDate.serviceSelectds[index].end = ''
-                    this.registerDate.serviceSelectds[index].lender = lender
-                    this.registerDate.serviceSelectds[index].realLender = lender
+                    this.registerDate.serviceSelectds[index].employe = lender
+                    this.registerDate.serviceSelectds[index].employeId = lendeId
+                    this.registerDate.serviceSelectds[index].realEmploye = lender
                     this.registerDate.serviceSelectds[index].days = restTime
                     this.registerDate.serviceSelectds[index].class = Class
                     this.registerDate.serviceSelectds[index].itFirst = false
                     this.validHour = false
-                    var durationDesign = this.registerDate.design == 'si' ? duration + 15 : duration 
-                    this.validMultiLender(index, lender, duration, restTime, check) 
+                    
+                    axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                        block: this.registerDate.serviceSelectds[index].blocks,
+                        timedate: this.registerDate.serviceSelectds[index].duration,
+                        employeSelect: lendeId,
+                        firstBlock: false
+                    }, this.configHeader)
+                    .then(res => {
+                        console.log(res)
+                    })
                 }
             },
             selectHourService(index, lender, time, resTime){
@@ -1422,7 +1434,8 @@
                     element.end = ''
                     element.sort = ''
                     element.realLender = ''
-                    element.lender = ''
+                    element.employe = 'Primera disponible'
+                    element.realEmploye = 'Primera disponible'
                     element.blocks = []
                     element.restTime = ''
                     element.class = ''
@@ -1538,31 +1551,6 @@
                     }
                 }
             },
-            selectBloq(hora, i){
-                this.registerDate.start = this.blockHour[i].Horario
-                var sortSp = this.registerDate.start.split(":") 
-                this.registerDate.sort = sortSp[0]+sortSp[1]
-                
-                axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
-                    employe: this.registerDate.employeSelect,
-                    date: this.finalDate,
-                    time: this.registerDate.duration,
-                    resTime : this.registerDate.employeResTime
-                })
-                .then(res => {
-                    
-                    for (let index = 0 ; index <= this.registerDate.duration / 15; index++) {
-                        res.data[i].validator = 'select'
-                        this.registerDate.end = res.data[i].Horario
-                        i++
-                    }
-                    this.blockHour = res.data
-                    this.validHour = true
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-            },
             selectBloqMulti(lenders, hora, i, indexService, open, check){
                 console.log(lenders, hora, i, indexService, open, check)
                 for (let j = indexService + 1; j < this.registerDate.serviceSelectds.length; j++) {
@@ -1572,7 +1560,8 @@
                     element.sort = ''
                     element.blocks = []
                     element.valid = false
-                    element.lender = 'Primera disponible'
+                    element.employe = 'Primera disponible'
+                    element.realEmploye = 'Primera disponible'
                     element.itFirst = true
                 }
                 setTimeout(() => {
@@ -1580,81 +1569,55 @@
                 }, 500);
 
                 if (lenders) {
-                    console.log('entro')
                     var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].hour.split(":") 
                     this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].hour
                     this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
 
-                    var valid = false
-                    
                     for (let j = 0; j < this.registerDate.serviceSelectds[indexService].blocks[i].employes.length; j++) {
                         const element = this.registerDate.serviceSelectds[indexService].blocks[i].employes[j];
                         if (element.valid == true) {
-                            this.registerDate.serviceSelectds[indexService].class = elementTwo.class
-                            this.registerDate.serviceSelectds[indexService].realLender = element.name
-                            this.registerDate.serviceSelectds[indexService].lenderId = element.id
-                            this.registerDate.serviceSelectds[indexService].lender = element.name
-                            valid = true
+                            this.registerDate.serviceSelectds[indexService].class = element.class
+                            this.registerDate.serviceSelectds[indexService].realEmploye = element.name
+                            this.registerDate.serviceSelectds[indexService].employeId = element.id
+                            this.registerDate.serviceSelectds[indexService].employe = element.name
+                            break
                         }
                     }
-                    console.log(this.registerDate.serviceSelectds[indexService].lenderId)
+                    console.log(this.registerDate.serviceSelectds[indexService])
                     axios.post(endPoint.endpointTarget+'/dates/selectdatesBlocksFirst', {
                         date: this.finalDate,
                         timedate: this.registerDate.serviceSelectds[indexService].duration,
                         hour: this.registerDate.serviceSelectds[indexService].start,
-                        employe: this.registerDate.serviceSelectds[indexService].lenderId,
+                        employe: this.registerDate.serviceSelectds[indexService].employeId,
                         block: this.registerDate.serviceSelectds[indexService].blocks,
                         branch: this.branch,
                         ifFirstClick: this.registerDate.serviceSelectds[indexService].itFirst,
+                        firstBlock: true
                     }, this.configHeader)
                     .then(res => {
                         this.registerDate.serviceSelectds[indexService].blocks = res.data.data
                         this.registerDate.serviceSelectds[indexService].itFirst = false
-
+                        this.registerDate.serviceSelectds[indexService].end = res.data.end
+                        const finalIndex = parseFloat(indexService) + parseFloat(1)
+                        if (this.registerDate.serviceSelectds[finalIndex]) {
+                            axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                                block: this.registerDate.serviceSelectds[indexService].blocks,
+                                timedate: this.registerDate.serviceSelectds[finalIndex].duration,
+                                employesServices: this.registerDate.serviceSelectds[finalIndex].employes,
+                                firstBlock: true
+                            })
+                            .then(res => {
+                                this.registerDate.serviceSelectds[finalIndex].valid = true
+                                this.registerDate.serviceSelectds[finalIndex].blocks = res.data.data
+                                console.log(res)
+                            })
+                        }
                         console.log(res)
                     }).catch(err => console.log(err))
                     
-                    // const finalIndex = parseFloat(indexService) + parseFloat(1)
-                    // if (this.registerDate.serviceSelectds[finalIndex]) {
-                    //     axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
-                    //         array: this.registerDate.serviceSelectds[indexService].blocks,
-                    //         time: designNext,
-                    //         lender: this.registerDate.serviceSelectds[indexService].lender,
-                    //         lendersService: this.registerDate.serviceSelectds[finalIndex].lenders
-                    //     })
-                    //     .then(res => {
-                    //         this.registerDate.serviceSelectds[finalIndex].blocks = res.data
-                    //         var none = true
-                    //         for (let n = 0; n < res.data.length; n++) {
-                    //             const element = res.data[n];
-                    //             if (element.validator == true) {
-                    //                 this.registerDate.serviceSelectds[finalIndex].valid = true
-                    //                 none = false
-                    //                 break
-                    //             }
-                    //         }
-                    //         if (none) {
-                    //             this.registerDate.serviceSelectds[finalIndex].valid = "none"
-                    //             $('#block'+finalIndex).toggle('slow')
-                    //         }
-                            
-                    //     })
-                    // }
-                    // var valid = 0 
-                    // for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                    //     const element = this.registerDate.serviceSelectds[index];
-                    //     if (element.start == "") {
-                    //         valid = 1
-                    //     }
-                    // }
-                    // if (valid == 0) {
-                    //     this.validHour = true
-                    // }
-                    // setTimeout(() => {
-                    //     $('#'+check).addClass('fa-check')
-                    // }, 500);
-                    
-                    // console.log(this.registerDate)
+                    setTimeout(() => {
+                        $('#'+check).addClass('fa-check')
+                    }, 500);
                 }
                 // else{
                 //     var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].Horario.split(":") 
@@ -1937,8 +1900,8 @@
                                 element.sort = ''
                                 element.blocks = []
                                 element.valid = false
-                                element.lender = 'Primera disponible'
-                                element.realLender = ''
+                                element.employe = 'Primera disponible'
+                                element.realEmploye = ''
                             }
                             this.validHour = false
                             setTimeout(() => {
@@ -1960,6 +1923,7 @@
                                         this.readyChange = true
                                         this.registerDate.serviceSelectds[0].valid = true
                                         this.registerDate.serviceSelectds[0].blocks = res.data.data
+                                        this.registerDate.block = res.data.data
                                         console.log(this.registerDate.serviceSelectds[0].blocks)
                                         $('#block0').toggle('slow')
                                     })
@@ -1985,6 +1949,7 @@
                                         this.readyChange = true
                                         this.registerDate.serviceSelectds[0].valid = true
                                         this.registerDate.serviceSelectds[0].blocks = res.data.data
+                                        this.registerDate.block = res.data.data
                                         console.log(this.registerDate.serviceSelectds[0].blocks)
                                     })
                                 })

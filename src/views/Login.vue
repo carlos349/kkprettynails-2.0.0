@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div v-if="ifStart" class="col-lg-12 col-md-12">
             <div class="card bg-secondary shadow border-0">
-                <div class="card-body px-lg-5 py-lg-5">
+                <div class="card-body px-lg-5 pt-0 pb-4">
                     <div class="btn-wrapper text-center">
                         <span class="mb-1"><img style="width:30%" src="img/brand/syswa-gestion.png"></span> <br><br>
                     </div>
@@ -22,12 +22,12 @@
                             </a-step> 
                         </a-steps>
                     </div>
-                    <div class="stepsBox mt-5">
-                        <div v-if="process == 'branch'" class="branch mt-4">
-                            <h1 class="text-uppercase text-center mb-4">
-                                ¡Bienvenido a Syswa Gestión!
+                    <div class="stepsBox">
+                        <div v-if="process == 'branch'" class="branch">
+                            <h1 class="text-uppercase text-center mb-4 mt-1">
+                                ¡Bienvenido!
                             </h1>
-                            <div class="row mt-5">
+                            <div class="row">
                                 <div class="col-md-6 col-sm-12">
                                     <a-tooltip placement="topLeft">
                                         <template slot="title">
@@ -54,15 +54,16 @@
                                         <base-input class="input-group-alternative"
                                             placeholder="+56"
                                             v-model="modelStart.businessPhoneCode"
-                                        >
+                                            readonly>
                                         </base-input>
                                     </div>
                                     <div class="col-9 px-0">
                                         <base-input class="input-group-alternative"
                                             placeholder="Teléfono"
-                                            type='number'
                                             addon-left-icon="fa fa-phone"
-                                            v-model="modelStart.businessPhone">
+                                            v-model="modelStart.businessPhone"
+                                            v-on:input="formatPhone"
+                                            :valid="modelStart.businessPhone.length == 11 ? true : false">
                                         </base-input>
                                     </div>
                                 </div>
@@ -501,7 +502,7 @@ import jwtDecode from 'jwt-decode'
                 credential: '',
                 branch: '',
                 businessName: '',
-                businessPhoneCode: '',
+                businessPhoneCode: '+56',
                 businessPhone: '',
                 businessType: '',
                 businessLocation: '',
@@ -509,49 +510,49 @@ import jwtDecode from 'jwt-decode'
                     {
                         day: 0,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 1,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 2,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 3,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 4,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 5,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 6,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     }
@@ -560,6 +561,14 @@ import jwtDecode from 'jwt-decode'
                 typesPay: ['Efectivo']
             },
             fromArray: [
+                '6:00',
+                '6:30',
+                '7:00',
+                '7:30',
+                '8:00',
+                '8:30',
+                '9:00',
+                '9:30',
                 '10:00',
                 '10:30',
                 '11:00',
@@ -571,15 +580,8 @@ import jwtDecode from 'jwt-decode'
                 '14:00',
                 '14:30',
                 '15:00',
-                '15:30',
-                '16:00',
-                '16:30',
-                '17:00',
             ],
             toArray: [
-                '10:30',
-                '11:00',
-                '11:30',
                 '12:00',
                 '12:30',
                 '13:00',
@@ -591,7 +593,18 @@ import jwtDecode from 'jwt-decode'
                 '16:00',
                 '16:30',
                 '17:00',
-                '17:30'
+                '17:30',
+                '18:00',
+                '18:30',
+                '19:00',
+                '19:30',
+                '20:00',
+                '20:30',
+                '21:00',
+                '21:30',
+                '22:00',
+                '22:30',
+                '23:00',
             ],
             model: {
                 email: '',
@@ -701,20 +714,29 @@ import jwtDecode from 'jwt-decode'
             this.modelStart.businessType = value
         },
         insertTypePay(){
-            if (this.typePay.length > 4) {
-                this.modelStart.typesPay.push(this.typePay)
-                this.typePay = ''
-            }else if (this.typePay.length < 4) {
-                this.$swal({
-                    icon: 'error',
-                    title: 'El método de pago debe estar compuesto por mas de 4 caracteres',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+            if (this.modelStart.typesPay.length < 8) {
+                if (this.typePay.length > 4) {
+                    this.modelStart.typesPay.push(this.typePay)
+                    this.typePay = ''
+                }else if (this.typePay.length < 4) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'El método de pago debe estar compuesto por mas de 4 caracteres',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Debe llenar el tipo de pago',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
             }else{
                 this.$swal({
                     icon: 'error',
-                    title: 'Debe llenar el tipo de pago',
+                    title: 'No puede ingresar mas de 8 métodos de pago.',
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -756,7 +778,7 @@ import jwtDecode from 'jwt-decode'
         },
         nextStep(step){
             if (step == 'branch') {
-                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhoneCode.length < 5 && this.modelStart.businessPhone.length >= 6 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != '') {
+                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhoneCode.length < 5 && this.modelStart.businessPhone.length == 11 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != '') {
                     this.status.branch = 'finish'
                     this.status.date = 'process'
                     this.process = 'date'
@@ -799,6 +821,16 @@ import jwtDecode from 'jwt-decode'
             }else if(step == 'final'){
                 this.status.branch = 'finish'
             }
+        },
+        formatPhone(){
+            var number = this.modelStart.businessPhone.replace(/[^\d]/g, '')
+            if (number.length == 9) {
+                number = number.replace(/(\d{1})(\d{4})/, "$1-$2-");
+            } 
+            // else if (number.length == 10) {
+            //     number = number.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+            // }
+            this.modelStart.businessPhone = number
         },
         prevStep(step){
             if (step == 'date') {

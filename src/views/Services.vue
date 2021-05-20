@@ -897,7 +897,7 @@ export default {
                     })
                 }else{
                     axios.post(endPoint.endpointTarget+'/services', {
-                        branch: this.branchRegister,
+                        branch: this.branch,
                         name: this.serviceRegister,
                         price: this.priceRegister,
                         commission: this.comissionRegister,
@@ -992,6 +992,7 @@ export default {
                     }
                 }
             }
+
         },
         clean(){
             this.lenderSelecteds = []
@@ -1021,7 +1022,7 @@ export default {
                     var ifCheck = this.addDiscountEdit ? false : true
 					const id = this.idServiceEdit
 					axios.put(endPoint.endpointTarget+'/services/'+id, {
-                        branch: this.branchEdit,
+                        branch: this.branch,
                         name: this.serviceEdit,
                         price: this.priceEdit,
                         commission: this.comissionEdit,
