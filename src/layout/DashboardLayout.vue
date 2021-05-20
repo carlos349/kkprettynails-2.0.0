@@ -2,14 +2,6 @@
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
     <side-bar  :background-color="sidebarBackground" short-title="Syswa" title="Syswa">
       <template slot="links">
-        <a-dropdown>
-          <a-menu class="bg-default" style="margin-left: -5px; width:99%;" slot="overlay" @click="selectBranch">
-            <a-menu-item style=":hover{background-color: #172b4d !important;}" class="text-white font-weight-bold" v-for="branch of branches" :key="branch._id+'/'+branch.name" > 
-              <a-icon type="shop" style="vertical-align:1px;" />{{branch.name}} 
-            </a-menu-item>
-          </a-menu>
-          <a-button class="mb-2 bg-default text-white font-weight-bold"  style="margin-left: -10px; width:99%;"> {{this.branchName}} <a-icon type="down" style="vertical-align:1px;" /> </a-button>
-        </a-dropdown>
         <base-button id="processButton" style="margin-left: -50px;" size="sm" v-if="validRoute('procesar')" type="default" icon="ni ni-tag" v-on:click="modals.modal1 = true">
         <span style="margin-left:15px;">Procesar</span> 
         </base-button>
@@ -81,11 +73,7 @@
         auth: [], 
         modals: {
           modal1: false
-        },
-        branches: [],
-        branchName: localStorage.branchName,
-        branch: localStorage.branch,
-        ifBranch: false
+        }
       };
     },
     created(){
@@ -100,34 +88,8 @@
           this.auth = decoded.access
         }
       },
-      selectBranch(value){
-        if (value.key.split('/')[0] != this.branch) {
-          localStorage.setItem('branch', value.key.split('/')[0])
-          localStorage.setItem('branchName', value.key.split('/')[1])
-          this.branch = value.key.split('/')[0]
-          this.branchName = value.key.split('/')[1]
-          EventBus.$emit('changeBranch', true)
-        }
-      },
       changeAccess(status){
         this.auth = status 
-      },
-      async getBranches() {
-        const configHeader = {
-          headers: {
-              "x-database-connect": endPoint.database, 
-              "x-access-token": localStorage.userToken
-          }
-        }
-        try {
-          const getBranches = await axios.get(endPoint.endpointTarget+'/branches', configHeader)
-          if (getBranches.data.status == 'ok') {
-              if (getBranches.data.data.length > 1) {
-                this.ifBranch = true
-              }
-              this.branches = getBranches.data.data
-          }
-        }catch(err){console.log(err)}
       },
       toggleSidebar() {
         if (this.$sidebar.showSidebar) {
@@ -145,8 +107,6 @@
     },
     mounted() {
       EventBus.$on('loggedin', status => {
-        this.branch = localStorage.branch
-        this.branchName = localStorage.branchName
         this.getToken()
       })
       EventBus.$on('loggedin-user', status => {
