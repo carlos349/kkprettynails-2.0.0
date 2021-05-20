@@ -388,19 +388,33 @@
                                         :valid="validEmail()">
                                     </base-input>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="password">
-                                        Contraseña
-                                    </label>
-                                    <base-input class="input-group-alternative"
-                                        placeholder="Contraseña"
-                                        autocomplete="off"
-                                        type="password"
-                                        addon-left-icon="fa fa-unlock-alt"
-                                        v-model="modelStart.password"
-                                        :valid="modelStart.password.length > 8 ? true : false"
-                                    >
-                                    </base-input>
+                                <div class="col-md-6 row pr-0">
+                                    <div class="col-10 pr-0">
+                                        <label for="password">
+                                            <a-tooltip placement="topLeft">
+                                                <template slot="title">
+                                                    <span>Su contraseña debe contener más de 8 caracteres.</span>
+                                                </template>
+                                                <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                                            </a-tooltip>
+                                            Contraseña
+                                        </label>
+                                        <base-input class="input-group-alternative"
+                                            placeholder="Contraseña"
+                                            autocomplete="off"
+                                            :type="typePass"
+                                            addon-left-icon="fa fa-unlock-alt"
+                                            v-model="modelStart.password"
+                                            :valid="modelStart.password.length > 8 ? true : false"
+                                        >
+                                        </base-input>
+                                    </div>
+                                    <div class="col-2 pr-0">
+                                        <base-button outline type="default" style="margin-top:30px;float:right;" v-on:click="viewPass">
+                                            <a-icon style="vertical-align: 1px;" type="eye" />
+                                        </base-button>
+                                        
+                                    </div>
                                 </div>
                             </div>
                             <base-button outline type="default" class="float-left mt-3" v-on:click="prevStep('final')">
@@ -520,6 +534,7 @@ import jwtDecode from 'jwt-decode'
                 final: 'wait'
             },
             process: 'branch',
+            typePass: 'password',
             typePay: '',
             modelStart: {
                 email: '',
@@ -671,6 +686,9 @@ import jwtDecode from 'jwt-decode'
             return (
                 option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
             );
+        },
+        viewPass(){
+            this.typePass = this.typePass == 'password' ? '' : 'password'
         },
         async finishProcess(){
             if (this.modelStart.first_name.length >= 4 && this.modelStart.last_name.length >= 4 && this.modelStart.credential.length == 20 && this.validEmail() && this.modelStart.password.length > 8) {
