@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white">Sección de caja</h1>
+                        <h1 class="display-2 text-white">Caja</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus caja, aquí podrás registrar, editar y visualizar todos los cierres de caja.</p>
                         <template v-if="cashFunds.inspector">
                             <base-button v-if="validRoute('caja', 'fondo')" type="success"  v-on:click="modals.modal2 = true">Registrar fondo de caja</base-button>

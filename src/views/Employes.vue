@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white">Sección de empleados</h1>
+                        <h1 class="display-2 text-white">Empleados</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus empleados, aquí podrás registrar, editar y visualizar todos tus empleados.</p>
                         <base-button v-if="validRoute('empleados', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un empleado</base-button>
                     </div>

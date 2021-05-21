@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white">Sección de sucursales</h1>
+                        <h1 class="display-2 text-white">Sucursales</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus caja, aquí podrás registrar, editar y visualizar todos los cierres de caja.</p>
                         <base-button v-if="validRoute('caja', 'fondo')" type="success" @click="modals.modal1 = true" >Registrar nueva sucursal</base-button>
                     </div>

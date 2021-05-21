@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 text-white">Sección de clientes</h1>
+                        <h1 class="display-2 text-white">Clientes</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus clientes, aquí podrás registrar, editar y visualizar todos tus clientes.</p>
                         <base-button v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un cliente</base-button>
                         <base-button icon="ni ni-email-83" v-if="validRoute('clientes', 'correos')" type="success" @click="modals.modal3 = true">Enviar correos</base-button>

@@ -10,7 +10,7 @@
                 
                 <div class="row">
                     <div class="col-lg-12 col-md-12" style="display:inline-block">
-                        <h1 class="display-2 text-white w-100">Sección de ventas</h1>
+                        <h1 class="display-2 text-white w-100">Ventas</h1>
                         <label class="text-white" v-if="validRoute('ventas', 'filtrar')">Filtra tus ventas</label>
                         <div class="row">
                             <div class="col-md-6">
@@ -380,7 +380,7 @@ export default {
             }, 
             columns: [
                 {
-                    title: 'Comisión',
+                    title: 'Fecha',
                     dataIndex: 'createdAt',
                     key: 'createdAt',
                     scopedSlots: { customRender: 'date-format' },

@@ -7,7 +7,7 @@
         <div class="container-fluid d-flex align-items-center">
             <div class="row">
                 <div class="col-12">
-                    <h1 class="display-2 text-white">Sección de bodega</h1>
+                    <h1 class="display-2 text-white">Bodega</h1>
                     <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tu bodega, aquí podrás registrar, editar y visualizar todos los productos de tu bodega.</p>
                     <a @click="modals.modal1 = true ,validForm = 1, initialState(3)" class="btn btn-success text-white cursor-pointer">Registrar un producto</a>
                     <a @click="modalAdminProduct.modal1 = true, productsCount()" class="btn btn-success text-white cursor-pointer">Gestionar sucursales</a>

@@ -7,7 +7,7 @@
         <div class="container-fluid d-flex align-items-center">
             <div class="row">
                 <div class="col-12">
-                    <h1 class="display-2 text-white">Sección de inventario</h1>
+                    <h1 class="display-2 text-white">Inventario</h1>
                     <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tu inventario, aquí podrás visualizar todos los productos de la sucursal actual.</p>
                     <a @click="modals.modal4 = true" class="btn btn-danger text-white cursor-pointer">Cerrar inventario</a>
                 </div>

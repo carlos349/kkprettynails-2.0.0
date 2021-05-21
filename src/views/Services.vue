@@ -8,12 +8,12 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1  class="display-2 text-white w-100">Sección de servicios</h1>
+                        <h1  class="display-2 text-white w-100">Servicios</h1>
                         <p class="text-white mt-0 mb-2">Esta es la sección de servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
-                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()"  type="success">Ingrese un servicio</base-button>
-                        <base-button v-tooltip="'You have new messages.'" v-else disabled  type="success">Ingrese un servicio</base-button>
-                        <base-button v-tooltip="'You have new messages.'" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorías</base-button>
-                        <base-button v-tooltip="'You have new messages.'" v-else disabled  type="default">Categorías</base-button>
+                        <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()"  type="success">Ingrese un servicio</base-button>
+                        <base-button v-else disabled  type="success">Ingrese un servicio</base-button>
+                        <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorías</base-button>
+                        <base-button v-else disabled  type="default">Categorías</base-button>
                     </div>
                 </div>
             </div>
@@ -69,27 +69,49 @@
                                     <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
                                 </select>
                             </div>
-                            <div class="col-md-6"> 
-                                <select class="form-control mb-3" v-model="timeRegister">
-                                    <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
-                                    <option style="color:black;" value="15">15 Minutos</option>
-                                    <option style="color:black;" value="30">30 Minutos</option>
-                                    <option style="color:black;" value="45">45 Minutos</option>
-                                    <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
-                                    <option style="color:black;" value="75">75 Minutos (1:15 Hr)</option>
-                                    <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
-                                    <option style="color:black;" value="105">105 Minutos (1:45 Hr)</option>
-                                    <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
-                                    <option style="color:black;" value="135">135 Minutos (2:15 Hr)</option>
-                                    <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
-                                    <option style="color:black;" value="165">165 Minutos (2:45 Hr)</option>
-                                    <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
-                                    <option style="color:black;" value="195">195 Minutos (3:15 Hr)</option>
-                                    <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
-                                    <option style="color:black;" value="225">225 Minutos (3:45 Hr)</option>
-                                    <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
-                                </select>
-
+                            
+                            <div class="col-md-6 row ml-1" style="margin-top:-10px;"> 
+                                <label class="ml-5">
+                                    Tiempo del servicio
+                                </label>
+                                <div class="col-6 px-1" style="margin-top:-10px;">
+                                    <a-select default-value="0" v-model="timeHoursRegister">
+                                        <a-select-option value="0">
+                                            0 hr
+                                        </a-select-option>
+                                        <a-select-option value="1">
+                                            1 hr
+                                        </a-select-option>
+                                        <a-select-option value="2">
+                                            2 hr
+                                        </a-select-option>
+                                        <a-select-option value="3">
+                                            3 hr
+                                        </a-select-option>
+                                        <a-select-option value="4">
+                                            4 hr
+                                        </a-select-option>
+                                        <a-select-option value="5">
+                                            5 hr
+                                        </a-select-option>
+                                    </a-select>
+                                </div>
+                                <div class="col-6 px-1" style="margin-top:-10px;">
+                                    <a-select default-value="0" v-model="timeMinutesRegister">
+                                        <a-select-option value="0">
+                                            0 min
+                                        </a-select-option>
+                                        <a-select-option value="15">
+                                            15 min
+                                        </a-select-option>
+                                        <a-select-option value="30">
+                                            30 min
+                                        </a-select-option>
+                                        <a-select-option value="45">
+                                            45 min
+                                        </a-select-option>
+                                    </a-select>
+                                </div>
                             </div>
                             <div style="margin-top:-10px" class="row col-sm-6 mx-auto">
                                 <h3 class="w-100 text-center">¿Aplica descuento?</h3>
@@ -164,7 +186,6 @@
                     <form role="form">
                         <div class="row m-0">
                             <div class="col-md-12">
-                                <label for="branch">Nombre del servicio</label>
                                 <base-input alternative
                                     class="w-100 mb-2"
                                     placeholder="Nombre"
@@ -197,25 +218,49 @@
                                     <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
                                 </select>
                             </div>
-                            <select class="form-control col-md-5 mx-auto mb-3" v-model="timeEdit">
-                                <option style="color:black;" selected value="Seleccione el tiempo">Seleccione el tiempo</option>
-                                    <option style="color:black;" value="15">15 Minutos</option>
-                                    <option style="color:black;" value="30">30 Minutos</option>
-                                    <option style="color:black;" value="45">45 Minutos</option>
-                                    <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
-                                    <option style="color:black;" value="75">75 Minutos (1:15 Hr)</option>
-                                    <option style="color:black;" value="90">90 Minutos (1:30 Hr)</option>
-                                    <option style="color:black;" value="105">105 Minutos (1:45 Hr)</option>
-                                    <option style="color:black;" value="120">120 Minutos (2 Hr)</option>
-                                    <option style="color:black;" value="135">135 Minutos (2:15 Hr)</option>
-                                    <option style="color:black;" value="150">150 Minutos (2:30 Hr)</option>
-                                    <option style="color:black;" value="165">165 Minutos (2:45 Hr)</option>
-                                    <option style="color:black;" value="180">180 Minutos (3 Hr)</option>
-                                    <option style="color:black;" value="195">195 Minutos (3:15 Hr)</option>
-                                    <option style="color:black;" value="210">210 Minutos (3:30 Hr)</option>
-                                    <option style="color:black;" value="225">225 Minutos (3:45 Hr)</option>
-                                    <option style="color:black;" value="240">240 Minutos (4 Hr)</option>
-                            </select>
+                            <div class="col-md-6 row ml-1" style="margin-top:-10px;"> 
+                                <label class="ml-5">
+                                    Tiempo del servicio
+                                </label>
+                                <div class="col-6 px-1" style="margin-top:-10px;">
+                                    <a-select default-value="0" v-model="editTimeHoursRegister">
+                                        <a-select-option value="0">
+                                            0 hr
+                                        </a-select-option>
+                                        <a-select-option value="1">
+                                            1 hr
+                                        </a-select-option>
+                                        <a-select-option value="2">
+                                            2 hr
+                                        </a-select-option>
+                                        <a-select-option value="3">
+                                            3 hr
+                                        </a-select-option>
+                                        <a-select-option value="4">
+                                            4 hr
+                                        </a-select-option>
+                                        <a-select-option value="5">
+                                            5 hr
+                                        </a-select-option>
+                                    </a-select>
+                                </div>
+                                <div class="col-6 px-1" style="margin-top:-10px;">
+                                    <a-select default-value="0" v-model="editTimeMinutesRegister">
+                                        <a-select-option value="0">
+                                            0 min
+                                        </a-select-option>
+                                        <a-select-option value="15">
+                                            15 min
+                                        </a-select-option>
+                                        <a-select-option value="30">
+                                            30 min
+                                        </a-select-option>
+                                        <a-select-option value="45">
+                                            45 min
+                                        </a-select-option>
+                                    </a-select>
+                                </div>
+                            </div>
                             <div class="row mx-auto col-md-6" style="margin-top:-2%">
                                 <h3 class="w-100 text-center">¿Aplica descuento?</h3>
                                 <base-radio name="false"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
@@ -339,31 +384,39 @@
                 </template>
                 
                 <template slot="actionButtons" class="mx-auto" slot-scope="record, column">
-                    <center>
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Editar</span>
-                            </template>
-                            <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch)"></base-button>
-                            <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" ></base-button>
-                        </a-tooltip>
-        
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Activar / Desactivar</span>
-                            </template>
-                            <template v-if="validRoute('servicios', 'activaciones')">
-                                <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(column._id)"></base-button>
-                                <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(column._id)"></base-button> 
-                    
-                            </template>
-                            <template v-else>
-                                <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
-                                <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled></base-button> 
-                            </template>
-                        </a-tooltip>
-                        
-                    </center>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Editar</span>
+                        </template>
+                        <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch)"></base-button>
+                        <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" ></base-button>
+                    </a-tooltip>
+    
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                        <span>Activar / Desactivar</span>
+                        </template>
+                        <template v-if="validRoute('servicios', 'activaciones')">
+                            <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(column._id)"></base-button>
+                            <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(column._id)"></base-button> 
+                
+                        </template>
+                        <template v-else>
+                            <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
+                            <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled></base-button> 
+                        </template>
+                    </a-tooltip>
+
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                            <span>Eliminar</span>
+                        </template>
+                        <base-button v-if="validRoute('servicios', 'editar')" size="sm" type="danger" class="text-center" v-on:click="deleteService(column._id)">
+                        <a-icon type="close" style="vertical-align:1px;" />
+                        </base-button>
+                        <base-button v-else size="sm" type="danger" disabled class="text-center" >
+                        <a-icon type="close" style="vertical-align:1px;" /></base-button>
+                    </a-tooltip>
                 </template>
                 <template slot="format-price" slot-scope="record, column">
                     {{formatPrice(column.price)}}
@@ -469,8 +522,6 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 import router from '../router'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
-import VTooltip from 'v-tooltip'
- 
 
 // COMPONENTS
 import Modal from '@/components/Modal'
@@ -479,8 +530,7 @@ export default {
     components: {
         VueBootstrap4Table,
         Modal,
-        vueCustomScrollbar,
-        VTooltip
+        vueCustomScrollbar
     },
     data(){
         return {
@@ -512,10 +562,13 @@ export default {
             nameCategory: '',
             categories: [],
             serviceRegister: '',
-            priceRegister: '',
+            priceRegister: 0,
             comissionRegister: '',
-            timeRegister: 'Seleccione el tiempo',
+            timeHoursRegister: 'Horas',
+            timeMinutesRegister: 'Minutos',
             services: [],
+            editTimeHoursRegister: '',
+            editTimeMinutesRegister: '',
             columnsLender: [
                 {
                     label: "Nombre",
@@ -747,6 +800,35 @@ export default {
             this.getProducts()
             this.getCategories()
         },
+        deleteService(id){
+            this.$swal({
+				title: '\n¿Desea eliminar este servicio?',
+				text: 'No puede revertir esta acción',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Estoy seguro',
+				cancelButtonText: 'No, evitar acción',
+				showCloseButton: true,
+				showLoaderOnConfirm: true
+			}).then((result) => {
+                if (result.value) {
+                    axios.delete(endPoint.endpointTarget+'/services/'+id, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.getServices()
+                        }
+                    })
+                    .catch(err => console.log(err))
+                }else{
+                    this.$swal({
+                        icon: 'info',
+                        title: 'acción cancelada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+        },
         async getServices(){
             this.serviceState = true
             try {
@@ -875,7 +957,12 @@ export default {
             this.EdititemSelected = []
         },
         registerService(){
-            if (this.serviceRegister == '' || this.priceRegister == 0 || this.timeRegister == '' || this.comissionRegister == '') {
+            var timeService = 0 
+            
+            if (this.timeHoursRegister != 'Horas' && this.timeMinutesRegister != 'Minutos') {
+                timeService = (this.timeHoursRegister * 60) + parseFloat(this.timeMinutesRegister)
+            }
+            if (this.serviceRegister == '' || this.priceRegister == 0 || timeService > 0 || this.comissionRegister == '') {
                 this.$swal({
                     icon: 'info',
                     title: 'Debe rellenar los datos',
@@ -896,7 +983,7 @@ export default {
                         name: this.serviceRegister,
                         price: this.priceRegister,
                         commission: this.comissionRegister,
-                        duration: this.timeRegister,
+                        duration: timeService,
                         employes: this.lenderSelecteds,
                         products:this.itemSelected,
                         category: this.categoryRegister,
@@ -927,7 +1014,7 @@ export default {
         initialState(){
             this.serviceRegister = ''
             this.priceRegister = 0
-            this.comissionRegister = 0
+            this.comissionRegister = ''
             this.timeRegister = 'Seleccione el tiempo'
             this.lenderSelecteds = []
             this.addDiscount = false
@@ -972,7 +1059,10 @@ export default {
             this.priceEdit = price
             this.editCategoryServicer = category
             this.comissionEdit = comission
-            this.timeEdit = time
+            this.editTimeHoursRegister = parseInt(time / 60) + ' hr'
+            this.editTimeMinutesRegister = time - (parseInt(time / 60) * 60 )  + ' min'
+            console.log(this.editTimeHoursRegister)
+            console.log(this.editTimeMinutesRegister)
             this.addDiscountEdit = discount
             this.modals.modal2 = true
             this.EditlenderSelecteds = []
@@ -998,7 +1088,15 @@ export default {
             }
         },
         editService(){
-            if (this.serviceEdit == '' || this.priceEdit == '' || this.timeEdit == '' || this.comissionEdit == '') {
+            var timeService = 0 
+            if (this.editTimeHoursRegister.includes('hr')) {
+                this.editTimeHoursRegister = this.editTimeHoursRegister.split(' ')[0]
+            }
+            if (this.editTimeMinutesRegister.includes('min')) {
+                this.editTimeMinutesRegister = this.editTimeMinutesRegister.split(' ')[0]
+            }
+            timeService = (this.editTimeHoursRegister * 60) + parseFloat(this.editTimeMinutesRegister)
+            if (this.serviceEdit == '' || this.priceEdit == '' || timeService <=0 || this.comissionEdit == '') {
                 this.$swal({
                     icon: 'error',
                     title: 'Debe rellenar los datos',
@@ -1021,7 +1119,7 @@ export default {
                         name: this.serviceEdit,
                         price: this.priceEdit,
                         commission: this.comissionEdit,
-                        duration: this.timeEdit,
+                        duration: timeService,
                         employes: this.EditlenderSelecteds,
                         products:this.EdititemSelected,
                         category: this.editCategoryServicer,
@@ -1205,112 +1303,5 @@ export default {
     }
     .class_categories .card-footer{
         display: none;
-    }
-    .tooltip {
-    display: block !important;
-    z-index: 10000;
-    }
-    
-    .tooltip .tooltip-inner {
-    background: black;
-    color: white;
-    border-radius: 16px;
-    padding: 5px 10px 4px;
-    }
-    
-    .tooltip .tooltip-arrow {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    position: absolute;
-    margin: 5px;
-    border-color: black;
-    z-index: 1;
-    }
-    
-    .tooltip[x-placement^="top"] {
-    margin-bottom: 5px;
-    }
-    
-    .tooltip[x-placement^="top"] .tooltip-arrow {
-    border-width: 5px 5px 0 5px;
-    border-left-color: transparent !important;
-    border-right-color: transparent !important;
-    border-bottom-color: transparent !important;
-    bottom: -5px;
-    left: calc(50% - 5px);
-    margin-top: 0;
-    margin-bottom: 0;
-    }
-    
-    .tooltip[x-placement^="bottom"] {
-    margin-top: 5px;
-    }
-    
-    .tooltip[x-placement^="bottom"] .tooltip-arrow {
-    border-width: 0 5px 5px 5px;
-    border-left-color: transparent !important;
-    border-right-color: transparent !important;
-    border-top-color: transparent !important;
-    top: -5px;
-    left: calc(50% - 5px);
-    margin-top: 0;
-    margin-bottom: 0;
-    }
-    
-    .tooltip[x-placement^="right"] {
-    margin-left: 5px;
-    }
-    .card .table td{
-        padding: 0.3rem;
-    }
-    .tooltip[x-placement^="right"] .tooltip-arrow {
-    border-width: 5px 5px 5px 0;
-    border-left-color: transparent !important;
-    border-top-color: transparent !important;
-    border-bottom-color: transparent !important;
-    left: -5px;
-    top: calc(50% - 5px);
-    margin-left: 0;
-    margin-right: 0;
-    }
-    
-    .tooltip[x-placement^="left"] {
-    margin-right: 5px;
-    }
-    
-    .tooltip[x-placement^="left"] .tooltip-arrow {
-    border-width: 5px 0 5px 5px;
-    border-top-color: transparent !important;
-    border-right-color: transparent !important;
-    border-bottom-color: transparent !important;
-    right: -5px;
-    top: calc(50% - 5px);
-    margin-left: 0;
-    margin-right: 0;
-    }
-    
-    .tooltip.popover .popover-inner {
-    background: #f9f9f9;
-    color: black;
-    padding: 24px;
-    border-radius: 5px;
-    box-shadow: 0 5px 30px rgba(black, .1);
-    }
-    
-    .tooltip.popover .popover-arrow {
-    border-color: #f9f9f9;
-    }
-    
-    .tooltip[aria-hidden='true'] {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity .15s, visibility .15s;
-    }
-    
-    .tooltip[aria-hidden='false'] {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity .15s;
     }
 </style>
