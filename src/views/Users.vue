@@ -5,14 +5,20 @@
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
-            <div class="container-fluid d-flex align-items-center">
-                <div class="row">
-                    <div class="col-12">
-                        <h1 class="display-2 text-white">Sección de usuarios</h1>
-                        <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus usuarios, aquí podrás registrar, editar y visualizar todos tus usuarios.</p>
-                        <base-button v-if="validRoute('usuarios', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un usuario</base-button>
-                        <base-button v-if="validRoute('usuarios', 'registrar')" @click="modals.modal8 = true" type="default">Crear perfiles de acceso</base-button>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-absolute">
+                        <p class="mb-0 display-2 text-white">Usuarios</p>
+                        <p class="text-white">Sección dedicada a registrar y administrar los accesos necesarios para cada usuario dentro del sistema.</p>
                     </div>
+                    <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('usuarios', 'registrar')" @click="modals.modal8 = true" type="primary">
+                        <a-icon type="user" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Perfiles
+                    </base-button>
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('usuarios', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">
+                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Registrar
+                    </base-button>
                 </div>
             </div>
         </base-header>

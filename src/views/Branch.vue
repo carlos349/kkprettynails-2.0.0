@@ -1,19 +1,20 @@
 <template>
     <div>
-        <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
+        <base-header class="header pb-3 pt-2 pt-lg-4 d-flex align-items-center"
                      style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
-            <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
+            <span style="background-color:#172b4d !important" class="mask opacity-7"></span>
             <!-- Header container -->
-            <div class="container-fluid d-flex align-items-center">
-                <div class="row">
-                    <div class="col-12">
-                        <h1 class="display-2 text-white">Sucursales</h1>
-                        <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus caja, aquí podrás registrar, editar y visualizar todos los cierres de caja.</p>
-                        <base-button v-if="validRoute('caja', 'fondo')" type="success" @click="modals.modal1 = true" >Registrar nueva sucursal</base-button>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-absolute">
+                        <p class="mb-0 display-2 text-white">Sucursales</p>
+                        <p class="text-white">Esta es la sección administrativa de tus caja, aquí podrás registrar, editar y visualizar todos los cierres de caja.</p>
                     </div>
+                    <base-button class="float-right mt-7" v-if="validRoute('caja', 'fondo')" size="sm" type="success" style="font-size:1em;" @click="modals.modal1 = true" ><a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" /> Registrar</base-button>
                 </div>
             </div>
+            
         </base-header>
         <a-config-provider>
             <template #renderEmpty>

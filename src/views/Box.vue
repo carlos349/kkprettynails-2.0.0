@@ -5,18 +5,24 @@
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
-            <div class="container-fluid d-flex align-items-center">
-                <div class="row">
-                    <div class="col-12">
-                        <h1 class="display-2 text-white">Caja</h1>
-                        <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus caja, aquí podrás registrar, editar y visualizar todos los cierres de caja.</p>
-                        <template v-if="cashFunds.inspector">
-                            <base-button v-if="validRoute('caja', 'fondo')" type="success"  v-on:click="modals.modal2 = true">Registrar fondo de caja</base-button>
-                        </template>
-                        <template v-else>
-                            <base-button v-if="validRoute('caja', 'cerrar')" type="success" v-on:click="daySalesClose">Hacer cierre</base-button>
-                        </template>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-absolute">
+                        <p class="mb-0 display-2 text-white">Caja</p>
+                        <p class="text-white">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
                     </div>
+                    <template v-if="cashFunds.inspector">
+                        <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('caja', 'fondo')"  v-on:click="modals.modal2 = true" type="success">
+                            <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
+                            Fondo
+                        </base-button>
+                    </template>
+                    <template v-else>
+                        <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('caja', 'cerrar')" v-on:click="daySalesClose" type="success">
+                            <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
+                            Cierre
+                        </base-button>
+                    </template>
                 </div>
             </div>
         </base-header>

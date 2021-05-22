@@ -5,15 +5,24 @@
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
-            <div class="container-fluid d-flex align-items-center">
-                <div class="row">
-                    <div class="col-12">
-                        <h1 class="display-2 text-white">Clientes</h1>
-                        <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tus clientes, aquí podrás registrar, editar y visualizar todos tus clientes.</p>
-                        <base-button v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">Registrar un cliente</base-button>
-                        <base-button icon="ni ni-email-83" v-if="validRoute('clientes', 'correos')" type="success" @click="modals.modal3 = true">Enviar correos</base-button>
-                        <base-button @click="generateExcel" type="default" icon="ni ni-book-bookmark"></base-button>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-absolute">
+                        <p class="mb-0 display-2 text-white">Clientes</p>
+                        <p class="text-white">Sección dedicada a la administración de sus clientes. Donde podrá enviar correos electrónicos a mail registrados y exportar en excel la base de datos de sus clientes.</p>
                     </div>
+                    <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('clientes', 'correos')" @click="modals.modal3 = true" type="primary">
+                        <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Correos
+                    </base-button>
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('clientes', 'registrar')" @click="generateExcel" type="success">
+                        <a-icon type="file-excel" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Excel
+                    </base-button>
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">
+                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Registrar
+                    </base-button>
                 </div>
             </div>
         </base-header>
@@ -615,10 +624,10 @@ moment.locale('es');
                     }
 
                     this.progress = true
-                    setTimeout(() => {
-                        this.clientState = false
-                    }, 1000);
-                    }
+                    this.clientState = false
+                }else{
+                    this.clientState = false
+                }
             }catch (err) {
                 res.send(err)
             }

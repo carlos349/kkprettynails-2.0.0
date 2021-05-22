@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-lg-12 col-md-12">
-                        <h1 class="display-2 text-white w-100">Sección de Agenda</h1>
+                        <h1 class="display-2 text-white w-100">Agenda</h1>
                         <p class="text-white headMob mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         <div class="col-12">
                             <div style="width:120%" class="row buttons">

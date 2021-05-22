@@ -4,16 +4,27 @@
         <!-- Mask -->
         <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
         <!-- Header container -->
-        <div class="container-fluid d-flex align-items-center">
-            <div class="row">
-                <div class="col-12">
-                    <h1 class="display-2 text-white">Bodega</h1>
-                    <p class="text-white mt-0 mb-2">Esta es la sección administrativa de tu bodega, aquí podrás registrar, editar y visualizar todos los productos de tu bodega.</p>
-                    <a @click="modals.modal1 = true ,validForm = 1, initialState(3)" class="btn btn-success text-white cursor-pointer">Registrar un producto</a>
-                    <a @click="modalAdminProduct.modal1 = true, productsCount()" class="btn btn-success text-white cursor-pointer">Gestionar sucursales</a>
-                    <a @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" class="btn btn-success text-white cursor-pointer">Registrar un provedor</a>
-                    <a @click="modals.modal4 = true" class="btn btn-danger text-white cursor-pointer">Cerrar bodega</a>
+        <div class="row">
+            <div class="col-12">
+                <div class="text-absolute">
+                    <p class="mb-0 display-2 text-white">Bodega</p>
                 </div>
+                <base-button class="float-right mt-7 mr-0" size="sm" @click="modals.modal4 = true" type="warning">
+                    <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
+                    Cerrar bodega
+                </base-button>
+                <base-button class="float-right mt-7 mr-2" size="sm" @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" type="primary">
+                    <a-icon type="shopping-cart" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                    proveedores
+                </base-button>
+                <base-button class="float-right mt-7 mr-2" size="sm" @click="modalAdminProduct.modal1 = true, productsCount()" type="success">
+                    <a-icon type="shop" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                    Sucursales
+                </base-button>
+                <base-button class="float-right mt-7 mr-2" size="sm" @click="modals.modal1 = true ,validForm = 1, initialState(3)" type="success">
+                    <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                    Registrar
+                </base-button>
             </div>
         </div>
     </base-header>

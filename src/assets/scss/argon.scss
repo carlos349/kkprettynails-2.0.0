@@ -83,6 +83,10 @@
     top: -5px;
     right: 4px;
 }
+.text-absolute{
+    position: absolute;
+    top:30%;
+}
 @media screen and (max-width: 768px){
     .display-2{
         font-size: 8vw;

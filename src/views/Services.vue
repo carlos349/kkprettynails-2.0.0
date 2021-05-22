@@ -5,16 +5,20 @@
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
-            <div class="container-fluid d-flex align-items-center">
-                <div class="row">
-                    <div class="col-12">
-                        <h1  class="display-2 text-white w-100">Servicios</h1>
-                        <p class="text-white mt-0 mb-2">Esta es la sección de servicios de tu negocio, aquí podrás registrar, editar y visualizar todos tus servicios.</p>
-                        <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()"  type="success">Ingrese un servicio</base-button>
-                        <base-button v-else disabled  type="success">Ingrese un servicio</base-button>
-                        <base-button v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="default">Categorías</base-button>
-                        <base-button v-else disabled  type="default">Categorías</base-button>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-absolute">
+                        <p class="mb-0 display-2 text-white">Servicios</p>
+                        <p class="text-white">Sección dedicada a registrar, editar, eliminar o activar e inactivar servicios de su negocio.</p>
                     </div>
+                    <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="primary">
+                        <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Categorías
+                    </base-button>
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()" type="success">
+                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Nuevo
+                    </base-button>
                 </div>
             </div>
         </base-header>
