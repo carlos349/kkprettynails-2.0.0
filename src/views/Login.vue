@@ -690,7 +690,19 @@ import jwtDecode from 'jwt-decode'
         viewPass(){
             this.typePass = this.typePass == 'password' ? '' : 'password'
         },
+        calculatedHour(){
+          for (const day of this.modelStart.blockHour) {
+            var SumHours, SumMinutes, TotalMinutes
+              if (day.status) {
+                SumHours  = (parseInt(day.end.split(':')[0] - parseInt(day.start.split(':')[0])) * 60)
+                SumMinutes = parseInt(day.start.split(':')[1]) - parseInt(day.end.split(':')[1])
+                TotalMinutes = SumHours + SumMinutes
+                day.time = TotalMinutes
+              }
+          }
+        },
         async finishProcess(){
+            this.calculatedHour()
             if (this.modelStart.first_name.length >= 4 && this.modelStart.last_name.length >= 4 && this.modelStart.credential.length == 20 && this.validEmail() && this.modelStart.password.length > 8) {
                 try {
                     const registerBranch = await axios.post(endPoint.endpointTarget+'/branches/createBranchCertificate', {

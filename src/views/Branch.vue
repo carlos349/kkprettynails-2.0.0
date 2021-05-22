@@ -135,14 +135,15 @@
                                         <base-input class="input-group-alternative"
                                             placeholder="+56"
                                             v-model="modelStart.businessPhoneCode"
+                                            readonly
                                         >
                                         </base-input>
                                     </div>
                                     <div class="col-9 px-0">
                                         <base-input class="input-group-alternative"
                                             placeholder="Teléfono"
-                                            type='number'
                                             addon-left-icon="fa fa-phone"
+                                            v-on:input="formatPhone"
                                             v-model="modelStart.businessPhone">
                                         </base-input>
                                     </div>
@@ -427,7 +428,7 @@ export default {
                 last_name: '',
                 branch: '',
                 businessName: '',
-                businessPhoneCode: '',
+                businessPhoneCode: '+56',
                 businessPhone: '',
                 businessType: '',
                 businessLocation: '',
@@ -683,9 +684,19 @@ export default {
                 this.days.sunday = this.days.sunday == 'success' ? 'danger' : 'success'
             }
         },
+        formatPhone(){
+            var number = this.modelStart.businessPhone.replace(/[^\d]/g, '')
+            if (number.length == 9) {
+                number = number.replace(/(\d{1})(\d{4})/, "$1-$2-");
+            } 
+            // else if (number.length == 10) {
+            //     number = number.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+            // }
+            this.modelStart.businessPhone = number
+        },
         nextStep(step){
             if (step == 'branch') {
-                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhoneCode.length < 5 && this.modelStart.businessPhone.length >= 6 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != '') {
+                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhone.length >= 6 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != '') {
                     this.status.branch = 'finish'
                     this.status.date = 'process'
                     this.process = 'date'
@@ -779,7 +790,19 @@ export default {
                 return false
             }
         },
+        calculatedHour(){
+          for (const day of this.modelStart.blockHour) {
+            var SumHours, SumMinutes, TotalMinutes
+              if (day.status) {
+                SumHours  = (parseInt(day.end.split(':')[0] - parseInt(day.start.split(':')[0])) * 60)
+                SumMinutes = parseInt(day.start.split(':')[1]) - parseInt(day.end.split(':')[1])
+                TotalMinutes = SumHours + SumMinutes
+                day.time = TotalMinutes
+              }
+          }
+        },
         async finishProcess(){
+            this.calculatedHour()
             var phone = this.modelStart.businessPhoneCode + ' ' + this.modelStart.businessPhone
             if (this.modelStart.typesPay.length > 1) {
                 try {
