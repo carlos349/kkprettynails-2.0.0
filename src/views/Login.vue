@@ -111,7 +111,7 @@
                         </div>
                         <div v-else-if="process == 'date'" class="data">
                             <h1 class="text-uppercase text-center">
-                                Agenda
+                                Horario
                             </h1>
                             <hr class="w-50">
                             <h3 class="text-weigth-bold text-center">
@@ -121,7 +121,7 @@
                                     </template>
                                     <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
                                 </a-tooltip>
-                                Configura tu agenda
+                                Configura tu horario
                             </h3>
                             <div class="row pl-8 pr-4">
                                 <div class="col-2">

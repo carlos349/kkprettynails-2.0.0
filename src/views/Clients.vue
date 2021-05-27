@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Clientes</p>
-                        <p class="text-white">Sección dedicada a la administración de sus clientes. Donde podrá enviar correos electrónicos a mail registrados y exportar en excel la base de datos de sus clientes.</p>
+                        
                     </div>
                     <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('clientes', 'correos')" @click="modals.modal3 = true" type="primary">
                         <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />

@@ -90,31 +90,31 @@
             </a-table>
         </a-config-provider>
          <modal :show.sync="modals.modal1"
-               modal-classes="modal-dialog-centered modal-xl">
+               modal-classes="modal-dialog-centered modal-xl pt-lg-2">
                <h6 slot="header" class="modal-title" id="modal-title-default">
                    <h3>Registre una sucursal</h3>
                </h6>
             <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
+                  header-classes="bg-white"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <template>
                     <div class="stepsBar">
                         <a-steps>
                             <a-step :status="status.branch" title="Sucursal">
-                                <a-icon slot="icon" :type="status.branch == 'process' ? 'loading' : 'shop'" />
+                                <a-icon style="vertical-align:3px;" slot="icon" :type="status.branch == 'process' ? 'loading' : 'shop'" />
                             </a-step>
                             <a-step :status="status.date" title="Agenda">
-                                <a-icon slot="icon" :type="status.date == 'process' ? 'loading' : 'calendar'" />
+                                <a-icon style="vertical-align:3px;" slot="icon" :type="status.date == 'process' ? 'loading' : 'calendar'" />
                             </a-step>
                             <a-step :status="status.sale" title="Ventas">
-                                <a-icon slot="icon" :type="status.sale == 'process' ? 'loading' : 'credit-card'" />
+                                <a-icon style="vertical-align:3px;" slot="icon" :type="status.sale == 'process' ? 'loading' : 'credit-card'" />
                             </a-step> 
                         </a-steps>
                     </div>
-                    <div class="stepsBox mt-5">
-                        <div v-if="process == 'branch'" class="branch mt-4">
-                            <div class="row mt-5">
+                    <div class="stepsBox mt-1">
+                        <div v-if="process == 'branch'" class="branch mt-1">
+                            <div class="row mt-2">
                                 <div class="col-md-6 col-sm-12">
                                     <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.05em;" type="question-circle" />
                                     <label class="ml-2" for="branch">
@@ -156,7 +156,7 @@
                                         placeholder="Dirección"
                                         addon-left-icon="fa fa-location-arrow"
                                         v-model="modelStart.businessLocation"
-                                        :valid="modelStart.businessLocation.length >= 4 ? true : false">
+                                        :valid="modelStart.businessLocation.length >= 10 ? true : false">
                                     </base-input>
                                 </div>
                                 <div class="col-md-6 col-sm-12">
@@ -167,9 +167,10 @@
                                             show-search
                                             placeholder="Seleccionar negocio"
                                             option-filter-prop="children"
-                                            style="width: 100%"
+                                            style="width: 100%;height: 43px;"
                                             class="input-group-alternative"
                                             size="large"
+                                            v-model="modelStart.businessType"
                                             :filter-option="filterOption"
                                             @change="handleChange"
                                         >
@@ -189,23 +190,22 @@
                                 Siguiente
                             </base-button>
                         </div>
-                        <div v-else-if="process == 'date'" class="data mt-4">
-                            <h1 class="text-uppercase text-center mb-4">
-                                Configura tu agenda
+                        <div v-else-if="process == 'date'" class="data">
+                            <h1 class="text-uppercase text-center">
+                                Horario
                             </h1>
                             <hr class="w-50">
-                            
                             <h3 class="text-weigth-bold text-center">
                                 <a-tooltip placement="topLeft">
                                     <template slot="title">
-                                        <span>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorem reiciendis in labore voluptatibus tempora, amet cum culpa cupiditate laborum consequatur voluptate repudiandae modi dolorum fuga necessitatibus dolores eum consectetur dolore?</span>
+                                        <span>Seleccione los días y horarios de apertura y cierre de su negocio.</span>
                                     </template>
                                     <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
                                 </a-tooltip>
-                                Configura tu agenda
+                                Configura tu horario
                             </h3>
-                            <div class="row">
-                                <div class="col-4">
+                            <div class="row pl-8 pr-4">
+                                <div class="col-2">
                                     <base-button :type="days.monday" size="sm" class="mt-2 w-100" v-on:click="salectDay('monday')">
                                         Lunes
                                     </base-button>
@@ -228,7 +228,7 @@
                                         Domingo
                                     </base-button>
                                 </div>
-                                <div class="col-8">
+                                <div class="col-10">
                                     <a-select :disabled="modelStart.blockHour[1].status == true ? false : true" style="width:40%" class="mx-2 mt-1 input-group-alternative" placeholder="Desde" v-model="modelStart.blockHour[1].start">
                                         <a-select-option v-for="i in fromArray" :key="i">
                                             {{i}}
@@ -314,26 +314,49 @@
                                 Siguiente
                             </base-button>
                         </div>
-                        <div v-else-if="process == 'sale'" class="data mt-4">
-                            <h1 class="text-uppercase text-center mb-4">
-                                Crea tus tipos de pago
+                        <div v-else-if="process == 'sale'" class="data">
+                            <h1 class="text-uppercase text-center">
+                                Tipos de pago
                             </h1>
                             <hr class="w-50">
+                            <h3 class="text-weigth-bold text-center">
+                                <a-tooltip placement="topLeft">
+                                    <template slot="title">
+                                        <span>Seleccione los días y horarios de apertura y cierre de su negocio.</span>
+                                    </template>
+                                    <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                                </a-tooltip>
+                                Crea tus tipos de pago
+                            </h3>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <base-input class="input-group-alternative"
-                                        placeholder="Debito"
-                                        addon-left-icon="fa fa-plus"
-                                        v-model="typePay"
-                                        v-on:keyup.enter="insertTypePay">
-                                    </base-input>
-                                    <base-button outline type="default" size="sm" class="w-50" v-on:click="insertTypePay">
-                                        Ingresar
-                                    </base-button>
+                                    <label for="currency">
+                                        Escriba su tipo de pago
+                                    </label>
+                                    <div class="row pr-2">
+                                        <div class="col-10 pr-0">
+                                            <base-input class="input-group-alternative"
+                                                placeholder="Tipo de pago"
+                                                addon-left-icon="fa fa-plus"
+                                                v-model="typePay"
+                                                v-on:keyup.enter="insertTypePay">
+                                            </base-input>
+                                        </div>
+                                        <div class="col-2">
+                                            <a-tooltip placement="topLeft">
+                                                <template slot="title">
+                                                    <span>Ingresar método de pago.</span>
+                                                </template>
+                                                <base-button outline type="default" class="p-2 px-3 mt-1" v-on:click="insertTypePay">
+                                                    <a-icon style="vertical-align: 1px;" type="plus" />
+                                                </base-button>
+                                            </a-tooltip>
+                                        </div>
+                                    </div>
                                     <label class="mt-4" for="currency">
                                         Seleccione su moneda local
                                     </label>
-                                    <a-select class="input-group-alternative" default-value="CLP" style="width: 100%" @change="selectCurrency" size="large">
+                                    <a-select class="input-group-alternative" default-value="CLP" style="width: 100%;height: 43px;" @change="selectCurrency" size="large">
                                         <a-select-option value="USD">
                                             USD
                                         </a-select-option>
@@ -361,21 +384,16 @@
                                             <p>No se han agregado metodos de pago</p>
                                         </div>
                                     </template>
-                                    <a-tooltip placement="top">
-                                        <template slot="title">
-                                        <span>Para ingresar un método de pago debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
-                                        </template>
-                                        <div class="col-md-8" style="overflow: hidden;overflow-y:scroll; max-height: 200px;">
-                                            <a-list bordered :data-source="modelStart.typesPay">
-                                                <a-list-item slot="renderItem" slot-scope="item, index">
-                                                    {{ item }} 
-                                                    <base-button v-if="item != 'Efectivo'" outline type="default" size="sm" class="float-right" v-on:click="removeTypePay(index)">
-                                                        <i class="fa fa-times"></i>
-                                                    </base-button>
-                                                </a-list-item>
-                                            </a-list>
-                                        </div>
-                                    </a-tooltip>
+                                    <div class="col-md-8 mt-4" style="overflow: hidden;overflow-y:scroll; max-height: 200px;">
+                                        <a-list size="small" bordered :data-source="modelStart.typesPay">
+                                            <a-list-item slot="renderItem" slot-scope="item, index">
+                                                {{ item }} 
+                                                <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeTypePay(index)" style="margin-top: -3px;">
+                                                    <i class="fa fa-times"></i>
+                                                </base-button>
+                                            </a-list-item>
+                                        </a-list>
+                                    </div>
                                 </a-config-provider>
                             </div>
                             <base-button outline type="default" class="float-left mt-2" v-on:click="prevStep('sale')">
@@ -430,55 +448,55 @@ export default {
                 businessName: '',
                 businessPhoneCode: '+56',
                 businessPhone: '',
-                businessType: '',
+                businessType: 'Seleccione',
                 businessLocation: '',
                 blockHour: [
                     {
                         day: 0,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 1,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 2,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 3,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 4,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 5,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     },
                     {
                         day: 6,
                         start: '10:00',
-                        end: '19:00',
+                        end: '20:00',
                         status: false,
                         time: 0
                     }
@@ -489,6 +507,14 @@ export default {
                 ]
             },
             fromArray: [
+                '6:00',
+                '6:30',
+                '7:00',
+                '7:30',
+                '8:00',
+                '8:30',
+                '9:00',
+                '9:30',
                 '10:00',
                 '10:30',
                 '11:00',
@@ -500,15 +526,8 @@ export default {
                 '14:00',
                 '14:30',
                 '15:00',
-                '15:30',
-                '16:00',
-                '16:30',
-                '17:00',
             ],
             toArray: [
-                '10:30',
-                '11:00',
-                '11:30',
                 '12:00',
                 '12:30',
                 '13:00',
@@ -520,7 +539,18 @@ export default {
                 '16:00',
                 '16:30',
                 '17:00',
-                '17:30'
+                '17:30',
+                '18:00',
+                '18:30',
+                '19:00',
+                '19:30',
+                '20:00',
+                '20:30',
+                '21:00',
+                '21:30',
+                '22:00',
+                '22:30',
+                '23:00',
             ],
             progress: false,
             days: {
@@ -696,7 +726,7 @@ export default {
         },
         nextStep(step){
             if (step == 'branch') {
-                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhone.length >= 6 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != '') {
+                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhone.length == 11 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione') {
                     this.status.branch = 'finish'
                     this.status.date = 'process'
                     this.process = 'date'
@@ -756,20 +786,39 @@ export default {
             }
         },
         insertTypePay(){
-            if (this.typePay.length > 4) {
-                this.modelStart.typesPay.push(this.typePay)
-                this.typePay = ''
-            }else if (this.typePay.length < 4) {
-                this.$swal({
-                    icon: 'error',
-                    title: 'El método de pago debe estar compuesto por mas de 4 caracteres',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+            if (this.modelStart.typesPay.length < 8) {
+                if (this.typePay.length > 4) {
+                    var findType = this.modelStart.typesPay.find(type => type == this.typePay)
+                    if (findType == undefined) {
+                        this.modelStart.typesPay.push(this.typePay)
+                        this.typePay = ''
+                    }else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Tipo de pago duplicado.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }else if (this.typePay.length < 4) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'El método de pago debe estar compuesto por mas de 4 caracteres',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Debe llenar el tipo de pago',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
             }else{
                 this.$swal({
                     icon: 'error',
-                    title: 'Debe llenar el tipo de pago',
+                    title: 'No puede ingresar mas de 8 métodos de pago.',
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -840,7 +889,7 @@ export default {
                 this.$swal({
                     type: 'error',
                     icon: 'error',
-                    title: 'Debe llenar los campos correctamente.',
+                    title: 'Registre al menos dos tipos de pago.',
                     showConfirmButton: false,
                     timer: 1500
                 })

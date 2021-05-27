@@ -120,7 +120,7 @@
                                                         <template slot="title">
                                                             <span>Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
                                                         </template>
-                                                        <span class="ml-1 mt-2 mb-0 font-weight-bold" style="font-size: 1.2em;">Microservicios: </span>
+                                                        <span class="ml-1 mt-2 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
                                                         <br>
                                                         <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;">
                                                             <badge style="z-index:100" :type="micro.checked ? 'primary' : 'secondary'" class="text-default">
@@ -239,6 +239,7 @@
                             </div>
                         </div>
                     </tab-content>
+                    <!-- employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, microServices: microsService  microServiceSelect -->
                     <tab-content title="Información" icon="fa fa-question-circle">
                         <div class="row">
                             <div class="col-md-8 col-sm-12" >
@@ -248,19 +249,35 @@
                                             <center>
                                             <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
                                             </center>
-                                            <base-button slot="title" type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
-                                                <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.servicio}}</span> </badge><br>
-                                                <span class="mx-auto" style="font-size:1.2em;">{{data.realLender}}</span>
-                                            </base-button>
+                                            <a-tooltip placement="top">
+                                                <template slot="title">
+                                                    <span>Adicionales: 
+                                                        <template v-if="data.microServiceSelect.length > 0">
+                                                            <span v-for="micros of data.microServiceSelect" :key="micros.name">
+                                                                {{micros.name}}
+                                                            </span>  
+                                                        </template>
+                                                        <template v-else>
+                                                            <span>
+                                                                No se seleccionó adicional
+                                                            </span>  
+                                                        </template>
+                                                    </span>
+                                                </template>
+                                                <base-button type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
+                                                    <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.name}}</span> </badge><br>
+                                                    <span class="mx-auto" style="font-size:1.2em;">{{data.realEmploye}}</span>
+                                                </base-button>
+                                            </a-tooltip>
                                             <div style="background-color:#f8fcfd;">
                                                 <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:.9em;text-transform:none;">Desde las</span> 
+                                                    <span style="color:#000;font-weight:600;font-size:.96em;text-transform:none;">Desde las</span> 
                                                 </badge>
                                                 <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
                                                     <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.start}}</span> 
                                                 </badge>
                                                 <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:.9em;text-transform:none;">Hasta las</span> 
+                                                    <span style="color:#000;font-weight:600;font-size:.96em;text-transform:none;">Hasta las</span> 
                                                 </badge>
                                                 <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
                                                     <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.end}}</span> 
@@ -284,9 +301,6 @@
                                     </base-dropdown><br>
                                     <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
                                     Fecha: <strong>{{dates.simple}}</strong>
-                                    </base-button><br>
-                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                        Diseño: <strong class="text-uppercase">{{registerDate.design}}</strong>
                                     </base-button><br>
                                     <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
                                         Hora de inicio: <strong v-if="registerDate.serviceSelectds[0]">{{registerDate.serviceSelectds[0].start}}</strong>
@@ -1187,150 +1201,94 @@
             insertData(index, lender, restTime, Class, duration, lendeId, check, lenders){
                 console.log(this.registerDate)
                 if (lender == 'Primera disponible') {
-                    var durationFirst = this.registerDate.design == 'si' ? duration + 15 : duration 
-                    if (index > 0) {
-                        const finalIndex = index - 1
-                        var arrayLenders = []
-                        if (this.registerDate.serviceSelectds[finalIndex].itFirst) {
-                            for (let i = 0; i < this.registerDate.serviceSelectds[index].lenders.length; i++) {
-                                const element = this.registerDate.serviceSelectds[index].lenders[i];
-                                if (element.employe != 'Primera disponible') {
-                                    arrayLenders.push(element)
-                                }
-                            }
-                            axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
-                                array: this.registerDate.serviceSelectds[finalIndex].blocks,
-                                time: durationFirst,
-                                lender: this.registerDate.serviceSelectds[finalIndex].lender,
-                                lendersService: arrayLenders
-                            })
-                            .then(res => {
-                                this.registerDate.serviceSelectds[index].start = ''
-                                this.registerDate.serviceSelectds[index].end = ''
-                                this.registerDate.serviceSelectds[index].sort = ''
-                                this.readyChange = true
-                                this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
-                                this.registerDate.serviceSelectds[index].valid = true
-                                this.registerDate.serviceSelectds[index].blocks = res.data
-                                for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
-                                    const element = this.registerDate.serviceSelectds[j];
-                                    element.start = ''
-                                    element.end = ''
-                                    element.sort = ''
-                                    element.blocks = []
-                                    element.valid = false
-                                    element.employe = 'Primera disponible'
-                                    element.realEmploye = 'Primera disponible'
-                                    element.itFirst = true
-                                }
-                            })
-                        }else{
-                            axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
-                                date: this.finalDate,
-                                lenders: this.availableslenders,
-                                time: durationFirst,
-                                lendersService: this.registerDate.serviceSelectds[index].lenders
-                            })
-                            .then(res => {
-                                for (let i = 0; i < this.registerDate.serviceSelectds[index].lenders.length; i++) {
-                                    const element = this.registerDate.serviceSelectds[index].lenders[i];
-                                    if (element.employe != 'Primera disponible') {
-                                        arrayLenders.push(element)
-                                    }
-                                }
-                                console.log(this.registerDate.serviceSelectds[finalIndex])
-                                axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
-                                    array: res.data.blocks,
-                                    prevBlocks:this.registerDate.serviceSelectds[finalIndex].blocks,
-                                    time: durationFirst,
-                                    lender: this.registerDate.serviceSelectds[finalIndex].lender,
-                                    lendersService: arrayLenders,
-                                    start:this.registerDate.serviceSelectds[finalIndex].start,
-                                    end:this.registerDate.serviceSelectds[finalIndex].end
-                                })
-                                .then(res => {
-                                    console.log(res.data)
-                                    this.registerDate.serviceSelectds[index].start = ''
-                                    this.registerDate.serviceSelectds[index].end = ''
-                                    this.registerDate.serviceSelectds[index].sort = ''
-                                    this.readyChange = true
-                                    this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
-                                    this.registerDate.serviceSelectds[index].valid = true
-                                    this.registerDate.serviceSelectds[index].blocks = res.data
-                                    for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
-                                        const element = this.registerDate.serviceSelectds[j];
-                                        element.start = ''
-                                        element.end = ''
-                                        element.sort = ''
-                                        element.blocks = []
-                                        element.valid = false
-                                        element.employe = 'Primera disponible'
-                                        element.realEmploye = 'Primera disponible'
-                                        element.itFirst = true
-                                    }
-                                })
-                            })
-                        }
-                    }else{
-                        axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
-                            date: this.finalDate,
-                            lenders: this.availableslenders,
-                            time: durationFirst,
-                            lendersService: this.registerDate.serviceSelectds[index].lenders
-                        })
-                        .then(res => {
-                            this.registerDate.serviceSelectds[index].start = ''
-                            this.registerDate.serviceSelectds[index].end = ''
-                            this.registerDate.serviceSelectds[index].sort = ''
-                            this.readyChange = true
-                            this.registerDate.serviceSelectds[index].lender = 'Primera disponible'
-                            this.registerDate.serviceSelectds[index].valid = true
-                            this.registerDate.serviceSelectds[index].blocks = res.data.blocks
-                            this.registerDate.serviceSelectds[index].itFirst = false
-                            for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
-                                const element = this.registerDate.serviceSelectds[j];
-                                element.start = ''
-                                element.end = ''
-                                element.sort = ''
-                                element.blocks = []
-                                element.valid = false
-                                element.employe = 'Primera disponible'
-                                element.realEmploye = 'Primera disponible'
-                                element.itFirst = true
-                            }
-                        })
-                    }
-                }else{
-                    for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
-                        const element = this.registerDate.serviceSelectds[j];
-                        element.start = ''
-                        element.end = ''
-                        element.sort = ''
-                        element.blocks = []
-                        element.valid = false
-                        element.employe = 'Primera disponible'
-                        element.realEmploye = 'Primera disponible'
-                        element.itFirst = true
-                    }
-                    this.registerDate.serviceSelectds[index].start = ''
-                    this.registerDate.serviceSelectds[index].end = ''
-                    this.registerDate.serviceSelectds[index].employe = lender
-                    this.registerDate.serviceSelectds[index].employeId = lendeId
-                    this.registerDate.serviceSelectds[index].realEmploye = lender
-                    this.registerDate.serviceSelectds[index].days = restTime
-                    this.registerDate.serviceSelectds[index].class = Class
-                    this.registerDate.serviceSelectds[index].itFirst = false
-                    this.validHour = false
                     
-                    axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
-                        block: this.registerDate.serviceSelectds[index].blocks,
-                        timedate: this.registerDate.serviceSelectds[index].duration,
-                        employeSelect: lendeId,
-                        firstBlock: false
-                    }, this.configHeader)
-                    .then(res => {
-                        console.log(res)
-                    })
+                }else{
+                    if (this.registerDate.serviceSelectds[index].blocksFirst.length > 0) {
+                        for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
+                            const element = this.registerDate.serviceSelectds[j];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.blocks = []
+                            element.valid = false
+                            element.employe = 'Primera disponible'
+                            element.realEmploye = 'Primera disponible'
+                            element.itFirst = true
+                        }
+                        this.registerDate.serviceSelectds[index].start = ''
+                        this.registerDate.serviceSelectds[index].end = ''
+                        this.registerDate.serviceSelectds[index].employe = lender
+                        this.registerDate.serviceSelectds[index].employeId = lendeId
+                        this.registerDate.serviceSelectds[index].realEmploye = lender
+                        this.registerDate.serviceSelectds[index].days = restTime
+                        this.registerDate.serviceSelectds[index].class = Class
+                        this.registerDate.serviceSelectds[index].itFirst = false
+                        this.validHour = false
+                        
+                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                            block: this.registerDate.serviceSelectds[index].blocksFirst,
+                            timedate: this.registerDate.serviceSelectds[index].duration,
+                            employeSelect: lendeId,
+                            firstBlock: false
+                        }, this.configHeader)
+                        .then(res => {
+                            console.log(res)
+                            if (res.data.status == 'ok') {
+                                this.registerDate.serviceSelectds[index].blocks = res.data.blockEmploye
+                                this.registerDate.serviceSelectds[index].blocksFirst = res.data.data
+                                this.registerDate.serviceSelectds[index].itFirst = false
+                                setTimeout(() => {
+                                    $('#block'+index).toggle('slow')
+                                }, 500);
+                                setTimeout(() => {
+                                    $('#check'+index).addClass('fa-check')
+                                }, 500);
+                            }
+                        })
+                    }else{
+                        for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
+                            const element = this.registerDate.serviceSelectds[j];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.blocks = []
+                            element.valid = false
+                            element.employe = 'Primera disponible'
+                            element.realEmploye = 'Primera disponible'
+                            element.itFirst = true
+                        }
+                        this.registerDate.serviceSelectds[index].start = ''
+                        this.registerDate.serviceSelectds[index].end = ''
+                        this.registerDate.serviceSelectds[index].employe = lender
+                        this.registerDate.serviceSelectds[index].employeId = lendeId
+                        this.registerDate.serviceSelectds[index].realEmploye = lender
+                        this.registerDate.serviceSelectds[index].days = restTime
+                        this.registerDate.serviceSelectds[index].class = Class
+                        this.registerDate.serviceSelectds[index].itFirst = false
+                        this.validHour = false
+                        
+                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                            block: this.registerDate.serviceSelectds[index].blocks,
+                            timedate: this.registerDate.serviceSelectds[index].duration,
+                            employeSelect: lendeId,
+                            firstBlock: false
+                        }, this.configHeader)
+                        .then(res => {
+                            console.log(res)
+                            if (res.data.status == 'ok') {
+                                this.registerDate.serviceSelectds[index].blocks = res.data.blockEmploye
+                                this.registerDate.serviceSelectds[index].blocksFirst = res.data.data
+                                this.registerDate.serviceSelectds[index].itFirst = false
+                                setTimeout(() => {
+                                    $('#block'+index).toggle('slow')
+                                }, 500);
+                                setTimeout(() => {
+                                    $('#check'+index).addClass('fa-check')
+                                }, 500);
+                            }
+                        })
+                    }
+                    
                 }
             },
             selectHourService(index, lender, time, resTime){
@@ -1479,9 +1437,9 @@
                     for (const micro of this.microServices) {
                         microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                     }
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocks: [], name: service, microServices: microsService})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: []})
                 }else{
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocks: [], name: service})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service})
                 }
 
                 this.validHour = false  
@@ -1511,9 +1469,9 @@
                     for (const micro of this.microServices) {
                         microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                     }
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocks: [], name: service, microServices: microsService})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, microServices: microsService, microServiceSelect: []})
                 }else{
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocks: [], name: service})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service})
                 }
                 
                 console.log(this.registerDate.serviceSelectds)
@@ -1584,7 +1542,7 @@
                         }
                     }
                     console.log(this.registerDate.serviceSelectds[indexService])
-                    axios.post(endPoint.endpointTarget+'/dates/selectdatesBlocksFirst', {
+                    axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
                         date: this.finalDate,
                         timedate: this.registerDate.serviceSelectds[indexService].duration,
                         hour: this.registerDate.serviceSelectds[indexService].start,
@@ -1611,6 +1569,8 @@
                                 this.registerDate.serviceSelectds[finalIndex].blocks = res.data.data
                                 console.log(res)
                             })
+                        }else{
+                            this.validHour = true
                         }
                         console.log(res)
                     }).catch(err => console.log(err))
@@ -1619,164 +1579,47 @@
                         $('#'+check).addClass('fa-check')
                     }, 500);
                 }
-                // else{
-                //     var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].Horario.split(":") 
-                //     this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].Horario
-                //     this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
-                    
-                //     axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDate.serviceSelectds[indexService].lenderSelectData)
-                //     .then(res => {
-                        
-                //         var editBlock = false
-                //         if (indexService > 0) {
-                //             for (let i = 0; i < this.arrayLendersSelect.length; i++) {
-                //                 const element = this.arrayLendersSelect[i];
-                //                 if (element.lender == this.registerDate.serviceSelectds[indexService].realLender) {
-                //                     editBlock = true
-                //                 }
-                //             }
-                //         }
-                //         if (editBlock) {
-                            
-                //             axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
-                //                 array: this.registerDate.serviceSelectds[indexService].blocks,
-                //                 time: this.registerDate.serviceSelectds[indexService].lenderSelectData.time
-                //             })
-                //             .then(res => {
-                //                 for (let t = 0; t < res.data.length; t++) {
-                //                     const elementTor = res.data[t];
-                //                     if (elementTor.validatores && elementTor.validatores == 'select') {
-                //                         res.data[t].validator = true
-                //                         elementTor.validatores = ''
-                //                     }
-                //                 }
-                //                 for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
-                //                     res.data[i].validator = 'select'
-                //                     res.data[i].validatores= 'select'
-                //                     this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
-                //                     i++
-                //                 }
-                //                 this.registerDate.serviceSelectds[indexService].blocks = res.data
-                //                 this.registerDate.serviceSelectds[indexService].itFirst = false
-                //                 var valid = 0 
-                //                 for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                //                     const element = this.registerDate.serviceSelectds[index];
-                                    
-                //                     if (element.start == "") {
-                //                         valid = 1
-                //                     }
-                //                 }
-                //                 if (valid == 0) {
-                //                     this.validHour = true
-                //                 }
-                //                 $('#'+check).addClass('fa-check')
-                //             })
-                //         }else{
-                //             for (let t = 0; t < res.data.length; t++) {
-                //                 const elementTor = res.data[t];
-                //                 if (elementTor.validatores && elementTor.validatores == 'select') {
-                //                     res.data[t].validator = true
-                //                     elementTor.validatores = ''
-                //                 }
-                //             }
-                //             for (let index = 0 ; index <= this.registerDate.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
-                //                 res.data[i].validator = 'select'
-                //                 res.data[i].validatores= 'select'
-                //                 this.registerDate.serviceSelectds[indexService].end = res.data[i].Horario
-                //                 i++
-                //             }
-                //             this.registerDate.serviceSelectds[indexService].blocks = res.data
-                //             this.blockHour = res.data
-                //             this.registerDate.serviceSelectds[indexService].itFirst = false
-                //             var valid = 0 
-                //             for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                //                 const element = this.registerDate.serviceSelectds[index];
-                                
-                //                 if (element.start == "") {
-                //                     valid = 1
-                //                 }
-                //             }
-                //             if (valid == 0) {
-                //                 this.validHour = true
-                //             }
-                //             this.registerDate.serviceSelectds[indexService].blocks = res.data
-                //             $('#'+check).addClass('fa-check')
-                //         }
-                        
-                //         const finalIndex = parseFloat(indexService) + parseFloat(1)
-                //         var arrayLenders = []
-                //         if (this.registerDate.serviceSelectds[finalIndex]) {
-                //             axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
-                //                 date: this.finalDate,
-                //                 lenders: this.availableslenders,
-                //                 time: this.registerDate.serviceSelectds[finalIndex].duration,
-                //                 lendersService: this.registerDate.serviceSelectds[finalIndex].lenders
-                //             })
-                //             .then(res => {
-                //                 for (let i = 0; i < this.registerDate.serviceSelectds[indexService].lenders.length; i++) {
-                //                     const element = this.registerDate.serviceSelectds[indexService].lenders[i];
-                //                     if (element.lender != 'Primera disponible') {
-                //                         arrayLenders.push(element)
-                //                     }
-                //                 }
-
-                //                 var blocksNFirst = []
-                //                 var trueLastBlock = ''
-                //                 var trueLender = ''
-                //                 for (let k = 0; k < this.registerDate.serviceSelectds.length; k++) {
-                //                     const element = this.registerDate.serviceSelectds[indexService-k];
-                //                     console.log(element)
-                //                     if (element) {
-                //                         blocksNFirst.push({block:element.blocks,lender:element.lender})
-                //                     }
-                //                 }
-                //                 if (this.registerDate.serviceSelectds[0].itFirst) {
-                //                     trueLastBlock = this.registerDate.serviceSelectds[0].blocks
-                //                     trueLender = this.registerDate.serviceSelectds[0].lender      
-                //                 }
-                //                 if (trueLastBlock == '') {
-                //                     trueLastBlock = res.data.blocks
-                //                 }
-                //                 if (trueLender == '') {
-                //                     trueLender = this.registerDate.serviceSelectds[indexService].lender
-                //                 }
-                //                 console.log(this.registerDate.serviceSelectds[finalIndex])
-                //                 axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
-                //                     array: res.data.blocks,
-                //                     prevBlocks:trueLastBlock,
-                //                     blocksNFirst:blocksNFirst,
-                //                     time: this.registerDate.serviceSelectds[finalIndex].duration,
-                //                     lender: trueLender,
-                //                     lendersService: arrayLenders
-                //                 })
-                //                 .then(res => {
-                //                     console.log(res.data)
-                //                     this.registerDate.serviceSelectds[finalIndex].start = ''
-                //                     this.registerDate.serviceSelectds[finalIndex].end = ''
-                //                     this.registerDate.serviceSelectds[finalIndex].sort = ''
-                //                     this.readyChange = true
-                //                     this.registerDate.serviceSelectds[finalIndex].lender = 'Primera disponible'
-                //                     this.registerDate.serviceSelectds[finalIndex].valid = true
-                //                     this.registerDate.serviceSelectds[finalIndex].blocks = res.data
-                //                     for (let j = finalIndex + 1; j < this.registerDate.serviceSelectds.length; j++) {
-                //                         const element = this.registerDate.serviceSelectds[j];
-                //                         element.start = ''
-                //                         element.end = ''
-                //                         element.sort = ''
-                //                         element.blocks = []
-                //                         element.valid = false
-                //                         element.lender = 'Primera disponible'
-                //                         element.itFirst = true
-                //                     }
-                //                 })
-                //             })
-                //         }
-                //     })
-                //     .catch(err => {
-                //         console.log(err)
-                //     })
-                // }
-                
+                else{
+                    console.log('entre')
+                    var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].hour.split(":") 
+                    this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].hour
+                    this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
+                    axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
+                        date: this.finalDate,
+                        timedate: this.registerDate.serviceSelectds[indexService].duration,
+                        hour: this.registerDate.serviceSelectds[indexService].start,
+                        employe: this.registerDate.serviceSelectds[indexService].employeId,
+                        block: this.registerDate.serviceSelectds[indexService].blocks,
+                        blockFirst: this.registerDate.serviceSelectds[indexService].blocksFirst,
+                        branch: this.branch,
+                        ifFirstClick: this.registerDate.serviceSelectds[indexService].itFirst,
+                        firstBlock: false
+                    }, this.configHeader)
+                    .then(res => {
+                        this.registerDate.serviceSelectds[indexService].blocks = res.data.data
+                        this.registerDate.serviceSelectds[indexService].itFirst = false
+                        this.registerDate.serviceSelectds[indexService].end = res.data.end
+                        const finalIndex = parseFloat(indexService) + parseFloat(1)
+                        if (this.registerDate.serviceSelectds[finalIndex]) {
+                            axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                                block: res.data.blockFirst,
+                                timedate: this.registerDate.serviceSelectds[finalIndex].duration,
+                                employesServices: this.registerDate.serviceSelectds[finalIndex].employes,
+                                firstBlock: true
+                            })
+                            .then(res => {
+                                this.registerDate.serviceSelectds[finalIndex].valid = true
+                                this.registerDate.serviceSelectds[finalIndex].blocks = res.data.data
+                                console.log(res)
+                            })
+                        }else{
+                            this.validHour = true
+                        }
+                    })
+                    setTimeout(() => {
+                        $('#'+check).addClass('fa-check')
+                    }, 500);
+                }
             },
             validateFirstStep() {
                 window.scrollTo(0, 0);
@@ -1835,6 +1678,19 @@
                 
                 if (this.validHour) {
                     this.validWizard = true
+                    for (const micro of this.registerDate.serviceSelectds) {
+                        if (micro.microServices[0].checked) {
+                            micro.microServiceSelect = []
+                        }else{
+                            for (const selects of micro.microServices) {
+                                if (selects.checked) {
+                                    micro.microServiceSelect = []
+                                    micro.microServiceSelect.push({name: selects.microService, duration: selects.duration, price: selects.price})
+                                }
+                            }
+                        }
+                    }
+                    console.log(this.registerDate.serviceSelectds)
                     return this.validHour
                 }else{
                     this.validWizard = false
