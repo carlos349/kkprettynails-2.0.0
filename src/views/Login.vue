@@ -111,7 +111,7 @@
                         </div>
                         <div v-else-if="process == 'date'" class="data">
                             <h1 class="text-uppercase text-center">
-                                Agenda
+                                Horario
                             </h1>
                             <hr class="w-50">
                             <h3 class="text-weigth-bold text-center">
@@ -121,7 +121,7 @@
                                     </template>
                                     <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
                                 </a-tooltip>
-                                Configura tu agenda
+                                Configura tu horario
                             </h3>
                             <div class="row pl-8 pr-4">
                                 <div class="col-2">
@@ -690,7 +690,19 @@ import jwtDecode from 'jwt-decode'
         viewPass(){
             this.typePass = this.typePass == 'password' ? '' : 'password'
         },
+        calculatedHour(){
+          for (const day of this.modelStart.blockHour) {
+            var SumHours, SumMinutes, TotalMinutes
+              if (day.status) {
+                SumHours  = (parseInt(day.end.split(':')[0] - parseInt(day.start.split(':')[0])) * 60)
+                SumMinutes = parseInt(day.start.split(':')[1]) - parseInt(day.end.split(':')[1])
+                TotalMinutes = SumHours + SumMinutes
+                day.time = TotalMinutes
+              }
+          }
+        },
         async finishProcess(){
+            this.calculatedHour()
             if (this.modelStart.first_name.length >= 4 && this.modelStart.last_name.length >= 4 && this.modelStart.credential.length == 20 && this.validEmail() && this.modelStart.password.length > 8) {
                 try {
                     const registerBranch = await axios.post(endPoint.endpointTarget+'/branches/createBranchCertificate', {

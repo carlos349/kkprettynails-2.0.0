@@ -748,6 +748,14 @@
               table: "table-bordered table-striped"
           },
           fromArray: [
+              '6:00',
+              '6:30',
+              '7:00',
+              '7:30',
+              '8:00',
+              '8:30',
+              '9:00',
+              '9:30',
               '10:00',
               '10:30',
               '11:00',
@@ -759,15 +767,8 @@
               '14:00',
               '14:30',
               '15:00',
-              '15:30',
-              '16:00',
-              '16:30',
-              '17:00',
           ],
             toArray: [
-              '10:30',
-              '11:00',
-              '11:30',
               '12:00',
               '12:30',
               '13:00',
@@ -779,7 +780,18 @@
               '16:00',
               '16:30',
               '17:00',
-              '17:30'
+              '17:30',
+              '18:00',
+              '18:30',
+              '19:00',
+              '19:30',
+              '20:00',
+              '20:30',
+              '21:00',
+              '21:30',
+              '22:00',
+              '22:30',
+              '23:00'
           ],
         }
       },
@@ -856,7 +868,20 @@
         handleChange(value){
           this.configData.businessType = value
         },
+        calculatedHour(){
+          for (const day of this.configData.blockHour) {
+            var SumHours, SumMinutes, TotalMinutes
+              if (day.status) {
+                SumHours  = (parseInt(day.end.split(':')[0] - parseInt(day.start.split(':')[0])) * 60)
+                SumMinutes = parseInt(day.start.split(':')[1]) - parseInt(day.end.split(':')[1])
+                TotalMinutes = SumHours + SumMinutes
+                day.time = TotalMinutes
+              }
+          }
+          console.log(this.configData.blockHour)
+        },
         updateconfig(){
+          this.calculatedHour()
           axios.post(endPoint.endpointTarget+'/configurations/editConfiguration/'+this.configData._id, {
             blockHour: this.configData.blockHour,
             blackList: this.configData.blackList,

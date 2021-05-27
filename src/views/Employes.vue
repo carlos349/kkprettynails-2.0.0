@@ -24,7 +24,7 @@
                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  body-classes="px-lg-5 py-lg-1"
                   class="border-0">
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
@@ -53,28 +53,36 @@
                             </div>
                         
                         <base-input alternative
-                                    class="mb-3"
-                                    placeholder="Documento"
-                                    v-model="registerEmploye.document"
-                                    v-on:keyup="validRegister(), formatRut(registerEmploye.document)"
-                                    addon-left-icon="ni ni-key-25"
-                                     addon-right-icon="fa fa-asterisk text-danger">
+                            class="mb-3"
+                            placeholder="Documento"
+                            v-model="registerEmploye.document"
+                            v-on:keyup="validRegister(), formatRut(registerEmploye.document)"
+                            addon-left-icon="ni ni-key-25"
+                            addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
                         <template>
-                            <div class="text-muted text-center mb-3">Tabla de días</div>
+                            <div class="text-muted text-center mb-1">Días laborales</div>
                         </template>
-                        <vue-bootstrap4-table class="text-left styleDays" :rows="days" :columns="columnsDays" :classes="classes" :config="configDays">
+                        <vue-bootstrap4-table class="text-left styleDays" :rows="days" :columns="columnsDays" :config="configDays">
                             <template slot="name" slot-scope="props">
-                                <b class="text-uppercase ml-2">{{props.row.name}}</b>
+                                <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-75 mt-1 ml-1" size="sm" type="success" v-if="props.row.valid">
+                                    {{props.row.day}}
+                                </base-button>
+                                <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-75 mt-1 ml-1" size="sm" type="danger" v-else>
+                                    {{props.row.day}}
+                                </base-button>
                             </template>
                             <template slot="validation" slot-scope="props">
-                                <center>
-                                    <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid">
-                                    </base-button>
-                                    <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else></base-button>
-                                    <base-button class="w-50" size="sm" type="success" v-if="props.row.valid" v-on:click="selectHour(props.row.vbt_id, props.row.value)">Horarios</base-button>
-                                    <base-button class="w-50" disabled size="sm" type="danger" v-else v-on:click="selectHour(props.row.vbt_id, props.row.value)">Horarios</base-button>
-                                </center>
+                                <a-select :disabled="props.row.valid == true ? false : true" @change="selectHourInit" style="width:45%" class="ml-1 mt-1 mb-1 input-group-alternative" placeholder="Desde" v-model="props.row.start">
+                                    <a-select-option v-on:click="addHour(props.row.value, props.row.vbt_id)" v-for="i in props.row.hour" :key="i">
+                                        {{i}}
+                                    </a-select-option>
+                                </a-select>
+                                <a-select :disabled="props.row.valid == true ? false : true" @change="selectHourFinally" style="width:45%" class="ml-1 mt-1 mb-1 input-group-alternative" placeholder="Hasta" v-model="props.row.end">
+                                    <a-select-option v-on:click="removeHour(props.row.value, props.row.vbt_id)" v-for="i in props.row.hour" :key="i">
+                                        {{i}}
+                                    </a-select-option>
+                                </a-select>
                             </template>
                         </vue-bootstrap4-table>
                         <div class="text-center">
@@ -82,40 +90,6 @@
                         </div>
                         
                     </form>
-            </template>
-            </card>
-        </modal>
-        <modal :show.sync="modals.modal3"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                        Horarios a bloquear
-                    </div>
-                </template>
-                <template>
-                    <div class="row">
-                        <div class="col-6">
-                            <a-select class="w-100" v-model="from">
-                                <a-select-option v-for="i in fromArray" :key="i">
-                                    {{i}}
-                                </a-select-option>
-                            </a-select>
-                        </div>
-                        <div class="col-6">                
-                            <a-select class="w-100" v-model="to">
-                                <a-select-option v-for="i in toArray" :key="i">
-                                    {{i}}
-                                </a-select-option>
-                            </a-select>
-                        </div>
-                        <base-button type="primary" v-on:click="selectHourFinaly()" class="mt-4 mx-auto">Seleccionar horas</base-button>
-                    </div>
             </template>
             </card>
         </modal>
@@ -233,18 +207,18 @@ import jwtDecode from 'jwt-decode'
     data() {
       return {
         auth: [],
-        tipeForm:'',
+        tipeForm:'Registrar',
         employeState:false,
         registerEmploye: {
             branch:'Seleccione una sucursal',
-            firstName:'',
-            lastName:'',
-            document:'',
+            firstName: '',
+            lastName: '',
+            document: '',
             days: [],
-            _id:'',
-            show:false,
-            valid:false,
-            valid2:false,
+            _id: '',
+            show: false,
+            valid: false,
+            valid2: false,
         },
         filter:'',
         branch:'',
@@ -266,13 +240,13 @@ import jwtDecode from 'jwt-decode'
         columnsDays: [
             {
                 label: "Día",
-                name: "name",
+                name: "day",
                 slot_name:"name",
                 sort: false,
             },
             {
-                label: "Acciones",
-                name: "valid",
+                label: "Horas de descanso",
+                name: "value",
                 slot_name:"validation",
                 sort: false,
             }
@@ -294,43 +268,7 @@ import jwtDecode from 'jwt-decode'
             pagination_info : false,
             pagination:false
         },
-        days: [
-            {
-                name: 'Lunes',
-                value: 1,
-                valid: false
-            },
-            {
-                name: 'Martes',
-                value: 2,
-                valid: false
-            },
-            {
-                name: 'Miercoles',
-                value: 3,
-                valid: false
-            },
-            {
-                name: 'Jueves',
-                value: 4,
-                valid: false
-            },
-            {
-                name: 'Viernes',
-                value: 5,
-                valid: false
-            },
-            {
-                name: 'Sabado',
-                value: 6,
-                valid: false
-            },
-            {
-                name: 'Domingo',
-                value: 0,
-                valid: false
-            }
-        ],
+        days: [],
         employes: [],
         searchText: '',
         searchInput: null,
@@ -451,42 +389,8 @@ import jwtDecode from 'jwt-decode'
             }
         ],
         selectedDays: [],
-        from: 'Seleccione un horario',
-        to: 'Seleccione un horario',
-        fromArray: [
-            '10:00',
-            '10:30',
-            '11:00',
-            '11:30',
-            '12:00',
-            '12:30',
-            '13:00',
-            '13:30',
-            '14:00',
-            '14:30',
-            '15:00',
-            '15:30',
-            '16:00',
-            '16:30',
-            '17:00',
-        ],
-        toArray: [
-            '10:30',
-            '11:00',
-            '11:30',
-            '12:00',
-            '12:30',
-            '13:00',
-            '13:30',
-            '14:00',
-            '14:30',
-            '15:00',
-            '15:30',
-            '16:00',
-            '16:30',
-            '17:00',
-            '17:30'
-        ],
+        hourInit: 'Desde',
+        hourFinally: 'Hasta',
         editHourIndex: 0
       };
     },
@@ -510,6 +414,20 @@ import jwtDecode from 'jwt-decode'
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
             this.getEmployes()
+            this.getBlockHours()
+        },
+        async getBlockHours(){
+            try{
+                const getHours = await axios.get(endPoint.endpointTarget+'/configurations/getHours/'+this.branch, this.configHeader)
+                if (getHours.data.status == 'ok') {
+                    console.log(getHours)
+                    this.days = getHours.data.data
+                    // this.fromArray = getHours.data.data
+                    // this.toArray = false
+                }
+            }catch(err){
+                res.send(err)
+            }
         },
         async getEmployes(){
             this.employeState = true
@@ -527,18 +445,35 @@ import jwtDecode from 'jwt-decode'
                 res.send(err)
             }
         },
-        selectBranchForCreate(value){
-            this.registerEmploye.branch = value._id
-            this.validRegister()
+        selectHourInit(value){
+            this.hourInit = value
         },
-        handleSearch(selectedKeys, confirm, dataIndex) {
-            confirm();
-            this.searchText = selectedKeys[0];
-            this.searchedColumn = dataIndex;
+        selectHourFinally(value){
+            this.hourFinally = value    
         },
-        handleReset(clearFilters) {
-            clearFilters();
-            this.searchText = '';
+        addHour(day, index){
+            setTimeout(() => {
+                for (const key in this.selectedDays) {
+                    const days = this.selectedDays[key]
+                    if (days.day == day ) {
+                        this.selectedDays[key].hours[0] = this.hourInit
+                        this.days[index - 1].start = this.hourInit  
+                    }
+                }
+                console.log(this.validHoursDays()) 
+            }, 200);
+        },
+        removeHour(day, index){
+            setTimeout(() => {
+                for (const key in this.selectedDays) {
+                    const days = this.selectedDays[key]
+                    if (days.day == day ) {
+                        this.selectedDays[key].hours[1] = this.hourFinally
+                        this.days[index - 1].end = this.hourFinally                  
+                    }
+                }
+                console.log(this.validHoursDays()) 
+            }, 200);
         },
         addDay(id, value, valid){
             if (valid) {
@@ -559,31 +494,18 @@ import jwtDecode from 'jwt-decode'
                 this.selectedDays.push({day: value, hours: []})
             }
         },
-        selectHour(id, value){
-            console.log(this.selectedDays)
-            this.modals.modal1 = false
-            this.modals.modal3 = true
-            for (let j = 0; j < this.selectedDays.length; j++) {
-                const elementTwo = this.selectedDays[j];
-                if (value == elementTwo.day) {
-                    this.editHourIndex = j
-                }
-            }
-            console.log(this.selectedDays)
-            if (this.selectedDays[this.editHourIndex].hours.length > 0) {
-                console.log(this.selectedDays[this.editHourIndex].hours)
-                this.from = this.selectedDays[this.editHourIndex].hours[0]
-                this.to = this.selectedDays[this.editHourIndex].hours[1]    
-            }
-        },
-        selectHourFinaly(){
-            this.selectedDays[this.editHourIndex].hours = [this.from, this.to]
-            this.modals.modal3 = false
-            this.modals.modal1 = true
-            this.from  = "Seleccione un horario"
-            this.to = "Seleccione un horario"
+        selectBranchForCreate(value){
+            this.registerEmploye.branch = value._id
             this.validRegister()
-            console.log(this.selectedDays)
+        },
+        handleSearch(selectedKeys, confirm, dataIndex) {
+            confirm();
+            this.searchText = selectedKeys[0];
+            this.searchedColumn = dataIndex;
+        },
+        handleReset(clearFilters) {
+            clearFilters();
+            this.searchText = '';
         },
         getToken(){
             const token = localStorage.userToken
@@ -602,88 +524,148 @@ import jwtDecode from 'jwt-decode'
                 this.updateEmploye()
             }
         },
-        registerEmployes(){
-            if (this.registerEmploye.firstName.length > 3 && this.registerEmploye.lastName.length > 3 && this.registerEmploye.document.length > 1) {
-                axios.post(endPoint.endpointTarget+'/employes', {
-                    branch: this.branch,
-                    days: this.selectedDays,
-                    firstName: this.registerEmploye.firstName,
-                    lastName: this.registerEmploye.lastName,
-                    document: this.registerEmploye.document,
-                }, this.configHeader)
-                .then(res => {
-                    if(res.data.status == 'employe created'){
-                        this.modals = {
-                            modal2: true,
-                            message: "¡Empleado registrado con exito!",
-                            icon: 'ni ni-check-bold ni-5x',
-                            type: 'success'
+        validHoursDays(){
+            if (this.selectedDays.length > 0) {
+                for (const days of this.days) {
+                    if (days.valid) {
+                        if (days.start == "Desde" || days.end == "Hasta") {
+                            return false
+                        }else{
+                            if (parseInt(days.end.split(':')[0]) <= parseInt(days.start.split(':')[0])) {
+                                if (parseInt(days.end.split(':')[0]) == parseInt(days.start.split(':')[0])) {
+                                    if (parseInt(days.end.split(':')[1]) <= parseInt(days.start.split(':')[1])) {
+                                       return 'hora atras' 
+                                    }
+                                }else{
+                                    return 'hora atras'
+                                }
+                            }
                         }
-                        setTimeout(() => {
-                            this.getEmployes()
-                            this.initialState(1)
-                            EventBus.$emit('reloadLenders', 'reload')
-                        }, 1500);
-                    }else{
-                        this.modals = {
-                            modal2: true,
-                            message: "¡El empleado ya se encuentra registrado!",
-                            icon: 'ni ni-fat-remove ni-5x',
-                            type: 'danger'
-                        }
-                        setTimeout(() => {
-                        this.modals = {
-                            modal2: false,  
-                            modal1: true,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        } 
-                        }, 1500);
                     }
-                })
+                } 
+                return true
             }else{
-
+                return false
             }
         },
-        updateEmploye(){
-				axios.put(endPoint.endpointTarget+'/employes', {
-                    id:this.registerEmploye._id,
-					firstName: this.registerEmploye.firstName,
-					document: this.registerEmploye.document,
-					days: this.selectedDays,
-					lastName: this.registerEmploye.lastName
-				}, this.configHeader)
-				.then(res => {
-					if(res.data.status == "employe edited"){
-						this.modals = {
-                            modal2: true,
-                            message: "¡Empleado editado con exito!",
-                            icon: 'ni ni-check-bold ni-5x',
-                            type: 'success'
-                        }
-                        setTimeout(() => {
-                            if (this.filter == 'Todas') {
-                                this.getEmployes()
-                            }if (this.filter != 'Todas' && this.filter != '') {
-                                const sendBranch = {
-                                    _id:this.filter
-                                }
-                                this.findBranch(sendBranch)
+        registerEmployes(){
+            console.log(this.registerEmploye.firstName)
+            console.log(this.registerEmploye.lastName)
+            console.log(this.registerEmploye.document)
+            if (this.validHoursDays() == 'hora atras') {
+                this.$swal({
+                    icon: 'error',
+                    title: 'La hora de un dia tiene el horario incorrecto.',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else{
+                if (this.registerEmploye.firstName.length > 3 && this.registerEmploye.lastName.length > 3 && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
+                    axios.post(endPoint.endpointTarget+'/employes', {
+                        branch: this.branch,
+                        days: this.selectedDays,
+                        firstName: this.registerEmploye.firstName,
+                        lastName: this.registerEmploye.lastName,
+                        document: this.registerEmploye.document,
+                    }, this.configHeader)
+                    .then(res => {
+                        if(res.data.status == 'employe created'){
+                            this.modals = {
+                                modal2: true,
+                                message: "¡Empleado registrado con exito!",
+                                icon: 'ni ni-check-bold ni-5x',
+                                type: 'success'
                             }
-                            this.initialState(1)
-                            EventBus.$emit('reloadLenders', 'reload')
-                        }, 2000);
-					}else{
-						this.$swal({
-							type: 'error',
-                            icon: 'error',
-							title: 'Prestador ya existe',
-							showConfirmButton: false,
-							timer: 1500
-						})
-					}
-				})
+                            setTimeout(() => {
+                                this.getEmployes()
+                                this.initialState(1)
+                                EventBus.$emit('reloadLenders', 'reload')
+                            }, 1500);
+                        }else{
+                            this.modals = {
+                                modal2: true,
+                                message: "¡El empleado ya se encuentra registrado!",
+                                icon: 'ni ni-fat-remove ni-5x',
+                                type: 'danger'
+                            }
+                            setTimeout(() => {
+                            this.modals = {
+                                modal2: false,  
+                                modal1: true,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            } 
+                            }, 1500);
+                        }
+                    })
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Llene todos los datos y seleccione al menos un dia.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            }
+            
+        },
+        updateEmploye(){
+            if (this.validHoursDays() == 'hora atras') {
+                this.$swal({
+                    icon: 'error',
+                    title: 'La hora de un dia tiene el horario incorrecto.',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else{
+                if (this.registerEmploye.firstName.length > 3 && this.registerEmploye.lastName.length > 3 && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
+                    axios.put(endPoint.endpointTarget+'/employes', {
+                        id:this.registerEmploye._id,
+                        firstName: this.registerEmploye.firstName,
+                        document: this.registerEmploye.document,
+                        days: this.selectedDays,
+                        lastName: this.registerEmploye.lastName
+                    }, this.configHeader)
+                    .then(res => {
+                        if(res.data.status == "employe edited"){
+                            this.modals = {
+                                modal2: true,
+                                message: "¡Empleado editado con exito!",
+                                icon: 'ni ni-check-bold ni-5x',
+                                type: 'success'
+                            }
+                            setTimeout(() => {
+                                if (this.filter == 'Todas') {
+                                    this.getEmployes()
+                                }if (this.filter != 'Todas' && this.filter != '') {
+                                    const sendBranch = {
+                                        _id:this.filter
+                                    }
+                                    this.findBranch(sendBranch)
+                                }
+                                this.initialState(1)
+                                EventBus.$emit('reloadLenders', 'reload')
+                            }, 2000);
+                        }else{
+                            this.$swal({
+                                type: 'error',
+                                icon: 'error',
+                                title: 'Prestador ya existe',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Llene todos los datos y seleccione al menos un dia.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            }
 		},
         deleteEmploye(id){
 		    this.$swal({
@@ -748,6 +730,8 @@ import jwtDecode from 'jwt-decode'
                     const elementTwo = days[j];
                     if (element.value == elementTwo.day) {
                         element.valid = true
+                        element.start = elementTwo.hours[0]
+                        element.end = elementTwo.hours[1]
                     }
                 }
             }
@@ -775,7 +759,7 @@ import jwtDecode from 'jwt-decode'
         },
         initialState(val){
             this.registerEmploye = {
-                firsName:'',
+                firstName:'',
                 lastName:'',
                 branch: '',
                 document:'',
@@ -806,9 +790,17 @@ import jwtDecode from 'jwt-decode'
                     this.registerEmploye.show = false
                 }, 10);
                 this.tipeForm = 'Registrar'
+                for (const days of this.days){
+                    days.start = 'Desde',
+                    days.end = 'Hasta'
+                }
             }
             if (val == 3) {
                 this.tipeForm = 'Editar'
+                for (const days of this.days){
+                    days.start = 'Desde',
+                    days.end = 'Hasta'
+                }
             }
         },
         validRegister(){
