@@ -1,3 +1,4 @@
+
 <template>
     <div>
         <base-header class="header pb-7 pt-5  d-flex align-items-center"
@@ -479,6 +480,7 @@
     </div>
 </template>
 <script>
+    //@collapse
     import axios from 'axios'
     import router from '../router'
     import endPoint from '../../config-endpoint/endpoint.js'

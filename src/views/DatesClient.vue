@@ -630,7 +630,7 @@
                 socket: io(endPoint.endpointTarget),
                 desactive: false,
                 ifUserRegister: false,
-                branch: '60a6cfa79c6a72625c92274b',
+                branch: '6099ddddafb3f231cc1509b1',
                 branches: [],
                 branchName: '',
                 configDate: {
