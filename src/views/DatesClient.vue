@@ -896,7 +896,7 @@
                     if (this.registerUser.pay == 'Transferencia') {
                         this.modals.modal5 = true
                     }else{
-                        this.modals.modal2 = true
+                        this.finallyAgend()
                     }
                 }else{
                     $('.dropdownPay').css({'color': 'red'})
@@ -1203,6 +1203,17 @@
                 if (lender == 'Primera disponible') {
                     
                 }else{
+                    for (const block of this.registerDate.serviceSelectds[index].blocks) {
+                        if (block.validator == 'select'){
+                            block.validator = true
+                            block.employes.unshift({
+                                id: this.registerDate.serviceSelectds[index].employeId,
+                                name: this.registerDate.serviceSelectds[index].realEmploye,
+                                position: 1,
+                                valid: true
+                            })
+                        }
+                    }
                     if (this.registerDate.serviceSelectds[index].blocksFirst.length > 0) {
                         for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
                             const element = this.registerDate.serviceSelectds[j];
@@ -1288,7 +1299,6 @@
                             }
                         })
                     }
-                    
                 }
             },
             selectHourService(index, lender, time, resTime){
