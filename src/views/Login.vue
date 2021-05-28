@@ -47,24 +47,17 @@
                                     </base-input>
                                 </div>
                                 <div class="col-md-6 col-sm-12 row pr-0">
-                                    <label class="ml-4 w-100" for="credentials">
+                                    <label class="ml-4 mb-0 pb-0 w-100" style="margin-bottom:-20px !important" for="credentials">
                                         Número de contacto
                                     </label>
-                                    <div class="col-3">
-                                        <base-input class="input-group-alternative"
-                                            placeholder="+56"
-                                            v-model="modelStart.businessPhoneCode"
-                                            readonly>
-                                        </base-input>
-                                    </div>
-                                    <div class="col-9 px-0">
-                                        <base-input class="input-group-alternative"
-                                            placeholder="Teléfono"
-                                            addon-left-icon="fa fa-phone"
-                                            v-model="modelStart.businessPhone"
-                                            v-on:input="formatPhone"
-                                            :valid="modelStart.businessPhone.length == 11 ? true : false">
-                                        </base-input>
+                                    <div class="col-12 pl-3 pr-0 mt-0 pt-0">
+                                        <VuePhoneNumberInput v-model="modelStart.businessPhone" @update="phoneData = $event" 
+                                        :translations="{
+                                            countrySelectorLabel: 'Código de país',
+                                            countrySelectorError: 'Elije un pais',
+                                            phoneNumberLabel: 'Número de teléfono',
+                                            example: 'Ejemplo :'
+                                        }"/>
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-sm-12">
@@ -513,11 +506,18 @@ import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
+import VuePhoneNumberInput from 'vue-phone-number-input';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+
   export default {
     name: 'login',
+    components: {
+        VuePhoneNumberInput
+    },
     data() {
       return {
             ifStart: false,
+            phoneData: {isValid: false},
             days: {
                 monday: 'danger',
                 tuesday: 'danger',
@@ -717,7 +717,7 @@ import jwtDecode from 'jwt-decode'
                                 secretKey: this.modelStart.credential,
                                 blockHour: this.modelStart.blockHour,
                                 businessName: this.modelStart.businessName,
-                                businessPhone: this.modelStart.businessPhoneCode + ' ' + this.modelStart.businessPhone,
+                                businessPhone: this.phoneData,
                                 businessType: this.modelStart.businessType,
                                 businessLocation: this.modelStart.businessLocation,
                                 typesPay: this.modelStart.typesPay,
@@ -733,6 +733,7 @@ import jwtDecode from 'jwt-decode'
                                     password: this.modelStart.password
                                 }, this.configHeader)
                                 if (registerUser) {
+                                    const registerFirstProfile = await axios.get(endPoint.endpointTarget+'/configurations/addFirstProfile',this.configHeader)
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',
@@ -846,11 +847,19 @@ import jwtDecode from 'jwt-decode'
         },
         nextStep(step){
             if (step == 'branch') {
-                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhoneCode.length < 5 && this.modelStart.businessPhone.length == 11 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione') {
+                if (this.modelStart.businessName.length >= 4 && this.phoneData.isValid && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione') {
                     this.status.branch = 'finish'
                     this.status.date = 'process'
                     this.process = 'date'
-                }else{
+                }else if (this.phoneData.isValid == false) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Debe escribir un número de teléfono valido',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                else{
                     this.$swal({
                         icon: 'error',
                         title: 'Llene todos los campos.',

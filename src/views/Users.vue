@@ -202,9 +202,10 @@
         <modal :show.sync="modals.modal8"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-xl">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  body-classes="px-lg-5"
                   class="border-0">
                 <template>
                     <div class="text-muted text-center mb-3">
@@ -264,9 +265,10 @@
         <modal :show.sync="modals.modal6"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  body-classes="px-lg-5"
                   class="border-0">
                 <template>
                     <div class="text-muted text-center mb-3">

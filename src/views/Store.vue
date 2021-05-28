@@ -1283,11 +1283,13 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         async getProviders() {
           try{
             const getProviders = await axios.get(endPoint.endpointTarget+'/stores/getproviders', this.configHeader)
-            if (getProviders) {
+            if (getProviders.data.status == 'ok') {
               this.providerTable = getProviders.data.data
               for (let i = 0; i < getProviders.data.data.length; i++) {
                   this.providers.push(getProviders.data.data[i].name)
               }
+            }else{
+                this.providerTable = []
             }
           }catch(err){
             this.$swal({

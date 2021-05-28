@@ -1,3 +1,4 @@
+
 <template>
     <div>
         <base-header class="header pb-7 pt-5  d-flex align-items-center"
@@ -353,23 +354,19 @@
                                 </base-input>
                             </div>
                             <div class="col-md-6 col-sm-12 row pr-0">
-                                <label class="ml-4 w-100" for="credentials">
+                                <label class="ml-4 mb-0 pb-0 w-100" style="margin-bottom:-20px !important" for="credentials">
                                     Número de contacto
                                 </label>
-                                <div class="col-3">
-                                    <base-input class="input-group-alternative"
-                                        placeholder="+56"
-                                        v-model="configData.businessPhoneCode"
-                                    >
-                                    </base-input>
-                                </div>
-                                <div class="col-9 px-0">
-                                    <base-input class="input-group-alternative"
-                                        placeholder="Teléfono"
-                                        type='number'
-                                        addon-left-icon="fa fa-phone"
-                                        v-model="configData.businessPhone">
-                                    </base-input>
+                                <div class="col-12 pl-3 pr-0 mt-0 pt-0">
+                                    <VuePhoneNumberInput v-model="configData.businessPhone.formatNational" @update="configData.businessPhone = $event" 
+                                    :default-phoner-number="configData.businessPhone.nationalNumber"
+                                    :default-country-code="configData.businessPhone.countryCode"
+                                    :translations="{
+                                        countrySelectorLabel: 'Código de país',
+                                        countrySelectorError: 'Elije un pais',
+                                        phoneNumberLabel: 'Número de teléfono',
+                                        example: 'Ejemplo :'
+                                    }"/>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12">
@@ -409,7 +406,7 @@
                                     </a-select-option>
                                 </a-select>
                             </div>
-                            <base-button class="mx-auto mt-2" v-on:click="updateconfig" :disabled="configData.businessName.length < 4 && configData.businessPhone != '' && configData.businessPhone != 0 && configData.businessPhone != null && configData.businessLocation != '' ? true : false" outline type="default">Actualizar información</base-button>
+                            <base-button class="mx-auto mt-2" v-on:click="updateconfig" :disabled="configData.businessName.length > 4 && configData.businessPhone.isValid && configData.businessLocation != '' ? false : true" outline type="default">Actualizar información</base-button>
                         </div>
                       </div>
                       <div class="row p-4" v-if="selectedConfig == 'microServices'">
@@ -479,6 +476,7 @@
     </div>
 </template>
 <script>
+    
     import axios from 'axios'
     import router from '../router'
     import endPoint from '../../config-endpoint/endpoint.js'
@@ -488,11 +486,14 @@
     import EventBus from '../components/EventBus'
     import * as moment from 'moment';
     import 'moment/locale/es';
+    import VuePhoneNumberInput from 'vue-phone-number-input';
+    import 'vue-phone-number-input/dist/vue-phone-number-input.css';
     moment.locale('es');
     export default {
       components: {
           VueBootstrap4Table,
-        vueCustomScrollbar
+          vueCustomScrollbar,
+          VuePhoneNumberInput
       },
       data() {
         return {
@@ -1134,7 +1135,7 @@
             }
           }
           this.updateconfig()
-        }
+        },
       }
     };
 </script>

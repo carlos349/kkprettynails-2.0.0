@@ -44,6 +44,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
 import vuescroll from 'vuescroll';
+import VuePhoneNumberInput from 'vue-phone-number-input';
 
 // You can set global config here.
 Vue.use(vuescroll)
@@ -55,13 +56,15 @@ import VueFormWizard from 'vue-form-wizard'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import 'vue-popperjs/dist/vue-popper.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
-/* I DO NOT KNOW */
+/* Currency input */
 Vue.config.productionTip = false
 const pluginOptions = {globalOptions: { currency: {'prefix':'$ '}, precision: 0, distractionFree: false, autoDecimalMode:false}}
 
 /* USES*/
 Vue.use(Antd);
+Vue.component('vue-phone-number-input', VuePhoneNumberInput);
 Vue.component('vue-single-select', VueSingleSelect);
 Vue.use(VueCurrencyInput, pluginOptions)
 Vue.use(ArgonDashboard)
@@ -80,6 +83,7 @@ Vue.use(new VueSocketIO({
 );
 Vue.use(VueProgress)
 Vue.use(VueCarousel);
+
 /* FONTS LIBRARY */
 library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit, faPager, faEdit, faTrash, faClipboard, faShoppingCart)
 
