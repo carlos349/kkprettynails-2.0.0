@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Sucursales</p>
-                        <p class="text-white">Esta es la sección administrativa de tus caja, aquí podrás registrar, editar y visualizar todos los cierres de caja.</p>
+                        <p class="text-white">Esta es la sección administrativa de tus sucursales, aquí podrás registrar, editar y visualizar todas tus sucursales.</p>
                     </div>
                     <base-button class="float-right mt-7" size="sm" type="success" style="font-size:1em;" @click="modals.modal1 = true" ><a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" /> Registrar</base-button>
                 </div>
@@ -128,24 +128,17 @@
                                     </base-input>
                                 </div>
                                 <div class="col-md-6 col-sm-12 row pr-0">
-                                    <label class="ml-4 w-100" for="phone">
+                                    <label class="ml-4 mb-0 pb-0 w-100" style="margin-bottom:-20px !important" for="credentials">
                                         Número de contacto
                                     </label>
-                                    <div class="col-3">
-                                        <base-input class="input-group-alternative"
-                                            placeholder="+56"
-                                            v-model="modelStart.businessPhoneCode"
-                                            readonly
-                                        >
-                                        </base-input>
-                                    </div>
-                                    <div class="col-9 px-0">
-                                        <base-input class="input-group-alternative"
-                                            placeholder="Teléfono"
-                                            addon-left-icon="fa fa-phone"
-                                            v-on:input="formatPhone"
-                                            v-model="modelStart.businessPhone">
-                                        </base-input>
+                                    <div class="col-12 pl-3 pr-0 mt-0 pt-0">
+                                        <VuePhoneNumberInput v-model="modelStart.businessPhone" @update="phoneData = $event" 
+                                        :translations="{
+                                            countrySelectorLabel: 'Código de país',
+                                            countrySelectorError: 'Elije un país',
+                                            phoneNumberLabel: 'Número de teléfono',
+                                            example: 'Ejemplo :'
+                                        }"/>
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-sm-12">
@@ -416,11 +409,16 @@ import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import jwtDecode from 'jwt-decode'
 // COMPONENTS
+import VuePhoneNumberInput from 'vue-phone-number-input';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 import EventBus from '../components/EventBus'
 import * as moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
 export default {
+    components: {
+        VuePhoneNumberInput
+    },
     data(){
         return {
             configHeader: {
@@ -429,6 +427,7 @@ export default {
                     "x-access-token": localStorage.userToken
                 }
             },
+            phoneData: {isValid: false},
             modals: {
                 modal1: false
             },
@@ -726,10 +725,17 @@ export default {
         },
         nextStep(step){
             if (step == 'branch') {
-                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhone.length == 11 && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione') {
+                if (this.modelStart.businessName.length >= 4 && this.phoneData.isValid && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione') {
                     this.status.branch = 'finish'
                     this.status.date = 'process'
                     this.process = 'date'
+                }else if (this.phoneData.isValid == false) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Debe escribir un número de teléfono valido',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }else{
                     this.$swal({
                         icon: 'error',
@@ -864,7 +870,7 @@ export default {
                                 branch: registerBranch.data.data._id,
                                 blockHour: this.modelStart.blockHour,
                                 businessName: this.modelStart.businessName,
-                                businessPhone: phone,
+                                businessPhone: phoneData,
                                 businessType: this.modelStart.businessType,
                                 businessLocation: this.modelStart.businessLocation,
                                 typesPay: this.modelStart.typesPay,

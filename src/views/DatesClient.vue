@@ -776,19 +776,32 @@
                 this.branchName = value.name
             },
             SelectMicro(index, indexM, microServices) {
-                console.log(index, indexM, microServices)
-                
-                if (this.registerDate.serviceSelectds[index].microServices[indexM].checked) {
-                    this.registerDate.serviceSelectds[index].microServices[indexM].checked = false    
-                    this.registerDate.serviceSelectds[index].duration = parseFloat(this.registerDate.serviceSelectds[index].duration) - parseFloat(microServices.duration)
-                    this.registerDate.serviceSelectds[index].price = this.registerDate.serviceSelectds[index].price - microServices.price
-                    this.totalPrice = this.totalPrice - this.registerDate.serviceSelectds[index].price
+                console.log(microServices)
+                if (this.registerDate.serviceSelectds[index].microServices[indexM].microService == 'Ninguno') {
+                    this.registerDate.serviceSelectds[index].microServices.forEach(element => {
+                        if (element.checked && element.microService != 'Ninguno') {
+                            element.checked = false
+                            this.registerDate.serviceSelectds[index].duration = parseFloat(this.registerDate.serviceSelectds[index].duration) - parseFloat(element.duration)
+                            this.registerDate.serviceSelectds[index].price = this.registerDate.serviceSelectds[index].price - element.price
+                            this.totalPrice = this.totalPrice - this.registerDate.serviceSelectds[index].price
+                        }
+                    });
+                    this.registerDate.serviceSelectds[index].microServices[0].checked = true
                 }else{
-                    this.registerDate.serviceSelectds[index].microServices[indexM].checked = true
-                    this.registerDate.serviceSelectds[index].duration = parseFloat(this.registerDate.serviceSelectds[index].duration) + parseFloat(microServices.duration)
-                    this.registerDate.serviceSelectds[index].price = this.registerDate.serviceSelectds[index].price + microServices.price
-                    this.totalPrice = this.totalPrice + this.registerDate.serviceSelectds[index].price
+                    if (this.registerDate.serviceSelectds[index].microServices[indexM].checked) {
+                        this.registerDate.serviceSelectds[index].microServices[indexM].checked = false    
+                        this.registerDate.serviceSelectds[index].duration = parseFloat(this.registerDate.serviceSelectds[index].duration) - parseFloat(microServices.duration)
+                        this.registerDate.serviceSelectds[index].price = this.registerDate.serviceSelectds[index].price - microServices.price
+                        this.totalPrice = this.totalPrice - this.registerDate.serviceSelectds[index].price
+                    }else{
+                        this.registerDate.serviceSelectds[index].microServices[0].checked = false
+                        this.registerDate.serviceSelectds[index].microServices[indexM].checked = true
+                        this.registerDate.serviceSelectds[index].duration = parseFloat(this.registerDate.serviceSelectds[index].duration) + parseFloat(microServices.duration)
+                        this.registerDate.serviceSelectds[index].price = this.registerDate.serviceSelectds[index].price + microServices.price
+                        this.totalPrice = this.totalPrice + this.registerDate.serviceSelectds[index].price
+                    }
                 }
+                
                 
             },
             async getMicroServices(){
@@ -1199,12 +1212,18 @@
                 this.selectHourService(index, lender, time, rest)
             },
             insertData(index, lender, restTime, Class, duration, lendeId, check, lenders){
-                console.log(this.registerDate)
                 if (lender == 'Primera disponible') {
+                    if (this.registerDate.serviceSelectds[index].blocks[0].employes) {
+                        this.registerDate.serviceSelectds[index].blocks = this.registerDate.serviceSelectds[index].blocksFirst
+                    }else{
+
+                    }
+                    
                     
                 }else{
+                    console.log(this.registerDate.serviceSelectds[index].blocks)
                     for (const block of this.registerDate.serviceSelectds[index].blocks) {
-                        if (block.validator == 'select'){
+                        if (block.validator == 'select' && block.employes){
                             block.validator = true
                             block.employes.unshift({
                                 id: this.registerDate.serviceSelectds[index].employeId,
