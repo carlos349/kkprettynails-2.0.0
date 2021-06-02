@@ -341,112 +341,37 @@
                 <template>
                     <form role="form">
                         <div class="row">
-                            <div class="col-md-6 borderRight">
-                                <span style="color:red;position:absolute;right:20px;top:5px;z-index:1;">*</span>
-                                <base-input alternative
-                                    type="text"
-                                    v-on:keyup="validFields()"
-                                    placeholder="Escriba su nombre"
-                                    v-model="registerUser.firstName"
-                                    addon-left-icon="fa fa-user">
-                                </base-input>
-                                <span style="color:red;position:absolute;right:20px;top:70px;z-index:1;">*</span>
-                                <base-input alternative
-                                    type="text"
-                                    v-on:keyup="validFields()"
-                                    placeholder="Escriba su apellido"
-                                    v-model="registerUser.lastName"
-                                    addon-left-icon="fa fa-user">
-                                </base-input>
-                                <span style="color:red;position:absolute;right:20px;top:140px;z-index:1;">*</span>
-                                <base-input alternative
-                                    type="email"
-                                    v-on:keyup="validFields()"
-                                    placeholder="Escriba su correo"
-                                    v-model="registerUser.email"
-                                    addon-left-icon="ni ni-email-83">
-                                </base-input>
-                                <span style="color:red;position:absolute;right:20px;top:200px;z-index:1;">*</span>
-                                <div class="row">
-                                    <div class="col-3 col-md-3">
-                                        <base-input alternative
-                                            type="text"
-                                            value="+56"
-                                            class="p-0 codigoNum"
-                                            readonly="true">
-                                        </base-input>
-                                    </div>
-                                    <div class="col-9 col-md-9 pl-0">
-                                        <base-input alternative
-                                            type="text"
-                                            v-on:input="formatPhone() ,validFields()"
-                                            maxlength="9"
-                                            class="text-lowercase"
-                                            placeholder="Número de teléfono"
-                                            v-model="registerUser.phone"
-                                            addon-left-icon="fa fa-phone">
-                                        </base-input>
-                                    </div>
+                            <label v-if="registerUser.pay == 'Transferencia'" for="pay">Comprobante de pago</label>
+                            <input alternative
+                                v-if="registerUser.pay == 'Transferencia'"
+                                type="file"
+                                ref="file" class="form-control mb-1"
+                                v-on:change="handleFileUpload()">
+                            <hr style="margin-bottom:5px !important;margin-top:10px !important;" v-if="registerUser.pay == 'Transferencia'">
+                            <div class="card-info">
+                                <div>
+                                    <p v-if="registerUser.pay == 'Transferencia'">
+                                        Al finalizar su agendamiento usted debe considerar que su hora está tomada con pago mediante <b style="font-weight:600;">transferencia electrónica por validar.</b> 
+                                        <br><br>
+                                        Una vez validado su pago le llegará un correo donde debe confirmar su cita.
+                                    </p>
                                 </div>
-                                
-                                <base-input alternative
-                                    type="text"
-                                    v-on:keyup="validFields()"
-                                    placeholder="Escriba su correo"
-                                    readonly
-                                    v-model="registerUser.pay"
-                                    addon-left-icon="fa fa-money-check-alt"
-                                    style="margin-bottom: 0px !important;">
-                                </base-input>
+                            </div> 
+                            <div v-if="registerUser.pay == 'Transferencia'">
+                                <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" :disabled="ifDisabled" v-if="validRegister" type="success" v-on:click="finallyAgend()">
+                                    Finalizar agenda
+                                </base-button>  
+                                <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
+                                    Finalizar agenda
+                                </base-button>
                             </div>
-                            <div class="col-md-6">
-                                <label v-if="registerUser.pay == 'Transferencia'" for="pay">Comprobante de pago</label>
-                                <input alternative
-                                    v-if="registerUser.pay == 'Transferencia'"
-                                    type="file"
-                                    ref="file" class="form-control mb-1"
-                                    v-on:change="handleFileUpload()">
-                                <hr style="margin-bottom:5px !important;margin-top:10px !important;" v-if="registerUser.pay == 'Transferencia'">
-                                <div class="card-info">
-                                    <div>
-                                        <p v-if="registerUser.pay == 'Presencial efectivo'">
-                                            Al finalizar su agendamiento usted debe considerar que su hora está tomada con pago de forma presencial mediante <b style="font-weight:600;">efectivo</b> en nuestro establecimiento.
-                                            <br><br>
-                                            <b style="font-weight:600;">Importante:</b> para evitar retrasos en los servicios, <b style="font-weight:600;">no se atenderá una vez pasado los 15 minutos de la hora agendada.</b>
-                                        </p>
-                                        <p v-if="registerUser.pay == 'Presencial Débito'">
-                                            Al finalizar su agendamiento usted debe considerar que su hora está tomada con pago de forma presencial mediante <b style="font-weight:600;">débito</b> en nuestro establecimiento.
-                                            <br><br>
-                                            <b style="font-weight:600;">Importante:</b> para evitar retrasos en los servicios, <b style="font-weight:600;">no se atenderá una vez pasado los 15 minutos de la hora agendada.</b>
-                                        </p>
-                                        <p v-if="registerUser.pay == 'Presencial Crédito'">
-                                            Al finalizar su agendamiento usted debe considerar que su hora está tomada con pago de forma presencial mediante <b style="font-weight:600;">crédito</b> en nuestro establecimiento.
-                                            <br><br>
-                                            <b style="font-weight:600;">Importante:</b> para evitar retrasos en los servicios, <b style="font-weight:600;">no se atenderá una vez pasado los 15 minutos de la hora agendada.</b>
-                                        </p>
-                                        <p v-if="registerUser.pay == 'Transferencia'">
-                                            Al finalizar su agendamiento usted debe considerar que su hora está tomada con pago mediante <b style="font-weight:600;">transferencia electrónica por validar.</b> 
-                                            <br><br>
-                                            Una vez validado su pago le llegará un correo donde debe confirmar su cita.
-                                        </p>
-                                    </div>
-                                </div> 
-                                <div v-if="registerUser.pay == 'Transferencia'">
-                                    <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" :disabled="ifDisabled" v-if="validRegister" type="success" v-on:click="finallyAgend()">
-                                        Finalizar agenda
-                                    </base-button>  
-                                    <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
-                                        Finalizar agenda
-                                    </base-button>
-                                </div>
-                                <div v-else class="mt-5">
-                                    <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" :disabled="ifDisabled" v-if="validRegister" type="success" v-on:click="finallyAgend()">
-                                        Finalizar agenda
-                                    </base-button>  
-                                    <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
-                                        Finalizar agenda
-                                    </base-button>
-                                </div>
+                            <div v-else class="mt-5">
+                                <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" :disabled="ifDisabled" v-if="validRegister" type="success" v-on:click="finallyAgend()">
+                                    Finalizar agenda
+                                </base-button>  
+                                <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
+                                    Finalizar agenda
+                                </base-button>
                             </div>
                         </div>
                     </form>
@@ -469,7 +394,7 @@
                             type="text"
                             v-on:keyup="validFields()"
                             placeholder="Escriba su nombre"
-                            v-model="registerUser.name"
+                            v-model="registerUser.firstName"
                             addon-left-icon="fa fa-user">
                         </base-input>
                     </div>
@@ -486,12 +411,12 @@
                         type="email"
                         v-on:keyup="validFields()"
                         placeholder="Escriba su correo"
-                        v-model="registerUser.mail"
+                        v-model="registerUser.email"
                         addon-left-icon="ni ni-email-83">
                     </base-input>
                     <span style="color:red;position:absolute;right:35px;top:205px;z-index:1;">*</span>
                     <div class="col-12 p-0">
-                        <VuePhoneNumberInput v-model="registerUser.phone" @update="phoneData = $event" 
+                        <VuePhoneNumberInput v-model="registerUser.phone" @update="phoneData = $event, validFields()" 
                         :translations="{
                             countrySelectorLabel: 'Código de país',
                             countrySelectorError: 'Elije un país',
@@ -500,7 +425,10 @@
                         }"/>
                     </div>
                     <span style="color:red;position:absolute;right:35px;top:270px;z-index:1;">*</span>
-                    <base-button class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="registerClients">
+                    <base-button v-if="validRegister" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="registerClients">
+                        Registrar y continuar
+                    </base-button>
+                    <base-button v-else class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" disabled v-on:click="registerClients">
                         Registrar y continuar
                     </base-button>
                 </div>
@@ -508,9 +436,9 @@
                     <label for="branche">Correo</label>
                     <base-input alternative
                         type="email"
-                        v-on:keyup="validFields()"
+                        v-on:keyup="validVerifyFunc()"
                         placeholder="Escriba su correo"
-                        v-model="registerUser.mail"
+                        v-model="registerUser.email"
                         addon-left-icon="ni ni-email-83">
                     </base-input>
                     <label for="branche">Seleccione la sucursal</label>
@@ -520,7 +448,10 @@
                         </a-select-option>
                     </a-select>
 
-                    <base-button class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData">
+                    <base-button v-if="validVerify" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData">
+                        Confirmar
+                    </base-button>
+                    <base-button v-else class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData" disabled>
                         Confirmar
                     </base-button>
                 </div>
@@ -755,7 +686,8 @@
                 selectedMicro: [],
                 safe: [],
                 ifMicro: false,
-                itFirst: true
+                itFirst: true,
+                validVerify: false
             }
         },
         created(){
@@ -769,6 +701,7 @@
             selectBranch(value){
                 this.branch = value._id
                 this.branchName = value.name
+                this.validVerifyFunc()
             },
             SelectMicro(index, indexM, microServices) {
                 console.log(microServices)
@@ -817,13 +750,12 @@
             async verifyData(){
                 try{
                     const findClient = await axios.get(endPoint.endpointTarget+'/clients/findOneWithoutToken/'+this.registerUser.mail, this.configHeader)
-                    console.log(findClient)
                     if (findClient.data.status == 'ok') {
                         this.registerUser = {
                             firstName: findClient.data.data.firstName,
                             email: findClient.data.data.email,
                             lastName: findClient.data.data.lastName,
-                            id: findClient.data.data.id,
+                            id: findClient.data.data._id,
                             name: findClient.data.data.firstName + ' ' + findClient.data.data.lastName,
                             phone: findClient.data.data.phone.formatInternational,
                             pay: 'Presencial efectivo',
@@ -954,23 +886,44 @@
                 }
                 this.registerUser.phone = number
             },
-            validFields(){
-                const split = this.registerUser.mail.split('@')
+            validVerifyFunc(){
+                const split = this.registerUser.email.split('@')
                 var splitTwo = ''
                 
-                    this.registerUser.mail = this.registerUser.mail.toLowerCase()
+                this.registerUser.mail = this.registerUser.email.toLowerCase()
                 
                 if (split.length == 2) {
                     splitTwo = split[1].split('.')
                 }
-                if (this.registerUser.pay == 'Transferencia') {
-                    if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '' && this.registerUser.phone.length == 11) {
-                        if (split.length == 2) {
-                            if (splitTwo.length == 2) {
-                                this.validRegister = true
-                            }else{
-                                this.validRegister = false
-                            }
+                if (this.registerUser.email != '' && this.branch != '') {
+                    if (split.length == 2) {
+                        if (splitTwo.length == 2) {
+                            this.validVerify = true
+                        }else{
+                            this.validVerify = false
+                        }
+                    }else{
+                        this.validVerify = false
+                    }
+                }else{
+                    this.validVerify = false
+                }
+            },
+            validFields(){
+                console.log('aja')
+                const split = this.registerUser.email.split('@')
+                var splitTwo = ''
+
+                this.registerUser.mail = this.registerUser.email.toLowerCase()
+                
+                if (split.length == 2) {
+                    splitTwo = split[1].split('.')
+                }
+                
+                if (this.registerUser.email != '' && this.registerUser.firstName != '' && this.registerUser.lastName != '' && this.phoneData.isValid) {
+                    if (split.length == 2) {
+                        if (splitTwo.length == 2) {
+                            this.validRegister = true
                         }else{
                             this.validRegister = false
                         }
@@ -978,19 +931,7 @@
                         this.validRegister = false
                     }
                 }else{
-                    if (this.registerUser.name != '' && this.registerUser.mail != '' && this.registerUser.lastName != '' && this.registerUser.phone.length == 11) {
-                        if (split.length == 2) {
-                            if (splitTwo.length == 2) {
-                                this.validRegister = true
-                            }else{
-                                this.validRegister = false
-                            }
-                        }else{
-                            this.validRegister = false
-                        }
-                    }else{
-                        this.validRegister = false
-                    }
+                    this.validRegister = false
                 }
             },
             sendConfirmation(id, name, mail, start, end, services, lender){
@@ -999,7 +940,7 @@
                 const startFormat = start
                 const endFormat = end
                 const dateFormat = this.finalDate
-                axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
+                axios.post(endPoint.endpointTarget+'/dates/sendConfirmation/'+id, {
                     name: nameFormat,
                     contact: contactFormat,
                     start: startFormat,
@@ -1020,26 +961,23 @@
             },
             finallyAgend(){
                 this.ifDisabled = true
-                
-                const name = this.registerUser.name
-                const mail = this.registerUser.mail.toLowerCase()
-                this.client = res.data.data.nombre+' / '+res.data.data.identidad
-                var lenderFinal = ''
+                var employeFinal = ''
                 var hourFinal = ''
                 for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
                     const element = this.registerDate.serviceSelectds[index];
                     if (index > 0){
-                        lenderFinal = lenderFinal+' - '+element.realLender
+                        employeFinal = employeFinal+' - '+element.realEmploye
                         hourFinal = hourFinal+' - '+element.start+'Hrs'
                     }else{
-                        lenderFinal = element.realLender
+                        employeFinal = element.realEmploye
                         hourFinal = element.start+'Hrs'
                     }
                 }
-                axios.post(endPoint.endpointTarget+'/citas/verifyDate', {
+                axios.post(endPoint.endpointTarget+'/dates/verifyDate', {
                     dataDate: this.registerDate,
                     date: this.finalDate,
-                }).then(res => {
+                    branch: this.branch
+                }, this.configHeader).then(res => {
                     if(res.data.status == true){
                         this.modals = {
                             modal3: true,
@@ -1064,6 +1002,7 @@
                                 element.start = ''
                                 element.end = ''
                                 element.sort = ''
+                                element.class = ''
                                 element.blocks = []
                                 element.blocksFirst = []
                                 element.valid = false
@@ -1073,27 +1012,38 @@
                             }
                             this.validHour = false
                             setTimeout(() => {
-                                axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                                axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                                    date: this.finalDate,
+                                    branch: this.branch
+                                }, this.configHeader)
                                 .then(res => {
                                     this.getDay = res.data.day
                                     this.availableslenders = res.data.array
-                                    axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                    axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
                                         date: this.finalDate,
-                                        lenders: res.data.array,
-                                        time: this.registerDate.serviceSelectds[0].duration,
-                                        lendersService: this.registerDate.serviceSelectds[0].lenders
-                                    })
+                                        employes: res.data.array,
+                                        timedate: this.registerDate.serviceSelectds[0].duration,
+                                        employesServices: this.registerDate.serviceSelectds[0].employes,
+                                        branch: this.branch
+                                    }, this.configHeader)
                                     .then(res => {
-                                        console.log(res)
                                         this.readyChange = true
                                         this.registerDate.serviceSelectds[0].valid = true
-                                        this.registerDate.serviceSelectds[0].blocks = res.data.blocks
+                                        this.registerDate.serviceSelectds[0].blocks = res.data.data
+                                        this.registerDate.block = res.data.data
+                                        console.log(this.registerDate.serviceSelectds[0].blocks)
                                         $('#block0').toggle('slow')
                                     })
                                 })
-                            }, 200); 
+                            }, 200);  
                         }, 5000);
                     }else{
+                        var blockEdit = []
+                        if (this.registerDate.serviceSelectds[this.registerDate.serviceSelectds.length - 1].blocksFirst.length > 0) {
+                            blockEdit = this.registerDate.serviceSelectds[this.registerDate.serviceSelectds.length - 1].blocksFirst
+                        }else{
+                            blockEdit = this.registerDate.serviceSelectds[this.registerDate.serviceSelectds.length - 1].blocks
+                        }
                         if (this.file != '') {
                             let formData = new FormData();
                             formData.append('file', this.file)
@@ -1101,18 +1051,21 @@
                                 headers: {
                                     'Content-Type': 'multipart/form-data'
                                 }
-                            })
+                            }, this.configHeader)
                             .then(res => {
-                                axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                                axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
                                     dataDate: this.registerDate,
                                     date: this.finalDate,
                                     client: this.registerUser,
+                                    block: blockEdit,
+                                    blockId: this.idDatesBlocks,
+                                    typeCreation: 'Web',
                                     pdf: res.data.nameFile,
                                     ifClient: true
-                                })
+                                }, this.configHeader)
                                 .then(res => {
                                     if (res.data.status == "cita creada") {
-                                        this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                        this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal)
                                         this.modals.modal2 = false
                                         this.modals.modal4 = true
                                         
@@ -1122,17 +1075,20 @@
                                 })   
                             })
                         }else{
-                            axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                            axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
                                 dataDate: this.registerDate,
                                 date: this.finalDate,
                                 client: this.registerUser,
+                                block: blockEdit,
+                                blockId: this.idDatesBlocks,
+                                typeCreation: 'Web',
                                 pdf: 'not',
                                 ifClient: true
-                            })
+                            }, this.configHeader)
                             .then(res => {
-                                if (res.data.status == "cita creada") {
+                                if (res.data.status == "ok") {
                                     this.ifDisabled = false
-                                    this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                    this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal)
                                     this.modals.modal2 = false
                                     this.modals.modal4 = true
                                     $("#overlay").toggle()
@@ -1214,6 +1170,7 @@
                             element.start = ''
                             element.end = ''
                             element.sort = ''
+                            element.class = ''
                             element.blocks = []
                             element.blocksFirst = []
                             element.valid = false
@@ -1252,6 +1209,7 @@
                             element.start = ''
                             element.end = ''
                             element.sort = ''
+                            element.class = ''
                             element.blocks = []
                             element.blocksFirst = []
                             element.valid = false
@@ -1298,6 +1256,7 @@
                                 id: this.registerDate.serviceSelectds[index].employeId,
                                 name: this.registerDate.serviceSelectds[index].realEmploye,
                                 position: 1,
+                                class: this.registerDate.serviceSelectds[index].class,
                                 valid: true
                             })
                         }
@@ -1309,6 +1268,7 @@
                             element.start = ''
                             element.end = ''
                             element.sort = ''
+                            element.class = ''
                             element.blocks = []
                             element.blocksFirst = []
                             element.valid = false
@@ -1353,6 +1313,7 @@
                             element.start = ''
                             element.end = ''
                             element.sort = ''
+                            element.class = ''
                             element.blocks = []
                             element.blocksFirst = []
                             element.valid = false
@@ -1413,6 +1374,7 @@
                             element.start = ''
                             element.end = ''
                             element.sort = ''
+                            element.class = ''
                             element.realLender = ''
                             element.blocks = []
                             element.days = ''
@@ -1620,6 +1582,7 @@
                     element.start = ''
                     element.end = ''
                     element.sort = ''
+                    element.class = ''
                     element.blocks = []
                     element.blocksFirst = []
                     element.valid = false
@@ -1797,7 +1760,8 @@
                             }
                         }
                     }
-                    console.log(this.registerDate.serviceSelectds)
+                    console.log(this.registerDate)
+                    console.log(this.finalDate)
                     return this.validHour
                 }else{
                     this.validWizard = false
@@ -1861,6 +1825,7 @@
                                 element.start = ''
                                 element.end = ''
                                 element.sort = ''
+                                element.class = ''
                                 element.blocks = []
                                 element.blocksFirst = []
                                 element.valid = false
@@ -1885,6 +1850,8 @@
                                         branch: this.branch
                                     }, this.configHeader)
                                     .then(res => {
+                                        this.idDatesBlocks = res.data.id
+                                        console.log(this.idDatesBlocks)
                                         this.readyChange = true
                                         this.registerDate.serviceSelectds[0].valid = true
                                         this.registerDate.serviceSelectds[0].blocks = res.data.data
@@ -1911,6 +1878,8 @@
                                         branch: this.branch
                                     }, this.configHeader)
                                     .then(res => {
+                                        this.idDatesBlocks = res.data.id
+                                        console.log(this.idDatesBlocks)
                                         this.readyChange = true
                                         this.registerDate.serviceSelectds[0].valid = true
                                         this.registerDate.serviceSelectds[0].blocks = res.data.data
@@ -2047,14 +2016,14 @@
                     
                 // }
                 axios.post(endPoint.endpointTarget+'/clients', {
-                    firstName:this.registerUser.firstName,
+                    firstName: this.registerUser.firstName,
                     lastName: this.registerUser.lastName,
-                    email:this.registerUser.email,
-                    recommender:null,
-                    idRecomender:null,
-                    phone:this.phoneData,
-                    birthday: null,
-                    instagram:null
+                    email: this.registerUser.email,
+                    recommender: null,
+                    idRecomender: null,
+                    phone: this.phoneData,
+                    birthday: '',
+                    instagram: null
                 }, this.configHeader)
                 .then(res => {
                     if (res.data.status == 'client create') {
