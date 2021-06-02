@@ -54,7 +54,7 @@
                                         <VuePhoneNumberInput v-model="modelStart.businessPhone" @update="phoneData = $event" 
                                         :translations="{
                                             countrySelectorLabel: 'Código de país',
-                                            countrySelectorError: 'Elije un pais',
+                                            countrySelectorError: 'Elije un país',
                                             phoneNumberLabel: 'Número de teléfono',
                                             example: 'Ejemplo :'
                                         }"/>

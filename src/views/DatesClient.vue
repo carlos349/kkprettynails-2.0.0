@@ -347,7 +347,7 @@
                                     type="text"
                                     v-on:keyup="validFields()"
                                     placeholder="Escriba su nombre"
-                                    v-model="registerUser.name"
+                                    v-model="registerUser.firstName"
                                     addon-left-icon="fa fa-user">
                                 </base-input>
                                 <span style="color:red;position:absolute;right:20px;top:70px;z-index:1;">*</span>
@@ -363,7 +363,7 @@
                                     type="email"
                                     v-on:keyup="validFields()"
                                     placeholder="Escriba su correo"
-                                    v-model="registerUser.mail"
+                                    v-model="registerUser.email"
                                     addon-left-icon="ni ni-email-83">
                                 </base-input>
                                 <span style="color:red;position:absolute;right:20px;top:200px;z-index:1;">*</span>
@@ -465,7 +465,6 @@
             <template>
                 <div v-if="ifUserRegister">
                     <div>
-                        <span style="color:red;position:absolute;right:25px;top:5px;z-index:1;">*</span>
                         <base-input alternative
                             type="text"
                             v-on:keyup="validFields()"
@@ -474,7 +473,7 @@
                             addon-left-icon="fa fa-user">
                         </base-input>
                     </div>
-                    <span style="color:red;position:absolute;right:25px;top:70px;z-index:1;">*</span>
+                    <span style="color:red;position:absolute;right:35px;top:70px;z-index:1;">*</span>
                     <base-input alternative
                         type="text"
                         v-on:keyup="validFields()"
@@ -482,7 +481,7 @@
                         v-model="registerUser.lastName"
                         addon-left-icon="fa fa-user">
                     </base-input>
-                    <span style="color:red;position:absolute;right:25px;top:140px;z-index:1;">*</span>
+                    <span style="color:red;position:absolute;right:35px;top:140px;z-index:1;">*</span>
                     <base-input alternative
                         type="email"
                         v-on:keyup="validFields()"
@@ -490,28 +489,20 @@
                         v-model="registerUser.mail"
                         addon-left-icon="ni ni-email-83">
                     </base-input>
-                    <span style="color:red;position:absolute;right:25px;top:200px;z-index:1;">*</span>
-                    <div class="row">
-                        <div class="col-3 col-md-3">
-                            <base-input alternative
-                                type="text"
-                                value="+56"
-                                class="p-0 codigoNum"
-                                readonly="true">
-                            </base-input>
-                        </div>
-                        <div class="col-9 col-md-9 pl-0">
-                            <base-input alternative
-                                type="text"
-                                v-on:input="formatPhone() ,validFields()"
-                                maxlength="9"
-                                class="text-lowercase"
-                                placeholder="Número de teléfono"
-                                v-model="registerUser.phone"
-                                addon-left-icon="fa fa-phone">
-                            </base-input>
-                        </div>
+                    <span style="color:red;position:absolute;right:35px;top:205px;z-index:1;">*</span>
+                    <div class="col-12 p-0">
+                        <VuePhoneNumberInput v-model="registerUser.phone" @update="phoneData = $event" 
+                        :translations="{
+                            countrySelectorLabel: 'Código de país',
+                            countrySelectorError: 'Elije un país',
+                            phoneNumberLabel: 'Número de teléfono',
+                            example: 'Ejemplo :'
+                        }"/>
                     </div>
+                    <span style="color:red;position:absolute;right:35px;top:270px;z-index:1;">*</span>
+                    <base-button class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="registerClients">
+                        Registrar y continuar
+                    </base-button>
                 </div>
                 <div class="card p-3" v-else>
                     <label for="branche">Correo</label>
@@ -636,11 +627,14 @@
     import flatPicker from "vue-flatpickr-component";
     import {Spanish} from 'flatpickr/dist/l10n/es.js';
     import vueCustomScrollbar from 'vue-custom-scrollbar'
+    import VuePhoneNumberInput from 'vue-phone-number-input';
+    import 'vue-phone-number-input/dist/vue-phone-number-input.css';
     const dateNow = new Date()
     export default {
         components: {
             flatPicker,
-            vueCustomScrollbar
+            vueCustomScrollbar,
+            VuePhoneNumberInput
         },
         data(){
             return {
@@ -680,9 +674,11 @@
                 servicesPhoneShow:false,
                 CatSelected: 'Categorias',
                 finalDate: '',
+                phoneData: null,                
                 registerUser: {
                     name: '',
-                    mail: '',
+                    firstName: '',
+                    email: '',
                     lastName: '',
                     phone: '',
                     pay: 'Presencial efectivo',
@@ -764,10 +760,6 @@
         },
         created(){
             this.getBranches()
-            this.getEmployes()
-            this.getServices()
-            this.getCategories()
-            this.getMicroServices()
             this.device()
         },
         methods: {
@@ -828,13 +820,19 @@
                     console.log(findClient)
                     if (findClient.data.status == 'ok') {
                         this.registerUser = {
-                            name: findClient.data.data.firstName,
-                            mail: findClient.data.data.email,
+                            firstName: findClient.data.data.firstName,
+                            email: findClient.data.data.email,
                             lastName: findClient.data.data.lastName,
-                            phone: findClient.data.data.phone,
+                            id: findClient.data.data.id,
+                            name: findClient.data.data.firstName + ' ' + findClient.data.data.lastName,
+                            phone: findClient.data.data.phone.formatInternational,
                             pay: 'Presencial efectivo',
                             pdf: 'danger'
                         }
+                        this.getServices()
+                        this.getCategories()
+                        this.getEmployes()
+                        this.getMicroServices()
                         this.$swal({
                             icon: 'success',
                             title: `Bienvenido ${findClient.data.data.firstName} ya puedes agendar tu cita.`,
@@ -1022,10 +1020,9 @@
             },
             finallyAgend(){
                 this.ifDisabled = true
-                const phone = '+56 '+this.registerUser.phone
-                const name = this.registerUser.name+' '+this.registerUser.lastName
+                
+                const name = this.registerUser.name
                 const mail = this.registerUser.mail.toLowerCase()
-
                 this.client = res.data.data.nombre+' / '+res.data.data.identidad
                 var lenderFinal = ''
                 var hourFinal = ''
@@ -2045,12 +2042,67 @@
                     console.log(err)
                 }
             },
-            proba(){
-                console.log("yes")
+            registerClients(){
+                // if (this.phoneData.isValid) {
+                    
+                // }
+                axios.post(endPoint.endpointTarget+'/clients', {
+                    firstName:this.registerUser.firstName,
+                    lastName: this.registerUser.lastName,
+                    email:this.registerUser.email,
+                    recommender:null,
+                    idRecomender:null,
+                    phone:this.phoneData,
+                    birthday: null,
+                    instagram:null
+                }, this.configHeader)
+                .then(res => {
+                    if (res.data.status == 'client create') {
+                        this.modals = {
+                            modal2: true,
+                            message: "Te has registrado con exito",
+                            icon: 'ni ni-check-bold ni-5x',
+                            type: 'success'
+                        }
+                        this.registerUser.name = this.registerUser.firstName + ' ' + this.registerUser.lastName
+                        this.registerUser.id = res.data.data._id
+                        this.registerUser.phone = this.phoneData.formatInternational
+                        setTimeout(() => {
+                            this.modals = {
+                                modal1: false,
+                                modal2: false,
+                                modal3:false,
+                                message: "",
+                                icon: '',
+                                type:''
+                            }
+                            this.getServices()
+                            this.getCategories()
+                            this.getEmployes()
+                            this.getMicroServices()
+                            EventBus.$emit('reloadClients', 'reload')
+                        }, 1500);
+                        
+                    }else{
+                        this.modals = {
+                            modal2: true,
+                            message: "El cliente ya existe",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
+                        }
+                        setTimeout(() => {
+                            this.modals = {
+                                modal1: true,
+                                modal2: false,
+                                modal3:false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 1500);
+                    }
+                })
             },
-            noop(){
-                console.log("yes")
-            }
         }
     }
 </script>
