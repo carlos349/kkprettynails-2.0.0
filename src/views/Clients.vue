@@ -80,14 +80,17 @@
                                                 addon-left-icon="fa fa-address-card"
                                                 addon-right-icon="fa fa-asterisk text-danger">
                                     </base-input>
-                                    <base-input alternative
-                                                type="text"
-                                                class="mb-2"
-                                                placeholder="Número de teléfono"
-                                                v-model="registerClient.phone"
-                                                addon-left-icon="fa fa-address-card"
-                                                addon-right-icon="fas fa-plus text-default">
-                                    </base-input>
+                                    <div class="col-12 mb-2 p-0">
+                                        <VuePhoneNumberInput v-model="registerClient.phone.formatNational" @update="phoneData = $event, registerClient.phone = $event, validRegister()"
+                                        :default-phoner-number="registerClient.phone.nationalNumber"
+                                        :default-country-code="registerClient.phone.countryCode" 
+                                        :translations="{
+                                            countrySelectorLabel: 'Código de país',
+                                            countrySelectorError: 'Elije un país',
+                                            phoneNumberLabel: 'Número de teléfono',
+                                            example: 'Ejemplo :'
+                                        }"/>
+                                    </div>
                                     <base-input alternative
                                                 type="text"
                                                 placeholder="Instagram"
@@ -164,27 +167,17 @@
                                     addon-left-icon="fa fa-address-card"
                                     addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <base-input alternative
-                                    type="text"
-                                    value="+56"
-                                    readonly="true">
-                                </base-input>
-                            </div>
-                            <div class="col-md-9">
-                                <base-input alternative
-                                    type="text"
-                                    placeholder="Teléfono"
-                                    v-on:input="formatPhone"
-                                    maxlength="9"
-                                    v-model="registerClient.phone"
-                                    addon-left-icon="fa fa-address-card"
-                                    addon-right-icon="fas fa-plus text-default">
-                                </base-input>
-                            </div>
-                        </div>
                         
+                        <div class="col-12 mb-4 p-0">
+                            <VuePhoneNumberInput v-model="registerClient.phone" @update="phoneData = $event, validRegister()" 
+                            :translations="{
+                                countrySelectorLabel: 'Código de país',
+                                countrySelectorError: 'Elije un país',
+                                phoneNumberLabel: 'Número de teléfono',
+                                example: 'Ejemplo :'
+                            }"/>
+                        </div>
+                        <span style="color:red;position:absolute;right:60px;top:160px;z-index:1;font-size:20px">*</span>
                         <base-input alternative
                                     type="text"
                                     placeholder="Instagram"
@@ -419,11 +412,14 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
 // COMPONENTS
+import VuePhoneNumberInput from 'vue-phone-number-input';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
   export default {
     components: {
         VueBootstrap4Table,
-        flatPicker
+        flatPicker,
+        VuePhoneNumberInput
     },
     data() {
       return {
@@ -438,6 +434,7 @@ moment.locale('es');
             dateFormat: 'd-m-Y',
         },
         clientState: true,
+        phoneData: {isValid: false},
         registerClient: {
             firstName:'',
             lastName:'',
@@ -552,7 +549,7 @@ moment.locale('es');
             },
             {
                 title: 'Número telefónico',
-                dataIndex: 'phone',
+                dataIndex: 'phone.formatInternational',
                 key: 'phone',
                 ellipsis: true,
                 scopedSlots: {
@@ -560,7 +557,7 @@ moment.locale('es');
                     filterIcon: 'filterIcon',
                     customRender: 'customRender',
                 },
-                onFilter: (value, record) => record.phone.split(' ')[1].toString().toLowerCase().includes(value.toLowerCase()),
+                onFilter: (value, record) => record.phone.formattedNumber.toLowerCase().includes(value.toLowerCase()),
                 onFilterDropdownVisibleChange: visible => {
                     if (visible) {
                     setTimeout(() => {
@@ -669,14 +666,13 @@ moment.locale('es');
                 var split = this.registerClient.birthday.split('-')
                 date = split[1]+'-'+split[0]+'-'+split[2]
             }
-            const phone = this.registerClient.phone.length > 0 ? '+56 '+this.registerClient.phone : ''
             axios.post(endPoint.endpointTarget+'/clients', {
                 firstName:this.registerClient.firstName,
                 lastName: this.registerClient.lastName,
                 email:this.registerClient.email,
                 recommender:this.registerClient.recommender,
                 idRecomender:idRecomender,
-                phone:phone,
+                phone:this.phoneData,
                 birthday: date,
                 instagram:this.registerClient.instagram,
                 ifCheck: ifCheck
@@ -724,7 +720,7 @@ moment.locale('es');
             })
         },
         validRegister(){
-            if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '') {
+            if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '' &&this.phoneData.isValid) {
                 if (this.registerClient.email.split('@').length == 2) {
                     if (this.registerClient.email.split('@')[1].split('.').length == 2) {
                         this.registerClient.valid = true
