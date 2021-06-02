@@ -459,20 +459,22 @@
             </template>
             <template>
                 <div class="text-muted text-center">
-                    <h3>Formulario de compra</h3>
+                    <h3>Complete para agendar</h3>
                 </div>
             </template>
             <template>
                 <div v-if="ifUserRegister">
-                    <span style="color:red;position:absolute;right:20px;top:5px;z-index:1;">*</span>
-                    <base-input alternative
-                        type="text"
-                        v-on:keyup="validFields()"
-                        placeholder="Escriba su nombre"
-                        v-model="registerUser.name"
-                        addon-left-icon="fa fa-user">
-                    </base-input>
-                    <span style="color:red;position:absolute;right:20px;top:70px;z-index:1;">*</span>
+                    <div>
+                        <span style="color:red;position:absolute;right:25px;top:5px;z-index:1;">*</span>
+                        <base-input alternative
+                            type="text"
+                            v-on:keyup="validFields()"
+                            placeholder="Escriba su nombre"
+                            v-model="registerUser.name"
+                            addon-left-icon="fa fa-user">
+                        </base-input>
+                    </div>
+                    <span style="color:red;position:absolute;right:25px;top:70px;z-index:1;">*</span>
                     <base-input alternative
                         type="text"
                         v-on:keyup="validFields()"
@@ -480,7 +482,7 @@
                         v-model="registerUser.lastName"
                         addon-left-icon="fa fa-user">
                     </base-input>
-                    <span style="color:red;position:absolute;right:20px;top:140px;z-index:1;">*</span>
+                    <span style="color:red;position:absolute;right:25px;top:140px;z-index:1;">*</span>
                     <base-input alternative
                         type="email"
                         v-on:keyup="validFields()"
@@ -488,7 +490,7 @@
                         v-model="registerUser.mail"
                         addon-left-icon="ni ni-email-83">
                     </base-input>
-                    <span style="color:red;position:absolute;right:20px;top:200px;z-index:1;">*</span>
+                    <span style="color:red;position:absolute;right:25px;top:200px;z-index:1;">*</span>
                     <div class="row">
                         <div class="col-3 col-md-3">
                             <base-input alternative
@@ -512,6 +514,7 @@
                     </div>
                 </div>
                 <div class="card p-3" v-else>
+                    <label for="branche">Correo</label>
                     <base-input alternative
                         type="email"
                         v-on:keyup="validFields()"
@@ -644,7 +647,7 @@
                 socket: io(endPoint.endpointTarget),
                 desactive: false,
                 ifUserRegister: false,
-                branch: '60b03b3a2fac073d9866236d',
+                branch: '',
                 branches: [],
                 branchName: '',
                 configDate: {
@@ -698,7 +701,7 @@
                     modal3: false,
                     modal4: false,
                     modal5: false,
-                    modal6: false,
+                    modal6: true,
                     message: "Disculpa, las citas todavia no están habilitadas",
                     icon: 'ni ni-fat-remove ni-5x',
                     type:''
@@ -1022,132 +1025,127 @@
                 const phone = '+56 '+this.registerUser.phone
                 const name = this.registerUser.name+' '+this.registerUser.lastName
                 const mail = this.registerUser.mail.toLowerCase()
-                axios.post(endPoint.endpointTarget+'/clients/verifyClient', {
-                    name: name,
-                    mail: mail,
-                    number: phone,
-                    referidoId: ''
-                })
-                .then(res => {
-                    this.client = res.data.data.nombre+' / '+res.data.data.identidad
-                    var lenderFinal = ''
-                    var hourFinal = ''
-                    for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                        const element = this.registerDate.serviceSelectds[index];
-                        if (index > 0){
-                            lenderFinal = lenderFinal+' - '+element.realLender
-                            hourFinal = hourFinal+' - '+element.start+'Hrs'
-                        }else{
-                            lenderFinal = element.realLender
-                            hourFinal = element.start+'Hrs'
-                        }
+
+                this.client = res.data.data.nombre+' / '+res.data.data.identidad
+                var lenderFinal = ''
+                var hourFinal = ''
+                for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                    const element = this.registerDate.serviceSelectds[index];
+                    if (index > 0){
+                        lenderFinal = lenderFinal+' - '+element.realLender
+                        hourFinal = hourFinal+' - '+element.start+'Hrs'
+                    }else{
+                        lenderFinal = element.realLender
+                        hourFinal = element.start+'Hrs'
                     }
-                    axios.post(endPoint.endpointTarget+'/citas/verifyDate', {
-                        dataDate: this.registerDate,
-                        date: this.finalDate,
-                    }).then(res => {
-                        if(res.data.status == true){
+                }
+                axios.post(endPoint.endpointTarget+'/citas/verifyDate', {
+                    dataDate: this.registerDate,
+                    date: this.finalDate,
+                }).then(res => {
+                    if(res.data.status == true){
+                        this.modals = {
+                            modal3: true,
+                            message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
+                        }
+                        setTimeout(() => {
                             this.modals = {
-                                modal3: true,
-                                message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.",
-                                icon: 'ni ni-fat-remove ni-5x',
-                                type: 'danger'
+                                modal1:false,
+                                modal2:false,
+                                modal3: false,
+                                modal4: false,
+                                modal5: false,
+                                message: "",
+                                icon: '',
+                                type: ''
                             }
+                            this.$refs.wizard.prevTab()
+                            for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                                const element = this.registerDate.serviceSelectds[index];
+                                element.start = ''
+                                element.end = ''
+                                element.sort = ''
+                                element.blocks = []
+                                element.blocksFirst = []
+                                element.valid = false
+                                element.employe = 'Primera disponible'
+                                element.employeId = ''
+                                element.realEmploye = 'Primera disponible'
+                            }
+                            this.validHour = false
                             setTimeout(() => {
-                                this.modals = {
-                                    modal1:false,
-                                    modal2:false,
-                                    modal3: false,
-                                    modal4: false,
-                                    modal5: false,
-                                    message: "",
-                                    icon: '',
-                                    type: ''
-                                }
-                                this.$refs.wizard.prevTab()
-                                for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                                    const element = this.registerDate.serviceSelectds[index];
-                                    element.start = ''
-                                    element.end = ''
-                                    element.sort = ''
-                                    element.blocks = []
-                                    element.valid = false
-                                    element.employe = 'Primera disponible'
-                                    element.realEmploye = 'Primera disponible'
-                                }
-                                this.validHour = false
-                                setTimeout(() => {
-                                    axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
-                                    .then(res => {
-                                        this.getDay = res.data.day
-                                        this.availableslenders = res.data.array
-                                        axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
-                                            date: this.finalDate,
-                                            lenders: res.data.array,
-                                            time: this.registerDate.serviceSelectds[0].duration,
-                                            lendersService: this.registerDate.serviceSelectds[0].lenders
-                                        })
-                                        .then(res => {
-                                            console.log(res)
-                                            this.readyChange = true
-                                            this.registerDate.serviceSelectds[0].valid = true
-                                            this.registerDate.serviceSelectds[0].blocks = res.data.blocks
-                                            $('#block0').toggle('slow')
-                                        })
-                                    })
-                                }, 200); 
-                            }, 5000);
-                        }else{
-                            if (this.file != '') {
-                                let formData = new FormData();
-                                formData.append('file', this.file)
-                                axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
-                                    headers: {
-                                        'Content-Type': 'multipart/form-data'
-                                    }
-                                })
+                                axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
                                 .then(res => {
-                                    axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
-                                        dataDate: this.registerDate,
+                                    this.getDay = res.data.day
+                                    this.availableslenders = res.data.array
+                                    axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
                                         date: this.finalDate,
-                                        client: this.registerUser,
-                                        pdf: res.data.nameFile,
-                                        ifClient: true
+                                        lenders: res.data.array,
+                                        time: this.registerDate.serviceSelectds[0].duration,
+                                        lendersService: this.registerDate.serviceSelectds[0].lenders
                                     })
                                     .then(res => {
-                                        if (res.data.status == "cita creada") {
-                                            this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
-                                            this.modals.modal2 = false
-                                            this.modals.modal4 = true
-                                            
-                                            $("#overlay").toggle()
-                                            this.ifDisabled = false
-                                        }    
-                                    })   
+                                        console.log(res)
+                                        this.readyChange = true
+                                        this.registerDate.serviceSelectds[0].valid = true
+                                        this.registerDate.serviceSelectds[0].blocks = res.data.blocks
+                                        $('#block0').toggle('slow')
+                                    })
                                 })
-                            }else{
+                            }, 200); 
+                        }, 5000);
+                    }else{
+                        if (this.file != '') {
+                            let formData = new FormData();
+                            formData.append('file', this.file)
+                            axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                            })
+                            .then(res => {
                                 axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
                                     dataDate: this.registerDate,
                                     date: this.finalDate,
                                     client: this.registerUser,
-                                    pdf: 'not',
+                                    pdf: res.data.nameFile,
                                     ifClient: true
                                 })
                                 .then(res => {
                                     if (res.data.status == "cita creada") {
-                                        this.ifDisabled = false
                                         this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
                                         this.modals.modal2 = false
                                         this.modals.modal4 = true
+                                        
                                         $("#overlay").toggle()
+                                        this.ifDisabled = false
                                     }    
-                                })
-                            }
+                                })   
+                            })
+                        }else{
+                            axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
+                                dataDate: this.registerDate,
+                                date: this.finalDate,
+                                client: this.registerUser,
+                                pdf: 'not',
+                                ifClient: true
+                            })
+                            .then(res => {
+                                if (res.data.status == "cita creada") {
+                                    this.ifDisabled = false
+                                    this.sendConfirmation(res.data.id, name, this.registerUser.mail, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, lenderFinal)
+                                    this.modals.modal2 = false
+                                    this.modals.modal4 = true
+                                    $("#overlay").toggle()
+                                }    
+                            })
                         }
-                    }).catch(err => {
-                        console.log(err)
-                    })
-                }) 
+                    }
+                }).catch(err => {
+                    console.log(err)
+                })
             },
             async getServices(){
                 try {
@@ -1213,13 +1211,87 @@
             },
             insertData(index, lender, restTime, Class, duration, lendeId, check, lenders){
                 if (lender == 'Primera disponible') {
-                    if (this.registerDate.serviceSelectds[index].blocks[0].employes) {
-                        this.registerDate.serviceSelectds[index].blocks = this.registerDate.serviceSelectds[index].blocksFirst
+                    if (index == 0) {
+                        for (let i = 0; i < this.registerDate.serviceSelectds.length; i++) {
+                            const element = this.registerDate.serviceSelectds[i];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.blocks = []
+                            element.blocksFirst = []
+                            element.valid = false
+                            element.employe = 'Primera disponible'
+                            element.realEmploye = 'Primera disponible'
+                            element.employeId = ''
+                        }
+                        this.validHour = false
+                        setTimeout(() => {
+                            axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                                date: this.finalDate,
+                                branch: this.branch
+                            }, this.configHeader)
+                            .then(res => {
+                                this.getDay = res.data.day
+                                this.availableslenders = res.data.array
+                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                                    date: this.finalDate,
+                                    employes: res.data.array,
+                                    timedate: this.registerDate.serviceSelectds[0].duration,
+                                    employesServices: this.registerDate.serviceSelectds[0].employes,
+                                    branch: this.branch
+                                }, this.configHeader)
+                                .then(res => {
+                                    this.readyChange = true
+                                    this.registerDate.serviceSelectds[0].valid = true
+                                    this.registerDate.serviceSelectds[0].blocks = res.data.data
+                                    this.registerDate.block = res.data.data
+                                    $('#block0').toggle('slow')
+                                })
+                            })
+                        }, 200);
                     }else{
-
+                        for (let i = index; i < this.registerDate.serviceSelectds.length; i++) {
+                            const element = this.registerDate.serviceSelectds[i];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.blocks = []
+                            element.blocksFirst = []
+                            element.valid = false
+                            element.employe = 'Primera disponible'
+                            element.realEmploye = 'Primera disponible'
+                            element.employeId = ''
+                        }
+                        this.validHour = false
+                        if (this.registerDate.serviceSelectds[index - 1].blocksFirst.length > 0) {
+                            console.log('blockFirst')
+                            console.log(this.registerDate.serviceSelectds[index - 1].blocksFirst)
+                            axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                                block: this.registerDate.serviceSelectds[index - 1].blocksFirst,
+                                timedate: this.registerDate.serviceSelectds[index].duration,
+                                employesServices: this.registerDate.serviceSelectds[index].employes,
+                                firstBlock: true
+                            })
+                            .then(res => {
+                                this.registerDate.serviceSelectds[index].valid = true
+                                this.registerDate.serviceSelectds[index].blocks = res.data.data
+                                this.registerDate.serviceSelectds[index].blocksFirst = []
+                            })
+                        }else{
+                            console.log('blockNormal')
+                            axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                                block: this.registerDate.serviceSelectds[index - 1].blocks,
+                                timedate: this.registerDate.serviceSelectds[index].duration,
+                                employesServices: this.registerDate.serviceSelectds[index].employes,
+                                firstBlock: true
+                            })
+                            .then(res => {
+                                this.registerDate.serviceSelectds[index].valid = true
+                                this.registerDate.serviceSelectds[index].blocks = res.data.data
+                                this.registerDate.serviceSelectds[index].blocksFirst = []
+                            })
+                        }
                     }
-                    
-                    
                 }else{
                     console.log(this.registerDate.serviceSelectds[index].blocks)
                     for (const block of this.registerDate.serviceSelectds[index].blocks) {
@@ -1234,14 +1306,17 @@
                         }
                     }
                     if (this.registerDate.serviceSelectds[index].blocksFirst.length > 0) {
+                        console.log(this.registerDate.serviceSelectds[index].blocksFirst)
                         for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
                             const element = this.registerDate.serviceSelectds[j];
                             element.start = ''
                             element.end = ''
                             element.sort = ''
                             element.blocks = []
+                            element.blocksFirst = []
                             element.valid = false
                             element.employe = 'Primera disponible'
+                            element.employeId = ''
                             element.realEmploye = 'Primera disponible'
                             element.itFirst = true
                         }
@@ -1282,8 +1357,10 @@
                             element.end = ''
                             element.sort = ''
                             element.blocks = []
+                            element.blocksFirst = []
                             element.valid = false
                             element.employe = 'Primera disponible'
+                            element.employeId = ''
                             element.realEmploye = 'Primera disponible'
                             element.itFirst = true
                         }
@@ -1422,6 +1499,7 @@
                     element.sort = ''
                     element.realLender = ''
                     element.employe = 'Primera disponible'
+                    element.employeId = '',
                     element.realEmploye = 'Primera disponible'
                     element.blocks = []
                     element.restTime = ''
@@ -1546,8 +1624,10 @@
                     element.end = ''
                     element.sort = ''
                     element.blocks = []
+                    element.blocksFirst = []
                     element.valid = false
                     element.employe = 'Primera disponible'
+                    element.employeId = ''
                     element.realEmploye = 'Primera disponible'
                     element.itFirst = true
                 }
@@ -1626,6 +1706,7 @@
                     }, this.configHeader)
                     .then(res => {
                         this.registerDate.serviceSelectds[indexService].blocks = res.data.data
+                        this.registerDate.serviceSelectds[indexService].blocksFirst = res.data.blockFirst
                         this.registerDate.serviceSelectds[indexService].itFirst = false
                         this.registerDate.serviceSelectds[indexService].end = res.data.end
                         const finalIndex = parseFloat(indexService) + parseFloat(1)
@@ -1784,9 +1865,11 @@
                                 element.end = ''
                                 element.sort = ''
                                 element.blocks = []
+                                element.blocksFirst = []
                                 element.valid = false
                                 element.employe = 'Primera disponible'
-                                element.realEmploye = ''
+                                element.employeId = ''
+                                element.realEmploye = 'Primera disponible'
                             }
                             this.validHour = false
                             setTimeout(() => {
