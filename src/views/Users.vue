@@ -392,12 +392,23 @@
             <template slot="status-format" slot-scope="record, column">
                 <a-dropdown>
                     <a-menu slot="overlay" >
-                        <a-menu-item v-for="profile of accessProfiles" :key="profile.profile" v-on:click="estatusEdit(profile.profile, profile.commission, profile.routes, column._id)"> <a-icon type="user" />{{profile.profile}} </a-menu-item>
+                        <template v-if="accessProfiles.lenght == 0">
+                            <a-menu-item v-on:click="modals.modal8 = true"> 
+                                <a-icon type="user" style="vertical-align: 1.5px;" />
+                                Cree perfiles de acceso 
+                            </a-menu-item>
+                        </template>
+                        <template v-else>
+                            <a-menu-item v-for="profile of accessProfiles" :key="profile.profile" v-on:click="estatusEdit(profile.profile, profile.commission, profile.routes, column._id)"> 
+                                <a-icon type="user" style="vertical-align: 1.5px;" />
+                                {{profile.profile}} 
+                            </a-menu-item>
+                        </template>
                     </a-menu>
                     <a-button class="w-100" style="margin-left: 8px"> {{column.status}} <a-icon type="down" /> </a-button>
                 </a-dropdown>
             </template>
-            <template slot="access" class="text-left" slot-scope="record, column" >
+            <template slot="Administrar" slot-scope="record, column">
                 <a-tooltip placement="top">
                     <template slot="title">
                         <span>Agregar accesos</span>
@@ -407,8 +418,6 @@
                     <base-button v-else size="sm" icon="ni ni-badge" type="success" disabled>
                     </base-button>
                 </a-tooltip>
-            </template>
-            <template slot="Administrar" slot-scope="record, column">
                 <a-tooltip placement="top">
                     <template slot="title">
                     <span>Eliminar</span>
@@ -418,33 +427,6 @@
                         
                     </base-button> 
                 </a-tooltip>
-            </template>
-            <template slot="name" slot-scope="record, column">
-                <b>
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Detalles</span>
-                        </template>
-                        <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.document, column.days, column._id,column.commission)" icon="ni ni-bullet-list-67"></base-button>
-                        <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
-                    </a-tooltip>
-                    
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Reporte</span>
-                        </template>
-                        <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
-                        <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
-                    </a-tooltip>
-                    
-                    <a-tooltip placement="top">
-                        <template slot="title">
-                        <span>Eliminar</span>
-                        </template>
-                        <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="warning" icon="fas fa-trash"></base-button>
-                        <base-button v-else size="sm" disabled type="warning" icon="fas fa-trash"></base-button>
-                    </a-tooltip>
-                </b>
             </template>
         </a-table>
     </div>
@@ -743,14 +725,7 @@ moment.locale('es');
                 ellipsis: true,
             },
             {
-                title: 'Accesos',
-                dataIndex: 'access',
-                key: 'access',
-                scopedSlots: { customRender: 'access' },
-                ellipsis: true,
-            },
-            {
-                title: 'Elimina',
+                title: 'Acciones',
                 dataIndex: '_id',
                 key: '_id',
                 scopedSlots: { customRender: 'Administrar' },

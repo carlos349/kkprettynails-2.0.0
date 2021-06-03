@@ -327,7 +327,7 @@
         </nav>
         <modal :show.sync="modals.modal2"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-xl">
+               modal-classes="modal-dialog-centered modal-sm">
                <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
@@ -358,18 +358,10 @@
                                 </div>
                             </div> 
                             <div v-if="registerUser.pay == 'Transferencia'">
-                                <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" :disabled="ifDisabled" v-if="validRegister" type="success" v-on:click="finallyAgend()">
+                                <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
                                     Finalizar agenda
                                 </base-button>  
                                 <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
-                                    Finalizar agenda
-                                </base-button>
-                            </div>
-                            <div v-else class="mt-5">
-                                <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" :disabled="ifDisabled" v-if="validRegister" type="success" v-on:click="finallyAgend()">
-                                    Finalizar agenda
-                                </base-button>  
-                                <base-button style="float:right;margin-top:15px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
                                     Finalizar agenda
                                 </base-button>
                             </div>
@@ -697,6 +689,7 @@
         methods: {
             handleFileUpload(){
                 this.file = this.$refs.file.files[0]
+                this.validRegister = true
             },
             selectBranch(value){
                 this.branch = value._id
@@ -977,7 +970,9 @@
                     dataDate: this.registerDate,
                     date: this.finalDate,
                     branch: this.branch
-                }, this.configHeader).then(res => {
+                }, this.configHeader)
+                .then(res => {
+                    console.log(res)
                     if(res.data.status == true){
                         this.modals = {
                             modal3: true,
@@ -1055,6 +1050,7 @@
                             .then(res => {
                                 axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
                                     dataDate: this.registerDate,
+                                    branch: this.branch,
                                     date: this.finalDate,
                                     client: this.registerUser,
                                     block: blockEdit,
@@ -1077,6 +1073,7 @@
                         }else{
                             axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
                                 dataDate: this.registerDate,
+                                branch: this.branch,
                                 date: this.finalDate,
                                 client: this.registerUser,
                                 block: blockEdit,

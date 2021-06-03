@@ -1464,6 +1464,8 @@
                 "x-access-token": localStorage.userToken
             }
         },
+        branch: '',
+        branchName: ''
       };
     },
     beforeCreate(){
@@ -1478,15 +1480,14 @@
 		}
     },
     created(){
-        this.getToken()
-        this.validatorLender()
-        this.getClients()
-        this.getServices()
-        this.getUsers()
-        this.getDates()
-        this.getClosed()
-        this.getCategories()
-        this.getLenders()
+        // this.getToken()
+        // this.validatorLender()
+        // this.getClients()
+        // this.getServices()
+        // this.getUsers()
+        this.getBranch()
+        // this.getClosed()
+        // this.getCategories()
         
     },
     destroyed () {
@@ -1498,15 +1499,12 @@
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
         },
-        async getLenders(){
-            try{
-                const Lenders = await axios.get(endPoint.endpointTarget+'/employes/'+this.branch, this.configHeader)
-                if (lenders.data.status == 'ok') {
-                    this.lenders = Lenders.data.data
-                }
-            }catch(err){
-                console.log(err)
-            }
+        getBranch(){
+            this.branchName = localStorage.branchName  
+            this.branch = localStorage.branch
+            // this.getUsers()
+            this.getEmployes()
+            this.getDates()
         },
         logEvents(change, event){
             console.log(change)
@@ -1517,11 +1515,10 @@
             if (event.view == 'day') {
                 for (let index = 0; index < this.employeShow.length; index++) {
                     const name = this.employeShow[index];
-                    const split = name.class.split('class')[1]
                     for (let j = 0; j < event.events.length; j++) {
                         const element = event.events[j]
-                        if (element.empleada == name.name) {
-                            this.splitDays.push({id: parseInt(split), class: name.class+'Split', label: name.name, img: name.img})
+                        if (element.employe.name == name.name) {
+                            this.splitDays.push({id: name._id, class: name.class+'Split', label: name.name, img: name.img})
                             break
                         }
                     }
@@ -1555,75 +1552,52 @@
                 }
             } 
         },
-        getDates() {
+        async getDates() {
             if (this.lender != '' && this.validRoute('agendamiento', 'todas') != true) {
                 this.events = []
-                axios.post(endPoint.endpointTarget+'/dates/getDatesByEmployes/'+this.branch, {
-                    lender: this.lender
-                }, this.configHeader)
-                .then(res => {
-                    for (let index = 0; index < res.data.length; index++) {
-                        let dateNow = new Date(res.data[index].date)
-                        let formatDate = dateNow.format('YYYY-MM-DD')+" "+res.data[index].start
-                        let formatDateTwo = dateNow.format('YYYY-MM-DD')+" "+res.data[index].end
-                        const split = res.data[index].employe.class.split('class')[1]
-                        let arrayEvents = {
-                            start: formatDate,
-                            end: formatDateTwo,
-                            title: res.data[index].services[0].service+" - "+res.data[index].employe.name,
-                            content: res.data[index].client.name,
-                            class: res.data[index].employe.class,
-                            cliente: res.data[index].client,
-                            services: res.data[index].services,
-                            empleada: res.data[index].employe,
-                            id: res.data[index]._id,
-                            process: res.data[index].process,
-                            image: res.data[index].image,
-                            imageLength: res.data[index].image.length,
-                            confirmation: res.data[index].confirmation,
-                            confirmationId: res.data[index].confirmationId,
-                            type: res.data[index].type,
-                            typepay: res.data[index].typepay,
-                            paypdf: res.data[index].paypdf,
-                            split: parseInt(split)
-                        }
-                        this.events.push(arrayEvents)
-                    }
-                })
+                // axios.post(endPoint.endpointTarget+'/dates/getDatesByEmployes/'+this.branch, {
+                //     lender: this.lender
+                // }, this.configHeader)
+                // .then(res => {
+                //     for (let index = 0; index < res.data.length; index++) {
+                //         let dateNow = new Date(res.data[index].date)
+                //         let formatDate = dateNow.format('YYYY-MM-DD')+" "+res.data[index].start
+                //         let formatDateTwo = dateNow.format('YYYY-MM-DD')+" "+res.data[index].end
+                //         const split = res.data[index].employe.class.split('class')[1]
+                //         let arrayEvents = {
+                //             start: formatDate,
+                //             end: formatDateTwo,
+                //             title: res.data[index].services[0].service+" - "+res.data[index].employe.name,
+                //             content: res.data[index].client.name,
+                //             class: res.data[index].employe.class,
+                //             cliente: res.data[index].client,
+                //             services: res.data[index].services,
+                //             empleada: res.data[index].employe,
+                //             id: res.data[index]._id,
+                //             process: res.data[index].process,
+                //             image: res.data[index].image,
+                //             imageLength: res.data[index].image.length,
+                //             confirmation: res.data[index].confirmation,
+                //             confirmationId: res.data[index].confirmationId,
+                //             type: res.data[index].type,
+                //             typepay: res.data[index].typepay,
+                //             paypdf: res.data[index].paypdf,
+                //             split: parseInt(split)
+                //         }
+                //         this.events.push(arrayEvents)
+                //     }
+                // })
             }else{
                 this.events = []
-                axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
-                .then(res => {
-                    for (let index = 0; index < res.data.length; index++) {
-                    let dateNow = new Date(res.data[index].date)
-                    let formatDate = dateNow.format('YYYY-MM-DD')+" "+res.data[index].start
-                    let formatDateTwo = dateNow.format('YYYY-MM-DD')+" "+res.data[index].end
-                    const split = res.data[index].class.split('class')[1]
-                    let arrayEvents = {
-                        start: formatDate,
-                        end: formatDateTwo,
-                        title: res.data[index].services[0].servicio+" - "+res.data[index].employe,
-                        content: res.data[index].client,
-                        class:res.data[index].class,
-                        cliente: res.data[index].client,
-                        services: res.data[index].services,
-                        empleada: res.data[index].employe,
-                        id:res.data[index]._id,
-                        process: res.data[index].process,
-                        image: res.data[index].image,
-                        imageLength: res.data[index].image.length,
-                        confirmation: res.data[index].confirmation,
-                        confirmationId: res.data[index].confirmationId,
-                        type: res.data[index].type,
-                        typepay: res.data[index].typepay,
-                        paypdf: res.data[index].paypdf,
-                        split: parseInt(split)
-                    }
-                    this.events.push(arrayEvents)
-                    }
-                })
+                try {
+                    const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
+                    console.log(dates)
+                    this.events = dates.data.data
+                    console.log(this.events)
+                }catch(err){
+                    console.log(err)
+                }
             }
-            
         },
         getClosed() {
             axios.get(endPoint.endpointTarget+'/dates/endingdates/'+this.branch, this.configHeader)
@@ -1644,29 +1618,13 @@
             })
         },
         getEmployes(){
-  			axios.get(endPoint.endpointTarget+'/manicuristas')
+  			axios.get(endPoint.endpointTarget+'/employes/UsersEmployes/'+this.branch, this.configHeader)
   			.then(res => {
-                this.employes = res.data
-                var insp = false
-                for (let index = 0; index < this.employes.length; index++) {
-                    for (let i = 0; i < this.users.length; i++) {
-                        if (this.employes[index].nombre + " / " + this.employes[index].documento == this.users[i].linkLender && this.users[i].userImage.length > 1) {
-                            this.employeShow.push({name:this.employes[index].nombre, img:endPoint.imgEndpoint+this.users[i].userImage,days: this.employes[index].days, class:this.employes[index].class})
-                            insp = false
-                            break
-                        }
-                        else {
-                            insp = true
-                        }
-                        
-                    }
-                    if (insp == true) {
-                        this.employeShow.push({name:this.employes[index].nombre,img:'no',restDay:this.employes[index].restDay, days:this.employes[index].days,class:this.employes[index].class})
-                    }
-                }
+                console.log(res)
+                this.employeShow = res.data.data
   			})
-          },
-         async getCategories(){
+        },
+        async getCategories(){
             const categories = await axios.get(endPoint.endpointTarget+'/servicios/getCategory')
             if (categories.data.length > 0) {
                 this.categories = categories.data
@@ -2332,23 +2290,23 @@
                 })
             }
         },
-        getUsers(){
-			axios.get(endPoint.endpointTarget+'/users', this.configHeader)
-			.then(res => {
-                this.users = res.data
+        // getUsers(){
+		// 	axios.get(endPoint.endpointTarget+'/users', this.configHeader)
+		// 	.then(res => {
+        //         this.users = res.data
                 
-                this.getEmployes()
-			})
-			.catch(err => {
-				this.$swal({
-					type: 'error',
-					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-					showConfirmButton: false,
-					timer: 2500
-				})
-				router.push({name: 'login'})
-			})
-        },
+        //         this.getEmployes()
+		// 	})
+		// 	.catch(err => {
+		// 		this.$swal({
+		// 			type: 'error',
+		// 			title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+		// 			showConfirmButton: false,
+		// 			timer: 2500
+		// 		})
+		// 		router.push({name: 'login'})
+		// 	})
+        // },
         onEventClick(event, e){
             this.selectedEvent = event
             this.dateModals.modal1 = true
@@ -4146,6 +4104,9 @@
         this.socket.on('notify', (data) => {
             this.getClosed()
         });
+        EventBus.$on('changeBranch', status => {
+            this.getBranch()
+        })
     }
   };
 </script>
