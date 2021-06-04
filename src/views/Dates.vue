@@ -399,15 +399,29 @@
         
         <modal :show.sync="dateModals.modal1"
                body-classes="p-0"
+               :header-classes="selectedEvent.class"
                modal-classes="modal-dialog-centered modal-md">
             <h5 slot="header" class="modal-title" id="modal-title-notification">{{dateSplit(selectedEvent.start)}}</h5>   
             <card type="secondary" shadow
-                  header-classes="bg-white"
-                  body-classes=""
+                  
+                  :body-classes="selectedEvent.class"
                   class="border-0 pt-0">
-                <div class="text-center">
-                    <base-button type="primary" style="margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}}</base-button>
-                </div>
+                  <card shadow>
+                    <div class="row mt-4">
+                        <div v-if="selectedEvent.employe" style="border-right:1px solid lightgray" class="col-md-6">
+                            <a-avatar shape="square" :size="64" src="img/theme/team-4-800x800.jpg" />
+                            <span class="ml-2">{{selectedEvent.employe.name}}</span>
+                        </div>
+                        <div class="col-md-6">
+                            <center>
+                                <base-button type="primary" :class="selectedEvent.class">{{selectedEvent.title}}</base-button> 
+                            </center>
+                        
+                        </div>
+                        
+                    </div>
+                  </card>
+                
                 <tabs fill class="flex-column flex-md-row">
                     <card shadow>
                         <tab-pane>
@@ -418,11 +432,11 @@
                             <dt class="text-center">Detalles de la cita</dt>
                             <a-tooltip placement="top">
                                 <template slot="title">
-                                <span>{{formatContact(selectedEvent.cliente)}}</span>
+                                <span v-if="selectedEvent.client">{{selectedEvent.client.email}} - {{selectedEvent.client.phone}}</span>
                                 </template>
-                                <base-button class="mt-2 col-12" size="sm" type="secondary">
+                                <base-button v-if="selectedEvent.client" class="mt-2 col-12" size="sm" type="secondary">
                                     <span >Cliente:</span>
-                                    <badge style="font-size:0.8em !important" class="text-default" type="success">{{formatName(selectedEvent.cliente)}}</badge>
+                                    <badge style="font-size:0.8em !important" class="text-default" type="success">{{selectedEvent.client.name}}</badge>
                                 </base-button>
                             </a-tooltip>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
@@ -452,8 +466,6 @@
                             <base-button v-if="selectedEvent.typepay == 'Transferencia'" class="mt-1 col-12" size="sm" type="default">
                                 <a :href="imgEndpoint+'/static/designs/'+selectedEvent.paypdf" target="_blank" download>Descargar comprobante</a>
                             </base-button>
-                            <dt class="mt-3 text-center">Servicios</dt>  
-                            <badge v-for="service of selectedEvent.services" class="mt-1 ml-1 text-default" type="primary">{{service.servicio}}</badge>
                             <hr/>
                             <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <span v-if="selectedEvent.imageLength >= 3"> (Máximo 3)</span></dt>
                             <div class="row mt-1" v-if="selectedEvent.imageLength < 3">
