@@ -1029,8 +1029,8 @@ export default {
         selected(value, id){
             this.lenders[id - 1].valid = true
             console.log(value)
-            this.lenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days})
-            this.EditlenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days})
+            this.lenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no'})
+            this.EditlenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no'})
         },
         unSelected(value, id){
             this.lenders[id - 1].valid = false
@@ -1076,7 +1076,7 @@ export default {
                 for (let j = 0; j < lenders.length; j++) {
                     const elementTwo = lenders[j];
                     if (elementTwo.id == element._id) {
-                        this.EditlenderSelecteds.push({id: element._id, name: element.firstName+' '+element.lastName, class: element.class, days: element.days})
+                        this.EditlenderSelecteds.push({id: element._id, name: element.firstName+' '+element.lastName, class: element.class, days: element.days, img: element.users ? element.users.userImage : ''})
                         this.lenders[index].valid = true
                     }
                 }
