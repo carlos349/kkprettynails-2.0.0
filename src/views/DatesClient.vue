@@ -189,7 +189,7 @@
                                                             <span style="color:red">Horarios ocupados</span>
                                                         </base-button>
                                                         <template v-for="employe of servicesSelect.employes" >
-                                                            <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes)">{{employe.name}}  </b>
+                                                            <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
                                                         </template>
                                                     </base-dropdown>
                                                 </div>
@@ -1002,6 +1002,7 @@
                                 element.blocksFirst = []
                                 element.valid = false
                                 element.employe = 'Primera disponible'
+                                element.employeImg = ''
                                 element.employeId = ''
                                 element.realEmploye = 'Primera disponible'
                             }
@@ -1159,7 +1160,7 @@
                 console.log(rest)
                 this.selectHourService(index, lender, time, rest)
             },
-            insertData(index, lender, restTime, Class, duration, lendeId, check, lenders){
+            insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg){
                 if (lender == 'Primera disponible') {
                     if (index == 0) {
                         for (let i = 0; i < this.registerDate.serviceSelectds.length; i++) {
@@ -1173,6 +1174,7 @@
                             element.valid = false
                             element.employe = 'Primera disponible'
                             element.realEmploye = 'Primera disponible'
+                            element.employeImg = ''
                             element.employeId = ''
                         }
                         this.validHour = false
@@ -1212,6 +1214,7 @@
                             element.valid = false
                             element.employe = 'Primera disponible'
                             element.realEmploye = 'Primera disponible'
+                            element.employeImg = ''
                             element.employeId = ''
                         }
                         this.validHour = false
@@ -1254,7 +1257,8 @@
                                 name: this.registerDate.serviceSelectds[index].realEmploye,
                                 position: 1,
                                 class: this.registerDate.serviceSelectds[index].class,
-                                valid: true
+                                valid: true,
+                                img: this.registerDate.serviceSelectds[index].employeImg
                             })
                         }
                     }
@@ -1272,12 +1276,14 @@
                             element.employe = 'Primera disponible'
                             element.employeId = ''
                             element.realEmploye = 'Primera disponible'
+                            element.employeImg = ''
                             element.itFirst = true
                         }
                         this.registerDate.serviceSelectds[index].start = ''
                         this.registerDate.serviceSelectds[index].end = ''
                         this.registerDate.serviceSelectds[index].employe = lender
                         this.registerDate.serviceSelectds[index].employeId = lendeId
+                        this.registerDate.serviceSelectds[index].employeImg = lendeId
                         this.registerDate.serviceSelectds[index].realEmploye = lender
                         this.registerDate.serviceSelectds[index].days = restTime
                         this.registerDate.serviceSelectds[index].class = Class
@@ -1317,12 +1323,14 @@
                             element.employe = 'Primera disponible'
                             element.employeId = ''
                             element.realEmploye = 'Primera disponible'
+                            element.employeImg = ''
                             element.itFirst = true
                         }
                         this.registerDate.serviceSelectds[index].start = ''
                         this.registerDate.serviceSelectds[index].end = ''
                         this.registerDate.serviceSelectds[index].employe = lender
                         this.registerDate.serviceSelectds[index].employeId = lendeId
+                        this.registerDate.serviceSelectds[index].employeImg = lenderImg
                         this.registerDate.serviceSelectds[index].realEmploye = lender
                         this.registerDate.serviceSelectds[index].days = restTime
                         this.registerDate.serviceSelectds[index].class = Class
@@ -1457,6 +1465,7 @@
                     element.employe = 'Primera disponible'
                     element.employeId = '',
                     element.realEmploye = 'Primera disponible'
+                    element.employeImg = ''
                     element.blocks = []
                     element.restTime = ''
                     element.class = ''
@@ -1500,9 +1509,9 @@
                     for (const micro of this.microServices) {
                         microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                     }
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: []})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: []})
                 }else{
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service})
                 }
 
                 this.validHour = false  
@@ -1532,9 +1541,9 @@
                     for (const micro of this.microServices) {
                         microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                     }
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, microServices: microsService, microServiceSelect: []})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, microServices: microsService, microServiceSelect: []})
                 }else{
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service})
                 }
                 
                 console.log(this.registerDate.serviceSelectds)
@@ -1586,6 +1595,7 @@
                     element.employe = 'Primera disponible'
                     element.employeId = ''
                     element.realEmploye = 'Primera disponible'
+                    element.employeImg = ''
                     element.itFirst = true
                 }
                 setTimeout(() => {
@@ -1604,6 +1614,7 @@
                             this.registerDate.serviceSelectds[indexService].realEmploye = element.name
                             this.registerDate.serviceSelectds[indexService].employeId = element.id
                             this.registerDate.serviceSelectds[indexService].employe = element.name
+                            this.registerDate.serviceSelectds[indexService].employeImg = element.img
                             break
                         }
                     }
@@ -1827,6 +1838,7 @@
                                 element.blocksFirst = []
                                 element.valid = false
                                 element.employe = 'Primera disponible'
+                                element.employeImg = ''
                                 element.employeId = ''
                                 element.realEmploye = 'Primera disponible'
                             }
