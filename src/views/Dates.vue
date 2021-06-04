@@ -418,7 +418,6 @@
                             </center>
                         
                         </div>
-                        
                     </div>
                   </card>
                 
@@ -447,7 +446,7 @@
                             </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span >Tipo de pago:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{selectedEvent.typepay}}</badge>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{selectedEvent.typePay}}</badge>
                             </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
                                 <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'first'" >
@@ -463,6 +462,17 @@
                                     <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
                                 </span>
                             </base-button>
+                            
+                            <dt class="mt-3 text-center">Microservicios</dt>
+                            <a-tooltip v-for="micro of selectedEvent.microServices" :key="micro" placement="top">
+                                <template slot="title">
+                                    <span>Duración: {{micro.duration}} minutos</span> <br>
+                                    <span>Precio: $ {{formatPrice(micro.price)}}</span>
+                                </template>
+                                <badge  style="font-size:0.85em; cursor:pointer" class="mt-1 ml-1 text-default" type="primary">{{micro.name}}</badge>
+                            </a-tooltip> 
+                            
+
                             <base-button v-if="selectedEvent.typepay == 'Transferencia'" class="mt-1 col-12" size="sm" type="default">
                                 <a :href="imgEndpoint+'/static/designs/'+selectedEvent.paypdf" target="_blank" download>Descargar comprobante</a>
                             </base-button>
