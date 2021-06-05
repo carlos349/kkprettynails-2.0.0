@@ -510,8 +510,8 @@
                                 <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
-                                            <span class="float-right">Editar</span>  
-                                            <span style="margin-top:3px" class="fa fa-edit float-left"></span>
+                                            <span class="float-left">Editar</span>  
+                                            <span style="margin-top:3px" class="fa fa-edit float-right"></span>
                                         </base-button> 
                                     </center>
                                 </div>
@@ -529,8 +529,8 @@
                                     <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
-                                            <span class="float-right">Cerrar</span>  
-                                            <span style="margin-top:3px" class="fa fa-times float-left"></span>
+                                            <span class="float-left">Cerrar</span>  
+                                            <span style="margin-top:3px" class="fa fa-times float-right"></span>
                                         </base-button> 
                                     </center>
                                     </div>
@@ -549,28 +549,19 @@
                                     <center>
                                         <div v-if="selectedEvent.process == true">
                                             <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation" type="success" class="mx-auto col-12">
-                                                <i style="margin-top:3px" class="ni ni-check-bold float-left"></i>
-                                                <span class="float-right">Confirmada</span> 
+                                                <i style="margin-top:3px" class="ni ni-check-bold float-right"></i>
+                                                <span class="float-left">Confirmada</span> 
                                             </base-button>
 
                                             <base-button outline size="sm" v-else class="mx-auto col-12" style="padding-left:10px;padding-right:10px" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
-                                                <i style="margin-top:3px" class="ni ni-send float-left"></i>
-                                                <span class="float-right">Enviar confirmación</span>  
+                                                <i style="margin-top:3px" class="ni ni-send float-right"></i>
+                                                <span class="float-left">Enviar confirmación</span>  
                                             </base-button>
                                         </div>
                                         
                                     </center>
                                 </div>
                                 
-                                
-                                <template v-if="validRoute('agendamiento', 'procesar')">
-                                    <div v-if="selectedEvent.process == true" class="col-md-6 mx-auto mt-2">
-                                        <base-button outline size="sm" class="mx-auto col-12" type="success" v-on:click="processDate(selectedEvent.id, 'process')">
-                                            <span class="float-left">Procesar</span>  
-                                            <span style="margin-top:3px" class="fa fa-calendar-check float-right"></span>
-                                        </base-button> 
-                                    </div>
-                                </template>
                                 
                             </div>
                             
@@ -583,7 +574,7 @@
                                             <h2>Este cliente no ha sido atendido aun</h2>
                                         </div>
                                     </template>
-                                    <a-table class="historicalClientTable" :scroll="{ x: 800 }" :columns="historyClientColumn" :data-source="dateData.history">
+                                    <a-table class="historicalClientTable" :scroll="{ x: true }" :columns="historyClientColumn" :data-source="dateData.history">
                                         <div
                                             slot="filterDropdown"
                                             slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
@@ -638,11 +629,13 @@
                                         </template>
                                         
                                         <template slot="date-format" slot-scope="record, column">
-                                            {{formatDate(column.date)}}
+                                            {{formatDate(column.createdAt)}}
                                         </template>
-                                        
+                                        <template slot="services" slot-scope="record">
+                                            <span v-for="service in record" :key="service">{{service.service}}</span>
+                                        </template>
                                         <template slot="total" slot-scope="record, column">
-                                            {{formatPrice(column.total)}}
+                                            $ {{formatPrice(column.total)}}
                                         </template>
                                     </a-table>
                                 </a-config-provider>
@@ -1326,39 +1319,27 @@
         historyClientColumn: [
             {
                 title: 'Fecha',
-                dataIndex: 'date',
+                dataIndex: 'createdAt',
                 fixed:'left',
-                width:140,
-                key: 'date',
+                key: 'createdAt',
                 scopedSlots: { customRender: 'date-format' },
                 defaultSortOrder: 'descend',
-                sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+                sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
                 ellipsis: true,
             },
             {
                 title: 'Servicio',
-                dataIndex: 'service',
-                key: 'service',
-                width:250,
+                dataIndex: 'services',
+                key: 'services',
                 ellipsis: true,
                 sortDirections: ['descend', 'ascend'],
                 scopedSlots: {
-                    filterDropdown: 'filterDropdown',
-                    filterIcon: 'filterIcon',
-                    customRender: 'customRender',
-                },
-                onFilter: (value, record) => record.service.toString().toLowerCase().includes(value.toLowerCase()),
-                onFilterDropdownVisibleChange: visible => {
-                    if (visible) {
-                    setTimeout(() => {
-                        this.searchInput.focus();
-                    }, 0);
-                    }
+                    customRender: 'services',
                 },
             },
             {
                 title: 'Empleado',
-                dataIndex: 'employe',
+                dataIndex: 'employe.name',
                 key: 'employe',
                 ellipsis: true,
                 scopedSlots: {
@@ -1379,7 +1360,6 @@
                 title: 'Gasto',
                 dataIndex: 'total',
                 key: 'total',
-                width:150,
                 ellipsis: true,
                 scopedSlots: { customRender: 'total' },
                 sorter: (a, b) => a.total - b.total,
@@ -4609,5 +4589,6 @@
     .historicalClientTable .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
         padding: 6px !important;
     }
+    .ant-table td { white-space: nowrap; }
     
 </style>
