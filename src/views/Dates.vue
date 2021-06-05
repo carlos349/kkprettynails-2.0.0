@@ -409,7 +409,8 @@
                   <card shadow>
                     <div class="row mt-4">
                         <div v-if="selectedEvent.employe" style="border-right:1px solid lightgray" class="col-md-6">
-                            <a-avatar shape="square" :size="64" src="img/theme/team-4-800x800.jpg" />
+                            <a-avatar v-if="selectedEvent.employe.img != 'no'" shape="square" :size="64" :src="selectedEvent.employe.img" />
+                            <a-avatar v-else shape="square" :size="64" src="img/theme/team-4-800x800.jpg" />
                             <span class="ml-2">{{selectedEvent.employe.name}}</span>
                         </div>
                         <div class="col-md-6">
@@ -462,15 +463,17 @@
                                     <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
                                 </span>
                             </base-button>
-                            
-                            <dt class="mt-3 text-center">Microservicios</dt>
-                            <a-tooltip v-for="micro of selectedEvent.microServices" :key="micro" placement="top">
-                                <template slot="title">
-                                    <span>Duración: {{micro.duration}} minutos</span> <br>
-                                    <span>Precio: $ {{formatPrice(micro.price)}}</span>
-                                </template>
-                                <badge  style="font-size:0.85em; cursor:pointer" class="mt-1 ml-1 text-default" type="primary">{{micro.name}}</badge>
-                            </a-tooltip> 
+                            <div v-if="selectedEvent.microServices && selectedEvent.microServices.length > 0">
+                                <dt class="mt-3 text-center">Servicios adicionales</dt>
+                                <a-tooltip v-for="micro of selectedEvent.microServices" :key="micro" placement="top">
+                                    <template slot="title">
+                                        <span>Duración: {{micro.duration}} minutos</span> <br>
+                                        <span>Precio: $ {{formatPrice(micro.price)}}</span>
+                                    </template>
+                                    <badge  style="font-size:0.85em; cursor:pointer" class="mt-1 ml-1 text-default" type="primary">{{micro.name}}</badge>
+                                </a-tooltip>
+                            </div>
+                             
                             
 
                             <base-button v-if="selectedEvent.typepay == 'Transferencia'" class="mt-1 col-12" size="sm" type="default">
@@ -499,46 +502,60 @@
                             </div>
                         </tab-pane>
                         <tab-pane>
-                            <span class="text-default" slot="title">
+                            <span slot="title">
                                 <i class="ni ni-chart-bar-32"></i>
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit(selectedEvent.id, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.class)" class="col-md-6 mx-auto mt-2"><center>
-
-                                   <base-button icon="fa fa-edit" class="mx-auto col-12" type="default">Editar</base-button> 
-                                </center>
+                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
+                                    <center>
+                                        <base-button outline size="sm" class="mx-auto col-12" type="default">
+                                            <span class="float-right">Editar</span>  
+                                            <span style="margin-top:3px" class="fa fa-edit float-left"></span>
+                                        </base-button> 
+                                    </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
                                     <div v-if="selectedEvent.process == true" v-on:click="serviciosSelecionadosDates='',endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-md-6 mx-auto mt-2"><center>
 
-                                        <base-button icon="fa fa-check-square" class="mx-auto col-12" type="default">Finalizar</base-button> 
+                                        <base-button outline size="sm" class="mx-auto col-12" type="default">
+                                            <span class="float-left">Finalizar</span>  
+                                            <span style="margin-top:3px" class="fa fa-check-square float-right"></span>
+                                        </base-button> 
                                     </center>
                                     </div>
                                 </template>
                                 <template v-if="validRoute('agendamiento', 'cerrar')">
                                     <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2"><center>
 
-                                        <base-button icon="fa fa-times" class=" col-12 mx-auto" type="danger">Cerrar</base-button> 
+                                        <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
+                                            <span class="float-right">Cerrar</span>  
+                                            <span style="margin-top:3px" class="fa fa-times float-left"></span>
+                                        </base-button> 
                                     </center>
                                     </div>
                                 </template>
                                 
                                 <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent.id,selectedEvent.cliente)" class="col-md-6 mx-auto mt-2">
                                     <center>
-                                        <base-button icon="fa fa-trash-alt" class=" col-12 mx-auto" type="danger">Borrar</base-button> 
+                                        <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
+                                            <span class="float-left">Borrar</span>  
+                                            <span style="margin-top:3px" class="fa fa-trash-alt float-right"></span>
+                                        </base-button> 
                                     </center>
                                 </div>
 
                                 <div class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <div v-if="selectedEvent.process == true">
-                                            <base-button v-if="selectedEvent.confirmation" type="success" icon="ni ni-check-bold" class="mx-auto col-12">
-                                                Confirmada
+                                            <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation" type="success" class="mx-auto col-12">
+                                                <i style="margin-top:3px" class="ni ni-check-bold float-left"></i>
+                                                <span class="float-right">Confirmada</span> 
                                             </base-button>
 
-                                            <base-button v-else class="mx-auto col-12" style="padding-left:10px;padding-right:10px" type="default" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
-                                                Enviar confirmación
+                                            <base-button outline size="sm" v-else class="mx-auto col-12" style="padding-left:10px;padding-right:10px" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                                <i style="margin-top:3px" class="ni ni-send float-left"></i>
+                                                <span class="float-right">Enviar confirmación</span>  
                                             </base-button>
                                         </div>
                                         
@@ -548,7 +565,10 @@
                                 
                                 <template v-if="validRoute('agendamiento', 'procesar')">
                                     <div v-if="selectedEvent.process == true" class="col-md-6 mx-auto mt-2">
-                                        <base-button icon="fa fa-calendar-check" class="mx-auto col-12" type="success" v-on:click="processDate(selectedEvent.id, 'process')">Procesar</base-button> 
+                                        <base-button outline size="sm" class="mx-auto col-12" type="success" v-on:click="processDate(selectedEvent.id, 'process')">
+                                            <span class="float-left">Procesar</span>  
+                                            <span style="margin-top:3px" class="fa fa-calendar-check float-right"></span>
+                                        </base-button> 
                                     </div>
                                 </template>
                                 
@@ -556,30 +576,76 @@
                             
                             <dt class="mt-4 text-center">Histórico de cliente </dt>
                             <vue-custom-scrollbar class="maxHeightHistorical">
-                                <table class="table table-light table-borderless table-striped ">
-                                    <thead >
-                                        <tr>
-                                            <th>
-                                                Fecha
-                                            </th>
-                                            <th>
-                                                Servicios
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="text-left" v-for="historical of dateData.history">
-                                            <td class="text-left">
-                                                {{formatDate(historical.fecha)}}
-                                            </td>
-                                            <td>
-                                                <p v-for="(servicios, index) of historical.servicios"  style="margin-bottom:-6px;">
-                                                    <strong >{{(index + 1)+ ') ' +servicios.servicio}} </strong>
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <a-config-provider>
+                                    <template #renderEmpty>
+                                        <div style="text-align: center">
+                                            <a-icon type="warning" style="font-size: 20px" />
+                                            <h2>Este cliente no ha sido atendido aun</h2>
+                                        </div>
+                                    </template>
+                                    <a-table class="historicalClientTable" :scroll="{ x: 800 }" :columns="historyClientColumn" :data-source="dateData.history">
+                                        <div
+                                            slot="filterDropdown"
+                                            slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                                            style="padding: 8px"
+                                            >
+                                            <a-input
+                                                v-ant-ref="c => (searchInput = c)"
+                                                :placeholder="`Buscar por nombre`"
+                                                :value="selectedKeys[0]"
+                                                style="width: 188px; margin-bottom: 8px; display: block;"
+                                                @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                                                @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                                            />
+                                            <a-button
+                                                type="primary"
+                                                icon="search"
+                                                size="small"
+                                                style="width: 90px; margin-right: 8px"
+                                                @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                                            >
+                                                Buscar
+                                            </a-button>
+                                            <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                                                resetear
+                                            </a-button>
+                                        </div>
+                                        <a-icon
+                                            slot="filterIcon"
+                                            slot-scope="filtered"
+                                            type="search"
+                                            :style="{ color: filtered ? '#108ee9' : undefined }"
+                                        />
+                                        <template slot="customRender" slot-scope="text, record, index, column">
+                                            <span v-if="searchText && searchedColumn === column.dataIndex">
+                                                <template
+                                                v-for="(fragment, i) in text
+                                                    .toString()
+                                                    .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                                                >
+                                                <mark
+                                                    v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                                                    :key="i"
+                                                    class="highlight"
+                                                    >{{ fragment }}</mark
+                                                >
+                                                <template v-else>{{ fragment }}</template>
+                                                </template>
+                                            </span>
+                                            <template v-else>
+                                                {{ text }}
+                                            </template>
+                                        </template>
+                                        
+                                        <template slot="date-format" slot-scope="record, column">
+                                            {{formatDate(column.date)}}
+                                        </template>
+                                        
+                                        <template slot="total" slot-scope="record, column">
+                                            {{formatPrice(column.total)}}
+                                        </template>
+                                    </a-table>
+                                </a-config-provider>
                             </vue-custom-scrollbar>
                         </tab-pane>
                     </card>
@@ -1254,6 +1320,71 @@
             valid2:true,
             valid3:false
         },
+        searchText: '',
+        searchInput: null,
+        searchedColumn: '',
+        historyClientColumn: [
+            {
+                title: 'Fecha',
+                dataIndex: 'date',
+                fixed:'left',
+                width:140,
+                key: 'date',
+                scopedSlots: { customRender: 'date-format' },
+                defaultSortOrder: 'descend',
+                sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+                ellipsis: true,
+            },
+            {
+                title: 'Servicio',
+                dataIndex: 'service',
+                key: 'service',
+                width:250,
+                ellipsis: true,
+                sortDirections: ['descend', 'ascend'],
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.service.toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
+            },
+            {
+                title: 'Empleado',
+                dataIndex: 'employe',
+                key: 'employe',
+                ellipsis: true,
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.employe.toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
+            },
+            {
+                title: 'Gasto',
+                dataIndex: 'total',
+                key: 'total',
+                width:150,
+                ellipsis: true,
+                scopedSlots: { customRender: 'total' },
+                sorter: (a, b) => a.total - b.total,
+            }
+        ],
         columnsDatesClosed: [{
                 label: "Fecha",
                 name: "date",
@@ -1502,7 +1633,7 @@
 		}
     },
     created(){
-        // this.getToken()
+        this.getToken()
         // this.validatorLender()
         // this.getClients()
         // this.getServices()
@@ -1520,6 +1651,7 @@
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+            console.log(this.auth)
         },
         getBranch(){
             this.branchName = localStorage.branchName  
@@ -1620,6 +1752,15 @@
                     console.log(err)
                 }
             }
+        },
+        handleSearch(selectedKeys, confirm, dataIndex) {
+            confirm();
+            this.searchText = selectedKeys[0];
+            this.searchedColumn = dataIndex;
+        },
+        handleReset(clearFilters) {
+            clearFilters();
+            this.searchText = '';
         },
         getClosed() {
             axios.get(endPoint.endpointTarget+'/dates/endingdates/'+this.branch, this.configHeader)
@@ -2332,16 +2473,13 @@
         onEventClick(event, e){
             this.selectedEvent = event
             this.dateModals.modal1 = true
-            const split = event.cliente.split('/')
-            const splitTwo = split[1].split(' ')
-            const splitThree = split[0].split(' ')
-            axios.get(endPoint.endpointTarget+'/clients/dataDiscount/'+splitTwo[1])
+            axios.get(endPoint.endpointTarget+'/clients/findOne/'+this.selectedEvent.client.id, this.configHeader)
             .then(res => {
-                if (res.data[0].participacion == 0) {
+                if (res.data.data.attends == 0) {
                     this.dateData.discount.discount = true
                     this.dateData.discount.type = 'first'
                 }
-                else if(res.data[0].recomendaciones > 0) {
+                else if(res.data.data.recommendations > 0) {
                     this.dateData.discount.discount = true
                     this.dateData.discount.type = 'recomnd'
                 }else{
@@ -2349,7 +2487,8 @@
                     this.dateData.discount.type = 'none'
                 }
                 this.dateData.history = []
-                this.dateData.history = res.data[0].historical
+                this.dateData.history = res.data.data.historical
+                console.log(this.dateData.history)
             })
             e.stopPropagation()
         },
@@ -4370,9 +4509,6 @@
     overflow: hidden;
     overflow-y: scroll;
     }
-    .nav-pills .nav-link.active{
-        background-color:#2dce89 ;
-    }
     .listDatesEnd{
         max-height: 60vh;
         height: auto;
@@ -4469,6 +4605,9 @@
         border: 1px solid #91d5ff;
         background-color: #e6f7ff;
         padding: 30px;
+    }
+    .historicalClientTable .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+        padding: 6px !important;
     }
     
 </style>
