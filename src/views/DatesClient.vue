@@ -1582,7 +1582,6 @@
                 }
             },
             selectBloqMulti(lenders, hora, i, indexService, open, check){
-                console.log(lenders, hora, i, indexService, open, check)
                 for (let j = indexService + 1; j < this.registerDate.serviceSelectds.length; j++) {
                     const element = this.registerDate.serviceSelectds[j];
                     element.start = ''

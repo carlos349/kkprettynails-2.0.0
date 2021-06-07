@@ -86,25 +86,26 @@
                         </div>
                         <div class="row p-0 mt-2">
                             <div class="row col-md-12 pl-5">
-                                <div style="width:auto;" class="mx-auto">
+                                <div style="width:auto;" class="mx-auto col-12">
                                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                         <li v-for="(category, index) of categories" class="nav-item responsiveItem" role="presentation">
                                             <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
                                         </li>
                                     </ul>   
-                                </div>
-                                <vue-custom-scrollbar class="w-100" v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                </div> 
+                                <vue-custom-scrollbar class="col-md-6 col-12" v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                    <h2 class="text-center">Servicios</h2>
                                     <div class="tab-content" id="pills-tabContent">
-                                        <div v-for="category of categories" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                        <div v-for="category of categories" :key="category" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row">
                                                 <template v-for="(name, index) of services" >
-                                                    <div class="col-lg-6 mt-2" v-if="name.category == category.name && name.active == true">
-                                                        <base-button  class="w-100 px-1" v-on:click="plusService(index, name.nombre, name.tiempo, name.comision, name.precio, name.prestadores, name.descuento)"  type="default">
+                                                    <div class="col-lg-12 mt-2" v-if="name.category == category.name && name.active == true" :key="name">
+                                                        <base-button  class="w-100 px-1" v-on:click="plusService(index, name.name, name.duration, name.commission, name.price, name.employes, name.discount)"  type="default">
                                                             <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
-                                                                <i class="fas fa-user-check m-0"></i>{{name.prestadores.length}}
-                                                                <i class="far fa-clock ml-1"></i> {{name.tiempo}}Min
+                                                                <i class="fas fa-user-check m-0"></i>{{name.employes.length}}
+                                                                <i class="far fa-clock ml-1"></i> {{name.duration}}Min
                                                             </badge>
-                                                            <span class="float-left">{{name.nombre}}</span>
+                                                            <span class="float-left">{{name.name}}</span>
                                                             <badge class="text-default float-right col-md-1 col-sm-12" type="white">{{countServices[index].count}}</badge>
                                                         </base-button>
                                                     </div>
@@ -113,13 +114,36 @@
                                         </div>
                                     </div>
                                 </vue-custom-scrollbar>
-                            </div>
-                        </div>
-                        <div style="width:auto;" class="mx-auto">
-                            <div class="row mx-auto mt-2">
-                                <h3 class="ml-3">¿Se realizara un diseño?</h3> 
-                                <base-radio name="si" value="true" inline class="mb-3 ml-3" v-model="registerDae.design"> <b>Si</b> </base-radio>
-                                <base-radio name="no" value="false" inline class="mb-3 ml-3" v-model="registerDae.design"> <b>No</b> </base-radio> 
+                                <vue-custom-scrollbar class="col-md-6 col-12" v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                    <h2 class="text-center">Servicios seleccionados</h2>
+                                        <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                            <div class="row">
+                                                <template  >
+                                                    <div class="col-lg-12 mt-2">
+                                                        <base-button v-for="(service, index) in registerDae.serviceSelectds" :key="service" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
+                                                            <span class="float-left ml-2">{{service.name}}</span>
+                                                            <template style="z-index: 100" v-if="ifMicro">
+                                                                <a-tooltip placement="top">
+                                                                    <template slot="title">
+                                                                        <span>Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
+                                                                    </template>
+                                                                    <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
+                                                                        <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
+                                                                            {{micro.microService}}
+                                                                        </badge>
+                                                                    </div>
+                                                                        
+                                                                </a-tooltip>
+                                                            </template>
+                                                            <!-- <badge class="text-default float-right" v- type="white">microservicio</badge>
+                                                            <badge class="text-default float-right" type="white">otro</badge>
+                                                            <badge class="text-default float-right" type="white">diseño</badge> -->
+                                                        </base-button>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                </vue-custom-scrollbar>
                             </div>
                         </div>
                     </tab-content>
@@ -146,26 +170,28 @@
                                     <a-spin :spinning="load1">
                                     <vue-custom-scrollbar class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                                     <div class="row mb-3">
-                                        <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" >
+                                        <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" :key="indexService">
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="py-1" style="background-color:#f8fcfd;">
-                                                        <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1">
+                                                        <badge style="font-size:.7em !important" v-if="servicesSelect.employe != ''" type="secondary" class="mb-1">
                                                             <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
-                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.servicio}} </span>
+                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.name}} </span>
                                                         </badge>
                                                         <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
                                                         <base-dropdown class="responsiveButtonsPercent styleDropdown">
                                                             <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == true" slot="title" type="default" class="dropdown-toggle w-100">
-                                                                {{servicesSelect.lender}} 
+                                                                {{servicesSelect.employe}} 
+                                                            </base-button>
+                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == false" disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                                {{servicesSelect.employe}} 
                                                             </base-button>
                                                             <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == 'none'" disabled slot="title" type="default" class="dropdown-toggle w-100">
                                                                 <span style="color:red">Horarios ocupados</span>
                                                             </base-button>
-                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == false" disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                                {{servicesSelect.lender}} 
-                                                            </base-button>
-                                                            <b v-for="lenders of servicesSelect.lenders" v-if="lenders.valid && findDay(lenders.days, lenders.lender)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, lenders.lender, lenders.days, lenders.class, servicesSelect.duration, 'check'+indexService, servicesSelect.lenders,servicesSelect)">{{lenders.lender}}  </b>
+                                                            <template v-for="employe of servicesSelect.employes" >
+                                                                <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
+                                                            </template>
                                                         </base-dropdown>
                                                     </div>
                                                 </div>
@@ -188,20 +214,20 @@
                                                         <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
                                                             <a-spin :spinning="load2">
                                                                 <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
-                                                                    <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.lenders , block.Horario, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
-                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                    <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes , block.hour, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                                                                         <span>Disponible</span>
                                                                     </base-button>
                                                                     <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                                                                         <span>Ocupado</span>
                                                                     </base-button>
                                                                     <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                                                                         <span>Seleccionado</span>
                                                                     </base-button>
                                                                     <base-button v-else size="sm" disabled class="col-12" type="secondary">
-                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                                                                         <span>No seleccionable</span>
                                                                     </base-button>
                                                                 </div>
@@ -230,9 +256,20 @@
                                             <center>
                                             <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
                                             </center>
-                                            <base-button slot="title" type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
-                                                <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.servicio}}</span> </badge><br>
-                                                <span class="mx-auto" style="font-size:1.2em;">{{data.realLender}}</span>
+                                            <base-button slot="title" type="secondary" :class="'w-100 '+'text-center '+'mb-1 '+data.class" style="color:#1c2021;border:none">
+                                                <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.name}}</span> </badge><br>
+                                                <span class="mx-auto" style="font-size:1.2em;">{{data.realEmploye}}</span> <br>
+                                                <template v-if="ifMicro">
+                                                    <span>
+                                                        Adicionales
+                                                        <span v-for="(micro, index) in data.microServices" :key="micro">
+                                                            <span v-if="index == 0">: </span>
+                                                            <span v-if="micro.checked && index != 0">, </span>
+                                                            <span v-if="micro.checked">{{micro.microService}}</span>
+                                                        </span>
+                                                    </span>
+                                                </template>
+                                                
                                             </base-button>
                                             <div style="background-color:#f8fcfd;">
                                                 <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
@@ -401,7 +438,10 @@
                body-classes="p-0"
                :header-classes="selectedEvent.class"
                modal-classes="modal-dialog-centered modal-md">
-            <h5 slot="header" class="modal-title" id="modal-title-notification">{{dateSplit(selectedEvent.start)}}</h5>   
+            <h5 slot="header" class="modal-title" id="modal-title-notification">
+                {{dateSplit(selectedEvent.start)}} 
+                <span v-if="selectedEvent.typeCreation == 'Web'">(Creado desde la web de agendamientos)</span>
+                <span v-else>(Creado desde el sistema de agendamientos)</span></h5>   
             <card type="secondary" shadow
                   
                   :body-classes="selectedEvent.class"
@@ -516,7 +556,7 @@
                                     </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="serviciosSelecionadosDates='',endDate(selectedEvent.id, selectedEvent.cliente, selectedEvent.empleada, selectedEvent.services)" class="col-md-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent)" class="col-md-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Finalizar</span>  
@@ -1266,6 +1306,7 @@
         blockHour:[],
         blockHourEdit:[],
         finalDate:'',
+        idDatesBlocks:'',
         readyChange: false,
         validHour: false,
         getDay: 0,
@@ -1598,7 +1639,9 @@
             }
         },
         branch: '',
-        branchName: ''
+        branchName: '',
+        ifMicro:false,
+        microServices:[]
       };
     },
     beforeCreate(){
@@ -1637,12 +1680,31 @@
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
             // this.getUsers()
+            this.getClients()
+            this.getMicroServices()
+            this.getServices()
+            this.getCategories()
             this.getEmployes()
             this.getDates()
         },
         logEvents(change, event){
             console.log(change)
             console.log(event)
+        },
+        async getMicroServices(){
+            try {
+                const getMicro = await axios.get(endPoint.endpointTarget+'/configurations/getMicroservice/'+this.branch, this.configHeader)
+                if (getMicro.data.status == 'ok') {
+                    this.microServices = getMicro.data.data
+                    for (const micro of this.microServices ) {
+                        micro.checked = false
+                    }
+                    this.ifMicro = true
+                    console.log(this.microServices)
+                }else{
+                    this.ifMicro = false
+                }
+            }catch(err){}
         },
         validatorLendersDaysSplit(change, event){
             this.splitDays = []
@@ -1767,33 +1829,55 @@
                 this.employeShow = res.data.data
   			})
         },
-        async getCategories(){
-            const categories = await axios.get(endPoint.endpointTarget+'/servicios/getCategory')
-            if (categories.data.length > 0) {
-                this.categories = categories.data
+        async getServices(){
+            try {
+                const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
+                if (services.data.status == 'ok') {
+                    this.services = services.data.data
+                    services.data.data.forEach(element => {this.countServices.push({count: 0})});
+                }else{
+                    this.services = []
+                }
+            }catch(err){
+                console.log(err)
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error técnico',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }
         },
-        getServices() {
-            axios.get(endPoint.endpointTarget+'/servicios')
-            .then(res => {
-                this.services = res.data
-                for (let index = 0; index < this.services.length; index++) {
-                    this.countServices.push({count:0})
-                    
+        async getCategories(){
+            try {
+                const categories = await axios.get(endPoint.endpointTarget+'/services/getCategories/'+this.branch, this.configHeader)
+                if (categories.data.status == 'ok') {
+                    this.categories = categories.data.data
+                }else{
+                    this.categories = []
                 }
-                
-            })
+            }catch(err){
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error técnico',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
         },
-        getClients(){
-            axios.get(endPoint.endpointTarget+'/clients')
-            .then(res => {
-				
-                this.clients = res.data
-                for (let index = 0; index < res.data.length; index++) {
-                    this.clientsNames.push(res.data[index].nombre + " / " + res.data[index].identidad)
-                    
+        async getClients(){
+            try {
+                const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
+                if (getAllClients.data.data.length > 0) {
+                    this.clients = getAllClients.data.data
+
+                    for (let index = 0; index < getAllClients.data.data.length; index++) {
+                        this.clientsNames.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email)
+                    }
                 }
-            })
+            }catch (err) {
+                res.send(err)
+            }
         },
         formatPhone(){
             var number = this.dateClient.infoOne.replace(/[^\d]/g, '')
@@ -1870,24 +1954,26 @@
             $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
             $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
         }, 
-        plusService(index, service, time, comision, precio, lenders, discount){
+        plusService(index, service, duration, commission, price, employes, discount){
             this.ifServices = true
             this.countServices[index].count++
-            this.registerDae.duration = this.registerDae.duration + parseFloat(time)
-            var lendersName = [{lender: 'Primera disponible', days: '', restDay: '', class: '', valid:true}]
-            for (let indexThree = 0; indexThree < this.lenders.length; indexThree++) {
-                for (let indexTwo = 0; indexTwo < lenders.length; indexTwo++) {
-                    if (this.lenders[indexThree]._id == lenders[indexTwo]) {
-                        lendersName.push({lender: this.lenders[indexThree].nombre, days: this.lenders[indexThree].days, restDay: this.lenders[indexThree].restDay, class: this.lenders[indexThree].class, valid: true})
-                        break
-                    }
-                }  
+            this.registerDae.duration = this.registerDae.duration + parseFloat(duration)
+            for (const employe of employes) {
+                employe.valid = true
             }
-            
-            this.registerDae.serviceSelectds.push({comision: comision, precio: precio, discount:discount, servicio: service, realLender:'', lender: 'Primera disponible', lenders: lendersName, start: '', end:'', sort: 0, duration: time, days: '', class: '', blocks: [], lenderSelectData: {}, valid: false, validAfter: false, itFirst: true }) 
+            var employesName = [{name: 'Primera disponible', days: '', class: '', valid:true}, ...employes]
+            if (this.ifMicro) {
+                var microsService = [{checked: false, duration: 0, microService: "Ninguno", price: 0, position: index}]
+                for (const micro of this.microServices) {
+                    microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
+                }
+                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: []})
+            }else{
+                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service})
+            }
             this.validHour = false  
-            this.totalPrice = parseFloat(this.totalPrice) + parseFloat(precio)
-            
+            this.totalPrice = parseFloat(this.totalPrice) + parseFloat(price)
+            console.log(this.registerDae.serviceSelectds)
         },
         validateWizardOne(){
             if (this.registerDate.services != '' && this.registerDate.design != false) { 
@@ -2196,130 +2282,150 @@
             })
         },
         register(){
-            var lenderFinal = ''
+            this.ifDisabled = true
+            var employeFinal = ''
             var hourFinal = ''
             for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                 const element = this.registerDae.serviceSelectds[index];
                 if (index > 0){
-                    lenderFinal = lenderFinal+' - '+element.realLender
+                    employeFinal = employeFinal+' - '+element.realEmploye
                     hourFinal = hourFinal+' - '+element.start+'Hrs'
                 }else{
-                    lenderFinal = element.realLender
+                    employeFinal = element.realEmploye
                     hourFinal = element.start+'Hrs'
                 }
             }
-            axios.post(endPoint.endpointTarget+'/citas/verifyDate', {
+            axios.post(endPoint.endpointTarget+'/dates/verifyDate', {
                 dataDate: this.registerDae,
                 date: this.finalDate,
-            }).then(res => {
-                 if(res.data.status == true){
-                     this.modals.modal1 = false
-                    this.modalsDialog = {
-                        modal2: true,
-                        message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar la cita.",
+                branch: this.branch
+            }, this.configHeader)
+            .then(res => {
+                console.log(res)
+                if(res.data.status == true){
+                    this.modals = {
+                        modal3: true,
+                        message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.",
                         icon: 'ni ni-fat-remove ni-5x',
                         type: 'danger'
                     }
                     setTimeout(() => {
-                        this.modalsDialog = {
-                            modal2: false,
+                        this.modals = {
+                            modal1:false,
+                            modal2:false,
+                            modal3: false,
+                            modal4: false,
+                            modal5: false,
                             message: "",
                             icon: '',
                             type: ''
                         }
-                        this.modals.modal1 = true
                         this.$refs.wizard.prevTab()
                         for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                             const element = this.registerDae.serviceSelectds[index];
                             element.start = ''
                             element.end = ''
                             element.sort = ''
+                            element.class = ''
                             element.blocks = []
+                            element.blocksFirst = []
                             element.valid = false
-                            element.lender = 'Primera disponible'
-                            element.realLender = ''
+                            element.employe = 'Primera disponible'
+                            element.employeImg = ''
+                            element.employeId = ''
+                            element.realEmploye = 'Primera disponible'
                         }
                         this.validHour = false
                         setTimeout(() => {
-                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                            axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                                date: this.finalDate,
+                                branch: this.branch
+                            }, this.configHeader)
                             .then(res => {
                                 this.getDay = res.data.day
                                 this.availableslenders = res.data.array
-                                axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
                                     date: this.finalDate,
-                                    lenders: res.data.array,
-                                    time: this.registerDae.serviceSelectds[0].duration,
-                                    lendersService: this.registerDae.serviceSelectds[0].lenders
-                                })
+                                    employes: res.data.array,
+                                    timedate: this.registerDae.serviceSelectds[0].duration,
+                                    employesServices: this.registerDae.serviceSelectds[0].employes,
+                                    branch: this.branch
+                                }, this.configHeader)
                                 .then(res => {
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
-                                    this.registerDae.serviceSelectds[0].blocks = res.data.blocks
+                                    this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                    this.registerDae.block = res.data.data
+                                    console.log(this.registerDae.serviceSelectds[0].blocks)
                                     $('#block0').toggle('slow')
                                 })
                             })
-                        }, 200); 
+                        }, 200);  
                     }, 5000);
                 }else{
-                    if (this.registerDate.client) {
-                        this.modals.modal1 = false
-                        const User = {
-                            name: this.dateClient.name,
-                            mail: this.dateClient.id,
-                            lastName: '',
-                            phone: this.dateClient.infoOne,
-                            pay: 'No especificado',
-                            pdf: ''
-                        }
-                        axios.post(endPoint.endpointTarget+'/citas/noOneLender', {
-                            dataDate: this.registerDae,
-                            date: this.finalDate,
-                            client: User,
-                            pdf: 'not',
-                            ifClient: false
-                        })
-                        .then(res => {
-                            if (res.data.status == "cita creada") {
-                                this.sendConfirmationn(res.data.id, User.name, User.mail, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, lenderFinal)
-                                this.modals.modal1 = false
-                                this.modalsDialog = {
-                                    modal2: true,
-                                    type: 'success',
-                                    icon: 'ni ni-check-bold ni-5x',
-                                    message: '¡Agendamiento exitoso!', 
-                                }
-                                this.getDates()
-                                if (this.employeByDate != 'Filtrar por empleado') {
-                                    this.getCitasByEmploye()
-                                }
-                                axios.post(endPoint.endpointTarget+'/notifications', {
-                                    userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                                    userImage:localStorage.getItem('imageUser'),
-                                    detail:'Creo una cita',
-                                    link: 'agendamiento'
-                                })
-                                .then(res => {
-                                    this.socket.emit('sendNotification', res.data)
-                                })
-                                setTimeout(() => {
-                                    this.initialState()
-                                    this.modals.modal1 = true
-                                    this.modalsDialog = {
-                                        modal2: false,
-                                        type: '',
-                                        icon: '',
-                                        message: '', 
-                                    }
-                                }, 1500);
-                            }    
-                        }) 
+                    var blockEdit = []
+                    if (this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst.length > 0) {
+                        blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst
                     }else{
-                        this.registerDae.valid = false
+                        blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocks
+                    }
+                    if (this.file != '') {
+                        let formData = new FormData();
+                        formData.append('file', this.file)
+                        axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }, this.configHeader)
+                        .then(res => {
+                            axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
+                                dataDate: this.registerDae,
+                                branch: this.branch,
+                                date: this.finalDate,
+                                client: this.registerDate.client,
+                                block: blockEdit,
+                                blockId: this.idDatesBlocks,
+                                typeCreation: 'system',
+                                pdf: res.data.nameFile,
+                                ifClient: true
+                            }, this.configHeader)
+                            .then(res => {
+                                if (res.data.status == "cita creada") {
+                                    // this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
+                                    this.modals.modal2 = false
+                                    this.modals.modal4 = true
+                                    
+                                    $("#overlay").toggle()
+                                    this.ifDisabled = false
+                                }    
+                            })   
+                        })
+                    }else{
+                        axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
+                            dataDate: this.registerDae,
+                            branch: this.branch,
+                            date: this.finalDate,
+                            client: this.registerDate.client,
+                            block: blockEdit,
+                            blockId: this.idDatesBlocks,
+                            typeCreation: 'system',
+                            pdf: 'not',
+                            ifClient: true
+                        }, this.configHeader)
+                        .then(res => {
+                            if (res.data.status == "ok") {
+                                this.ifDisabled = false
+                                this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
+                                this.modals.modal2 = false
+                                this.modals.modal4 = true
+                                $("#overlay").toggle()
+                            }    
+                        })
                     }
                 }
             }).catch(err => {
                 console.log(err)
-            })        
+            })       
         },
         newClient(){
             const name = this.dateClient.name.split(' ')
@@ -2731,42 +2837,74 @@
             }
             
         },
-        addThefuckingServices(services){
-            
-        },
-        endDate(id, client, employe, services){
-            this.endId = ''
-            this.endServices = []
-            this.endClient = ''
-            this.endEmploye = ''
-            this.dateModals.modal3 = true
-            this.endId = id
-            this.serviciosSelecionadosDates = []
-            
-            this.endClient = client
-            this.EndDateServices = ''
-            this.endEmploye = employe
-            $('.inputFind').val('')
-            this.myFunction()
-            axios.get(endPoint.endpointTarget+'/servicios')
+        endDate(data){
+            axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
+                service:data.services,
+                client:data.client,
+                branch:this.branch,
+                employe: data.employe,
+                microServices: data.microServices
+            }, this.configHeader)
             .then(res => {
-                this.EndDateServices = []
-                for (let i = 0; i < res.data.length; i++) {
-                    $(`.${res.data[i]._id}`).text(0)
+                if (res.data.status == 'ok') {
+                    
+                    this.getDates();
+                    setTimeout(() => {
+                    if (this.employeByDate != 'Filtrar por empleado') {
+                        this.getCitasByEmploye()
+                    }
+                    }, 500);
+                    this.getClosed()
+                    this.$swal({
+                        type: 'success',
+                        title: 'Cita finalizada con exito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    
+                    axios.post(endPoint.endpointTarget+'/notifications', {
+                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                        userImage:localStorage.getItem('imageUser'),
+                        detail:'Finalizó una cita',
+                        link: 'agendamiento'
+                    })
+                    .then(res => {
+                        this.socket.emit('sendNotification', res.data)
+                    })   
                 }
-                for (let index = 0; index < services.length; index++) {
-                    for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
-                        if (services[index].servicio == res.data[indexTwo].nombre) {
-                            let valSpan = $(`.${res.data[indexTwo]._id}`).text()
-                            let sumaVal = parseFloat(valSpan) + 1
-                            $(`.${res.data[indexTwo]._id}`).text(sumaVal)
-                            this.EndDateServices.push({name: services[index].servicio, id: res.data[indexTwo]._id, index: indexTwo, valid: true})
-                            this.serviciosSelecionadosDates.push({comision:services[index].comision, discount:services[index].discount, precio:services[index].precio, servicio:services[index].servicio})
-                        }
-                    } 
-                }
-                
             })
+            // this.endId = ''
+            // this.endServices = []
+            // this.endClient = ''
+            // this.endEmploye = ''
+            // this.dateModals.modal3 = true
+            // this.endId = id
+            // this.serviciosSelecionadosDates = []
+            
+            // this.endClient = client
+            // this.EndDateServices = ''
+            // this.endEmploye = employe
+            // $('.inputFind').val('')
+            // this.myFunction()
+            // axios.get(endPoint.endpointTarget+'/servicios')
+            // .then(res => {
+            //     this.EndDateServices = []
+            //     for (let i = 0; i < res.data.length; i++) {
+            //         $(`.${res.data[i]._id}`).text(0)
+            //     }
+            //     for (let index = 0; index < services.length; index++) {
+            //         for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
+            //             if (services[index].servicio == res.data[indexTwo].nombre) {
+            //                 let valSpan = $(`.${res.data[indexTwo]._id}`).text()
+            //                 let sumaVal = parseFloat(valSpan) + 1
+            //                 $(`.${res.data[indexTwo]._id}`).text(sumaVal)
+            //                 this.EndDateServices.push({name: services[index].servicio, id: res.data[indexTwo]._id, index: indexTwo, valid: true})
+            //                 this.serviciosSelecionadosDates.push({comision:services[index].comision, discount:services[index].discount, precio:services[index].precio, servicio:services[index].servicio})
+            //             }
+            //         } 
+            //     }
+                
+            // })
             // for (let index = 0; index < services.length; index++) {
             //   if (services[index].) {
                 
@@ -3246,10 +3384,7 @@
         },
         endingDate(){
             const id = this.endId
-            if (this.designEndDate == null) {
-                
-                this.designEndDate = 0
-            }
+            
             axios.post(endPoint.endpointTarget+'/citas/endDate/'+id, {
                 services:this.serviciosSelecionadosDates,
                 client:this.endClient,
@@ -3444,23 +3579,32 @@
             })
         },
         openCalendar(){
-            
             setTimeout(() => {
                 const split = this.registerDae.date.split('-')
                 this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
                 const restDay = new Date(this.finalDate+' 10:00')
                 this.getDay = restDay.getDay()
                 var onlySunday = split[0]+'-'+split[1]
-                var durationOpen = this.registerDae.design == 'si' ? this.registerDae.serviceSelectds[0].duration + 15 : this.registerDae.serviceSelectds[0].duration
                 if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
-                    this.$swal({
-                        type: 'error',
-                        title: 'No laboramos los domingos',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    this.registerDae.date = ''
-                    this.load1 = false
+                    this.modals = {
+                        modal3: true,
+                        message: "Disculpa, No laboramos Sábados y Domingos.",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1:false,
+                            modal2:false,
+                            modal3: false,
+                            modal4: false,
+                            modal5: false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                        this.registerDae.date = ''
+                    }, 3000);
                 }else{
                     if (this.readyChange) {
                         for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
@@ -3468,62 +3612,75 @@
                             element.start = ''
                             element.end = ''
                             element.sort = ''
+                            element.class = ''
                             element.blocks = []
+                            element.blocksFirst = []
                             element.valid = false
-                            element.lender = 'Primera disponible'
-                            element.realLender = ''
+                            element.employe = 'Primera disponible'
+                            element.employeImg = ''
+                            element.employeId = ''
+                            element.realEmploye = 'Primera disponible'
                         }
                         this.validHour = false
                         setTimeout(() => {
-                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                            axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                                date: this.finalDate,
+                                branch: this.branch
+                            }, this.configHeader)
                             .then(res => {
                                 this.getDay = res.data.day
                                 this.availableslenders = res.data.array
-                                axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
                                     date: this.finalDate,
-                                    lenders: res.data.array,
-                                    time: durationOpen,
-                                    lendersService: this.registerDae.serviceSelectds[0].lenders
-                                })
+                                    employes: res.data.array,
+                                    timedate: this.registerDae.serviceSelectds[0].duration,
+                                    employesServices: this.registerDae.serviceSelectds[0].employes,
+                                    branch: this.branch
+                                }, this.configHeader)
                                 .then(res => {
+                                    this.idDatesBlocks = res.data.id
+                                    console.log(this.idDatesBlocks)
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
-                                    this.registerDae.serviceSelectds[0].blocks = res.data.blocks
-                                    this.load1 = false
+                                    this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                    this.registerDae.block = res.data.data
+                                    console.log(this.registerDae.serviceSelectds[0].blocks)
                                     $('#block0').toggle('slow')
+                                    this.load1 = false
                                 })
                             })
                         }, 200); 
                     }else{
                         setTimeout(() => {
-                            axios.get(endPoint.endpointTarget+'/citas/availableslenders/'+this.finalDate)
+                            axios.post(endPoint.endpointTarget+'/dates/availableslenders', {
+                                date: this.finalDate,
+                                branch: this.branch
+                            }, this.configHeader)
                             .then(res => {
                                 this.getDay = res.data.day
                                 this.availableslenders = res.data.array
-                                axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
+                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
                                     date: this.finalDate,
-                                    lenders: res.data.array,
-                                    time: durationOpen,
-                                    lendersService: this.registerDae.serviceSelectds[0].lenders
-                                })
+                                    employes: res.data.array,
+                                    timedate: this.registerDae.serviceSelectds[0].duration,
+                                    employesServices: this.registerDae.serviceSelectds[0].employes,
+                                    branch: this.branch
+                                }, this.configHeader)
                                 .then(res => {
+                                    this.idDatesBlocks = res.data.id
+                                    console.log(this.idDatesBlocks)
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
-                                    this.registerDae.serviceSelectds[0].blocks = res.data.blocks
+                                    this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                    this.registerDae.block = res.data.data
+                                    console.log(this.registerDae.serviceSelectds[0].blocks)
                                     this.load1 = false
-                                    $('#block0').toggle('slow')
-                                })  
+                                })
                             })
                         }, 200); 
                     }
                 }
-                $('#block0').toggle('slow')
             }, 200);
-            setTimeout(() => {
-                var d = document.getElementById("block0");
-                d.className += "ps--active-y";
-                $("#block0").addClass("ps--active-y")
-            }, 800);
         },
         validMultiLender(index, lender, time, resTime, check){
             $('#'+check).removeClass('fa-check')
@@ -3617,475 +3774,372 @@
                 element.start = ''
                 element.end = ''
                 element.sort = ''
+                element.class = ''
                 element.blocks = []
+                element.blocksFirst = []
                 element.valid = false
-                element.lender = 'Primera disponible'
+                element.employe = 'Primera disponible'
+                element.employeId = ''
+                element.realEmploye = 'Primera disponible'
+                element.employeImg = ''
                 element.itFirst = true
             }
             setTimeout(() => {
                 $('#'+open).toggle('slow')
             }, 500);
-            var designMulti = this.registerDae.design == 'si' ? this.registerDae.serviceSelectds[indexService].duration + 15 : this.registerDae.serviceSelectds[indexService].duration
-            const finalIndexPrev = parseFloat(indexService) + parseFloat(1)
-            var designNext = ''
-            if (this.registerDae.serviceSelectds[finalIndexPrev]) {
-                designNext = this.registerDae.design == 'si' ? this.registerDae.serviceSelectds[finalIndexPrev].duration + 15 : this.registerDae.serviceSelectds[finalIndexPrev].duration
-            }
+
             if (lenders) {
-                var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].Horario.split(":") 
-                this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
+                var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].hour.split(":") 
+                this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].hour
                 this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
 
-                var valid = false
-                for (let j = 0; j < this.registerDae.serviceSelectds[indexService].blocks[i].lenders.length; j++) {
-                    const element = this.registerDae.serviceSelectds[indexService].blocks[i].lenders[j];
+                for (let j = 0; j < this.registerDae.serviceSelectds[indexService].blocks[i].employes.length; j++) {
+                    const element = this.registerDae.serviceSelectds[indexService].blocks[i].employes[j];
                     if (element.valid == true) {
-                        for (let r = 0; r < this.registerDae.serviceSelectds[indexService].lenders.length; r++) {
-                            const elementTwo = this.registerDae.serviceSelectds[indexService].lenders[r];
-                            if (element.name == elementTwo.lender) {
-                                this.registerDae.serviceSelectds[indexService].class = elementTwo.class
-                                this.registerDae.serviceSelectds[indexService].realLender = element.name
-                                this.registerDae.serviceSelectds[indexService].lender = element.name
-                                valid = true
-                                break
-                            }
-                        }
-                        if (valid) {
-                            break
-                        }
+                        this.registerDae.serviceSelectds[indexService].class = element.class
+                        this.registerDae.serviceSelectds[indexService].realEmploye = element.name
+                        this.registerDae.serviceSelectds[indexService].employeId = element.id
+                        this.registerDae.serviceSelectds[indexService].employe = element.name
+                        this.registerDae.serviceSelectds[indexService].employeImg = element.img
+                        break
                     }
                 }
-                for (let t = 0; t < this.registerDae.serviceSelectds[indexService].blocks.length; t++) {
-                    const element = this.registerDae.serviceSelectds[indexService].blocks[t];
-                    if (element.validator == 'select') {
-                        this.registerDae.serviceSelectds[indexService].blocks[t].validator = true
-                        this.registerDae.serviceSelectds[indexService].blocks[t].lenders.push({name:this.registerDae.serviceSelectds[indexService].lender,valid:true})
+                console.log(this.registerDae.serviceSelectds[indexService])
+                axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
+                    date: this.finalDate,
+                    timedate: this.registerDae.serviceSelectds[indexService].duration,
+                    hour: this.registerDae.serviceSelectds[indexService].start,
+                    employe: this.registerDae.serviceSelectds[indexService].employeId,
+                    block: this.registerDae.serviceSelectds[indexService].blocks,
+                    branch: this.branch,
+                    ifFirstClick: this.registerDae.serviceSelectds[indexService].itFirst,
+                    firstBlock: true
+                }, this.configHeader)
+                .then(res => {
+                    this.registerDae.serviceSelectds[indexService].blocks = res.data.data
+                    this.registerDae.serviceSelectds[indexService].itFirst = false
+                    this.registerDae.serviceSelectds[indexService].end = res.data.end
+                    const finalIndex = parseFloat(indexService) + parseFloat(1)
+                    if (this.registerDae.serviceSelectds[finalIndex]) {
+                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                            block: this.registerDae.serviceSelectds[indexService].blocks,
+                            timedate: this.registerDae.serviceSelectds[finalIndex].duration,
+                            employesServices: this.registerDae.serviceSelectds[finalIndex].employes,
+                            firstBlock: true
+                        })
+                        .then(res => {
+                            this.registerDae.serviceSelectds[finalIndex].valid = true
+                            this.registerDae.serviceSelectds[finalIndex].blocks = res.data.data
+                            console.log(res)
+                        })
+                    }else{
+                        this.validHour = true
                     }
-                }
-
-                for (let index = 0 ; index <= designMulti / 15; index++) {
-                    this.registerDae.serviceSelectds[indexService].blocks[i].validator = 'select'
-                    this.registerDae.serviceSelectds[indexService].end = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
-                    i++
-                }
+                    console.log(res)
+                }).catch(err => console.log(err))
                 
-                const finalIndex = parseFloat(indexService) + parseFloat(1)
-                if (this.registerDae.serviceSelectds[finalIndex]) {
-                    axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
-                        array: this.registerDae.serviceSelectds[indexService].blocks,
-                        time: designNext,
-                        lender: this.registerDae.serviceSelectds[indexService].lender,
-                        lendersService: this.registerDae.serviceSelectds[finalIndex].lenders
-                    })
-                    .then(res => {
-                        this.registerDae.serviceSelectds[finalIndex].blocks = res.data
-                        var none = true
-                        for (let n = 0; n < res.data.length; n++) {
-                            const element = res.data[n];
-                            if (element.validator == true) {
-                                this.registerDae.serviceSelectds[finalIndex].valid = true
-                                none = false
-                                break
-                            }
-                        }
-                        if (none) {
-                            this.registerDae.serviceSelectds[finalIndex].valid = "none"
-                            $('#block'+finalIndex).toggle('slow')
-                        }
-                        console.log(this.registerDae.serviceSelectds[finalIndex].valid)
-                    })
-                }
-                var valid = 0 
-                for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                    const element = this.registerDae.serviceSelectds[index];
-                    if (element.start == "") {
-                        valid = 1
-                    }
-                }
-                if (valid == 0) {
-                    this.validHour = true
-                }
                 setTimeout(() => {
                     $('#'+check).addClass('fa-check')
                 }, 500);
-            }else{
-                var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].Horario.split(":") 
-                this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].Horario
+            }
+            else{
+                console.log('entre')
+                var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].hour.split(":") 
+                this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].hour
                 this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
-                
-                axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDae.serviceSelectds[indexService].lenderSelectData)
+                axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
+                    date: this.finalDate,
+                    timedate: this.registerDae.serviceSelectds[indexService].duration,
+                    hour: this.registerDae.serviceSelectds[indexService].start,
+                    employe: this.registerDae.serviceSelectds[indexService].employeId,
+                    block: this.registerDae.serviceSelectds[indexService].blocks,
+                    blockFirst: this.registerDae.serviceSelectds[indexService].blocksFirst,
+                    branch: this.branch,
+                    ifFirstClick: this.registerDae.serviceSelectds[indexService].itFirst,
+                    firstBlock: false
+                }, this.configHeader)
                 .then(res => {
-                    
-                    var editBlock = false
-                    if (indexService > 0) {
-                        for (let i = 0; i < this.arrayLendersSelect.length; i++) {
-                            const element = this.arrayLendersSelect[i];
-                            if (element.lender == this.registerDae.serviceSelectds[indexService].realLender) {
-                                editBlock = true
-                            }
-                        }
-                    }
-                    if (editBlock) {
-                        
-                        axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
-                            array: this.registerDae.serviceSelectds[indexService].blocks,
-                            time: this.registerDae.serviceSelectds[indexService].lenderSelectData.time
+                    this.registerDae.serviceSelectds[indexService].blocks = res.data.data
+                    this.registerDae.serviceSelectds[indexService].blocksFirst = res.data.blockFirst
+                    this.registerDae.serviceSelectds[indexService].itFirst = false
+                    this.registerDae.serviceSelectds[indexService].end = res.data.end
+                    const finalIndex = parseFloat(indexService) + parseFloat(1)
+                    if (this.registerDae.serviceSelectds[finalIndex]) {
+                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                            block: res.data.blockFirst,
+                            timedate: this.registerDae.serviceSelectds[finalIndex].duration,
+                            employesServices: this.registerDae.serviceSelectds[finalIndex].employes,
+                            firstBlock: true
                         })
                         .then(res => {
-                            for (let t = 0; t < res.data.length; t++) {
-                                const elementTor = res.data[t];
-                                if (elementTor.validatores && elementTor.validatores == 'select') {
-                                    res.data[t].validator = true
-                                    elementTor.validatores = ''
-                                }
-                            }
-                            for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
-                                res.data[i].validator = 'select'
-                                res.data[i].validatores = 'select'
-                                this.registerDae.serviceSelectds[indexService].end = res.data[i].Horario
-                                i++
-                            }
-                            this.registerDae.serviceSelectds[indexService].blocks = res.data
-                            this.registerDae.serviceSelectds[indexService].itFirst = false
-                            var valid = 0 
-                            for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                                const element = this.registerDae.serviceSelectds[index];
-                                
-                                if (element.start == "") {
-                                    valid = 1
-                                }
-                            }
-                            if (valid == 0) {
-                                this.validHour = true
-                            }
-                            $('#'+check).addClass('fa-check')
+                            this.registerDae.serviceSelectds[finalIndex].valid = true
+                            this.registerDae.serviceSelectds[finalIndex].blocks = res.data.data
+                            console.log(res)
                         })
                     }else{
-                        
-                        for (let t = 0; t < res.data.length; t++) {
-                            const elementTor = res.data[t];
-                            if (elementTor.validatores && elementTor.validatores == 'select') {
-                                res.data[t].validator = true
-                                elementTor.validatores = ''
-                            }
-                        }
-                        for (let index = 0 ; index <= this.registerDae.serviceSelectds[indexService].lenderSelectData.time / 15; index++) {
-                            res.data[i].validator = 'select'
-                            this.registerDae.serviceSelectds[indexService].end = res.data[i].Horario
-                            i++
-                        }
-                        this.registerDae.serviceSelectds[indexService].blocks = res.data
-                        this.blockHour = res.data
-                        this.registerDae.serviceSelectds[indexService].itFirst = false
-                        var valid = 0 
-                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                            const element = this.registerDae.serviceSelectds[index];
-                            
-                            if (element.start == "") {
-                                valid = 1
-                            }
-                        }
-                        if (valid == 0) {
-                            this.validHour = true
-                        }
-                        this.registerDae.serviceSelectds[indexService].blocks = res.data
-                        $('#'+check).addClass('fa-check')
-                    }
-                    
-                    const finalIndex = parseFloat(indexService) + parseFloat(1)
-                    var arrayLenders = []
-                    if (this.registerDae.serviceSelectds[finalIndex]) {
-                        axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
-                            date: this.finalDate,
-                            lenders: this.availableslenders,
-                            time: this.registerDae.serviceSelectds[finalIndex].duration,
-                            lendersService: this.registerDae.serviceSelectds[finalIndex].lenders
-                        })
-                        .then(res => {
-                            for (let i = 0; i < this.registerDae.serviceSelectds[indexService].lenders.length; i++) {
-                                const element = this.registerDae.serviceSelectds[indexService].lenders[i];
-                                if (element.lender != 'Primera disponible') {
-                                    arrayLenders.push(element)
-                                }
-                            }
-                            var blocksNFirst = []
-                            var trueLastBlock = ''
-                            var trueLender = ''
-
-                            for (let k = 0; k < this.registerDae.serviceSelectds.length; k++) {
-                                const element = this.registerDae.serviceSelectds[indexService-k];
-                                console.log(this.registerDae.serviceSelectds)
-                                if (element) {
-                                    blocksNFirst.push({block:element.blocks,lender:element.lender})
-                                }
-                            }
-                            if (this.registerDae.serviceSelectds[0].itFirst) {
-                                trueLastBlock = this.registerDae.serviceSelectds[0].blocks
-                                trueLender = this.registerDae.serviceSelectds[0].lender      
-                            }
-                            if (trueLastBlock == '') {
-                                trueLastBlock = res.data.blocks
-                            }
-                            if (trueLender == '') {
-                                trueLender = this.registerDae.serviceSelectds[indexService].lender
-                            }
-                            axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
-                                array: res.data.blocks,
-                                prevBlocks:trueLastBlock,
-                                blocksNFirst:blocksNFirst,
-                                time: this.registerDae.serviceSelectds[finalIndex].duration,
-                                lender: trueLender,
-                                lendersService: arrayLenders
-                            })
-                            .then(res => {
-                                this.registerDae.serviceSelectds[finalIndex].start = ''
-                                this.registerDae.serviceSelectds[finalIndex].end = ''
-                                this.registerDae.serviceSelectds[finalIndex].sort = ''
-                                this.readyChange = true
-                                this.registerDae.serviceSelectds[finalIndex].lender = 'Primera disponible'
-                                this.registerDae.serviceSelectds[finalIndex].valid = true
-                                this.registerDae.serviceSelectds[finalIndex].blocks = res.data
-                                for (let j = finalIndex + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                                    const element = this.registerDae.serviceSelectds[j];
-                                    element.start = ''
-                                    element.end = ''
-                                    element.sort = ''
-                                    element.blocks = []
-                                    element.valid = false
-                                    element.lender = 'Primera disponible'
-                                    element.itFirst = true
-                                }
-                            })
-                        })
+                        this.validHour = true
                     }
                 })
-                .catch(err => {
-                    console.log(err)
-                })
+                setTimeout(() => {
+                    $('#'+check).addClass('fa-check')
+                }, 500);
             }
             
         },
-        insertData(index, lender, restTime, Class, duration, check, lenders, servicesSelect){
-            var validIndex = true
-            for (let c = 0; c < this.blockCountArray.length; c++) {
-                const element = this.blockCountArray[c];
-                if (element.index == index) {
-                    validIndex = false
-                }
-            }
-            if (validIndex) {
-                this.blockCountArray.push({index:index})
-                this.blockCountValid++
-            }
-            if (index == 0) {
-                this.blockCountValid = 0
-                this.blockCountArray = []
-            }
-            
-            console.log(index)
+        insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg){
             if (lender == 'Primera disponible') {
-                var durationFirst = this.registerDae.design == 'si' ? duration + 15 : duration 
-                if (index > 0) {
-                    const finalIndex = index - 1
-                    var arrayLenders = []
-                    if (this.registerDae.serviceSelectds[finalIndex].itFirst) {
-                        for (let i = 0; i < this.registerDae.serviceSelectds[index].lenders.length; i++) {
-                            const element = this.registerDae.serviceSelectds[index].lenders[i];
-                            if (element.lender != 'Primera disponible') {
-                                arrayLenders.push(element)
-                            }
-                        }
-                        
-                        axios.post(endPoint.endpointTarget+'/citas/editBlocksFirst', {
-                            array: this.registerDae.serviceSelectds[finalIndex].blocks,
-                            time: durationFirst,
-                            lender: this.registerDae.serviceSelectds[finalIndex].lender,
-                            lendersService: arrayLenders
+                if (index == 0) {
+                    for (let i = 0; i < this.registerDae.serviceSelectds.length; i++) {
+                        const element = this.registerDae.serviceSelectds[i];
+                        element.start = ''
+                        element.end = ''
+                        element.sort = ''
+                        element.class = ''
+                        element.blocks = []
+                        element.blocksFirst = []
+                        element.valid = false
+                        element.employe = 'Primera disponible'
+                        element.realEmploye = 'Primera disponible'
+                        element.employeImg = ''
+                        element.employeId = ''
+                    }
+                    this.validHour = false
+                    setTimeout(() => {
+                        axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                            date: this.finalDate,
+                            branch: this.branch
+                        }, this.configHeader)
+                        .then(res => {
+                            this.getDay = res.data.day
+                            this.availableslenders = res.data.array
+                            axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                                date: this.finalDate,
+                                employes: res.data.array,
+                                timedate: this.registerDae.serviceSelectds[0].duration,
+                                employesServices: this.registerDae.serviceSelectds[0].employes,
+                                branch: this.branch
+                            }, this.configHeader)
+                            .then(res => {
+                                this.readyChange = true
+                                this.registerDae.serviceSelectds[0].valid = true
+                                this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                this.registerDae.block = res.data.data
+                                $('#block0').toggle('slow')
+                            })
+                        })
+                    }, 200);
+                }else{
+                    for (let i = index; i < this.registerDae.serviceSelectds.length; i++) {
+                        const element = this.registerDae.serviceSelectds[i];
+                        element.start = ''
+                        element.end = ''
+                        element.sort = ''
+                        element.class = ''
+                        element.blocks = []
+                        element.blocksFirst = []
+                        element.valid = false
+                        element.employe = 'Primera disponible'
+                        element.realEmploye = 'Primera disponible'
+                        element.employeImg = ''
+                        element.employeId = ''
+                    }
+                    this.validHour = false
+                    if (this.registerDae.serviceSelectds[index - 1].blocksFirst.length > 0) {
+                        console.log('blockFirst')
+                        console.log(this.registerDae.serviceSelectds[index - 1].blocksFirst)
+                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                            block: this.registerDae.serviceSelectds[index - 1].blocksFirst,
+                            timedate: this.registerDae.serviceSelectds[index].duration,
+                            employesServices: this.registerDae.serviceSelectds[index].employes,
+                            firstBlock: true
                         })
                         .then(res => {
-                            this.registerDae.serviceSelectds[index].start = ''
-                            this.registerDae.serviceSelectds[index].end = ''
-                            this.registerDae.serviceSelectds[index].sort = ''
-                            this.readyChange = true
-                            this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
-                            this.registerDae.serviceSelectds[index].blocks = res.data
-                            var none = true
-                            for (let n = 0; n < res.data.length; n++) {
-                                const element = res.data[n];
-                                if (element.validator) {
-                                    this.registerDae.serviceSelectds[index].valid = true
-                                    none = false
-                                    break
-                                }
-                            }
-                            if (none) {
-                                this.registerDae.serviceSelectds[index].valid = "none"
-                            }
-                            for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                                const element = this.registerDae.serviceSelectds[j];
-                                element.start = ''
-                                element.end = ''
-                                element.sort = ''
-                                element.blocks = []
-                                element.valid = false
-                                element.lender = 'Primera disponible'
-                                element.itFirst = true
-                            }
-                            this.load1 = false
-                            console.log("maldita sea" + this.load1)
+                            this.registerDae.serviceSelectds[index].valid = true
+                            this.registerDae.serviceSelectds[index].blocks = res.data.data
+                            this.registerDae.serviceSelectds[index].blocksFirst = []
                         })
                     }else{
-                        axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
-                            date: this.finalDate,
-                            lenders: this.availableslenders,
-                            time: durationFirst,
-                            lendersService: this.registerDae.serviceSelectds[index].lenders
+                        console.log('blockNormal')
+                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                            block: this.registerDae.serviceSelectds[index - 1].blocks,
+                            timedate: this.registerDae.serviceSelectds[index].duration,
+                            employesServices: this.registerDae.serviceSelectds[index].employes,
+                            firstBlock: true
                         })
                         .then(res => {
-                            for (let i = 0; i < this.registerDae.serviceSelectds[index].lenders.length; i++) {
-                                const element = this.registerDae.serviceSelectds[index].lenders[i];
-                                if (element.lender != 'Primera disponible') {
-                                    arrayLenders.push(element)
-                                }
-                            }
-                            axios.post(endPoint.endpointTarget+'/citas/editBlocksLenders', {
-                                array: res.data.blocks,
-                                prevBlocks:this.registerDae.serviceSelectds[finalIndex].blocks,
-                                time: durationFirst,
-                                lender: this.registerDae.serviceSelectds[finalIndex].lender,
-                                lendersService: arrayLenders,
-                                start:this.registerDae.serviceSelectds[finalIndex].start,
-                                end:this.registerDae.serviceSelectds[finalIndex].end
-                            })
-                            .then(res => {
-                                this.registerDae.serviceSelectds[index].start = ''
-                                this.registerDae.serviceSelectds[index].end = ''
-                                this.registerDae.serviceSelectds[index].sort = ''
-                                this.readyChange = true
-                                this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
-                                this.registerDae.serviceSelectds[index].valid = true
-                                this.registerDae.serviceSelectds[index].blocks = res.data
-                                for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                                    for (let c = 0; c < this.blockCountArray.length; c++) {
-                                        const element = this.blockCountArray[c];
-                                        if (element.index == j) {
-                                            this.blockCountArray.splice(c,1)
-                                            this.blockCountValid--
-                                        }
-                                    }
-                                    const element = this.registerDae.serviceSelectds[j];
-                                    element.start = ''
-                                    element.end = ''
-                                    element.sort = ''
-                                    element.blocks = []
-                                    element.valid = false
-                                    element.lender = 'Primera disponible'
-                                    element.itFirst = true
-                                }
-                                setTimeout(() => {
-                                    this.load1 = false
-                                }, 1000);
-                                
-                                console.log("maldita sea" + this.load1)
-                            })
+                            this.registerDae.serviceSelectds[index].valid = true
+                            this.registerDae.serviceSelectds[index].blocks = res.data.data
+                            this.registerDae.serviceSelectds[index].blocksFirst = []
                         })
                     }
-                }else{
-                    axios.post(endPoint.endpointTarget+'/citas/getBlocksFirst', {
-                        date: this.finalDate,
-                        lenders: this.availableslenders,
-                        time: durationFirst,
-                        lendersService: this.registerDae.serviceSelectds[index].lenders
-                    })
-                    .then(res => {
-                        this.registerDae.serviceSelectds[index].start = ''
-                        this.registerDae.serviceSelectds[index].end = ''
-                        this.registerDae.serviceSelectds[index].sort = ''
-                        this.readyChange = true
-                        this.registerDae.serviceSelectds[index].lender = 'Primera disponible'
-                        this.registerDae.serviceSelectds[index].valid = true
-                        this.registerDae.serviceSelectds[index].blocks = res.data.blocks
-                        this.registerDae.serviceSelectds[index].itFirst = false
-                        for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                            console.log("si lllegue aqui y entonce")
-                            const element = this.registerDae.serviceSelectds[j];
-                            element.start = ''
-                            element.end = ''
-                            element.sort = ''
-                            element.blocks = []
-                            element.valid = false
-                            element.lender = 'Primera disponible'
-                            element.realLender = ''
-                            element.itFirst = true
-                        }
-                        console.log("maldita sea" + this.load1)
-                        this.load1 = false
-                    })
                 }
             }else{
-                for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                    for (let c = 0; c < this.blockCountArray.length; c++) {
-                        const element = this.blockCountArray[c];
-                        if (element.index == j) {
-                            this.blockCountArray.splice(c,1)
-                            this.blockCountValid--
-                        }
+                console.log(this.registerDae.serviceSelectds[index].blocks)
+                for (const block of this.registerDae.serviceSelectds[index].blocks) {
+                    if (block.validator == 'select' && block.employes){
+                        block.validator = true
+                        block.employes.unshift({
+                            id: this.registerDae.serviceSelectds[index].employeId,
+                            name: this.registerDae.serviceSelectds[index].realEmploye,
+                            position: 1,
+                            class: this.registerDae.serviceSelectds[index].class,
+                            valid: true,
+                            img: this.registerDae.serviceSelectds[index].employeImg
+                        })
                     }
-                    const element = this.registerDae.serviceSelectds[j];
-                    element.start = ''
-                    element.end = ''
-                    element.sort = ''
-                    element.blocks = []
-                    element.valid = false
-                    element.lender = 'Primera disponible'
-                    element.realLender = ''
-                    element.itFirst = true
                 }
-                this.registerDae.serviceSelectds[index].start = ''
-                this.registerDae.serviceSelectds[index].end = ''
-                this.registerDae.serviceSelectds[index].lender = lender
-                this.registerDae.serviceSelectds[index].realLender = lender
-                this.registerDae.serviceSelectds[index].days = restTime
-                this.registerDae.serviceSelectds[index].class = Class
-                this.registerDae.serviceSelectds[index].itFirst = false
-                this.validHour = false
-                var durationDesign = this.registerDate.design == 'si' ? duration + 15 : duration 
-                this.validMultiLender(index, lender, duration, restTime, check)
-                console.log("maldita sea" + this.load1) 
-                this.load1 = false
+                if (this.registerDae.serviceSelectds[index].blocksFirst.length > 0) {
+                    console.log(this.registerDae.serviceSelectds[index].blocksFirst)
+                    for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                        const element = this.registerDae.serviceSelectds[j];
+                        element.start = ''
+                        element.end = ''
+                        element.sort = ''
+                        element.class = ''
+                        element.blocks = []
+                        element.blocksFirst = []
+                        element.valid = false
+                        element.employe = 'Primera disponible'
+                        element.employeId = ''
+                        element.realEmploye = 'Primera disponible'
+                        element.employeImg = ''
+                        element.itFirst = true
+                    }
+                    this.registerDae.serviceSelectds[index].start = ''
+                    this.registerDae.serviceSelectds[index].end = ''
+                    this.registerDae.serviceSelectds[index].employe = lender
+                    this.registerDae.serviceSelectds[index].employeId = lendeId
+                    this.registerDae.serviceSelectds[index].employeImg = lendeId
+                    this.registerDae.serviceSelectds[index].realEmploye = lender
+                    this.registerDae.serviceSelectds[index].days = restTime
+                    this.registerDae.serviceSelectds[index].class = Class
+                    this.registerDae.serviceSelectds[index].itFirst = false
+                    this.validHour = false
+                    
+                    axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                        block: this.registerDae.serviceSelectds[index].blocksFirst,
+                        timedate: this.registerDae.serviceSelectds[index].duration,
+                        employeSelect: lendeId,
+                        firstBlock: false
+                    }, this.configHeader)
+                    .then(res => {
+                        console.log(res)
+                        if (res.data.status == 'ok') {
+                            this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
+                            this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
+                            this.registerDae.serviceSelectds[index].itFirst = false
+                            setTimeout(() => {
+                                $('#block'+index).toggle('slow')
+                            }, 500);
+                            setTimeout(() => {
+                                $('#check'+index).addClass('fa-check')
+                            }, 500);
+                        }
+                    })
+                }else{
+                    for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                        const element = this.registerDae.serviceSelectds[j];
+                        element.start = ''
+                        element.end = ''
+                        element.sort = ''
+                        element.class = ''
+                        element.blocks = []
+                        element.blocksFirst = []
+                        element.valid = false
+                        element.employe = 'Primera disponible'
+                        element.employeId = ''
+                        element.realEmploye = 'Primera disponible'
+                        element.employeImg = ''
+                        element.itFirst = true
+                    }
+                    this.registerDae.serviceSelectds[index].start = ''
+                    this.registerDae.serviceSelectds[index].end = ''
+                    this.registerDae.serviceSelectds[index].employe = lender
+                    this.registerDae.serviceSelectds[index].employeId = lendeId
+                    this.registerDae.serviceSelectds[index].employeImg = lenderImg
+                    this.registerDae.serviceSelectds[index].realEmploye = lender
+                    this.registerDae.serviceSelectds[index].days = restTime
+                    this.registerDae.serviceSelectds[index].class = Class
+                    this.registerDae.serviceSelectds[index].itFirst = false
+                    this.validHour = false
+                    
+                    axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                        block: this.registerDae.serviceSelectds[index].blocks,
+                        timedate: this.registerDae.serviceSelectds[index].duration,
+                        employeSelect: lendeId,
+                        firstBlock: false
+                    }, this.configHeader)
+                    .then(res => {
+                        console.log(res)
+                        if (res.data.status == 'ok') {
+                            this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
+                            this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
+                            this.registerDae.serviceSelectds[index].itFirst = false
+                            setTimeout(() => {
+                                $('#block'+index).toggle('slow')
+                            }, 500);
+                            setTimeout(() => {
+                                $('#check'+index).addClass('fa-check')
+                            }, 500);
+                        }
+                    })
+                }
             }
-            console.log("maldita sea2" + this.load1)
-            this.load1 = false
         },
         openBlocks(open,indexService){
             $('#'+open).toggle('slow')
             
         },
         validateFirstStep() {
-            
-            if (this.registerDae.design != 'nada' && this.ifServices) {
+            window.scrollTo(0, 0);
+            var validService = false
+            if (this.ifMicro) {
+                for (const service of this.registerDae.serviceSelectds) {
+                    var validMicro = false
+                    for (const micro of service.microServices) {
+                        if (micro.checked) {
+                            validMicro = true
+                        }
+                    }
+                    if (validMicro) {
+                        validService = true
+                    }else{
+                        validService = false
+                        break
+                    }
+                }
+            }else{
+                validService = true
+            }
+            if (this.ifServices && validService) {
                 this.validWizard = true
-                if (this.registerDae.date != '') {
+                if ( this.registerDae.date != '') {
                     for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                         const element = this.registerDae.serviceSelectds[index];
-                            if (element.valid == false) {
-                                element.valid = true
-                                this.insertData(index, 'Primera disponible', '', '', element.duration, 'check'+index, element.lenders)
-                                break
-                            }
+                        if (element.valid == false) {
+                            element.valid = true
+                            this.insertData(index, 'Primera disponible', '', '', element.duration, 'check'+index, element.lenders)
+                            break
+                        }
                     }
                 }
                 if (this.registerDae.date != '') {
                     setTimeout(() => {
                         this.openCalendar()
                     }, 1000);
+                    
                 }
-                this.registerDae.valid = true
                 return this.ifServices
             }else{
-                this.registerDae.valid = false
+                this.$swal({
+                    icon: 'error',
+                    title: 'Debe elegir un servicio y si desea microservicio, en su defecto elegir ninguno.',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+                this.validWizard = false
                 return false
-            } 
+            }
         },
         validateLastStep() {
             
@@ -4230,7 +4284,39 @@
                             
                     }
                 })
-        }
+        },
+        SelectMicro(index, indexM, microServices) {
+            
+            if (this.registerDae.serviceSelectds[index].microServices[indexM].microService == 'Ninguno') {
+                this.registerDae.serviceSelectds[index].microServices.forEach(element => {
+                    if (element.checked && element.microService != 'Ninguno') {
+                        element.checked = false
+                        this.registerDae.serviceSelectds[index].duration = parseFloat(this.registerDae.serviceSelectds[index].duration) - parseFloat(element.duration)
+                        this.registerDae.serviceSelectds[index].price = this.registerDae.serviceSelectds[index].price - element.price
+                        this.totalPrice = this.totalPrice - microServices.price
+                    }
+                });
+                this.registerDae.serviceSelectds[index].microServices[0].checked = true
+            }else{
+                console.log("entre bien")
+                if (this.registerDae.serviceSelectds[index].microServices[indexM].checked) {
+                    this.registerDae.serviceSelectds[index].microServices[indexM].checked = false    
+                    this.registerDae.serviceSelectds[index].duration = parseFloat(this.registerDae.serviceSelectds[index].duration) - parseFloat(microServices.duration)
+                    this.registerDae.serviceSelectds[index].price = this.registerDae.serviceSelectds[index].price - microServices.price
+                    this.totalPrice = this.totalPrice - microServices.price
+                }else{
+                    console.log("entre bien de nuevo")
+                    console.log(this.totalPrice)
+                    this.registerDae.serviceSelectds[index].microServices[0].checked = false
+                    this.registerDae.serviceSelectds[index].microServices[indexM].checked = true
+                    this.registerDae.serviceSelectds[index].duration = parseFloat(this.registerDae.serviceSelectds[index].duration) + parseFloat(microServices.duration)
+                    this.registerDae.serviceSelectds[index].price = this.registerDae.serviceSelectds[index].price + microServices.price
+                    this.totalPrice = this.totalPrice + microServices.price
+                }
+            }
+            console.log(this.registerDae.serviceSelectds[index]) 
+            console.log(this.totalPrice)
+        },
     },
     computed: {
         ifSticky: () => {
