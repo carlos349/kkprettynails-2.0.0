@@ -82,6 +82,23 @@
                                   </span>
                                     
                                 </template>
+                                <template slot="typeProduct" slot-scope="record, column">
+                                    <a-dropdown>
+                                        <a-menu slot="overlay">
+                                            <template>
+                                                <a-menu-item  v-on:click="productTypeEdit('Materia prima', column._id)"> 
+                                                    <a-icon type="experiment" style="vertical-align: 1.5px;" />
+                                                    Materia prima
+                                                </a-menu-item>
+                                                <a-menu-item  v-on:click="productTypeEdit('Venta', column._id)"> 
+                                                    <a-icon type="shop" style="vertical-align: 1.5px;" />
+                                                    Venta
+                                                </a-menu-item>
+                                            </template>
+                                        </a-menu>
+                                        <a-button class="w-100" style="margin-left: 5px"> {{column.productType}} <a-icon style="vertical-align: 1.5px;" type="down" /> </a-button>
+                                    </a-dropdown>
+                                </template>
                                 <template slot="price" slot-scope="record">
                                     {{formatPrice(record)}}
                                 </template>
@@ -421,6 +438,12 @@ export default {
                 scopedSlots: { customRender: 'total' },
                 sorter: (a, b) => (a.quantity + a.entry - a.consume) - (b.quantity + b.entry - b.consume),
             },
+            {
+                title: 'Tipo de producto',
+                key: '_id',
+                width: 170,
+                scopedSlots: { customRender: 'typeProduct' }
+            }
         ],
         columnsHistory: [
             {
@@ -736,6 +759,31 @@ export default {
             })
         })
       },
+        productTypeEdit(type, id){
+            axios.put(endPoint.endpointTarget+'/stores/changetype/'+id,{
+                productType: type
+            }, this.configHeader)
+            .then( res => {
+                if (res.data.status == 'ok') {
+                    this.$swal({
+                        type: 'success',
+                        icon: 'success',
+                        title: 'Cambio exitoso',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getProducts()
+                }
+            }).catch(err => {
+                this.$swal({
+                    type: 'error',
+                    icon: 'error',
+                    title: 'Errores tecnicos, vuelve a intentarlo',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
+        }
     },
     mounted() {
         EventBus.$on('changeBranch', status => {
