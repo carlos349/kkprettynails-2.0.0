@@ -402,7 +402,7 @@
                         style="margin-top:-10px;"
                     />	
                     <base-button icon="fa fa-plus" @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" v-if="validForm == 3" class="mb-2" size="sm" type="success">Registrar provedor</base-button>
-                    <a-select class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione un provedor"   size="large">
+                    <a-select class="input-group-alternative w-100 mb-4 mt-2" v-if="validForm == 3" default-value="Seleccione un provedor"   size="large">
                         <a-select-option v-for="provider of providers" :key="provider" @click="selectProviderForProduct(provider)" :value="provider">
                             {{provider}}
                         </a-select-option>

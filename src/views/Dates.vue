@@ -256,36 +256,32 @@
                                             <center>
                                             <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
                                             </center>
-                                            <base-button slot="title" type="secondary" :class="'w-100 '+'text-center '+'mb-1 '+data.class" style="color:#1c2021;border:none">
+                                            <base-button slot="title" type="secondary" :class="'w-100 '+'text-center '+'mb-1'" style="color:#1c2021;border:none;background-color: rgb(213, 218, 221)">
                                                 <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.name}}</span> </badge><br>
                                                 <span class="mx-auto" style="font-size:1.2em;">{{data.realEmploye}}</span> <br>
                                                 <template v-if="ifMicro">
                                                     <span>
-                                                        Adicionales
-                                                        <span v-for="(micro, index) in data.microServices" :key="micro">
-                                                            <span v-if="index == 0">: </span>
-                                                            <span v-if="micro.checked && index != 0">, </span>
-                                                            <span v-if="micro.checked">{{micro.microService}}</span>
+                                                        Adicionales:
+                                                        <span v-for="micro in data.microServices" :key="micro">
+                                                            <badge v-if="micro.checked" type="secondary" class="text-default mr-1">{{micro.microService}}</badge>
                                                         </span>
                                                     </span>
                                                 </template>
+                                                <div class="row col-12 mx-auto">
+                                                    <center>
+                                                        <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class="mx-auto">Desde</span>
+                                                        <span style="color:#000;font-weight:600;font-size:1.8em;" class="mx-auto">
+                                                            {{data.start}}
+                                                        </span>
+                                                        <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class="mx-auto">Hasta</span>
+                                                        <span style="color:#000;font-weight:600;font-size:1.8em;" class="mx-auto">
+                                                            {{data.end}}
+                                                        </span>
+                                                    </center>
+                                                    
+                                                </div>
                                                 
                                             </base-button>
-                                            <div style="background-color:#f8fcfd;">
-                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:.9em;text-transform:none;">Desde las</span> 
-                                                </badge>
-                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.start}}</span> 
-                                                </badge>
-                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:.9em;text-transform:none;">Hasta las</span> 
-                                                </badge>
-                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.end}}</span> 
-                                                </badge>
-                                            </div>
-                                            
                                         </div>
                                     </div>
                                 </div>
@@ -294,9 +290,6 @@
                                 <center>
                                     <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
                                     Fecha: <strong>{{registerDae.date}}</strong>
-                                    </base-button><br>
-                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                        Diseño: <strong class="text-uppercase">{{registerDae.design}}</strong>
                                     </base-button><br>
                                     <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
                                         Hora de inicio: <strong v-if="registerDae.serviceSelectds[0]">{{registerDae.serviceSelectds[0].start}}</strong>
