@@ -314,7 +314,9 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 import EventBus from '../components/EventBus'
 // COMPONENTS
 
-  export default {
+import mixinUserToken from '../mixins/mixinUserToken'
+export default {
+    mixins: [mixinUserToken],
     components: {
         vueCustomScrollbar
     },
@@ -616,17 +618,6 @@ import EventBus from '../components/EventBus'
             }
         },    
       };
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-          this.$swal({ 
-              type: 'error',
-              title: 'URL restringida',
-              showConfirmButton: false,
-              timer: 1500
-          })
-            router.push({name: 'login'})
-		    }
     },
     created(){
       this.getBranch();

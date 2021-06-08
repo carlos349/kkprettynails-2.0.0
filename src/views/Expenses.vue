@@ -105,7 +105,9 @@ import jwtDecode from 'jwt-decode'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
+import mixinUserToken from '../mixins/mixinUserToken'
 export default {
+    mixins: [mixinUserToken],
     components: {
         VueBootstrap4Table,
         flatPicker
@@ -190,17 +192,6 @@ export default {
             },
             expenses:[]
         }
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-          this.$swal({ 
-              type: 'error',
-              title: 'URL restringida',
-              showConfirmButton: false,
-              timer: 1500
-          })
-            router.push({name: 'login'})
-		}
     },
     created(){
         this.getExpenses()

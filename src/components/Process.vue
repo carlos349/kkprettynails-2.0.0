@@ -1,172 +1,140 @@
 <template>
     <a-spin size="large" :spinning="spinning">
         <div class="row spin-content">
-            <div class="col-6 mb-3">
+            <div class="col-8 mb-3 separatorLeft">
+                <label for="Client">Cliente</label><br>
                 <a-select
                     show-search
-                    placeholder="Clientes"
+                    placeholder="Seleccione el cliente"
                     option-filter-prop="children"
-                    style="width: 100%"
+                    style="width: 40%"
                     :filter-option="filterOption"
                     :allowClear="true"
+                    class="mb-2 "
                     @change="chooseClient">
                     <a-select-option v-for="client of clients" :key="client._id" :value="client._id">
                         {{client.firstName}} / {{client.email}}
                     </a-select-option>
                 </a-select>
-            </div>
-            <div class="col-6 mb-3">
-                <!-- <div v-on:click="chooseLender"> 
-                    <vue-single-select
-                    v-model="lenderSelect"
-                    :options="lenderNames"
-                    placeholder="Prestadoras"
-                    ></vue-single-select> 
-                </div> -->
-                <a-select
-                    show-search
-                    placeholder="Prestadoras"
-                    option-filter-prop="children"
-                    style="width: 100%"
-                    :filter-option="filterOption"
-                    :allowClear="true"
-                    ref="lenderRef"
-                    @change="chooseLender">
-                    <a-select-option v-for="(lender, index) of registerService.lenders" :key="lender._id" :value="lender._id+'/'+index">
-                        {{lender.firstName}}
-                    </a-select-option>
-                </a-select>
-            </div>
-            <div class="col-12">
-                <table class="table" v-bind:style="{ 'background-color': '#172b4d', 'border-radius' : '10px', 'border':'none !important'}" >
-                    <thead>
-                        <tr>
-                            <th style="border-radius:15px !important;border:none">
-                                <input class="w-75 inputFilter" id="myInputProccess" v-on:keyup="myFunction()" type="text" placeholder="Filtre servicios">
-                            </th>
-                            <th style="color:white;border:none" class="text-center pb-2">
-                                Precio 
-                            </th>
-                        </tr>
-                    </thead>
-                </table>
-                <vue-custom-scrollbar ref="scroll" class="ps-container ListaProcesar p-2 ps ps--active-y">
-                    <table class="table tableBg" id="myTableProcess">
-                        <tr v-for="(service, index) in services" class="soy" v-bind:key="service._id">
-                            <td style="border:none;padding:5px;" v-if="service.active" class="font-weight-bold" >
-                                <base-button size="sm" :disabled="validator"  type="default" class="w-75" v-on:click="addService(service.name, service.price, service.commission, service.discount, service.products), countServices[index].count++">
-                                    <span class="float-left">{{service.name}}</span>
-                                    <badge class="badgeClass badgeServices float-right" style="font-size: .9em;color:#4b4b4b" type="secondary" :id="service._id">{{countServices[index].count}}</badge>
-                                </base-button>
-                                <base-button size="sm" type="default" v-on:click="removeService(service.name, index,service._id, service.price, service.discount)">
-                                    <font-awesome-icon icon="times"/>
-                                </base-button>
-                            </td>
-                            <td style="border:none" v-if="service.active" class="font-weight-bold text-center">
-                                {{formatPrice(service.price)}}
-                            </td>
-                        </tr>  
-                    </table>
-                </vue-custom-scrollbar>
-                <div class="row pt-3 shadowTop">
-                    <div class="col-sm-5">
-                        <div class="input-group">
-                            <a-tooltip placement="top">
-                                <template slot="title">
-                                <span>Sub Total</span>
-                                </template>
-                                <base-input alternative
-                                    type="text"
-                                    class="align"
-                                    placeholder=""
-                                    addon-left-icon="ni ni-money-coins"
-                                    v-model="price"
-                                    disabled
-                                ></base-input>
-                            </a-tooltip>
-                            
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="input-group">
-                            <a-tooltip v-if="validRoute('procesar', 'descuento')" placement="topLeft">
-                                <template slot="title">
-                                    <span>{{discountSelect}}</span>
-                                </template>
-                                <base-input  alternative
-                                    type="text"
-                                    class="align"
-                                    placeholder="0%"
-                                    addon-left-icon="ni ni-tag"
-                                    v-on:change="descuentoFunc(true)"
-                                    v-model="discount"
-                                ></base-input>
-                            </a-tooltip>
-                            
-                            <base-input v-else disabled 
-                                alternative
-                                title="Descuento deshabilitado"
-                                type="text"
-                                class="align"
-                                placeholder="Descuento"
-                                addon-left-icon="ni ni-tag"
-                                v-model="discount"
-                            ></base-input>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Adicional por diseño</span>
-                            </template>
-                            <currency-input
-                            
-                            v-model="design"
-                            placeholder="Diseño"
-                            locale="de"
-                            class="form-control"
-                            v-on:keyup="addDesign()"/>
-                        </a-tooltip>
-                        
-                    </div>
-                </div>
-                <div class="text-muted text-center mb-1" style="margin-top:-15px;">
-                    Medios de pago
-                </div>
-                <div class="row">
-                    <div v-for="(pays, index) in typesPay" :key="pays._id" class="col-6">
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>{{pays.type}}</span>
-                            </template>
-                            <div class="input-group mb-2">
-                                <div v-on:click="hundredPercent(index)" class="input-group-prepend text-center w-25 hundred">
-                                    <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
-                                        <a-icon type="credit-card" style="font-size:1em; color:#6BB2E5" />
-                                    </span>
-                                    
+                <div class="card-container">
+                    <a-tabs type="card">
+                        <a-tab-pane key="1">
+                            <span slot="tab">
+                                <a-icon type="plus-circle" style="vertical-align: 1.5px;" />
+                                Servicios
+                            </span>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="service">Servicio</label>
+                                    <a-select
+                                        show-search
+                                        placeholder="Seleccione el servicio"
+                                        option-filter-prop="children"
+                                        :filter-option="filterOption"
+                                        :allowClear="true"
+                                        class="mb-2 pt-1 w-100"
+                                        @change="chooseService">
+                                        <a-select-option v-for="service of services" :key="service._id" :value="service._id">
+                                            {{service.name}}
+                                        </a-select-option>
+                                    </a-select>
                                 </div>
-                                <currency-input
-                                    v-model="pays.total"
-                                    locale="de"
-                                    :placeholder="pays.type"
-                                    class="form-control"
-                                />
+                                <div class="col-md-6">
+                                    <label for="employe">Empleado</label>
+                                    <a-select
+                                        show-search
+                                        placeholder="Seleccione el empleado"
+                                        option-filter-prop="children"
+                                        :filter-option="filterOption"
+                                        :allowClear="true"
+                                        class="mb-2 pt-1 w-100"
+                                        @change="chooseEmploye">
+                                        <a-select-option v-for="employe of registerService.lenders" :key="employe._id" :value="employe._id">
+                                            {{employe.firstName}} {{employe.lastName}}
+                                        </a-select-option>
+                                    </a-select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="Client" class="mb-3">Precio</label>
+                                    <currency-input
+                                        v-on:change="validRegister(1)"
+                                        v-model="priceService"
+                                        locale="de"
+                                        class="form-control w-100 mb-3"
+                                        style="margin-top:-10px;"
+                                    />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="Client" style="margin-bottom:6px">Descuento</label>
+                                    <base-input alternative
+                                        type="number"
+                                        v-model="discountService"
+                                        placeholder="Descuento"
+                                        addon-right-icon="fa fa-percent"
+                                        @keyup="addDiscountFunc"
+                                        :disabled="discountServiceIf"
+                                        class="w-100">
+                                    </base-input>
+                                </div>
+                                <div class="col-md-6" style="margin-top:-10px;">
+                                    <label for="Client" class="w-50">Adicionales</label><br>
+                                    <a-select
+                                        show-search
+                                        placeholder="Seleccione un adicional"
+                                        option-filter-prop="children"
+                                        :filter-option="filterOption"
+                                        v-model="microSelect.name"
+                                        :allowClear="true"
+                                        class="mb-2 pt-1 w-50"
+                                        @change="chooseAditional">
+                                        <a-select-option v-for="micro of microservices" :key="micro.microService" :value="micro.microService+'/'+micro.price">
+                                            {{micro.microService}}
+                                        </a-select-option>
+                                    </a-select>
+                                    <currency-input
+                                        v-model="microSelect.price"
+                                        locale="de"
+                                        class="ant-input w-25 ml-1 mt-1"
+                                    />
+                                    <a-button @click="addAdditional" class="ml-3" type="primary" shape="round">
+                                        <a-icon type="plus" style="vertical-align: 1.5px;"/>
+                                    </a-button>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="Micros" style="margin-top:-20px;">Adicionales seleccionados</label><br>
+                                    <template v-if="microserviceSelecteds.length > 0">
+                                        <badge class="ml-2" v-for="micros of microserviceSelecteds" :key="micros.id" type="default">{{micros.name}}</badge>
+                                    </template>
+                                    <template v-else>
+                                        <badge type="default">Ninguno seleccionado</badge>
+                                    </template>
+                                </div>
                             </div>
-                        </a-tooltip>
-                    </div>
+                            <base-button class="float-right" size="sm" type="primary">agregar item</base-button>
+                        </a-tab-pane>
+                        <a-tab-pane key="2">
+                            <span slot="tab">
+                                <a-icon type="shopping" style="vertical-align: 1.5px;"/>
+                                Productos
+                            </span>
+                            <p>Content of Tab Pane 2</p>
+                            <p>Content of Tab Pane 2</p>
+                            <p>Content of Tab Pane 2</p>
+                        </a-tab-pane>
+                        <a-tab-pane key="3">
+                            <span slot="tab">
+                                <a-icon type="schedule" style="vertical-align: 1.5px;"/>
+                                Por procesar
+                            </span>
+                            <p>Content of Tab Pane 3</p>
+                            <p>Content of Tab Pane 3</p>
+                            <p>Content of Tab Pane 3</p>
+                        </a-tab-pane>
+                    </a-tabs>
                 </div>
-                <div class="row">
-                    <div class="col-6">
-                        <h1 class="pt-2">Total: {{total}}</h1>
-                    </div>
-                    <div class="col-6">
-                        <base-button size="lg" :disabled="validatorBtn" class="float-right w-75" type="success" v-on:click="processSale">
-                            Procesar
-                        </base-button>
-                    </div>
-                </div>
+            </div>
+            <div class="col-4">
+                <h3>Monto: 12.000</h3>
             </div>
             <modal :show.sync="modals.modal1"
                 :gradient="modals.type"
@@ -270,7 +238,7 @@
                 body-classes="p-0"
                 modal-classes="modal-dialog-centered modal-md">
                 <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
-            <card type="secondary" shadow
+                <card type="secondary" shadow
                     header-classes="bg-white pb-5"
                     body-classes="px-lg-5"
                     class="border-0">
@@ -449,7 +417,7 @@
                     </template>
                 </card>
             </modal>
-            <div v-if="validRoute('procesar', 'nuevo_cliente')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
+            <!-- <div v-if="validRoute('procesar', 'nuevo_cliente')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
                 <div class="row">
                     <div class="col-2 pt-1">
                         <font-awesome-icon v-if="ifEdit" class="icons" style="color:#172b4d;font-size:1em" icon="user-edit" />
@@ -510,7 +478,7 @@
                         <b style="font-size:14px;">Validar código</b>	
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </a-spin>
 </template>
@@ -549,6 +517,10 @@ export default {
                 icon: '',
                 type:''
             },
+            priceService: 0,
+            priceServiceReal: 0,
+            discountService: '',
+            discountServiceIf: false,
             typesPay: [],
             configHeader: {
                 headers: {
@@ -638,11 +610,6 @@ export default {
             price: 0,
             discount: '',
             design: 0,
-            payCash: 0,
-            payTransfer: 0,
-            payOthers: 0,
-            payDebit: 0,
-            payCredit: 0,
             payOrder:0,
             haveCode:false,
             subTotal: 0,
@@ -673,7 +640,16 @@ export default {
             editClientId: '',
             ifrecomend: false,
             branchName: '',
-            branch: ''
+            branch: '',
+            microservices: [],
+            microSelect: {
+                name: '',
+                price: 0
+            },
+            quantityMicro: 1,
+            microserviceSelecteds: [],
+            serviceSelecteds: [],
+            serviceData: null
         }
     },
     created(){
@@ -726,6 +702,7 @@ export default {
             this.getLenders()
             this.getServices()
             this.getTypesPay()
+            this.getMicroservices()
         },
         unSelected(value){
             for (let i = 0; i < this.registerService.lenderSelecteds.length; i++) {
@@ -971,10 +948,6 @@ export default {
                 const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
                 if (services.data.status == 'ok') {
                     this.services = services.data.data
-                    this.countServices = []
-                    for (let index = 0; index < this.services.length; index++) {
-                        this.countServices.push({count: 0})
-                    }
                 }
             }catch(err){
                 this.$swal({
@@ -1112,92 +1085,110 @@ export default {
             });
             this.typesPay[index].total = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
         },
-        chooseLender(value){
-            this.lenderSelect = {
-                id: this.registerService.lenders[value.split('/')[1]]._id,
-                name: this.registerService.lenders[value.split('/')[1]].firstName,
-                document: this.registerService.lenders[value.split('/')[1]].document
-            }
-            if (this.clientSelect != '' && this.lenderSelect != '') {
-                this.validator = false
-                this.validatorBtn = false
-            }
-            else{
-                this.validator = true
-                this.validatorBtn = true
+        addDiscountFunc(){
+            var discount = this.discountService < 10 ? '0'+this.discountService : this.discountService
+            if (this.discountService != '') { 
+                this.priceService = this.priceServiceReal - (this.priceServiceReal * parseFloat('0.'+discount))
+            }else{
+                this.priceService = this.priceServiceReal
             }
         },
-        chooseLenderByDataToDate(lender){
-            console.log(this.$refs.lenderRef.select)
-            for (let i = 0; i < this.registerService.lenders.length; i++) {
-                const element = this.registerService.lenders[i];
-                if (lender == element.nombre) {
-                    this.docLender = element._id
-                    this.nombreManicurista = element.nombre
-                    break
+        chooseAditional(value){
+            this.microSelect = {
+                name: value.split('/')[0],
+                price: value.split('/')[1]
+            }
+        },
+        addAdditional(){
+            this.priceService = this.priceService + this.microSelect.price
+            this.priceServiceReal = this.priceServiceReal + this.microSelect.price
+            this.microserviceSelecteds.push({id: new Date().getTime(), name: this.microSelect.name, price: this.microSelect.price})
+            this.microSelect.price = 0
+            this.microSelect.name = 'Seleccione'
+        },
+        async chooseEmploye(value){
+            try {
+                const getEmploye = await axios.get(`${endPoint.endpointTarget}/employes/justonebyid/${value}`, this.configHeader) 
+                console.log(getEmploye)
+            }catch(err) {
+                console.log(err)
+            }
+        },
+        async getMicroservices(){
+            try {
+                const getMicro = await axios.get(`${endPoint.endpointTarget}/configurations/getMicroservice/${this.branch}`, this.configHeader) 
+                this.microservices = getMicro.data.data
+                console.log(getMicro)
+            }catch(err) {
+                console.log(err)
+            }
+        },
+        async chooseService(value){
+            if (value) {
+                try {
+                    const getService = await axios.get(`${endPoint.endpointTarget}/services/getServiceInfo/${value}`, this.configHeader)
+                    console.log(getService)
+                    this.serviceData = getService.data.data
+                    this.priceService = getService.data.data.price
+                    this.priceServiceReal = getService.data.data.price
+                    this.discountServiceIf = getService.data.data.discount
+                }catch(err){
+                    console.log(err)
                 }
-            }
-            if (this.clientSelect != '' && this.lenderSelect != '') {
-                this.validator = false
-                this.validatorBtn = false
-            }
-            else{
-                this.validator = true
-                this.validatorBtn = true
+            }else{
+                this.serviceData = null
+                this.priceService = 0
+                this.priceServiceReal = 0
+                this.discountServiceIf = false
             }
         },
-        handleChange(value) {
-            console.log(`selected ${value}`);
-        },
-        chooseClient(value){
+        async chooseClient(value){
             this.discount = ''
             this.discountSelect = 'Descuento'
             this.ifrecomend = false
             console.log(value)
             this.clientSelect = value
             if (this.clientSelect) {
-                axios.get(endPoint.endpointTarget+'/clients/findOne/'+this.clientSelect, this.configHeader)
-                .then(res => {
-                    console.log(res)
+                try {
+                    const getClient = await axios.get(`${endPoint.endpointTarget}/clients/findOne/${value}`, this.configHeader)
                     this.newClient.text = "Editar cliente"
                     this.ifEdit = true
-                    this.editClientId = res.data.data._id
-                    this.registerClient.firstName = res.data.data.firstName
-                    this.registerClient.lastName = res.data.data.lastName
-                    this.registerClient.email = res.data.data.email
-                    this.registerClient.phone = res.data.data.phone.split(' ')[1]
-                    this.registerClient.instagram = res.data.data.instagram
+                    this.editClientId = getClient.data.data._id
+                    this.registerClient.firstName = getClient.data.data.firstName
+                    this.registerClient.lastName = getClient.data.data.lastName
+                    this.registerClient.email = getClient.data.data.email
+                    this.registerClient.phone = getClient.data.data.phone.formatNational
+                    this.registerClient.instagram = getClient.data.data.instagram
                     this.validRegister(2)
-                    if(res.data.data.birthday){
-                        var birthday = new Date(res.data.data.birthday).getMonth()
+                    if(getClient.data.data.birthday){
+                        var birthday = new Date(getClient.data.data.birthday).getMonth()
                         var monthNow = new Date().getMonth()
                         if (birthday == monthNow) {
                             this.discount = 10
                             this.discountSelect = 'Descuento por cumpleaños'
-                        }else if (res.data.data.recommendations > 0) {
+                        }else if (getClient.data.data.recommendations > 0) {
                             this.discount = 15
                             this.ifrecomend = true
                             this.discountSelect = 'Descuento por recomendacion'
-                        }else if (res.data.data.attends == 0) {
+                        }else if (getClient.data.data.attends == 0) {
                             this.discount = 10
                             this.discountSelect = 'Descuento por primera atención'
                         }
-                    }else if (res.data.data.recommendations > 0) {
+                    }else if (getClient.data.data.recommendations > 0) {
                         this.discount = 15
                         this.ifrecomend = true
                         this.discountSelect = 'Descuento por recomendacion'
-                    }else if (res.data.data.attends == 0) {
+                    }else if (getClient.data.data.attends == 0) {
                         this.discount = 10
                         this.discountSelect = 'Descuento por primera atención'
                     }
                     this.clientSelect = {
-                        name: res.data.data.firstName,
-                        email:res.data.data.email
+                        name: getClient.data.data.firstName,
+                        email:getClient.data.data.email
                     }
-                })
-                .catch(err => {
+                }catch(err){
                     console.log(err)
-                })
+                }
             }else{
                 this.newClient.text = "Nuevo cliente"
                 this.ifEdit = false
@@ -1668,6 +1659,40 @@ export default {
 	right:-37%;
 	z-index:2;
 }
- 
 
+.card-container > .ant-tabs-card > .ant-tabs-content {
+  margin-top: -16px;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
+  background: #fff;
+  padding: 16px;
+  padding-bottom: 40px;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-bar {
+  border-color: #fff !important;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
+  border-color: transparent !important;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab:hover {
+  color: #111111 !important;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
+  border-color: #fff !important;
+  background: #fff;
+  color: #111111 !important;
+  font-weight: 600 !important;
+}
+
+.separatorLeft{
+    border-right: 5px solid #fff;
+}
+.ant-select-selection{
+    border: 1px solid #d9d9d9;
+}
 </style>

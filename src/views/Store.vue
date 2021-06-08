@@ -706,7 +706,9 @@ import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
 // COMPONENTS
 
-  export default {
+import mixinUserToken from '../mixins/mixinUserToken'
+export default {
+    mixins: [mixinUserToken],
     components: {
         flatPicker,
         vueCustomScrollbar
@@ -1229,17 +1231,6 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
         idUser: '',
         dataHistory: ''     
       };
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-          this.$swal({ 
-              type: 'error',
-              title: 'URL restringida',
-              showConfirmButton: false,
-              timer: 1500
-          })
-            router.push({name: 'login'})
-		}
     },
     created(){
       this.getProducts();

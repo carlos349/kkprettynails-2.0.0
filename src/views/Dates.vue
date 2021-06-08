@@ -1197,50 +1197,27 @@
     </div>
 </template>
 <script>
-  // COMPONENTS
-    import VueCal from 'vue-cal'
-  import 'vue-cal/dist/vuecal.css'
-  import 'vue-cal/dist/i18n/es.js'
-  import VueBootstrap4Table from 'vue-bootstrap4-table'
-  import flatPicker from "vue-flatpickr-component";
-  import "flatpickr/dist/flatpickr.css";
-  import {Spanish} from 'flatpickr/dist/l10n/es.js';
-  import vueCustomScrollbar from 'vue-custom-scrollbar'
-  import EventBus from '../components/EventBus'
-  import io from 'socket.io-client';
-  import { Carousel, Slide } from 'vue-carousel';
-  //Back - End 
-  import jwtDecode from 'jwt-decode'
-  import axios from 'axios'
-  import endPoint from '../../config-endpoint/endpoint.js'
-  import router from '../router'
+// COMPONENTS
+import VueCal from 'vue-cal'
+import 'vue-cal/dist/vuecal.css'
+import 'vue-cal/dist/i18n/es.js'
+import VueBootstrap4Table from 'vue-bootstrap4-table'
+import flatPicker from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
+import {Spanish} from 'flatpickr/dist/l10n/es.js';
+import vueCustomScrollbar from 'vue-custom-scrollbar'
+import EventBus from '../components/EventBus'
+import io from 'socket.io-client';
+import { Carousel, Slide } from 'vue-carousel';
+//Back - End 
+import jwtDecode from 'jwt-decode'
+import axios from 'axios'
+import endPoint from '../../config-endpoint/endpoint.js'
+import router from '../router'
+import mixinUserToken from '../mixins/mixinUserToken'
 
-  class Event {
-    constructor (start, end, title, content) {
-      this.start = start
-      this.end = end
-      this.title = title
-      this.content = content
-    }
-  }
-
-  class Manicurista{
-  	constructor(nombre, documento, porcentaje, comision) {
-  		this.nombre = nombre;
-  		this.documento = documento;
-  		this.porcentaje = porcentaje;
-  		this.comision = comision;
-  	}
-  }
-
-  class Servicio{
-		constructor(nombre, precio) {
-			this.nombre = nombre;
-			this.precio = precio;
-		}
-    }
-    
-  export default {
+export default {
+    mixins: [mixinUserToken],
     components: {
         VueCal,
         VueBootstrap4Table,

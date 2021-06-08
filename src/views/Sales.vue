@@ -343,8 +343,9 @@ import VueMoment from 'vue-moment'
 var moment = require('moment'); // require
 const dateNew = new Date()
 
-
+import mixinUserToken from '../mixins/mixinUserToken'
 export default {
+    mixins: [mixinUserToken],
     components: {
         flatPicker,
         VueBootstrap4Table
@@ -471,17 +472,6 @@ export default {
             branch: '',
             branchName: ''
         }
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-            this.$swal({ 
-                type: 'error',
-                title: 'URL restringida',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            router.push({name: 'login'})
-		}
     },
     created(){
         this.getToken()

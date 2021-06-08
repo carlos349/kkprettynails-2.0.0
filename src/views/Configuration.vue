@@ -477,19 +477,21 @@
 </template>
 <script>
     
-    import axios from 'axios'
-    import router from '../router'
-    import endPoint from '../../config-endpoint/endpoint.js'
-    import VueBootstrap4Table from 'vue-bootstrap4-table'
-    import vueCustomScrollbar from 'vue-custom-scrollbar'
-    import jwtDecode from 'jwt-decode'
-    import EventBus from '../components/EventBus'
-    import * as moment from 'moment';
-    import 'moment/locale/es';
-    import VuePhoneNumberInput from 'vue-phone-number-input';
-    import 'vue-phone-number-input/dist/vue-phone-number-input.css';
-    moment.locale('es');
+  import axios from 'axios'
+  import router from '../router'
+  import endPoint from '../../config-endpoint/endpoint.js'
+  import VueBootstrap4Table from 'vue-bootstrap4-table'
+  import vueCustomScrollbar from 'vue-custom-scrollbar'
+  import jwtDecode from 'jwt-decode'
+  import EventBus from '../components/EventBus'
+  import * as moment from 'moment';
+  import 'moment/locale/es';
+  import VuePhoneNumberInput from 'vue-phone-number-input';
+  import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+  moment.locale('es');
+  import mixinUserToken from '../mixins/mixinUserToken'
     export default {
+      mixins: [mixinUserToken],
       components: {
           VueBootstrap4Table,
           vueCustomScrollbar,
@@ -792,17 +794,6 @@
               '22:30',
               '23:00'
           ],
-        }
-      },
-      beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-        this.$swal({ 
-          type: 'error',
-          title: 'URL restringida',
-          showConfirmButton: false,
-          timer: 1500
-        })
-          router.push({name: 'login'})
         }
       },
       created(){

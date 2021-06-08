@@ -15,7 +15,15 @@
                         <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Categorías
                     </base-button>
+                    <base-button class="float-right mt-7 mr-0" size="sm" v-else @click="modals.modal5 = true" type="primary" disabled>
+                        <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Categorías
+                    </base-button>
                     <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()" type="success">
+                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Nuevo
+                    </base-button>
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-else @click="modals.modal1 = true, clean()" type="success" disabled>
                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Nuevo
                     </base-button>
@@ -530,7 +538,10 @@ import jwtDecode from 'jwt-decode'
 // COMPONENTS
 import Modal from '@/components/Modal'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
+import mixinUserToken from '../mixins/mixinUserToken'
+
 export default {
+    mixins: [mixinUserToken],
     components: {
         VueBootstrap4Table,
         Modal,
@@ -757,17 +768,6 @@ export default {
             searchedColumn: '',
             status: 0
         }
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-            this.$swal({ 
-                type: 'error',
-                title: 'URL restringida',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            router.push({name: 'login'})
-		}
     },
     created(){
         this.getToken()

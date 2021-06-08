@@ -415,7 +415,10 @@ import EventBus from '../components/EventBus'
 import * as moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
+//mixin
+import mixinUserToken from '../mixins/mixinUserToken'
 export default {
+    mixins: [mixinUserToken],
     components: {
         VuePhoneNumberInput
     },
@@ -607,17 +610,6 @@ export default {
                 }
             ],
         }
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-            this.$swal({ 
-                type: 'error',
-                title: 'URL restringida',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            router.push({name: 'login'})
-		}
     },
     created(){
         this.getToken()

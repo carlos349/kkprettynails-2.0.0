@@ -236,7 +236,9 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 import flatPicker from "vue-flatpickr-component";
 import io from 'socket.io-client';
 import "flatpickr/dist/flatpickr.css";
+import mixinUserToken from '../mixins/mixinUserToken'
 export default {
+    mixins: [mixinUserToken],
     components: {
         VueBootstrap4Table,
         vueCustomScrollbar,
@@ -448,17 +450,6 @@ export default {
                 table: "table-bordered table-striped"
             },
         }
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-          this.$swal({ 
-              type: 'error',
-              title: 'URL restringida',
-              showConfirmButton: false,
-              timer: 1500
-          })
-            router.push({name: 'login'})
-		}
     },
     created(){
         this.getData()
