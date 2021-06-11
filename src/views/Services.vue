@@ -917,10 +917,10 @@ export default {
                 this.itemsBox[this.itemIndex].check = true
                 this.itemsBox[this.itemIndex].count = this.countModal
                 if (this.typeItemModal == 1) {
-                    this.itemSelected.push({id:this.rowsItems[this.itemIndex]._id,count:this.itemsBox[this.itemIndex].count})
+                    this.itemSelected.push({id:this.rowsItems[this.itemIndex]._id,count:this.itemsBox[this.itemIndex].count, name:this.rowsItems[this.itemIndex].product})
                 }
                 if (this.typeItemModal == 2) {
-                    this.EdititemSelected.push({id:this.rowsItems[this.itemIndex]._id,count:this.itemsBox[this.itemIndex].count})
+                    this.EdititemSelected.push({id:this.rowsItems[this.itemIndex]._id,count:this.itemsBox[this.itemIndex].count, name:this.rowsItems[this.itemIndex].product})
                 }
                 this.$swal({
                     icon: 'success',

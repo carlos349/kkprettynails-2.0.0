@@ -100,7 +100,7 @@
                                             <div class="row">
                                                 <template v-for="(name, index) of services" >
                                                     <div class="col-lg-12 mt-2" v-if="name.category == category.name && name.active == true" :key="name">
-                                                        <base-button  class="w-100 px-1" v-on:click="plusService(index, name.name, name.duration, name.commission, name.price, name.employes, name.discount)"  type="default">
+                                                        <base-button  class="w-100 px-1" v-on:click="plusService(index, name.name, name.duration, name.commission, name.price, name.employes, name.discount, name.products)"  type="default">
                                                             <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
                                                                 <i class="fas fa-user-check m-0"></i>{{name.employes.length}}
                                                                 <i class="far fa-clock ml-1"></i> {{name.duration}}Min
@@ -1248,27 +1248,6 @@
     </div>
 </template>
 <script>
-<<<<<<< HEAD
-  // COMPONENTS
-    import VueCal from 'vue-cal'
-  import 'vue-cal/dist/vuecal.css'
-  import 'vue-cal/dist/i18n/es.js'
-  import VueBootstrap4Table from 'vue-bootstrap4-table'
-  import flatPicker from "vue-flatpickr-component";
-  import "flatpickr/dist/flatpickr.css";
-  import {Spanish} from 'flatpickr/dist/l10n/es.js';
-  import vueCustomScrollbar from 'vue-custom-scrollbar'
-  import EventBus from '../components/EventBus'
-  import io from 'socket.io-client';
-  import { Carousel, Slide } from 'vue-carousel';
-  import VuePhoneNumberInput from 'vue-phone-number-input';
-  import 'vue-phone-number-input/dist/vue-phone-number-input.css';
-  //Back - End 
-  import jwtDecode from 'jwt-decode'
-  import axios from 'axios'
-  import endPoint from '../../config-endpoint/endpoint.js'
-  import router from '../router'
-=======
 // COMPONENTS
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
@@ -1289,7 +1268,6 @@ import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import router from '../router'
 import mixinUserToken from '../mixins/mixinUserToken'
->>>>>>> 3c208940393e90d1ae768c566643235bed7041df
 
 export default {
     mixins: [mixinUserToken],
@@ -1949,7 +1927,7 @@ export default {
             $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
             $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
         }, 
-        plusService(index, service, duration, commission, price, employes, discount){
+        plusService(index, service, duration, commission, price, employes, discount, products){
             this.ifServices = true
             this.countServices[index].count++
             this.registerDae.duration = this.registerDae.duration + parseFloat(duration)
@@ -1962,9 +1940,9 @@ export default {
                 for (const micro of this.microServices) {
                     microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                 }
-                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: []})
+                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: [], products: products})
             }else{
-                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service})
+                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, products: products})
             }
             this.validHour = false  
             this.totalPrice = parseFloat(this.totalPrice) + parseFloat(price)
