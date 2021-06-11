@@ -1248,7 +1248,6 @@
     </div>
 </template>
 <script>
-<<<<<<< HEAD
   // COMPONENTS
     import VueCal from 'vue-cal'
   import 'vue-cal/dist/vuecal.css'
@@ -1268,26 +1267,6 @@
   import axios from 'axios'
   import endPoint from '../../config-endpoint/endpoint.js'
   import router from '../router'
-=======
-// COMPONENTS
-import VueCal from 'vue-cal'
-import 'vue-cal/dist/vuecal.css'
-import 'vue-cal/dist/i18n/es.js'
-import VueBootstrap4Table from 'vue-bootstrap4-table'
-import flatPicker from "vue-flatpickr-component";
-import "flatpickr/dist/flatpickr.css";
-import {Spanish} from 'flatpickr/dist/l10n/es.js';
-import vueCustomScrollbar from 'vue-custom-scrollbar'
-import EventBus from '../components/EventBus'
-import io from 'socket.io-client';
-import { Carousel, Slide } from 'vue-carousel';
-//Back - End 
-import jwtDecode from 'jwt-decode'
-import axios from 'axios'
-import endPoint from '../../config-endpoint/endpoint.js'
-import router from '../router'
-import mixinUserToken from '../mixins/mixinUserToken'
->>>>>>> 55c07b1209862bdfda546f86c9d431c4ed179135
 
 export default {
     mixins: [mixinUserToken],
