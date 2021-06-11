@@ -39,10 +39,12 @@ import 'vue-progress-path/dist/vue-progress-path.css'
 import VueProgress from 'vue-progress-path'
 import VueCarousel from 'vue-carousel';
 import Antd from 'ant-design-vue';
+import formatPrice from '@/plugins/formatPrice';
 import 'ant-design-vue/dist/antd.css';
 import * as moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
+import formatDate from '@/plugins/formatDate';
 import vuescroll from 'vuescroll';
 import VuePhoneNumberInput from 'vue-phone-number-input';
 
@@ -71,6 +73,8 @@ Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)
 Vue.use(Popper)
+Vue.use(formatDate)
+Vue.use(formatPrice)
 Vue.use(CKEditor);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueFormWizard)

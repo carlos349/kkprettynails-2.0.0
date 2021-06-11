@@ -4637,11 +4637,6 @@ export default {
     .ps__thumb-y{
         height: 44px !important;
     }
-    .spin-content {
-        border: 1px solid #91d5ff;
-        background-color: #e6f7ff;
-        padding: 30px;
-    }
     .historicalClientTable .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
         padding: 6px !important;
     }

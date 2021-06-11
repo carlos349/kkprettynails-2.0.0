@@ -1,16 +1,16 @@
 <template>
     <a-spin size="large" :spinning="spinning">
         <div class="row spin-content">
-            <div class="col-8 mb-3 separatorLeft">
+            <div class="col-md-8 mb-3 separatorLeft">
                 <label for="Client">Cliente</label><br>
                 <a-select
                     show-search
                     placeholder="Seleccione el cliente"
                     option-filter-prop="children"
-                    style="width: 40%"
                     :filter-option="filterOption"
                     :allowClear="true"
                     class="mb-2 "
+                    :class="screenWidth"
                     @change="chooseClient">
                     <a-select-option v-for="client of clients" :key="client._id" :value="client._id">
                         {{client.firstName}} / {{client.email}}
@@ -48,36 +48,30 @@
                                         :filter-option="filterOption"
                                         :allowClear="true"
                                         class="mb-2 pt-1 w-100"
-                                        @change="chooseEmploye">
+                                        @change="chooseEmploye"
+                                        ref="employeSelect">
                                         <a-select-option v-for="employe of registerService.lenders" :key="employe._id" :value="employe._id">
                                             {{employe.firstName}} {{employe.lastName}}
                                         </a-select-option>
                                     </a-select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="Client" class="mb-3">Precio</label>
+                                    <label for="Client" style="margin-bottom:12px">Precio</label>
                                     <currency-input
-                                        v-on:change="validRegister(1)"
-                                        v-model="priceService"
+                                        v-model="itemData.price"
                                         locale="de"
-                                        class="form-control w-100 mb-3"
+                                        class="ant-input w-100 mb-3"
                                         style="margin-top:-10px;"
                                     />
                                 </div>
                                 <div class="col-md-6">
                                     <label for="Client" style="margin-bottom:6px">Descuento</label>
-                                    <base-input alternative
-                                        type="number"
-                                        v-model="discountService"
-                                        placeholder="Descuento"
-                                        addon-right-icon="fa fa-percent"
-                                        @keyup="addDiscountFunc"
-                                        :disabled="discountServiceIf"
-                                        class="w-100">
-                                    </base-input>
+                                    <a-input @keyup="addDiscountFunc" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
+                                        <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                                    </a-input>
                                 </div>
-                                <div class="col-md-6" style="margin-top:-10px;">
-                                    <label for="Client" class="w-50">Adicionales</label><br>
+                                <div class="col-md-6" style="margin-top: -5px;">
+                                    <label :class="marginAdditional" for="Client" class="w-50">Adicionales</label><br>
                                     <a-select
                                         show-search
                                         placeholder="Seleccione un adicional"
@@ -85,7 +79,8 @@
                                         :filter-option="filterOption"
                                         v-model="microSelect.name"
                                         :allowClear="true"
-                                        class="mb-2 pt-1 w-50"
+                                        :class="screenWidthInput"
+                                        class="mt-1"
                                         @change="chooseAditional">
                                         <a-select-option v-for="micro of microservices" :key="micro.microService" :value="micro.microService+'/'+micro.price">
                                             {{micro.microService}}
@@ -94,47 +89,196 @@
                                     <currency-input
                                         v-model="microSelect.price"
                                         locale="de"
-                                        class="ant-input w-25 ml-1 mt-1"
+                                        :class="screenWidth"
+                                        class="ant-input ml-1 mt-1"
                                     />
-                                    <a-button @click="addAdditional" class="ml-3" type="primary" shape="round">
+                                    <a-button :disabled="microValid" @click="addAdditional" class="ml-3 mt-1" type="primary" shape="round">
                                         <a-icon type="plus" style="vertical-align: 1.5px;"/>
                                     </a-button>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6" style="margin-top: -5px;">
                                     <label for="Micros" style="margin-top:-20px;">Adicionales seleccionados</label><br>
                                     <template v-if="microserviceSelecteds.length > 0">
-                                        <badge class="ml-2" v-for="micros of microserviceSelecteds" :key="micros.id" type="default">{{micros.name}}</badge>
+                                        <template v-for="(micros, index) in microserviceSelecteds" @click="removeMicro(index)">
+                                            <badge :key="micros.id" class="ml-2 mt-2" type="primary" >{{micros.name}}</badge>
+                                        </template>
                                     </template>
                                     <template v-else>
-                                        <badge type="default">Ninguno seleccionado</badge>
+                                        <badge type="default" class="mt-2">Ninguno seleccionado</badge>
                                     </template>
                                 </div>
                             </div>
-                            <base-button class="float-right" size="sm" type="primary">agregar item</base-button>
+                            <base-button @click="addItem('service')" class="float-right mt-1" size="sm" type="primary">Agregar item</base-button>
                         </a-tab-pane>
                         <a-tab-pane key="2">
                             <span slot="tab">
                                 <a-icon type="shopping" style="vertical-align: 1.5px;"/>
                                 Productos
                             </span>
-                            <p>Content of Tab Pane 2</p>
-                            <p>Content of Tab Pane 2</p>
-                            <p>Content of Tab Pane 2</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="service" style="margin-bottom:3px">Producto</label>
+                                    <a-select
+                                        show-search
+                                        placeholder="Seleccione el producto"
+                                        option-filter-prop="children"
+                                        :filter-option="filterOption"
+                                        :allowClear="true"
+                                        class="mb-2 pt-1 w-100"
+                                        @change="chooseProduct"
+                                        ref="serviceSelect">
+                                        <a-select-option v-for="product of products" :key="product._id" :value="product._id">
+                                            {{product.product}}
+                                        </a-select-option>
+                                    </a-select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="Client" style="margin-bottom:12px">Precio</label>
+                                    <currency-input
+                                        v-model="itemData.price"
+                                        locale="de"
+                                        class="ant-input w-100 mb-3"
+                                        style="margin-top:-10px;"
+                                    />
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="Client" style="margin-bottom:6px">Descuento</label>
+                                    <a-input @keyup="addDiscountFunc" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
+                                        <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                                    </a-input>
+                                </div>
+                            </div>
+                            <base-button @click="addItem('product')" class="float-right mt-1" size="sm" type="primary">Agregar item</base-button>
                         </a-tab-pane>
                         <a-tab-pane key="3">
                             <span slot="tab">
                                 <a-icon type="schedule" style="vertical-align: 1.5px;"/>
-                                Por procesar
+                                Citas finalizadas
                             </span>
-                            <p>Content of Tab Pane 3</p>
-                            <p>Content of Tab Pane 3</p>
-                            <p>Content of Tab Pane 3</p>
+                            <a-config-provider>
+                                <template #renderEmpty>
+                                    <div style="text-align: center">
+                                        <a-icon type="warning" style="font-size: 20px" />
+                                        <h2>No ha ingresado items</h2>
+                                    </div>
+                                </template>
+                                <!-- :scroll="getScreen" -->
+                                <a-table :columns="columnDates" :loading="progress" :data-source="datesFinally" :scroll="getScreen" >
+                                    <template slot="date-slot" slot-scope="record, column">
+                                        {{column.createdAt | formatDate}}
+                                    </template>
+                                    <template slot="service-slot" slot-scope="record, column">
+                                        {{column.service.name}}
+                                    </template>
+                                    <template slot="employe-slot" slot-scope="record, column">
+                                        {{column.employe.name}}
+                                    </template>
+                                    <template slot="total-slot" slot-scope="record, column">
+                                        {{column.total | formatPrice}}
+                                    </template>
+                                    <template slot="actionInsert" slot-scope="record, column, index">
+                                        <base-button @click="addItem('date', index)" size="sm" type="success">
+                                            <a-icon type="plus-circle" style="vertical-align:1.5px;" />
+                                        </base-button>
+                                    </template>
+                                </a-table>
+                            </a-config-provider>
                         </a-tab-pane>
                     </a-tabs>
                 </div>
+                <a-config-provider>
+                    <template #renderEmpty>
+                        <div style="text-align: center">
+                            <a-icon type="warning" style="font-size: 20px" />
+                            <h2>No ha ingresado items</h2>
+                        </div>
+                    </template>
+                    <!-- :scroll="getScreen" -->
+                    <a-table :columns="columns" :loading="progress" :data-source="serviceSelecteds" :scroll="getScreen" >
+                        <template slot="price-slot" slot-scope="record, column">
+                            <currency-input
+                                v-model="column.price"
+                                locale="de"
+                                class="ant-input w-100"
+                            />
+                        </template>
+                        <template slot="item-slot" slot-scope="record, column">
+                            {{column.item.name}}
+                        </template>
+                        <template slot="discount-slot" slot-scope="record, column, index">
+                            <a-input :disabled="column.ifDiscount" v-on:keyup="addDiscountTable(record, index)" v-model="column.discount">
+                                <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                            </a-input>
+                        </template>
+                        <template slot="additional-slot" slot-scope="record, column">
+                            {{formatPrice(column.additionalTotal)}}
+                        </template>
+                        <template slot="total-slot" slot-scope="record, column">
+                            {{formatPrice(column.total)}}
+                        </template>
+                        <template slot="actionRemove" slot-scope="record, column, index">
+                            <base-button @click="removeItem(index)" size="sm" type="danger">
+                                <a-icon type="minus-circle" style="vertical-align:1.5px;" />
+                            </base-button>
+                        </template>
+                        <template slot="expandedRowRender" slot-scope="record">
+                            <p>{{ record.description }}</p> 
+                        </template>
+                    </a-table>
+                </a-config-provider>
             </div>
-            <div class="col-4">
-                <h3>Monto: 12.000</h3>
+            <div class="col-md-4">
+                <h3>Métodos de pago</h3>
+                <div class="row">
+                    <template v-if="typesPay.length > 0">
+                        <div class="col-md-6 mt-2" v-for="(pay, index) in typesPay" :key="pay.type">
+                            <a-button :disabled="serviceSelecteds.length > 0 ? false : true" @click="selectPay(index)" class="w-100" type="primary" :ghost="pay.click">
+                                <a-icon class="ml-2" type="plus-square" style="vertical-align: 1.5px;" />
+                                {{pay.type}}
+                            </a-button>
+                        </div>
+                    </template>
+                </div>
+                <label for="type" class="mt-2"><b>Tipo</b></label>
+                <a-input class="w-100 mb-2" placeholder="Método de pago" :disabled="serviceSelecteds.length > 0 ? false : true" v-model="payment.type">
+                    <a-icon slot="preffix" type="credit-card" style="vertical-align: 1.5px;" />
+                </a-input>
+                <label for="type"><b>Total</b></label>
+                <currency-input
+                    :disabled="serviceSelecteds.length > 0 ? false : true"
+                    v-model="payment.total"
+                    locale="de"
+                    class="ant-input w-100 mb-3"
+                />
+                <a-button @click="addPayment()" :disabled="serviceSelecteds.length > 0 ? false : true" type="primary" class="float-right w-50">
+                    Agregar pago
+                </a-button>
+                <hr class="mt-5 mb-2">
+                <a-config-provider>
+                    <template #renderEmpty>
+                        <div style="text-align: center">
+                            <a-icon type="warning" style="font-size: 20px" />
+                            <h2>no ha ingresado métodos de pago</h2>
+                        </div>
+                    </template>
+                    <a-list bordered :data-source="paysSelecteds">
+                        <a-list-item slot="renderItem" slot-scope="item, index">
+                            Método: {{ item.type }} 
+                            <span class="ml-4">Total: {{item.total | formatPrice}}</span>
+                            <a-button style="margin-top:-6px;" @click="removePay(index)" type="danger" class="float-right">
+                                <a-icon type="close-circle" style="vertical-align: 1.5px;"/>
+                            </a-button>
+                        </a-list-item>
+                    </a-list>
+                </a-config-provider>
+                <hr class="mt-2 mb-2">
+                <h3>Pagado: {{totalPay | formatPrice}}</h3>
+                <h3>Total: {{totalSale | formatPrice}}</h3>
+                <p><b>Por pagar: </b>{{showPerPay(perPay) | formatPrice}} | <b>Vuelto: {{restPay | formatPrice}}</b></p>
+                <a-button style="margin-top:-6px;" type="primary" class="float-right">
+                    <a-icon type="shopping" style="vertical-align: 1.5px;"/>
+                    Procesar
+                </a-button>
             </div>
             <modal :show.sync="modals.modal1"
                 :gradient="modals.type"
@@ -522,6 +666,10 @@ export default {
             discountService: '',
             discountServiceIf: false,
             typesPay: [],
+            payment: {
+                type: '',
+                total: 0
+            },
             configHeader: {
                 headers: {
                     "x-database-connect": endPoint.database, 
@@ -574,6 +722,94 @@ export default {
                 // },
                 sort: true,
             }],
+            progress: false,
+            columnDates: [
+                {
+                    title: 'Fecha',
+                    dataIndex: 'createdAT',
+                    key: 'createdAT',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'date-slot' }
+                },
+                {
+                    title: 'Servicio',
+                    dataIndex: 'service',
+                    key: 'service',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'service-slot' }
+                },
+                {
+                    title: 'Empleado',
+                    dataIndex: 'employe',
+                    key: 'employe',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'employe-slot' }
+                },
+                {
+                    title: 'Total',
+                    dataIndex: 'total',
+                    key: 'total',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'total-slot' }
+                },
+                {
+                    title: '',
+                    dataIndex: '_id',
+                    key: '_id',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'actionInsert' }
+                },
+            ],
+            columns: [
+                {
+                    title: 'Item',
+                    dataIndex: 'item',
+                    key: 'item',
+                    width: '25%',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'item-slot' }
+                },
+                {
+                    title: 'Precio',
+                    dataIndex: 'price',
+                    key: 'price',
+                    width: '20%',
+                    ellipsis: false,
+                    scopedSlots: { customRender: 'price-slot' }
+                },
+                {
+                    title: 'Descuento',
+                    dataIndex: 'discount',
+                    key: 'discount',
+                    width: '15%',
+                    ellipsis: false,
+                    scopedSlots: { customRender: 'discount-slot' }
+                },
+                {
+                    title: 'Adicional',
+                    dataIndex: 'additionalTotal',
+                    key: 'additionalTotal',
+                    width: '15%',
+                    ellipsis: false,
+                    scopedSlots: { customRender: 'additional-slot' }
+                },
+                {
+                    title: 'Total',
+                    dataIndex: 'total',
+                    key: 'total',
+                    width: '15%',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'total-slot' }
+                },
+                {
+                    title: '',
+                    dataIndex: 'id',
+                    key: 'id',
+                    width: '10%',
+                    ellipsis: false,
+                    scopedSlots: { customRender: 'actionRemove' }
+                }
+            ],
             configLender: {
                 checkbox_rows: true,
                 rows_selectable : true,
@@ -649,7 +885,27 @@ export default {
             quantityMicro: 1,
             microserviceSelecteds: [],
             serviceSelecteds: [],
-            serviceData: null
+            datesFinally: [],
+            itemData: {
+                item: {},
+                price: 0,
+                realPrice: 0,
+                discountServiceIf: false,
+                discountService: '',
+                employe: {
+                    id: '',
+                    name: '',
+                    document: ''
+                },
+                commission: 0
+            },
+            totalSale: 0,
+            products: [],
+            perPay: 0,
+            restPay: 0,
+            totalPay: 0,
+            paysSelecteds: [],
+            microValid: true
         }
     },
     created(){
@@ -677,11 +933,11 @@ export default {
                 const pays = await axios.get(endPoint.endpointTarget+'/configurations/'+this.branch, this.configHeader)
                 if (pays.data.status == 'ok') {
                     
-                    for (let i = 0; i < pays.data.data.typesPay.length; i++) {
-                        const element = pays.data.data.typesPay[i];
+                    for (const element of pays.data.data.typesPay) {
                         this.typesPay.push({
                             type: element,
-                            total: 0
+                            total: 0,
+                            click: true
                         })
                     }
                 }
@@ -703,6 +959,19 @@ export default {
             this.getServices()
             this.getTypesPay()
             this.getMicroservices()
+            this.getProducts()
+            this.getFinallyDates()
+        },
+        async getFinallyDates(){
+            try {
+                const datesFinally = await axios.get(endPoint.endpointTarget+'/dates/getEndingDates/'+this.branch, this.configHeader)
+                if (datesFinally.data.status == 'ok') {
+                    this.datesFinally = datesFinally.data.data
+                } 
+                console.log(datesFinally)
+            }catch(err){
+                console.log(err)
+            }
         },
         unSelected(value){
             for (let i = 0; i < this.registerService.lenderSelecteds.length; i++) {
@@ -959,125 +1228,173 @@ export default {
 				router.push({name: 'login'})
             }
         },
-        addService(name, price, commission, discount, items){
-            console.log(name, price, commission, discount, items)
-            const descuento = parseFloat(this.discount) / 100
-			const porcentaje = 1 - parseFloat(descuento)
-            const priceTotal = parseFloat(this.subTotal) + parseFloat(price)
-            const totalWithoutFormat = parseFloat(this.totalSinFormato) + parseFloat(price)
-			this.price = this.formatPrice(priceTotal)
-			this.subTotal = priceTotal
-			console.log(this.price)
-			
-			if(this.discount == '' || discount == true){
-                this.total = this.formatPrice(totalWithoutFormat)
-                this.totalSinFormato = totalWithoutFormat
-            }
-            else{
-                const priceConDescuento = parseFloat(price) * parseFloat(porcentaje)
-                const totalConDescuento = parseFloat(this.totalSinFormato) + parseFloat(priceConDescuento) 
-                this.total =  this.formatPrice(totalConDescuento)
-                this.totalSinFormato = totalConDescuento
-			}
-			const servicios = {'service': name, 'commission': commission, 'price': price, 'discount': discount, 'products': items}
-			this.serviciosSelecionados.push(servicios)
-        },
-        removeService(name, index, _id, price, descuento){
-            for (var i = 0; i < this.serviciosSelecionados.length; i++) {
-				if (this.serviciosSelecionados[i].service == name ) {
-					this.serviciosSelecionados.splice(i, 1)
-					break
-				}
-            }
-			if (this.countServices[index].count != 0) {
-                this.countServices[index].count--
-				const subTotal = parseFloat(this.subTotal) - parseFloat(price) 
-				this.price = this.formatPrice(subTotal)
-                this.subTotal = subTotal
-                if (descuento == true || this.discount == '') {
-                    this.totalSinFormato = this.totalSinFormato - price
-                    this.total = this.formatPrice(this.totalSinFormato)
+        async getProducts(){
+            try {
+                const product = await axios.get(endPoint.endpointTarget+'/stores/getproductsales/'+this.branch, this.configHeader)
+                if (product.data.status == 'ok') {
+                    this.products = product.data.data
+                    console.log(this.products)
                 }
-                else{
-                    const descuento = parseFloat(this.discount) / 100
-                    const porcentaje = 1 - parseFloat(descuento)
-                    const priceConDescuento = price * porcentaje
-                    this.totalSinFormato = this.totalSinFormato - priceConDescuento
-                    this.total = this.formatPrice(this.totalSinFormato)
+            }catch(err){
+                this.$swal({
+					icon: 'error',
+					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+					showConfirmButton: false,
+					timer: 2500
+				})
+				router.push({name: 'login'})
+            }
+        },
+        addItem(type, index){
+            var dateItem = 'none'
+            if (type == 'date') {
+                for (const micro of this.datesFinally[index].microServices) {
+                    this.microserviceSelecteds.push({id: new Date().getTime(), name: micro.name, price: micro.price})
                 }
-			}
-        },
-        addDesign(){
-            if (this.design.length == 0) {
-                this.totalSinFormato = parseFloat(this.totalSinFormato) - parseFloat(this.resto)
-                this.total = "$" + this.formatPrice(this.totalSinFormato)
-                this.resto = 0
+                this.itemData.item = this.datesFinally[index].service
+                this.itemData.tag = 'service'
+                this.itemData.employe = this.datesFinally[index].employe
+                this.itemData.realPrice = this.datesFinally[index].total
+                this.itemData.price = this.datesFinally[index].total
+                this.itemData.commission = this.datesFinally[index].service.commission
+                this.itemData.discountServiceIf = this.datesFinally[index].service.discount
+                this.itemData.discountService = this.datesFinally[index].discount
+                dateItem = this.datesFinally[index]
+                this.datesFinally.splice(index, 1)
             }
-            else{
-                this.totalSinFormato = parseFloat(this.totalSinFormato) - parseFloat(this.resto)
-                this.totalSinFormato = parseFloat(this.totalSinFormato) + parseFloat(this.design)
-                this.total = this.formatPrice(this.totalSinFormato)
-                this.resto = this.design
+            var total = 0
+            var additionals = ''
+            for (const micro of this.microserviceSelecteds) {
+                total = total + parseFloat(micro.price)
+                additionals = additionals == '' ? micro.name : additionals + ', '+micro.name 
             }
-        },
-        descuentoFunc(deletee){
-            if (this.discount > 0) {
-                this.totalSinFormato = this.design
-                this.total = this.design
-                for (let index = 0; index < this.serviciosSelecionados.length; index++) {
-                    if (!this.serviciosSelecionados[index].descuento) {
-                            const descuento = parseFloat(this.discount) / 100
-                            const porcentaje = 1 - parseFloat(descuento)
-                            const precioConDescuento = parseFloat(this.serviciosSelecionados[index].precio) * parseFloat(porcentaje)  
-                            const totalConDescuento = parseFloat(this.totalSinFormato) + parseFloat(precioConDescuento)
-                            this.total = this.formatPrice(totalConDescuento)
-                            this.totalSinFormato = totalConDescuento 
+            var description = this.itemData.tag == 'service' ? `Servicio: ${this.itemData.item.name} | Empleado: ${this.itemData.employe.name} | Adicionales: ${additionals}` : `1 ${this.itemData.item.measure}`
+            if (this.itemData.item.name && this.itemData.realPrice > 0 && this.itemData.price > 0 && this.itemData.tag != '') {
+                var valid = false
+                if (this.itemData.tag == 'service') {
+                    valid = this.itemData.employe.name != '' ? true : false
+                }else{
+                    valid = true
+                }
+                if (valid) {
+                    this.serviceSelecteds.push({
+                        item: this.itemData.item,
+                        price: this.itemData.realPrice,
+                        discount: this.itemData.discountService == '' ? 0 : this.itemData.discountService,
+                        additionalTotal: total,
+                        additionals: this.microserviceSelecteds,
+                        ifDiscount: this.itemData.discountServiceIf,
+                        total: this.itemData.price + total,
+                        commission: this.itemData.commission,
+                        productsService: this.itemData.item.products ? this.itemData.item.products : 'none',
+                        tag: this.itemData.tag,
+                        employe: this.itemData.tag == 'service' ? this.itemData.employe : 'none',
+                        description: description,
+                        datesItem: dateItem
+                    })
+                    this.itemData = {
+                        item: {},
+                        price: 0,
+                        realPrice: 0,
+                        discountServiceIf: false,
+                        discountService: '',
+                        employe: {
+                            id: '',
+                            name: '',
+                            document: ''
+                        },
+                        commission: 0,
+                        tag: ''
                     }
-                    else{ 
-                        this.total = this.formatPrice(parseFloat(this.totalSinFormato) + parseFloat(this.serviciosSelecionados[index].precio))
-                        this.totalSinFormato = parseFloat(this.totalSinFormato) + parseFloat(this.serviciosSelecionados[index].precio)
-                    }
+                    this.calculatedTotal()
+                    this.microserviceSelecteds = []
+                    console.log(this.serviceSelecteds)
+                    $('.ant-select-selection__clear').click()
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Debe llenar todos los campos',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             }else{
-
-                this.total = this.formatPrice(this.subTotal + this.design)
-                this.totalSinFormato = this.subTotal + this.design
+                this.$swal({
+                    icon: 'error',
+                    title: 'Debe llenar todos los campos',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }
-			
         },
-        formatClass(value){
-			if (value) {
-				const split = value.split(' ')
-				if (split[1]) {
-					return split[0]+split[1]
-				}else{
-					return split[0]
-				}
-				
-			}
+        calculatedTotal(){
+            var total = 0
+            for (const items of this.serviceSelecteds) {
+                total = total + items.total
+            }
+            this.totalSale = total
+            this.perPay = this.totalSale - this.totalPay
+            this.restPay = this.perPay < 0 ? Math.abs(this.perPay) : 0
+        },
+        removeItem(key){
+            if (this.serviceSelecteds[key].datesItem != 'none') {
+                this.datesFinally.push(this.serviceSelecteds[key].datesItem)
+            }
+            this.serviceSelecteds.splice(key, 1)
+            this.calculatedTotal()
+            if (this.serviceSelecteds.length == 0) {
+                this.paysSelecteds = []
+                this.perPay = 0
+                this.totalPay = 0
+                this.restPay = 0
+            }
+        },
+        showPerPay(value){
+            return value < 0 ? 0 : value
+        },
+        selectPay(key){
+            for (const pay of this.typesPay) {
+                pay.click = true
+            }
+            this.typesPay[key].click = false
+            this.payment.type = this.typesPay[key].type
+            this.payment.total = this.perPay
+        },
+        addPayment(){
+            for (const pay of this.typesPay) {
+                pay.click = true
+            }
+            var valid = true
+            for (const pay of this.paysSelecteds) {
+                if (pay.type == this.payment.type) {
+                    pay.total = pay.total + this.payment.total
+                    valid = false
+                    break
+                }
+            }
+            if (valid) {
+                this.paysSelecteds.push({
+                    type: this.payment.type,
+                    total: this.payment.total
+                })
+            }
+            var total = 0
+            for (const pay of this.paysSelecteds) {
+                total = total + pay.total
+            }
+            this.totalPay = total
+            this.calculatedTotal()
+            this.payment.type = ''
+            this.payment.total = 0
+        },
+        removePay(key){
+            this.totalPay = this.totalPay - this.paysSelecteds[key].total
+            this.paysSelecteds.splice(key, 1)
+            this.calculatedTotal()
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-        },
-        myFunction() {
-            console.log("hola")
-			var input, filter, table, tr, td, i, txtValue;
-			input = document.getElementById("myInputProccess");
-			filter = input.value.toUpperCase();
-			table = document.getElementById("myTableProcess");
-			tr = table.getElementsByTagName("tr");
-			for (i = 0; i < tr.length; i++) {
-			td = tr[i].getElementsByTagName("td")[0];
-			if (td) {
-				txtValue = td.textContent || td.innerText;
-				if (txtValue.toUpperCase().indexOf(filter) > -1) {
-				tr[i].style.display = "";
-				} else {
-				tr[i].style.display = "none";
-				}
-			}
-			}
         },
         hundredPercent(index){
             this.typesPay.forEach(element => {
@@ -1086,32 +1403,59 @@ export default {
             this.typesPay[index].total = parseFloat(this.totalSinFormato) - parseFloat(this.payOrder)
         },
         addDiscountFunc(){
-            var discount = this.discountService < 10 ? '0'+this.discountService : this.discountService
-            if (this.discountService != '') { 
-                this.priceService = this.priceServiceReal - (this.priceServiceReal * parseFloat('0.'+discount))
+            var discount = this.itemData.discountService < 10 ? '0'+this.itemData.discountService : this.itemData.discountService
+            if (this.itemData.discountService != '') {
+                console.log(this.itemData.realPrice +' '+(this.itemData.price * parseFloat('0.'+discount)))
+                this.itemData.price = this.itemData.realPrice - (this.itemData.realPrice * parseFloat('0.'+discount))
             }else{
-                this.priceService = this.priceServiceReal
+                this.itemData.price = this.itemData.realPrice
             }
         },
+        addDiscountTable(record, key){
+            var discount = record < 10 ? '0'+record : record
+            if (this.serviceSelecteds[key].discount > 0) {
+                this.serviceSelecteds[key].total = this.serviceSelecteds[key].price - (this.serviceSelecteds[key].price * parseFloat('0.'+discount)) + this.serviceSelecteds[key].additionalTotal
+            }else{
+                this.serviceSelecteds[key].total = this.serviceSelecteds[key].price + this.serviceSelecteds[key].additionalTotal
+            }
+            this.calculatedTotal()
+        },
         chooseAditional(value){
-            this.microSelect = {
-                name: value.split('/')[0],
-                price: value.split('/')[1]
+            if (value) {
+                this.microSelect = {
+                    name: value.split('/')[0],
+                    price: parseFloat(value.split('/')[1])
+                }  
+                this.microValid = false
+            }else{
+                this.microValid = true
             }
         },
         addAdditional(){
-            this.priceService = this.priceService + this.microSelect.price
-            this.priceServiceReal = this.priceServiceReal + this.microSelect.price
+            this.microValid = true
             this.microserviceSelecteds.push({id: new Date().getTime(), name: this.microSelect.name, price: this.microSelect.price})
             this.microSelect.price = 0
             this.microSelect.name = 'Seleccione'
         },
+        removeMicro(index){
+            this.itemData.price = this.itemData.price - this.microserviceSelecteds[index].price
+            this.itemData.realPrice = this.itemData.realPrice - this.microserviceSelecteds[index].price
+            this.microserviceSelecteds.splice(index, 1)
+        },
         async chooseEmploye(value){
-            try {
-                const getEmploye = await axios.get(`${endPoint.endpointTarget}/employes/justonebyid/${value}`, this.configHeader) 
-                console.log(getEmploye)
-            }catch(err) {
-                console.log(err)
+            if (value) {
+                try {
+                    const getEmploye = await axios.get(`${endPoint.endpointTarget}/employes/justonebyid/${value}`, this.configHeader)
+                    this.itemData.employe.id = getEmploye.data.data._id
+                    this.itemData.employe.name = getEmploye.data.data.firstName+' '+getEmploye.data.data.lastName
+                    this.itemData.employe.document = getEmploye.data.data.document
+                }catch(err) {
+                    console.log(err)
+                }
+            }else{
+                this.itemData.employe.id = ''
+                this.itemData.employe.name = ''
+                this.itemData.employe.document = ''
             }
         },
         async getMicroservices(){
@@ -1123,23 +1467,54 @@ export default {
                 console.log(err)
             }
         },
+        async chooseProduct(value){
+            if (value) {
+                try {
+                    const product = await axios.get(`${endPoint.endpointTarget}/stores/getinventorybyid/${value}`, this.configHeader)
+                    product.data.data.name =  product.data.data.product
+                    this.itemData.item = product.data.data
+                    this.itemData.price = product.data.data.price
+                    this.itemData.realPrice = product.data.data.price
+                    this.itemData.discountServiceIf = false
+                    this.itemData.commission = 0
+                    this.itemData.tag = 'product'
+                }catch(err){
+                    console.log(err)
+                }
+            }else{
+                this.itemData.item = {}
+                this.itemData.price = 0
+                this.itemData.realPrice = 0
+                this.itemData.commission = 0
+                this.itemData.discountServiceIf = false
+                this.itemData.discountService = ''
+                this.microserviceSelecteds = []
+                this.itemData.tag = ''
+            }
+        },
         async chooseService(value){
             if (value) {
                 try {
                     const getService = await axios.get(`${endPoint.endpointTarget}/services/getServiceInfo/${value}`, this.configHeader)
                     console.log(getService)
-                    this.serviceData = getService.data.data
-                    this.priceService = getService.data.data.price
-                    this.priceServiceReal = getService.data.data.price
-                    this.discountServiceIf = getService.data.data.discount
+                    this.itemData.item = getService.data.data
+                    this.itemData.price = getService.data.data.price
+                    this.itemData.realPrice = getService.data.data.price
+                    this.itemData.discountServiceIf = getService.data.data.discount
+                    this.itemData.commission = getService.data.data.commission
+                    this.itemData.tag = 'service'
                 }catch(err){
                     console.log(err)
                 }
             }else{
-                this.serviceData = null
-                this.priceService = 0
-                this.priceServiceReal = 0
-                this.discountServiceIf = false
+                this.itemData.item = {}
+                this.itemData.price = 0
+                this.itemData.realPrice = 0
+                this.itemData.commission = 0
+                this.itemData.discountServiceIf = false
+                this.itemData.discountService = ''
+                this.microserviceSelecteds = []
+                this.itemData.tag = ''
             }
         },
         async chooseClient(value){
@@ -1499,6 +1874,20 @@ export default {
                 })
         }
     },
+    computed: {
+        getScreen: () => {
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : {}
+        },
+        screenWidth: () => {
+            return screen.width < 780 ? "w-100" : "w-25"
+        },
+        screenWidthInput: () => {
+            return screen.width < 780 ? "w-100" : "w-50"
+        },
+        marginAdditional: () => {
+            return screen.width < 780 ? "mt-3" : "mt-0"
+        }
+    },
     mounted (){
         EventBus.$on('reloadServices', status => {
             this.getServices()
@@ -1666,7 +2055,7 @@ export default {
 
 .card-container > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
   background: #fff;
-  padding: 16px;
+  padding: 3px;
   padding-bottom: 40px;
 }
 

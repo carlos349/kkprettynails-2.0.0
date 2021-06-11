@@ -1795,7 +1795,6 @@
                 }else{
                     return true
                 }
-                
             },
             openCalendar(){ 
                 // this.configDate.inline = false

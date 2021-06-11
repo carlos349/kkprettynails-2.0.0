@@ -1,7 +1,7 @@
 <template>
     <div>
         <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
-                     style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
+            style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
@@ -11,7 +11,7 @@
                         <p class="mb-0 display-2 text-white">Empleados</p>
                         <p class="text-white">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
                     </div>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('empleados', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">
+                    <base-button class="float-right mt-7" size="sm" v-if="validRoute('empleados', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">
                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Registrar
                     </base-button>
@@ -102,91 +102,87 @@
             </div>
         </modal>
         <!-- TABLA DE CLIENTES -->
-        <template>
-            <div class="p-2">
-                <a-config-provider>
-                    <template #renderEmpty>
-                        <div style="text-align: center">
-                            <a-icon type="warning" style="font-size: 20px" />
-                            <h2>Selecciona un filtro en la parte superior</h2>
-                        </div>
-                    </template>
-                    <a-table :columns="columns" :loading="employeState" :data-source="employes" :scroll="getScreen">
-                        <div
-                        slot="filterDropdown"
-                        slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                        style="padding: 8px"
-                        >
-                        <a-input
-                            v-ant-ref="c => (searchInput = c)"
-                            :placeholder="`Buscar por ${column.title.toLowerCase()}`"
-                            :value="selectedKeys[0]"
-                            style="width: 188px; margin-bottom: 8px; display: block;"
-                            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                            @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                        />
-                        <a-button
-                            type="primary"
-                            icon="search"
-                            size="small"
-                            style="width: 90px; margin-right: 8px"
-                            @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                        >
-                            Buscar
-                        </a-button>
-                        <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
-                            Restablecer
-                        </a-button>
-                        </div>
-                        <a-icon
-                            slot="filterIcon"
-                            slot-scope="filtered"
-                            type="search"
-                            :style="{ color: filtered ? '#108ee9' : undefined }"
-                        />
-                        <template slot="total" slot-scope="record,column">
-                            {{formatPrice((parseFloat(column.commission) + parseFloat(column.bonus)) - parseFloat(column.advancement))}}
-                        </template>
-                        <template slot="bonus" slot-scope="record">
-                            {{formatPrice(record)}}
-                        </template>
-                        <template slot="advancement" slot-scope="record">
-                            {{formatPrice(record)}}
-                        </template>
-                        <template slot="commission" slot-scope="record">
-                            {{formatPrice(record)}}
-                        </template>
-                        <template slot="name" slot-scope="record, column">
-                            <b>
-                                <a-tooltip placement="top">
-                                    <template slot="title">
-                                    <span>Detalles</span>
-                                    </template>
-                                    <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch)" icon="ni ni-bullet-list-67"></base-button>
-                                    <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
-                                </a-tooltip>
-                                
-                                <a-tooltip placement="top">
-                                    <template slot="title">
-                                    <span>Reporte</span>
-                                    </template>
-                                    <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
-                                    <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
-                                </a-tooltip>
-                                
-                                <a-tooltip placement="top">
-                                    <template slot="title">
-                                    <span>Eliminar</span>
-                                    </template>
-                                    <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="warning" icon="fas fa-trash"></base-button>
-                                    <base-button v-else size="sm" disabled type="warning" icon="fas fa-trash"></base-button>
-                                </a-tooltip>
-                            </b>
-                        </template>
-                    </a-table>
-                </a-config-provider>    
-            </div>
-        </template>
+        <a-config-provider>
+            <template #renderEmpty>
+                <div style="text-align: center">
+                    <a-icon type="warning" style="font-size: 20px" />
+                    <h2>Selecciona un filtro en la parte superior</h2>
+                </div>
+            </template>
+            <a-table :columns="columns" :loading="employeState" :data-source="employes" :scroll="getScreen">
+                <div
+                slot="filterDropdown"
+                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                style="padding: 8px"
+                >
+                <a-input
+                    v-ant-ref="c => (searchInput = c)"
+                    :placeholder="`Buscar por ${column.title.toLowerCase()}`"
+                    :value="selectedKeys[0]"
+                    style="width: 188px; margin-bottom: 8px; display: block;"
+                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                />
+                <a-button
+                    type="primary"
+                    icon="search"
+                    size="small"
+                    style="width: 90px; margin-right: 8px"
+                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                >
+                    Buscar
+                </a-button>
+                <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                    Restablecer
+                </a-button>
+                </div>
+                <a-icon
+                    slot="filterIcon"
+                    slot-scope="filtered"
+                    type="search"
+                    :style="{ color: filtered ? '#108ee9' : undefined }"
+                />
+                <template slot="total" slot-scope="record,column">
+                    {{formatPrice((parseFloat(column.commission) + parseFloat(column.bonus)) - parseFloat(column.advancement))}}
+                </template>
+                <template slot="bonus" slot-scope="record">
+                    {{formatPrice(record)}}
+                </template>
+                <template slot="advancement" slot-scope="record">
+                    {{formatPrice(record)}}
+                </template>
+                <template slot="commission" slot-scope="record">
+                    {{formatPrice(record)}}
+                </template>
+                <template slot="name" slot-scope="record, column">
+                    <b>
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Detalles</span>
+                            </template>
+                            <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch)" icon="ni ni-bullet-list-67"></base-button>
+                            <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
+                        </a-tooltip>
+                        
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Reporte</span>
+                            </template>
+                            <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
+                            <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
+                        </a-tooltip>
+                        
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                            <span>Eliminar</span>
+                            </template>
+                            <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="warning" icon="fas fa-trash"></base-button>
+                            <base-button v-else size="sm" disabled type="warning" icon="fas fa-trash"></base-button>
+                        </a-tooltip>
+                    </b>
+                </template>
+            </a-table>
+        </a-config-provider>    
     </div>
 </template>
 <script>
@@ -616,7 +612,8 @@ export default {
                         firstName: this.registerEmploye.firstName,
                         document: this.registerEmploye.document,
                         days: this.selectedDays,
-                        lastName: this.registerEmploye.lastName
+                        lastName: this.registerEmploye.lastName,
+                        branch: this.branch
                     }, this.configHeader)
                     .then(res => {
                         if(res.data.status == "employe edited"){

@@ -1058,13 +1058,3 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
     }
   }
 </script>
-<style>
-.ant-select-selection{
-    border: none !important;
-    border-radius: 8px;
-    outline: none;
-}
-.ant-select-selection:focus{
-    outline: none;
-}
-</style>
