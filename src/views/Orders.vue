@@ -251,7 +251,9 @@ import 'moment/locale/es';
 moment.locale('es');
 // COMPONENTS
 
-  export default {
+import mixinUserToken from '../mixins/mixinUserToken'
+export default {
+    mixins: [mixinUserToken],
     components: {
         VueBootstrap4Table 
     },
@@ -513,17 +515,6 @@ moment.locale('es');
             table: "table-bordered table-striped"
         }     
       };
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-            this.$swal({ 
-                type: 'error',
-                title: 'URL restringida',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            router.push({name: 'login'})
-		}
     },
     created(){
 		this.getOrders();

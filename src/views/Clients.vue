@@ -415,7 +415,9 @@ moment.locale('es');
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
-  export default {
+import mixinUserToken from '../mixins/mixinUserToken'
+export default {
+    mixins: [mixinUserToken],
     components: {
         VueBootstrap4Table,
         flatPicker,
@@ -581,17 +583,6 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
             }
                                      ],  
       };
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-            this.$swal({ 
-                type: 'error',
-                title: 'URL restringida',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            router.push({name: 'login'})
-		}
     },
     created(){
 		this.getClients();

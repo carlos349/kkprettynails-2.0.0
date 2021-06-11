@@ -444,7 +444,10 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 import * as moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
-  export default {
+import mixinUserToken from '../mixins/mixinUserToken'
+
+export default {
+    mixins: [mixinUserToken],
     components: {
         VueBootstrap4Table,
         vueCustomScrollbar
@@ -849,17 +852,6 @@ moment.locale('es');
         profileSelect: '',
         routesSelect: []
       };
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-          this.$swal({ 
-              icon: 'error',
-              title: 'URL restringida',
-              showConfirmButton: false,
-              timer: 1500
-          })
-            router.push({name: 'login'})
-		}
     },
     created(){
 		this.getUsers();
@@ -1535,7 +1527,7 @@ moment.locale('es');
             return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 'auto' }
         }
     }
-  };
+};
 </script>
 <style lang="scss">
     .card-header{

@@ -200,7 +200,9 @@ import jwtDecode from 'jwt-decode'
 
 // COMPONENTS
 
-  export default {
+import mixinUserToken from '../mixins/mixinUserToken'
+export default {
+    mixins: [mixinUserToken],
     components: {
         VueBootstrap4Table 
     },
@@ -393,17 +395,6 @@ import jwtDecode from 'jwt-decode'
         hourFinally: 'Hasta',
         editHourIndex: 0
       };
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-          this.$swal({ 
-              type: 'error',
-              title: 'URL restringida',
-              showConfirmButton: false,
-              timer: 1500
-          })
-            router.push({name: 'login'})
-		}
     },
     created(){
         this.getToken()

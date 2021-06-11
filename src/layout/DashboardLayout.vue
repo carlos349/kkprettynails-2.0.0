@@ -30,24 +30,16 @@
         <content-footer v-if="!$route.meta.hideFooter"></content-footer>
       </div>
     </div>
-     <modal :show.sync="modals.modal1"
-              body-classes="p-0"
-              modal-classes="modal-dialog-centered modal-lg">
-              <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-          <card type="secondary" shadow
-                header-classes="bg-white "
-                body-classes=""
-                class="border-0">
-              <template>
-                  <div style="margin-top:-10% !important" class="text-muted text-center mb-3">
-                      <h1>KKPrettyNails</h1> 
-                  </div>
-              </template>
-              <template>
-                  <procesar></procesar>
-              </template>
-          </card>
-      </modal>
+    <a-modal v-model="modals.modal1" class="modal-lg px-0" size="lg" :footer="null" :closable="true" >
+      <card type="secondary" shadow
+          header-classes="bg-white "
+          body-classes=""
+          class="border-0">
+        <template>
+            <procesar></procesar>
+        </template>
+      </card>
+    </a-modal>
   </div>
 </template>
 <script>
@@ -140,5 +132,12 @@
   }
   form .text-default{
     font-size: .5em;
+  }
+  .ant-modal{
+    width: 80% !important;
+  }
+  .ant-modal-body{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
   }
 </style>

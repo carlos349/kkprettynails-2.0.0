@@ -255,7 +255,9 @@ import endPoint from '../../config-endpoint/endpoint.js'
 // import EventBus from './EventBus'
 import axios from 'axios'
 import router from '../router'
+import mixinUserToken from '../mixins/mixinUserToken'
 export default {
+    mixins: [mixinUserToken],
     data() {
         return {
             editor: ClassicEditor,
