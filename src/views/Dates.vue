@@ -22,12 +22,12 @@
                                     <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                             {{employeByDate}}
                                     </base-button>
-                                    <li v-on:click="getCitasByEmploye('Todos')">
+                                    <li v-on:click="getDatesByEmploye('Todos')">
                                         <base-button class="dropdown-item" href="#">
                                             <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
                                         </base-button>
                                     </li>
-                                    <li v-for="data in employeShow"   v-on:click="getCitasByEmploye(data.name,data.img)">
+                                    <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
                                         <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
                                             <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
                                         </base-button>
@@ -305,42 +305,58 @@
                                 Datos del cliente
                             </div>
                         </template>
-                        <div class="w-100 " v-on:keyup.enter="selectClient()" @click="selectClient()">
-                            <vue-single-select
-                                v-model="registerDate.client"
-                                :options="clientsNames"
-                                placeholder="Seleccione un cliente"
-                                class="w-50 mx-auto mt-1"
-                            ></vue-single-select> 
-                        </div>
+                        <center>
+                            <a-select
+                                show-search
+                                placeholder="Selecciona un cliente"
+                                class="w-50 mb-2"
+                                option-filter-prop="children"
+                                :filter-option="filterOption"
+                            >
+                                <a-select-option v-on:click="selectClient('register')" class="text-success" value="register">
+                                    Registrar cliente
+                                </a-select-option>
+                                <a-select-option v-for="client in clients" :key="client" :value="client.firstName + ' ' + client.lastName + ' (' + client.email + ')'" v-on:click="selectClient(client)">
+                                    {{client.firstName}} {{client.lastName}} ({{client.email}})
+                                </a-select-option>
+                            </a-select>
+                        </center>
+                        
                         <div  class="row">
-                            <div style="color:black !important" class="col-md-6">
-                                <base-input v-on:keyup="validRegister()" class="text-white" placeholder="Nombre del cliente" v-model="dateClient.name" addon-left-icon="ni ni-circle-08"></base-input>
+                            <div class="col-md-3">
+                                <base-input v-on:keyup="validRegister()" placeholder="Nombre" v-model="dataClient.firstName" addon-left-icon="ni ni-circle-08"></base-input>
+                            </div>
+                            <div class="col-md-3">
+                                <base-input v-on:keyup="validRegister()" placeholder="Apellido" v-model="dataClient.lastName" addon-left-icon="ni ni-circle-08"></base-input>
                             </div>
                             <div class="col-md-6">
-                                <base-input v-on:keyup="validRegister()" placeholder="Correo" v-model="dateClient.id" addon-left-icon="ni ni-key-25"></base-input>
+                                <base-input v-on:keyup="validRegister()" placeholder="Correo" v-model="dataClient.email" addon-left-icon="ni ni-key-25"></base-input>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <VuePhoneNumberInput v-if="dataClient.valid && dataClient.phone" v-model="dataClient.phone.formatNational" @update="phoneData = $event, registerClient.phone = $event, validRegister()"
+                                    :default-phoner-number="dataClient.phone.nationalNumber"
+                                    :default-country-code="dataClient.phone.countryCode" 
+                                    :translations="{
+                                        countrySelectorLabel: 'Código de país',
+                                        countrySelectorError: 'Elije un país',
+                                        phoneNumberLabel: 'Número de teléfono',
+                                        example: 'Ejemplo :'
+                                    }"
+                                />
+                                <VuePhoneNumberInput v-else v-model="dataClient.phone" @update="dataClient.phone = $event, validRegister()" 
+                                :translations="{
+                                    countrySelectorLabel: 'Código de país',
+                                    countrySelectorError: 'Elije un país',
+                                    phoneNumberLabel: 'Número de teléfono',
+                                    example: 'Ejemplo :'
+                                }"/>
                             </div>
                             <div class="col-md-6">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <base-input alternative
-                                            type="text"
-                                            value="+56"
-                                            readonly="true">
-                                        </base-input>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <base-input placeholder="Teléfono" v-model="dateClient.infoOne" v-on:input="formatPhone" maxlength="9" addon-left-icon="ni ni-fat-add"></base-input>
-                                    </div>
-                                </div>
-                                
-                                
-                            </div>
-                            <div class="col-md-6">
-                                <base-input placeholder="Instagram" v-model="dateClient.infoTwo" addon-left-icon="ni ni-fat-add"></base-input>
+                                <base-input placeholder="Instagram" v-model="dataClient.instagram" addon-left-icon="ni ni-fat-add"></base-input>
                             </div>
                             <div class="col-md-3 col-sm-12">
-                                <base-checkbox v-model="dateClient.discount" class="mt-2">
+                                <base-checkbox v-model="dataClient.discount" class="mt-2">
                                     Descuento de nuevo cliente
                                 </base-checkbox>
                             </div>
@@ -353,46 +369,48 @@
                                             :config="configDate"
                                             class="form-control datepicker"
                                             placeholder="Seleccione una fecha"
-                                            v-model="dateClient.birthday">
+                                            v-model="dataClient.birthday">
                                     </flat-picker>
                                 </base-input>
                             </div>
                             <div class="col-md-6 col-sm-12">
                                 <vue-single-select
-                                    v-model="dateClient.recommender"
+                                    v-model="dataClient.recommender"
                                     :options="clientsNames"
                                     placeholder="Recomendador"
                                 ></vue-single-select>
                             </div>
-                            <div v-if="dateClient.valid" class="col-md-3 col-sm-12">
+                            <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Participación</span>
-                                    <badge type="default">{{dateClient.partipation}}</badge>
+                                    <badge type="default">{{dataClient.attends}}</badge>
                                 </base-button>
                             </div>
-                            <div v-if="dateClient.valid" class="col-md-3 col-sm-12">
+                            <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Recomendaciones</span>
-                                    <badge type="default">{{dateClient.recommenders}}</badge>
+                                    <badge type="default">{{dataClient.recommendations}}</badge>
                                 </base-button>
                             </div>
-                            <div v-if="dateClient.valid" class="col-md-3 col-sm-12">
+                            <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Ultima atención</span>
-                                    <badge type="default">{{formatDate(dateClient.lastDate)}}</badge>
+                                    <badge type="default">{{formatDate(dataClient.lastAttend)}}</badge>
                                 </base-button>
                             </div>
-                            <div v-if="dateClient.valid" class="col-md-3 col-sm-12">
+                            <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Cliente desde</span>
-                                    <badge type="default">{{formatDate(dateClient.date)}}</badge>
+                                    <badge type="default">{{formatDate(dataClient.createdAt)}}</badge>
                                 </base-button>
                             </div>
                             <div class="col-auto mx-auto mt-4">
-                                <base-button  type="default" v-on:click="clientEdit" v-if="dateClient.valid && dateClient.valid2" class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
-                                <base-button  type="default"  v-if="dateClient.valid && dateClient.valid2 != true" disabled class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
-                                <base-button type="success" disabled v-if="dateClient.valid != true && dateClient.valid2 != true" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
-                                <base-button type="success" v-on:click="newClient()" v-if="dateClient.valid != true && dateClient.valid2" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
+                                <base-button  type="default" v-on:click="clientEdit" v-if="dataClient.valid && dataClient.valid2" class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
+                                
+                                <base-button  type="default"  v-if="dataClient.valid && dataClient.valid2 != true" disabled class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
+                                
+                                <base-button type="success" disabled v-if="dataClient.valid != true && dataClient.valid2 != true" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
+                                <base-button type="success" v-on:click="newClient()" v-if="dataClient.valid != true && dataClient.valid2" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
                             </div>
                         </div>
                         </vue-custom-scrollbar>
@@ -441,9 +459,9 @@
                   class="border-0 pt-0">
                   <card shadow>
                     <div class="row mt-4">
-                        <div v-if="selectedEvent.employe" style="border-right:1px solid lightgray" class="col-md-6">
-                            <a-avatar v-if="selectedEvent.employe.img != 'no'" shape="square" :size="64" :src="selectedEvent.employe.img" />
-                            <a-avatar v-else shape="square" :size="64" src="img/theme/team-4-800x800.jpg" />
+                        <div v-if="selectedEvent.employe" style="border-right:1px solid lightgray" class="col-md-6 pr-0 pl-1">
+                            <a-avatar v-if="selectedEvent.employe.img != 'no'" shape="square" size="large" :src="selectedEvent.employe.img" />
+                            <a-avatar v-else shape="square" size="large" src="img/theme/team-4-800x800.jpg" />
                             <span class="ml-2">{{selectedEvent.employe.name}}</span>
                         </div>
                         <div class="col-md-6">
@@ -1230,6 +1248,27 @@
     </div>
 </template>
 <script>
+<<<<<<< HEAD
+  // COMPONENTS
+    import VueCal from 'vue-cal'
+  import 'vue-cal/dist/vuecal.css'
+  import 'vue-cal/dist/i18n/es.js'
+  import VueBootstrap4Table from 'vue-bootstrap4-table'
+  import flatPicker from "vue-flatpickr-component";
+  import "flatpickr/dist/flatpickr.css";
+  import {Spanish} from 'flatpickr/dist/l10n/es.js';
+  import vueCustomScrollbar from 'vue-custom-scrollbar'
+  import EventBus from '../components/EventBus'
+  import io from 'socket.io-client';
+  import { Carousel, Slide } from 'vue-carousel';
+  import VuePhoneNumberInput from 'vue-phone-number-input';
+  import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+  //Back - End 
+  import jwtDecode from 'jwt-decode'
+  import axios from 'axios'
+  import endPoint from '../../config-endpoint/endpoint.js'
+  import router from '../router'
+=======
 // COMPONENTS
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
@@ -1248,6 +1287,7 @@ import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import router from '../router'
 import mixinUserToken from '../mixins/mixinUserToken'
+>>>>>>> 55c07b1209862bdfda546f86c9d431c4ed179135
 
 export default {
     mixins: [mixinUserToken],
@@ -1257,7 +1297,8 @@ export default {
         flatPicker,
         vueCustomScrollbar,
         Carousel,
-        Slide
+        Slide,
+        VuePhoneNumberInput
     },
     data() {
       return {
@@ -1288,6 +1329,7 @@ export default {
             duration: 0,
             restTime:'',
             class: '',
+            client: '',
             employeResTime: '',
             serviceSelectds: [],
             design:'nada',
@@ -1439,22 +1481,24 @@ export default {
             icon: '',
             message: '', 
         },
-        dateClient: {
-            name:'',
-            id:'',
-            infoOne:'',
-            infoTwo:null,
-            partipation:null,
-            recommender:null,
-            recommenders:null,
+        dataClient:{
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            instagram: '',
+            attends: '',
+            recommender: '',
+            recommendations: '',
             birthday: '',
-            lastDate:null,
-            discount:null,
-            date:null,
-            _id:null,
-            valid:false,
-            valid2:false
+            lastAttend: '',
+            historical: '',
+            createdAt: '',
+            idRecommender:'',
+            valid: false,
+            valid2: false
         },
+        dateClient: {},
         configDate: {
             allowInput: true, 
             dateFormat: 'd-m-Y',
@@ -1765,6 +1809,13 @@ export default {
                 }
             }
         },
+        filterOption(input, option) {
+            console.log(input)
+            console.log(option)
+            return (
+                option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            );
+        },
         handleSearch(selectedKeys, confirm, dataIndex) {
             confirm();
             this.searchText = selectedKeys[0];
@@ -1859,66 +1910,49 @@ export default {
             this.dateClient.infoOne = number
         },
         clientEdit(){
-			const name = this.dateClient.name.split(' ')
-			var firstName, lastName, fullName
-			if (name[1]) {
-				firstName = this.MaysPrimera(name[0])
-				lastName = this.MaysPrimera(name[1])
-				fullName = firstName+' '+lastName
-			}else{
-				fullName = this.MaysPrimera(name[0])
-			}
+            var ifCheck = null
+            var firstName = this.MaysPrimera(this.dataClient.firstName)
+            var lastName = this.MaysPrimera(this.dataClient.lastName)
 
-			if (this.dateClient.name != '' &&  this.dateClient.id != '') {
-				axios.put(endPoint.endpointTarget+'/clients/'+this.dateClient._id, {
-					nombreClienteEditar: fullName,
-					identidadClienteEditar: this.dateClient.id,
-					correoClienteEditar: this.dateClient.infoOne,
-					instagramClienteEditar: this.dateClient.infoTwo
-				})
-				.then(res => {
-					
-					if (res.data.status == 'Servicio actualizado') {
-						this.modals = {
-                            modal1:true,
-                            modal2: true,
-                            message: "¡Emplado editado con exito!",
-                            icon: 'ni ni-check-bold ni-5x',
-                            type: 'success'
-                        }
-                        setTimeout(() => {
-                            this.getClients();
-                            this.registerDate.client = fullName + " / " + this.dateClient.id
-                            this.modals = {
-                                modal1:true,  
-                                modal2: false,
-                                message: '',
-                                icon: '',
-                                type: ''
-                            }
-                        }, 1500);
-                        
-						// this.arrayUsers();
-						// this.ServicesQuantityChartFunc();
-						// this.emitMethodTwo()
-					}else{
-						this.$swal({
-							type: 'error',
-							title: 'Cliente ya registrado',
+            axios.put(endPoint.endpointTarget+'/clients/'+this.dataClient._id, {
+                firstName: this.dataClient.firstName,
+                lastName: this.dataClient.lastName,
+                email: this.dataClient.email,
+                phone: this.dataClient.phone,
+                instagram: this.dataClient.instagram,
+            },this.configHeader)
+            .then(res => {
+                if (res.data.status == 'update client') {
+                    this.$swal({
+							type: 'success',
+                            icon: 'success',
+							title: 'Cliente editado con exito',
 							showConfirmButton: false,
 							timer: 1500
 						})
-					}
-				})
-			}else{
-				this.$swal({
-					type: 'error',
-					title: 'Llene los datos',
-					showConfirmButton: false,
-					timer: 1500
-				})
-			}
-			
+                    setTimeout(() => {
+                        this.getClients();
+                        EventBus.$emit('reloadClients', 'reload')
+                    }, 1500);
+                }else{
+                    this.modals = {
+                        modal2: true,
+                        message: "El email ya existe",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
+                    }
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: true,
+                            modal2: false,
+                            modal3:false,
+                            message: "",
+                            icon: '',
+                            type: ''
+                        }
+                    }, 1500);
+                }
+            })
         },
         selectCat(cat){
             $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
@@ -2088,17 +2122,25 @@ export default {
             this.dateClient = {
                 name:'',
                 id:'',
-                infoOne:'',
-                infoTwo:null,
-                partipation:null,
-                recommender:null,
-                recommenders:null,
-                lastDate:null,
-                discount:null,
-                date:null,
-                _id:null,
-                valid:false,
-                valid2:false
+                phone:'',
+                email:''
+            }
+            this.dataClient ={
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                instagram: '',
+                attends: '',
+                recommender: '',
+                recommendations: '',
+                birthday: '',
+                lastAttend: '',
+                historical: '',
+                createdAt: '',
+                idRecommender:'',
+                valid: false,
+                valid2: false
             }
             this.totalPrice = 0
             this.img1 = ''
@@ -2107,65 +2149,49 @@ export default {
                 this.countServices[index].count = 0
             }
         },
-        selectClient(){
-            if (this.registerDate.client != null) {
-                for (let index = 0; index < this.clients.length; index++) {
-                    if (this.clients[index].nombre + " / " + this.clients[index].identidad == this.registerDate.client) {
-                        this.dateClient = {
-                            name:this.clients[index].nombre,
-                            id:this.clients[index].identidad,
-                            infoOne:this.clients[index].correoCliente,
-                            infoTwo:this.clients[index].instagramCliente,
-                            partipation:this.clients[index].participacion,
-                            birthday: this.clients[index].birthday,
-                            recommender:this.clients[index].recomendacion,
-                            recommenders:this.clients[index].recomendaciones,
-                            lastDate:this.clients[index].ultimaFecha,
-                            date:this.clients[index].fecha,
-                            _id:this.clients[index]._id,
-                            valid:true
-                        }
-                        this.dateClient.valid2 = true
-                        if (this.dateClient.partipation == 0) {
-                            this.dateClient.discount = true
-                        }
-                    }
-                }
-            }
-            else{
+        selectClient(value){
+            if (value == 'register') {
+                this.dataClient.valid = false
+                this.dateClient.valid2 = false
+            }else{
                 this.dateClient = {
-                    name:'',
-                    id:'',
-                    infoOne:'',
-                    infoTwo:null,
-                    partipation:null,
-                    recommender:null,
-                    recommenders:null,
-                    birthday: null,
-                    lastDate:null,
-                    discount:null,
-                    date:null,
-                    _id:null,
-                    valid:false,
-                    valid2:false
+                    name: value.firstName + ' ' + value.lastName,
+                    id: value._id,
+                    email: value.email,
+                    phone: value.phone
                 }
-            }
-            
+                this.dataClient = {
+                    firstName: value.firstName,
+                    lastName: value.lastName,
+                    email: value.email,
+                    phone: value.phone,
+                    instagram: value.instagram,
+                    attends: value.attends,
+                    recommender: value.recommender,
+                    recommendations: value.recommendations,
+                    birthday: value.birthday,
+                    lastAttend: value.lastAttend,
+                    historical: value.historical,
+                    createdAt: value.createdAt,
+                    valid: true,
+                    valid2: true 
+                }
+            } 
         },
         validRegister(){
-            if (this.dateClient.name != '' && this.dateClient.id != '') {
-                if (this.dateClient.id.split('@').length == 2) {
-                    if (this.dateClient.id.split('@')[1].split('.').length == 2) {
-                        this.dateClient.valid2 = true
+            if (this.dataClient.firstName.length > 2 && this.dataClient.lastName.length > 2 && this.dataClient.email != '') {
+                if (this.dataClient.email.split('@').length == 2) {
+                    if (this.dataClient.email.split('@')[1].split('.').length == 2) {
+                        this.dataClient.valid2 = true
                     }else{
-                        this.dateClient.valid2 = false
+                        this.dataClient.valid2 = false
                     }
                 }else{
-                    this.dateClient.valid2 = false
+                    this.dataClient.valid2 = false
                 }
             }
             else{
-                this.dateClient.valid2 = false
+                this.dataClient.valid2 = false
             }  
         },
         formatDate(date) {
@@ -2352,7 +2378,7 @@ export default {
                                 dataDate: this.registerDae,
                                 branch: this.branch,
                                 date: this.finalDate,
-                                client: this.registerDate.client,
+                                client: this.dateClient,
                                 block: blockEdit,
                                 blockId: this.idDatesBlocks,
                                 typeCreation: 'system',
@@ -2360,12 +2386,18 @@ export default {
                                 ifClient: true
                             }, this.configHeader)
                             .then(res => {
-                                if (res.data.status == "cita creada") {
+                                if (res.data.status == "ok") {
+                                    this.$swal({
+                                        type: 'success',
+                                        icon: 'success',
+                                        title: 'Cita creada con exito',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    this.$refs.wizard.reset()
+                                    this.initialState()
                                     // this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
                                     this.modals.modal2 = false
-                                    this.modals.modal4 = true
-                                    
-                                    $("#overlay").toggle()
                                     this.ifDisabled = false
                                 }    
                             })   
@@ -2375,7 +2407,7 @@ export default {
                             dataDate: this.registerDae,
                             branch: this.branch,
                             date: this.finalDate,
-                            client: this.registerDate.client,
+                            client: this.dateClient,
                             block: blockEdit,
                             blockId: this.idDatesBlocks,
                             typeCreation: 'system',
@@ -2384,11 +2416,18 @@ export default {
                         }, this.configHeader)
                         .then(res => {
                             if (res.data.status == "ok") {
+                                this.$swal({
+                                    type: 'success',
+                                    icon: 'success',
+                                    title: 'Cita creada con exito',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
                                 this.ifDisabled = false
+                                this.$refs.wizard.reset()
+                                this.initialState()
                                 this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
                                 this.modals.modal2 = false
-                                this.modals.modal4 = true
-                                $("#overlay").toggle()
                             }    
                         })
                     }
@@ -2398,72 +2437,66 @@ export default {
             })       
         },
         newClient(){
-            const name = this.dateClient.name.split(' ')
-            var firstName, lastName, fullName, ifCheck
-            if (name[1]) {
-                firstName = this.MaysPrimera(name[0])
-                lastName = this.MaysPrimera(name[1])
-                fullName = firstName+' '+lastName
-            }
-            else {
-                fullName = this.MaysPrimera(name[0])
-            }
-            if (this.dateClient.discount) {
+            var ifCheck = null
+            var firstName = this.MaysPrimera(this.dataClient.firstName)
+            var lastName = this.MaysPrimera(this.dataClient.lastName)
+
+            if (this.dataClient.discount) {
                 ifCheck = 0
             }
             else{
                 ifCheck = 1
             }
-            var date = this.dateClient.birthday
-            if (this.dateClient.birthday.split('-')[1]) {
-                var split = this.dateClient.birthday.split('-')
+            var date = this.dataClient.birthday
+            if (this.dataClient.birthday.split('-')[1]) {
+                var split = this.dataClient.birthday.split('-')
                 date = split[1]+'-'+split[0]+'-'+split[2]
             }
-            const phone = this.dateClient.infoOne.length > 0 ? '+56 '+ this.dateClient.infoOne : ''
+            const phone = this.dataClient.phone
             axios.post(endPoint.endpointTarget+'/clients', {
-                nombre:fullName,
-                identidad:this.dateClient.id,
-                recomendador:this.dateClient.recommender,
-                correoCliente:phone,
+                firstName:this.dataClient.firstName,
+                lastName: this.dataClient.lastName,
+                email:this.dataClient.email,
+                recommender:this.dataClient.recommender,
+                idRecomender:this.dataClient.idRecommender,
+                phone:this.phoneData,
                 birthday: date,
-                instagramCliente:this.dateClient.infoTwo,
+                instagram:this.dataClient.instagram,
                 ifCheck: ifCheck
-            })
+            }, this.configHeader)
             .then(res => {
-                if (res.data.status == 'Registrado') {
-                        this.modals = {
-                        modal1:true,
-                        modal2: true,
-                        message: "¡Cliente registrado!",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
+                if (res.data.status == 'client create') {
+                    this.$swal({
+                        type: 'success',
+                        icon: 'success',
+                        title: 'Se registro el cliente con exito, ya puede continuar',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.dateClient = {
+                        name: res.data.data.firstName + ' ' + res.data.data.lastName,
+                        id: res.data.data._id,
+                        email: res.data.data.email,
+                        phone: res.data.data.phone
                     }
-                    this.getClients()
-                    
+                    console.log(this.dateClient)
                     setTimeout(() => {
-                            this.registerDate.client = fullName + ' / ' + this.dateClient.id
-                            this.selectClient()
-                        this.modals = {
-                            modal1:true,  
-                            modal2: false,
-                            message: '',
-                            icon: '',
-                            type: ''
-                        }
+                        this.getClients()
+                        EventBus.$emit('reloadClients', 'reload')
                     }, 1500);
-                }
-                else {
+                    
+                }else{
                     this.$swal({
                         type: 'error',
                         title: 'El cliente ya existe',
                         showConfirmButton: false,
                         timer: 1500
                     })
-				}
-			})
+                }
+            })
         },
-        getCitasByEmploye(name,img){
-            if (name == "Todos") {
+        getDatesByEmploye(id, img, name){
+            if (id == "Todos") {
                 this.getDates()
                 this.filter = false
                 this.employeByDate = "Filtrar por empleado"
@@ -2476,56 +2509,24 @@ export default {
                 else {
                     this.img2 = "https://www.w3schools.com/howto/img_avatar.png"
                 }
-                axios.get(endPoint.endpointTarget+'/citas/' + name)
+                axios.get(endPoint.endpointTarget+'/dates/getDatesbyemploye/'+ id, this.configHeader)
                 .then(res => {
-                    for (let index = 0; index < res.data.length; index++) {
-                        let dateNow = new Date(res.data[index].date)
-                        let formatDate = dateNow.format('YYYY-MM-DD')+" "+res.data[index].start
-                        let formatDateTwo = dateNow.format('YYYY-MM-DD')+" "+res.data[index].end
-                        const split = res.data[index].class.split('class')[1]
-                        let arrayEvents = {
-                            start: formatDate,
-                            end: formatDateTwo,
-                            title: res.data[index].services[0].servicio+" - "+res.data[index].employe,
-                            content: res.data[index].client,
-                            class: res.data[index].class,
-                            cliente: res.data[index].client,
-                            services: res.data[index].services,
-                            empleada: res.data[index].employe,
-                            id:res.data[index]._id, 
-                            image: res.data[index].image,
-                            imageLength: res.data[index].image.length,
-                            confirmation: res.data[index].confirmation,
-                            confirmationId: res.data[index].confirmationId,
-                            type: res.data[index].type,
-                            typepay: res.data[index].typepay,
-                            paypdf: res.data[index].paypdf,
-                            split: parseInt(split)
-                        } 
-                        this.events.push(arrayEvents)
+                    if (res.data.status == 'ok') {
+                        this.events = res.data.data
+                    }else{
+                        this.$swal({
+                            type: 'error',
+                            icon: 'error',
+                            title: 'Este empleado no posee ninguna cita',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                     }
                     this.employeByDate = name
                     this.filter = true
                 })
             }
         },
-        // getUsers(){
-		// 	axios.get(endPoint.endpointTarget+'/users', this.configHeader)
-		// 	.then(res => {
-        //         this.users = res.data
-                
-        //         this.getEmployes()
-		// 	})
-		// 	.catch(err => {
-		// 		this.$swal({
-		// 			type: 'error',
-		// 			title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-		// 			showConfirmButton: false,
-		// 			timer: 2500
-		// 		})
-		// 		router.push({name: 'login'})
-		// 	})
-        // },
         onEventClick(event, e){
             this.selectedEvent = event
             this.dateModals.modal1 = true
@@ -2703,10 +2704,10 @@ export default {
                 
             }else{
                 this.$swal({
-                type: 'error',
-                title: 'error al editar',
-                showConfirmButton: false,
-                timer: 1500
+                    type: 'error',
+                    title: 'error al editar',
+                    showConfirmButton: false,
+                    timer: 1500
                 })
             }
             })

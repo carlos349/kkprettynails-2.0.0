@@ -160,13 +160,13 @@
                                 </span>
                                 <vue-custom-scrollbar class="maxHeight">
                                     <div class="p-4">
-                                        <base-button v-for="(data, index) in rowsItems" :key="data" v-on:click="elegirCantidad(index, 1)" class="col-12 mb-1" type="secondary">
+                                        <base-button v-for="(data, index) in rowsItems" :key="data" v-on:click="itemsFunction(index, 1)" class="col-12 mb-1" type="secondary">
                                             <div class="row">
                                                 <div class="col-8">
-                                                    <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.producto}}</base-checkbox>
+                                                    <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.product}}</base-checkbox>
                                                 </div>
                                                 <div class="col-4">
-                                                    <badge v-if="itemsBox[index].count != ''" style="font-size:.8em !important" class="float-right text-default" type="success">{{itemsBox[index].count}} {{data.type}}</badge>
+                                                    <badge v-if="itemsBox[index].count != ''" style="font-size:.8em !important" class="float-right text-default" type="success">{{itemsBox[index].count}} {{data.measure}}</badge>
                                                 </div>
                                             </div>
                                         </base-button>
@@ -310,13 +310,13 @@
 
                                 <vue-custom-scrollbar class="maxHeight">
                                     <div class="p-4">
-                                        <base-button v-for="(data, index) in rowsItems" :key="data" v-on:click="elegirCantidad(index,2)" class="col-12 mb-1" type="secondary">
+                                        <base-button v-for="(data, index) in rowsItems" :key="data" v-on:click="itemsFunction(index,2)" class="col-12 mb-1" type="secondary">
                                             <div class="row">
                                                 <div class="col-8">
-                                                    <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.producto}}</base-checkbox>
+                                                    <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.product}}</base-checkbox>
                                                 </div>
                                                 <div class="col-4">
-                                                    <badge v-if="itemsBox[index].count != ''" style="font-size:.8em !important" class="float-right text-default" type="success">{{itemsBox[index].count}} {{data.type}}</badge>
+                                                    <badge v-if="itemsBox[index].count != ''" style="font-size:.8em !important" class="float-right text-default" type="success">{{itemsBox[index].count}} {{data.measure}}</badge>
                                                 </div>
                                             </div>
                                         </base-button>
@@ -462,18 +462,21 @@
                     </div>
                 </template>
                 <template>
-                    <div class="row mx-auto">
-                     <div class="col-7">
-                        <base-input  alternative
-                                placeholder="Cantidad por uso"
-                                v-model="countModal"
-                                addon-left-icon="fa fa-list-ol">
-                        </base-input>
-                      </div>
-                      <div class="col-5 text-center mt-2">
-                        {{unitPerItem}}
-                      </div>
-                   </div>
+                    <center>
+                        <div class="row mx-auto">
+                            <div class="col-7">
+                                <base-input  alternative
+                                        placeholder="Cantidad por uso"
+                                        v-model="countModal"
+                                        addon-left-icon="fa fa-list-ol">
+                                </base-input>
+                            </div>
+                            <div class="col-5 text-center mt-2">
+                                {{unitPerItem}}
+                            </div>
+                        </div>
+                    </center>
+                    
                         <div class="text-center">
                             <base-button type="primary" v-on:click="selectedItem" class="my-4">Registrar</base-button>
                             
@@ -857,11 +860,11 @@ export default {
         },
         async getProducts() {
             try {
-                const inventory = await axios.get(endPoint.endpointTarget+'/stores/getinventorybybranch/'+this.branch, this.configHeader)
+                const inventory = await axios.get(endPoint.endpointTarget+'/stores/getinventorybybranchforservice/'+this.branch, this.configHeader)
                 if (inventory.data.status == 'ok') {
                     this.rowsItems = inventory.data.data 
                     for (let index = 0; index < this.rowsItems.length; index++) {
-                        this.itemsBox.push({check: false, count: ''})
+                        this.itemsBox.push({check: false, count: '', id:this.rowsItems[index]._id})
                     }
                 }
             }catch(err){
@@ -925,6 +928,7 @@ export default {
                     showConfirmButton: false,
                     timer: 1500
                 })
+                this.modals.modal4 = false
             }
             else{
                 this.$swal({
@@ -1048,10 +1052,21 @@ export default {
             }
         },
         dataEdit(id, lenders, name, time, discount, comission, price, items, category, branch){
-            this.itemsBox = []
-            for (let index = 0; index < this.rowsItems.length; index++) {
-                this.itemsBox.push({check:false,count:''})
+            console.log(items)
+            this.itemsBox.forEach(element => {
+                element.check = false
+                element.count = ''
+            });
+            for (let i = 0; i < items.length; i++) {
+                const element = items[i];
+                for (let index = 0; index < this.itemsBox.length; index++) {
+                    if (element.id == this.itemsBox[index].id) {
+                        this.itemsBox[index].check = true
+                        this.itemsBox[index].count = element.count
+                    }
+                }
             }
+            console.log(this.itemsBox)
             this.EditlenderSelecteds = []
             this.EdititemSelected = []
             const discountFinal = discount ? false : true
@@ -1065,8 +1080,6 @@ export default {
             this.comissionEdit = comission
             this.editTimeHoursRegister = parseInt(time / 60) + ' hr'
             this.editTimeMinutesRegister = time - (parseInt(time / 60) * 60 )  + ' min'
-            console.log(this.editTimeHoursRegister)
-            console.log(this.editTimeMinutesRegister)
             this.addDiscountEdit = discount
             this.modals.modal2 = true
             this.EditlenderSelecteds = []
@@ -1084,6 +1097,10 @@ export default {
 
         },
         clean(){
+            this.itemsBox.forEach(element => {
+                element.check = false
+                element.count = ''
+            });
             this.lenderSelecteds = []
             this.EditlenderSelecteds = []
             for (let index = 0; index < this.lenders.length; index++) {
@@ -1092,6 +1109,7 @@ export default {
             }
         },
         editService(){
+            console.log(this.EdititemSelected)
             var timeService = 0 
             if (this.editTimeHoursRegister.includes('hr')) {
                 this.editTimeHoursRegister = this.editTimeHoursRegister.split(' ')[0]
@@ -1173,31 +1191,59 @@ export default {
                 }
             }
         },
-        elegirCantidad(i,e){
-            if (this.itemsBox[i].count == '') {
-                this.typeItemModal = e
-                this.countModal = ''
-                this.modals.modal4 = true
-                this.itemsBox[i].check = false
-                this.itemIndex = i
-                this.unitPerItem = this.rowsItems[i].type
-            }
-            else{
-                this.itemsBox[i].count = ''
-                this.itemsBox[i].check = false
-                for (let e = 0; e < this.itemSelected.length;e++) {
-                    if (this.itemSelected[e].id == this.rowsItems[i]._id) {
-                        this.itemSelected.splice(e, 1)
-                        break
+        itemsFunction(i,e){
+            setTimeout(() => {
+                if (this.itemsBox[i].count == '') {
+                    if (this.itemsBox[i].check) {
+                        this.itemsBox[i].check = false
                     }
+                    this.typeItemModal = e
+                    this.countModal = ''
+                    this.modals.modal4 = true
+                    this.itemIndex = i
+                    this.unitPerItem = this.rowsItems[i].measure
                 }
-                for (let e = 0; e < this.EdititemSelected.length; e++) {
-                    if (this.EdititemSelected[e].id == this.rowsItems[i]._id) {
-                        this.EdititemSelected.splice(e, 1)
-                        break
-                    }
+                else{
+                    this.$swal({
+                        title: '¿Está seguro que desea eliminar este producto del servicio?',
+                        type: 'warning',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Estoy seguro',
+                        cancelButtonText: 'No, evitar acción',
+                        showCloseButton: true,
+                        showLoaderOnConfirm: true
+                    }).then((result) => {
+                        if(result.value) {
+                            this.itemsBox[i].count = ''
+                            this.itemsBox[i].check = false
+                            for (let e = 0; e < this.itemSelected.length;e++) {
+                                if (this.itemSelected[e].id == this.rowsItems[i]._id) {
+                                    this.itemSelected.splice(e, 1)
+                                    break
+                                }
+                            }
+                            for (let e = 0; e < this.EdititemSelected.length; e++) {
+                                if (this.EdititemSelected[e].id == this.rowsItems[i]._id) {
+                                    this.EdititemSelected.splice(e, 1)
+                                    break
+                                }
+                            }
+                        }
+                        else{
+                            this.itemsBox[i].check = true
+                            this.$swal({
+                                type: 'error',
+                                icon: 'error',
+                                title: 'Acción cancelada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
                 }
-            }
+            }, 200);
+            
         },
         async getCategories(){
             try {
