@@ -1248,6 +1248,7 @@
     </div>
 </template>
 <script>
+<<<<<<< HEAD
   // COMPONENTS
     import VueCal from 'vue-cal'
   import 'vue-cal/dist/vuecal.css'
@@ -1267,6 +1268,28 @@
   import axios from 'axios'
   import endPoint from '../../config-endpoint/endpoint.js'
   import router from '../router'
+=======
+// COMPONENTS
+import VueCal from 'vue-cal'
+import 'vue-cal/dist/vuecal.css'
+import 'vue-cal/dist/i18n/es.js'
+import VueBootstrap4Table from 'vue-bootstrap4-table'
+import flatPicker from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
+import {Spanish} from 'flatpickr/dist/l10n/es.js';
+import vueCustomScrollbar from 'vue-custom-scrollbar'
+import EventBus from '../components/EventBus'
+import io from 'socket.io-client';
+import { Carousel, Slide } from 'vue-carousel';
+import VuePhoneNumberInput from 'vue-phone-number-input';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+//Back - End 
+import jwtDecode from 'jwt-decode'
+import axios from 'axios'
+import endPoint from '../../config-endpoint/endpoint.js'
+import router from '../router'
+import mixinUserToken from '../mixins/mixinUserToken'
+>>>>>>> 3c208940393e90d1ae768c566643235bed7041df
 
 export default {
     mixins: [mixinUserToken],
@@ -1636,17 +1659,6 @@ export default {
         ifMicro:false,
         microServices:[]
       };
-    },
-    beforeCreate(){
-        if (!localStorage.getItem('userToken')) {
-            this.$swal({ 
-                type: 'error',
-                title: 'URL restringida',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            router.push({name: 'login'})
-		}
     },
     created(){
         this.getToken()
@@ -4616,11 +4628,6 @@ export default {
     }
     .ps__thumb-y{
         height: 44px !important;
-    }
-    .spin-content {
-        border: 1px solid #91d5ff;
-        background-color: #e6f7ff;
-        padding: 30px;
     }
     .historicalClientTable .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
         padding: 6px !important;

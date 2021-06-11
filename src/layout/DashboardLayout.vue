@@ -30,10 +30,10 @@
         <content-footer v-if="!$route.meta.hideFooter"></content-footer>
       </div>
     </div>
-    <a-modal v-model="modals.modal1" class="modal-lg px-0" size="lg" :footer="null" :closable="true" >
+    <a-modal v-model="modals.modal1" class="modal-lg px-0 pb-0 modalProcess" size="lg" :footer="null" :closable="true" >
       <card type="secondary" shadow
           header-classes="bg-white "
-          body-classes=""
+          body-classes="pb-0 pt-1"
           class="border-0">
         <template>
             <procesar></procesar>
@@ -133,8 +133,9 @@
   form .text-default{
     font-size: .5em;
   }
-  .ant-modal{
+  .modalProcess div .ant-modal{
     width: 80% !important;
+    top: 10px !important;
   }
   .ant-modal-body{
     padding-left: 10px !important;
