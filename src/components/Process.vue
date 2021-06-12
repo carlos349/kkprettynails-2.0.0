@@ -10,7 +10,7 @@
                     :filter-option="filterOption"
                     :allowClear="true"
                     class="mb-2 "
-                    :class="screenWidth"
+                    :class="screenWidthInput"
                     @change="chooseClient">
                     <a-select-option v-for="client of clients" :key="client._id" :value="client._id">
                         {{client.firstName}} / {{client.email}}
@@ -115,9 +115,9 @@
                                 <a-icon type="shopping" style="vertical-align: 1.5px;"/>
                                 Productos
                             </span>
-                            <div class="row">
+                            <div class="row p-2">
                                 <div class="col-md-6">
-                                    <label for="service" style="margin-bottom:3px">Producto</label>
+                                    <label for="service" style="margin-bottom:0px">Producto</label>
                                     <a-select
                                         show-search
                                         placeholder="Seleccione el producto"
@@ -132,7 +132,11 @@
                                         </a-select-option>
                                     </a-select>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
+                                    <label for="quantity" style="margin-bottom:3px">Cantidad</label>
+                                    <a-input @keyup="calculatedQuantity" class="w-100" type="number" placeholder="Cantidad" v-model="itemData.quantityProduct"/>
+                                </div>
+                                <div class="col-md-6">
                                     <label for="Client" style="margin-bottom:12px">Precio</label>
                                     <currency-input
                                         v-model="itemData.price"
@@ -141,7 +145,7 @@
                                         style="margin-top:-10px;"
                                     />
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <label for="Client" style="margin-bottom:6px">Descuento</label>
                                     <a-input @keyup="addDiscountFunc" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
                                         <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
@@ -195,12 +199,14 @@
                     </template>
                     <!-- :scroll="getScreen" -->
                     <a-table :columns="columns" :loading="progress" :data-source="serviceSelecteds" :scroll="getScreen" >
+                        <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
                         <template slot="price-slot" slot-scope="record, column">
-                            <currency-input
+                            {{column.price | formatPrice}}
+                            <!-- <currency-input
                                 v-model="column.price"
                                 locale="de"
                                 class="ant-input w-100"
-                            />
+                            /> -->
                         </template>
                         <template slot="item-slot" slot-scope="record, column">
                             {{column.item.name}}
@@ -211,7 +217,12 @@
                             </a-input>
                         </template>
                         <template slot="additional-slot" slot-scope="record, column">
-                            {{formatPrice(column.additionalTotal)}}
+                            <template v-if="column.tag == 'service'">
+                                {{formatPrice(column.additionalTotal)}}
+                            </template>
+                            <template v-else>
+                                Cantidad: {{column.quantityProduct}}
+                            </template>
                         </template>
                         <template slot="total-slot" slot-scope="record, column">
                             {{formatPrice(column.total)}}
@@ -765,7 +776,7 @@ export default {
                     title: 'Item',
                     dataIndex: 'item',
                     key: 'item',
-                    width: '25%',
+                    width: '20%',
                     ellipsis: true,
                     scopedSlots: { customRender: 'item-slot' }
                 },
@@ -773,7 +784,7 @@ export default {
                     title: 'Precio',
                     dataIndex: 'price',
                     key: 'price',
-                    width: '20%',
+                    width: '15%',
                     ellipsis: false,
                     scopedSlots: { customRender: 'price-slot' }
                 },
@@ -789,7 +800,7 @@ export default {
                     title: 'Adicional',
                     dataIndex: 'additionalTotal',
                     key: 'additionalTotal',
-                    width: '15%',
+                    width: '20%',
                     ellipsis: false,
                     scopedSlots: { customRender: 'additional-slot' }
                 },
@@ -797,7 +808,7 @@ export default {
                     title: 'Total',
                     dataIndex: 'total',
                     key: 'total',
-                    width: '15%',
+                    width: '20%',
                     ellipsis: true,
                     scopedSlots: { customRender: 'total-slot' }
                 },
@@ -897,6 +908,7 @@ export default {
                     name: '',
                     document: ''
                 },
+                quantityProduct: '',
                 commission: 0
             },
             totalSale: 0,
@@ -1217,6 +1229,8 @@ export default {
                 const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
                 if (services.data.status == 'ok') {
                     this.services = services.data.data
+                }else{
+                    this.services = []
                 }
             }catch(err){
                 this.$swal({
@@ -1246,6 +1260,9 @@ export default {
             }
         },
         addItem(type, index){
+            if (this.itemData.quantityProduct == '') {
+                this.itemData.quantityProduct = 0
+            }
             var dateItem = 'none'
             if (type == 'date') {
                 for (const micro of this.datesFinally[index].microServices) {
@@ -1268,7 +1285,7 @@ export default {
                 total = total + parseFloat(micro.price)
                 additionals = additionals == '' ? micro.name : additionals + ', '+micro.name 
             }
-            var description = this.itemData.tag == 'service' ? `Servicio: ${this.itemData.item.name} | Empleado: ${this.itemData.employe.name} | Adicionales: ${additionals}` : `1 ${this.itemData.item.measure}`
+            var description = this.itemData.tag == 'service' ? `Servicio: ${this.itemData.item.name} | Empleado: ${this.itemData.employe.name} | Adicionales: ${additionals}` : `${this.itemData.quantityProduct == 0 || this.itemData.quantityProduct == '' ? 1 : this.itemData.quantityProduct}) ${this.itemData.item.measure}`
             if (this.itemData.item.name && this.itemData.realPrice > 0 && this.itemData.price > 0 && this.itemData.tag != '') {
                 var valid = false
                 if (this.itemData.tag == 'service') {
@@ -1286,6 +1303,7 @@ export default {
                         ifDiscount: this.itemData.discountServiceIf,
                         total: this.itemData.price + total,
                         commission: this.itemData.commission,
+                        quantityProduct: this.itemData.tag != 'service' ? this.itemData.quantityProduct == 0 ? 1 : this.itemData.quantityProduct : 'none',
                         productsService: this.itemData.item.products ? this.itemData.item.products : 'none',
                         tag: this.itemData.tag,
                         employe: this.itemData.tag == 'service' ? this.itemData.employe : 'none',
@@ -1303,6 +1321,7 @@ export default {
                             name: '',
                             document: ''
                         },
+                        quantityProduct: '',
                         commission: 0,
                         tag: ''
                     }
@@ -1405,8 +1424,18 @@ export default {
         addDiscountFunc(){
             var discount = this.itemData.discountService < 10 ? '0'+this.itemData.discountService : this.itemData.discountService
             if (this.itemData.discountService != '') {
-                console.log(this.itemData.realPrice +' '+(this.itemData.price * parseFloat('0.'+discount)))
                 this.itemData.price = this.itemData.realPrice - (this.itemData.realPrice * parseFloat('0.'+discount))
+            }else{
+                this.itemData.price = this.itemData.realPrice
+            }
+        },
+        calculatedQuantity(){
+            if (this.itemData.quantityProduct != '') {
+                if (this.itemData.quantityProduct == 0) {
+                    this.itemData.price = this.itemData.realPrice
+                }else{
+                    this.itemData.price = this.itemData.realPrice * this.itemData.quantityProduct
+                }  
             }else{
                 this.itemData.price = this.itemData.realPrice
             }
@@ -1636,36 +1665,28 @@ export default {
             })
 		},
         initialState(){
-            this.getServices()
-            $('#myInput').val('')
-            this.myFunction()
-            this.validator = true
-            this.validatorBtn = true
-			this.price = '0';
-			this.serviciosSelecionados = [];
-			this.discount = "";
-			this.total = 0;
-			this.totalSinFormato = 0;
-			this.design = 0
-			this.typesPay.forEach(element => {
-                element.total = 0
-            });
-            this.docLender = ''
-			this.payTransfer = 0
-			this.lenderSelect = null
-			this.clientSelect = null
-			this.resto  = 0
-            this.subTotal = 0
-            this.nombreManicurista = ''
-            this.inspector = false
-            this.ifEdit = false
-            this.newClient.text = "Nuevo cliente"
-            this.registerClient.name = ''
-            this.registerClient.id = ''
-            this.ifrecomend = false
-            this.validRegister()
-            this.haveCode = false
-            $('.anticon-close-circle').click()
+            this.itemData = {
+                item: {},
+                price: 0,
+                realPrice: 0,
+                discountServiceIf: false,
+                discountService: '',
+                employe: {
+                    id: '',
+                    name: '',
+                    document: ''
+                },
+                quantityProduct: '',
+                commission: 0,
+                tag: ''
+            }
+            this.serviceSelecteds = []
+            this.totalSale = 0
+            this.paysSelecteds = []
+            this.perPay = 0
+            this.restPay = 0
+            this.totalPay = 0
+            $('.ant-select-selection__clear').click()
         },
         filterOption(input, option) {
             return (
@@ -1898,12 +1919,17 @@ export default {
         EventBus.$on('reloadClients', status => {
             this.getClient()
         })
-        EventBus.$on('processDate', status => {
+        EventBus.$on('openModal', status => {
             this.initialState()
-            this.getDataToDate(status)
         })
         EventBus.$on('changeBranch', status => {
             this.getBranch()
+        })
+        EventBus.$on('reloadProducts', status => {
+            this.getProducts()
+        })
+        EventBus.$on('reloadMicroservices', status => {
+            this.getMicroservices()
         })
     }
 }

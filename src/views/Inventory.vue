@@ -773,6 +773,7 @@ export default {
                         timer: 1500
                     })
                     this.getProducts()
+                    EventBus.$emit('reloadProducts', 'reload')
                 }
             }).catch(err => {
                 this.$swal({

@@ -2,7 +2,7 @@
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
     <side-bar  :background-color="sidebarBackground" short-title="Syswa" title="Syswa">
       <template slot="links">
-        <base-button id="processButton" style="margin-left: -50px;" size="sm" v-if="validRoute('procesar')" type="default" icon="ni ni-tag" v-on:click="modals.modal1 = true">
+        <base-button id="processButton" style="margin-left: -50px;" size="sm" v-if="validRoute('procesar')" type="default" icon="ni ni-tag" v-on:click="modals.modal1 = true, openModal()">
         <span style="margin-left:15px;">Procesar</span> 
         </base-button>
         <sidebar-item v-if="validRoute('metricas')" :link="{name: 'Metricas', icon: 'ni ni-chart-bar-32 text-primary', path: '/dashboard'}"/>
@@ -78,6 +78,9 @@
           const decoded = jwtDecode(token)
           this.auth = decoded.access
         }
+      },
+      openModal(){
+        EventBus.$emit('openModal', 'reload')
       },
       changeAccess(status){
         this.auth = status 

@@ -536,9 +536,6 @@ export default {
             }
         },
         registerEmployes(){
-            console.log(this.registerEmploye.firstName)
-            console.log(this.registerEmploye.lastName)
-            console.log(this.registerEmploye.document)
             if (this.validHoursDays() == 'hora atras') {
                 this.$swal({
                     icon: 'error',

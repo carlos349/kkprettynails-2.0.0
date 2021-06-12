@@ -896,6 +896,7 @@
                 timer: 1500
               })
               this.modals.modal1 = false
+              EventBus.$emit('reloadMicroservices', 'reload')
             }
           }).catch(err => {
             this.$swal({
