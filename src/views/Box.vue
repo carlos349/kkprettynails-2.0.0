@@ -504,7 +504,7 @@ export default {
                 }, this.configHeader)
                 .then(res => {
                     if (res.data.status == 'ok') {
-                        this.modals.modal4
+                        this.modals.modal4 = false
                         this.$swal({
                             icon: 'success',
                             title: 'Cierre hecho con exito',

@@ -47,6 +47,7 @@ moment.locale('es');
 import formatDate from '@/plugins/formatDate';
 import vuescroll from 'vuescroll';
 import VuePhoneNumberInput from 'vue-phone-number-input';
+import { KinesisContainer, KinesisElement } from 'vue-kinesis'
 
 // You can set global config here.
 Vue.use(vuescroll)
@@ -68,6 +69,8 @@ const pluginOptions = {globalOptions: { currency: {'prefix':'$ '}, precision: 0,
 Vue.use(Antd);
 Vue.component('vue-phone-number-input', VuePhoneNumberInput);
 Vue.component('vue-single-select', VueSingleSelect);
+Vue.component('kinesis-container', KinesisContainer)
+Vue.component('kinesis-element', KinesisElement)
 Vue.use(VueCurrencyInput, pluginOptions)
 Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);

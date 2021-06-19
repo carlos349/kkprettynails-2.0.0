@@ -2,20 +2,32 @@
     <a-spin size="large" :spinning="spinning">
         <div class="row spin-content">
             <div class="col-md-8 mb-3 separatorLeft">
-                <label for="Client">Cliente</label><br>
-                <a-select
-                    show-search
-                    placeholder="Seleccione el cliente"
-                    option-filter-prop="children"
-                    :filter-option="filterOption"
-                    :allowClear="true"
-                    class="mb-2 "
-                    :class="screenWidthInput"
-                    @change="chooseClient">
-                    <a-select-option v-for="client of clients" :key="client._id" :value="client._id">
-                        {{client.firstName}} / {{client.email}}
-                    </a-select-option>
-                </a-select>
+                <div class="row p-0">
+                    <div class="col-md-6">
+                        <label for="Client">Cliente</label>
+                        <a-select
+                            show-search
+                            placeholder="Seleccione el cliente"
+                            option-filter-prop="children"
+                            :filter-option="filterOption"
+                            :allowClear="true"
+                            class="mb-2 w-100 clientSelect"
+                            :class="screenWidthInput"
+                            @change="chooseClient">
+                            <a-select-option v-for="client of clients" :key="client._id" :value="client._id">
+                                {{client.firstName}}
+                            </a-select-option>
+                        </a-select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="Client">Correo cliente</label>
+                        <input readonly class="ant-input w-100" placeholder="Correo" v-model="registerClient.email"/>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="Client">Telefono cliente</label>
+                        <input readonly class="ant-input w-100" placeholder="Telefono" v-model="registerClient.phone"/>
+                    </div>
+                </div>
                 <div class="card-container">
                     <a-tabs type="card">
                         <a-tab-pane key="1">
@@ -32,7 +44,8 @@
                                         option-filter-prop="children"
                                         :filter-option="filterOption"
                                         :allowClear="true"
-                                        class="mb-2 pt-1 w-100"
+                                        :disabled="readyClient"
+                                        class="mb-2 pt-1 w-100 thisSelect"
                                         @change="chooseService">
                                         <a-select-option v-for="service of services" :key="service._id" :value="service._id">
                                             {{service.name}}
@@ -47,7 +60,8 @@
                                         option-filter-prop="children"
                                         :filter-option="filterOption"
                                         :allowClear="true"
-                                        class="mb-2 pt-1 w-100"
+                                        class="mb-2 pt-1 w-100 thisSelect"
+                                        :disabled="readyClient"
                                         @change="chooseEmploye"
                                         ref="employeSelect">
                                         <a-select-option v-for="employe of registerService.lenders" :key="employe._id" :value="employe._id">
@@ -60,6 +74,7 @@
                                     <currency-input
                                         v-model="itemData.price"
                                         locale="de"
+                                        :disabled="readyClient"
                                         class="ant-input w-100 mb-3"
                                         style="margin-top:-10px;"
                                     />
@@ -77,10 +92,11 @@
                                         placeholder="Seleccione un adicional"
                                         option-filter-prop="children"
                                         :filter-option="filterOption"
+                                        :disabled="readyClient"
                                         v-model="microSelect.name"
                                         :allowClear="true"
                                         :class="screenWidthInput"
-                                        class="mt-1"
+                                        class="mt-1 thisSelect"
                                         @change="chooseAditional">
                                         <a-select-option v-for="micro of microservices" :key="micro.microService" :value="micro.microService+'/'+micro.price">
                                             {{micro.microService}}
@@ -89,6 +105,7 @@
                                     <currency-input
                                         v-model="microSelect.price"
                                         locale="de"
+                                        :disabled="readyClient"
                                         :class="screenWidth"
                                         class="ant-input ml-1 mt-1"
                                     />
@@ -124,7 +141,8 @@
                                         option-filter-prop="children"
                                         :filter-option="filterOption"
                                         :allowClear="true"
-                                        class="mb-2 pt-1 w-100"
+                                        :disabled="readyClient"
+                                        class="mb-2 pt-1 w-100 thisSelect"
                                         @change="chooseProduct"
                                         ref="serviceSelect">
                                         <a-select-option v-for="product of products" :key="product._id" :value="product._id">
@@ -134,20 +152,21 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="quantity" style="margin-bottom:3px">Cantidad</label>
-                                    <a-input @keyup="calculatedQuantity" class="w-100" type="number" placeholder="Cantidad" v-model="itemData.quantityProduct"/>
+                                    <a-input @keyup="calculatedQuantity" :disabled="readyClient" class="w-100" type="number" placeholder="Cantidad" v-model="itemData.quantityProduct"/>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="Client" style="margin-bottom:12px">Precio</label>
                                     <currency-input
                                         v-model="itemData.price"
                                         locale="de"
+                                        :disabled="readyClient"
                                         class="ant-input w-100 mb-3"
                                         style="margin-top:-10px;"
                                     />
                                 </div>
                                 <div class="col-md-6">
                                     <label for="Client" style="margin-bottom:6px">Descuento</label>
-                                    <a-input @keyup="addDiscountFunc" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
+                                    <a-input @keyup="addDiscountFuncProduct" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
                                         <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
                                     </a-input>
                                 </div>
@@ -181,7 +200,7 @@
                                         {{column.total | formatPrice}}
                                     </template>
                                     <template slot="actionInsert" slot-scope="record, column, index">
-                                        <base-button @click="addItem('date', index)" size="sm" type="success">
+                                        <base-button :disabled="readyClient" @click="addItem('date', index)" size="sm" type="success">
                                             <a-icon type="plus-circle" style="vertical-align:1.5px;" />
                                         </base-button>
                                     </template>
@@ -212,7 +231,10 @@
                             {{column.item.name}}
                         </template>
                         <template slot="discount-slot" slot-scope="record, column, index">
-                            <a-input :disabled="column.ifDiscount" v-on:keyup="addDiscountTable(record, index)" v-model="column.discount">
+                            <a-input v-if="column.tag == 'service'" :disabled="column.ifDiscount" v-on:keyup="addDiscountTable(record, index)" v-model="column.discount">
+                                <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                            </a-input>
+                            <a-input v-else :disabled="column.ifDiscount" v-on:keyup="addDiscountTableProduct(record, index)" v-model="column.discount">
                                 <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
                             </a-input>
                         </template>
@@ -269,13 +291,12 @@
                     <template #renderEmpty>
                         <div style="text-align: center">
                             <a-icon type="warning" style="font-size: 20px" />
-                            <h2>no ha ingresado métodos de pago</h2>
+                            <h2>No ha ingresado métodos de pago</h2>
                         </div>
                     </template>
                     <a-list bordered :data-source="paysSelecteds">
                         <a-list-item slot="renderItem" slot-scope="item, index">
-                            Método: {{ item.type }} 
-                            <span class="ml-4">Total: {{item.total | formatPrice}}</span>
+                            {{item.type}}: {{ item.total | formatPrice }} 
                             <a-button style="margin-top:-6px;" @click="removePay(index)" type="danger" class="float-right">
                                 <a-icon type="close-circle" style="vertical-align: 1.5px;"/>
                             </a-button>
@@ -286,9 +307,9 @@
                 <h3>Pagado: {{totalPay | formatPrice}}</h3>
                 <h3>Total: {{totalSale | formatPrice}}</h3>
                 <p><b>Por pagar: </b>{{showPerPay(perPay) | formatPrice}} | <b>Vuelto: {{restPay | formatPrice}}</b></p>
-                <a-button style="margin-top:-6px;" type="primary" class="float-right">
-                    <a-icon type="shopping" style="vertical-align: 1.5px;"/>
+                <a-button @click="proccessSale" style="margin-top:-6px;" :disabled="serviceSelecteds.length > 0 ? false : true" :loading="ifProccess" type="primary" class="float-right">
                     Procesar
+                    <a-icon type="shopping" style="vertical-align: 1.5px;"/>
                 </a-button>
             </div>
             <modal :show.sync="modals.modal1"
@@ -845,6 +866,7 @@ export default {
             classes: {
                 table: "table-bordered table-striped"
             },
+            readyClient: true,
             clientNames: [],
             clientIds: [],
             clients: [],
@@ -893,6 +915,7 @@ export default {
                 name: '',
                 price: 0
             },
+            ifProccess: false,
             quantityMicro: 1,
             microserviceSelecteds: [],
             serviceSelecteds: [],
@@ -923,9 +946,6 @@ export default {
     created(){
         this.getToken()
         this.getBranch()
-        setTimeout(() => {
-            $('.anticon-close-circle').click()
-        }, 1000);
     },
     methods: {
         getToken(){
@@ -979,7 +999,9 @@ export default {
                 const datesFinally = await axios.get(endPoint.endpointTarget+'/dates/getEndingDates/'+this.branch, this.configHeader)
                 if (datesFinally.data.status == 'ok') {
                     this.datesFinally = datesFinally.data.data
-                } 
+                }else{
+                    this.datesFinally = []
+                }
                 console.log(datesFinally)
             }catch(err){
                 console.log(err)
@@ -1047,6 +1069,7 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    this.modals.modal4 = false
                     this.cashFunds.cashName = ''
                     this.cashFunds.cashAmount = ''
                     this.cashFunds.valid = false
@@ -1248,6 +1271,8 @@ export default {
                 if (product.data.status == 'ok') {
                     this.products = product.data.data
                     console.log(this.products)
+                }else{
+                    this.products = []
                 }
             }catch(err){
                 this.$swal({
@@ -1286,6 +1311,8 @@ export default {
                 additionals = additionals == '' ? micro.name : additionals + ', '+micro.name 
             }
             var description = this.itemData.tag == 'service' ? `Servicio: ${this.itemData.item.name} | Empleado: ${this.itemData.employe.name} | Adicionales: ${additionals}` : `${this.itemData.quantityProduct == 0 || this.itemData.quantityProduct == '' ? 1 : this.itemData.quantityProduct}) ${this.itemData.item.measure}`
+
+            const commissionEmploye = this.itemData.tag == 'service' ? (this.itemData.price + (total * 0.50)) * parseFloat('0.'+this.itemData.commission) : 'none'
             if (this.itemData.item.name && this.itemData.realPrice > 0 && this.itemData.price > 0 && this.itemData.tag != '') {
                 var valid = false
                 if (this.itemData.tag == 'service') {
@@ -1303,8 +1330,10 @@ export default {
                         ifDiscount: this.itemData.discountServiceIf,
                         total: this.itemData.price + total,
                         commission: this.itemData.commission,
-                        quantityProduct: this.itemData.tag != 'service' ? this.itemData.quantityProduct == 0 ? 1 : this.itemData.quantityProduct : 'none',
-                        productsService: this.itemData.item.products ? this.itemData.item.products : 'none',
+                        commissionEmploye: commissionEmploye,
+                        totalLocal: this.itemData.tag == 'service' ? (this.itemData.price - commissionEmploye) + (total * 0.50) : (this.itemData.price * 0.50),
+                        quantityProduct: this.itemData.tag != 'service' ? this.itemData.quantityProduct == 0 || this.itemData.quantityProduct == '' ? 1 : this.itemData.quantityProduct : 'none',
+                        productsService: this.itemData.item.products ? this.itemData.item.products : [],
                         tag: this.itemData.tag,
                         employe: this.itemData.tag == 'service' ? this.itemData.employe : 'none',
                         description: description,
@@ -1328,7 +1357,7 @@ export default {
                     this.calculatedTotal()
                     this.microserviceSelecteds = []
                     console.log(this.serviceSelecteds)
-                    $('.ant-select-selection__clear').click()
+                    $('.thisSelect .ant-select-selection__clear').click()
                 }else{
                     this.$swal({
                         icon: 'error',
@@ -1429,6 +1458,15 @@ export default {
                 this.itemData.price = this.itemData.realPrice
             }
         },
+        addDiscountFuncProduct(){
+            var quantity = this.itemData.quantityProduct == 0 || this.itemData.quantityProduct == '' ? 1 : this.itemData.quantityProduct
+            var discount = this.itemData.discountService < 10 ? '0'+this.itemData.discountService : this.itemData.discountService
+            if (this.itemData.discountService != '') {
+                this.itemData.price = (this.itemData.realPrice * quantity) - ((this.itemData.realPrice * quantity) * parseFloat('0.'+discount))
+            }else{
+                this.itemData.price = this.itemData.realPrice * quantity
+            }
+        },
         calculatedQuantity(){
             if (this.itemData.quantityProduct != '') {
                 if (this.itemData.quantityProduct == 0) {
@@ -1446,6 +1484,15 @@ export default {
                 this.serviceSelecteds[key].total = this.serviceSelecteds[key].price - (this.serviceSelecteds[key].price * parseFloat('0.'+discount)) + this.serviceSelecteds[key].additionalTotal
             }else{
                 this.serviceSelecteds[key].total = this.serviceSelecteds[key].price + this.serviceSelecteds[key].additionalTotal
+            }
+            this.calculatedTotal()
+        },
+        addDiscountTableProduct(record, key){
+            var discount = record < 10 ? '0'+record : record
+            if (this.serviceSelecteds[key].discount > 0) {
+                this.serviceSelecteds[key].total = (this.serviceSelecteds[key].price * this.serviceSelecteds[key].quantityProduct) - ((this.serviceSelecteds[key].price * this.serviceSelecteds[key].quantityProduct) * parseFloat('0.'+discount))
+            }else{
+                this.serviceSelecteds[key].total = this.serviceSelecteds[key].price * this.serviceSelecteds[key].quantityProduct
             }
             this.calculatedTotal()
         },
@@ -1546,11 +1593,53 @@ export default {
                 this.itemData.tag = ''
             }
         },
+        async proccessSale(){
+            this.ifProccess = true
+            if (this.perPay <= 0) {
+                try{
+                    const proccesSale = await axios.post(`${endPoint.endpointTarget}/sales/process`, {
+                        items: this.serviceSelecteds,
+                        total: this.totalSale,
+                        totalPay: this.totalPay,
+                        typesPay: this.paysSelecteds,
+                        client: this.registerClient,
+                        clientId: this.editClientId,
+                        branch: this.branch,
+                        date: new Date(),
+                        restPay: this.restPay
+                    }, this.configHeader)
+                    if (proccesSale.data.status == 'ok') {
+                        this.$swal({
+                            icon: 'success',
+                            title: 'Venta procesada',
+                            showConfirmButton: false,
+                            timer: 1000
+                        })
+                        this.initialState()
+                        this.ifProccess = false
+                    }else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Registre fondo de caja',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.modals.modal4 = true
+                        this.ifProccess = false
+                    }
+                }catch(err){}
+            }else{
+                this.$swal({
+                    icon: 'warning',
+                    title: 'Debe completar los pagos',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                this.ifProccess = false
+            }
+        },
         async chooseClient(value){
-            this.discount = ''
-            this.discountSelect = 'Descuento'
             this.ifrecomend = false
-            console.log(value)
             this.clientSelect = value
             if (this.clientSelect) {
                 try {
@@ -1563,6 +1652,7 @@ export default {
                     this.registerClient.email = getClient.data.data.email
                     this.registerClient.phone = getClient.data.data.phone.formatNational
                     this.registerClient.instagram = getClient.data.data.instagram
+                    this.readyClient = false
                     this.validRegister(2)
                     if(getClient.data.data.birthday){
                         var birthday = new Date(getClient.data.data.birthday).getMonth()
@@ -1601,6 +1691,7 @@ export default {
                 this.registerClient.email = ""
                 this.registerClient.phone = ""
                 this.registerClient.instagram = ""
+                this.readyClient = true
                 this.validRegister(2)
             }
             if (this.clientSelect != '' && this.lenderSelect != '') {
@@ -1612,58 +1703,6 @@ export default {
                 this.validatorBtn = true
             }
         },
-        getDataToDate(id){
-            this.initialState()
-            this.validator = false
-			this.servicesProcess = []
-			this.serviciosSelecionados = []
-			this.idProcess = id
-			axios.get(endPoint.endpointTarget+'/citas/getDataToDate/'+id)
-			.then(res => {
-				this.clientSelect = res.data.client
-				this.lenderSelect = res.data.employe
-				this.servicesProcess = res.data.services
-				this.chooseLenderByDataToDate(this.lenderSelect)
-				const split = res.data.client.split('/')
-				const splitTwo = split[1].split(' ')
-				axios.get(endPoint.endpointTarget+'/clients/dataDiscount/'+splitTwo[1])
-				.then(res => {
-					if (res.data[0].recomendaciones > 0) {
-                        this.discount = 15
-                        this.ifrecomend = true
-                    }else if (res.data[0].participacion == 0) {
-                        this.discount = 10
-                    }
-                    var subTotal = 0
-                    var desc = 0
-                    for (let index = 0; index < this.servicesProcess.length; index++) {
-                        this.serviciosSelecionados.push({servicio: this.servicesProcess[index].servicio, comision: this.servicesProcess[index].comision, precio: this.servicesProcess[index].precio, descuento: this.servicesProcess[index].descuento})
-                        let valSpan = ''
-                        let sumaVal = 0
-                        for (let indexTwo = 0; indexTwo < this.services.length; indexTwo++) {
-                            if (this.servicesProcess[index].servicio == this.services[indexTwo].nombre) {
-                                subTotal = subTotal + parseFloat(this.services[indexTwo].precio)
-                                this.countServices[indexTwo].count++
-                            }
-                        }
-                    }
-                    this.price = this.formatPrice(subTotal)
-                    if (this.discount == 10) {
-                        desc = subTotal * 0.90
-                    }
-                    else if (this.discount == 15) {
-                        desc = subTotal * 0.85
-                    }
-                    else{
-                        desc = subTotal
-                    }
-                    this.total = this.formatPrice(desc)
-                    this.totalSinFormato = desc
-                    this.subTotal = subTotal
-                
-				})
-            })
-		},
         initialState(){
             this.itemData = {
                 item: {},
@@ -1686,7 +1725,9 @@ export default {
             this.perPay = 0
             this.restPay = 0
             this.totalPay = 0
-            $('.ant-select-selection__clear').click()
+            
+            $('.thisSelect .ant-select-selection__clear').click()
+            $('.clientSelect .ant-select-selection__clear').click()
         },
         filterOption(input, option) {
             return (
@@ -1695,118 +1736,6 @@ export default {
         },
         processSale() {
             
-            this.spinning = true
-            var totalPay = 0
-            var payType = ''
-			this.typesPay.forEach(element => {
-                if (element.total == '') {
-                    element.total = 0
-                }
-                totalPay = totalPay + element.total
-                payType = element.total > 0 ? element.type : ''
-            });
-            if (this.clientSelect != null && this.lenderSelect != null) {
-				if (Math.round(this.totalSinFormato) == Math.round(totalPay)) {
-                    const itemList = []
-                    for (let index = 0; index < this.serviciosSelecionados.length; index++) {
-                        if (this.serviciosSelecionados[index].products) {
-                            for (let i = 0; i < this.serviciosSelecionados[index].products.length; i++) {
-                                itemList.push(this.serviciosSelecionados[index].products[i])
-                            }
-                        }
-                        
-                    }
-                    axios.post(endPoint.endpointTarget+'/inventario/procesarVenta',{
-                        array:itemList
-                    })
-                    .then(res => {})
-					axios.post(endPoint.endpointTarget+'/sales/process', {
-						client: this.clientSelect,
-						employe: this.lenderSelect,
-						services: this.serviciosSelecionados,
-						typesPay: this.typesPay,
-                        branch: this.branch,
-                        payType: payType,
-                        purchaseOrder: this.payOrder,
-                        discount: this.discount,
-                        processDate: this.inspectorDate,
-						date: this.dates.dateSale,
-						total: this.totalSinFormato,
-						ifProcess: this.idProcess,
-						design: this.design,
-                        ifrecomend: this.ifrecomend
-					}, this.configHeader)
-					.then(res => {
-                        console.log(res)
-						if (res.data.status == "Sale register") {
-                            this.$swal({
-                                icon: 'success',
-                                title: 'Venta procesada.',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            if (this.haveCode == true) {
-                                axios.get(endPoint.endpointTarget+'/pedidos/useCode/'+this.idArticulo)
-                                .then( res =>{})
-                            }
-                            this.haveCode = false
-                            this.alertProducts()
-							this.servicios =''
-							this.initialState()
-							EventBus.$emit('reloadDates', 'process')
-                            EventBus.$emit('reloadSales', 'process')
-                            this.spinning = false
-						}else if(res.data.status == "no-cash"){
-							this.$swal({
-                                icon: 'info',
-                                title: 'Primero debe registrar un fondo de caja.',
-                                showConfirmButton: false,
-                                timer: 2000
-                            })
-                            this.spinning = false
-						}
-					}).catch(err => {
-						this.$swal({
-							type: 'error',
-							title: 'experimentamos problemas :(',
-							showConfirmButton: false,
-							timer: 1500
-                        })
-                        this.spinning = false
-					})
-				}else{
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Los montos no coinciden.',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    this.spinning = false
-					if (this.pagoEfectivo == 0) {
-						this.pagoEfectivo = ''
-					}
-					if (this.pagoTransf == 0) {
-						this.pagoTransf = ''
-					}
-					if (this.pagoOtros == 0) {
-						this.pagoOtros = ''
-					}
-					if (this.pagoRedC == 0) {
-						this.pagoRedC = ''
-					}
-					if (this.pagoTransf == 0) {
-						this.pagoTransf = ''
-					}
-				}	
-			}else{
-                this.$swal({
-                    icon: 'error',
-                    title: 'Complete los datos necesarios.',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                this.spinning = false
-			}
         },
         alertProducts(){
             axios.get(endPoint.endpointTarget+'/inventario/alertProducts')

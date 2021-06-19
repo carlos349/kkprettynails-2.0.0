@@ -346,10 +346,12 @@ export default {
           modal4: false,
           modal5: false,
         },
+        productState: true,
         products: [],
         searchText: '',
         searchInput: null,
         searchedColumn: '',
+        dataHistoryClosedReport: [],
         columns: [
             {
                 title: 'Producto',
@@ -662,6 +664,7 @@ export default {
       },
       async getProducts() {
         this.countProduct = []
+        this.productState = true
         try{
           const getProducts = await axios.get(endPoint.endpointTarget+'/stores/getinventorybybranch/'+ this.branch, this.configHeader)
           if (getProducts) {
@@ -670,11 +673,13 @@ export default {
               var ideal = (this.products[index].quantity + this.products[index].entry) - this.products[index].consume
               this.countProduct.push({id:this.products[index]._id,count:'',ideal:ideal,measure:this.products[index].measure,product:this.products[index].product,difference:''})
             } 
+            this.productState = false
           }else{
             this.products = []
+            this.productState = false
           }
         }catch(err){
-          res.send(err)
+          console.log(err)
         }
       },
       async getHistory() {
@@ -682,11 +687,13 @@ export default {
           const getHistory = await axios.get(endPoint.endpointTarget+'/stores/gethistorybybranch/'+ this.branch, this.configHeader)
           if (getHistory) {
             this.dataHistory = getHistory.data.data
+            this.productState = false
           }else{
             this.dataHistory = []
+            this.productState = false
           }
         }catch(err){
-          res.send(err)
+          console.log(err)
         }
       },
       async getHistoryClosed() {
@@ -694,12 +701,14 @@ export default {
         try{
           const getHistoryClosed = await axios.get(endPoint.endpointTarget+'/stores/gethistoryclosedbybranch/'+ this.branch, this.configHeader)
           if (getHistoryClosed) {
+            this.productState = false
             this.dataHistoryClosed = getHistoryClosed.data.data
           }else{
             this.dataHistoryClosed = []
+            this.productState = false
           }
         }catch(err){
-          res.send(err)
+          console.log(err)
         }
       },
       handleSearch(selectedKeys, confirm, dataIndex) {
@@ -790,6 +799,11 @@ export default {
         EventBus.$on('changeBranch', status => {
             this.getBranch()
         })
+    },
+    computed: {
+        getScreen: () => {
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 'auto' }
+        }
     }
   }
 </script>

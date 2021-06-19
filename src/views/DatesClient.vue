@@ -1110,12 +1110,12 @@
                         this.services = []
                     }
                 }catch(err){
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error técnico',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
+                    // this.$swal({
+                    //     icon: 'error',
+                    //     title: 'Error técnico',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // })
                 }
             },
             async getCategories(){
@@ -1127,12 +1127,12 @@
                         this.categories = []
                     }
                 }catch(err){
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error técnico',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
+                    // this.$swal({
+                    //     icon: 'error',
+                    //     title: 'Error técnico',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // })
                 }
             },
             async getEmployes(){

@@ -1830,12 +1830,12 @@ export default {
                 }
             }catch(err){
                 console.log(err)
-                this.$swal({
-                    icon: 'error',
-                    title: 'Error técnico',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // this.$swal({
+                //     icon: 'error',
+                //     title: 'Error técnico',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // })
             }
         },
         async getCategories(){
@@ -1847,12 +1847,12 @@ export default {
                     this.categories = []
                 }
             }catch(err){
-                this.$swal({
-                    icon: 'error',
-                    title: 'Error técnico',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // this.$swal({
+                //     icon: 'error',
+                //     title: 'Error técnico',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // })
             }
         },
         async getClients(){
@@ -4610,6 +4610,5 @@ export default {
     .historicalClientTable .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
         padding: 6px !important;
     }
-    .ant-table td { white-space: nowrap; }
     
 </style>

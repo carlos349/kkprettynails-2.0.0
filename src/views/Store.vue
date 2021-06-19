@@ -1229,7 +1229,9 @@ export default {
         lastNameUser: '',
         emailUser: '',
         idUser: '',
-        dataHistory: ''     
+        dataHistory: '',
+        branchName: '',
+        branch: ''
       };
     },
     created(){
@@ -1239,6 +1241,7 @@ export default {
       this.getUserData()
       this.getHistory()
       this.getBranches()
+      this.getBranch()
     },
     methods: {
         getUserData(){
@@ -1246,6 +1249,10 @@ export default {
             this.lastNameUser = localStorage.lastname
             this.emailUser = localStorage.email
             this.idUser = localStorage._id
+        },
+        getBranch(){
+            this.branchName = localStorage.branchName  
+            this.branch = localStorage.branch
         },
         async getProducts() {
             this.countProduct = []
@@ -1467,19 +1474,38 @@ export default {
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == 'added') {
-                                    this.$swal({
-                                        type: 'success',
-                                        icon: 'success',
-                                        title: 'La cantidad fue agregada a la sucursal',
-                                        showConfirmButton: false,
-                                        timer: 1500
+                                    axios.post(endPoint.endpointTarget+'/expenses/', {
+                                        branch: this.branch,
+                                        detail: `Producto (${this.productForBranch.product}) ingresado al inventario`,
+                                        amount: this.productForBranch.price * this.branchEntry[index].count,
+                                        type: 'Inventario',
+                                    }, this.configHeader)
+                                    .then(res => {
+                                        if (res.data.status == 'ok') {
+                                            this.$swal({
+                                                type: 'success',
+                                                icon: 'success',
+                                                title: 'La cantidad fue agregada a la sucursal',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            this.branchEntry = []
+                                            for (let i = 0; i < this.branchData.length; i++) {
+                                                this.branchEntry.push({count: ''})
+                                            }
+                                            this.getProducts()
+                                            this.getHistory()
+                                        }
+                                    }).catch(err => {
+                                        this.$swal({
+                                            type: 'error',
+                                            icon: 'error',
+                                            title: 'Problemas con el servidor',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                        console.log(err)
                                     })
-                                    this.branchEntry = []
-                                    for (let i = 0; i < this.branchData.length; i++) {
-                                        this.branchEntry.push({count: ''})
-                                    }
-                                    this.getProducts()
-                                    this.getHistory()
                                 }
                             }).catch(err => {
                                 this.$swal({
@@ -2075,6 +2101,11 @@ export default {
             let val = concat.replace('.', '-')
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         }
+    },
+    mounted() {
+        EventBus.$on('changeBranch', status => {
+            this.getBranch()
+        })
     },
     computed: {
         getScreen: () => {
