@@ -93,14 +93,22 @@
             </template>
             </card>
         </modal>
-        <modal :show.sync="modals.modal2"
-               :gradient="modals.type"
-               modal-classes="modal-danger modal-dialog-centered">
-            <div class="py-3 text-center">
-                <i :class="modals.icon"></i>
-                <h1 class="heading mt-5">{{modals.message}}</h1>
-            </div>
-        </modal>
+        <a-modal v-model="modals.modal2" :width="300" >
+            <template>
+                <h3>Ingresar avance</h3>
+                <label for="Monto">Monto</label>
+                <currency-input
+                    v-model="advancementTotal"
+                    locale="de"
+                    class="ant-input w-100"
+                />
+            </template>
+            <template slot="footer">
+                <base-button :disabled="advancementTotal > 0 ? false : true" @click="registerAdvancement" size="sm" type="success">
+                    Ingresar
+                </base-button>
+            </template>
+        </a-modal>
         <!-- TABLA DE CLIENTES -->
         <a-config-provider>
             <template #renderEmpty>
@@ -143,43 +151,53 @@
                     :style="{ color: filtered ? '#108ee9' : undefined }"
                 />
                 <template slot="total" slot-scope="record,column">
-                    {{formatPrice((parseFloat(column.commission) + parseFloat(column.bonus)) - parseFloat(column.advancement))}}
+                    {{(parseFloat(column.commission) + parseFloat(column.bonus)) - parseFloat(column.advancement) | formatPrice}}
                 </template>
                 <template slot="bonus" slot-scope="record">
-                    {{formatPrice(record)}}
+                    {{record | formatPrice}}
                 </template>
                 <template slot="advancement" slot-scope="record">
-                    {{formatPrice(record)}}
+                    {{record | formatPrice}}
                 </template>
                 <template slot="commission" slot-scope="record">
-                    {{formatPrice(record)}}
+                    {{record | formatPrice}}
                 </template>
                 <template slot="name" slot-scope="record, column">
-                    <b>
-                        <a-tooltip placement="top">
-                            <template slot="title">
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                            <span>Avance</span>
+                        </template>
+                        <base-button v-if="validRoute('empleados', 'reportes')" size="sm" type="warning" @click="modals.modal2 = true, advancementId = column._id, advancementName = column.firstName + ' '+column.lastName">
+                            <a-icon type="wallet" style="vertical-align:1.5px;" />
+                        </base-button>
+                        <base-button v-else disabled size="sm" type="warning">
+                            <a-icon type="wallet" style="vertical-align:1.5px;" />
+                        </base-button>
+                    </a-tooltip>
+
+                    <a-tooltip placement="top">
+                        <template slot="title">
                             <span>Detalles</span>
-                            </template>
-                            <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch)" icon="ni ni-bullet-list-67"></base-button>
-                            <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
-                        </a-tooltip>
-                        
-                        <a-tooltip placement="top">
-                            <template slot="title">
+                        </template>
+                        <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch)" icon="ni ni-bullet-list-67"></base-button>
+                        <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
+                    </a-tooltip>
+                    
+                    <a-tooltip placement="top">
+                        <template slot="title">
                             <span>Reporte</span>
-                            </template>
-                            <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
-                            <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
-                        </a-tooltip>
-                        
-                        <a-tooltip placement="top">
-                            <template slot="title">
+                        </template>
+                        <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
+                        <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
+                    </a-tooltip>
+                    
+                    <a-tooltip placement="top">
+                        <template slot="title">
                             <span>Eliminar</span>
-                            </template>
-                            <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="warning" icon="fas fa-trash"></base-button>
-                            <base-button v-else size="sm" disabled type="warning" icon="fas fa-trash"></base-button>
-                        </a-tooltip>
-                    </b>
+                        </template>
+                        <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="danger" icon="fas fa-trash"></base-button>
+                        <base-button v-else size="sm" disabled type="danger" icon="fas fa-trash"></base-button>
+                    </a-tooltip>
                 </template>
             </a-table>
         </a-config-provider>    
@@ -227,13 +245,12 @@ export default {
                 'x-access-token':localStorage.userToken
                 }
         },
+        advancementId: '',
+        advancementName: '',
+        advancementTotal: 0,
         modals: {
             modal1: false,
-            modal2: false,
-            modal3: false,
-            message: "",
-            icon: '',
-            type:''
+            modal2: false
         },
         columnsDays: [
             {
@@ -276,7 +293,6 @@ export default {
                 title: 'Nombre',
                 dataIndex: 'firstName',
                 key: 'firstName',
-                ellipsis: true,
                 sorter: (a, b) => {
                      if (a.firstName > b.firstName) {
                         return -1;
@@ -305,7 +321,6 @@ export default {
                 title: 'Apellido',
                 dataIndex: 'lastName',
                 key: 'lastName',
-                ellipsis: true,
                 sorter: (a, b) => {
                      if (a.lastName > b.lastName) {
                         return -1;
@@ -333,7 +348,6 @@ export default {
                 title: 'Documento',
                 dataIndex: 'document',
                 key: 'document',
-                ellipsis: true,
                 scopedSlots: {
                     filterDropdown: 'filterDropdown',
                     filterIcon: 'filterIcon',
@@ -352,7 +366,6 @@ export default {
                 title: 'Comisión',
                 dataIndex: 'commission',
                 key: 'commission',
-                ellipsis: true,
                 scopedSlots: { customRender: 'commission' },
                 sorter: (a, b) => a.commission - b.commission,
             },
@@ -360,7 +373,6 @@ export default {
                 title: 'Bonos',
                 dataIndex: 'bonus',
                 key: 'bonus',
-                ellipsis: true,
                 scopedSlots: { customRender: 'bonus' },
                 sorter: (a, b) => a.bonus - b.bonus,
             },
@@ -368,19 +380,17 @@ export default {
                 title: 'Avances',
                 dataIndex: 'advancement',
                 key: 'advancement',
-                ellipsis: true,
                 scopedSlots: { customRender: 'advancement' },
                 sorter: (a, b) => a.advancement - b.advancement,
             },
             {
                 title: 'Total',
                 key: '_id',
-                ellipsis: true,
                 scopedSlots: { customRender: 'total' },
                 sorter: (a, b) => (a.commission + a.bonus - a.advancement) - (b.commission + b.bonus - b.advancement),
             },
             {
-                title: 'Acciones',
+                title: 'Acciones varias',
                 dataIndex: '_id',
                 key: '_id',
                 scopedSlots: { customRender: 'name' }
@@ -402,6 +412,36 @@ export default {
             this.branch = localStorage.branch
             this.getEmployes()
             this.getBlockHours()
+        },
+        registerAdvancement(){
+            const detail = `Avance de comisión para ${this.advancementName}`
+            axios.post(`${endPoint.endpointTarget}/expenses/`, {
+                branch: this.branch,
+                detail: detail,
+                employe: this.advancementId,
+                amount: this.advancementTotal,
+                type: "Comision",
+            }, this.configHeader)
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    axios.put(`${endPoint.endpointTarget}/employes/regAdvancement/${this.advancementId}`, {
+                        amount: this.advancementTotal
+                    }, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.getEmployes()
+                            this.advancementTotal = 0
+                            this.modals.modal2 = false
+                            this.$swal({
+                                icon: 'success',
+                                title: '¡Avance ingresado con éxito!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
+                }
+            })
         },
         async getBlockHours(){
             try{
@@ -554,33 +594,22 @@ export default {
                     }, this.configHeader)
                     .then(res => {
                         if(res.data.status == 'employe created'){
-                            this.modals = {
-                                modal2: true,
-                                message: "¡Empleado registrado con exito!",
-                                icon: 'ni ni-check-bold ni-5x',
-                                type: 'success'
-                            }
-                            setTimeout(() => {
-                                this.getEmployes()
-                                this.initialState(1)
-                                EventBus.$emit('reloadLenders', 'reload')
-                            }, 1500);
+                            this.$swal({
+                                icon: 'success',
+                                title: '¡Empleado registrado con exito!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.getEmployes()
+                            this.initialState(1)
+                            EventBus.$emit('reloadLenders', 'reload')
                         }else{
-                            this.modals = {
-                                modal2: true,
-                                message: "¡El empleado ya se encuentra registrado!",
-                                icon: 'ni ni-fat-remove ni-5x',
-                                type: 'danger'
-                            }
-                            setTimeout(() => {
-                            this.modals = {
-                                modal2: false,  
-                                modal1: true,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            } 
-                            }, 1500);
+                            this.$swal({
+                                icon: 'error',
+                                title: '¡El empleado ya se encuentra registrado!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                         }
                     })
                 }else{
@@ -614,24 +643,22 @@ export default {
                     }, this.configHeader)
                     .then(res => {
                         if(res.data.status == "employe edited"){
-                            this.modals = {
-                                modal2: true,
-                                message: "¡Empleado editado con exito!",
-                                icon: 'ni ni-check-bold ni-5x',
-                                type: 'success'
-                            }
-                            setTimeout(() => {
-                                if (this.filter == 'Todas') {
-                                    this.getEmployes()
-                                }if (this.filter != 'Todas' && this.filter != '') {
-                                    const sendBranch = {
-                                        _id:this.filter
-                                    }
-                                    this.findBranch(sendBranch)
+                            this.$swal({
+                                icon: 'success',
+                                title: '¡Empleado editado con exito!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            if (this.filter == 'Todas') {
+                                this.getEmployes()
+                            }if (this.filter != 'Todas' && this.filter != '') {
+                                const sendBranch = {
+                                    _id:this.filter
                                 }
-                                this.initialState(1)
-                                EventBus.$emit('reloadLenders', 'reload')
-                            }, 2000);
+                                this.findBranch(sendBranch)
+                            }
+                            this.initialState(1)
+                            EventBus.$emit('reloadLenders', 'reload')
                         }else{
                             this.$swal({
                                 type: 'error',
@@ -668,25 +695,22 @@ export default {
                     axios.delete(endPoint.endpointTarget+'/employes/' + id, this.configHeader)
                     .then(res => {
                         if(res.data.status = 'employe deleted'){
-                            this.modals = {
-                                modal2: true,
-                                message: "¡Empleado eliminado!",
-                                icon: 'ni ni-check-bold ni-5x',
-                                type: 'success'
-                            }
-                            setTimeout(() => {
-                                if (this.filter == 'Todas') {
-                                    this.getEmployes()
-                                }if (this.filter != 'Todas' && this.filter != '') {
-                                    const sendBranch = {
-                                        _id:this.filter
-                                    }
-                                    this.findBranch(sendBranch)
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Empleado eliminado',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            if (this.filter == 'Todas') {
+                                this.getEmployes()
+                            }if (this.filter != 'Todas' && this.filter != '') {
+                                const sendBranch = {
+                                    _id:this.filter
                                 }
-                                this.initialState(1)
-                                EventBus.$emit('reloadLenders', 'reload')
-                            }, 2000);
-                            // this.emitMethod()
+                                this.findBranch(sendBranch)
+                            }
+                            this.initialState(1)
+                            EventBus.$emit('reloadLenders', 'reload')
                         }
                     })
                     .catch(err => {
@@ -760,15 +784,6 @@ export default {
             for (let index = 0; index < this.days.length; index++) {
                 this.days[index].valid = false
             }
-            if (val == 1) {
-                this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        message: "",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-            }
             if (val == 2) {
                 this.registerEmploye.show = true
                 setTimeout(() => {
@@ -795,14 +810,6 @@ export default {
             else{
                 this.registerEmploye.valid = false
             }
-        },
-        formatDate(date) {
-            let dateFormat = new Date(date)
-            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+" "+" ("+ dateFormat.getHours()+":"+ dateFormat.getMinutes()+")"
-        },
-        formatPrice(value) {
-            let val = (value/1).toFixed(2).replace('.', ',')
-            return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         formatRut(rut) {
             rut.replace(/[-.]/g,'')

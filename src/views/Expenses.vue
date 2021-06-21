@@ -54,7 +54,7 @@
                         <div class="col-md-2 px-1">
                             <stats-card title="Comisiones"
                                 type="gradient-orange"
-                                :sub-title="commissionThisMonth | formatPrice"
+                                :sub-title="thisMonth.Comision | formatPrice"
                                 icon="ni ni-money-coins"
                                 class="mt-7">
                                 <template slot="footer">
@@ -65,7 +65,7 @@
                                     <span class="text-nowrap">
                                         Mes pasado 
                                         <small class="text-muted">  
-                                            {{commissionBeforeMonth | formatPrice}}
+                                            {{beforeMonth.Comision | formatPrice}}
                                         </small>
                                     </span>
                                 </template>
@@ -164,7 +164,7 @@
                     {{column.amount | formatPrice}}
                 </template>
                 <template slot="action-slot" slot-scope="record, column">
-                    <base-button @click="deleteExpense(column._id)" size="sm" type="danger">
+                    <base-button @click="deleteExpense(column._id, column.type, column.employe, column.amount)" size="sm" type="danger">
                         <a-icon type="close-circle" style="vertical-align:1.5px;" />
                     </base-button>
                 </template>
@@ -200,7 +200,7 @@
                         option-filter-prop="children"
                         :filter-option="filterOption"
                         :allowClear="true"
-                        class="mb-2 pt-1 w-100 thisSelect"
+                        class="mb-2 pt-1 w-100 selectEmploye"
                         @change="chooseEmploye">
                         <a-select-option v-for="employe of employes" :key="employe._id" :value="employe._id">
                             {{employe.firstName}} {{employe.lastName}}
@@ -214,6 +214,9 @@
                     />
                 </template>
                 <template slot="footer">
+                    <base-button class="float-left" @click="modals.modal1 = true, modals.modal2 = false" size="sm" type="default">
+                        Regresar
+                    </base-button>
                     <base-button :disabled="registerExpense.detail.length > 0 && registerExpense.amount > 0 && employeSelect.id.length > 0 ? false : true" @click="registerBonusExpense" size="sm" type="success">
                         registrar
                     </base-button>
@@ -237,6 +240,9 @@
                 />
             </template>
             <template slot="footer">
+                <base-button class="float-left" @click="modals.modal1 = true, modals.modal3 = false" size="sm" type="default">
+                        Regresar
+                    </base-button>
                 <base-button :disabled="registerExpense.detail.length > 0 && registerExpense.amount > 0 ? false : true" @click="registerMonthExpense" size="sm" type="success">
                     registrar
                 </base-button>
@@ -361,12 +367,14 @@ export default {
             thisMonth:  {
                 Inventario: 0,
                 Bono: 0,
-                Mensual: 0
+                Mensual: 0,
+                Comision: 0
             },
             beforeMonth: {
                 Inventario: 0,
                 Bono: 0,
-                Mensual: 0
+                Mensual: 0,
+                Comision: 0
             },
             commissionThisMonth: 0,
             commissionBeforeMonth: 0,
@@ -396,7 +404,6 @@ export default {
             this.branch = localStorage.branch
             this.getExpenses()
             this.getEmployes()
-            this.getCommissions()
             this.getReinvestment()
             this.getTotal() 
         },
@@ -414,7 +421,7 @@ export default {
         },
         closeReinvestment(){
             if (this.reinvestmentValid && this.reinvestmentId != '') {
-                const expenseTotal = this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual
+                const expenseTotal = this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual + this.thisMonth.Comision
                 this.$swal({
                         title: '¿Está seguro que desea Hacer el cierre?',
                         type: 'warning',
@@ -430,7 +437,6 @@ export default {
                                 reinvestment: this.reinvestmentTotal,
                                 sales: this.totalSales,
                                 expenses: expenseTotal,
-                                commissions: this.commissionThisMonth,
                                 totalFinal: this.totalFinal,
                                 branch: this.branch,
                                 reinvestmentId: this.reinvestmentId 
@@ -513,26 +519,6 @@ export default {
                 this.totalFinal = this.reinvestmentTotal + this.totalSales - (this.commissionThisMonth + this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual)
             }, 200);
         },
-        async getCommissions(){
-            try {
-                const commissions = await axios.get(`${endPoint.endpointTarget}/sales/commissionsTotal/${this.branch}`, this.configHeader)
-                console.log(commissions)
-                if (commissions.data.status == 'ok') {
-                    this.commissionThisMonth = commissions.data.data.commissionThisMonth
-                    this.commissionBeforeMonth = commissions.data.data.commissionBeforeMonth
-                    this.totalSales = commissions.data.data.totalSales
-                    this.percentCommission = this.commissionThisMonth > 0 ? ((commissions.data.data.commissionThisMonth - commissions.data.data.commissionBeforeMonth) / commissions.data.data.commissionThisMonth) * 100 : 0
-                }
-            }catch(err){
-                this.$swal({
-					icon: 'error',
-					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-					showConfirmButton: false,
-					timer: 2500
-				})
-				router.push({name: 'login'})
-            }
-        },
         async getExpenses(){
             try {
                 const expenses = await axios.get(`${endPoint.endpointTarget}/expenses/${this.branch}`, this.configHeader)
@@ -543,7 +529,7 @@ export default {
                     this.percentInventory = this.thisMonth.Inventario > 0 ? ((this.thisMonth.Inventario - this.beforeMonth.Inventario) / this.thisMonth.Inventario) * 100 : 0
                     this.percentBonus = this.thisMonth.Bono > 0 ? ((this.thisMonth.Bono - this.beforeMonth.Bono) / this.thisMonth.Bono) * 100 : 0
                     this.percentMonth = this.thisMonth.Mensual > 0 ? ((this.thisMonth.Mensual - this.beforeMonth.Mensual) / this.thisMonth.Mensual) * 100 : 0
-                    console.log(this.percentInventory)
+                    this.percentCommission = this.thisMonth.Comision > 0 ? ((this.thisMonth.Comision - this.beforeMonth.Comision) / this.thisMonth.Comision) * 100 : 0
                 }else{
                     this.expenses = []
                 }
@@ -589,8 +575,13 @@ export default {
 				router.push({name: 'login'})
             }
         },
-        deleteExpense(id){
-            axios.delete(`${endPoint.endpointTarget}/expenses/${id}`, this.configHeader)
+        deleteExpense(id, type, employe, total){
+            console.log(id, type, employe, total)
+            axios.put(`${endPoint.endpointTarget}/expenses/${id}`, {
+                type: type,
+                idEmploye: employe,
+                total: total
+            }, this.configHeader)
             .then(res => {
                 this.$swal({
                     type: 'success',
@@ -607,10 +598,11 @@ export default {
             })
         },
         registerBonusExpense(){
-            const detail = `Bono para ${this.employeSelect.name}, Razon: ${this.registerExpense.detail}`
+            const detail = `${this.registerExpense.detail} a ${this.registerExpense.name}`
             axios.post(`${endPoint.endpointTarget}/expenses/`, {
                 branch: this.branch,
                 detail: detail,
+                employe: this.employeSelect.id,
                 amount: this.registerExpense.amount,
                 type: "Bono",
             }, this.configHeader)
@@ -626,6 +618,7 @@ export default {
                             this.employeSelect.name = ''
                             this.employeSelect.id = ''
                             this.modals.modal2 = false
+                            $('.selectEmploye .ant-select-selection__clear').click()
                             this.$swal({
                                 icon: 'success',
                                 title: 'Bono registrado',
@@ -644,6 +637,7 @@ export default {
             axios.post(`${endPoint.endpointTarget}/expenses/`, {
                 branch: this.branch,
                 detail: this.registerExpense.detail,
+                employe: 'none',
                 amount: this.registerExpense.amount,
                 type: "Mensual",
             }, this.configHeader)
