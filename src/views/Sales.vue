@@ -286,18 +286,12 @@
                 <template slot="date-format" slot-scope="record, column">
                     {{formatDate(column.createdAt)}}
                 </template>
-                <template slot="employeName" slot-scope="record, column">
-                    {{column.employe.name}}
-                </template>
-                <template slot="commission" slot-scope="record, column">
-                    {{formatPrice(column.commission)}}
-                </template>
                 <template slot="localGain" slot-scope="record, column">
                     {{formatPrice(column.localGain)}}
                 </template>
                 
                 <template slot="total" slot-scope="record, column">
-                    {{formatPrice(column.total)}}
+                    {{formatPrice(column.totals.total)}}
                 </template>
                 <template slot="reportSale" slot-scope="record, column">
                     <center v-if="validRoute('ventas', 'detalle')" >
@@ -339,8 +333,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import io from 'socket.io-client';
 import jwtDecode from 'jwt-decode'
 import XLSX from 'xlsx'
-import VueMoment from 'vue-moment'
-var moment = require('moment'); // require
+const moment = require('moment'); // require
 const dateNew = new Date()
 
 import mixinUserToken from '../mixins/mixinUserToken'
@@ -390,15 +383,6 @@ export default {
                     ellipsis: true,
                 },
                 {
-                    title: 'Comisión',
-                    dataIndex: 'commission',
-                    key: 'commission',
-                    ellipsis: true,
-                    scopedSlots: { customRender: 'commission' },
-                    defaultSortOrder: 'descend',
-                    sorter: (a, b) => a.commission - b.commission
-                },
-                {
                     title: 'Ganacia local',
                     dataIndex: 'localGain',
                     key: 'localGain',
@@ -409,22 +393,15 @@ export default {
                 },
                 {
                     title: 'Total',
-                    dataIndex: 'total',
-                    key: 'total',
+                    dataIndex: 'totals.total',
+                    key: 'totals.total',
                     ellipsis: true,
                     scopedSlots: { customRender: 'total' },
                     defaultSortOrder: 'descend',
                     sorter: (a, b) => a.total - b.total
                 },
                 {
-                    title: 'Empleadas (os)',
-                    dataIndex: 'employe',
-                    key: 'employe',
-                    ellipsis: true,
-                    scopedSlots: { customRender: 'employeName' },
-                },
-                {
-                    title: 'Acciones',
+                    title: 'Detalle',
                     dataIndex: '_id',
                     key: '_id',
                     ellipsis: true,

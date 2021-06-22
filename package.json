@@ -55,6 +55,7 @@
     "vue-sweetalert2": "^3.0.3",
     "vue-template-compiler": "^2.6.11",
     "vue2-transitions": "0.3.0",
+    "vuesax": "^4.0.1-alpha.25",
     "vuescroll": "^4.17.2",
     "xlsx": "^0.15.6"
   },

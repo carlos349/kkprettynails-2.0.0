@@ -48,6 +48,8 @@ import formatDate from '@/plugins/formatDate';
 import vuescroll from 'vuescroll';
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import { KinesisContainer, KinesisElement } from 'vue-kinesis'
+import Vuesax from 'vuesax'
+import 'vuesax/dist/vuesax.css'
 
 // You can set global config here.
 Vue.use(vuescroll)
@@ -76,6 +78,7 @@ Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)
 Vue.use(Popper)
+Vue.use(Vuesax)
 Vue.use(formatDate)
 Vue.use(formatPrice)
 Vue.use(CKEditor);

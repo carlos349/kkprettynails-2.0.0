@@ -16,7 +16,7 @@
                                 type="gradient-orange"
                                 :sub-title="thisMonth.Inventario | formatPrice"
                                 icon="ni ni-box-2"
-                                class="mt-7">
+                                class="mt-6">
                                 <template slot="footer">
                                     <span :class="percentInventory >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                         <i :class="percentInventory >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -36,7 +36,7 @@
                                 type="gradient-orange"
                                 :sub-title="thisMonth.Bono | formatPrice"
                                 icon="ni ni-trophy"
-                                class="mt-7">
+                                class="mt-6">
                                 <template slot="footer">
                                     <span :class="percentBonus >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                         <i :class="percentBonus >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -56,7 +56,7 @@
                                 type="gradient-orange"
                                 :sub-title="thisMonth.Comision | formatPrice"
                                 icon="ni ni-money-coins"
-                                class="mt-7">
+                                class="mt-6">
                                 <template slot="footer">
                                     <span :class="percentCommission >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                         <i :class="percentCommission >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -76,7 +76,7 @@
                                 type="gradient-orange"
                                 :sub-title="thisMonth.Mensual | formatPrice"
                                 icon="ni ni-shop"
-                                class="mt-7">
+                                class="mt-6">
                                 <template slot="footer">
                                     <span :class="percentMonth >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                         <i :class="percentMonth >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -91,7 +91,7 @@
                                 </template>
                             </stats-card>
                         </div>
-                        <div class="col-md-2 px-1">
+                        <div class="col-md-4 px-1">
                             <a-tooltip>
                                 <template slot="title">
                                     Total = Ventas + Reinversión - Gastos
@@ -100,7 +100,7 @@
                                     type="gradient-orange"
                                     :sub-title="totalFinal | formatPrice"
                                     icon="ni ni-sound-wave"
-                                    class="mt-7">
+                                    class="mt-6">
                                     <template slot="footer">
                                         <span :class="totalFinal >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                             <i :class="totalFinal >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -122,11 +122,18 @@
                             </a-tooltip>
                         </div>
                     </div>
+                    <div class="float-left mt-2">
+                        <label style="margin-left:-10px;" for="date" class="text-white">Busque por fecha</label><br>
+                        <a-range-picker :ranges="{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }" @change="selectDate" style="margin-left:-10px;" :locale="locale" />
+                        <base-button class="ml-2" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="findExpenses" type="success">
+                            <a-icon type="search" style="vertical-align:1px;font-size:1.5em;" />
+                        </base-button>
+                    </div>
                     <a-tooltip>
                         <template slot="title">
                             Registrar gasto
                         </template>
-                        <base-button class="float-right mr-2" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal1 = true" type="success">
+                        <base-button style="margin-right:-10px;" class="float-right mt-5" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal1 = true" type="success">
                             <a-icon type="wallet" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -134,7 +141,7 @@
                         <template slot="title">
                             Inversión mensual
                         </template>
-                        <base-button class="float-right mr-2" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
+                        <base-button class="float-right mr-2 mt-5" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
                             <a-icon type="book" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -142,7 +149,7 @@
                         <template slot="title">
                             Cierre mensual
                         </template>
-                        <base-button @click="closeReinvestment" class="float-right mr-2" size="sm"  v-if="validRoute('gastos', 'registrar')" type="danger">
+                        <base-button @click="closeReinvestment" class="float-right mr-2 mt-5" size="sm"  v-if="validRoute('gastos', 'registrar')" type="danger">
                             <i class="fa fa-archive" style="vertical-align:1px;font-size:1.2em;"></i>
                         </base-button>
                     </a-tooltip>
@@ -284,6 +291,8 @@ import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
+import moment from 'moment';
+import locale from 'ant-design-vue/es/date-picker/locale/es_ES';
 // COMPONENTS
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
@@ -303,6 +312,9 @@ export default {
             dates: {
                 simple: new Date()
             },
+            locale,
+            moment,
+            dateFind: [],
             modals: {
                 modal1: false,
                 modal2: false,
@@ -433,6 +445,11 @@ export default {
                         showLoaderOnConfirm: true
                     }).then((result) => {
                         if(result.value) {
+                            const type = 'circles'
+                            const loading = this.$vs.loading({
+                                type
+                            })
+                            
                             axios.post(`${endPoint.endpointTarget}/expenses/closeExpenses`, {
                                 reinvestment: this.reinvestmentTotal,
                                 sales: this.totalSales,
@@ -443,12 +460,7 @@ export default {
                             }, this.configHeader)
                             .then(res => {
                                 if(res.data.status == 'ok'){
-                                    this.$swal({
-                                        icon: 'success',
-                                        title: 'Cierre efectuado con éxito',
-                                        showConfirmButton: false,
-                                        timer: 2000
-                                    })
+                                    loading.close()
                                     window.open(`${endPoint.endpointTarget}/static/reportExpenses.pdf`)
                                     this.getBranch()
                                 }
@@ -519,6 +531,47 @@ export default {
                 this.totalFinal = this.reinvestmentTotal + this.totalSales - (this.commissionThisMonth + this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual)
             }, 200);
         },
+        selectDate(date, dateString){
+            console.log(date, dateString)
+            if (date) {
+                this.dateFind = dateString
+            }else{
+                this.dateFind = []
+            }
+        },
+        async findExpenses(){
+            if (this.dateFind.length > 0) {
+                this.progress = true
+                try {
+                    const expenses = await axios.post(`${endPoint.endpointTarget}/expenses/findByDates/${this.branch}`, {
+                        dates: this.dateFind
+                    }, this.configHeader)
+                    if (expenses.data.status == 'ok') {
+                        this.expenses = expenses.data.data
+                        this.progress = false
+                        console.log(this.expenses)
+                    }else{
+                        this.expenses = []
+                        this.progress = false
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Fechas sin gastos registrados',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }) 
+                    }
+                }catch(err){
+                    console.log(err)
+                }
+            }else{
+               this.$swal({
+					icon: 'error',
+					title: 'Debe seleccionar fechas',
+					showConfirmButton: false,
+					timer: 1500
+				}) 
+            }
+        },
         async getExpenses(){
             try {
                 const expenses = await axios.get(`${endPoint.endpointTarget}/expenses/${this.branch}`, this.configHeader)
@@ -576,7 +629,7 @@ export default {
             }
         },
         deleteExpense(id, type, employe, total){
-            console.log(id, type, employe, total)
+            // console.log(id, type, employe, total)
             axios.put(`${endPoint.endpointTarget}/expenses/${id}`, {
                 type: type,
                 idEmploye: employe,
@@ -598,7 +651,7 @@ export default {
             })
         },
         registerBonusExpense(){
-            const detail = `${this.registerExpense.detail} a ${this.registerExpense.name}`
+            const detail = `${this.registerExpense.detail} a ${this.employeSelect.name}`
             axios.post(`${endPoint.endpointTarget}/expenses/`, {
                 branch: this.branch,
                 detail: detail,
