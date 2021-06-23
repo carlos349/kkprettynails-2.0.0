@@ -91,7 +91,27 @@
                                 </template>
                             </stats-card>
                         </div>
-                        <div class="col-md-4 px-1">
+                        <div class="col-md-2 px-1">
+                            <stats-card title="Total gastos"
+                                type="gradient-orange"
+                                :sub-title="(totalExpenses) | formatPrice"
+                                icon="ni ni-trophy"
+                                class="mt-6">
+                                <template slot="footer">
+                                    <span :class="percentTotalExpenses >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
+                                        <i :class="percentTotalExpenses >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
+                                        {{percentTotalExpenses}}%
+                                    </span><br>
+                                    <span class="text-nowrap"
+                                        >Mes pasado 
+                                        <small class="text-muted">  
+                                            {{totalExpensesBefore | formatPrice}}
+                                        </small>
+                                    </span>
+                                </template>
+                            </stats-card>
+                        </div>
+                        <div class="col-md-2 px-1">
                             <a-tooltip>
                                 <template slot="title">
                                     Total = Ventas + Reinversión - Gastos
@@ -129,30 +149,18 @@
                             <a-icon type="search" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </div>
-                    <a-tooltip>
-                        <template slot="title">
-                            Registrar gasto
-                        </template>
-                        <base-button style="margin-right:-10px;" class="float-right mt-5" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal1 = true" type="success">
-                            <a-icon type="wallet" style="vertical-align:1px;font-size:1.5em;" />
-                        </base-button>
-                    </a-tooltip>
-                    <a-tooltip>
-                        <template slot="title">
-                            Inversión mensual
-                        </template>
-                        <base-button class="float-right mr-2 mt-5" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
-                            <a-icon type="book" style="vertical-align:1px;font-size:1.5em;" />
-                        </base-button>
-                    </a-tooltip>
-                    <a-tooltip>
-                        <template slot="title">
-                            Cierre mensual
-                        </template>
-                        <base-button @click="closeReinvestment" class="float-right mr-2 mt-5" size="sm"  v-if="validRoute('gastos', 'registrar')" type="danger">
-                            <i class="fa fa-archive" style="vertical-align:1px;font-size:1.2em;"></i>
-                        </base-button>
-                    </a-tooltip>
+                    <base-button style="margin-right:-10px; margin-top:3.3em;" class="float-right" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal1 = true" type="success">
+                        <a-icon type="wallet" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
+                        Registrar
+                    </base-button>
+                    <base-button class="float-right mr-2" style="margin-top:3.3em;" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
+                        <a-icon type="book" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
+                        Inversión mensual
+                    </base-button>
+                    <base-button @click="closeReinvestment" class="float-right mr-2" style="margin-top:3.3em;" size="sm"  v-if="validRoute('gastos', 'registrar')" type="danger">
+                        <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
+                        Cierre
+                    </base-button>
                 </div>
             </div>
         </base-header>
@@ -398,7 +406,10 @@ export default {
             totalFinal: 0,
             reinvestmentTotal: 0,
             reinvestmentValid: false,
-            reinvestmentId: ''
+            reinvestmentId: '',
+            totalExpenses: 0,
+            totalExpensesBefore: 0,
+            percentTotalExpenses: 0
         }
     },
     created(){
@@ -528,7 +539,7 @@ export default {
         },
         getTotal(){
             setTimeout(() => {
-                this.totalFinal = this.reinvestmentTotal + this.totalSales - (this.commissionThisMonth + this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual)
+                this.totalFinal = this.reinvestmentTotal + this.totalSales - (this.thisMonth.Comision + this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual)
             }, 200);
         },
         selectDate(date, dateString){
@@ -579,10 +590,13 @@ export default {
                     this.expenses = expenses.data.data.expenses
                     this.thisMonth = expenses.data.data.expenseTotals
                     this.beforeMonth = expenses.data.data.expenseTotalsBefore
+                    this.totalExpenses = this.thisMonth.Comision + this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual
+                    this.totalExpensesBefore = this.beforeMonth.Comision + this.beforeMonth.Inventario + this.beforeMonth.Bono + this.beforeMonth.Mensual
                     this.percentInventory = this.thisMonth.Inventario > 0 ? ((this.thisMonth.Inventario - this.beforeMonth.Inventario) / this.thisMonth.Inventario) * 100 : 0
                     this.percentBonus = this.thisMonth.Bono > 0 ? ((this.thisMonth.Bono - this.beforeMonth.Bono) / this.thisMonth.Bono) * 100 : 0
                     this.percentMonth = this.thisMonth.Mensual > 0 ? ((this.thisMonth.Mensual - this.beforeMonth.Mensual) / this.thisMonth.Mensual) * 100 : 0
                     this.percentCommission = this.thisMonth.Comision > 0 ? ((this.thisMonth.Comision - this.beforeMonth.Comision) / this.thisMonth.Comision) * 100 : 0
+                    this.percentTotalExpenses = this.totalExpenses > 0 ? ((this.totalExpenses - this.totalExpensesBefore) / this.this.totalExpenses) * 100 : 0
                 }else{
                     this.expenses = []
                 }
