@@ -478,14 +478,15 @@
                 class="calen"
                 :locale="locale"
                 :events="events"
-                :time-from="540"
-                :time-to="1240"
+                :time-from="startCalendar"
+                :time-to="endCalendar"
                 :time-step="15"
                 active-view="month"
                 :disable-views="['years', 'year', 'week']" 
                 events-count-on-month-view
                 :split-days="splitDays"
                 @view-change="validatorLendersDaysSplit('view-change', $event)"
+                :hide-weekdays="hideDays"
                 :sticky-split-labels="stickySplitLabels"
                 :on-event-click="onEventClick"
                 :overlaps-per-time-step="true">
@@ -496,7 +497,6 @@
                 </template>
             </vue-cal>
         </vue-custom-scrollbar>
-        
         <modal :show.sync="dateModals.modal1"
                body-classes="p-0"
                :header-classes="selectedEvent.class"
@@ -1692,7 +1692,11 @@ export default {
         branch: '',
         branchName: '',
         ifMicro:false,
-        microServices:[]
+        microServices:[],
+        configurations: {},
+        startCalendar: 0,
+        endCalendar: 0,
+        hideDays: []
       };
     },
     created(){
@@ -1720,6 +1724,7 @@ export default {
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
             // this.getUsers()
+            this.getConfiguration()
             this.getClients()
             this.getMicroServices()
             this.getServices()
@@ -1746,9 +1751,32 @@ export default {
                 }
             }catch(err){}
         },
+        async getConfiguration(){
+            try {
+                const getConfig = await axios.get(endPoint.endpointTarget+'/configurations/'+this.branch, this.configHeader)
+                if (getConfig.data.status == 'ok') {
+                    this.configurations = getConfig.data.data
+                    var daysBlock = []
+                    for (const days of this.configurations.blockHour) {
+                        if (!days.status) {
+                            daysBlock.push(days.day == 0 ? 7 : days.day)
+                        }
+                    }
+                    this.hideDays = daysBlock
+                }else{
+                    this.configurations = {}
+                }
+            }catch(err){}
+        },
         validatorLendersDaysSplit(change, event){
             this.splitDays = []
             if (event.view == 'day') {
+                var splitStart = this.configurations.blockHour[new Date(event.startDate).getDay()].start.split(':')
+                var splitEnd = this.configurations.blockHour[new Date(event.startDate).getDay()].end.split(':')
+                var start = parseFloat(splitStart[0]+splitStart[1]) * 0.60
+                var end = parseFloat(splitEnd[0]+splitEnd[1]) * 0.60
+                this.startCalendar = start
+                this.endCalendar = end
                 for (let index = 0; index < this.employeShow.length; index++) {
                     const name = this.employeShow[index];
                     for (let j = 0; j < event.events.length; j++) {

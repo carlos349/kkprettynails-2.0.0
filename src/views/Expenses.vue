@@ -427,6 +427,7 @@ export default {
             this.branch = localStorage.branch
             this.getExpenses()
             this.getEmployes()
+            this.getTotalSales()
             this.getReinvestment()
             this.getTotal() 
         },
@@ -440,6 +441,18 @@ export default {
                         } 
                     }
                 }
+            }
+        },
+        async getTotalSales(){
+            try {
+                const getTotal = await axios.get(`${endPoint.endpointTarget}/sales/totalSales/${this.branch}`, this.configHeader)
+                console.log(getTotal)
+                if (getTotal.data.status == 'ok') {
+                    this.totalSales = getTotal.data.data
+                    console.log(this.totalSales)
+                }
+            }catch(err){
+                console.log(err)
             }
         },
         closeReinvestment(){
