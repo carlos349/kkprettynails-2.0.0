@@ -5,13 +5,68 @@
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
-            <div class="container-fluid d-flex align-items-center">
                 <div class="row">
-                    <div class="col-lg-12 col-md-12">
+                    <div class="col-12">
+                    <div class="text-absolute">
+                        <p class="mb-0 display-2 text-white">Agenda</p>
+                        <p class="text-white">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
+                    </div>
+
+                    <base-button class="float-right mt-7 mr-0 ml-1" size="sm" v-if="validRoute('agendamiento', 'agendar')" @click="modals.modal1 = true , initialState()"  type="success">
+                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Agendar
+                    </base-button>
+
+                    <base-dropdown v-if="validRoute('agendamiento', 'filtrar')" class="float-right mt-7 mr-0 qloq" size="sm">
+                        <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                {{employeByDate}}
+                        </base-button>
+                        <li v-on:click="getDatesByEmploye('Todos')">
+                            <base-button class="dropdown-item" href="#">
+                                <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+                            </base-button>
+                        </li>
+                        <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
+                            <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                                <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                            </base-button>
+                            <base-button v-else class="dropdown-item" href="#">
+                                <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                            </base-button>
+                        </li>
+                    </base-dropdown>
+                    <div v-if="filter == true && validRoute('agendamiento', 'filtrar') == true" class="ml-2">
+                        <img class="avatar rounded-circle" :src="img2" />
+                    </div>
+                    <!-- <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="primary">
+                        <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Categorías
+                    </base-button>
+                    <base-button class="float-right mt-7 mr-0" size="sm" v-else @click="modals.modal5 = true" type="primary" disabled>
+                        <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Categorías
+                    </base-button>
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()" type="success">
+                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Agendar
+                    </base-button>
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-else @click="modals.modal1 = true, clean()" type="success" disabled>
+                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Agendar
+                    </base-button> -->
+                </div>
+                    <!-- <div class="col-lg-12 col-md-12">
                         <h1 class="display-2 text-white w-100">Agenda</h1>
                         <p class="text-white headMob mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
-                        <div class="col-12">
-                            <div style="width:120%" class="row buttons">
+                        
+                                <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="primary">
+                                <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                                    Categorías
+                                </base-button>
+                                <base-button class="float-right mt-7 mr-0" size="sm" v-else @click="modals.modal5 = true" type="primary" disabled>
+                                    <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                                    Categorías
+                                </base-button>
                                 <base-button v-if="validRoute('agendamiento', 'agendar')" @click="modals.modal1 = true , initialState()"  type="success">Agendar</base-button>
                                 <base-button v-if="validRoute('agendamiento', 'procesar')" class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" type="primary">
                                     <span>Ventas por procesar</span>
@@ -39,11 +94,8 @@
                                 <div v-if="filter == true && validRoute('agendamiento', 'filtrar') == true" class="ml-2">
                                     <img class="avatar rounded-circle" :src="img2" />
                                 </div>
-                            </div>
-                        </div>
-                    </div>
+                    </div> -->
                 </div>
-            </div>
         </base-header>
         <modal :show.sync="modalsDialog.modal2"
                :gradient="modalsDialog.type"
@@ -483,7 +535,7 @@
                             <dt class="text-center">Detalles de la cita</dt>
                             <a-tooltip placement="top">
                                 <template slot="title">
-                                <span v-if="selectedEvent.client">{{selectedEvent.client.email}} - {{selectedEvent.client.phone}}</span>
+                                <span v-if="selectedEvent.client">{{selectedEvent.client.email}} - {{selectedEvent.client.phone.formatInternational}}</span>
                                 </template>
                                 <base-button v-if="selectedEvent.client" class="mt-2 col-12" size="sm" type="secondary">
                                     <span >Cliente:</span>
@@ -567,7 +619,7 @@
                                     </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="endDate(selectedEvent)" class="col-md-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true" class="col-md-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Finalizar</span>  
@@ -779,17 +831,22 @@
                   header-classes="bg-white pb-5"
                   body-classes=""
                   class="border-0">
-                <div class="form-group" style="margin-top:-20px;">
-                    <label for="Montodiseño">Monto del diseño</label>
-                    <currency-input
-                    title="Monto de diseño"
-                    v-model="designEndDate"
-                    placeholder="Monto de diseño"
-                    locale="de"
-                    class="form-control mb-3"
-                    />
+                <div class="form-group" style="margin-top:-10px;">
+                    <center>
+                        <base-button type="primary" :class="selectedEvent.class">{{selectedEvent.title}}</base-button> 
+                    </center>
                 </div>
-                <template v-for="servicesEnding of EndDateServices" >
+                <div v-if="selectedEvent.microServices && selectedEvent.microServices.length > 0">
+                                <dt class="mt-3 text-center">Servicios adicionales</dt>
+                                <a-tooltip v-for="micro of selectedEvent.microServices" :key="micro" placement="top">
+                                    <template slot="title">
+                                        <span>Duración: {{micro.duration}} minutos</span> <br>
+                                        <span>Precio: $ {{formatPrice(micro.price)}}</span>
+                                    </template>
+                                    <badge  style="font-size:0.85em; cursor:pointer" class="mt-1 ml-1 text-default" type="primary">{{micro.name}}</badge>
+                                </a-tooltip>
+                            </div>
+                <!-- <template v-for="servicesEnding of EndDateServices" >
                    <button v-if="servicesEnding.valid"   type="button" class="btn btn-default btn-sm mr-1 mb-2">
                         <span>{{servicesEnding.name}}</span>
                         <span v-on:click="discountServiceDate(servicesEnding.id, servicesEnding.index, servicesEnding.name,false)" class="badge badge-primary text-white">X</span>
@@ -826,9 +883,9 @@
                             </tr>
                         </tbody>
                     </table>
-                </vue-custom-scrollbar>
+                </vue-custom-scrollbar> -->
                 <div class="text-center">
-                    <base-button v-if="serviciosSelecionadosDates.length > 0" v-on:click="endingDate()" class="mt-3" type="default">Finalizar</base-button>
+                    <base-button v-if="serviciosSelecionadosDates.length > 0" v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
                     <base-button v-else disabled class="mt-3" type="default">Finalizar</base-button>
                 </div>
             </card>
@@ -1696,7 +1753,7 @@ export default {
                     const name = this.employeShow[index];
                     for (let j = 0; j < event.events.length; j++) {
                         const element = event.events[j]
-                        if (element.employe.name == name.name) {
+                        if (element.employe.id == name._id) {
                             this.splitDays.push({id: name._id, class: name.class+'Split', label: name.name, img: name.img})
                             break
                         }
@@ -2123,6 +2180,7 @@ export default {
                 this.dataClient.valid = false
                 this.dateClient.valid2 = false
             }else{
+                
                 this.dateClient = {
                     name: value.firstName + ' ' + value.lastName,
                     id: value._id,
@@ -2247,102 +2305,132 @@ export default {
             })
         },
         register(){
-            this.ifDisabled = true
-            var employeFinal = ''
-            var hourFinal = ''
-            for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                const element = this.registerDae.serviceSelectds[index];
-                if (index > 0){
-                    employeFinal = employeFinal+' - '+element.realEmploye
-                    hourFinal = hourFinal+' - '+element.start+'Hrs'
-                }else{
-                    employeFinal = element.realEmploye
-                    hourFinal = element.start+'Hrs'
-                }
-            }
-            axios.post(endPoint.endpointTarget+'/dates/verifyDate', {
-                dataDate: this.registerDae,
-                date: this.finalDate,
-                branch: this.branch
-            }, this.configHeader)
-            .then(res => {
-                console.log(res)
-                if(res.data.status == true){
-                    this.modals = {
-                        modal3: true,
-                        message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
+            if (this.dataClient.valid && this.dataClient.valid2) {
+                    this.ifDisabled = true
+                var employeFinal = ''
+                var hourFinal = ''
+                for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                    const element = this.registerDae.serviceSelectds[index];
+                    if (index > 0){
+                        employeFinal = employeFinal+' - '+element.realEmploye
+                        hourFinal = hourFinal+' - '+element.start+'Hrs'
+                    }else{
+                        employeFinal = element.realEmploye
+                        hourFinal = element.start+'Hrs'
                     }
-                    setTimeout(() => {
+                }
+                axios.post(endPoint.endpointTarget+'/dates/verifyDate', {
+                    dataDate: this.registerDae,
+                    date: this.finalDate,
+                    branch: this.branch
+                }, this.configHeader)
+                .then(res => {
+                    console.log(res)
+                    if(res.data.status == true){
                         this.modals = {
-                            modal1:false,
-                            modal2:false,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
-                            message: "",
-                            icon: '',
-                            type: ''
+                            modal3: true,
+                            message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
                         }
-                        this.$refs.wizard.prevTab()
-                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                            const element = this.registerDae.serviceSelectds[index];
-                            element.start = ''
-                            element.end = ''
-                            element.sort = ''
-                            element.class = ''
-                            element.blocks = []
-                            element.blocksFirst = []
-                            element.valid = false
-                            element.employe = 'Primera disponible'
-                            element.employeImg = ''
-                            element.employeId = ''
-                            element.realEmploye = 'Primera disponible'
-                        }
-                        this.validHour = false
                         setTimeout(() => {
-                            axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                                date: this.finalDate,
-                                branch: this.branch
-                            }, this.configHeader)
-                            .then(res => {
-                                this.getDay = res.data.day
-                                this.availableslenders = res.data.array
-                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                            this.modals = {
+                                modal1:false,
+                                modal2:false,
+                                modal3: false,
+                                modal4: false,
+                                modal5: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                            this.$refs.wizard.prevTab()
+                            for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                                const element = this.registerDae.serviceSelectds[index];
+                                element.start = ''
+                                element.end = ''
+                                element.sort = ''
+                                element.class = ''
+                                element.blocks = []
+                                element.blocksFirst = []
+                                element.valid = false
+                                element.employe = 'Primera disponible'
+                                element.employeImg = ''
+                                element.employeId = ''
+                                element.realEmploye = 'Primera disponible'
+                            }
+                            this.validHour = false
+                            setTimeout(() => {
+                                axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                                     date: this.finalDate,
-                                    employes: res.data.array,
-                                    timedate: this.registerDae.serviceSelectds[0].duration,
-                                    employesServices: this.registerDae.serviceSelectds[0].employes,
                                     branch: this.branch
                                 }, this.configHeader)
                                 .then(res => {
-                                    this.readyChange = true
-                                    this.registerDae.serviceSelectds[0].valid = true
-                                    this.registerDae.serviceSelectds[0].blocks = res.data.data
-                                    this.registerDae.block = res.data.data
-                                    console.log(this.registerDae.serviceSelectds[0].blocks)
-                                    $('#block0').toggle('slow')
+                                    this.getDay = res.data.day
+                                    this.availableslenders = res.data.array
+                                    axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                                        date: this.finalDate,
+                                        employes: res.data.array,
+                                        timedate: this.registerDae.serviceSelectds[0].duration,
+                                        employesServices: this.registerDae.serviceSelectds[0].employes,
+                                        branch: this.branch
+                                    }, this.configHeader)
+                                    .then(res => {
+                                        this.readyChange = true
+                                        this.registerDae.serviceSelectds[0].valid = true
+                                        this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                        this.registerDae.block = res.data.data
+                                        console.log(this.registerDae.serviceSelectds[0].blocks)
+                                        $('#block0').toggle('slow')
+                                    })
                                 })
-                            })
-                        }, 200);  
-                    }, 5000);
-                }else{
-                    var blockEdit = []
-                    if (this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst.length > 0) {
-                        blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst
+                            }, 200);  
+                        }, 5000);
                     }else{
-                        blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocks
-                    }
-                    if (this.file != '') {
-                        let formData = new FormData();
-                        formData.append('file', this.file)
-                        axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        }, this.configHeader)
-                        .then(res => {
+                        var blockEdit = []
+                        if (this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst.length > 0) {
+                            blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst
+                        }else{
+                            blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocks
+                        }
+                        if (this.file != '') {
+                            let formData = new FormData();
+                            formData.append('file', this.file)
+                            axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                            }, this.configHeader)
+                            .then(res => {
+                                axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
+                                    dataDate: this.registerDae,
+                                    branch: this.branch,
+                                    date: this.finalDate,
+                                    client: this.dateClient,
+                                    block: blockEdit,
+                                    blockId: this.idDatesBlocks,
+                                    typeCreation: 'system',
+                                    pdf: res.data.nameFile,
+                                    ifClient: true
+                                }, this.configHeader)
+                                .then(res => {
+                                    if (res.data.status == "ok") {
+                                        this.$swal({
+                                            type: 'success',
+                                            icon: 'success',
+                                            title: 'Cita creada con exito',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                        this.$refs.wizard.reset()
+                                        this.initialState()
+                                        // this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
+                                        this.modals.modal2 = false
+                                        this.ifDisabled = false
+                                    }    
+                                })   
+                            })
+                        }else{
                             axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
                                 dataDate: this.registerDae,
                                 branch: this.branch,
@@ -2351,7 +2439,7 @@ export default {
                                 block: blockEdit,
                                 blockId: this.idDatesBlocks,
                                 typeCreation: 'system',
-                                pdf: res.data.nameFile,
+                                pdf: 'not',
                                 ifClient: true
                             }, this.configHeader)
                             .then(res => {
@@ -2363,47 +2451,28 @@ export default {
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
+                                    this.ifDisabled = false
                                     this.$refs.wizard.reset()
                                     this.initialState()
-                                    // this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
+                                    this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
                                     this.modals.modal2 = false
-                                    this.ifDisabled = false
                                 }    
-                            })   
-                        })
-                    }else{
-                        axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
-                            dataDate: this.registerDae,
-                            branch: this.branch,
-                            date: this.finalDate,
-                            client: this.dateClient,
-                            block: blockEdit,
-                            blockId: this.idDatesBlocks,
-                            typeCreation: 'system',
-                            pdf: 'not',
-                            ifClient: true
-                        }, this.configHeader)
-                        .then(res => {
-                            if (res.data.status == "ok") {
-                                this.$swal({
-                                    type: 'success',
-                                    icon: 'success',
-                                    title: 'Cita creada con exito',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                this.ifDisabled = false
-                                this.$refs.wizard.reset()
-                                this.initialState()
-                                this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
-                                this.modals.modal2 = false
-                            }    
-                        })
+                            })
+                        }
                     }
-                }
-            }).catch(err => {
-                console.log(err)
-            })       
+                }).catch(err => {
+                    console.log(err)
+                }) 
+            }else{
+                this.$swal({
+                    type: 'error',
+                    icon: 'error',
+                    title: 'Debe elegir un cliente',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }        
+                  
         },
         newClient(){
             var ifCheck = null
@@ -4342,16 +4411,16 @@ export default {
     .vuecal__time-column .vuecal__time-cell{
         color: #0F2027
     }
-    .vuecal__cell-split.class1Split {background-color: rgba(234, 197, 190, 0.6);}
-    .vuecal__cell-split.class2Split {background-color: rgb(188, 209, 255, 0.6);}
-    .vuecal__cell-split.class3Split {background-color: rgb(221, 239, 189, 0.6);}
-    .vuecal__cell-split.class4Split {background-color: rgb(205, 242, 226, 0.6);}
-    .vuecal__cell-split.class5Split {background-color: rgb(183, 232, 205, 0.6);}
-    .vuecal__cell-split.class6Split {background-color: rgb(192, 229, 221, 0.6);}
-    .vuecal__cell-split.class7Split {background-color: rgb(242, 230, 230, 0.6);}
-    .vuecal__cell-split.class8Split {background-color: rgb(255, 214, 214, 0.6);}
-    .vuecal__cell-split.class9Split {background-color: rgb(255, 209, 186, 0.6);}
-    .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.6);}
+    .vuecal__cell-split.class1Split {background-color: rgba(234, 197, 190, 0.1);}
+    .vuecal__cell-split.class2Split {background-color: rgb(188, 209, 255, 0.1);}
+    .vuecal__cell-split.class3Split {background-color: rgb(221, 239, 189, 0.1);}
+    .vuecal__cell-split.class4Split {background-color: rgb(205, 242, 226, 0.1);}
+    .vuecal__cell-split.class5Split {background-color: rgb(183, 232, 205, 0.1);}
+    .vuecal__cell-split.class6Split {background-color: rgb(192, 229, 221, 0.1);}
+    .vuecal__cell-split.class7Split {background-color: rgb(242, 230, 230, 0.1);}
+    .vuecal__cell-split.class8Split {background-color: rgb(255, 214, 214, 0.1);}
+    .vuecal__cell-split.class9Split {background-color: rgb(255, 209, 186, 0.1);}
+    .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.1);}
     .class0 {
         background:#eb755e;
         border: 1px solid #eb755e;
@@ -4609,6 +4678,10 @@ export default {
     }
     .historicalClientTable .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
         padding: 6px !important;
+    }
+    .qloq button{
+        padding: 3px !important;
+        margin-right: 30px !important;
     }
     
 </style>
