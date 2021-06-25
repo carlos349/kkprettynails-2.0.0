@@ -1,18 +1,18 @@
 <template>
 <div>
-  <kinesis-container>
-    <kinesis-element :strength="8">
+  <!-- <kinesis-container> -->
+    <!-- <kinesis-element :strength="8"> -->
       <card class="card-stats" :show-footer-line="true">
         <div class="row">
-          <kinesis-element :strength="5">
+          <!-- <kinesis-element :strength="5"> -->
             <div class="col">
               <slot>
                 <h6 class="card-title text-uppercase text-muted mb-0" v-if="title">{{title}}</h6>
                 <span class="h5 font-weight-bold mb-0" v-if="subTitle">{{subTitle}}</span>
               </slot>
             </div>
-          </kinesis-element>
-          <kinesis-element :strength="5">
+          <!-- </kinesis-element> -->
+          <!-- <kinesis-element :strength="5"> -->
             <div class="col-auto" v-if="$slots.icon || icon">
               <slot name="icon">
                 <div class="icon-sm icon-shape text-white rounded-circle shadow"
@@ -21,16 +21,16 @@
                 </div>
               </slot>
             </div>
-          </kinesis-element>
+          <!-- </kinesis-element> -->
         </div>
-        <kinesis-element :strength="5">
+        <!-- <kinesis-element :strength="5"> -->
           <p class="mt-3 mb-0 text-sm">
             <slot name="footer"></slot>
           </p>
-        </kinesis-element>
+        <!-- </kinesis-element> -->
       </card>
-    </kinesis-element>
-  </kinesis-container>
+    <!-- </kinesis-element> -->
+  <!-- </kinesis-container> -->
 </div>
 </template>
 <script>
@@ -52,4 +52,8 @@
     }
   };
 </script>
-<style></style>
+<style>
+.card-stats .card-body{
+  padding:0.8rem;
+}
+</style>

@@ -722,7 +722,7 @@
                         this.totalPrice = this.totalPrice + this.registerDate.serviceSelectds[index].price
                     }
                 }
-                
+                console.log()
                 
             },
             async getMicroServices(){
@@ -1756,18 +1756,13 @@
                 if (this.validHour) {
                     this.validWizard = true
                     for (const micro of this.registerDate.serviceSelectds) {
-                        if (micro.microServices[0].checked) {
-                            micro.microServiceSelect = []
-                        }else{
-                            for (const selects of micro.microServices) {
-                                if (selects.checked) {
-                                    micro.microServiceSelect = []
-                                    micro.microServiceSelect.push({name: selects.microService, duration: selects.duration, price: selects.price})
-                                }
+                        for (const selects of micro.microServices) {
+                            if (selects.checked) {
+                                micro.microServiceSelect.push({name: selects.microService, duration: selects.duration, price: selects.price})
                             }
                         }
                     }
-                    console.log(this.registerDate)
+                    console.log(this.registerDate.serviceSelectds[0].microServiceSelect)
                     console.log(this.finalDate)
                     return this.validHour
                 }else{
