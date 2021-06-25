@@ -94,7 +94,7 @@
                         <div class="col-md-2 px-1">
                             <stats-card title="Total gastos"
                                 type="gradient-orange"
-                                :sub-title="(totalExpenses) | formatPrice"
+                                :sub-title="totalExpenses | formatPrice"
                                 icon="ni ni-trophy"
                                 class="mt-6">
                                 <template slot="footer">
@@ -144,9 +144,9 @@
                     </div>
                     <div class="float-left mt-2">
                         <label style="margin-left:-10px;" for="date" class="text-white">Busque por fecha</label><br>
-                        <a-range-picker :ranges="{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }" @change="selectDate" style="margin-left:-10px;" :locale="locale" />
-                        <base-button class="ml-2" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="findExpenses" type="success">
-                            <a-icon type="search" style="vertical-align:1px;font-size:1.5em;" />
+                        <a-range-picker :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" style="margin-left:-10px;width:55%;" :locale="locale" />
+                        <base-button class="ml-2" style="margin-top:-5px;" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="findExpenses" type="success">
+                            <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
                         </base-button>
                     </div>
                     <base-button style="margin-right:-10px; margin-top:3.3em;" class="float-right" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal1 = true" type="success">
@@ -233,7 +233,7 @@
                         Regresar
                     </base-button>
                     <base-button :disabled="registerExpense.detail.length > 0 && registerExpense.amount > 0 && employeSelect.id.length > 0 ? false : true" @click="registerBonusExpense" size="sm" type="success">
-                        registrar
+                        Registrar
                     </base-button>
                 </template>
             </template>
@@ -259,7 +259,7 @@
                         Regresar
                     </base-button>
                 <base-button :disabled="registerExpense.detail.length > 0 && registerExpense.amount > 0 ? false : true" @click="registerMonthExpense" size="sm" type="success">
-                    registrar
+                    Registrar
                 </base-button>
             </template>
         </a-modal>
@@ -596,11 +596,12 @@ export default {
                     this.percentBonus = this.thisMonth.Bono > 0 ? ((this.thisMonth.Bono - this.beforeMonth.Bono) / this.thisMonth.Bono) * 100 : 0
                     this.percentMonth = this.thisMonth.Mensual > 0 ? ((this.thisMonth.Mensual - this.beforeMonth.Mensual) / this.thisMonth.Mensual) * 100 : 0
                     this.percentCommission = this.thisMonth.Comision > 0 ? ((this.thisMonth.Comision - this.beforeMonth.Comision) / this.thisMonth.Comision) * 100 : 0
-                    this.percentTotalExpenses = this.totalExpenses > 0 ? ((this.totalExpenses - this.totalExpensesBefore) / this.this.totalExpenses) * 100 : 0
+                    this.percentTotalExpenses = this.totalExpenses > 0 ? ((this.totalExpenses - this.totalExpensesBefore) / this.totalExpenses) * 100 : 0
                 }else{
                     this.expenses = []
                 }
             }catch(err){
+                console.log(err)
                 this.$swal({
 					icon: 'error',
 					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',

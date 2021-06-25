@@ -48,6 +48,7 @@ import formatDate from '@/plugins/formatDate';
 import vuescroll from 'vuescroll';
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import { KinesisContainer, KinesisElement } from 'vue-kinesis'
+import VueHtmlToPaper from 'vue-html-to-paper';
 import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css'
 
@@ -66,7 +67,21 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 /* Currency input */
 Vue.config.productionTip = false
 const pluginOptions = {globalOptions: { currency: {'prefix':'$ '}, precision: 0, distractionFree: false, autoDecimalMode:false}}
-
+const options = {
+  name: '_blank',
+  specs: [
+    'fullscreen=yes',
+    'titlebar=yes',
+    'scrollbars=yes'
+  ],
+  styles: [
+    'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
+    'https://unpkg.com/kidlat-css/css/kidlat.css'
+  ],
+  timeout: 1000, // default timeout before the print window appears
+  autoClose: true, // if false, the window will not close after printing
+  windowTitle: window.document.title, // override the window title
+}
 /* USES*/
 Vue.use(Antd);
 Vue.component('vue-phone-number-input', VuePhoneNumberInput);
@@ -80,6 +95,7 @@ Vue.use(VueApexCharts)
 Vue.use(Popper)
 Vue.use(Vuesax)
 Vue.use(formatDate)
+Vue.use(VueHtmlToPaper, options)
 Vue.use(formatPrice)
 Vue.use(CKEditor);
 Vue.component('font-awesome-icon', FontAwesomeIcon)

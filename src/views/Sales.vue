@@ -6,42 +6,125 @@
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             
             <!-- Header container -->
-            <div class="container-fluid d-flex align-items-center">
-                
-                <div class="row">
-                    <div class="col-lg-12 col-md-12" style="display:inline-block">
-                        <h1 class="display-2 text-white w-100">Ventas</h1>
-                        <label class="text-white" v-if="validRoute('ventas', 'filtrar')">Filtra tus ventas</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <base-input v-if="validRoute('ventas', 'filtrar')" addon-left-icon="ni ni-calendar-grid-58">
-                                    <flat-picker slot-scope="{focus, blur}"
-                                        @on-open="focus"
-                                        @on-close="blur"
-                                        :config="configDatePicker"
-                                        class="form-control datepicker"
-                                        v-model="dates.range">
-                                    </flat-picker>
-                                </base-input>
-                            </div>
-                            <div class="col-md-2">
-                                <base-button v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="filterSale">Filtrar</base-button>
-                            </div>
-                            <div class="col-md-2">
-                                <base-button v-if="inspectorFilter"  type="secondary" v-on:click="getSales('button')">
-                                    <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="redo" />
-                                </base-button>
-                            </div>
-                            <div class="col-md-2">
-                                <base-button title="Generar excel" icon="ni ni-book-bookmark" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="default" v-on:click="modals.modal3 = true"> </base-button>
-                            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-absolute">
+                        <p class="mb-0 display-2 text-white">Ventas</p>
+                    </div>
+                    <div class="float-right mt-6">
+                        <div class="float-right" style="width:73%;">
+                            <label for="date" class="text-white">Busque por fecha</label><br>
+                            <a-range-picker style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="locale" />
+                            <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;" v-if="validRoute('ventas', 'filtrar')"  v-on:click="filterSale" type="success">
+                                <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
+                            </base-button>
+                            <base-button v-else disabled size="sm" class="mr-2 ml-2" style="margin-top:-5px;" type="success">
+                                <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
+                            </base-button>
+                            <base-button :disabled="inspectorFilter ? false : true" @click="getSales" size="sm" class="mr-2" style="margin-top:-5px;" type="secondary">
+                                <a-icon type="undo" style="vertical-align:1px;font-size:1.8em;" />
+                            </base-button>
+                            <base-button style="margin-top:-5px;" title="Generar excel" size="sm" class="excel-generate" v-if="validRoute('ventas', 'filtrar')"  type="primary" v-on:click="modals.modal3 = true"> 
+                                <a-icon type="file-excel" style="vertical-align:1.5px;font-size:1.8em;" />
+                            </base-button>
                         </div>
-                        
                     </div>
                 </div>
             </div>
         </base-header>
-        <modal :show.sync="modals.modal1"
+        <a-modal v-model="modals.modal1" class="modalReport" :width="800" :footer="null" :closable="true" >
+            <div class="mx-2" id="htmlPrint">
+                <template v-if="dataSale != null">
+                    <h2>Detalle de la venta (ID: {{dataSale.uuid}})</h2>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                            <span>Anular venta</span>
+                        </template>
+                        <base-button size="sm" class="mr-2 float-right" type="warning">
+                            <a-icon type="close-circle" style="vertical-align:1px;font-size:1.5em;" />
+                        </base-button>
+                    </a-tooltip>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                            <span>Imprimir reporte</span>
+                        </template>
+                        <base-button @click="printReport" size="sm" class="mr-2 float-right" type="secondary">
+                            <a-icon type="printer" style="vertical-align:1px;font-size:1.5em;" />
+                        </base-button>
+                    </a-tooltip>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                            <span>Enviar correo</span>
+                        </template>
+                        <base-button size="sm" class="mr-2 float-right" type="secondary">
+                            <a-icon type="mail" style="vertical-align:1px;font-size:1.5em;" />
+                        </base-button>
+                    </a-tooltip>
+                </template>
+                <template v-if="dataSale != null">
+                    <h3>Resumen de pago</h3>
+                    <hr class="mt-0 mb-0">
+                    <div class="row">
+                        <div class="col-md-4 mt-2">
+                            <label for="date" style="margin-bottom:0px;"><b>Fecha</b></label><br>
+                            <span class="ml-1">{{dataSale.createdAt | formatDate}}</span>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label for="date" style="margin-bottom:0px;"><b>Cliente</b></label><br>
+                            <span class="ml-1">{{dataSale.client.firstName}} {{dataSale.client.lastName}}</span>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label for="date" style="margin-bottom:0px;"><b>Correo cliente</b></label><br>
+                            <span class="ml-1">{{dataSale.client.email}}</span>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label for="date" style="margin-bottom:0px;"><b>Monto total</b></label><br>
+                            <span class="ml-1">{{dataSale.totals.total | formatPrice}}</span>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label for="date" style="margin-bottom:0px;"><b>Monto pagado</b></label><br>
+                            <span class="ml-1">{{dataSale.totals.totalPay | formatPrice}}</span>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label for="date" style="margin-bottom:0px;"><b>Vuelto</b></label><br>
+                            <span class="ml-1">{{dataSale.totals.total - dataSale.totals.totalPay | formatPrice}}</span>
+                        </div>
+                    </div>
+                    <h3 class="mt-3">Abonos</h3>
+                    <hr class="mt-0 mb-0">
+                    <div class="row" v-for="pay of dataSale.typesPay" :key="pay.type">
+                        <div class="col-md-4 mt-2">
+                            <label for="date" style="margin-bottom:0px;"><b>Fecha</b></label><br>
+                            <span class="ml-1">{{dataSale.createdAt | formatDate}}</span>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label for="date" style="margin-bottom:0px;"><b>Medio de pago</b></label><br>
+                            <span class="ml-1">
+                                {{pay.type}}
+                            </span>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label for="date" style="margin-bottom:0px;"><b>Total</b></label><br>
+                            <span class="ml-1">{{pay.total | formatPrice}}</span>
+                        </div>
+                    </div>
+                    <!-- <hr class="mt-3 mb-1" style="height:2px;background-color:#353535;border-radius:5px;"> -->
+                    <hr class="mt-3 mb-1">
+                    <h3 class="mt-3">ítems</h3>
+                    <hr class="mt-1 mb-0">
+                    <a-table :columns="columnsReport" :loading="progress" :data-source="dataSale.items" :scroll="getScreen">
+                        <template slot="total-slot'" slot-scope="record, column">
+                            {{column.totalItem | formatPrice}}
+                        </template>
+                        <template slot="type-slot" slot-scope="record, column">
+                            <span v-if="column.type == 'service'">Servicio, Empleada: {{column.employe.name}}</span>
+                            <span v-else>Producto, Cantidad: {{column.quantityProduct}}</span>
+                        </template>
+                    </a-table>
+                </template>
+            </div>
+        </a-modal>
+        <!-- <modal :show.sync="modals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
@@ -150,77 +233,47 @@
                     
                 </template>
             </card>
-        </modal>
-         <modal :show.sync="modals.modal3"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                       <h3>Aplica filtros para tu reporte {{dates.rangeExcel}}</h3> 
+        </modal> -->
+        <modal :show.sync="modals.modal3"
+            body-classes="p-4"
+            modal-classes="modal-dialog-centered modal-sm">
+            <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+            <template>
+                <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                    <h3>Aplica filtros para tu reporte {{dates.rangeExcel}}</h3> 
+                </div>
+            </template>
+            <template>
+                <div class="row">
+                    <div class="col-md-12 mt-2">
+                        <label for="date">Filtra por fecha</label>
+                        <a-range-picker class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDateExcel" :locale="locale" />
                     </div>
-                </template>
-                <template>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label for="date">Filtra por fecha</label>
-                            <base-input addon-left-icon="ni ni-calendar-grid-58">
-                                <flat-picker slot-scope="{focus, blur}"
-                                    @on-open="focus"
-                                    @on-close="blur"
-                                    :config="configDatePicker"
-                                    class="form-control datepicker"
-                                    v-model="dates.rangeExcel">
-                                </flat-picker>
-                            </base-input>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="lender">¿Filtrar por prestadora en específico?</label>
-                            <div v-on:click="chooseLender"> 
-                                <vue-single-select v-if="validClient"
-                                v-model="lenderSelect"
-                                :options="lenderNames"
-                                placeholder="Prestadoras"
-                                ></vue-single-select> 
-                                <vue-single-select v-else
-                                v-model="lenderSelect"
-                                :options="lenderNames"
-                                placeholder="Prestadoras"
-                                class="bgcolor-danger"
-                                disabled
-                                ></vue-single-select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="lender">¿Filtrar por cliente en específico?</label>
-                            <div v-on:click="chooseClient">
-                                <vue-single-select v-if="validLender"
-                                v-model="clientSelect"
-                                :options="clientNames"
-                                placeholder="Clientes"
-                                ></vue-single-select>  
-                                <vue-single-select v-else
-                                v-model="clientSelect"
-                                :options="clientNames"
-                                placeholder="Clientes"
-                                class="bgcolor-danger"
-                                disabled
-                                ></vue-single-select> 
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <center>
-                                <base-button type="default" v-on:click="generateExcel()"> Generar
-                                </base-button>
-                            </center>
+                    <div class="col-md-12 mt-2">
+                        <label for="lender">¿Filtrar por cliente?</label>
+                        <div v-on:click="chooseClient">
+                            <vue-single-select v-if="validLender"
+                            v-model="clientSelect"
+                            :options="clientNames"
+                            placeholder="Clientes"
+                            ></vue-single-select>  
+                            <vue-single-select v-else
+                            v-model="clientSelect"
+                            :options="clientNames"
+                            placeholder="Clientes"
+                            class="bgcolor-danger"
+                            disabled
+                            ></vue-single-select> 
                         </div>
                     </div>
-                </template>
-            </card>
+                    <div class="col-md-12">
+                        <center>
+                            <base-button type="default" v-on:click="generateExcel()"> Generar
+                            </base-button>
+                        </center>
+                    </div>
+                </div>
+            </template>
         </modal>
         <a-config-provider>
             <template #renderEmpty>
@@ -282,32 +335,41 @@
                         {{ text }}
                     </template>
                 </template>
-                
+                <template slot="client-slot" slot-scope="record, column">
+                    {{column.client.firstName}} {{column.client.lastName}}
+                </template>
                 <template slot="date-format" slot-scope="record, column">
-                    {{formatDate(column.createdAt)}}
+                    {{column.createdAt | formatDate}}
                 </template>
                 <template slot="localGain" slot-scope="record, column">
-                    {{formatPrice(column.localGain)}}
+                    {{column.localGain | formatPrice}}
                 </template>
                 
                 <template slot="total" slot-scope="record, column">
-                    {{formatPrice(column.totals.total)}}
+                    {{column.totals.total | formatPrice}}
                 </template>
                 <template slot="reportSale" slot-scope="record, column">
-                    <center v-if="validRoute('ventas', 'detalle')" >
+                    <template v-if="validRoute('ventas', 'detalle')" >
                         <a-tooltip placement="top">
                             <template slot="title">
-                            <span>Ver detalles</span>
+                                <span>Ver detalles</span>
                             </template>
-                            <base-button v-if="column.status" icon="ni ni-fat-add" size="sm" type="default" v-on:click="dataReport(column)"></base-button>
-                        <base-button v-else icon="ni ni-fat-add" size="sm" type="danger" v-on:click="dataReport(column)"></base-button>
+                            <base-button v-if="column.status" size="sm" type="default" v-on:click="dataReport(column)">
+                                <a-icon type="file-pdf" style="vertical-align:1.5px;font-size:1.3em;" />
+                            </base-button>
+                            <base-button v-else size="sm" type="danger" v-on:click="dataReport(column)">
+                                <a-icon type="file-pdf" style="vertical-align:1.5px;font-size:1.3em;" />
+                            </base-button>
                         </a-tooltip>
-                        
-                    </center>
-                    <center v-else >
-                        <base-button v-if="column.status" icon="ni ni-fat-add" disabled size="sm" type="default"></base-button>
-                        <base-button v-else icon="ni ni-fat-add" disabled size="sm" type="danger" ></base-button>
-                    </center>
+                    </template>
+                    <template v-else >
+                        <base-button v-if="column.status" disabled size="sm" type="default">
+                            <a-icon type="file-pdf" style="vertical-align:1.5px;font-size:1.3em;" />
+                        </base-button>
+                        <base-button v-else disabled size="sm" type="danger" >
+                            <a-icon type="file-pdf" style="vertical-align:1.5px;font-size:1.3em;" />
+                        </base-button>
+                    </template>
                 </template>
             </a-table>
         </a-config-provider>
@@ -332,6 +394,7 @@ import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import io from 'socket.io-client';
 import jwtDecode from 'jwt-decode'
+import locale from 'ant-design-vue/es/date-picker/locale/es_ES';
 import XLSX from 'xlsx'
 const moment = require('moment'); // require
 const dateNew = new Date()
@@ -353,6 +416,7 @@ export default {
             },
             progress:true,
             auth: [],
+            moment,
             socket: io(endPoint.endpointTarget),
             modals: {
                 modal1: false,
@@ -371,7 +435,30 @@ export default {
                 mode: 'range',
                 dateFormat: 'd-m-Y',
                 locale: Spanish, // locale for this instance only          
-            }, 
+            },
+            locale,
+            columnsReport: [
+                {
+                    title: 'Nombre',
+                    dataIndex: 'item.name',
+                    key: 'item.name',
+                    width: '30%',
+                },
+                {
+                    title: 'Total',
+                    dataIndex: 'totalItem',
+                    key: 'totalItem',
+                    width: '20%',
+                    scopedSlots: { customRender: 'total-slot' }
+                },
+                {
+                    title: 'Tipo',
+                    dataIndex: 'type',
+                    key: 'type',
+                    width: '50%',
+                    scopedSlots: { customRender: 'type-slot' }
+                }
+            ],
             columns: [
                 {
                     title: 'Fecha',
@@ -381,6 +468,13 @@ export default {
                     defaultSortOrder: 'descend',
                     sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
                     ellipsis: true,
+                },
+                {
+                    title: 'Cliente',
+                    dataIndex: 'client',
+                    key: 'client',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'client-slot' }
                 },
                 {
                     title: 'Ganacia local',
@@ -408,58 +502,24 @@ export default {
                     scopedSlots: { customRender: 'reportSale' },
                 },
             ],
-            configTable: {
-                card_title: "Tabla de ventas",
-                checkbox_rows: false,
-                rows_selectable : true,
-                highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
-                rows_selectable: true,
-                per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
-                num_of_visibile_pagination_buttons: 7,
-                global_search: {
-                    placeholder: "Enter custom Search text",
-                    visibility: false,
-                    case_sensitive: false
-                },
-                
-                show_refresh_button: false,
-                show_reset_button: false,  
-                selected_rows_info: true,
-                preservePageOnDataChange : true,
-                pagination_info : true
-            },
-            classes: {
-                table: "table-bordered table-striped"
-            },
             sales: [],
             dataSale: null,
-            successAlert: false,
-            errorAlert: false,
-            messageSuccess: '',
-            messageError: '',
             inspectorFilter: false,
             lenderSelect: '',
             lenderNames: [],
             clientSelect: '',
             clientNames: [],
-            paySelect: '',
-            payNames: ['Efectivo', 'Transferencia', 'Débito', 'Crédito', 'Otros'],
             validLender: true,
             validClient: true,
             branch: '',
-            branchName: ''
+            branchName: '',
+            dateFind: [],
+            dateFindExcel: []
         }
     },
     created(){
         this.getToken()
-        this.getBranch()
-        $(document).ready(function(){
-            setTimeout(() => {
-               $("input[placeholder='Go to page']").hide(); 
-            }, 200);
-            
-        });
-        
+        this.getBranch()   
     },
     methods: {
         getToken(){
@@ -472,7 +532,23 @@ export default {
             this.branch = localStorage.branch
             this.getClient()
             this.getEmployes()
-            this.getSales('no-button')
+            this.getSales()
+        },
+        selectDate(date, dateString){
+            console.log(date, dateString)
+            if (date) {
+                this.dateFind = dateString
+            }else{
+                this.dateFind = []
+            }
+        },
+        selectDateExcel(date, dateString){
+            console.log(date, dateString)
+            if (date) {
+                this.dateFindExcel = dateString
+            }else{
+                this.dateFindExcel = []
+            }
         },
         async getClient(){
             try{
@@ -511,75 +587,36 @@ export default {
             }
         },
         async filterSale(){
-            console.log(this.dates.range)
             this.progress = true
             this.inspectorFilter = true
-            const splitDate = this.dates.range.split(' a ')
-            if (splitDate.length > 1) {
-                var f1 = splitDate[0].split("-")
-                var f2 = splitDate[1].split("-")
-                var Dates = f1[1]+"-"+f1[0]+"-"+f1[2]+":"+f2[1]+"-"+f2[0]+"-"+f2[2]
-                
-                try {
-                    const sales = await axios.post(endPoint.endpointTarget+'/sales/findSalesByDate', {
-                        branch: this.branch,
-                        dates: Dates
-                    }, this.configHeader)
-                    console.log(sales)
-                    if (sales.data.status == 'sales does exist') {
-                        this.progress = false
-                        this.sales = []
-                        this.$swal({
-                            icon: 'error',
-                            title: 'No hay ventas en las fechas seleccionadas',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }else{
-                        this.progress = false
-                        this.sales = sales.data.data
-                    }
-                }catch(error){
-                    console.log(error)
+            try {
+                const sales = await axios.post(endPoint.endpointTarget+'/sales/findSalesByDate', {
+                    branch: this.branch,
+                    dates: this.dateFind
+                }, this.configHeader)
+                console.log(sales)
+                if (sales.data.status == 'sales does exist') {
+                    this.progress = false
+                    this.sales = []
+                    this.$swal({
+                        icon: 'error',
+                        title: 'No hay ventas en las fechas seleccionadas',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else{
+                    this.progress = false
+                    this.sales = sales.data.data
                 }
-            }else{
-                
-                var f1 = this.dates.range.split("-")
-                var newsD = f1[1]+"-"+f1[0]+"-"+f1[2]
-                var dateDesde = new Date(newsD)
-                const formatDesde =(dateDesde.getMonth() + 1) + "-" + dateDesde.getDate()+"-"+dateDesde.getFullYear() 
-                dateDesde.setDate(dateDesde.getDate() + 1)
-                const formatHasta = (dateDesde.getMonth() + 1)+"-" + dateDesde.getDate()+"-"+dateDesde.getFullYear()
-                const Dates = formatDesde+':'+formatHasta
-                try {
-                    const sales = await axios.post(endPoint.endpointTarget+'/sales/findSalesByDay/', {
-                        dates: Dates,
-                        branch: this.branch
-                    }, this.configHeader)
-                    if (sales.data.status == 'sales does exist') {
-                        this.progress = false
-                        this.sales = []
-                        this.$swal({
-                            icon: 'error',
-                            title: 'no hay ventas en la fecha seleccionada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }else{
-                        this.progress = false
-                        this.sales = sales.data.data
-                    }
-                }catch(err){
-                    console.log(err)
-                }
+            }catch(error){
+                console.log(error)
             }
         },
-        async getSales(button){
+        async getSales(){
             this.progress = true
-            if(button == 'button'){
-                this.dates.range = ''
-            }
             this.inspectorFilter = false
+            $('.rangeInput .ant-calendar-picker-clear').click()
+            this.dateFind = []
             try {
                 const sales = await axios.get(endPoint.endpointTarget+'/sales/'+this.branch, this.configHeader)
                 if (sales.data.status == 'ok') {
@@ -598,14 +635,6 @@ export default {
                 })
                 router.push({name: 'login'})
             }
-        },
-        formatDate(date) {
-            let dateFormat = new Date(date)
-			return moment(dateFormat).format("DD-MM-YYYY")
-        },
-        formatPrice(value) {
-            let val = (value/1).toFixed(2).replace('.', ',')
-            return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         justName(value){
             if(value){
@@ -652,7 +681,7 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                            this.getSales('no-button')
+                            this.getSales()
                             this.dataSale.status = false
                             axios.post(endPoint.endpointTarget+'/notifications', {
                                 branch: this.branch,
@@ -698,27 +727,14 @@ export default {
             }
         },
         generateExcel(){
-            console.log(this.dates.rangeExcel.length)
-            var valid = this.dates.rangeExcel
-            var f = this.dates.rangeExcel.split("-")
-            var dates = f[1]+"-"+f[0]+"-"+f[2]+':not'
-            if (this.dates.rangeExcel.length > 12) {
-                const split = this.dates.rangeExcel.split(' a ')
-                var f1 = split[0].split("-")
-                var f2 = split[1].split("-")
-                dates = f1[1]+"-"+f1[0]+"-"+f1[2]+" a "+f2[1]+"-"+f2[0]+"-"+f2[2]
-                valid = split[0]
-            }
-            if (this.lenderSelect == null) {
-                this.lenderSelect = ''
-            }
+            var valid = this.dateFindExcel[0]+' a '+this.dateFindExcel[1]
             if (this.clientSelect == null) {
                 this.clientSelect = ''
             }
             axios.post(endPoint.endpointTarget+'/sales/generateDataExcel', {
-                rangeExcel: dates, 
-                lenderSelect: this.lenderSelect, 
-                clientSelect: this.clientSelect.split(' / ')[1],
+                rangeExcel: this.dateFindExcel,  
+                clientSelect: this.clientSelect.split(' / ')[1] ? this.clientSelect.split(' / ')[1] : '',
+                branch: this.branch
             }, this.configHeader)
             .then(res => {
                 console.log(res)
@@ -727,29 +743,16 @@ export default {
                     var wb = XLSX.utils.book_new() 
                     XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
                     XLSX.writeFile(wb, 'Ventas del '+valid+'.xlsx') 
-                    this.lenderSelect = ''
                     this.clientSelect = ''
-                    this.validLender = true
-                    this.validClient = true
-                    this.dates.rangeExcel = (dateNew.getMonth() + 1)+'-'+dateNew.getDate()+'-'+dateNew.getFullYear()
+                    $('.rangeInput .ant-calendar-picker-clear').click()
                     this.modals.modal3 = false
                 }else{
-                    this.modals = {
-                        modal2: true,
-                        message: "¡No se encontraron ventas!",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3:true,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 2000);
+                    this.$swal({
+                        icon: 'info',
+                        title: 'No se encontraron ventas en las fechas seleccionadas',
+                        showConfirmButton: false,
+                        timer: 2000
+                    })
                 }
             })
         },
@@ -766,11 +769,16 @@ export default {
             }else{
                 this.validClient = false
             }
+        },
+        printReport(){
+            this.$htmlToPaper('htmlPrint', null, () => {
+                console.log('Printing completed or was cancelled!');
+            });
         }
     },
     mounted (){
         EventBus.$on('reloadSales', status => {
-            this.getSales('no-button')
+            this.getSales()
         })
         EventBus.$on('changeBranch', status => {
             this.getBranch()
@@ -801,5 +809,8 @@ export default {
     } */
     .bgcolor-danger #single-select{
         border-color:red;
+    }
+    .modalReport div .ant-modal{
+        top: 10px !important;
     }
 </style>
