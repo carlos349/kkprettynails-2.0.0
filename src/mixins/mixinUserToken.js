@@ -15,6 +15,7 @@ const mixinUserToken = {
     }
 }
 
+
 // mixinUserToken.install = (Vue) => {
 //     Vue.mixin({
 //         beforeCreate(){

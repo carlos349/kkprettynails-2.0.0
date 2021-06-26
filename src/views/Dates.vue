@@ -9,7 +9,7 @@
                     <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Agenda</p>
-                        <p class="text-white">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
+                        <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                     </div>
 
                     <base-button class="float-right mt-7 mr-0 ml-1" size="sm" v-if="validRoute('agendamiento', 'agendar')" @click="modals.modal1 = true , initialState()"  type="success">
@@ -120,86 +120,94 @@
 
                     <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
-
-                    <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateFirstStep">
-                        <template>
-                            <div class="text-muted text-center p-0">
-                                Seleccione los servicios
+                    
+                    <tab-content icon="ni ni-bullet-list-67"  title="Servicios" :before-change="validateFirstStep">
+                        <vuescroll :ops="ops" v-on:scroll="scroll()" :class="hideText == 'display:none' ? 'mobileForm' : ''">
+                            <template>
+                                <div class="text-muted text-center p-0">
+                                    Seleccione los servicios
+                                </div>
+                            </template>
+                            
+                            <div class="col-12">
+                                <center>
+                                    
+                                    <base-button v-on:click="initialState()" type="secondary" class="text-default">
+                                        <font-awesome-icon class="mx-auto"  icon="redo-alt" />
+                                    </base-button>
+                                </center>
                             </div>
-                        </template>
-                        
-                        <div class="col-12">
-                            <center>
-                                
-                                <base-button v-on:click="initialState()" type="secondary" class="text-default">
-                                    <font-awesome-icon class="mx-auto"  icon="redo-alt" />
-                                </base-button>
-                            </center>
-                        </div>
-                        <div class="row p-0 mt-2">
-                            <div class="row col-md-12 pl-5">
-                                <div style="width:auto;" class="mx-auto col-12">
-                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                        <li v-for="(category, index) of categories" class="nav-item responsiveItem" role="presentation">
-                                            <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
-                                        </li>
-                                    </ul>   
-                                </div> 
-                                <vue-custom-scrollbar class="col-md-6 col-12" v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                    <h2 class="text-center">Servicios</h2>
-                                    <div class="tab-content" id="pills-tabContent">
-                                        <div v-for="category of categories" :key="category" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                            <div class="row">
-                                                <template v-for="(name, index) of services" >
-                                                    <div class="col-lg-12 mt-2" v-if="name.category == category.name && name.active == true" :key="name">
-                                                        <base-button  class="w-100 px-1" v-on:click="plusService(index, name.name, name.duration, name.commission, name.price, name.employes, name.discount, name.products)"  type="default">
-                                                            <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
-                                                                <i class="fas fa-user-check m-0"></i>{{name.employes.length}}
-                                                                <i class="far fa-clock ml-1"></i> {{name.duration}}Min
-                                                            </badge>
-                                                            <span class="float-left">{{name.name}}</span>
-                                                            <badge class="text-default float-right col-md-1 col-sm-12" type="white">{{countServices[index].count}}</badge>
-                                                        </base-button>
-                                                    </div>
-                                                </template>
-                                            </div>
-                                        </div>
+                            <div class="row p-0 mt-2">
+                                <div class="row col-md-12 pl-5">
+                                    <div style="width:auto;" class="mx-auto col-12">
+                                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                            <li v-for="(category, index) of categories" class="nav-item responsiveItem" role="presentation">
+                                                <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
+                                            </li>
+                                        </ul>   
                                     </div>
-                                </vue-custom-scrollbar>
-                                <vue-custom-scrollbar class="col-md-6 col-12" v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                    <h2 class="text-center">Servicios seleccionados</h2>
-                                        <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                            <div class="row">
-                                                <template  >
-                                                    <div class="col-lg-12 mt-2">
-                                                        <base-button v-for="(service, index) in registerDae.serviceSelectds" :key="service" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
-                                                            <span class="float-left ml-2">{{service.name}}</span>
-                                                            <template style="z-index: 100" v-if="ifMicro">
-                                                                <a-tooltip placement="top">
-                                                                    <template slot="title">
-                                                                        <span>Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
-                                                                    </template>
-                                                                    <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
-                                                                        <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
-                                                                            {{micro.microService}}
-                                                                        </badge>
-                                                                    </div>
-                                                                        
-                                                                </a-tooltip>
-                                                            </template>
-                                                            <!-- <badge class="text-default float-right" v- type="white">microservicio</badge>
-                                                            <badge class="text-default float-right" type="white">otro</badge>
-                                                            <badge class="text-default float-right" type="white">diseño</badge> -->
-                                                        </base-button>
+                                    <div class="col-md-6 col-12">
+                                        <h2 class="text-center">Servicios</h2>
+                                        <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                            <div class="tab-content" id="pills-tabContent">
+                                                <div v-for="category of categories" :key="category" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                                    <div class="row">
+                                                        <template v-for="(name, index) of services" >
+                                                            <div class="col-lg-12 mt-2" v-if="name.category == category.name && name.active == true" :key="name">
+                                                                <base-button  class="w-100 px-1" v-on:click="plusService(index, name.name, name.duration, name.commission, name.price, name.employes, name.discount, name.products)"  type="default">
+                                                                    <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
+                                                                        <i class="fas fa-user-check m-0"></i>{{name.employes.length}}
+                                                                        <i class="far fa-clock ml-1"></i> {{name.duration}}Min
+                                                                    </badge>
+                                                                    <span class="float-left">{{name.name}}</span>
+                                                                    <badge class="text-default float-right col-md-1 col-sm-12" type="white">{{countServices[index].count}}</badge>
+                                                                </base-button>
+                                                            </div>
+                                                        </template>
                                                     </div>
-                                                </template>
+                                                </div>
                                             </div>
-                                        </div>
-                                </vue-custom-scrollbar>
+                                        </vuescroll>
+                                    </div> 
+                                    <div class="col-md-6 col-12">
+                                        <h2 class="text-center">Servicios seleccionados</h2>
+                                        <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                            
+                                                <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                                    <div class="row">
+                                                        <template  >
+                                                            <div class="col-lg-12 mt-2">
+                                                                <base-button v-for="(service, index) in registerDae.serviceSelectds" :key="service" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
+                                                                    <span class="float-left ml-2">{{service.name}}</span>
+                                                                    <template style="z-index: 100" v-if="ifMicro">
+                                                                        <a-tooltip placement="top">
+                                                                            <template slot="title">
+                                                                                <span v-if="hideText != 'display:none'">Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
+                                                                            </template>
+                                                                            <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
+                                                                                <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
+                                                                                    {{micro.microService}}
+                                                                                </badge>
+                                                                            </div>
+                                                                                
+                                                                        </a-tooltip>
+                                                                    </template>
+                                                                    <!-- <badge class="text-default float-right" v- type="white">microservicio</badge>
+                                                                    <badge class="text-default float-right" type="white">otro</badge>
+                                                                    <badge class="text-default float-right" type="white">diseño</badge> -->
+                                                                </base-button>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                        </vuescroll>
+                                    </div>
+                                    
+                                </div>
                             </div>
-                        </div>
+                        </vuescroll>
                     </tab-content>
-                
+                    
                     <tab-content icon="ni ni-collection" title="Profesionales" :before-change="validateLastStep">
                         <div class="row">
                             <div class="col-md-4 col-sm-12 mx-auto mt-4">
@@ -220,7 +228,7 @@
                             
                                 <div class="col-md-8">
                                     <a-spin :spinning="load1">
-                                    <vue-custom-scrollbar class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                    <vuescroll :ops="ops" class="w-100" style="height:45vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                                     <div class="row mb-3">
                                         <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" :key="indexService">
                                             <div class="row">
@@ -290,7 +298,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    </vue-custom-scrollbar>
+                                </vuescroll>
                                     </a-spin>
                                 </div>
                             
@@ -1314,6 +1322,7 @@ import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import vueCustomScrollbar from 'vue-custom-scrollbar'
+import vuescroll from 'vuescroll';
 import EventBus from '../components/EventBus'
 import io from 'socket.io-client';
 import { Carousel, Slide } from 'vue-carousel';
@@ -1325,9 +1334,10 @@ import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import router from '../router'
 import mixinUserToken from '../mixins/mixinUserToken'
+import mixinHideText from '../mixins/mixinHideText'
 
 export default {
-    mixins: [mixinUserToken],
+    mixins: [mixinUserToken, mixinHideText],
     components: {
         VueCal,
         VueBootstrap4Table,
@@ -1335,7 +1345,8 @@ export default {
         vueCustomScrollbar,
         Carousel,
         Slide,
-        VuePhoneNumberInput
+        VuePhoneNumberInput,
+        vuescroll
     },
     data() {
       return {
@@ -1402,6 +1413,32 @@ export default {
             valid:true,
             valid2:true,
             valid3:false
+        },
+        ops:{
+            rail: {
+                background: '#01a99a',
+                opacity: 0,
+                size: '9px',
+                specifyBorderRadius: false,
+                gutterOfEnds: null,
+                gutterOfSide: '0px',
+                keepShow: false
+            },
+            bar: {
+                showDelay: 1500,
+                onlyShowBarOnScroll: true,
+                keepShow: false,
+                background: '#c1c1c1',
+                opacity: .5,
+                specifyBorderRadius: false,
+                minSize: 0,
+                size: '6px',
+                disable: false
+            },
+            scrollPanel: {
+                scrollingX: false,
+                scrollingY: true,
+            }
         },
         searchText: '',
         searchInput: null,
@@ -4357,7 +4394,6 @@ export default {
     },
     computed: {
         ifSticky: () => {
-            
             return this.$refs.aggend
         }
     },
@@ -4393,6 +4429,19 @@ export default {
     .vuecal__menu li {border-bottom-color: #fff;color: #fff;}
     .vuecal__menu li.active {background-color: rgba(255, 255, 255, 0.15);}
     .vuecal__title-bar {background-color: #172b4d;color: #fff !important}
+    .vuecal__event-title{
+        font-size: 1.3em;
+        font-weight: 400;
+    }
+    .vuecal__event-time{
+        font-size: 1em;
+        font-weight: 600;
+    }
+    .vuecal__event-content{
+        font-size: 1.1em;
+        font-weight: 400;
+        font-style: italic;
+    }
     .vuecal__title button{
         color: white !important
     }
@@ -4412,7 +4461,7 @@ export default {
         background-color:white;
     }
     .vuecal__time-column .vuecal__time-cell{color:white;height:1vh;}
-    .vuecal__event{color:#fff;font-weight:bold;cursor:pointer;}
+    .vuecal__event{color:#fff;cursor:pointer;}
     .vuecal__event:hover{
         opacity: .8;
     }
@@ -4430,9 +4479,9 @@ export default {
     .vuecal:not(.vuecal--day-view) .vuecal__cell.selected {background-color: rgba(235, 255, 245, 0.4);}
     .vuecal__cell.selected:before {border-color: rgba(66, 185, 131, 0.5);}
     .vuecal__cell-date{color:#000;font-family: 'Raleway', sans-serif;
-    font-weight:600;}
+    font-weight:400;}
     .vuecal__heading span{color:#000;font-family: 'Raleway', sans-serif;
-    font-weight:600;}
+    font-weight:400;}
     .vuecal--green-theme .vuecal__title-bar {
         background-color: #1F5673;
     }
@@ -4450,159 +4499,159 @@ export default {
     .vuecal__cell-split.class9Split {background-color: rgb(255, 209, 186, 0.1);}
     .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.1);}
     .class0 {
-        background:#eb755e;
-        border: 1px solid #eb755e;
-        color: #343633;
+        background:#eb765e7a;
+        border: 3px solid #eb755e;
+        color: black;
     }
     .class1 {
-        background:#EAC5BE;
-        border: 1px solid #EAC5BE;
-        color: #343633;
+        background:#eac5be8a;
+        border: 3px solid #EAC5BE;
+        color: black;
     }
     .class2 {
-    background:#BCD1FF;
-    border: 1px solid #BCD1FF;
-    color: #343633;
+    background:#bcd1ff80;
+    border: 3px solid #BCD1FF;
+    color: black;
     }
     .class3 {
-    background:#DDEFBD;
-    border: 1px solid #DDEFBD;
-    color: #343633;
+    background:#ddefbd85;
+    border: 3px solid #DDEFBD;
+    color: black;
     }
     .class4 {
-    background:#CDF2E2;
-    border: 1px solid #CDF2E2;
-    color: #343633;
+    background:#cdf2e28f;
+    border: 3px solid #CDF2E2;
+    color: black;
     }
     .class5 {
-    background:#B7E8CD;
-    border: 1px solid #B7E8CD;
-    color: #343633;
+    background:#b7e8cd8c;
+    border: 3px solid #B7E8CD;
+    color: black;
     }
     .class6 {
-    background:#C0E5DD;
-    border: 1px solid #C0E5DD;
-    color: #343633;
+    background:#c0e5dd86;
+    border: 3px solid #C0E5DD;
+    color: black;
     }
     .class7 {
-    background:#F2E6E6;
-    border: 1px solid #F2E6E6;
-    color: #343633;
+    background:#f2e6e683;
+    border: 3px solid #F2E6E6;
+    color: black;
     }
     .class8 {
-    background:#FFD6D6;
-    border: 1px solid #FFD6D6;
-    color: #343633;
+    background:#ffd6d681;
+    border: 3px solid #FFD6D6;
+    color: black;
     }
     .class9 {
-    background:#FFD1BA;
-    border: 1px solid #FFD1BA;
-    color: #343633;
+    background:#ffd1ba83;
+    border: 3px solid #FFD1BA;
+    color: black;
     }
     .class10 {
-    background:#FFF3B5;
-    border: 1px solid #FFF3B5;
-    color: #343633;
+    background:#fff3b58c;
+    border: 3px solid #FFF3B5;
+    color: black;
     }
     .class11 {
-    background:#EFEBD0;
-    border: 1px solid #EFEBD0;
-    color: #343633;
+    background:#efebd085;
+    border: 3px solid #EFEBD0;
+    color: black;
     }
     .class12 {
-    background:#FFE5E5;
-    border: 1px solid #FFE5E5;
-    color: #343633;
+    background:#ffe5e58a;
+    border: 3px solid #FFE5E5;
+    color: black;
     }
     .class13 {
-    background:#A2CEA1;
-    border: 1px solid #A2CEA1;
-    color: #343633;
+    background:#a2cea18c;
+    border: 3px solid #A2CEA1;
+    color: black;
     }
     .class14 {
-    background:#9EC189;
-    border: 1px solid #9EC189;
-    color: #343633;
+    background:#9fc1898a;
+    border: 3px solid #9EC189;
+    color: black;
     }
     .class15 {
-    background:#ADC9D8;
-    border: 1px solid #ADC9D8;
+    background:#adc9d888;
+    border: 3px solid #ADC9D8;
     color: black;
     }
     .class16 {
-    background:#B0E098;
-    border: 1px solid #B0E098;
-    color: #343633;
+    background:#b0e09888;
+    border: 3px solid #B0E098;
+    color: black;
     }
     .class17 {
-    background:#E8FCCF;
-    border: 1px solid #E8FCCF;
-    color: #343633;
+    background:#e8fccf83;
+    border: 3px solid #E8FCCF;
+    color: black;
     }
     .class18 {
-    background:#BBCCEA;
-    border: 1px solid #BBCCEA;
-    color: #343633;
+    background:#bbccea8f;
+    border: 3px solid #BBCCEA;
+    color: black;
     }
     .class19 {
-    background:#A2BFF2;
-    border: 1px solid #A2BFF2;
-    color: #343633;
+    background:#a2bff28a;
+    border: 3px solid #A2BFF2;
+    color: black;
     }
     .class20 {
-    background:#D6FFDF;
-    border: 1px solid #D6FFDF;
-    color: #343633;
+    background:#d6ffdf8a;
+    border: 3px solid #D6FFDF;
+    color: black;
     }
     .class21 {
-    background:#C2C8E8;
-    border: 1px solid #C2C8E8;
-    color: #343633;
+    background:#c2c8e88e;
+    border: 3px solid #C2C8E8;
+    color: black;
     }
     .class22 {
-    background:#EBD4CB;
-    border: 1px solid #EBD4CB;
-    color: #343633;
+    background:#ebd4cb85;
+    border: 3px solid #EBD4CB;
+    color: black;
     }
     .class23 {
-    background:#EAC5BE;
-    border: 1px solid #EAC5BE;
-    color: #343633;
+    background:#eac5be8a;
+    border: 3px solid #EAC5BE;
+    color: black;
     }
     .class24 {
-    background:#A4D6CA;
-    border: 1px solid #A4D6CA;
-    color: #343633;
+    background:#a4d6ca8c;
+    border: 3px solid #A4D6CA;
+    color: black;
     }
     .class25 {
-    background:#CAF7E2;
-    border: 1px solid #CAF7E2;
-    color: #343633;
+    background:#caf7e283;
+    border: 3px solid #CAF7E2;
+    color: black;
     }
     .class26 {
-    background:#CAF7E2;
-    border: 1px solid #CAF7E2;
-    color: #343633;
+    background:#caf7e273;
+    border: 3px solid #CAF7E2;
+    color: black;
     }
     .class27 {
-    background:#6EA08B;
-    border: 1px solid #6EA08B;
-    color: #343633;
+    background:#6ea08b81;
+    border: 3px solid #6EA08B;
+    color: black;
     }
     .class28 {
-    background:#EBD8D0;
-    border: 1px solid #EBD8D0;
-    color: #343633;
+    background:#ebd8d07e;
+    border: 3px solid #EBD8D0;
+    color: black;
     }
     .class29 {
-    background:#D3AB9E;
-    border: 1px solid #D3AB9E;
-    color: #343633;
+    background:#d3ab9e7e;
+    border: 3px solid #D3AB9E;
+    color: black;
     }
     .class30 {
-    background:#CAF7E2;
-    border: 1px solid #CAF7E2;
-    color: #343633;
+    background:#caf7e280;
+    border: 3px solid #CAF7E2;
+    color: black;
     }
     .cursor-pointer{
         cursor: pointer;
@@ -4710,6 +4759,15 @@ export default {
     .qloq button{
         padding: 3px !important;
         margin-right: 30px !important;
+    }
+    .none{
+        display: none;
+    }
+    .mobileForm{
+        height:60vh !important;
+        overflow:hidden !important;
+        overflow-x: hidden !important;
+        overflow-y:hidden !important;
     }
     
 </style>
