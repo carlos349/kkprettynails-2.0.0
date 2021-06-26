@@ -4,6 +4,7 @@ import DashboardLayout from '@/layout/DashboardLayout'
 import AuthLayout from '@/layout/AuthLayout'
 import AgendLayout from '@/views/DatesClient'
 import ConfirmLayout from '@/views/DatesConfirm'
+import reportPdf from '@/views/reportPdf'
 Vue.use(Router)
 
 export default new Router({
@@ -30,6 +31,18 @@ export default new Router({
           path: '/ConfirmacionAgenda',
           name: '',
           component: () => import('./views/DatesConfirm.vue')
+        }
+      ] 
+    },
+    {
+      path: '/pdfReport',
+      redirect: 'reportPdf',
+      component: reportPdf,
+      children: [
+        {
+          path: '/reportPdf',
+          name: '',
+          component: () => import('./views/reportPdf.vue')
         }
       ] 
     },

@@ -485,7 +485,8 @@ export default {
                             .then(res => {
                                 if(res.data.status == 'ok'){
                                     loading.close()
-                                    window.open(`${endPoint.endpointTarget}/static/reportExpenses.pdf`)
+                                    var windowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
+                                    window.open(`${endPoint.endpointTarget}/static/reportExpenses.pdf`, 'Report', windowFeatures)
                                     this.getBranch()
                                 }
                             })

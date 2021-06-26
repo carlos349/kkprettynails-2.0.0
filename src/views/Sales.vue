@@ -113,7 +113,7 @@
                     <h3 class="mt-3">ítems</h3>
                     <hr class="mt-1 mb-0">
                     <a-table :columns="columnsReport" :loading="progress" :data-source="dataSale.items" :scroll="getScreen">
-                        <template slot="total-slot'" slot-scope="record, column">
+                        <template slot="total-slot" slot-scope="record, column">
                             {{column.totalItem | formatPrice}}
                         </template>
                         <template slot="type-slot" slot-scope="record, column">
@@ -771,9 +771,10 @@ export default {
             }
         },
         printReport(){
-            this.$htmlToPaper('htmlPrint', null, () => {
-                console.log('Printing completed or was cancelled!');
-            });
+            let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
+width=0,height=0,left=-1000,top=-1000`;
+            var win = window.open(endPoint.url+'/#/reportPdf?id=1619829652477', '_blank', params)
+            win.focus();
         }
     },
     mounted (){
