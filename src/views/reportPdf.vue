@@ -1,31 +1,7 @@
 <template>
     <div class="mx-2">
         <template v-if="dataSale != null">
-            <h2>Detalle de la venta (ID: {{dataSale.uuid}})</h2>
-            <a-tooltip placement="top">
-                <template slot="title">
-                    <span>Anular venta</span>
-                </template>
-                <base-button size="sm" class="mr-2 float-right" type="warning">
-                    <a-icon type="close-circle" style="vertical-align:1px;font-size:1.5em;" />
-                </base-button>
-            </a-tooltip>
-            <a-tooltip placement="top">
-                <template slot="title">
-                    <span>Imprimir reporte</span>
-                </template>
-                <base-button @click="printReport" size="sm" class="mr-2 float-right" type="secondary">
-                    <a-icon type="printer" style="vertical-align:1px;font-size:1.5em;" />
-                </base-button>
-            </a-tooltip>
-            <a-tooltip placement="top">
-                <template slot="title">
-                    <span>Enviar correo</span>
-                </template>
-                <base-button size="sm" class="mr-2 float-right" type="secondary">
-                    <a-icon type="mail" style="vertical-align:1px;font-size:1.5em;" />
-                </base-button>
-            </a-tooltip>
+            <h2>Detalle de la venta (ID: {{dataSale.uuid}}) <b v-if="!dataSale.status"># Anulada</b></h2>
         </template>
         <template v-if="dataSale != null">
             <h3>Resumen de pago</h3>
@@ -78,7 +54,7 @@
             <hr class="mt-3 mb-1">
             <h3 class="mt-3">ítems</h3>
             <hr class="mt-1 mb-0">
-            <a-table :columns="columnsReport" :loading="progress" :data-source="dataSale.items" :scroll="getScreen">
+            <a-table :columns="columnsReport" :pagination="false" :data-source="dataSale.items">
                 <template slot="total-slot" slot-scope="record, column">
                     {{column.totalItem | formatPrice}}
                 </template>
@@ -104,6 +80,28 @@ export default {
                 }
             },
             id: this.$route.query.id,
+            columnsReport: [
+                {
+                    title: 'Nombre',
+                    dataIndex: 'item.name',
+                    key: 'item.name',
+                    width: '30%',
+                },
+                {
+                    title: 'Total',
+                    dataIndex: 'totalItem',
+                    key: 'totalItem',
+                    width: '20%',
+                    scopedSlots: { customRender: 'total-slot' }
+                },
+                {
+                    title: 'Tipo',
+                    dataIndex: 'type',
+                    key: 'type',
+                    width: '50%',
+                    scopedSlots: { customRender: 'type-slot' }
+                }
+            ]
         }
     },
     created(){
@@ -117,6 +115,9 @@ export default {
                 this.dataSale = sale.data.data
                 setTimeout(() => {
                     print()
+                    setTimeout(() => {
+                        window.close()
+                    }, 200);
                 }, 200);
             }catch(err){
 
