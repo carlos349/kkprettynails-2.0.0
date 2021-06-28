@@ -4,20 +4,31 @@
             <div class="col-md-8 mb-3 separatorLeft">
                 <div class="row p-0">
                     <div class="col-md-6">
-                        <label for="Client">Cliente</label>
+                        <label for="Client">Cliente</label><br>
                         <a-select
                             show-search
                             placeholder="Seleccione el cliente"
                             option-filter-prop="children"
                             :filter-option="filterOption"
                             :allowClear="true"
-                            class="mb-2 w-100 clientSelect"
+                            class="mb-2 w-75 clientSelect"
                             :class="screenWidthInput"
+                            v-model="registerClient.select"
                             @change="chooseClient">
                             <a-select-option v-for="client of clients" :key="client._id" :value="client._id">
                                 {{client.firstName}}
                             </a-select-option>
                         </a-select>
+                        <a-button v-if="ifEdit" @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
+                            <!-- <a-icon type="user-add" style="vertical-align: 1.5px;font-size:1.5em;"/> -->
+                            <i class="fa fa-user-edit" style="font-size:1.5em;"></i>
+                            <!-- <i class="fa fa-user-plus" style="font-size:1.5em;"></i> -->
+                        </a-button>
+                        <a-button v-else @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
+                            <!-- <a-icon type="user-add" style="vertical-align: 1.5px;font-size:1.5em;"/> -->
+                            <!-- <i class="fa fa-user-edit" style="font-size:1.5em;"></i> -->
+                            <i class="fa fa-user-plus" style="font-size:1.5em;"></i>
+                        </a-button>
                     </div>
                     <div class="col-md-3">
                         <label for="Client">Correo cliente</label>
@@ -25,7 +36,7 @@
                     </div>
                     <div class="col-md-3">
                         <label for="Client">Telefono cliente</label>
-                        <input readonly class="ant-input w-100" placeholder="Telefono" v-model="registerClient.phone"/>
+                        <input readonly class="ant-input w-100" placeholder="Telefono" v-model="registerClient.phone.formatInternational"/>
                     </div>
                 </div>
                 <div class="card-container">
@@ -344,7 +355,7 @@
                             </base-input>
                             <base-input alternative
                                 class="mb-3"
-                                placeholder="Nombre"
+                                placeholder="Segundo nombre"
                                 v-model="registerClient.lastName"
                                 v-on:keyup="validRegister(2)"
                                 addon-left-icon="ni ni-single-02">
@@ -356,24 +367,18 @@
                                 v-on:keyup="validRegister(2)"
                                 addon-left-icon="fa fa-address-card">
                             </base-input>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <base-input alternative
-                                        type="text"
-                                        value="+56"
-                                        readonly="true">
-                                    </base-input>
-                                </div>
-                                <div class="col-md-9">
-                                    <base-input alternative
-                                        type="text"
-                                        placeholder="Teléfono"
-                                        v-on:input="formatPhone"
-                                        maxlength="9"
-                                        v-model="registerClient.phone"
-                                        addon-left-icon="fa fa-address-card">
-                                    </base-input>
-                                </div>
+                            <div class="col-12 mb-4 p-0">
+                                <VuePhoneNumberInput 
+                                v-model="registerClient.phone.formatNational" 
+                                @update="phoneData = $event, registerClient.phone = $event, validRegister(2)" 
+                                :default-phoner-number="registerClient.phone.nationalNumber"
+                                :default-country-code="registerClient.phone.countryCode"
+                                :translations="{
+                                    countrySelectorLabel: 'Código de país',
+                                    countrySelectorError: 'Elije un país',
+                                    phoneNumberLabel: 'Número de teléfono',
+                                    example: 'Ejemplo :'
+                                }"/>
                             </div>
                             <base-input alternative
                                 type="text"
@@ -402,9 +407,8 @@
                                 placeholder="Recomendador"
                             ></vue-single-select>
                             <div class="text-center">
-                                <base-button type="default" v-if="!registerClient.valid" disabled class="my-4">Registrar</base-button>
-                                <base-button type="default" v-on:click="registerClients()" v-if="registerClient.valid && !ifEdit" class="my-4">Registrar</base-button>
-                                <base-button type="default" v-on:click="editClient()" v-if="registerClient.valid && ifEdit" class="my-4">Editar</base-button>
+                                <base-button type="default" :disabled="registerClient.valid ? false : true" v-on:click="registerClients()" v-if="!ifEdit" class="my-4">Registrar</base-button>
+                                <base-button type="default" v-on:click="editClient()" v-if="ifEdit" class="my-4">Editar</base-button>
                             </div> 
                         </form>
                 </template>
@@ -669,11 +673,14 @@ import vueCustomScrollbar from 'vue-custom-scrollbar'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
+import VuePhoneNumberInput from 'vue-phone-number-input';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 export default {
     components: {
         vueCustomScrollbar,
         VueBootstrap4Table,
-        flatPicker
+        flatPicker,
+        VuePhoneNumberInput
     },
     data(){
         return {
@@ -716,11 +723,23 @@ export default {
                 firstName: '',
                 lastName: '',
                 email: '',
-                phone: '',
+                phone: {
+                    "countryCode": "CL", 
+                    "isValid": false, 
+                    "phoneNumber": "", 
+                    "countryCallingCode": "", 
+                    "formattedNumber": "", 
+                    "nationalNumber": "", 
+                    "formatInternational": "", 
+                    "formatNational": "", 
+                    "uri": "", 
+                    "e164": ""
+                },
                 instagram: '',
                 birthday: '',
                 discount: false,
                 recommender: '',
+                select: 'Seleccione',
                 valid: false,
             },
             articulo:'',
@@ -1047,15 +1066,6 @@ export default {
                 this.cashFunds.valid = this.cashFunds.cashName != '' && this.cashFunds.cashAmount > 0 ? true : false
             }
         },
-        formatPhone(){
-            var number = this.registerClient.contactOne.replace(/[^\d]/g, '')
-            if (number.length == 9) {
-                number = number.replace(/(\d{1})(\d{4})/, "$1-$2-");
-            } else if (number.length == 10) {
-                number = number.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
-            }
-            this.registerClient.contactOne = number
-        },
         registerFund(){
 			axios.post(endPoint.endpointTarget+'/sales/registerFund', {
 				userRegister: this.cashFunds.cashName,
@@ -1077,12 +1087,11 @@ export default {
 			})
         },
         editClient(){
-            const phone = this.registerClient.phone.length > 0 ? '+56 '+this.registerClient.phone : ''
             axios.put(endPoint.endpointTarget+'/clients/'+this.editClientId, {
                 firstName: this.registerClient.firstName,
                 lastName: this.registerClient.lastName,
                 email: this.registerClient.email,
-                phone: phone,
+                phone: this.registerClient.phone,
                 instagram: this.registerClient.instagram
             }, this.configHeader)
             .then(res => {
@@ -1110,6 +1119,7 @@ export default {
                 var split = this.registerClient.birthday.split('-')
                 date = split[1]+'-'+split[0]+'-'+split[2]
             }
+            var idRecomender = ''
             if (this.registerClient.recommender != '') {
                 for (let i = 0; i < this.clientIds.length; i++) {
                     const spId = this.clientIds[i].split("-")
@@ -1119,18 +1129,17 @@ export default {
                 }
             }
             var ifCheck = this.registerClient.discount ? 0 : 1
-            const phone = this.registerClient.phone.length > 0 ? '+56 '+this.registerClient.phone : ''
             axios.post(endPoint.endpointTarget+'/clients', {
                 firstName: this.registerClient.firstName,
-                lastName: this.registerClients.lastName,
+                lastName: this.registerClient.lastName,
                 email: this.registerClient.email,
                 recommender: this.registerClient.recommender,
                 idRecommender: idRecomender,
-                phone: phone,
+                phone: this.registerClient.phone.isValid ? this.registerClient.phone : '',
                 birthday: date,
                 instagram: this.registerClient.instagram,
                 ifCheck: ifCheck
-            })
+            }, this.configHeader)
             .then(res => {
                 if (res.data.status == 'client create') {
                     this.$swal({
@@ -1139,16 +1148,11 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    this.registerClient.select = this.registerClient.firstName
+                    this.readyClient = false
+                    this.ifEdit = true
+                    this.modals.modal2 = false
                     this.getClient()
-                    this.registerClient = {
-                        name: '',
-                        id: '',
-                        contactOne: '',
-                        contactTwo: '',
-                        discount: false,
-                        recommender: '',
-                        valid: false,
-                    }
                 }else{
                     this.$swal({
                         icon: 'error',
@@ -1650,9 +1654,10 @@ export default {
                     this.registerClient.firstName = getClient.data.data.firstName
                     this.registerClient.lastName = getClient.data.data.lastName
                     this.registerClient.email = getClient.data.data.email
-                    this.registerClient.phone = getClient.data.data.phone.formatNational
+                    this.registerClient.phone = getClient.data.data.phone
                     this.registerClient.instagram = getClient.data.data.instagram
                     this.readyClient = false
+                    console.log(this.registerClient.phone)
                     this.validRegister(2)
                     if(getClient.data.data.birthday){
                         var birthday = new Date(getClient.data.data.birthday).getMonth()
@@ -1687,20 +1692,24 @@ export default {
                 this.newClient.text = "Nuevo cliente"
                 this.ifEdit = false
                 this.registerClient.firstName = ""
+                this.registerClient.select = "Seleccione"
                 this.registerClient.lastName = ""
                 this.registerClient.email = ""
-                this.registerClient.phone = ""
+                this.registerClient.phone = {
+                    "countryCode": "CL", 
+                    "isValid": false, 
+                    "phoneNumber": "", 
+                    "countryCallingCode": "", 
+                    "formattedNumber": "", 
+                    "nationalNumber": "", 
+                    "formatInternational": "", 
+                    "formatNational": "", 
+                    "uri": "", 
+                    "e164": ""
+                }
                 this.registerClient.instagram = ""
                 this.readyClient = true
                 this.validRegister(2)
-            }
-            if (this.clientSelect != '' && this.lenderSelect != '') {
-                this.validator = false
-                this.validatorBtn = false
-            }
-            else{
-                this.validator = true
-                this.validatorBtn = true
             }
         },
         initialState(){
@@ -1725,7 +1734,7 @@ export default {
             this.perPay = 0
             this.restPay = 0
             this.totalPay = 0
-            
+            this.ifEdit = false
             $('.thisSelect .ant-select-selection__clear').click()
             $('.clientSelect .ant-select-selection__clear').click()
         },
