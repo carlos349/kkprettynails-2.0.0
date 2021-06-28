@@ -20,13 +20,9 @@
                             </a-select-option>
                         </a-select>
                         <a-button v-if="ifEdit" @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
-                            <!-- <a-icon type="user-add" style="vertical-align: 1.5px;font-size:1.5em;"/> -->
                             <i class="fa fa-user-edit" style="font-size:1.5em;"></i>
-                            <!-- <i class="fa fa-user-plus" style="font-size:1.5em;"></i> -->
                         </a-button>
                         <a-button v-else @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
-                            <!-- <a-icon type="user-add" style="vertical-align: 1.5px;font-size:1.5em;"/> -->
-                            <!-- <i class="fa fa-user-edit" style="font-size:1.5em;"></i> -->
                             <i class="fa fa-user-plus" style="font-size:1.5em;"></i>
                         </a-button>
                     </div>
@@ -1102,6 +1098,7 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    this.modals.modal2 = false
                     this.getClient()
                 }else{
                     this.$swal({
