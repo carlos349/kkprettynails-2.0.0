@@ -150,6 +150,9 @@
                     type="search"
                     :style="{ color: filtered ? '#108ee9' : undefined }"
                 />
+                <template slot="names-slot" slot-scope="record,column">
+                    {{column.firstName}} {{column.lastName}}
+                </template>
                 <template slot="total" slot-scope="record,column">
                     {{(parseFloat(column.commission) + parseFloat(column.bonus)) - parseFloat(column.advancement) | formatPrice}}
                 </template>
@@ -290,7 +293,7 @@ export default {
         searchedColumn: '',
         columns: [
             {
-                title: 'Nombre',
+                title: 'Nombres',
                 dataIndex: 'firstName',
                 key: 'firstName',
                 sorter: (a, b) => {
@@ -306,36 +309,9 @@ export default {
                 scopedSlots: {
                     filterDropdown: 'filterDropdown',
                     filterIcon: 'filterIcon',
-                    customRender: 'customRender',
+                    customRender: 'names-slot',
                 },
                 onFilter: (value, record) => record.firstName.toString().toLowerCase().includes(value.toLowerCase()),
-                onFilterDropdownVisibleChange: visible => {
-                    if (visible) {
-                    setTimeout(() => {
-                        this.searchInput.focus();
-                    }, 0);
-                    }
-                },
-            },
-            {
-                title: 'Apellido',
-                dataIndex: 'lastName',
-                key: 'lastName',
-                sorter: (a, b) => {
-                     if (a.lastName > b.lastName) {
-                        return -1;
-                    }
-                    if (b.lastName > a.lastName) {
-                        return 1;
-                    }
-                    return 0;
-                },
-                scopedSlots: {
-                    filterDropdown: 'filterDropdown',
-                    filterIcon: 'filterIcon',
-                    customRender: 'customRender',
-                },
-                onFilter: (value, record) => record.lastName.toString().toLowerCase().includes(value.toLowerCase()),
                 onFilterDropdownVisibleChange: visible => {
                     if (visible) {
                     setTimeout(() => {

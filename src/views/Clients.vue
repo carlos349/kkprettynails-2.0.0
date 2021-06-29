@@ -276,122 +276,72 @@
 
         <!-- TABLA DE CLIENTES -->
         <template>
-            <div class="p-2">
-                <a-config-provider>
-                    <template #renderEmpty>
-                        <div style="text-align: center">
-                            <a-icon type="warning" style="font-size: 20px" />
-                            <h2>No hay ningun cliente registrado</h2>
-                        </div>
+            <a-config-provider>
+                <template #renderEmpty>
+                    <div style="text-align: center">
+                        <a-icon type="warning" style="font-size: 20px" />
+                        <h2>No hay ningun cliente registrado</h2>
+                    </div>
+                </template>
+                <a-table :columns="columns" :loading="clientState" :data-source="clients" :scroll="getScreen">
+                    <div
+                    slot="filterDropdown"
+                    slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                    style="padding: 8px"
+                    >
+                    <a-input
+                        v-ant-ref="c => (searchInput = c)"
+                        :placeholder="`Buscar por ${column.title.toLowerCase()}`"
+                        :value="selectedKeys[0]"
+                        style="width: 188px; margin-bottom: 8px; display: block;"
+                        @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                        @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    />
+                    <a-button
+                        type="primary"
+                        icon="search"
+                        size="small"
+                        style="width: 90px; margin-right: 8px"
+                        @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    >
+                        Buscar
+                    </a-button>
+                    <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                        Restablecer
+                    </a-button>
+                    </div>
+                    <a-icon
+                        slot="filterIcon"
+                        slot-scope="filtered"
+                        type="search"
+                        :style="{ color: filtered ? '#108ee9' : undefined }"
+                    />
+                    <template slot="birthday" slot-scope="record">
+                        <span v-if="record">{{formatDateTwo(record)}}</span>
+                        <span v-else>Sin fecha de nacimiento</span>
                     </template>
-                    <a-table :columns="columns" :loading="clientState" :data-source="clients" :scroll="getScreen">
-                        <div
-                        slot="filterDropdown"
-                        slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                        style="padding: 8px"
-                        >
-                        <a-input
-                            v-ant-ref="c => (searchInput = c)"
-                            :placeholder="`Buscar por ${column.title.toLowerCase()}`"
-                            :value="selectedKeys[0]"
-                            style="width: 188px; margin-bottom: 8px; display: block;"
-                            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                            @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                        />
-                        <a-button
-                            type="primary"
-                            icon="search"
-                            size="small"
-                            style="width: 90px; margin-right: 8px"
-                            @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                        >
-                            Buscar
-                        </a-button>
-                        <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
-                            Restablecer
-                        </a-button>
-                        </div>
-                        <a-icon
-                            slot="filterIcon"
-                            slot-scope="filtered"
-                            type="search"
-                            :style="{ color: filtered ? '#108ee9' : undefined }"
-                        />
-                        <template slot="birthday" slot-scope="record">
-                            <span v-if="record">{{formatDateTwo(record)}}</span>
-                            <span v-else>Sin fecha de nacimiento</span>
-                        </template>
-                        <template slot="actions" slot-scope="record, column">
-                            <b>
-                                <a-tooltip placement="top">
-                                    <template slot="title">
-                                    <span>Detalles / Editar</span>
-                                    </template>
-                                    <base-button v-if="validRoute('clientes', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.lastName, column.email, column.phone, column.instagram, column.attends, column.recommender, column.recommendations, column.lastAttend, column.createdAt, column._id, column.birthday)" icon="ni ni-bullet-list-67"></base-button>
-                                    <base-button disabled v-else size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
-                                </a-tooltip>
-                                
-                                <a-tooltip placement="top">
-                                    <template slot="title">
-                                    <span>Eliminar</span>
-                                    </template>
-                                    <base-button v-if="validRoute('clientes', 'eliminar')" size="sm" v-on:click="deleteClient(column._id)" type="warning" icon="fas fa-trash"></base-button>
-                                    <base-button disabled v-else size="sm" type="warning" icon="fas fa-trash"></base-button>
-                                </a-tooltip>
-                            </b>
-                        </template>
-                    </a-table>
-                </a-config-provider>    
-            </div>
+                    <template slot="actions" slot-scope="record, column">
+                        <b>
+                            <a-tooltip placement="top">
+                                <template slot="title">
+                                <span>Detalles / Editar</span>
+                                </template>
+                                <base-button v-if="validRoute('clientes', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.lastName, column.email, column.phone, column.instagram, column.attends, column.recommender, column.recommendations, column.lastAttend, column.createdAt, column._id, column.birthday)" icon="ni ni-bullet-list-67"></base-button>
+                                <base-button disabled v-else size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
+                            </a-tooltip>
+                            
+                            <a-tooltip placement="top">
+                                <template slot="title">
+                                <span>Eliminar</span>
+                                </template>
+                                <base-button v-if="validRoute('clientes', 'eliminar')" size="sm" v-on:click="deleteClient(column._id)" type="warning" icon="fas fa-trash"></base-button>
+                                <base-button disabled v-else size="sm" type="warning" icon="fas fa-trash"></base-button>
+                            </a-tooltip>
+                        </b>
+                    </template>
+                </a-table>
+            </a-config-provider>    
         </template>
-        <vue-bootstrap4-table v-if="progress" class="tableClient" :rows="rows" :columns="columns" :classes="classes" :config="config">
-            <template slot="Administrar" slot-scope="props">
-                <b>
-                    <center>
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Detalles / Editar</span>
-                            </template>
-                            <base-button v-if="validRoute('clientes', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(props.row.nombre, props.row.identidad, props.row.correoCliente, props.row.instagramCliente, props.row.participacion, props.row.recomendacion, props.row.recomendaciones, props.row.ultimaFecha, props.row.fecha, props.row._id, props.row.birthday)" icon="ni ni-bullet-list-67"></base-button>
-                            <base-button disabled v-else size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
-                        </a-tooltip>
-                        
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Eliminar</span>
-                            </template>
-                            <base-button v-if="validRoute('clientes', 'eliminar')" size="sm" v-on:click="deleteClient(props.row._id)" type="warning" icon="fas fa-trash"></base-button>
-                            <base-button disabled v-else size="sm" type="warning" icon="fas fa-trash"></base-button>
-                        </a-tooltip>
-                        
-                    </center>
-                    
-                </b>
-            </template>
-            <template slot="birthday-format" slot-scope="props">
-                <span v-if="props.row.birthday">{{formatDateTwo(props.row.birthday)}}</span>
-                <span v-else>Sin fecha de nacimiento</span>
-            </template>
-            <template slot="pagination-info" slot-scope="props">
-                Actuales {{props.currentPageRowsLength}} | 
-                Registros totales {{props.originalRowsLength}}
-            </template>
-            <template slot="selected-rows-info" slot-scope="props">
-                Total Number of rows selected : {{props.selectedItemsCount}}
-            </template>
-        </vue-bootstrap4-table>
-        <center v-else>
-            <loading-progress
-                :progress="progress"
-                :indeterminate="indeterminate"
-                class="text-center"
-                :hide-background="hideBackground"
-                shape="circle"
-                size="100"
-                fill-duration="2"
-            />
-        </center>
-
         <!-- END -->
 
     </div> 

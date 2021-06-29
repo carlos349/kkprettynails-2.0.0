@@ -35,12 +35,12 @@
         <a-modal v-model="modals.modal1" class="modalReport" :width="800" :footer="null" :closable="true" >
             <div class="mx-2" id="htmlPrint">
                 <template v-if="dataSale != null">
-                    <h2>Detalle de la venta (ID: {{dataSale.uuid}})</h2>
+                    <h2>Detalle de la venta (ID: {{dataSale.uuid}}) <b v-if="!dataSale.status"># Anulada</b></h2>
                     <a-tooltip placement="top">
                         <template slot="title">
                             <span>Anular venta</span>
                         </template>
-                        <base-button size="sm" class="mr-2 float-right" type="warning">
+                        <base-button v-if="dataSale.status" @click="cancelSale(dataSale._id)" size="sm" class="mr-2 float-right" type="warning">
                             <a-icon type="close-circle" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -48,7 +48,7 @@
                         <template slot="title">
                             <span>Imprimir reporte</span>
                         </template>
-                        <base-button @click="printReport" size="sm" class="mr-2 float-right" type="secondary">
+                        <base-button @click="printReport(dataSale._id)" size="sm" class="mr-2 float-right" type="secondary">
                             <a-icon type="printer" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -113,7 +113,7 @@
                     <h3 class="mt-3">ítems</h3>
                     <hr class="mt-1 mb-0">
                     <a-table :columns="columnsReport" :loading="progress" :data-source="dataSale.items" :scroll="getScreen">
-                        <template slot="total-slot'" slot-scope="record, column">
+                        <template slot="total-slot" slot-scope="record, column">
                             {{column.totalItem | formatPrice}}
                         </template>
                         <template slot="type-slot" slot-scope="record, column">
@@ -654,7 +654,7 @@ export default {
             console.log(this.dataSale)
             this.modals.modal1 = true
         },
-        cancelSale(id, services){
+        cancelSale(id){
             this.$swal({
 				title: '\n¿Está seguro anular la venta?',
 				text: 'No puede revertir esta acción',
@@ -667,14 +667,10 @@ export default {
 			}).then((result) => {
                 if (result.value) {
                     axios.put(endPoint.endpointTarget+'/sales/'+id, {
-                        commission: this.dataSale.commission,
-                        employeId: this.dataSale.employe.id
+                        branch: this.branch
                     }, this.configHeader)
                     .then(res => {
                         if (res.data.status == 'ok') {
-                            axios.post(endPoint.endpointTarget+'/inventario/nullSale', {
-                                array: services
-                            }).then(res=>{})
                             this.$swal({
                                 icon: 'success',
                                 title: 'Venta anulada',
@@ -770,10 +766,11 @@ export default {
                 this.validClient = false
             }
         },
-        printReport(){
-            this.$htmlToPaper('htmlPrint', null, () => {
-                console.log('Printing completed or was cancelled!');
-            });
+        printReport(id){
+            let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
+width=0,height=0,left=-1000,top=-1000`;
+            var win = window.open(endPoint.url+'/#/reportPdf?id='+id, '_blank', params)
+            win.focus();
         }
     },
     mounted (){

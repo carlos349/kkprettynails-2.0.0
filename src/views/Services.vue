@@ -410,7 +410,9 @@
                         </template>
                         <template v-if="validRoute('servicios', 'activaciones')">
                             <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(column._id)"></base-button>
-                            <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" v-on:click="changeStatus(column._id)"></base-button> 
+                            <base-button class="text-center" v-else size="sm" type="danger" v-on:click="changeStatus(column._id)">
+                                <a-icon type="close" style="vertical-align:1px;" />
+                            </base-button> 
                 
                         </template>
                         <template v-else>
@@ -424,10 +426,10 @@
                             <span>Eliminar</span>
                         </template>
                         <base-button v-if="validRoute('servicios', 'editar')" size="sm" type="danger" class="text-center" v-on:click="deleteService(column._id)">
-                        <a-icon type="close" style="vertical-align:1px;" />
+                        <a-icon type="delete" style="vertical-align:1px;" />
                         </base-button>
                         <base-button v-else size="sm" type="danger" disabled class="text-center" >
-                        <a-icon type="close" style="vertical-align:1px;" /></base-button>
+                        <a-icon type="delete" style="vertical-align:1px;" /></base-button>
                     </a-tooltip>
                 </template>
                 <template slot="format-price" slot-scope="record, column">
@@ -453,11 +455,11 @@
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
             <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  header-classes="bg-white pb-2"
+                  body-classes="px-lg-2 py-lg-3"
                   class="border-0">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div class="text-muted text-center mb-2">
                         <small>Cantidad</small>
                     </div>
                 </template>
@@ -466,21 +468,29 @@
                         <div class="row mx-auto">
                             <div class="col-7">
                                 <base-input  alternative
-                                        placeholder="Cantidad por uso"
-                                        v-model="countModal"
-                                        addon-left-icon="fa fa-list-ol">
+                                    placeholder="Cantidad por uso"
+                                    v-model="countModal"
+                                    type="number"
+                                    addon-left-icon="fa fa-list-ol">
                                 </base-input>
                             </div>
-                            <div class="col-5 text-center mt-2">
-                                {{unitPerItem}}
+                            <div class="col-5">
+                                <base-input  alternative
+                                    placeholder="Cantidad por uso"
+                                    v-model="unitPerItem"
+                                    class="pl-2"
+                                    readonly
+                                    >
+                                </base-input>
                             </div>
+                            <!-- <div class="col-5 text-center mt-2">
+                                {{unitPerItem}}
+                            </div> -->
                         </div>
                     </center>
-                    
-                        <div class="text-center">
-                            <base-button type="primary" v-on:click="selectedItem" class="my-4">Registrar</base-button>
-                            
-                        </div>
+                    <div class="text-center">
+                        <base-button type="primary" v-on:click="selectedItem" class="my-1">Registrar</base-button>
+                    </div>
                 </template>
             </card>
         </modal>
@@ -490,7 +500,7 @@
                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-2"
-                  body-classes="px-lg-5 py-lg-5"
+                  body-classes="px-lg-5 py-lg-3"
                   class="border-0">
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
@@ -849,13 +859,14 @@ export default {
                     this.alertTable = 'Sucursal sin servicios creados'
                 }
             }catch(err){
-                this.$swal({
-					icon: 'error',
-					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-					showConfirmButton: false,
-					timer: 2500
-				})
-				router.push({name: 'login'})
+                console.log(err)
+                // this.$swal({
+				// 	icon: 'error',
+				// 	title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
+				// 	showConfirmButton: false,
+				// 	timer: 2500
+				// })
+				// router.push({name: 'login'})
             }
         },
         async getProducts() {
@@ -868,13 +879,7 @@ export default {
                     }
                 }
             }catch(err){
-                this.$swal({
-					icon: 'error',
-					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-					showConfirmButton: false,
-					timer: 2500
-				})
-				router.push({name: 'login'})
+                
             }
         },
         formatPrice(value) {
@@ -893,13 +898,7 @@ export default {
                     this.lenders = []
                 }
             }catch(err){
-                this.$swal({
-					icon: 'error',
-					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-					showConfirmButton: false,
-					timer: 2500
-				})
-				router.push({name: 'login'})
+                
             }
         },
         selectedAll(value){
@@ -923,8 +922,11 @@ export default {
                     this.EdititemSelected.push({id:this.rowsItems[this.itemIndex]._id,count:this.itemsBox[this.itemIndex].count, name:this.rowsItems[this.itemIndex].product})
                 }
                 this.$swal({
+                    type: 'success',
                     icon: 'success',
-                    title: 'Registro exitoso',
+                    toast: true,
+                    position: 'top-end',
+                    title: 'Ingreso producto',
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -966,11 +968,16 @@ export default {
         },
         registerService(){
             var timeService = 0 
-            
             if (this.timeHoursRegister != 'Horas' && this.timeMinutesRegister != 'Minutos') {
+                if (this.timeHoursRegister.includes('hr')) {
+                    this.timeHoursRegister = this.timeHoursRegister.split(' ')[0]
+                }
+                if (this.timeMinutesRegister.includes('min')) {
+                    this.timeMinutesRegister = this.timeMinutesRegister.split(' ')[0]
+                }
                 timeService = (this.timeHoursRegister * 60) + parseFloat(this.timeMinutesRegister)
             }
-            if (this.serviceRegister == '' || this.priceRegister == 0 || timeService > 0 || this.comissionRegister == '') {
+            if (this.serviceRegister == '' || this.priceRegister == 0 || timeService == 0 || this.comissionRegister == '') {
                 this.$swal({
                     icon: 'info',
                     title: 'Debe rellenar los datos',
@@ -1254,13 +1261,7 @@ export default {
                     this.categories = []
                 }
             }catch(err){
-                this.$swal({
-					icon: 'error',
-					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-					showConfirmButton: false,
-					timer: 2500
-				})
-				router.push({name: 'login'})
+                
             }
         },
         newCategory(){

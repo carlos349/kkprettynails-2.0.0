@@ -967,8 +967,8 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                     localStorage.setItem('imageUser', decoded.userImage)
                     localStorage.setItem('showNav', true)
                     localStorage.setItem('status', decoded.status)
-                    router.push({path: '/Agendamiento'})
                     this.emitMethod(decoded.status)
+                    router.push({path: '/Agendamiento'})
                 }
             })
             .catch(err =>{
