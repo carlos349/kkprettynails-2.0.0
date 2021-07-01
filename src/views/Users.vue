@@ -57,7 +57,7 @@
                                 <i slot="suffix" class="fa fa-asterisk text-danger"></i>
                             </a-input>
                             <label>Imagen de perfil</label>
-                            <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" >
+                            <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" style="height: 36px;" >
                             <label>Correo</label>
                             <a-input 
                             style="margin-top:-5px;"

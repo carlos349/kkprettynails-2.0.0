@@ -254,7 +254,7 @@
                             </template>
                         </template>
                         <template slot="total-slot" slot-scope="record, column">
-                            {{formatPrice(column.total)}}
+                            {{column.total | formatPrice}}
                         </template>
                         <template slot="actionRemove" slot-scope="record, column, index">
                             <base-button @click="removeItem(index)" size="sm" type="danger">
@@ -1013,7 +1013,24 @@ export default {
             try {
                 const datesFinally = await axios.get(endPoint.endpointTarget+'/dates/getEndingDates/'+this.branch, this.configHeader)
                 if (datesFinally.data.status == 'ok') {
-                    this.datesFinally = datesFinally.data.data
+                    for (const dates of datesFinally.data.data) {
+                        for (const service of dates.services) {
+                            var total = 0
+                            for (const micro of service.microServiceSelect) {
+                                total = total + micro.price
+                            }
+                            console.log(total)
+                            this.datesFinally.push({
+                                service: service,
+                                employe: dates.employe,
+                                _id: dates._id,
+                                price: service.price - total,
+                                total: service.price,
+                                createdAt: dates.createdAt
+                            })
+                        }
+                    }
+                    console.log(this.datesFinally)
                 }else{
                     this.datesFinally = []
                 }
@@ -1291,17 +1308,17 @@ export default {
             }
             var dateItem = 'none'
             if (type == 'date') {
-                for (const micro of this.datesFinally[index].microServices) {
+                for (const micro of this.datesFinally[index].service.microServiceSelect) {
                     this.microserviceSelecteds.push({id: new Date().getTime(), name: micro.name, price: micro.price})
                 }
                 this.itemData.item = this.datesFinally[index].service
                 this.itemData.tag = 'service'
                 this.itemData.employe = this.datesFinally[index].employe
-                this.itemData.realPrice = this.datesFinally[index].total
+                this.itemData.realPrice = this.datesFinally[index].price
                 this.itemData.price = this.datesFinally[index].total
                 this.itemData.commission = this.datesFinally[index].service.commission
                 this.itemData.discountServiceIf = this.datesFinally[index].service.discount
-                this.itemData.discountService = this.datesFinally[index].discount
+                this.itemData.discountService = 0
                 dateItem = this.datesFinally[index]
                 this.datesFinally.splice(index, 1)
             }
