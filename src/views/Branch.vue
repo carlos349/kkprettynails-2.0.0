@@ -11,7 +11,7 @@
                         <p class="mb-0 display-2 text-white">Sucursales</p>
                         <p class="text-white">Esta es la sección administrativa de tus sucursales, aquí podrás registrar, editar y visualizar todas tus sucursales.</p>
                     </div>
-                    <base-button class="float-right mt-7" size="sm" type="success" style="font-size:1em;" @click="modals.modal1 = true" ><a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" /> Registrar</base-button>
+                    <base-button :disabled="validRoute('sucursales', 'registrar') ? false : true" class="float-right mt-7" size="sm" type="success" style="font-size:1em;" @click="modals.modal1 = true" ><a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" /> Registrar</base-button>
                 </div>
             </div>
             
@@ -20,8 +20,7 @@
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
-                    <h2 v-if="!validRoute('caja', 'visualizar')">No tiene los permisos para visualizar cierres.</h2>
-                    <h2 v-else>Sucursal sin cierres registrados.</h2>
+                    <h2>Sin sucursales registrados.</h2>
                 </div>
             </template>
             <a-table :columns="columns" :loading="progress" :data-source="branches" :scroll="getScreen">
@@ -78,8 +77,8 @@
                         </template>
                     </template>
                     <template slot="actionButtons" class="mx-auto" slot-scope="record, column">
-                        <router-link :to="{ path: '/configuration', query: { id: column._id }}">
-                            <base-button class="text-center" icon="ni ni-settings-gear-65" size="sm" type="default" >
+                        <router-link  :to="{ path: '/configuration', query: { id: column._id }}">
+                            <base-button :disabled="validRoute('sucursales', 'configurar') ? false : true" class="text-center" icon="ni ni-settings-gear-65" size="sm" type="default" >
                                 Configurar
                             </base-button> 
                         </router-link>

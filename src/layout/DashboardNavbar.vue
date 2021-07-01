@@ -15,7 +15,7 @@
         
         <ul class="navbar-nav align-items-center  ml-md-auto ">
           <li class="nav-item">
-            <a-dropdown>
+            <a-dropdown :disabled="validRoute('sucursales', 'cambiar') ? false : true">
               <a-menu slot="overlay" @click="selectBranch">
                 <a-menu-item class="font-weight-bold" v-for="branch of branches" :key="branch._id+'/'+branch.name" > 
                   <a-icon type="shop" style="vertical-align:1px;" />{{branch.name}} 
@@ -136,11 +136,11 @@
                             <i class="ni ni-single-02"></i>
                             <span>Mi perfil</span>
                         </router-link>
-                        <router-link to="/sucursales" class="dropdown-item">
+                        <router-link v-if="validRoutee('sucursales')" to="/sucursales" class="dropdown-item">
                             <a-icon type="shop" style="vertical-align:1px;" />
                             <span>Sucursales</span>
                         </router-link>
-                        <router-link to="/store" class="dropdown-item">
+                        <router-link v-if="validRoutee('bodega')" to="/store" class="dropdown-item">
                             <i class="ni ni-box-2"></i>
                             <span>Bodega</span>
                         </router-link>
@@ -170,6 +170,7 @@
   import EventBus from '../components/EventBus'
   import io from 'socket.io-client';
   import * as moment from 'moment';
+  import jwtDecode from 'jwt-decode'
   import 'moment/locale/es';
   import { Empty } from 'ant-design-vue';
   import vueCustomScrollbar from 'vue-custom-scrollbar'
@@ -196,19 +197,49 @@
         pxSep: '',
         branches: [],
         branchName: localStorage.branchName,
-        branch: localStorage.branch
+        branch: localStorage.branch,
+        auth: []
       };
     },
     beforeCreate() {
       this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
     },
     created() {
-      this.getNotifications()
+      // this.getNotifications()
       this.getBranches()
+      this.getToken()
     },
     methods: {
       toggleSidebar() {
         this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
+      },
+      getToken(){
+        const token = localStorage.userToken
+        if (token) {
+          const decoded = jwtDecode(token)
+          this.auth = decoded.access
+          console.log(this.auth)
+        }
+      },
+      validRoute(route, type){
+        for (let index = 0; index < this.auth.length; index++) {
+          const element = this.auth[index];
+          if (element.ruta == route) {
+            for (let i = 0; i < element.validaciones.length; i++) {
+              if (type == element.validaciones[i]) { 
+                  return true
+              } 
+            }
+          }
+        }
+      },
+      validRoutee(route){
+        for (let index = 0; index < this.auth.length; index++) {
+          const element = this.auth[index];
+          if (element.ruta == route) {
+            return true
+          }
+        }
       },
       hideSidebar() {
         this.$sidebar.displaySidebar(false);

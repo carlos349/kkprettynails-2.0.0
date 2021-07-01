@@ -11,25 +11,25 @@
                         <p class="mb-0 display-2 text-white">Usuarios</p>
                         <p class="text-white">Sección dedicada a registrar y administrar los accesos necesarios para cada usuario dentro del sistema.</p>
                     </div>
-                    <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('usuarios', 'registrar')" @click="modals.modal8 = true" type="primary">
+                    <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('usuarios', 'registrar') ? false : true" @click="modals.modal8 = true" type="primary">
                         <a-icon type="user" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Perfiles
                     </base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('usuarios', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">
+                    <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('usuarios', 'registrar') ? false : true" @click="modals.modal1 = true , initialState(2)" type="success">
                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Registrar
-                    </base-button>
+                    </base-button>     
                 </div>
             </div>
         </base-header>
         <modal :show.sync="modals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <a-spin size="large" :spinning="ifRegister">
                 <div class="p-3 pt-4">
                     <template>
-                        <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                        <div style="margin-top:-10% !important" class="text-muted text-center mb-3">
                             Datos del usuario
                         </div>
                     </template>
@@ -57,25 +57,26 @@
                                 <i slot="suffix" class="fa fa-asterisk text-danger"></i>
                             </a-input>
                             <label>Imagen de perfil</label>
-                            <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-3 pb-2" >
-                            <a-form-item
-                                help="Debe ingresar un correo valido">
-                                <a-input 
+                            <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" >
+                            <label>Correo</label>
+                            <a-input 
+                            style="margin-top:-5px;"
                                 v-model="registerUser.email"
                                 placeholder="Correo"
                                 v-on:keyup="validFields('c')"
-                                class="mb-2">
-                                    <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
-                                    <i slot="suffix" class="fa fa-asterisk text-danger"></i>
-                                </a-input>
-                            </a-form-item>
+                                class="mb-0">
+                                <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
+                                <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                            </a-input>
                             <a-form-item
+                            class="mt-1"
                             :validate-status="registerUser.c ? 'success' : 'error'"
-                            :help="registerUser.c ? 'Correcto' : 'Los correos deben coincidir'">
+                            :help="registerUser.c ? '' : 'Los correos deben coincidir'">
                                 <a-input :id="registerUser.c ? 'success' : 'error'" v-model="registerUser.emailConfirm" placeholder="Confirmar correo" v-on:keyup="validFields('c')">
                                     <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
                                 </a-input>
                             </a-form-item>
+                            <label>Contraseña</label>
                             <a-input-password 
                             v-model="registerUser.password"
                             placeholder="contraseña"
@@ -86,7 +87,7 @@
                             </a-input-password>
                             <a-form-item
                             :validate-status="registerUser.p ? 'success' : 'error'"
-                            :help="registerUser.p ? 'Correcto' : 'Las contraseñas deben coincidir'">
+                            :help="registerUser.p ? '' : 'Las contraseñas deben coincidir'">
                                 <a-input-password :id="registerUser.p ? 'success' : 'error'" v-model="registerUser.passwordConfirm" placeholder="Confirmar contraseña" v-on:keyup="validFields('p')">
                                     <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
                                 </a-input-password>
@@ -238,16 +239,16 @@
                               </template>
                               <a-tooltip placement="top">
                                   <template slot="title">
-                                  <span v-if="accessProfiles.lenght == 0">Para ingresar un perfil de usuario debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
+                                  <span>Los perfiles en rojo significan que no tienen niguna atribución</span>
                                   </template>
                                   <div class="col-md-8" >
                                       <a-list bordered :data-source="accessProfiles">
                                           <a-list-item slot="renderItem" slot-scope="item, index" :class="item.routes.length > 0 ? 'text-black' : ' text-danger' ">
                                               {{ item.profile }}
-                                              <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeProfile(index)">
+                                              <base-button outline v-if="item.profile != 'Gerente'" type="default" size="sm" class="float-right" v-on:click="removeProfile(index)">
                                                   <i class="fa fa-times"></i>
                                               </base-button>
-                                              <base-button outline type="default" size="sm" class="float-right mr-2" v-on:click="editProfiles(item.routes, index)">
+                                              <base-button outline v-if="item.profile != 'Gerente'" type="default" size="sm" class="float-right mr-2" v-on:click="editProfiles(item.routes, index)">
                                                   <i class="fa fa-edit"></i>
                                               </base-button>
                                           </a-list-item>
@@ -499,7 +500,8 @@ export default {
             {route: 'agendamiento', valid: false},
             {route: 'caja', valid: false},
             {route: 'pedidos', valid: false},
-            {route: 'prueba', valid: false}
+            {route: 'bodega', valid: false},
+            {route: 'sucursales', valid: false}
         ],
         commission:false,
         selectedProfile: 0,
@@ -641,7 +643,11 @@ export default {
             {
                 route: 'sucursales', 
                 valid: false,
-                functions: []
+                functions: [
+                    {function: 'cambiar', name:'Elegir sucursal', valid: false},
+                    {function: 'registrar', name:'Registrar sucursal', valid: false},
+                    {function: 'configurar', name:'Configurar sucursal', valid: false}
+                ]
             }
         ],
         functions: [],
@@ -896,19 +902,20 @@ export default {
             for (let i = 0; i < this.accessProfiles[this.selectedProfile].routes.length; i++) {
                 const elementOne = this.accessProfiles[this.selectedProfile].routes[i];
                 if (elementOne.ruta == route) {
-                this.selectedRoute = i
-                functions.forEach(function (elementTwo, index) {
-                    functions[index].valid = false
-                    elementOne.validaciones.forEach(elementThree => {
-                        if (elementTwo.function == elementThree) {
-                            functions[index].valid = true
-                        }
+                    this.selectedRoute = i
+                    functions.forEach(function (elementTwo, index) {
+                        functions[index].valid = false
+                        elementOne.validaciones.forEach(elementThree => {
+                            if (elementTwo.function == elementThree) {
+                                functions[index].valid = true
+                            }
+                        });
                     });
-                });
                 }
             }
             this.functionsProfile = functions
             this.modals.modal7 = true
+            console.log(this.functionsProfile)
         },
         removeRoute(route){
             for (let i = 0; i < this.accessProfiles[this.selectedProfile].routes.length; i++) {
@@ -1074,7 +1081,9 @@ export default {
                 {route: 'gastos', valid: false},
                 {route: 'agendamiento', valid: false},
                 {route: 'caja', valid: false},
-                {route: 'pedidos', valid: false}
+                {route: 'pedidos', valid: false},
+                {route: 'bodega', valid: false},
+                {route: 'sucursales', valid: false}
             ]
             this.mail = mail 
             this.idAccess = id
@@ -1207,6 +1216,12 @@ export default {
                     {function: 'nuevo_cliente', name:'Registrar cliente', valid: false},
                     {function: 'nuevo_servicio', name:'Registrar servicio', valid: false},
                     {function: 'descuento', name:'Ingresar descuento', valid: false},
+                ]
+            }else if (route == 'sucursales') {
+                this.functions = [
+                    {function: 'cambiar', name:'Elegir sucursal', valid: false},
+                    {function: 'registrar', name:'Registrar sucursal', valid: false},
+                    {function: 'configurar', name:'Configurar sucursal', valid: false},
                 ]
             }
             for (let index = 0; index < this.functions.length; index++) {
