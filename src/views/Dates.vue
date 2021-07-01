@@ -758,22 +758,14 @@
         </modal>
         <modal :show.sync="dateModals.modal2"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
+               modal-classes="modal-dialog-centered modal-lg">
                <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
-            <card type="secondary" shadow
+            <card v-if="selectedEvent.start" type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <div style="margin-top:-10% !important" class="text-center">
-                    <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}} <br> <i class="fa fa-clock"></i> {{dateData.startEdit}} / {{dateData.endEdit}}</base-button>
-                </div>
-                <div class="col-12" v-on:keyup.enter="selectClient()" @click="selectClient()">
-                    <vue-single-select
-                        v-model="dateData.clientEdit"
-                        :options="clientsNames"
-                        placeholder="Seleccione un cliente"
-                        class="mx-auto mt-1"
-                    ></vue-single-select> 
+                    <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}} <br> <i  class="fa fa-clock"></i> {{moment(selectedEvent.start).format('LT')}} / {{moment(selectedEvent.end).format('LT')}}</base-button>
                 </div>
                 <dd v-if="dateData.fechaEditPick == ''" class="text-danger text-center">Debe seleccionar una fecha</dd>
                 <div class="col-12 mx-auto">
@@ -781,51 +773,70 @@
                         <flat-picker  slot-scope="{focus, blur}"
                                     @on-open="focus"
                                     @on-close="blur"
-                                    @on-change="insertDateTwo"
+                                    @on-change="changeDateEdit()"
                                     :config="configDatePickerEdit"
                                     class="form-control datepicker"
-                                    v-model="dateData.fechaEditPick"
+                                    v-model="selectedEvent.createdAt"
                                     placeholder="Seleccione una fecha">
                         </flat-picker>
                     </base-input>
                 </div>
-               
-                <base-dropdown class="col-12 mt-1 mb-2 p-0">
-                    <base-button slot="title" type="default" class="dropdown-toggle col-12">
-                            {{dateData.lenderEdit}}
-                    </base-button>
-                    <li v-for="data in employeShow" v-if="findDayEdit(data.days, dateData.fechaEditPick)" v-on:click="selectEmployeEdit(data.name, dateData.fechaEditPick)">
-                        <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                            <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                        </base-button>
-                        <base-button v-else class="dropdown-item" href="#">
-                            <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                        </base-button>
-                    </li>
-                </base-dropdown>
-                <vue-custom-scrollbar style="height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:scroll;">
-                    <div class="col-12" v-for="(block , index) of blockHourEdit">
-                        <base-button v-if="block.validator == true" v-on:click="selectBloqEdit(block.Horario, index)" size="sm" class="col-12" type="success">
-                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                <center>
+                    <div class="row col-12 p-0 m-0">
+                        <div style="margin-top: -6px" class="col-md-2 p-0">
+                            <span class="minLess text-danger"> -{{minLessEdit}}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <a-button v-on:click="changeMin(false)"  type="danger">
+                                <a-icon style="vertical-align: unset;" type="minus-circle" />Restar minutos
+                            </a-button>
+                        </div>
+                        <div class="col-md-4">
+                            <a-button v-on:click="changeMin(true)" class="text-white" style="background-color:#2dce89" type="success">
+                                Agregar minutos<a-icon style="vertical-align: unset;" type="plus-circle" />
+                            </a-button>
+                        </div>
+                        <div style="margin-top: -8px" class="col-md-2 p-0">
+                             <span class="minAdd"> +{{minAddEdit}}</span>
+                        </div>
+                        
+                    </div>
+                    <span class="minAdd text-default"> Duración: {{selectedEvent.duration}} Min</span>
+                </center>
+                <hr>
+                <a-select class="col-12 col-md-9 mx-1" :default-value="selectedEvent.employe.name" >
+                    <a-select-option v-for="employe in selectedEvent.services[0].employes" :key="employe" @click="editEmployeDate(employe)" :value="employe.name">
+                        {{employe.name}}
+                    </a-select-option>
+                </a-select>
+                <a-tooltip placement="right">
+                    <template slot="title">
+                    <span>Buscar horario</span>
+                    </template>
+                    <a-button class="text-white col-12 col-md-2 mx-1" @click="searchBlockEdit()" style="background-color:#2dce89" type="success">
+                        <a-icon style="vertical-align: unset;" type="search" />
+                    </a-button>
+                </a-tooltip>
+                <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent col-12 mt-3" v-if="finalBlockEdit"  style="height:25vh; padding-right: 25px;">
+                    <div class="col-12" v-for="block in finalBlockEdit" :key="block">
+                        <base-button v-if="block.validator == true" v-on:click="selectBlockEdit(block.hour)" size="sm" class="col-12" type="success">
+                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                             <span>Disponible</span>
                         </base-button>
-
                         <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                             <span>Ocupado</span>
                         </base-button>
-
                         <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                             <span>Seleccionado</span>
                         </base-button>
-
                         <base-button v-else size="sm" disabled class="col-12" type="secondary">
-                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
-                            <span>No disponible</span>
+                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                            <span>No seleccionable</span>
                         </base-button>
                     </div>
-                </vue-custom-scrollbar>
+                </vuescroll>
                 <div class="text-center">
                     <base-button v-on:click="editDate()" class="mt-3" type="default">Editar</base-button>
                 </div>
@@ -1355,6 +1366,7 @@ import io from 'socket.io-client';
 import { Carousel, Slide } from 'vue-carousel';
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+import moment from 'moment'
 //Back - End 
 import jwtDecode from 'jwt-decode'
 import axios from 'axios'
@@ -1383,6 +1395,9 @@ export default {
                 'x-access-token':localStorage.userToken
             }
         },
+        minAddEdit:0,
+        minLessEdit:0,
+        moment,
         prueba: 'primary',
         imgEndpoint: endPoint.endpointTarget,
         auth:[],
@@ -1637,6 +1652,10 @@ export default {
                 
             ] 
         },
+        availableEmployesEdit:[],
+        blockFirstEdit:[],
+        validEditBlock:false,
+        finalBlockEdit:[],
         dateData: {
         history:[],
         discount:{discount:false,type:'none'},
@@ -1754,6 +1773,7 @@ export default {
                 "x-access-token": localStorage.userToken
             }
         },
+        employeForSearchEdit:'',
         branch: '',
         branchName: '',
         ifMicro:false,
@@ -2324,6 +2344,57 @@ export default {
                 this.countServices[index].count = 0
             }
         },
+        changeMin(valid){
+            if (valid) {
+                if (this.minLessEdit > 0) {
+                    this.minLessEdit = this.minLessEdit - 15
+                    this.selectedEvent.duration = this.selectedEvent.duration + 15
+                }else{
+                    this.minAddEdit = this.minAddEdit + 15
+                    this.selectedEvent.duration = this.selectedEvent.duration + 15
+                }
+            }else{
+                if (this.selectedEvent.duration == 15) {
+                    this.$swal({
+                        type: 'error',
+                        icon: 'error',
+                        title: 'No se pueden restar mas minutos',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else{
+                    if (this.minAddEdit > 0) {
+                        this.minAddEdit = this.minAddEdit - 15
+                        this.selectedEvent.duration = this.selectedEvent.duration - 15
+                    }else{
+                        this.minLessEdit = this.minLessEdit + 15
+                        this.selectedEvent.duration = this.selectedEvent.duration - 15
+                    }
+                } 
+            }
+            console.log(this.selectedEvent.duration)
+        },
+        editEmployeDate(value){
+            this.employeForSearchEdit = value.id
+            this.selectedEvent.employe = value
+        },
+        searchBlockEdit(){
+            this.blockFirstEdit.forEach(element => {
+                if (element.validator == 'select') {
+                    element.validator = true
+                }
+            });
+            axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                block: this.blockFirstEdit,
+                timedate: this.selectedEvent.duration,
+                employeSelect: this.employeForSearchEdit,
+                firstBlock: false
+            })
+            .then(res => {
+                this.finalBlockEdit = res.data.blockEmploye
+                this.validEditBlock = true
+            })
+        },
         selectClient(value){
             if (value == 'register') {
                 this.dataClient.valid = false
@@ -2772,30 +2843,85 @@ export default {
             let dateFormat = new Date(date+' 10:00')
             return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
         },
-        dataEdit(id, start, end, services, cliente, empleada, classDate){
-            const startFormat = new Date(start).format('YYYY-MM-DD HH:mm')
-            const endFormat = new Date(end).format('YYYY-MM-DD HH:mm')
+        dataEdit(){
+            this.selectedEvent.isFirst = true
+            this.employeForSearchEdit = this.selectedEvent.employe.id
+            this.minLessEdit = 0
+            this.minAddEdit = 0
+            this.finalBlockEdit = []
+            this.validEditBlock = false
             this.dateModals.modal2 = true
-            const Datedate = this.dateSplit(startFormat)
-            this.changeDateEdit = false
-            const startDate = this.dateSplitHours(startFormat)
-            const endDate = this.dateSplitHours(endFormat)
-            const separStart = startDate.split(':')
-            const separEnd = endDate.split(':')
-            const dateForPicker =  new Date(start).format('MM-DD-YYYY')
-            const SumHours  = ((parseFloat(separEnd[0]) - parseFloat(separStart[0])) * 60)
-            const SumMinutes = parseFloat(separEnd[1]) - parseFloat(separStart[1])
-            const TotalMinutes = SumHours + SumMinutes
-            this.dateData.clientEdit = cliente
-            this.dateData.fechaEdit = dateForPicker
-            this.dateData.fechaEditPick = dateForPicker
-            this.dateData.startEdit = startDate
-            this.dateData.endEdit = endDate
-            this.dateData.lenderEdit = empleada
-            this.dateData.classFinalEdit = classDate
-            this.dateData.duracionEdit = TotalMinutes
-            this.dateData.dateEditId = id
-            this.selectEmployeEdit(empleada, this.dateData.fechaEditPick)
+            this.selectedEvent.services[0].employes.forEach((element, i) => {
+                if (element.name == 'Primera disponible') {
+                    this.selectedEvent.services[0].employes.splice(i, 1)
+                }
+            });
+            setTimeout(() => {
+                axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                    date: this.moment(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
+                    branch: this.branch
+                }, this.configHeader)
+                .then(res => {
+                    this.availableEmployesEdit = res.data.array
+                    axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                        date: this.moment(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
+                        employes: res.data.array,
+                        timedate: this.selectedEvent.duration,
+                        employesServices: this.selectedEvent.services[0].employes,
+                        branch: this.branch
+                    }, this.configHeader)
+                    .then(res => {
+                        this.blockFirstEdit = res.data.data
+                        this.selectedEvent.idBlock = res.data.id
+                        axios.post(endPoint.endpointTarget+'/dates/editdateblockbefore',{
+                            block: this.blockFirstEdit,
+                            employe: this.selectedEvent.employe,
+                            start: this.moment(this.selectedEvent.start).format('LT').split(' ')[0],
+                            end: this.moment(this.selectedEvent.end).format('LT').split(' ')[0]
+                        }, this.configHeader)
+                        .then(res => {
+                            this.blockFirstEdit = res.data.data
+                        })
+                    })
+                })
+            }, 200);
+        },
+        changeDateEdit(){
+            setTimeout(() => {
+                axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                    date: this.selectedEvent.createdAt,
+                    branch: this.branch
+                }, this.configHeader)
+                .then(res => {
+                    this.availableEmployesEdit = res.data.array
+                    axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                        date: this.selectedEvent.createdAt,
+                        employes: res.data.array,
+                        timedate: this.selectedEvent.duration,
+                        employesServices: this.selectedEvent.services[0].employes,
+                        branch: this.branch
+                    }, this.configHeader)
+                    .then(res => {
+                        this.selectedEvent.idblock = res.data.id
+                        this.blockFirstEdit = res.data.data
+                        this.blockFirstEdit.forEach(element => {
+                            if (element.validator == 'select') {
+                                element.validator = true
+                            }
+                        })
+                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                            block: this.blockFirstEdit,
+                            timedate: this.selectedEvent.duration,
+                            employeSelect: this.employeForSearchEdit,
+                            firstBlock: false
+                        })
+                        .then(res => {
+                            this.finalBlockEdit = res.data.blockEmploye
+                            this.validEditBlock = true
+                        })
+                    })
+                })
+            }, 200);
         },
         selectEmployeEdit(name, date){
             const getDay = new Date(date+' 10:00').getDay()
@@ -2852,94 +2978,53 @@ export default {
             }, 200);
         },
         editDate(){
-            if (this.dateData.startEdit && this.dateData.endEdit != '') {
-            
-            const split = this.dateData.startEdit.split(':')
-            const sort = split[0]+split[1]
-            let dateEdit = ''
-
-            if (this.dateData.fechaEditPick != '') {
-                dateEdit =  this.dateData.fechaEdit
-            }
-            else {
-                dateEdit =  this.dateData.fechaEditPick
-            }
-            const entrada = this.dateData.startEdit
-            axios.put(endPoint.endpointTarget+'/citas/editDate/'+this.dateData.dateEditId, {
-            entrada: this.dateData.startEdit,
-            salida: this.dateData.endEdit,
-            sort: sort,
-            fecha: this.dateData.fechaEditPick,
-            cliente: this.dateData.clientEdit,
-            class: this.dateData.classFinalEdit,
-            manicuristas: this.dateData.lenderEdit
-            })
-            .then(res => {
-            if (res.data.status == 'ok') {
-                this.$swal({
-                type: 'success',
-                title: 'Cita editada',
-                showConfirmButton: false,
-                timer: 1500
-                })
-                this.blockHourEdit = []
-                this.getDates();
-                this.dateModals.modal2 = false
-                setTimeout(() => {
-                // if (this.employeByDate != 'Manicuristas') {
-                //     this.getDatesb()
-                // }
-                }, 500);
-                
-            }else{
-                this.$swal({
-                    type: 'error',
-                    title: 'error al editar',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            }
-            })
-            }
-            else{
-            this.$swal({
-                type: 'error',
-                title: '¡Debes elegir un horario!',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            }
-        },
-        selectBloqEdit(hora, i){
-            this.dateData.startEdit =this.blockHourEdit[i].Horario
-            var sortSp = this.dateData.startEdit.split(":") 
-            this.sort = sortSp[0]+sortSp[1]
-            let dateEdit = ''
-
-            if (this.dateData.fechaEditPick != null) {
-                dateEdit =  this.dateData.fechaEdit
-            }
-            else {
-                dateEdit =  this.dateData.fechaEditPick
-            }
-
-            axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
-                employe: this.dateData.lenderEdit,
-                date: dateEdit,
-                time: this.dateData.duracionEdit,
-                resTime:this.dateData.resTimeFinalEdit
-            })
-            .then(res => {
-                for (let index = 0 ; index <= this.dateData.duracionEdit / 15; index++) {
-                    res.data[i].validator = 'select'
-                    this.dateData.endEdit = res.data[i].Horario
-                    i++
+            var valid = false
+            if (this.validEditBlock) {
+                this.finalBlockEdit.forEach(element => {
+                    if (element.validator == 'select') {
+                        valid = true
+                    }
+                });
+                if (valid == false) {
+                    this.$swal({
+                        type: 'error',
+                        icon: 'error',
+                        title: '¡Debes elegir un horario!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
-                this.blockHourEdit = res.data
-            })
-            .catch(err => {
-            console.log(err)
-            })
+            }else{valid = true}
+            if(valid){
+                axios.post(endPoint.endpointTarget+'/dates/editdate', {
+                    data: this.selectedEvent,
+                    blocks : this.blockFirstEdit
+                }, this.configHeader)
+                .then(res => {
+                    if (res.data.status == 'ok') {
+                        this.$swal({
+                            type: 'success',
+                            icon: 'success',
+                            title: 'Cita editada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.dateModals.modal2 = false
+                        this.dateModals.modal1 = false
+                        this.getDates()
+                    }else{
+                        this.$swal({
+                            type: 'error',
+                            icon: 'error',
+                            title: 'Problemas tecnicos',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
+            }
+            
+            
         },
         initialDate(val){
             this.$refs.table.$children[0].unSelectAllItems()
@@ -4065,6 +4150,26 @@ export default {
             }
             
         },
+        selectBlockEdit(hour){
+            axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
+                date: this.selectedEvent.createdAt,
+                timedate: this.selectedEvent.duration,
+                hour: hour,
+                employe: this.employeForSearchEdit,
+                block: this.finalBlockEdit,
+                blockFirst: this.blockFirstEdit,
+                branch: this.branch,
+                ifFirstClick: this.selectedEvent.isFirst,
+                firstBlock: false
+            }, this.configHeader)
+            .then(res => {
+                this.selectedEvent.isFirst = false
+                this.finalBlockEdit = res.data.data
+                this.blockFirstEdit = res.data.blockFirst
+                this.selectedEvent.startEdit = hour
+                this.selectedEvent.endEdit = res.data.end
+            })
+        },
         insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg){
             if (lender == 'Primera disponible') {
                 if (index == 0) {
@@ -4878,6 +4983,22 @@ export default {
         overflow:hidden !important;
         overflow-x: hidden !important;
         overflow-y:hidden !important;
+    }
+    .minAdd{
+        font-size: 2em;
+        vertical-align: sub;
+        margin-left: 5px;
+        color: #2dce89;
+    }
+    .minLess{
+        font-size: 2em;
+        vertical-align: sub;
+        margin-right: 5px;
+    }
+    
+
+    ::-webkit-scrollbar {
+        display: none;
     }
     
 </style>
