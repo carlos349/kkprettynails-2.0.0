@@ -16,7 +16,6 @@
         <sidebar-item v-if="validRoute('gastos')" :link="{name: 'Gastos', icon: 'ni ni-tag text-green', path: '/Gastos'}"/>
         <sidebar-item v-if="validRoute('agendamiento')" :link="{name: 'Agendamiento', icon: 'ni ni-calendar-grid-58 text-blue', path: '/Agendamiento'}"/>
         <sidebar-item v-if="validRoute('caja')" :link="{name: 'Caja', icon: 'ni ni-archive-2 text-green', path: '/Caja'}"/>
-        <sidebar-item v-if="validRoute('prueba')" :link="{name: 'Prueba', icon: 'ni ni-archive-2 text-green', path: '/Prueba'}"/>
       </template>
     </side-bar>
     <div class="main-content" :data="sidebarBackground">

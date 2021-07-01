@@ -412,7 +412,7 @@
                       <div class="row p-4" v-if="selectedConfig == 'microServices'">
                         <div class="w-100 mb-3">
                             <h1 class=" text-center w-100 my-2">
-                                Microservicios
+                                Adicionales
                             </h1>
                             <hr class="w-50 mb-0 mt-0">
                           </div>
@@ -431,7 +431,7 @@
                               <template  #renderEmpty>
                                   <div style="text-align: center">
                                       <a-icon type="warning" style="font-size: 20px"/>
-                                      <p>No se han agregado microservicios</p>
+                                      <p>No se han agregado Adicional</p>
                                   </div>
                               </template>
                               <a-tooltip placement="top">
@@ -466,7 +466,7 @@
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'agend' ? false : true" type="primary" v-on:click="selectedConfig = 'agend', getConfiguration()">Agendamiento</base-button>
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'blackList' ? false : true" type="primary" v-on:click="fixed('blackList'), getConfiguration()">Lista negra</base-button>
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'information' ? false : true" type="primary" v-on:click="selectedConfig = 'information', getConfiguration()">Informacion</base-button>
-                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'microServices' ? false : true" type="primary" v-on:click="selectedConfig = 'microServices', getConfiguration()">Microservicios</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'microServices' ? false : true" type="primary" v-on:click="selectedConfig = 'microServices', getConfiguration()">Adicionales</base-button>
                             </div>
                         </div>
                     </card>

@@ -11,15 +11,15 @@
                         <p class="mb-0 display-2 text-white">Clientes</p>
                         
                     </div>
-                    <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('clientes', 'correos')" @click="modals.modal3 = true" type="primary">
+                    <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('clientes', 'correos') ? false : true" @click="modals.modal3 = true" type="primary">
                         <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Correos
                     </base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('clientes', 'registrar')" @click="generateExcel" type="success">
+                    <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('clientes', 'registrar') ? false : true" @click="generateExcel" type="success">
                         <a-icon type="file-excel" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Excel
                     </base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('clientes', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">
+                    <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('clientes', 'registrar') ? false : true" @click="modals.modal1 = true , initialState(2)" type="success">
                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Registrar
                     </base-button>

@@ -12,12 +12,12 @@
                         <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                     </div>
 
-                    <base-button class="float-right mt-7 mr-0 ml-1" size="sm" v-if="validRoute('agendamiento', 'agendar')" @click="modals.modal1 = true , initialState()"  type="success">
+                    <base-button class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Agendar
                     </base-button>
 
-                    <base-dropdown v-if="validRoute('agendamiento', 'filtrar')" class="float-right mt-7 mr-0 qloq" size="sm">
+                    <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mt-7 mr-0 qloq" size="sm">
                         <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                 {{employeByDate}}
                         </base-button>

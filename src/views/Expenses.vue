@@ -144,20 +144,20 @@
                     </div>
                     <div class="float-left mt-2">
                         <label style="margin-left:-10px;" for="date" class="text-white">Busque por fecha</label><br>
-                        <a-range-picker :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" style="margin-left:-10px;width:55%;" :locale="locale" />
-                        <base-button class="ml-2" style="margin-top:-5px;" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="findExpenses" type="success">
+                        <a-range-picker :disabled="validRoute('gastos', 'registrar') ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" style="margin-left:-10px;width:55%;" :locale="locale" />
+                        <base-button class="ml-2" style="margin-top:-5px;" size="sm"  :disabled="validRoute('gastos', 'registrar') ? false : true"  v-on:click="findExpenses" type="success">
                             <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
                         </base-button>
                     </div>
-                    <base-button style="margin-right:-10px; margin-top:3.3em;" class="float-right" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal1 = true" type="success">
+                    <base-button style="margin-right:-10px; margin-top:3.3em;" class="float-right" size="sm"  :disabled="validRoute('gastos', 'registrar') ? false : true"  v-on:click="modals.modal1 = true" type="success">
                         <a-icon type="wallet" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
                         Registrar
                     </base-button>
-                    <base-button class="float-right mr-2" style="margin-top:3.3em;" size="sm"  v-if="validRoute('gastos', 'registrar')"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
+                    <base-button class="float-right mr-2" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'registrar') ? false : true"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
                         <a-icon type="book" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
                         Inversión mensual
                     </base-button>
-                    <base-button @click="closeReinvestment" class="float-right mr-2" style="margin-top:3.3em;" size="sm"  v-if="validRoute('gastos', 'registrar')" type="danger">
+                    <base-button @click="closeReinvestment" class="float-right mr-2" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'registrar') ? false : true" type="danger">
                         <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
                         Cierre
                     </base-button>

@@ -11,94 +11,96 @@
                         <p class="mb-0 display-2 text-white">Usuarios</p>
                         <p class="text-white">Sección dedicada a registrar y administrar los accesos necesarios para cada usuario dentro del sistema.</p>
                     </div>
-                    <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('usuarios', 'registrar')" @click="modals.modal8 = true" type="primary">
+                    <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('usuarios', 'registrar') ? false : true" @click="modals.modal8 = true" type="primary">
                         <a-icon type="user" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Perfiles
                     </base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('usuarios', 'registrar')" @click="modals.modal1 = true , initialState(2)" type="success">
+                    <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('usuarios', 'registrar') ? false : true" @click="modals.modal1 = true , initialState(2)" type="success">
                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Registrar
-                    </base-button>
+                    </base-button>     
                 </div>
             </div>
         </base-header>
         <modal :show.sync="modals.modal1"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                        Datos del usuario
-                    </div>
-                </template>
-                <template>
-                    <form role="form">
-                        <a-select class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione la sucursal"  @change="selectBranch" size="large">
-                            <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
-                                {{branch.name}}
-                            </a-select-option>
-                        </a-select>
-                        <base-input alternative
-                                    class="mb-3"
-                                    placeholder="Nombre"
-                                    v-model="registerUser.name"
-                                    v-on:change="validRegister()"
-                                    addon-left-icon="ni ni-single-02"
-                                    addon-right-icon="fa fa-asterisk text-danger">
-                        </base-input>
-                        <base-input alternative
-                                    class="mb-3"
-                                    placeholder="Apellido"
-                                    v-model="registerUser.lastname"
-                                    v-on:change="validRegister()"
-                                    addon-left-icon="ni ni-single-02"
-                                    addon-right-icon="fa fa-asterisk text-danger"   >
-                        </base-input>
-                        <input type="file" id="fileProfile" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
-                        <base-input alternative
-                                    type="text"
-                                    placeholder="Correo"
-                                    v-model="registerUser.email"
-                                    addon-left-icon="ni ni-email-83"
-                                    addon-right-icon="fa fa-asterisk text-danger">
-                        </base-input>
-                        <base-input alternative
-                                    type="text"
-                                    :valid="registerUser.c"
-                                    v-on:keyup="validFields('c')"
-                                    placeholder="Confirmar correo"
-                                    v-model="registerUser.emailConfirm"
-                                    addon-right-icon="fa fa-asterisk text-danger"
-                                    >
-                        </base-input>
-                        <base-input alternative
-                                    type="password"
-                                    placeholder="Contraseña"
-                                    v-model="registerUser.password"
-                                    addon-left-icon="ni ni-lock-circle-open"
-                                    addon-right-icon="fa fa-asterisk text-danger">
-                        </base-input>
-                        <base-input alternative
-                                    type="password"
-                                    :valid="registerUser.p"
-                                    v-on:keyup="validFields('p')"
-                                    placeholder="Confirmar contraseña"
-                                    v-model="registerUser.passwordConfirm"
-                                    addon-right-icon="fa fa-asterisk text-danger"
-                                    >
-                        </base-input>
-                        <div class="text-center">
-                            <base-button type="primary" v-if="registerUser.valid == false" disabled class="my-4">Registrar</base-button>
-                            <base-button type="primary" v-on:click="registerUsers()" v-else class="my-4">Registrar</base-button>
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
+            <a-spin size="large" :spinning="ifRegister">
+                <div class="p-3 pt-4">
+                    <template>
+                        <div style="margin-top:-10% !important" class="text-muted text-center mb-3">
+                            Datos del usuario
                         </div>
-                        
-                    </form>
-            </template>
-            </card>
+                    </template>
+                    <template>
+                        <form role="form">
+                            <a-select class="w-100 mb-2 mt-2" default-value="Seleccione la sucursal"  @change="selectBranch">
+                                <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
+                                    {{branch.name}}
+                                </a-select-option>
+                            </a-select>
+                            <a-input 
+                            v-model="registerUser.name"
+                            placeholder="Nombre"
+                            class="mb-2"
+                            v-on:change="validRegister()">
+                                <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
+                                <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                            </a-input>
+                            <a-input 
+                            v-model="registerUser.lastname"
+                            placeholder="Apellido"
+                            class="mb-2"
+                            v-on:change="validRegister()">
+                                <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
+                                <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                            </a-input>
+                            <label>Imagen de perfil</label>
+                            <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" >
+                            <label>Correo</label>
+                            <a-input 
+                            style="margin-top:-5px;"
+                                v-model="registerUser.email"
+                                placeholder="Correo"
+                                v-on:keyup="validFields('c')"
+                                class="mb-0">
+                                <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
+                                <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                            </a-input>
+                            <a-form-item
+                            class="mt-1"
+                            :validate-status="registerUser.c ? 'success' : 'error'"
+                            :help="registerUser.c ? '' : 'Los correos deben coincidir'">
+                                <a-input :id="registerUser.c ? 'success' : 'error'" v-model="registerUser.emailConfirm" placeholder="Confirmar correo" v-on:keyup="validFields('c')">
+                                    <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
+                                </a-input>
+                            </a-form-item>
+                            <label>Contraseña</label>
+                            <a-input-password 
+                            v-model="registerUser.password"
+                            placeholder="contraseña"
+                            v-on:keyup="validFields('p')"
+                            class="mb-2">
+                                <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
+                                <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                            </a-input-password>
+                            <a-form-item
+                            :validate-status="registerUser.p ? 'success' : 'error'"
+                            :help="registerUser.p ? '' : 'Las contraseñas deben coincidir'">
+                                <a-input-password :id="registerUser.p ? 'success' : 'error'" v-model="registerUser.passwordConfirm" placeholder="Confirmar contraseña" v-on:keyup="validFields('p')">
+                                    <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
+                                </a-input-password>
+                            </a-form-item>
+                            <div class="text-center">
+                                <base-button type="primary" v-if="registerUser.valid == false" disabled class="my-2">Registrar</base-button>
+                                <base-button type="primary" v-on:click="registerUsers()" v-else class="my-2">Registrar</base-button>
+                            </div>
+                            
+                        </form>
+                    </template>
+                </div>
+            </a-spin>
         </modal>
         <modal :show.sync="modals.modal3"
                :gradient="modals.type"
@@ -202,18 +204,15 @@
         <modal :show.sync="modals.modal8"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-xl">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5"
-                  class="border-0">
+               <span slot="header" class="modal-title p-1 m-0" id="modal-title-default"></span>
+            <div class="px-5 py-2">
                 <template>
-                    <div class="text-muted text-center mb-3">
+                    <div class="text-muted text-center">
                         <h3>Cree perfiles de usuario</h3>
                     </div>
                 </template>
                 <template>
-                    <div class="row p-4">
+                    <div class="row p-1">
                         <div class="w-100 mb-3">
                             <h1 class=" text-center w-100 my-2">
                                 Perfiles de usuarios
@@ -240,17 +239,16 @@
                               </template>
                               <a-tooltip placement="top">
                                   <template slot="title">
-                                  <span v-if="accessProfiles.lenght == 0">Para ingresar un perfil de usuario debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
+                                  <span>Los perfiles en rojo significan que no tienen niguna atribución</span>
                                   </template>
                                   <div class="col-md-8" >
                                       <a-list bordered :data-source="accessProfiles">
-                                          <a-list-item slot="renderItem" slot-scope="item, index">
+                                          <a-list-item slot="renderItem" slot-scope="item, index" :class="item.routes.length > 0 ? 'text-black' : ' text-danger' ">
                                               {{ item.profile }}
-                                               
-                                              <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeProfile(index)">
+                                              <base-button outline v-if="item.profile != 'Gerente'" type="default" size="sm" class="float-right" v-on:click="removeProfile(index)">
                                                   <i class="fa fa-times"></i>
                                               </base-button>
-                                              <base-button outline type="default" size="sm" class="float-right mr-2" v-on:click="editProfiles(item.routes, index)">
+                                              <base-button outline v-if="item.profile != 'Gerente'" type="default" size="sm" class="float-right mr-2" v-on:click="editProfiles(item.routes, index)">
                                                   <i class="fa fa-edit"></i>
                                               </base-button>
                                           </a-list-item>
@@ -260,7 +258,7 @@
                           </a-config-provider>
                       </div>
                 </template>
-            </card>
+            </div>
         </modal>
         <modal :show.sync="modals.modal6"
                body-classes="p-0"
@@ -273,7 +271,12 @@
                 <template>
                     <div class="text-muted text-center mb-3">
                         <h3>Administre las rutas de acceso</h3>
-                        <a-switch class="mx-auto my-1" :checked="commission" @click="changeCommission()" checked-children="Recibe comisiones" un-checked-children="Recibe comisiones" />
+                        <a-tooltip>
+                            <template slot="title">
+                                Si al usuario que le atribuira este perfil presta servicios entonces deberá marcarlo
+                            </template>
+                            <a-switch class="mx-auto my-1" :checked="commission" @click="changeCommission()" checked-children="Recibe comisiones" un-checked-children="Recibe comisiones" />
+                        </a-tooltip>
                     </div>
                     
                 </template>
@@ -422,7 +425,7 @@
                     <template slot="title">
                     <span>Eliminar</span>
                     </template>
-                    <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteUser(column._id, column.status)" type="warning" icon="fas fa-trash"></base-button>     
+                    <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteUser(column._id)" type="warning" icon="fas fa-trash"></base-button>     
                     <base-button v-else size="sm" slot="title" type="warning" icon="fas fa-trash" disabled>
                         
                     </base-button> 
@@ -465,20 +468,21 @@ export default {
             }
         },
         auth: [],
+        ifRegister: false,
         registerUser: {
-            name:null,
-            lastname:null,
-            image:null,
-            email:null,
-            emailConfirm:null,
-            password:null,
-            passwordConfirm:null,
-            branch: null,
+            name:'',
+            lastname:'',
+            image:'',
+            email:'',
+            emailConfirm:'',
+            password:'',
+            passwordConfirm:'',
+            branch:'',
             valid:false,
             valid2:false,
-            date:null,
-            c:null,
-            p:null
+            date:'',
+            c:'',
+            p:''
         },
         searchText: '',
         searchInput: null,
@@ -496,7 +500,8 @@ export default {
             {route: 'agendamiento', valid: false},
             {route: 'caja', valid: false},
             {route: 'pedidos', valid: false},
-            {route: 'prueba', valid: false}
+            {route: 'bodega', valid: false},
+            {route: 'sucursales', valid: false}
         ],
         commission:false,
         selectedProfile: 0,
@@ -638,7 +643,11 @@ export default {
             {
                 route: 'sucursales', 
                 valid: false,
-                functions: []
+                functions: [
+                    {function: 'cambiar', name:'Elegir sucursal', valid: false},
+                    {function: 'registrar', name:'Registrar sucursal', valid: false},
+                    {function: 'configurar', name:'Configurar sucursal', valid: false}
+                ]
             }
         ],
         functions: [],
@@ -875,6 +884,7 @@ export default {
         },
         selectBranch(value){
             this.registerUser.branch = value
+            this.validRegister()
         },
         selectEmploye(value){
             this.linkLender = value
@@ -892,19 +902,20 @@ export default {
             for (let i = 0; i < this.accessProfiles[this.selectedProfile].routes.length; i++) {
                 const elementOne = this.accessProfiles[this.selectedProfile].routes[i];
                 if (elementOne.ruta == route) {
-                this.selectedRoute = i
-                functions.forEach(function (elementTwo, index) {
-                    functions[index].valid = false
-                    elementOne.validaciones.forEach(elementThree => {
-                        if (elementTwo.function == elementThree) {
-                            functions[index].valid = true
-                        }
+                    this.selectedRoute = i
+                    functions.forEach(function (elementTwo, index) {
+                        functions[index].valid = false
+                        elementOne.validaciones.forEach(elementThree => {
+                            if (elementTwo.function == elementThree) {
+                                functions[index].valid = true
+                            }
+                        });
                     });
-                });
                 }
             }
             this.functionsProfile = functions
             this.modals.modal7 = true
+            console.log(this.functionsProfile)
         },
         removeRoute(route){
             for (let i = 0; i < this.accessProfiles[this.selectedProfile].routes.length; i++) {
@@ -974,8 +985,8 @@ export default {
                 type: 'warning',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Estoy seguro',
-                cancelButtonText: 'No, evitar acción',
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No, cancelar',
                 showCloseButton: true,
                 showLoaderOnConfirm: true
             }).then((result) => {
@@ -1031,9 +1042,9 @@ export default {
         },
         async getAccessProfile(){
             try {
-                const getProfiles = await axios.get(endPoint.endpointTarget+'/configurations/getProfiles', this.configHeader)
-                if (getProfiles.data.status == 'ok') {
+                const getProfiles = await axios.get(endPoint.endpointTarget+'/configurations/profiles', this.configHeader)
                     console.log(getProfiles)
+                if (getProfiles.data.status == 'ok') {
                     this.accessProfiles = getProfiles.data.data[0].profiles
                     this.idProfile = getProfiles.data.data[0]._id
                 }
@@ -1071,7 +1082,8 @@ export default {
                 {route: 'agendamiento', valid: false},
                 {route: 'caja', valid: false},
                 {route: 'pedidos', valid: false},
-                {route: 'prueba', valid: false}
+                {route: 'bodega', valid: false},
+                {route: 'sucursales', valid: false}
             ]
             this.mail = mail 
             this.idAccess = id
@@ -1205,6 +1217,12 @@ export default {
                     {function: 'nuevo_servicio', name:'Registrar servicio', valid: false},
                     {function: 'descuento', name:'Ingresar descuento', valid: false},
                 ]
+            }else if (route == 'sucursales') {
+                this.functions = [
+                    {function: 'cambiar', name:'Elegir sucursal', valid: false},
+                    {function: 'registrar', name:'Registrar sucursal', valid: false},
+                    {function: 'configurar', name:'Configurar sucursal', valid: false},
+                ]
             }
             for (let index = 0; index < this.functions.length; index++) {
                 const element = this.functions[index];
@@ -1326,6 +1344,7 @@ export default {
             })
         },
         registerUsers(){
+            this.ifRegister = true
             let formData = new FormData();
             formData.append('image', this.file)
             formData.append('first_name', this.registerUser.name)
@@ -1345,8 +1364,10 @@ export default {
                     })
                     this.modals.modal1 = false
                     this.initialState(1)
+                    this.ifRegister = false
                     this.getUsers()
                 }else{
+                    this.ifRegister = false
                     this.$swal({
                         icon: 'error',
                         title: '¡Usuario ya existe use otro correo!',
@@ -1355,13 +1376,13 @@ export default {
                     })
                 }
             }).catch(err => {
+                this.ifRegister = false
                 this.$swal({
 					icon: 'error',
 					title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
 					showConfirmButton: false,
 					timer: 2500
 				})
-				router.push({name: 'login'})
             })
         },
         async getUsers(){
@@ -1396,7 +1417,11 @@ export default {
             }
         },
         validRegister(){
-            this.registerUser.valid = this.registerUser.name != '' && this.registerUser.lastname && this.registerUser.c == true && this.registerUser.p == true ? true : false
+            if (this.registerUser.email.split('@')[1]) {
+                if (this.registerUser.email.split('@')[1].split('.')[1]) {
+                    this.registerUser.valid = this.registerUser.name != '' && this.registerUser.lastname != '' && this.registerUser.c == true && this.registerUser.p == true && this.registerUser.branch != '' ? true : false
+                }
+            }
         },
         validFields(field){
             if (field == 'c') {
@@ -1410,22 +1435,21 @@ export default {
         },
         initialState(val){
             this.registerUser = {
-                name:null,
-                lastname:null,
-                image:null,
-                correo:null,
-                correoConfirm:null,
-                password:null,
-                passwordConfirm:null,
+                name:'',
+                lastname:'',
+                image:'',
+                email:'',
+                emailConfirm:'',
+                password:'',
+                passwordConfirm:'',
+                branch:'',
                 valid:false,
                 valid2:false,
-                date:null,
-                c:null,
-                p:null
+                date:'',
+                c:'',
+                p:''
             }
-            if (val == 1) {
-                this.modals.modal1 = false
-            }
+            this.file = ''
             if (val == 2) {
                 this.tipeForm = 'Registrar'
             }
@@ -1437,22 +1461,23 @@ export default {
             let dateFormat = new Date(date)
             return moment(dateFormat).format('DD-MM-YYYY HH:mm');
         },
-        deleteUser(id, admin){
+        deleteUser(id){
 			this.$swal({
 				title: '\n¿Está seguro de borrar usuario?',
 				text: 'No puedes revertir esta acción',
 				icon: 'warning',
 				showCancelButton: true,
-				confirmButtonText: 'Estoy seguro',
-				cancelButtonText: 'No, evitar acción',
+				confirmButtonText: 'Sí',
+				cancelButtonText: 'No, cancelar',
 				showCloseButton: true,
 				showLoaderOnConfirm: true
 			}).then((result) => {
 				if(result.value) {
-					if(admin == 1){
+                    var idDecoded = jwtDecode(localStorage.userToken)
+					if(id == idDecoded._id){
                         this.$swal({
                             icon: 'error',
-                            title: 'No puede borrar un gerente',
+                            title: 'No puede borrar su propio usuario.',
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -1530,6 +1555,9 @@ export default {
 };
 </script>
 <style lang="scss">
+    .has-success::after {
+        right: 28px !important;
+    }
     .card-header{
         font-size: 2.5vw;
     }

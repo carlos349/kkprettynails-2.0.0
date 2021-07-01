@@ -12,13 +12,13 @@
                         <p class="text-white">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
                     </div>
                     <template v-if="cashFunds.inspector">
-                        <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('caja', 'fondo')"  v-on:click="modals.modal2 = true" type="success">
+                        <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('caja', 'fondo') ? false : true"  v-on:click="modals.modal2 = true" type="success">
                             <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
                             Fondo
                         </base-button>
                     </template>
                     <template v-else>
-                        <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('caja', 'cerrar')" v-on:click="daySalesClose" type="success">
+                        <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('caja', 'cerrar') ? false : true" v-on:click="daySalesClose" type="success">
                             <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
                             Cierre
                         </base-button>
