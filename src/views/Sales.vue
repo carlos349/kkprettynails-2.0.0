@@ -10,6 +10,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Ventas</p>
+                        <p class="text-white">Sección dedicada al registro de las ventas de su negocio, podrás filtrar y exportar en excel dichas ventas.</p>
                     </div>
                     <div class="float-right mt-6">
                         <div class="float-right" style="width:73%;">
