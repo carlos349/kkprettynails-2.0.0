@@ -27,10 +27,10 @@
                 <!-- Navbar items -->
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <router-link class="nav-link nav-link-icon" to="/">
+                        <a class="nav-link nav-link-icon" href="https://kkprettynails.cl" target="_blank">
                             <i class="ni ni-planet"></i>
                             <span class="nav-link-inner--text">Web</span>
-                        </router-link>
+                        </a>
                     </li>
                     <!-- <li class="nav-item">
                         <router-link class="nav-link nav-link-icon" to="/register">
@@ -64,17 +64,17 @@
             </div>
         </div>
         <!-- Page content -->
-        <div class="container mt--8 pb-5">
+        <div class="container mt--8 pb-5" style="height:85vh;">
             <slide-y-up-transition mode="out-in" origin="center top">
                 <router-view></router-view>
             </slide-y-up-transition>
         </div>
-        <footer class="py-5">
+        <footer class="py-5 fixed-bottom bg-default">
             <div class="container">
                 <div class="row align-items-center justify-content-xl-between">
                     <div class="col-xl-6">
                         <div class="copyright text-center text-xl-left text-muted">
-                            &copy; {{year}} <a href="https://syswa.net/" class="font-weight-bold ml-1"
+                            &copy; {{year}} <a href="http://syswa.net/" class="font-weight-bold ml-1"
                                                target="_blank">SYSWA</a>
                         </div>
                     </div>
