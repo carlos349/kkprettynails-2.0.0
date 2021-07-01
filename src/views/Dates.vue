@@ -271,9 +271,9 @@
                                                         <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == false" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
                                                         Seleccione una hora
                                                         </base-button>
-                                                        <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
+                                                        <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
                                                             <a-spin :spinning="load2">
-                                                                <div class="col-12" v-for="(block , index) of servicesSelect.blocks">
+                                                                <div class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="index">
                                                                     <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes , block.hour, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
                                                                         <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                                                                         <span>Disponible</span>
@@ -292,7 +292,7 @@
                                                                     </base-button>
                                                                 </div>
                                                             </a-spin>
-                                                        </vue-custom-scrollbar>
+                                                        </vuescroll>
                                                     </div>
                                                 </div>   
                                             </div>
@@ -627,7 +627,7 @@
                                     </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true" class="col-md-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true, plusMicroFinally()" class="col-md-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Finalizar</span>  
@@ -833,7 +833,7 @@
         </modal>
         <modal :show.sync="dateModals.modal3"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
+               modal-classes="modal-dialog-centered modal-lg">
             <h5 slot="header" class="modal-title" id="modal-title-notification">Finalizar cita - {{dateSplit(selectedEvent.start)}}</h5>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
@@ -841,60 +841,87 @@
                   class="border-0">
                 <div class="form-group" style="margin-top:-10px;">
                     <center>
-                        <base-button type="primary" :class="selectedEvent.class">{{selectedEvent.title}}</base-button> 
+                        <div class="row">
+                            <div  class="col-12 col-md-12 p-1 mb-2">
+                                <dt class="mt-3 text-center">Servicios actuales</dt>
+                                <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:20vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">   
+                                    <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                        <div class="row">
+                                            <template  >
+                                                <div class="col-lg-12 mt-2">
+                                                    <base-button style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
+                                                        <span class="float-left ml-2">{{selectedEvent.title}}</span>
+                                                        <template style="z-index: 100">
+                                                            <div class="ml-1" style="z-index:100" v-for="micro in selectedEvent.microServices" :key="micro.microService">
+                                                                <badge  style="cursor: pointer" type="primary" class="text-white ml-1 float-right">
+                                                                    {{micro.name}}
+                                                                </badge>
+                                                            </div>
+                                                        </template>
+                                                    </base-button>
+                                                    <base-button v-for="(service, index) in selectedEvent.services" :key="service" v-if="index != 0" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
+                                                    <a-icon class="float-left" style="vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;" v-if="service.index" @click="deleteServiceFinally(service.index)" type="close" />
+                                                        <span class="float-left ml-2">{{service.name}}</span>
+                                                        <template style="z-index: 100" v-if="ifMicro">
+                                                            <a-tooltip placement="top">
+                                                                <template slot="title">
+                                                                    <span v-if="hideText != 'display:none'">Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
+                                                                </template>
+                                                                <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)">
+                                                                    <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
+                                                                        {{micro.microService}}
+                                                                    </badge>
+                                                                </div>
+                                                                
+                                                                <!-- <div class="ml-1" style="z-index:100" v-for="micro in service.microServices" :key="micro.microService">
+                                                                    <badge  style="cursor: pointer" type="primary" class="text-default ml-1 float-right">
+                                                                        {{micro.microService}}
+                                                                    </badge>
+                                                                </div> -->
+                                                                    
+                                                            </a-tooltip>
+                                                        </template>
+                                                        <!-- <badge class="text-default float-right" v- type="white">microservicio</badge>
+                                                        <badge class="text-default float-right" type="white">otro</badge>
+                                                        <badge class="text-default float-right" type="white">diseño</badge> -->
+                                                    </base-button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                            </vuescroll>
+                                <!-- <base-button style="cursor:default" type="primary" size="sm" :class="selectedEvent.class + ' mx-1'">{{service.name}} <a-icon style="vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;" v-if="service.index" @click="deleteServiceFinally(service.index)" type="close" /> </base-button> -->
+                            </div>
+                        </div>
                     </center>
                 </div>
-                <div v-if="selectedEvent.microServices && selectedEvent.microServices.length > 0">
-                                <dt class="mt-3 text-center">Servicios adicionales</dt>
-                                <a-tooltip v-for="micro of selectedEvent.microServices" :key="micro" placement="top">
-                                    <template slot="title">
-                                        <span>Duración: {{micro.duration}} minutos</span> <br>
-                                        <span>Precio: $ {{formatPrice(micro.price)}}</span>
-                                    </template>
-                                    <badge  style="font-size:0.85em; cursor:pointer" class="mt-1 ml-1 text-default" type="primary">{{micro.name}}</badge>
-                                </a-tooltip>
+                
+                <hr class="my-3">
+                <dt class="mt-3 text-center">Agregar mas servicios</dt>
+                <div style="width:auto;" class="mx-auto col-12">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li v-for="(category, index) of categories" class="nav-item responsiveItem" role="presentation">
+                            <button class="categoryButtonFinally categoryButton mt-1 text-uppercase responsiveItem" :id="'catFinally'+index" data-toggle="pill" :href="'#v-pillsFinally-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCatFinally('catFinally'+index)">{{category.name}}</button>
+                        </li>
+                    </ul>   
+                </div>
+                <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:15vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div v-for="category of categories" :key="category" class="tab-pane fade" :id="'v-pillsFinally-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                            <div class="row">
+                                <template v-for="name of services" >
+                                    <div class="col-lg-6 col-md-6 col-12 mt-2" v-if="name.category == category.name && name.active == true" :key="name">
+                                        <base-button  class="w-100 px-1" v-on:click="plusServiceFinally(name.name, name.commission, name.price, name.discount, name.products)"  type="default">
+                                            <span class="float-left">{{name.name}}</span>
+                                        </base-button>
+                                    </div>
+                                </template>
                             </div>
-                <!-- <template v-for="servicesEnding of EndDateServices" >
-                   <button v-if="servicesEnding.valid"   type="button" class="btn btn-default btn-sm mr-1 mb-2">
-                        <span>{{servicesEnding.name}}</span>
-                        <span v-on:click="discountServiceDate(servicesEnding.id, servicesEnding.index, servicesEnding.name,false)" class="badge badge-primary text-white">X</span>
-                    </button> 
-                </template>
-                <table class="table" v-bind:style="{ 'background-color': '#6BB2E5', 'border-radius' : '5px', 'border':'none !important'}" >
-                    <thead>
-                        <tr class="pt-2">
-                            <th style="border-radius:5px !important;border:none" class="text-left pl-4 text-white pt-2">
-                                
-                                <input autocomplete="off" style="outline:none !important;background-color:white !important;color:black !important" type="text" id="myInput" v-on:keyup="myFunction()" class="inputFind" placeholder="Filtrar servicios"/>
-                            </th>
-                            <th style="color:white;border:none" class="text-center pl-5 pt-2">
-                                Precio 
-                            </th>
-                        </tr>
-                    </thead>
-                </table>
-                <vue-custom-scrollbar class="ListaProcesar">
-                    <table class="table tableBg" id="myTable">
-                        <tbody>
-                            <tr v-for="(servicio, index) in services" >
-                                <td style="border:none" v-if="servicio.active" class="font-weight-bold pt-1 pb-1">
-                                    <base-button outline  size="sm" type="default" class="w-75 btn procesar text-left" v-on:click="conteoServicioDate(servicio._id,servicio.nombre, servicio.precio, servicio.comision, servicio.descuento, index)">
-                                        {{servicio.nombre}} <span class="badge badge-dark conteoServ mt-1 float-right" :class="servicio._id" v-bind:id="index+servicio._id">0</span>
-                                    </base-button>
-                                    <base-button v-on:click="discountServiceDate(servicio._id, index, servicio.nombre,true)" outline size="sm" type="default" class="w-20 btn btn-back  text-left" >
-                                        <font-awesome-icon icon="times"/>
-                                    </base-button>
-                                </td>
-                                <td style="border:none" v-if="servicio.active" class="pt-2">
-                                    <b class="mt-3">$ {{formatPrice(servicio.precio)}}</b>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </vue-custom-scrollbar> -->
+                        </div>
+                    </div>
+                </vuescroll>
                 <div class="text-center">
-                    <base-button v-if="serviciosSelecionadosDates.length > 0" v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
-                    <base-button v-else disabled class="mt-3" type="default">Finalizar</base-button>
+                    <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
                 </div>
             </card>
         </modal>
@@ -1356,6 +1383,7 @@ export default {
                 'x-access-token':localStorage.userToken
             }
         },
+        prueba: 'primary',
         imgEndpoint: endPoint.endpointTarget,
         auth:[],
         socket : io(endPoint.endpointTarget),
@@ -2048,6 +2076,10 @@ export default {
         selectCat(cat){
             $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
             $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
+        },
+        selectCatFinally(cat){
+            $('.categoryButtonFinally').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
+            $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
         }, 
         plusService(index, service, duration, commission, price, employes, discount, products){
             this.ifServices = true
@@ -2069,6 +2101,58 @@ export default {
             this.validHour = false  
             this.totalPrice = parseFloat(this.totalPrice) + parseFloat(price)
             console.log(this.registerDae.serviceSelectds)
+        },
+        plusMicroFinally(){
+            this.selectedEvent.services[0].microServiceSelect = this.selectedEvent.microServices
+            console.log(this.selectedEvent)
+        },
+        plusServiceFinally(name, commission, price, discount, products){
+            var microServices = [{checked: false, microService: "Ninguno"}]
+            for (const micro of this.microServices) {
+                microServices.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price})
+            }
+            
+            this.selectedEvent.services.push({name: name, commission: commission, price: price, discount: discount, products: products, index:this.selectedEvent.services.length, microServices: microServices, microServiceSelect:[]})
+            console.log(this.selectedEvent)
+        },
+        deleteServiceFinally(i){
+            this.selectedEvent.services.forEach((element, index) => {
+                if (i == element.index) {
+                    this.selectedEvent.services.splice(index, 1)
+                }
+            }); 
+        },
+        SelectMicroFinally(index, micro, indexM){
+            if (micro.microService == 'Ninguno') {
+                this.selectedEvent.services[index].microServices.forEach(element => {
+                    element.checked = false
+                });
+                this.selectedEvent.services[index].microServices[0].checked = true
+                this.selectedEvent.services[index].microServiceSelect = []
+            }else{
+                if (this.selectedEvent.services[index].microServices[indexM].checked) {
+                    this.selectedEvent.services[index].microServices[indexM].checked = false
+                }else{
+                    this.selectedEvent.services[index].microServices[indexM].checked = true
+                    this.selectedEvent.services[index].microServices[0].checked = false
+                }
+                var valid = true
+                for (let i = 0; i < this.selectedEvent.services[index].microServiceSelect.length; i++) {
+                    const element = this.selectedEvent.services[index].microServiceSelect[i];
+                    if (element.name == micro.microService) {
+                        this.selectedEvent.services[index].microServiceSelect.splice(i, 1)
+                        valid = false
+
+                        break
+                    }
+                }
+                if (valid) {
+                    this.selectedEvent.services[index].microServiceSelect.push({name: micro.microService, duration: micro.duration, price:micro.price})
+                }
+            }
+            
+            console.log(this.selectedEvent.services[index])
+            console.log(valid)
         },
         validateWizardOne(){
             if (this.registerDate.services != '' && this.registerDate.design != false) { 
@@ -2488,6 +2572,7 @@ export default {
                                             timer: 1500
                                         })
                                         this.$refs.wizard.reset()
+                                        this.getDates()
                                         this.initialState()
                                         // this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
                                         this.modals.modal2 = false
@@ -2518,6 +2603,7 @@ export default {
                                     })
                                     this.ifDisabled = false
                                     this.$refs.wizard.reset()
+                                    this.getDates()
                                     this.initialState()
                                     this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
                                     this.modals.modal2 = false
@@ -2912,79 +2998,98 @@ export default {
             
         },
         endDate(data){
-            axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
-                service:data.services,
-                client:data.client,
-                branch:this.branch,
-                employe: data.employe,
-                microServices: data.microServices
-            }, this.configHeader)
-            .then(res => {
-                if (res.data.status == 'ok') {
-                    
-                    this.getDates();
-                    setTimeout(() => {
-                    if (this.employeByDate != 'Filtrar por empleado') {
-                        this.getCitasByEmploye()
-                    }
-                    }, 500);
-                    this.getClosed()
+            var valid = true
+            data.services.forEach(element => {
+                if (element.microServiceSelect && element.microServiceSelect.length == 0) {
+                    valid = false
                     this.$swal({
-                        type: 'success',
-                        title: 'Cita finalizada con exito',
-                        showConfirmButton: false,
-                        timer: 1500
+                        title: '¿Uno o mas de los servicios agregados se finalizaran sin servicios adicionales, deseas continuar?',
+                        text: 'No puedes revertir esta acción',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Estoy seguro',
+                        cancelButtonText: 'No, evitar acción',
+                        showCloseButton: true,
+                        showLoaderOnConfirm: true
                     })
-                    
-                    axios.post(endPoint.endpointTarget+'/notifications', {
-                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                        userImage:localStorage.getItem('imageUser'),
-                        detail:'Finalizó una cita',
-                        link: 'agendamiento'
-                    })
-                    .then(res => {
-                        this.socket.emit('sendNotification', res.data)
-                    })   
+                    .then((result) => {
+                        if(result.value) {
+                            axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
+                                service:data.services,
+                                client:data.client,
+                                branch:this.branch,
+                                employe: data.employe,
+                                microServices: data.microServices
+                            }, this.configHeader)
+                            .then(res => {
+                                if (res.data.status == 'ok') {
+                                    
+                                    this.getDates();
+                                    this.$swal({
+                                        type: 'success',
+                                        icon: 'success',
+                                        title: 'Cita finalizada con exito',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    this.dateModals.modal1 = false
+                                    this.dateModals.modal3 = false
+                                    axios.post(endPoint.endpointTarget+'/notifications', {
+                                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                                        userImage:localStorage.getItem('imageUser'),
+                                        detail:'Finalizó una cita',
+                                        link: 'agendamiento'
+                                    })
+                                    .then(res => {
+                                        this.socket.emit('sendNotification', res.data)
+                                    })   
+                                }
+                            })
+                        }
+                        else{
+                            this.$swal({
+                                type: 'info',
+                                title: 'Acción cancelada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    }) 
                 }
-            })
-            // this.endId = ''
-            // this.endServices = []
-            // this.endClient = ''
-            // this.endEmploye = ''
-            // this.dateModals.modal3 = true
-            // this.endId = id
-            // this.serviciosSelecionadosDates = []
-            
-            // this.endClient = client
-            // this.EndDateServices = ''
-            // this.endEmploye = employe
-            // $('.inputFind').val('')
-            // this.myFunction()
-            // axios.get(endPoint.endpointTarget+'/servicios')
-            // .then(res => {
-            //     this.EndDateServices = []
-            //     for (let i = 0; i < res.data.length; i++) {
-            //         $(`.${res.data[i]._id}`).text(0)
-            //     }
-            //     for (let index = 0; index < services.length; index++) {
-            //         for (let indexTwo = 0; indexTwo < res.data.length; indexTwo++) {
-            //             if (services[index].servicio == res.data[indexTwo].nombre) {
-            //                 let valSpan = $(`.${res.data[indexTwo]._id}`).text()
-            //                 let sumaVal = parseFloat(valSpan) + 1
-            //                 $(`.${res.data[indexTwo]._id}`).text(sumaVal)
-            //                 this.EndDateServices.push({name: services[index].servicio, id: res.data[indexTwo]._id, index: indexTwo, valid: true})
-            //                 this.serviciosSelecionadosDates.push({comision:services[index].comision, discount:services[index].discount, precio:services[index].precio, servicio:services[index].servicio})
-            //             }
-            //         } 
-            //     }
-                
-            // })
-            // for (let index = 0; index < services.length; index++) {
-            //   if (services[index].) {
-                
-            //   }
-            
-            // }
+            });
+            if (valid){
+                axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
+                    service:data.services,
+                    client:data.client,
+                    branch:this.branch,
+                    employe: data.employe,
+                    microServices: data.microServices
+                }, this.configHeader)
+                .then(res => {
+                    if (res.data.status == 'ok') {
+                        
+                        this.getDates();
+                        this.$swal({
+                            type: 'success',
+                            icon: 'success',
+                            title: 'Cita finalizada con exito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.dateModals.modal1 = false
+                        this.dateModals.modal3 = false
+                        axios.post(endPoint.endpointTarget+'/notifications', {
+                            userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                            userImage:localStorage.getItem('imageUser'),
+                            detail:'Finalizó una cita',
+                            link: 'agendamiento'
+                        })
+                        .then(res => {
+                            this.socket.emit('sendNotification', res.data)
+                        })   
+                    }
+                })
+            }
         },
         deleteDate(id,cliente){
             console.log(id)
@@ -4216,17 +4321,22 @@ export default {
             }
         },
         validateLastStep() {
-            
+
             if (this.validHour) {
                 this.validWizard = true
                 this.registerDae.valid = true
+                for (const micro of this.registerDae.serviceSelectds) {
+                    for (const selects of micro.microServices) {
+                        if (selects.checked) {
+                            micro.microServiceSelect.push({name: selects.microService, duration: selects.duration, price: selects.price})
+                        }
+                    }
+                }
                 return this.validHour
             }else{
                 this.validWizard = false
-                this.registerDae.valid = false
                 return this.validHour
-            }
-            
+            }  
         },
         changePrice(pos){
             
