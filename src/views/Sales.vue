@@ -241,7 +241,7 @@
             <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <template>
                 <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                    <h3>Aplica filtros para tu reporte {{dates.rangeExcel}}</h3> 
+                    <h3>Aplica filtros para tu reporte</h3> 
                 </div>
             </template>
             <template>
@@ -601,7 +601,7 @@ export default {
                     this.sales = []
                     this.$swal({
                         icon: 'error',
-                        title: 'No hay ventas en las fechas seleccionadas',
+                        title: 'No se encontraron ventas',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -657,12 +657,12 @@ export default {
         },
         cancelSale(id){
             this.$swal({
-				title: '\n¿Está seguro anular la venta?',
+				title: '\n¿Desea anular la venta?',
 				text: 'No puede revertir esta acción',
 				icon: 'warning',
 				showCancelButton: true,
-				confirmButtonText: 'Estoy seguro',
-				cancelButtonText: 'No, evitar acción',
+				confirmButtonText: 'Sí',
+				cancelButtonText: 'No, cancelar',
 				showCloseButton: true,
 				showLoaderOnConfirm: true
 			}).then((result) => {
@@ -704,7 +704,7 @@ export default {
                 }else{
                     this.$swal({
                         icon: 'info',
-                        title: 'acción cancelada',
+                        title: 'Acción cancelada',
                         showConfirmButton: false,
                         timer: 1500
                     })

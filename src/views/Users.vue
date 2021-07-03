@@ -57,7 +57,7 @@
                                 <i slot="suffix" class="fa fa-asterisk text-danger"></i>
                             </a-input>
                             <label>Imagen de perfil</label>
-                            <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" style="height: 36px;" >
+                            <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="fileProfile" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" style="height: 36px;" >
                             <label>Correo</label>
                             <a-input 
                             style="margin-top:-5px;"
@@ -77,18 +77,23 @@
                                 </a-input>
                             </a-form-item>
                             <label>Contraseña</label>
-                            <a-input-password 
-                            v-model="registerUser.password"
-                            placeholder="contraseña"
-                            v-on:keyup="validFields('p')"
-                            class="mb-2">
-                                <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
-                                <i slot="suffix" class="fa fa-asterisk text-danger"></i>
-                            </a-input-password>
                             <a-form-item
-                            :validate-status="registerUser.p ? 'success' : 'error'"
-                            :help="registerUser.p ? '' : 'Las contraseñas deben coincidir'">
-                                <a-input-password :id="registerUser.p ? 'success' : 'error'" v-model="registerUser.passwordConfirm" placeholder="Confirmar contraseña" v-on:keyup="validFields('p')">
+                            class="m-0"
+                            :validate-status="registerUser.password.length > 8 ? 'success' : 'error'">
+                                <a-input-password 
+                                v-model="registerUser.password"
+                                placeholder="contraseña"
+                                :id="registerUser.password.length > 8 ? 'success' : 'error'"
+                                v-on:keyup="validFields('p')"
+                                class="mb-2">
+                                    <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
+                                    <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                                </a-input-password>
+                            </a-form-item>
+                            <a-form-item
+                            :validate-status="registerUser.p && registerUser.password.length > 8 ? 'success' : 'error'"
+                            :help="registerUser.p && registerUser.password.length > 8 ? '' : 'Las contraseñas deben coincidir y tener más de 8 caracteres'">
+                                <a-input-password :id="registerUser.p && registerUser.password.length > 8 ? 'success' : 'error'" v-model="registerUser.passwordConfirm" placeholder="Confirmar contraseña" v-on:keyup="validFields('p')">
                                     <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
                                 </a-input-password>
                             </a-form-item>
@@ -273,9 +278,12 @@
                         <h3>Administre las rutas de acceso</h3>
                         <a-tooltip>
                             <template slot="title">
-                                Si al usuario que le atribuira este perfil presta servicios entonces deberá marcarlo
+                                <span class="text-center">
+                                    Esta funcion permite activar comision a este perfil 
+
+                                </span>
                             </template>
-                            <a-switch class="mx-auto my-1" :checked="commission" @click="changeCommission()" checked-children="Recibe comisiones" un-checked-children="Recibe comisiones" />
+                            <a-switch class="mx-auto my-1" :checked="commission" @click="changeCommission()" checked-children="Comisión activada" un-checked-children="Comisión desactivada" />
                         </a-tooltip>
                     </div>
                     
@@ -730,7 +738,7 @@ export default {
                 ellipsis: true,
             },
             {
-                title: 'Estado',
+                title: 'Perfil',
                 dataIndex: 'status',
                 key: 'status',
                 scopedSlots: { customRender: 'status-format' },
@@ -1281,8 +1289,13 @@ export default {
             this.searchText = '';
         },
         handleFileUpload(){
-            this.file = this.$refs.file.files[0]
-            console.log(this.file)
+            this.file = this.$refs.fileProfile.files[0]
+            console.log(this.$refs.fileProfile.files)
+            setTimeout(() => {
+                this.$refs.fileProfile.files = []
+                this.file = []  
+            }, 200);
+            // console.log(this.file)
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
@@ -1419,7 +1432,7 @@ export default {
         validRegister(){
             if (this.registerUser.email.split('@')[1]) {
                 if (this.registerUser.email.split('@')[1].split('.')[1]) {
-                    this.registerUser.valid = this.registerUser.name != '' && this.registerUser.lastname != '' && this.registerUser.c == true && this.registerUser.p == true && this.registerUser.branch != '' ? true : false
+                    this.registerUser.valid = this.registerUser.name != '' && this.registerUser.password.length > 8 && this.registerUser.lastname != '' && this.registerUser.c == true && this.registerUser.p == true && this.registerUser.branch != '' ? true : false
                 }
             }
         },
@@ -1449,6 +1462,7 @@ export default {
                 c:'',
                 p:''
             }
+            console.log(this.$refs.file)
             this.file = ''
             if (val == 2) {
                 this.tipeForm = 'Registrar'
@@ -1463,7 +1477,7 @@ export default {
         },
         deleteUser(id){
 			this.$swal({
-				title: '\n¿Está seguro de borrar usuario?',
+				title: '\n¿Desea eliminar usuario?',
 				text: 'No puedes revertir esta acción',
 				icon: 'warning',
 				showCancelButton: true,
@@ -1477,16 +1491,16 @@ export default {
 					if(id == idDecoded._id){
                         this.$swal({
                             icon: 'error',
-                            title: 'No puede borrar su propio usuario.',
-                            showConfirmButton: false,
-                            timer: 1500
+                            title: 'Accion no permitida',
+                            text: 'No puede eliminar el usuario de origen',
+                            showConfirmButton: true
                         })
 					}else{
 						axios.delete(endPoint.endpointTarget+'/users/'+id, this.configHeader)
 						.then(res => {
                             this.$swal({
                                 icon: 'success',
-                                title: 'Usuario borrado con éxito',
+                                title: 'Usuario eliminado con éxito',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
@@ -1505,7 +1519,7 @@ export default {
 				} else {
 					this.$swal({
                         icon: 'info',
-                        title: 'Acción',
+                        title: 'Acción cancelada',
                         showConfirmButton: false,
                         timer: 2500
                     })
@@ -1556,7 +1570,7 @@ export default {
 </script>
 <style lang="scss">
     .has-success::after {
-        right: 28px !important;
+        display: none !important;
     }
     .card-header{
         font-size: 2.5vw;
