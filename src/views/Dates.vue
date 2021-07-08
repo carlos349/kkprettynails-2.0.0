@@ -18,7 +18,7 @@
                     </base-button>
 
                     <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mt-7 mr-0 qloq" size="sm">
-                        <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                        <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                 {{employeByDate}}
                         </base-button>
                         <li v-on:click="getDatesByEmploye('Todos')">
@@ -35,7 +35,7 @@
                             </base-button>
                         </li>
                     </base-dropdown>
-                    <div v-if="filter == true && validRoute('agendamiento', 'filtrar') == true" class="ml-2">
+                    <div v-if="filter == true" class="ml-2">
                         <img class="avatar rounded-circle" :src="img2" />
                     </div>
                     <!-- <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="primary">
@@ -1873,45 +1873,28 @@ export default {
             } 
         },
         async getDates() {
-            if (this.lender != '' && this.validRoute('agendamiento', 'todas') != true) {
+            console.log(this.validRoute('agendamiento', 'todas'))
+            if (!this.validRoute('agendamiento', 'todas')) {
                 this.events = []
-                // axios.post(endPoint.endpointTarget+'/dates/getDatesByEmployes/'+this.branch, {
-                //     lender: this.lender
-                // }, this.configHeader)
-                // .then(res => {
-                //     for (let index = 0; index < res.data.length; index++) {
-                //         let dateNow = new Date(res.data[index].date)
-                //         let formatDate = dateNow.format('YYYY-MM-DD')+" "+res.data[index].start
-                //         let formatDateTwo = dateNow.format('YYYY-MM-DD')+" "+res.data[index].end
-                //         const split = res.data[index].employe.class.split('class')[1]
-                //         let arrayEvents = {
-                //             start: formatDate,
-                //             end: formatDateTwo,
-                //             title: res.data[index].services[0].service+" - "+res.data[index].employe.name,
-                //             content: res.data[index].client.name,
-                //             class: res.data[index].employe.class,
-                //             cliente: res.data[index].client,
-                //             services: res.data[index].services,
-                //             empleada: res.data[index].employe,
-                //             id: res.data[index]._id,
-                //             process: res.data[index].process,
-                //             image: res.data[index].image,
-                //             imageLength: res.data[index].image.length,
-                //             confirmation: res.data[index].confirmation,
-                //             confirmationId: res.data[index].confirmationId,
-                //             type: res.data[index].type,
-                //             typepay: res.data[index].typepay,
-                //             paypdf: res.data[index].paypdf,
-                //             split: parseInt(split)
-                //         }
-                //         this.events.push(arrayEvents)
-                //     }
-                // })
+                const token = localStorage.userToken
+                const decoded = jwtDecode(token)
+                if (decoded.linkLender == '') {
+                    this.$swal.fire({
+                        icon: 'error',
+                        title: 'No tiene permisos de ver citas, y su usuario no esta asociado a un prestador de servicio'
+                    })
+                }else{
+                    try {
+                        const employe = await axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+decoded.linkLender, this.configHeader)
+                        this.getDatesByEmploye(employe.data.data._id, decoded.userImage == '' ? 'no' : decoded.userImage, employe.data.data.firstName+' '+employe.data.data.lastName)
+                    }catch(err){
+                        console.log(err)
+                    }
+                }
             }else{
                 this.events = []
                 try {
                     const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
-                    console.log(dates)
                     this.events = dates.data.data
                     console.log(this.events)
                 }catch(err){
@@ -2727,6 +2710,7 @@ export default {
             })
         },
         getDatesByEmploye(id, img, name){
+            console.log(img)
             if (id == "Todos") {
                 this.getDates()
                 this.filter = false

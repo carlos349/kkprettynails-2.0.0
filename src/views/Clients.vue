@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Clientes</p>
-                        
+                        <p class="text-white">Sección dedicada a la administración de sus clientes, podrás enviar correos electrónicos y exportar en excel la base de datos de sus clientes.</p>
                     </div>
                     <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('clientes', 'correos') ? false : true" @click="modals.modal3 = true" type="primary">
                         <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
@@ -83,7 +83,7 @@
                                     <div class="col-12 mb-2 p-0">
                                         <VuePhoneNumberInput v-model="registerClient.phone.formatNational" @update="phoneData = $event, registerClient.phone = $event, validRegister()"
                                         :default-phoner-number="registerClient.phone.nationalNumber"
-                                        :default-country-code="registerClient.phone.countryCode" 
+                                        :default-country-code="registerClient.phone.countryCode"
                                         :translations="{
                                             countrySelectorLabel: 'Código de país',
                                             countrySelectorError: 'Elije un país',
@@ -169,8 +169,11 @@
                         </base-input>
                         
                         <div class="col-12 mb-4 p-0">
-                            <VuePhoneNumberInput v-model="registerClient.phone" @update="phoneData = $event, validRegister()" 
-                            :translations="{
+                            <VuePhoneNumberInput v-model="registerClient.phone.nationalNumber" 
+                                @update="phoneData = $event, registerClient.phone = $event, validRegister()" 
+                                :default-phoner-number="registerClient.phone.nationalNumber"
+                                :default-country-code="registerClient.phone.countryCode"
+                                :translations="{
                                 countrySelectorLabel: 'Código de país',
                                 countrySelectorError: 'Elije un país',
                                 phoneNumberLabel: 'Número de teléfono',
@@ -391,7 +394,18 @@ export default {
             firstName:'',
             lastName:'',
             email:'',
-            phone:'',
+            phone: {
+                "countryCode": "CL", 
+                "isValid": false, 
+                "phoneNumber": "", 
+                "countryCallingCode": "", 
+                "formattedNumber": "", 
+                "nationalNumber": "", 
+                "formatInternational": "", 
+                "formatNational": "", 
+                "uri": "", 
+                "e164": ""
+            },
             instagram:'',
             birthday: '',
             recommender:null,
@@ -693,7 +707,18 @@ export default {
                 firstName:'',
                 lastName:'',
                 email:'',
-                phone:'',
+                phone: {
+                    "countryCode": "CL", 
+                    "isValid": false, 
+                    "phoneNumber": "", 
+                    "countryCallingCode": "", 
+                    "formattedNumber": "", 
+                    "nationalNumber": "", 
+                    "formatInternational": "", 
+                    "formatNational": "", 
+                    "uri": "", 
+                    "e164": ""
+                },
                 instagram:'',
                 birthday: '',
                 recommender:null,

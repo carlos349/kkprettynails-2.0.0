@@ -53,7 +53,7 @@
             <!-- <hr class="mt-3 mb-1" style="height:2px;background-color:#353535;border-radius:5px;"> -->
             <hr class="mt-3 mb-1">
             <h3 class="mt-3">ítems</h3>
-            <hr class="mt-1 mb-0">
+            <hr class="mt-1 mb-1">
             <a-table :columns="columnsReport" :pagination="false" :data-source="dataSale.items">
                 <template slot="total-slot" slot-scope="record, column">
                     {{column.totalItem | formatPrice}}

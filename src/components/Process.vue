@@ -198,7 +198,7 @@
                                         {{column.createdAt | formatDate}}
                                     </template>
                                     <template slot="service-slot" slot-scope="record, column">
-                                        {{column.service.name}}
+                                        Cantidad: {{column.services.length}}
                                     </template>
                                     <template slot="employe-slot" slot-scope="record, column">
                                         {{column.employe.name}}
@@ -254,7 +254,7 @@
                             </template>
                         </template>
                         <template slot="total-slot" slot-scope="record, column">
-                            {{formatPrice(column.total)}}
+                            {{column.total | formatPrice}}
                         </template>
                         <template slot="actionRemove" slot-scope="record, column, index">
                             <base-button @click="removeItem(index)" size="sm" type="danger">
@@ -779,14 +779,14 @@ export default {
                     scopedSlots: { customRender: 'date-slot' }
                 },
                 {
-                    title: 'Servicio',
+                    title: 'Servicios',
                     dataIndex: 'service',
                     key: 'service',
                     ellipsis: true,
                     scopedSlots: { customRender: 'service-slot' }
                 },
                 {
-                    title: 'Empleado',
+                    title: 'Empleados',
                     dataIndex: 'employe',
                     key: 'employe',
                     ellipsis: true,
@@ -1013,7 +1013,19 @@ export default {
             try {
                 const datesFinally = await axios.get(endPoint.endpointTarget+'/dates/getEndingDates/'+this.branch, this.configHeader)
                 if (datesFinally.data.status == 'ok') {
+                    for (const dates of datesFinally.data.data) {
+                        dates.total = 0
+                        for (const service of dates.services) {
+                            var total = 0
+                            for (const micro of service.microServiceSelect) {
+                                total = total + micro.price
+                            }
+                            dates.total = dates.total + total + service.price
+                            
+                        }
+                    }
                     this.datesFinally = datesFinally.data.data
+                    console.log(this.datesFinally)
                 }else{
                     this.datesFinally = []
                 }
@@ -1291,37 +1303,29 @@ export default {
             }
             var dateItem = 'none'
             if (type == 'date') {
-                for (const micro of this.datesFinally[index].microServices) {
-                    this.microserviceSelecteds.push({id: new Date().getTime(), name: micro.name, price: micro.price})
-                }
-                this.itemData.item = this.datesFinally[index].service
-                this.itemData.tag = 'service'
-                this.itemData.employe = this.datesFinally[index].employe
-                this.itemData.realPrice = this.datesFinally[index].total
-                this.itemData.price = this.datesFinally[index].total
-                this.itemData.commission = this.datesFinally[index].service.commission
-                this.itemData.discountServiceIf = this.datesFinally[index].service.discount
-                this.itemData.discountService = this.datesFinally[index].discount
-                dateItem = this.datesFinally[index]
-                this.datesFinally.splice(index, 1)
-            }
-            var total = 0
-            var additionals = ''
-            for (const micro of this.microserviceSelecteds) {
-                total = total + parseFloat(micro.price)
-                additionals = additionals == '' ? micro.name : additionals + ', '+micro.name 
-            }
-            var description = this.itemData.tag == 'service' ? `Servicio: ${this.itemData.item.name} | Empleado: ${this.itemData.employe.name} | Adicionales: ${additionals}` : `${this.itemData.quantityProduct == 0 || this.itemData.quantityProduct == '' ? 1 : this.itemData.quantityProduct}) ${this.itemData.item.measure}`
+                const idDelete = new Date().getTime()
+                for (const service of this.datesFinally[index].services) {
+                    for (const micro of service.microServiceSelect) {
+                        this.microserviceSelecteds.push({id: new Date().getTime(), name: micro.name, price: micro.price})
+                    }
+                    this.itemData.item = service
+                    this.itemData.tag = 'service'
+                    this.itemData.employe = this.datesFinally[index].employe
+                    this.itemData.realPrice = service.price
+                    this.itemData.price = service.price
+                    this.itemData.commission = service.commission
+                    this.itemData.discountServiceIf = service.discount
+                    this.itemData.discountService = 0
+                    dateItem = this.datesFinally[index]
+                    var total = 0
+                    var additionals = ''
+                    for (const micro of this.microserviceSelecteds) {
+                        total = total + parseFloat(micro.price)
+                        additionals = additionals == '' ? micro.name : additionals + ', '+micro.name 
+                    }
+                    var description = this.itemData.tag == 'service' ? `Servicio: ${this.itemData.item.name} | Empleado: ${this.itemData.employe.name} | Adicionales: ${additionals}` : `${this.itemData.quantityProduct == 0 || this.itemData.quantityProduct == '' ? 1 : this.itemData.quantityProduct}) ${this.itemData.item.measure}`
 
-            const commissionEmploye = this.itemData.tag == 'service' ? (this.itemData.price + (total * 0.50)) * parseFloat('0.'+this.itemData.commission) : 'none'
-            if (this.itemData.item.name && this.itemData.realPrice > 0 && this.itemData.price > 0 && this.itemData.tag != '') {
-                var valid = false
-                if (this.itemData.tag == 'service') {
-                    valid = this.itemData.employe.name != '' ? true : false
-                }else{
-                    valid = true
-                }
-                if (valid) {
+                    const commissionEmploye = this.itemData.tag == 'service' ? (this.itemData.price + (total * 0.50)) * parseFloat('0.'+this.itemData.commission) : 'none'
                     this.serviceSelecteds.push({
                         item: this.itemData.item,
                         price: this.itemData.realPrice,
@@ -1338,7 +1342,8 @@ export default {
                         tag: this.itemData.tag,
                         employe: this.itemData.tag == 'service' ? this.itemData.employe : 'none',
                         description: description,
-                        datesItem: dateItem
+                        datesItem: dateItem,
+                        id: idDelete
                     })
                     this.itemData = {
                         item: {},
@@ -1357,8 +1362,72 @@ export default {
                     }
                     this.calculatedTotal()
                     this.microserviceSelecteds = []
-                    console.log(this.serviceSelecteds)
-                    $('.thisSelect .ant-select-selection__clear').click()
+                }
+                this.datesFinally.splice(index, 1)
+            }else{
+                var total = 0
+                var additionals = ''
+                for (const micro of this.microserviceSelecteds) {
+                    total = total + parseFloat(micro.price)
+                    additionals = additionals == '' ? micro.name : additionals + ', '+micro.name 
+                }
+                var description = this.itemData.tag == 'service' ? `Servicio: ${this.itemData.item.name} | Empleado: ${this.itemData.employe.name} | Adicionales: ${additionals}` : `${this.itemData.quantityProduct == 0 || this.itemData.quantityProduct == '' ? 1 : this.itemData.quantityProduct}) ${this.itemData.item.measure}`
+
+                const commissionEmploye = this.itemData.tag == 'service' ? (this.itemData.price + (total * 0.50)) * parseFloat('0.'+this.itemData.commission) : 'none'
+                if (this.itemData.item.name && this.itemData.realPrice > 0 && this.itemData.price > 0 && this.itemData.tag != '') {
+                    var valid = false
+                    if (this.itemData.tag == 'service') {
+                        valid = this.itemData.employe.name != '' ? true : false
+                    }else{
+                        valid = true
+                    }
+                    if (valid) {
+                        this.serviceSelecteds.push({
+                            item: this.itemData.item,
+                            price: this.itemData.realPrice,
+                            discount: this.itemData.discountService == '' ? 0 : this.itemData.discountService,
+                            additionalTotal: total,
+                            additionals: this.microserviceSelecteds,
+                            ifDiscount: this.itemData.discountServiceIf,
+                            total: this.itemData.price + total,
+                            commission: this.itemData.commission,
+                            commissionEmploye: commissionEmploye,
+                            totalLocal: this.itemData.tag == 'service' ? (this.itemData.price - commissionEmploye) + (total * 0.50) : (this.itemData.price * 0.50),
+                            quantityProduct: this.itemData.tag != 'service' ? this.itemData.quantityProduct == 0 || this.itemData.quantityProduct == '' ? 1 : this.itemData.quantityProduct : 'none',
+                            productsService: this.itemData.item.products ? this.itemData.item.products : [],
+                            tag: this.itemData.tag,
+                            employe: this.itemData.tag == 'service' ? this.itemData.employe : 'none',
+                            description: description,
+                            datesItem: 'none',
+                            id: 'none'
+                        })
+                        this.itemData = {
+                            item: {},
+                            price: 0,
+                            realPrice: 0,
+                            discountServiceIf: false,
+                            discountService: '',
+                            employe: {
+                                id: '',
+                                name: '',
+                                document: ''
+                            },
+                            quantityProduct: '',
+                            commission: 0,
+                            tag: ''
+                        }
+                        this.calculatedTotal()
+                        this.microserviceSelecteds = []
+                        console.log(this.serviceSelecteds)
+                        $('.thisSelect .ant-select-selection__clear').click()
+                    }else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Debe llenar todos los campos',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
                 }else{
                     this.$swal({
                         icon: 'error',
@@ -1367,14 +1436,8 @@ export default {
                         timer: 1500
                     })
                 }
-            }else{
-                this.$swal({
-                    icon: 'error',
-                    title: 'Debe llenar todos los campos',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
             }
+            
         },
         calculatedTotal(){
             var total = 0
@@ -1386,10 +1449,21 @@ export default {
             this.restPay = this.perPay < 0 ? Math.abs(this.perPay) : 0
         },
         removeItem(key){
+            const id = this.serviceSelecteds[key].id
             if (this.serviceSelecteds[key].datesItem != 'none') {
+                var splices = new Array()
                 this.datesFinally.push(this.serviceSelecteds[key].datesItem)
+                for (const index in this.serviceSelecteds) {
+                    const service = this.serviceSelecteds[index]
+                    if (id == service.id) {
+                        splices.push(index)
+                    }
+                }
+                this.serviceSelecteds.splice(splices[0], splices.length)
+            }else{
+                this.serviceSelecteds.splice(key, 1)
             }
-            this.serviceSelecteds.splice(key, 1)
+            
             this.calculatedTotal()
             if (this.serviceSelecteds.length == 0) {
                 this.paysSelecteds = []

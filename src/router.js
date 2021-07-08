@@ -67,6 +67,11 @@ export default new Router({
           component: () => import('./views/Icons.vue')
         },
         {
+          path: '/perfilesAcceso',
+          name: '',
+          component: () => import('./views/AccessProfile.vue')
+        },
+        {
           path: '/profile',
           name: '',
           component: () => import('./views/UserProfile.vue')
