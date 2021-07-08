@@ -1450,7 +1450,6 @@ export default {
         },
         removeItem(key){
             const id = this.serviceSelecteds[key].id
-            console.log(id)
             if (this.serviceSelecteds[key].datesItem != 'none') {
                 var splices = new Array()
                 this.datesFinally.push(this.serviceSelecteds[key].datesItem)

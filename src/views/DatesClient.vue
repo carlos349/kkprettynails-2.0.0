@@ -408,7 +408,9 @@
                     </base-input>
                     <span style="color:red;position:absolute;right:35px;top:205px;z-index:1;">*</span>
                     <div class="col-12 p-0">
-                        <VuePhoneNumberInput v-model="registerUser.phone" @update="phoneData = $event, validFields()" 
+                        <VuePhoneNumberInput v-model="registerUser.phone.formatNational" @update="phoneData = $event, registerUser.phone = $event, validFields()" 
+                        :default-phoner-number="registerUser.phone.nationalNumber"
+                        :default-country-code="registerUser.phone.countryCode"
                         :translations="{
                             countrySelectorLabel: 'Código de país',
                             countrySelectorError: 'Elije un país',
@@ -434,7 +436,7 @@
                         addon-left-icon="ni ni-email-83">
                     </base-input>
                     <label for="branche">Seleccione la sucursal</label>
-                    <a-select placeholder="Busque la sucursal" class="input-group-alternative" style="width: 100%" size="large">
+                    <a-select allowClear placeholder="Busque la sucursal" class="input-group-alternative clearClass" style="width: 100%" size="large">
                         <a-select-option v-for="branch in branches" :key="branch._id" @click="selectBranch(branch)"  :value="branch.name">
                             {{branch.name}}
                         </a-select-option>
@@ -567,6 +569,7 @@
                 branch: '',
                 branches: [],
                 branchName: '',
+                day: 0,
                 configDate: {
                     inline:false,
                     allowInput: false,
@@ -574,16 +577,9 @@
                     locale: Spanish, // locale for this instance only
                     minDate: new Date(),
                     "disable": [
-                        "25-12-2020",
                         function(date) {
-                            // return true to disable
-                            return (date.getDay() === 0 );
-
-                        },
-                        {
-                            from: "01-01-2021",
-                            to: "06-01-2021"
-                        },
+                            return false;
+                        }
                     ] 
                            
                 },
@@ -603,7 +599,18 @@
                     firstName: '',
                     email: '',
                     lastName: '',
-                    phone: '',
+                    phone: {
+                        "countryCode": "CL", 
+                        "isValid": false, 
+                        "phoneNumber": "", 
+                        "countryCallingCode": "", 
+                        "formattedNumber": "", 
+                        "nationalNumber": "", 
+                        "formatInternational": "", 
+                        "formatNational": "", 
+                        "uri": "", 
+                        "e164": ""
+                    },
                     pay: 'Presencial efectivo',
                     pdf: 'danger'
                 },
@@ -679,7 +686,8 @@
                 safe: [],
                 ifMicro: false,
                 itFirst: true,
-                validVerify: false
+                validVerify: false,
+                configurationsBranch: new Object()
             }
         },
         created(){
@@ -692,9 +700,38 @@
                 this.validRegister = true
             },
             selectBranch(value){
-                this.branch = value._id
-                this.branchName = value.name
-                this.validVerifyFunc()
+                if (value) {
+                    this.branch = value._id
+                    this.branchName = value.name
+                    axios.get(`${endPoint.endpointTarget}/configurations/${this.branch}`, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.configurationsBranch = res.data.data
+                            if (this.configurationsBranch.datesPolitics.onlineDates) {
+                                this.validVerifyFunc()
+                            }else{
+                                $('.clearClass .ant-select-selection__clear').click()
+                                this.$swal.fire({
+                                    icon: 'error',
+                                    html: `<p>La sucursal <strong>${this.branchName}</strong> no esta agendando, agende en otra sucursal o pongase en contacto a través del número <br> <strong>${this.configurationsBranch.businessPhone}</strong></p>`
+                                })
+                            }
+                            const blockHours = this.configurationsBranch.blockHour
+                            this.configDate.disable = [
+                                function(date) {
+                                    // var days = 10
+                                    // for (const element of blockHours) {
+                                    //     if (element.day === date.getDay()) {
+                                    //         days = element.status ? element.day : 10
+                                    //     }
+                                    // }
+                                    // console.log(days)
+                                    return blockHours[date.getDay()].status == true ? false : true;
+                                }
+                            ]
+                        }
+                    }).catch(err => console.log(err))
+                }
             },
             SelectMicro(index, indexM, microServices) {
                 console.log(microServices)
@@ -722,8 +759,6 @@
                         this.totalPrice = this.totalPrice + this.registerDate.serviceSelectds[index].price
                     }
                 }
-                console.log()
-                
             },
             async getMicroServices(){
                 try {
@@ -809,23 +844,13 @@
                 }
             },
             location(){
-                this.modals = {
-                    modal3: true,
-                    message: "¡Cita creada con exito!",
-                    icon: 'ni ni-check-bold ni-5x',
-                    type: 'success'
-                }
+                this.$swal({
+                    icon: 'success',
+                    title: '¡Cita creada con exito!',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
                 setTimeout(() => {
-                    this.modals = {
-                        modal1:false,
-                        modal2:false,
-                        modal3: false,
-                        modal4: false,
-                        modal5: false,
-                        message: "",
-                        icon: '',
-                        type: ''
-                    }
                     window.location = 'https://kkprettynails.cl/'
                 }, 3000);
                 
@@ -839,24 +864,12 @@
                     }
                 }else{
                     $('.dropdownPay').css({'color': 'red'})
-                    this.modals = {
-                        modal3: true,
-                        message: "Por favor, Seleccione el tipo de pago.",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1:false,
-                            modal2:false,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 3000);
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Por favor, Seleccione el tipo de pago',
+                        showConfirmButton: false,
+                        timer: 3000
+                    })
                 }
             },
             formatPrice(value) {
@@ -972,67 +985,54 @@
                     branch: this.branch
                 }, this.configHeader)
                 .then(res => {
-                    console.log(res)
                     if(res.data.status == true){
-                        this.modals = {
-                            modal3: true,
-                            message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.",
-                            icon: 'ni ni-fat-remove ni-5x',
-                            type: 'danger'
+                        this.$swal({
+                            icon: 'error',
+                            title: '¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        this.$refs.wizard.prevTab()
+                        for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                            const element = this.registerDate.serviceSelectds[index];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.class = ''
+                            element.blocks = []
+                            element.blocksFirst = []
+                            element.valid = false
+                            element.employe = 'Primera disponible'
+                            element.employeImg = ''
+                            element.employeId = ''
+                            element.realEmploye = 'Primera disponible'
                         }
+                        this.validHour = false
                         setTimeout(() => {
-                            this.modals = {
-                                modal1:false,
-                                modal2:false,
-                                modal3: false,
-                                modal4: false,
-                                modal5: false,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            }
-                            this.$refs.wizard.prevTab()
-                            for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                                const element = this.registerDate.serviceSelectds[index];
-                                element.start = ''
-                                element.end = ''
-                                element.sort = ''
-                                element.class = ''
-                                element.blocks = []
-                                element.blocksFirst = []
-                                element.valid = false
-                                element.employe = 'Primera disponible'
-                                element.employeImg = ''
-                                element.employeId = ''
-                                element.realEmploye = 'Primera disponible'
-                            }
-                            this.validHour = false
-                            setTimeout(() => {
-                                axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                            axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                                date: this.finalDate,
+                                branch: this.branch
+                            }, this.configHeader)
+                            .then(res => {
+                                this.getDay = res.data.day
+                                this.availableslenders = res.data.array
+                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
                                     date: this.finalDate,
+                                    employes: res.data.array,
+                                    timedate: this.registerDate.serviceSelectds[0].duration,
+                                    employesServices: this.registerDate.serviceSelectds[0].employes,
                                     branch: this.branch
                                 }, this.configHeader)
                                 .then(res => {
-                                    this.getDay = res.data.day
-                                    this.availableslenders = res.data.array
-                                    axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                        date: this.finalDate,
-                                        employes: res.data.array,
-                                        timedate: this.registerDate.serviceSelectds[0].duration,
-                                        employesServices: this.registerDate.serviceSelectds[0].employes,
-                                        branch: this.branch
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.readyChange = true
-                                        this.registerDate.serviceSelectds[0].valid = true
-                                        this.registerDate.serviceSelectds[0].blocks = res.data.data
-                                        this.registerDate.block = res.data.data
-                                        console.log(this.registerDate.serviceSelectds[0].blocks)
-                                        $('#block0').toggle('slow')
-                                    })
+                                    this.readyChange = true
+                                    this.registerDate.serviceSelectds[0].valid = true
+                                    this.registerDate.serviceSelectds[0].blocks = res.data.data
+                                    this.registerDate.block = res.data.data
+                                    console.log(this.registerDate.serviceSelectds[0].blocks)
+                                    $('#block0').toggle('slow')
                                 })
-                            }, 200);  
-                        }, 5000);
+                            })
+                        }, 200);
                     }else{
                         var blockEdit = []
                         if (this.registerDate.serviceSelectds[this.registerDate.serviceSelectds.length - 1].blocksFirst.length > 0) {
@@ -1157,7 +1157,6 @@
                         rest = element.hours[0]+'/'+element.hours[1]
                     }
                 }
-                console.log(rest)
                 this.selectHourService(index, lender, time, rest)
             },
             insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg){
@@ -1248,7 +1247,6 @@
                         }
                     }
                 }else{
-                    console.log(this.registerDate.serviceSelectds[index].blocks)
                     for (const block of this.registerDate.serviceSelectds[index].blocks) {
                         if (block.validator == 'select' && block.employes){
                             block.validator = true
@@ -1361,7 +1359,6 @@
                 }
             },
             selectHourService(index, lender, time, resTime){
-                
                 const finalTime =  this.registerDate.design == 'si' ? time + 15 : time
                 this.registerDate.serviceSelectds[index].lenderSelectData = {
                     employe: lender,
@@ -1370,7 +1367,6 @@
                     resTime: resTime,
                     index: index
                 }
-
                 axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDate.serviceSelectds[index].lenderSelectData)
                 .then(res => { 
                     if (this.registerDate.serviceSelectds[index].validAfter) {
@@ -1388,17 +1384,6 @@
                             this.arrayLendersSelect = []
                         } 
                     }
-                    // var editBlock = false
-                    // var indexEdit = 0
-                    // if (index > 0) {
-                    //     for (let i = 0; i < this.arrayLendersSelect.length; i++) {
-                    //         const element = this.arrayLendersSelect[i];
-                    //         if (element.lender == lender) {
-                                
-                                
-                    //         }
-                    //     }
-                    // }
                     var editBlock = false
                     var indexEdit = 0
                     const q = index - 1 
@@ -1497,7 +1482,6 @@
                 }
             },
             plusServicePhone(index, service, duration, commission, price, employes, discount){
-                console.log(index, service, duration, commission, price, employes, discount)
                 this.ifServices = true
                 for (const employe of employes) {
                     employe.valid = true
@@ -1511,7 +1495,8 @@
                     }
                     this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: []})
                 }else{
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,
+                    microServices: [], microServiceSelect: []})
                 }
 
                 this.validHour = false  
@@ -1543,10 +1528,9 @@
                     }
                     this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, microServices: microsService, microServiceSelect: []})
                 }else{
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service,
+                    microServices: [], microServiceSelect: []})
                 }
-                
-                console.log(this.registerDate.serviceSelectds)
             },
             lessService(index, service, time, card, precio){
                 if (this.serviceCount[index].count > 0) {
@@ -1617,7 +1601,6 @@
                             break
                         }
                     }
-                    console.log(this.registerDate.serviceSelectds[indexService])
                     axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
                         date: this.finalDate,
                         timedate: this.registerDate.serviceSelectds[indexService].duration,
@@ -1643,12 +1626,10 @@
                             .then(res => {
                                 this.registerDate.serviceSelectds[finalIndex].valid = true
                                 this.registerDate.serviceSelectds[finalIndex].blocks = res.data.data
-                                console.log(res)
                             })
                         }else{
                             this.validHour = true
                         }
-                        console.log(res)
                     }).catch(err => console.log(err))
                     
                     setTimeout(() => {
@@ -1762,8 +1743,6 @@
                             }
                         }
                     }
-                    console.log(this.registerDate.serviceSelectds[0].microServiceSelect)
-                    console.log(this.finalDate)
                     return this.validHour
                 }else{
                     this.validWizard = false
@@ -1800,25 +1779,13 @@
                     this.getDay = restDay.getDay()
                     var onlySunday = split[0]+'-'+split[1]
                     if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
-                        this.modals = {
-                            modal3: true,
-                            message: "Disculpa, No laboramos Sábados y Domingos.",
-                            icon: 'ni ni-fat-remove ni-5x',
-                            type: 'danger'
-                        }
-                        setTimeout(() => {
-                            this.modals = {
-                                modal1:false,
-                                modal2:false,
-                                modal3: false,
-                                modal4: false,
-                                modal5: false,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            }
-                            this.dates.simple = ''
-                        }, 3000);
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Disculpa, No laboramos Sábados y Domingos.',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
+                        this.dates.simple = ''
                     }else{
                         if (this.readyChange) {
                             for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
@@ -1938,24 +1905,12 @@
                         this.servicesCat = services.data.data
                         this.CatSelected = name
                     }else{
-                        this.modals = {
-                            modal3: true,
-                            message: "categoria sin servicios",
-                            icon: 'ni ni-fat-remove ni-5x',
-                            type: 'danger'
-                        }
-                        setTimeout(() => {
-                            this.modals = {
-                                modal1:false,
-                                modal2:false,
-                                modal3: false,
-                                modal4: false,
-                                modal5: false,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            }
-                        }, 2000);
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Categoria sin servicios.',
+                            showConfirmButton: false,
+                            timer: 2500
+                        })
                     }
                 }catch (err){
                     console.log(err)
@@ -1990,24 +1945,12 @@
                         this.servicePhoneCount.unshift({count: 0})
                         this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount)
                     }else{
-                        this.modals = {
-                            modal3: true,
-                            message: "Error técnico",
-                            icon: 'ni ni-fat-remove ni-5x',
-                            type: 'danger'
-                        }
-                        setTimeout(() => {
-                            this.modals = {
-                                modal1:false,
-                                modal2:false,
-                                modal3: false,
-                                modal4: false,
-                                modal5: false,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            }
-                        }, 2000);
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error técnico.',
+                            showConfirmButton: false,
+                            timer: 2500
+                        })
                     }
                 }catch(err){
                     console.log(err)
@@ -2029,48 +1972,27 @@
                 }, this.configHeader)
                 .then(res => {
                     if (res.data.status == 'client create') {
-                        this.modals = {
-                            modal2: true,
-                            message: "Te has registrado con exito",
-                            icon: 'ni ni-check-bold ni-5x',
-                            type: 'success'
-                        }
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Te has registrado con éxito',
+                            showConfirmButton: false,
+                            timer: 2500
+                        })
                         this.registerUser.name = this.registerUser.firstName + ' ' + this.registerUser.lastName
                         this.registerUser.id = res.data.data._id
                         this.registerUser.phone = this.phoneData.formatInternational
-                        setTimeout(() => {
-                            this.modals = {
-                                modal1: false,
-                                modal2: false,
-                                modal3:false,
-                                message: "",
-                                icon: '',
-                                type:''
-                            }
-                            this.getServices()
-                            this.getCategories()
-                            this.getEmployes()
-                            this.getMicroServices()
-                            EventBus.$emit('reloadClients', 'reload')
-                        }, 1500);
-                        
+                        this.getServices()
+                        this.getCategories()
+                        this.getEmployes()
+                        this.getMicroServices()
+                        EventBus.$emit('reloadClients', 'reload')
                     }else{
-                        this.modals = {
-                            modal2: true,
-                            message: "El cliente ya existe",
-                            icon: 'ni ni-fat-remove ni-5x',
-                            type: 'danger'
-                        }
-                        setTimeout(() => {
-                            this.modals = {
-                                modal1: true,
-                                modal2: false,
-                                modal3:false,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            }
-                        }, 1500);
+                        this.$swal({
+                            icon: 'error',
+                            title: 'El cliente ya existe',
+                            showConfirmButton: false,
+                            timer: 2500
+                        })
                     }
                 })
             },
