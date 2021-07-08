@@ -1823,6 +1823,20 @@ export default {
                     this.configurations = {}
                 }
             }catch(err){}
+
+            const blockHours = this.configurations
+            this.configDate.disable = [
+                function(date) {
+                    // var days = 10
+                    // for (const element of blockHours) {
+                    //     if (element.day === date.getDay()) {
+                    //         days = element.status ? element.day : 10
+                    //     }
+                    // }
+                    // console.log(days)
+                    return blockHours[date.getDay()].status == true ? false : true;
+                }
+            ]
         },
         validatorLendersDaysSplit(change, event){
             this.splitDays = []

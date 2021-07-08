@@ -1297,19 +1297,8 @@ export default {
             this.searchText = '';
         },
         handleFileUpload(){
-<<<<<<< HEAD
-
             this.file = this.$refs.file.files[0]
             console.log(this.file)
-=======
-            this.file = this.$refs.fileProfile.files[0]
-            console.log(this.$refs.fileProfile.files)
-            setTimeout(() => {
-                this.$refs.fileProfile.files = []
-                this.file = []  
-            }, 200);
-            // console.log(this.file)
->>>>>>> 2cded46cba0ef6daced82b114a98cb800c3a5387
         },
         resetFileInput(){
             console.log(this.$refs.file.files)
