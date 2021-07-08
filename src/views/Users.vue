@@ -58,6 +58,7 @@
                             </a-input>
                             <label>Imagen de perfil</label>
                             <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" >
+                            <base-button @click="resetFileInput" type="primary">Button</base-button>
                             <label>Correo</label>
                             <a-input 
                             style="margin-top:-5px;"
@@ -1281,8 +1282,14 @@ export default {
             this.searchText = '';
         },
         handleFileUpload(){
+
             this.file = this.$refs.file.files[0]
             console.log(this.file)
+        },
+        resetFileInput(){
+            console.log(this.$refs.file.files)
+            this.$refs.file.value = ''
+            console.log(this.$refs.file.files)
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
@@ -1450,6 +1457,7 @@ export default {
                 p:''
             }
             this.file = ''
+            this.$refs.file.value = ''
             if (val == 2) {
                 this.tipeForm = 'Registrar'
             }

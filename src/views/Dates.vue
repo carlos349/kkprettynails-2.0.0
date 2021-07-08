@@ -1498,36 +1498,7 @@ export default {
                 ellipsis: true,
             },
             {
-                title: 'Servicio',
-                dataIndex: 'services',
-                key: 'services',
-                ellipsis: true,
-                sortDirections: ['descend', 'ascend'],
-                scopedSlots: {
-                    customRender: 'services',
-                },
-            },
-            {
-                title: 'Empleado',
-                dataIndex: 'employe.name',
-                key: 'employe',
-                ellipsis: true,
-                scopedSlots: {
-                    filterDropdown: 'filterDropdown',
-                    filterIcon: 'filterIcon',
-                    customRender: 'customRender',
-                },
-                onFilter: (value, record) => record.employe.toString().toLowerCase().includes(value.toLowerCase()),
-                onFilterDropdownVisibleChange: visible => {
-                    if (visible) {
-                    setTimeout(() => {
-                        this.searchInput.focus();
-                    }, 0);
-                    }
-                },
-            },
-            {
-                title: 'Gasto',
+                title: 'Total',
                 dataIndex: 'total',
                 key: 'total',
                 ellipsis: true,
@@ -3083,10 +3054,13 @@ export default {
             
         },
         endDate(data){
+            console.log(data)
             var valid = true
+            const dataFinal = data
             data.services.forEach(element => {
                 if (element.microServiceSelect && element.microServiceSelect.length == 0) {
                     valid = false
+
                     this.$swal({
                         title: '¿Uno o mas de los servicios agregados se finalizaran sin servicios adicionales, deseas continuar?',
                         text: 'No puedes revertir esta acción',
@@ -3099,12 +3073,15 @@ export default {
                     })
                     .then((result) => {
                         if(result.value) {
+                            dataFinal.services[0].microServiceSelect.forEach(element => {
+                                dataFinal.services[0].price = dataFinal.services[0].price - element.price
+                            });
+                            console.log(dataFinal)
                             axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
-                                service:data.services,
-                                client:data.client,
+                                service:dataFinal.services,
+                                client:dataFinal.client,
                                 branch:this.branch,
-                                employe: data.employe,
-                                microServices: data.microServices
+                                employe: dataFinal.employe
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == 'ok') {
@@ -3143,6 +3120,9 @@ export default {
                 }
             });
             if (valid){
+                dataFinal.services[0].microServiceSelect.forEach(element => {
+                    dataFinal.services[0].price = dataFinal.services[0].price - element.price
+                });
                 axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
                     service:data.services,
                     client:data.client,

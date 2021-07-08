@@ -102,6 +102,7 @@
                                 Siguiente
                             </base-button>
                         </div>
+                        
                         <div v-else-if="process == 'date'" class="data">
                             <h1 class="text-uppercase text-center">
                                 Horario
@@ -967,8 +968,8 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                     localStorage.setItem('imageUser', decoded.userImage)
                     localStorage.setItem('showNav', true)
                     localStorage.setItem('status', decoded.status)
-                    this.emitMethod(decoded.status)
                     router.push({path: '/Agendamiento'})
+                    this.emitMethod(decoded.status)
                 }
             })
             .catch(err =>{
