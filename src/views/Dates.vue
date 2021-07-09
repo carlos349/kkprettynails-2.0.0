@@ -1591,6 +1591,7 @@ export default {
             allowInput: true, 
             dateFormat: 'd-m-Y',
         },
+        dateMax:'',
         configDatePicker: {
         allowInput: true,
         dateFormat: 'd-m-Y',
@@ -1608,7 +1609,8 @@ export default {
             allowInput: true,
             dateFormat: 'm-d-Y',
             locale: Spanish, // locale for this instance only
-            minDate: new Date(), 
+            minDate: new Date(),
+            maxDate: '', 
             "disable": [
                 function(date) {
                     // return true to disable
@@ -1818,8 +1820,7 @@ export default {
                     this.configurations = {}
                 }
             }catch(err){}
-            console.log("este")
-            console.log(this.configurations)
+            this.configDatePicker.maxDate = new Date().setMonth(new Date().getMonth() + this.configurations.datesPolitics.limitTimeDate)
             const blockHours = this.configurations.blockHour
             this.configDatePicker.disable = [
                 function(date) {
