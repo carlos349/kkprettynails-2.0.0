@@ -633,6 +633,7 @@ export default {
                                 }
                                 this.findBranch(sendBranch)
                             }
+                            this.modals.modal1 = false
                             this.initialState(1)
                             EventBus.$emit('reloadLenders', 'reload')
                         }else{

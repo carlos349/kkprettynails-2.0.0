@@ -5,8 +5,8 @@
         <base-button id="processButton" style="margin-left: -50px;" size="sm" v-if="validRoute('procesar')" type="default" icon="ni ni-tag" v-on:click="modals.modal1 = true, openModal()">
         <span style="margin-left:15px;">Procesar</span> 
         </base-button>
-        <sidebar-item v-if="validRoute('metricas')" :link="{name: 'Metricas', icon: 'ni ni-chart-bar-32 text-primary', path: '/dashboard'}"/>
-        <sidebar-item v-if="validRoute('pedidos')" :link="{name: 'Pedidos', icon: 'ni ni-cart text-green', path: '/Pedidos'}"/>
+        <sidebar-item v-if="validRoute('metricas')" :link="{name: 'Reportes', icon: 'ni ni-chart-bar-32 text-primary', path: '/dashboard'}"/>
+        <sidebar-item v-if="validRoute('pedidos')" :link="{name: 'Gift Cards', icon: 'ni ni-cart text-green', path: '/Pedidos'}"/>
         <sidebar-item v-if="validRoute('usuarios')" :link="{name: 'Usuarios', icon: 'ni ni-key-25 text-red', path: '/Usuarios'}"/>
         <sidebar-item v-if="validRoute('ventas')" :link="{name: 'Ventas', icon: 'ni ni-money-coins text-green', path: '/Ventas'}"/>
         <sidebar-item v-if="validRoute('servicios')" :link="{name: 'Servicios', icon: 'ni ni-bullet-list-67 text-orange', path: '/Servicios'}"/>

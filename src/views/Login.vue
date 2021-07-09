@@ -734,7 +734,9 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                                     password: this.modelStart.password
                                 }, this.configHeader)
                                 if (registerUser) {
-                                    const registerFirstProfile = await axios.get(endPoint.endpointTarget+'/configurations/addFirstProfile',this.configHeader)
+                                    const registerFirstProfile = await axios.post(endPoint.endpointTarget+'/configurations/addFirstProfile', {
+                                        secretKey: this.modelStart.credential
+                                    }, this.configHeader)
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',

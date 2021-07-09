@@ -64,15 +64,15 @@
             </div>
         </div>
         <!-- Page content -->
-        <div class="container mt--8 pb-5" style="height:85vh;">
-            <slide-y-up-transition mode="out-in" origin="center top">
+        <div class="container mt--8 pb-5" style="height:100vh;">
+            <!-- <slide-y-up-transition mode="out-in" origin="center top"> -->
                 <router-view></router-view>
-            </slide-y-up-transition>
+            <!-- </slide-y-up-transition> -->
         </div>
-        <footer class="py-5 fixed-bottom bg-default">
+        <footer class="py-5 bg-default">
             <div class="container">
                 <div class="row align-items-center justify-content-xl-between">
-                    <div class="col-xl-6">
+                    <div class="col-xl-3">
                         <div class="copyright text-center text-xl-left text-muted">
                             &copy; {{year}} <a href="http://syswa.net/" class="font-weight-bold ml-1"
                                                target="_blank">SYSWA</a>
