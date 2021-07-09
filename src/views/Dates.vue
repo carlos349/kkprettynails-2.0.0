@@ -618,7 +618,7 @@
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true && this.configurations.datesPolitics.editDates" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Editar</span>  
@@ -636,7 +636,7 @@
                                     </center>
                                     </div>
                                 </template>
-                                <template v-if="validRoute('agendamiento', 'cerrar')">
+                                <template v-if="validRoute('agendamiento', 'cerrar') ">
                                     <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
@@ -647,7 +647,7 @@
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent.id,selectedEvent.cliente)" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar') && this.configurations.datesPolitics.deleteDates" v-on:click="deleteDate(selectedEvent.id,selectedEvent.cliente)" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Borrar</span>  
@@ -1597,16 +1597,11 @@ export default {
         locale: Spanish, // locale for this instance only
         minDate: new Date(),
         "disable": [
-                "25-12-2020",
                 function(date) {
                     // return true to disable
-                    return (date.getDay() === 0 );
+                    return false;
 
-                },
-                {
-                    from: "01-01-2021",
-                    to: "06-01-2021"
-                },
+                }
             ]          
         },
         configDatePickerEdit: {
@@ -1617,7 +1612,7 @@ export default {
             "disable": [
                 function(date) {
                     // return true to disable
-                    return (date.getDay() === 0 );
+                    return false;
 
                 },
                 
@@ -1823,9 +1818,23 @@ export default {
                     this.configurations = {}
                 }
             }catch(err){}
+            console.log("este")
+            console.log(this.configurations)
+            const blockHours = this.configurations.blockHour
+            this.configDatePicker.disable = [
+                function(date) {
+                    // var days = 10
+                    // for (const element of blockHours) {
+                    //     if (element.day === date.getDay()) {
+                    //         days = element.status ? element.day : 10
+                    //     }
+                    // }
+                    // console.log(days)
+                    return blockHours[date.getDay()].status == true ? false : true;
+                }
+            ]
 
-            const blockHours = this.configurations
-            this.configDate.disable = [
+            this.configDatePickerEdit.disable = [
                 function(date) {
                     // var days = 10
                     // for (const element of blockHours) {
@@ -2084,7 +2093,7 @@ export default {
                 }
                 this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: [], products: products})
             }else{
-                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, products: products})
+                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,microServices: [], microServiceSelect: [], products: products})
             }
             this.validHour = false  
             this.totalPrice = parseFloat(this.totalPrice) + parseFloat(price)
