@@ -57,12 +57,7 @@
                                 <i slot="suffix" class="fa fa-asterisk text-danger"></i>
                             </a-input>
                             <label>Imagen de perfil</label>
-<<<<<<< HEAD
                             <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" >
-                            <base-button @click="resetFileInput" type="primary">Button</base-button>
-=======
-                            <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="fileProfile" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" style="height: 36px;" >
->>>>>>> 2cded46cba0ef6daced82b114a98cb800c3a5387
                             <label>Correo</label>
                             <a-input 
                             style="margin-top:-5px;"

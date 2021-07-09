@@ -637,7 +637,7 @@
                                     </div>
                                 </template>
                                 <template v-if="validRoute('agendamiento', 'cerrar') ">
-                                    <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent.id)" class="col-md-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent._id)" class="col-md-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Cerrar</span>  
@@ -647,7 +647,7 @@
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar') && this.configurations.datesPolitics.deleteDates" v-on:click="deleteDate(selectedEvent.id,selectedEvent.cliente)" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar') && this.configurations.datesPolitics.deleteDates" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Borrar</span>  
@@ -3165,7 +3165,6 @@ export default {
             }
         },
         deleteDate(id,cliente){
-            console.log(id)
             this.$swal({
                 title: '¿Está seguro de borrar la cita?',
                 text: 'No puedes revertir esta acción',
@@ -3178,17 +3177,18 @@ export default {
             })
             .then((result) => {
                 if(result.value) {
-                    axios.delete(endPoint.endpointTarget+'/citas/' + id)
+                    axios.delete(endPoint.endpointTarget+'/dates/' + id, this.configHeader)
                     .then(res => {
-                        console.log(cliente)
-                        if(res.data.status == 'Cita Eliminada'){
+                        if(res.data.status == 'deleted'){
                         this.$swal({
                             type: 'success',
                             title: 'Cita eliminada',
                             showConfirmButton: false,
                             timer: 1500
                         })
-                        var actualMoment = 
+                        this.events = []
+                        this.dateModals.modal1 = false
+                        this.getDates();
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
                             userImage:localStorage.getItem('imageUser'),
@@ -3199,9 +3199,7 @@ export default {
                         .then(res => {
                             this.socket.emit('sendNotification', res.data)
                         }) 
-                        this.events = []
-                        this.dateModals.modal1 = false
-                        this.getDates();
+                        
                         }
                     })
                 }
