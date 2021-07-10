@@ -1325,7 +1325,7 @@ export default {
                     }
                     var description = this.itemData.tag == 'service' ? `Servicio: ${this.itemData.item.name} | Empleado: ${this.itemData.employe.name} | Adicionales: ${additionals}` : `${this.itemData.quantityProduct == 0 || this.itemData.quantityProduct == '' ? 1 : this.itemData.quantityProduct}) ${this.itemData.item.measure}`
 
-                    const commissionEmploye = this.itemData.tag == 'service' ? (this.itemData.price + (total * 0.50)) * parseFloat('0.'+this.itemData.commission) : 'none'
+                    const commissionEmploye = this.itemData.tag == 'service' ? (this.itemData.price * parseFloat('0.'+this.itemData.commission) + (total * 0.50)) : 'none'
                     this.serviceSelecteds.push({
                         item: this.itemData.item,
                         price: this.itemData.realPrice,
