@@ -239,6 +239,8 @@ export default {
             valid: false,
             valid2: false,
         },
+        originalDays:[],
+        dayValid:false,
         filter:'',
         branch:'',
         branchName:'',
@@ -450,9 +452,13 @@ export default {
         },
         selectHourInit(value){
             this.hourInit = value
+            this.dayValid = true
+            console.log(this.originalDays)
         },
         selectHourFinally(value){
-            this.hourFinally = value    
+            this.hourFinally = value
+            this.dayValid = true
+            console.log(this.originalDays)
         },
         addHour(day, index){
             setTimeout(() => {
@@ -609,13 +615,15 @@ export default {
                 })
             }else{
                 if (this.registerEmploye.firstName.length > 3 && this.registerEmploye.lastName.length > 3 && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
+                    console.log(this.originalDays)
                     axios.put(endPoint.endpointTarget+'/employes', {
                         id:this.registerEmploye._id,
                         firstName: this.registerEmploye.firstName,
                         document: this.registerEmploye.document,
                         days: this.selectedDays,
                         lastName: this.registerEmploye.lastName,
-                        branch: this.branch
+                        branch: this.branch,
+                        dayValid: this.dayValid
                     }, this.configHeader)
                     .then(res => {
                         if(res.data.status == "employe edited"){
@@ -634,6 +642,7 @@ export default {
                                 this.findBranch(sendBranch)
                             }
                             this.modals.modal1 = false
+                            this.getEmployes()
                             this.initialState(1)
                             EventBus.$emit('reloadLenders', 'reload')
                         }else{
@@ -702,6 +711,7 @@ export default {
             })	
 		},
         pushData(firstName,days,_id,document,lastName,branch){
+            this.originalDays = []
             this.registerEmploye.firstName = firstName
             this.registerEmploye.lastName = lastName
             this.registerEmploye.document = document
@@ -710,6 +720,7 @@ export default {
             this.registerEmploye.show = true
             this.registerEmploye._id = _id
             this.selectedDays = days
+
             for (let index = 0; index < this.days.length; index++) {
                 const element = this.days[index];
                 for (let j = 0; j < days.length; j++) {
@@ -757,6 +768,7 @@ export default {
                 valid:false,
                 valid2:false,
             }
+            this.dayValid = false
             this.selectedDays = []
             for (let index = 0; index < this.days.length; index++) {
                 this.days[index].valid = false
@@ -773,6 +785,7 @@ export default {
                 }
             }
             if (val == 3) {
+                
                 this.tipeForm = 'Editar'
                 for (const days of this.days){
                     days.start = 'Desde',
