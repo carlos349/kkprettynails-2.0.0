@@ -19,7 +19,7 @@
                         <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Categorías
                     </base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()" type="success">
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="validCreate(), clean()" type="success">
                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Nuevo
                     </base-button>
@@ -817,6 +817,18 @@ export default {
             this.getProducts()
             this.getCategories()
         },
+        validCreate(){
+            if (this.categories.length == 0) {
+                this.$swal({
+					icon: 'error',
+					title: 'Debes crear una categoria primero',
+					showConfirmButton: false,
+					timer: 2500
+				})
+            }else{
+                this.modals.modal1 = true
+            }
+        },
         deleteService(id){
             this.$swal({
 				title: '\n¿Desea eliminar este servicio?',
@@ -1104,6 +1116,9 @@ export default {
 
         },
         clean(){
+            this.categoryRegister = 'Categoría'
+            this.timeHoursRegister = 'Horas',
+            this.timeMinutesRegister = 'Minutos',
             this.itemsBox.forEach(element => {
                 element.check = false
                 element.count = ''

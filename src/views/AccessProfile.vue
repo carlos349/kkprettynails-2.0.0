@@ -46,17 +46,10 @@
                             <h2>Accesos</h2>
                             <div class="row">
                                 <div v-for="(route, index) in routesProfiles" :key="route.ruta" class="col-md-4">
-                                    <a-tooltip>
-                                        <template slot="title">
-                                            <span>
-                                                Seleccione para administrar acceso
-                                            </span>
-                                        </template>
-                                        <base-button class="w-100 mt-2" :type="route.valid ? 'success' : 'danger'" @click="openFunctionalities(index, route.route)">
-                                            <i :class="route.valid ? 'ni ni-check-bold' : 'fa fa-ban'" class="float-left mt-1"></i>
-                                            <span class="text-center">{{route.route}}</span>
-                                        </base-button>
-                                    </a-tooltip>
+                                    <base-button class="w-100 mt-2" :type="route.valid ? 'success' : 'danger'" @click="openFunctionalities(index, route.route)">
+                                        <i :class="route.valid ? 'ni ni-check-bold' : 'fa fa-ban'" class="float-left mt-1"></i>
+                                        <span class="text-center">{{route.route}}</span>
+                                    </base-button>
                                 </div>
                             </div>
                         </div>
@@ -96,10 +89,10 @@
                 </base-button>
             </template>
         </a-modal>
-        <a-modal v-model="modals.modal2" :footer="null" :width="400">
+        <a-modal v-model="modals.modal2" :footer="null" :width="500">
             <template>
                 <div class="text-muted text-center">
-                    <h3>Habilite las funciones de la acceso</h3>
+                    <h3>Habilite las funciones de la sección de <span class="text-primary"> <b>{{selectedRouteName}}</b> </span> </h3>
                     <p>Activar acceso <a-switch size="small" :checked="routesProfiles[routeSelected].valid" @change="changeActive" /></p>
                 </div>
             </template>
@@ -142,6 +135,7 @@ export default {
                 name: '',
                 index: 0
             },
+            selectedRouteName: '',
             newAccess: {
                 name: '',
                 commission: false
@@ -380,6 +374,7 @@ export default {
         openFunctionalities(index, route){
             if (this.routesProfiles[index].valid) {
                 this.routeSelected = index
+                this.selectedRouteName = route
                 for (const i in this.routesProfiles[index].functions) {
                     const functionn = this.routesProfiles[index].functions[i]
                     for (const key in this.accessProfiles[this.profileSelect.index].routes) {
@@ -398,7 +393,6 @@ export default {
                 this.routeSelected = index
                 this.modals.modal2 = true
             }
-            console.log()
         },
         activeFunction(functionn, index){
             if (this.routesProfiles[this.routeSelected].functions[index].valid) {

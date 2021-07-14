@@ -15,7 +15,7 @@
                 </base-button>
                 <base-button class="float-right mt-7 mr-2" size="sm" @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" type="primary">
                     <a-icon type="shopping-cart" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                    proveedores
+                    Proveedores
                 </base-button>
                 <base-button class="float-right mt-7 mr-2" size="sm" @click="modalAdminProduct.modal1 = true, productsCount()" type="success">
                     <a-icon type="shop" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
@@ -82,7 +82,7 @@
                                     {{(parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume)}}
                                     <a-tooltip placement="topLeft">
                                         <template slot="title">
-                                            <span>Este producto necesita ser reabastecido.</span>
+                                            <span>Bajo en stock</span>
                                         </template>
                                         <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.1em;font-size:1.1em" type="exclamation-circle" />
                                     </a-tooltip>
@@ -390,6 +390,7 @@
                     </select>
                     <base-input v-if="validForm == 1" alternative
                           placeholder="Numero para alerta"
+                          v-on:keyup="verifyDecimal()"
                           v-model="dataProduct.alertTotal"
                           addon-left-icon="fa fa-bell">
                     </base-input>
@@ -447,6 +448,7 @@
                     </select>
                     <base-input alternative
                           placeholder="Numero para alerta"
+                          v-on:keyup="verifyDecimal()"
                           v-model="dataProduct.alertTotal"
                           addon-left-icon="fa fa-bell">
                     </base-input>
@@ -682,6 +684,7 @@
         </div>
         <base-input alternative
             placeholder="Numero para alerta"
+            v-on:keyup="verifyDecimalBranch()"
             v-model="branchAlert"
             addon-left-icon="fa fa-bell">
         </base-input>
@@ -724,7 +727,7 @@ export default {
         branchData:[],
         selectedBranchName: '',
         branchEntry: [],
-        branchAlert: '',
+        branchAlert: null,
         idForAlert:'',
         selectedBranch:'',
         productsForBranch:[],
@@ -1688,6 +1691,20 @@ export default {
             clearFilters();
             this.searchText = '';
         },
+        verifyDecimal(){
+            if (this.dataProduct.alertTotal != '') {
+                console.log("aqui no")
+                this.dataProduct.alertTotal = this.dataProduct.alertTotal.toString().replace(/\,/g,'.')
+            }
+        },
+        verifyDecimalBranch(){
+            setTimeout(() => {
+                if (this.branchAlert != '') {
+                    console.log("aqui no")
+                    this.branchAlert = parseFloat(this.branchAlert.toString().replace(/\,/g,'.'))
+                }
+            }, 200);
+        },
         addProvider(){
             axios.post(endPoint.endpointTarget+'/stores/addprovider', {
               name: this.provider.name,
@@ -2038,9 +2055,9 @@ export default {
                     .then(res => {
                         if (res.data.status == 'store edited') {
                             this.$swal({
-                                type: 'error',
-                                icon: 'error',
-                                title: 'El nombre del producto ya se encuentra registrado en la bodega',
+                                type: 'success',
+                                icon: 'success',
+                                title: 'Producto editado correctamente',
                                 showConfirmButton: false,
                                 timer: 1500
                             })

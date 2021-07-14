@@ -182,7 +182,7 @@
                                                                     <template style="z-index: 100" v-if="ifMicro">
                                                                         <a-tooltip placement="top">
                                                                             <template slot="title">
-                                                                                <span v-if="hideText != 'display:none'">Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
+                                                                                <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de aplicar marcar opción "NINGUNO" para poder avanzar.</span>
                                                                             </template>
                                                                             <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
                                                                                 <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
@@ -367,9 +367,11 @@
                         </template>
                         <center>
                             <a-select
+                                ref="clientSelect"
                                 show-search
                                 placeholder="Selecciona un cliente"
                                 class="w-50 mb-2"
+                                :allowClear="true"
                                 option-filter-prop="children"
                                 :filter-option="filterOption"
                             >
@@ -831,7 +833,7 @@
                             <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                             <span>Seleccionado</span>
                         </base-button>
-                        <base-button v-else size="sm" disabled class="col-12" type="secondary">
+                        <base-button v-else size="sm" style="cursor:not-allowed" disabled class="col-12" type="secondary">
                             <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                             <span>No seleccionable</span>
                         </base-button>
@@ -1905,7 +1907,7 @@ export default {
                 if (decoded.linkLender == '') {
                     this.$swal.fire({
                         icon: 'error',
-                        title: 'No tiene permisos de ver citas, y su usuario no esta asociado a un prestador de servicio'
+                        title: 'Usted no cuenta con permiso para visualizar la agenda. \n Contacte a su supervisor'
                     })
                 }else{
                     try {
@@ -2254,6 +2256,7 @@ export default {
                } 
         },
         initialState(){
+            $(".ant-select-selection__clear").click()
             this.$refs.wizard.reset()
             this.registerDate = {
                 services:[],
@@ -2621,6 +2624,8 @@ export default {
                                             timer: 1500
                                         })
                                         this.$refs.wizard.reset()
+                                        this.modals.modal1 = false
+                                        $(".ant-select-selection__clear").click()
                                         this.getDates()
                                         this.initialState()
                                         // this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
@@ -2652,6 +2657,7 @@ export default {
                                     })
                                     this.ifDisabled = false
                                     this.$refs.wizard.reset()
+                                    this.modals.modal1 = false
                                     this.getDates()
                                     this.initialState()
                                     this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
@@ -2733,6 +2739,9 @@ export default {
                 }
             })
         },
+        pruebaSe(){
+            $(".ant-select-selection__clear").click()
+        },
         getDatesByEmploye(id, img, name){
             console.log(img)
             if (id == "Todos") {
@@ -2756,7 +2765,7 @@ export default {
                         this.$swal({
                             type: 'error',
                             icon: 'error',
-                            title: 'Este empleado no posee ninguna cita',
+                            title: 'Empleado sin citas asignadas',
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -4403,7 +4412,7 @@ export default {
             }else{
                 this.$swal({
                     icon: 'error',
-                    title: 'Debe elegir un servicio y si desea microservicio, en su defecto elegir ninguno.',
+                    title: 'Debe seleccionar un Adicional, en caso de no desear, por favor marque como NINGUNO',
                     showConfirmButton: false,
                     timer: 3000
                 })
@@ -4980,11 +4989,6 @@ export default {
         font-size: 2em;
         vertical-align: sub;
         margin-right: 5px;
-    }
-    
-
-    ::-webkit-scrollbar {
-        display: none;
-    }
+    } 
     
 </style>

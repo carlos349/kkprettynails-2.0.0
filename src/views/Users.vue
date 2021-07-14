@@ -24,79 +24,92 @@
         </base-header>
         <modal :show.sync="modals.modal1"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
+               modal-classes="modal-dialog-centered modal-lg">
                <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <a-spin size="large" :spinning="ifRegister">
                 <div class="p-3 pt-4">
                     <template>
-                        <div style="margin-top:-10% !important" class="text-muted text-center mb-3">
+                        <div style="margin-top:-10% !important" class="text-muted text-center">
                             Datos del usuario
                         </div>
                     </template>
                     <template>
                         <form role="form">
-                            <a-select class="w-100 mb-2 mt-2" default-value="Seleccione la sucursal"  @change="selectBranch">
-                                <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
-                                    {{branch.name}}
-                                </a-select-option>
-                            </a-select>
-                            <a-input 
-                            v-model="registerUser.name"
-                            placeholder="Nombre"
-                            class="mb-2"
-                            v-on:change="validRegister()">
-                                <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
-                                <i slot="suffix" class="fa fa-asterisk text-danger"></i>
-                            </a-input>
-                            <a-input 
-                            v-model="registerUser.lastname"
-                            placeholder="Apellido"
-                            class="mb-2"
-                            v-on:change="validRegister()">
-                                <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
-                                <i slot="suffix" class="fa fa-asterisk text-danger"></i>
-                            </a-input>
-                            <label>Imagen de perfil</label>
-                            <input type="file" id="fileProfile" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-1 pb-2" >
-                            <label>Correo</label>
-                            <a-input 
-                            style="margin-top:-5px;"
-                                v-model="registerUser.email"
-                                placeholder="Correo"
-                                v-on:keyup="validFields('c')"
-                                class="mb-0">
-                                <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
-                                <i slot="suffix" class="fa fa-asterisk text-danger"></i>
-                            </a-input>
-                            <a-form-item
-                            class="mt-1"
-                            :validate-status="registerUser.c ? 'success' : 'error'"
-                            :help="registerUser.c ? '' : 'Los correos deben coincidir'">
-                                <a-input :id="registerUser.c ? 'success' : 'error'" v-model="registerUser.emailConfirm" placeholder="Confirmar correo" v-on:keyup="validFields('c')">
-                                    <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
-                                </a-input>
-                            </a-form-item>
-                            <label>Contraseña</label>
-                            <a-form-item
-                            class="m-0"
-                            :validate-status="registerUser.password.length > 8 ? 'success' : 'error'">
-                                <a-input-password 
-                                v-model="registerUser.password"
-                                placeholder="contraseña"
-                                :id="registerUser.password.length > 8 ? 'success' : 'error'"
-                                v-on:keyup="validFields('p')"
-                                class="mb-2">
-                                    <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
-                                    <i slot="suffix" class="fa fa-asterisk text-danger"></i>
-                                </a-input-password>
-                            </a-form-item>
-                            <a-form-item
-                            :validate-status="registerUser.p && registerUser.password.length > 8 ? 'success' : 'error'"
-                            :help="registerUser.p && registerUser.password.length > 8 ? '' : 'Las contraseñas deben coincidir y tener más de 8 caracteres'">
-                                <a-input-password :id="registerUser.p && registerUser.password.length > 8 ? 'success' : 'error'" v-model="registerUser.passwordConfirm" placeholder="Confirmar contraseña" v-on:keyup="validFields('p')">
-                                    <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
-                                </a-input-password>
-                            </a-form-item>
+                            <div class="row p-4">
+                                <a-select class="w-75 mb-2 mx-auto" placeholder="Seleccione la sucursal"
+                                :allowClear="true"
+                                @change="selectBranch">
+                                    <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
+                                        {{branch.name}}
+                                    </a-select-option>
+                                </a-select> <br>
+                                <label class="col-12 text-center">Imagen de perfil</label>
+                                <input type="file" id="fileProfile" style="padding:2px" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input w-75 mx-auto mb-2 pb-2" >
+                                <div class="col-md-6">
+                                    <a-input 
+                                    v-model="registerUser.name"
+                                    placeholder="Nombre"
+                                    class="mb-2 "
+                                    v-on:change="validRegister()">
+                                        <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
+                                        <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                                    </a-input>
+                                </div>
+                                <div class="col-md-6">
+                                    <a-input 
+                                    v-model="registerUser.lastname"
+                                    placeholder="Apellido"
+                                    class=""
+                                    v-on:change="validRegister()">
+                                        <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
+                                        <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                                    </a-input>
+                                </div>
+                                <div class="col-md-6">
+                                    <a-input 
+                                        v-model="registerUser.email"
+                                        placeholder="Correo"
+                                        v-on:keyup="validFields('c')"
+                                        class="mb-0">
+                                        <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
+                                        <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                                    </a-input>
+                                </div>
+                                <div class="col-md-6">
+                                    <a-form-item
+                                    :validate-status="registerUser.c ? 'success' : 'error'"
+                                    :help="registerUser.c ? '' : 'Los correos deben coincidir'">
+                                        <a-input :id="registerUser.c ? 'success' : 'error'" v-model="registerUser.emailConfirm" placeholder="Confirmar correo" v-on:keyup="validFields('c')">
+                                            <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
+                                        </a-input>
+                                    </a-form-item>
+                                </div>
+                                <div class="col-md-6">
+                                    <a-form-item
+                                    class="m-0"
+                                    :validate-status="registerUser.password.length > 8 ? 'success' : 'error'">
+                                        <a-input-password 
+                                        v-model="registerUser.password"
+                                        placeholder="contraseña"
+                                        :id="registerUser.password.length > 8 ? 'success' : 'error'"
+                                        v-on:keyup="validFields('p')"
+                                        class="mb-2">
+                                            <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
+                                            <i slot="suffix" class="fa fa-asterisk text-danger"></i>
+                                        </a-input-password>
+                                    </a-form-item>
+                                </div>
+                                <div class="col-md-6">
+                                    <a-form-item
+                                    :validate-status="registerUser.p && registerUser.password.length > 8 ? 'success' : 'error'"
+                                    :help="registerUser.p && registerUser.password.length > 8 ? '' : 'Las contraseñas deben coincidir y tener más de 8 caracteres'">
+                                        <a-input-password :id="registerUser.p && registerUser.password.length > 8 ? 'success' : 'error'" v-model="registerUser.passwordConfirm" placeholder="Confirmar contraseña" v-on:keyup="validFields('p')">
+                                            <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
+                                        </a-input-password>
+                                    </a-form-item>
+                                </div>
+                            </div>
+                            
                             <div class="text-center">
                                 <base-button type="primary" v-if="registerUser.valid == false" disabled class="my-2">Registrar</base-button>
                                 <base-button type="primary" v-on:click="registerUsers()" v-else class="my-2">Registrar</base-button>
@@ -118,9 +131,10 @@
         <modal :show.sync="modals.modal4"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  body-classes="px-lg-5"
                   class="border-0">
                 <template>
                     <div class="text-muted text-center mb-3">
@@ -167,7 +181,7 @@
                 <template>
                     <a-select class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione la sucursal"  @change="selectEmploye" size="large">
                         <a-select-option v-for="lender of lenderNames" :key="lender._id" :value="lender._id">
-                            {{lender.firstName}} / {{lender.document}}
+                            {{lender.firstName}} {{lender.lastName}} / {{lender.document}}
                         </a-select-option>
                     </a-select>
                     <base-button type="default" v-on:click="estatusEdit(profileSelect, false, routesSelect, idSelect)">
@@ -179,9 +193,10 @@
         <modal :show.sync="modals.modal5"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  body-classes="px-lg-5 "
                   class="border-0">
                 <template>
                     <div class="text-muted text-center mb-3">
@@ -1450,6 +1465,7 @@ export default {
             } 
         },
         initialState(val){
+            $(".ant-select-selection__clear").click()
             this.registerUser = {
                 name:'',
                 lastname:'',
@@ -1481,8 +1497,8 @@ export default {
         },
         deleteUser(id){
 			this.$swal({
-				title: '\n¿Desea eliminar usuario?',
-				text: 'No puedes revertir esta acción',
+				title: '¿Eliminar usuario?',
+				text: '¡Recuerda! No es posible revertir esta acción',
 				icon: 'warning',
 				showCancelButton: true,
 				confirmButtonText: 'Sí',

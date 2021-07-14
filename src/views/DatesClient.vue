@@ -68,7 +68,7 @@
                                                     <template v-if="ifMicro">
                                                         <a-tooltip placement="top">
                                                             <template slot="title">
-                                                                <span>Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
+                                                                <span>Marque el adicional deseado, en caso de aplicar marcar opción "NINGUNO" para poder avanzar.</span>
                                                             </template>
                                                             <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
                                                             <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
@@ -225,8 +225,8 @@
                                                                 <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                                                                 <span>Seleccionado</span>
                                                             </base-button>
-                                                            <base-button v-else size="sm" disabled class="col-12" type="secondary">
-                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.Horario}}</badge>
+                                                            <base-button style="cursor:not-allowed" v-else size="sm" disabled class="col-12" type="secondary">
+                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                                                                 <span>No seleccionable</span>
                                                             </base-button>
                                                         </div>
@@ -1722,7 +1722,7 @@
                 }else{
                     this.$swal({
                         icon: 'error',
-                        title: 'Debe elegir un servicio y si desea microservicio, en su defecto elegir ninguno.',
+                        title: 'Debe seleccionar un Adicional, en caso de no desear, por favor marque como NINGUNO',
                         showConfirmButton: false,
                         timer: 3000
                     })
@@ -1973,7 +1973,7 @@
                 .then(res => {
                     if (res.data.status == 'client create') {
                         this.$swal({
-                            icon: 'error',
+                            icon: 'success',
                             title: 'Te has registrado con éxito',
                             showConfirmButton: false,
                             timer: 2500
@@ -1985,6 +1985,7 @@
                         this.getCategories()
                         this.getEmployes()
                         this.getMicroServices()
+                        this.modals.modal6 = false
                         EventBus.$emit('reloadClients', 'reload')
                     }else{
                         this.$swal({

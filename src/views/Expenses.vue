@@ -116,7 +116,7 @@
                                 <template slot="title">
                                     Total = Ventas + Reinversión - Gastos
                                 </template>
-                                <stats-card title="Total"
+                                <stats-card title="Ganancia"
                                     type="gradient-orange"
                                     :sub-title="totalFinal | formatPrice"
                                     icon="ni ni-sound-wave"
@@ -459,7 +459,7 @@ export default {
             if (this.reinvestmentValid && this.reinvestmentId != '') {
                 const expenseTotal = this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual + this.thisMonth.Comision
                 this.$swal({
-                        title: '¿Está seguro que desea Hacer el cierre?',
+                        title: '¿Desea realizar el cierre?',
                         type: 'warning',
                         icon: 'warning',
                         showCancelButton: true,

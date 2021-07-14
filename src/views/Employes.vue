@@ -582,6 +582,7 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                            this.modals.modal1 = false
                             this.getEmployes()
                             this.initialState(1)
                             EventBus.$emit('reloadLenders', 'reload')
@@ -629,7 +630,7 @@ export default {
                         if(res.data.status == "employe edited"){
                             this.$swal({
                                 icon: 'success',
-                                title: '¡Empleado editado con exito!',
+                                title: '¡Edición Exitosa!',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
@@ -687,14 +688,7 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                            if (this.filter == 'Todas') {
-                                this.getEmployes()
-                            }if (this.filter != 'Todas' && this.filter != '') {
-                                const sendBranch = {
-                                    _id:this.filter
-                                }
-                                this.findBranch(sendBranch)
-                            }
+                            this.getEmployes()
                             this.initialState(1)
                             EventBus.$emit('reloadLenders', 'reload')
                         }

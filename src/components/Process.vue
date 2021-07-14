@@ -16,7 +16,7 @@
                             v-model="registerClient.select"
                             @change="chooseClient">
                             <a-select-option v-for="client of clients" :key="client._id" :value="client._id">
-                                {{client.firstName}}
+                                {{client.firstName}} {{client.lastName}} 
                             </a-select-option>
                         </a-select>
                         <a-button v-if="ifEdit" @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
@@ -193,7 +193,8 @@
                                     </div>
                                 </template>
                                 <!-- :scroll="getScreen" -->
-                                <a-table :columns="columnDates" :loading="progress" :data-source="datesFinally" :scroll="getScreen" >
+                                <a-table :columns="columnDates" :loading="progress"
+                                 :data-source="datesFinally" :scroll="getScreen" >
                                     <template slot="date-slot" slot-scope="record, column">
                                         {{column.createdAt | formatDate}}
                                     </template>
@@ -224,7 +225,7 @@
                         </div>
                     </template>
                     <!-- :scroll="getScreen" -->
-                    <a-table :columns="columns" :loading="progress" :data-source="serviceSelecteds" :scroll="getScreen" >
+                    <a-table :columns="columns" :pagination="{ pageSize: 3, defaultPageSize: 3 }" :loading="progress" :data-source="serviceSelecteds" :scroll="getScreen" >
                         <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
                         <template slot="price-slot" slot-scope="record, column">
                             {{column.price | formatPrice}}
@@ -351,7 +352,7 @@
                             </base-input>
                             <base-input alternative
                                 class="mb-3"
-                                placeholder="Segundo nombre"
+                                placeholder="Apellido"
                                 v-model="registerClient.lastName"
                                 v-on:keyup="validRegister(2)"
                                 addon-left-icon="ni ni-single-02">

@@ -512,6 +512,8 @@ export default {
                             timer: 1500
                         })
                         this.getClosing()
+                        this.modals.modal3 = false
+                        this.modals.modal4 = false
                         this.cashFunds.inspector = true
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
