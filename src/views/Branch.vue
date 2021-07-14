@@ -77,11 +77,14 @@
                         </template>
                     </template>
                     <template slot="actionButtons" class="mx-auto" slot-scope="record, column">
-                        <router-link  :to="{ path: '/configuration', query: { id: column._id }}">
+                        <router-link v-if="validRoute('sucursales', 'configurar')" :to="{ path: '/configuration', query: { id: column._id }}">
                             <base-button :disabled="validRoute('sucursales', 'configurar') ? false : true" class="text-center" icon="ni ni-settings-gear-65" size="sm" type="default" >
                                 Configurar
                             </base-button> 
                         </router-link>
+                        <base-button v-else disabled class="text-center" icon="ni ni-settings-gear-65" size="sm" type="default" >
+                            Configurar
+                        </base-button> 
                 </template>
                 <template slot="format-date" slot-scope="record, column">
                     {{formatDate(column.createdAt)}}

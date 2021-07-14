@@ -9,19 +9,19 @@
                 <div class="text-absolute">
                     <p class="mb-0 display-2 text-white">Bodega</p>
                 </div>
-                <base-button class="float-right mt-7 mr-0" size="sm" @click="modals.modal4 = true" type="warning">
+                <base-button class="float-right mt-7 mr-0" :disabled="validRoute('bodega', 'cierre_bodega') ? false : true" size="sm" @click="modals.modal4 = true" type="warning">
                     <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
                     Cerrar bodega
                 </base-button>
-                <base-button class="float-right mt-7 mr-2" size="sm" @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" type="primary">
+                <base-button :disabled="validRoute('bodega', 'registrar_proveedores') ? false : true" class="float-right mt-7 mr-2" size="sm" @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" type="primary">
                     <a-icon type="shopping-cart" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                     Proveedores
                 </base-button>
-                <base-button class="float-right mt-7 mr-2" size="sm" @click="modalAdminProduct.modal1 = true, productsCount()" type="success">
+                <base-button :disabled="validRoute('bodega', 'gestion_sucursales') ? false : true" class="float-right mt-7 mr-2" size="sm" @click="modalAdminProduct.modal1 = true, productsCount()" type="success">
                     <a-icon type="shop" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                     Sucursales
                 </base-button>
-                <base-button class="float-right mt-7 mr-2" size="sm" @click="modals.modal1 = true ,validForm = 1, initialState(3)" type="success">
+                <base-button :disabled="validRoute('bodega', 'registrar_producto') ? false : true" class="float-right mt-7 mr-2" size="sm" @click="modals.modal1 = true ,validForm = 1, initialState(3)" type="success">
                     <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                     Registrar
                 </base-button>
@@ -101,21 +101,21 @@
                                             <template slot="title">
                                             <span>Anexar productos</span>
                                             </template>
-                                            <base-button  title="Compras" size="sm" type="success" @click="modals.modal1 = true, validForm = 3, dataProduct.entry = '', dataProduct.measure = column.measure, dataProduct.product = column.product,initialState(1,column._id)" icon="fa fa-plus"></base-button>
+                                            <base-button :disabled="validRoute('bodega', 'anexar_productos') ? false : true" title="Compras" size="sm" type="success" @click="modals.modal1 = true, validForm = 3, dataProduct.entry = '', dataProduct.measure = column.measure, dataProduct.product = column.product,initialState(1,column._id)" icon="fa fa-plus"></base-button>
                                         </a-tooltip>
 
                                         <a-tooltip placement="top">
                                             <template slot="title">
                                                 <span>Editar producto</span>
                                             </template>
-                                            <base-button title="Editar producto" size="sm" type="default" icon="fa fa-edit" @click="pushDataProduct(column.product,column.measure,column.price, column.alertTotal, column._id)"></base-button>
+                                            <base-button :disabled="validRoute('bodega', 'editar_producto') ? false : true" title="Editar producto" size="sm" type="default" icon="fa fa-edit" @click="pushDataProduct(column.product,column.measure,column.price, column.alertTotal, column._id)"></base-button>
                                         </a-tooltip>  
 
                                         <a-tooltip placement="top">
                                             <template slot="title">
                                             <span>Eliminar</span>
                                             </template>
-                                            <base-button  title="Eliminar" size="sm" type="danger" @click="deleteItem(column._id)" icon="fa fa-trash"></base-button>
+                                            <base-button :disabled="validRoute('bodega', 'eliminar_producto') ? false : true" title="Eliminar" size="sm" type="danger" @click="deleteItem(column._id)" icon="fa fa-trash"></base-button>
                                         </a-tooltip> 
                                     </b>
                                 </template>
@@ -178,14 +178,14 @@
                                           <template slot="title">
                                             <span>Editar</span>
                                           </template>
-                                          <base-button size="sm" type="default" @click="modals.modal3 = true, providerSup.typeProvider = 'Editar', pushDataProvider(column.name, column.document, column.contact,column.contactPlus,column.location,column._id)" icon="fas fa-edit"></base-button>
+                                          <base-button :disabled="validRoute('bodega', 'editar_proveedor') ? false : true" size="sm" type="default" @click="modals.modal3 = true, providerSup.typeProvider = 'Editar', pushDataProvider(column.name, column.document, column.contact,column.contactPlus,column.location,column._id)" icon="fas fa-edit"></base-button>
                                         </a-tooltip>
 
                                         <a-tooltip placement="top">
                                             <template slot="title">
                                             <span>Eliminar</span>
                                             </template>
-                                            <base-button size="sm" type="danger" @click="deleteProvider(column._id)" icon="fa fa-trash"></base-button>
+                                            <base-button :disabled="validRoute('bodega', 'eliminar_proveedor') ? false : true" size="sm" type="danger" @click="deleteProvider(column._id)" icon="fa fa-trash"></base-button>
                                         </a-tooltip> 
                                     </b>
                                 </template>
@@ -213,7 +213,7 @@
                                       <template #renderEmpty>
                                           <div style="text-align: center">
                                               <a-icon type="warning" style="font-size: 20px" />
-                                              <h2>No hay ningun registro de historial</h2>
+                                              <h2>{{messageHistory}}</h2>
                                           </div>
                                       </template>
                                       <a-table :columns="columnsHistory" :loading="productState" :data-source="dataHistory" :scroll="getScreen">
@@ -272,7 +272,7 @@
                                       <template #renderEmpty>
                                           <div style="text-align: center">
                                               <a-icon type="warning" style="font-size: 20px" />
-                                              <h2>No hay ningun registro de cierre</h2>
+                                              <h2>{{messageHistory}}</h2>
                                           </div>
                                       </template>
                                       <a-table :columns="columnsHistoryClosed" :loading="productState" :data-source="dataHistoryClosed" :scroll="getScreen">
@@ -555,7 +555,7 @@
                     <template #renderEmpty>
                         <div style="text-align: center">
                             <a-icon type="warning" style="font-size: 20px" />
-                            <h2>No hay ningun registro</h2>
+                            <h2>{{messageHistory}}</h2>
                         </div>
                     </template>
                     <a-table :columns="columnsHistoryClosedReport" :loading="productState" :data-source="dataHistoryClosedReport" :scroll="getScreen">
@@ -707,6 +707,7 @@ import { Empty } from 'ant-design-vue';
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
+import jwtDecode from 'jwt-decode';
 // COMPONENTS
 
 import mixinUserToken from '../mixins/mixinUserToken'
@@ -759,6 +760,7 @@ export default {
           dateFormat: 'm-d-Y',
           locale: Spanish,        
         },
+        auth: [],
         modals: {
           modal1: false,
           modal3: false,
@@ -781,6 +783,7 @@ export default {
           alertTotal:'',
           id:null
         },
+        messageHistory: '',
         products: [],
         searchText: '',
         searchInput: null,
@@ -1238,13 +1241,14 @@ export default {
       };
     },
     created(){
-      this.getProducts();
-      this.getProviders();
-      this.getHistoryClosed();
-      this.getUserData()
-      this.getHistory()
-      this.getBranches()
-      this.getBranch()
+        this.getToken()
+        this.getProducts();
+        this.getProviders();
+        this.getHistoryClosed();
+        this.getUserData()
+        this.getHistory()
+        this.getBranches()
+        this.getBranch()
     },
     methods: {
         getUserData(){
@@ -1256,6 +1260,13 @@ export default {
         getBranch(){
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
+        },
+        getToken(){
+            const token = localStorage.userToken
+            if (token.length > 0) {
+                const decoded = jwtDecode(token)  
+                this.auth = decoded.access
+            }
         },
         async getProducts() {
             this.countProduct = []
@@ -1306,8 +1317,15 @@ export default {
         async getHistory() {
           try{
             const getHistory = await axios.get(endPoint.endpointTarget+'/stores/getstorehistory', this.configHeader)
-            if (getHistory) {
-              this.dataHistory = getHistory.data.data
+            if (this.validRoute('bodega', 'ver_historial_compras')) {
+                if (getHistory.data.status == 'ok') {
+                    this.dataHistory = getHistory.data.data
+                }else{
+                    this.dataHistory = []
+                    this.messageHistory = 'Sin historial registrado'
+                }
+            }else{
+                this.messageHistory = 'No tiene permisos para visualizar historial'
             }
           }catch(err){
             this.$swal({
@@ -1593,10 +1611,15 @@ export default {
         async getHistoryClosed() {
             try{
                 const getHistoryClosed = await axios.get(endPoint.endpointTarget+'/stores/getstoreclosed', this.configHeader)
-                if (getHistoryClosed.data.status == 'ok') {
-                    this.dataHistoryClosed = getHistoryClosed.data.data
+                if (this.validRoute('bodega', 'ver_historial_compras')) {
+                    if (getHistoryClosed.data.status == 'ok') {
+                        this.dataHistoryClosed = getHistoryClosed.data.data
+                    }else{
+                        this.dataHistoryClosed = []
+                        this.messageHistory = 'Sin historial registrado'
+                    }
                 }else{
-                    this.dataHistoryClosed = []
+                    this.messageHistory = 'No tiene permisos para visualizar historial'
                 }
             }catch(err){
                 this.$swal({
@@ -2117,6 +2140,18 @@ export default {
             } 
             let val = concat.replace('.', '-')
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
         }
     },
     mounted() {

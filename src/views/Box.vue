@@ -48,17 +48,13 @@
                     {{formatDate(column.createdAt)}}
                 </template>
                 <template slot="Admin" slot-scope="record, column">
-                    <b>
-                        <center>
-                            <a-tooltip placement="top">
-                                <template slot="title">
-                                <span>Reporte</span>
-                                </template>
-                                <base-button v-if="validRoute('caja', 'reporte')" size="sm" type="default" icon="fas fa-clipboard" v-on:click="dataReport(column._id)"></base-button> 
-                                <base-button v-else size="sm" type="default" icon="fas fa-clipboard" disabled></base-button> 
-                            </a-tooltip>
-                        </center> 
-                    </b>
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                            <span>Reporte</span>
+                        </template>
+                        <base-button v-if="validRoute('caja', 'reporte')" size="sm" type="default" icon="fas fa-clipboard" v-on:click="dataReport(column._id)"></base-button> 
+                        <base-button v-else size="sm" type="default" icon="fas fa-clipboard" disabled></base-button> 
+                    </a-tooltip>
                 </template>
             </a-table>
         </a-config-provider>

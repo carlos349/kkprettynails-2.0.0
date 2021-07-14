@@ -179,7 +179,7 @@
                     {{column.amount | formatPrice}}
                 </template>
                 <template slot="action-slot" slot-scope="record, column">
-                    <base-button @click="deleteExpense(column._id, column.type, column.employe, column.amount)" size="sm" type="danger">
+                    <base-button :disabled="validRoute('gastos', 'eliminar') ? false : true" @click="deleteExpense(column._id, column.type, column.employe, column.amount)" size="sm" type="danger">
                         <a-icon type="close-circle" style="vertical-align:1.5px;" />
                     </base-button>
                 </template>

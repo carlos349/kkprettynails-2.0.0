@@ -7,94 +7,38 @@
             <!-- Header container -->
                 <div class="row">
                     <div class="col-12">
-                    <div class="text-absolute">
-                        <p class="mb-0 display-2 text-white">Agenda</p>
-                        <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
-                    </div>
+                        <div class="text-absolute">
+                            <p class="mb-0 display-2 text-white">Agenda</p>
+                            <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
+                        </div>
 
-                    <base-button class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
-                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                        Agendar
-                    </base-button>
-
-                    <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mt-7 mr-0 qloq" size="sm">
-                        <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
-                                {{employeByDate}}
+                        <base-button class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                            <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                            Agendar
                         </base-button>
-                        <li v-on:click="getDatesByEmploye('Todos')">
-                            <base-button class="dropdown-item" href="#">
-                                <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+
+                        <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mt-7 mr-0 qloq" size="sm">
+                            <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                    {{employeByDate}}
                             </base-button>
-                        </li>
-                        <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
-                            <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                                <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                            </base-button>
-                            <base-button v-else class="dropdown-item" href="#">
-                                <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                            </base-button>
-                        </li>
-                    </base-dropdown>
-                    <div v-if="filter == true" class="ml-2">
-                        <img class="avatar rounded-circle" :src="img2" />
+                            <li v-on:click="getDatesByEmploye('Todos')">
+                                <base-button class="dropdown-item" href="#">
+                                    <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+                                </base-button>
+                            </li>
+                            <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
+                                <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                                    <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                </base-button>
+                                <base-button v-else class="dropdown-item" href="#">
+                                    <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                </base-button>
+                            </li>
+                        </base-dropdown>
+                        <div v-if="filter == true" class="ml-2">
+                            <img class="avatar rounded-circle" :src="img2" />
+                        </div>
                     </div>
-                    <!-- <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="primary">
-                        <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                        Categorías
-                    </base-button>
-                    <base-button class="float-right mt-7 mr-0" size="sm" v-else @click="modals.modal5 = true" type="primary" disabled>
-                        <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                        Categorías
-                    </base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal1 = true, clean()" type="success">
-                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                        Agendar
-                    </base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-else @click="modals.modal1 = true, clean()" type="success" disabled>
-                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                        Agendar
-                    </base-button> -->
-                </div>
-                    <!-- <div class="col-lg-12 col-md-12">
-                        <h1 class="display-2 text-white w-100">Agenda</h1>
-                        <p class="text-white headMob mt-0 mb-2">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
-                        
-                                <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="primary">
-                                <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                                    Categorías
-                                </base-button>
-                                <base-button class="float-right mt-7 mr-0" size="sm" v-else @click="modals.modal5 = true" type="primary" disabled>
-                                    <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                                    Categorías
-                                </base-button>
-                                <base-button v-if="validRoute('agendamiento', 'agendar')" @click="modals.modal1 = true , initialState()"  type="success">Agendar</base-button>
-                                <base-button v-if="validRoute('agendamiento', 'procesar')" class="mt-1" @click="dateModals.modal4 = true, initialDate(1)" type="primary">
-                                    <span>Ventas por procesar</span>
-                                    <badge v-if="loadingEnds == false" type="primary">{{lengthClosedDates}}</badge>
-                                    <a-spin v-else  class="float-right ml-2" size="small" /> 
-                                </base-button>
-                                <base-dropdown v-if="validRoute('agendamiento', 'filtrar')" class="maxheightDropDown dropAgend mt-1 p-0 col-lg-6 drop w-75 mt-1 p-0">
-                                    <base-button slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
-                                            {{employeByDate}}
-                                    </base-button>
-                                    <li v-on:click="getDatesByEmploye('Todos')">
-                                        <base-button class="dropdown-item" href="#">
-                                            <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
-                                        </base-button>
-                                    </li>
-                                    <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
-                                        <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                                            <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                        </base-button>
-                                        <base-button v-else class="dropdown-item" href="#">
-                                            <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                        </base-button>
-                                    </li>
-                                </base-dropdown>
-                                <div v-if="filter == true && validRoute('agendamiento', 'filtrar') == true" class="ml-2">
-                                    <img class="avatar rounded-circle" :src="img2" />
-                                </div>
-                    </div> -->
                 </div>
         </base-header>
         <modal :show.sync="modalsDialog.modal2"
@@ -660,7 +604,7 @@
 
                                 <div class="col-md-6 mx-auto mt-2">
                                     <center>
-                                        <div v-if="selectedEvent.process == true">
+                                        <div v-if="selectedEvent.process == true && validRoute('agendamiento', 'confirmacion')">
                                             <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation" type="success" class="mx-auto col-12">
                                                 <i style="margin-top:3px" class="ni ni-check-bold float-right"></i>
                                                 <span class="float-left">Confirmada</span> 

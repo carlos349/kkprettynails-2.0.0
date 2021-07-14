@@ -19,10 +19,10 @@
                                 {{client.firstName}} {{client.lastName}} 
                             </a-select-option>
                         </a-select>
-                        <a-button v-if="ifEdit" @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
+                        <a-button :disabled="validRoute('procesar', 'editar_cliente') ? false : true" v-if="ifEdit" @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
                             <i class="fa fa-user-edit" style="font-size:1.5em;"></i>
                         </a-button>
-                        <a-button v-else @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
+                        <a-button :disabled="validRoute('procesar', 'nuevo_cliente') ? false : true" v-else @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
                             <i class="fa fa-user-plus" style="font-size:1.5em;"></i>
                         </a-button>
                     </div>
@@ -88,9 +88,21 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="Client" style="margin-bottom:6px">Descuento</label>
-                                    <a-input @keyup="addDiscountFunc" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
-                                        <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
-                                    </a-input>
+                                    <template v-if="validRoute('procesar', 'descuento')">
+                                        <a-input @keyup="addDiscountFunc" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
+                                            <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                                        </a-input>
+                                    </template>
+                                    <template v-else>
+                                        <a-tooltip>
+                                            <template slot="title">
+                                                No tiene permisos para aplicar descuento
+                                            </template>
+                                            <a-input class="w-100" type="number" placeholder="Descuento" disabled v-model="itemData.discountService">
+                                                <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                                            </a-input>
+                                        </a-tooltip>
+                                    </template>
                                 </div>
                                 <div class="col-md-6" style="margin-top: -5px;">
                                     <label :class="marginAdditional" for="Client" class="w-50">Adicionales</label><br>
@@ -173,9 +185,21 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="Client" style="margin-bottom:6px">Descuento</label>
-                                    <a-input @keyup="addDiscountFuncProduct" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
-                                        <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
-                                    </a-input>
+                                    <template v-if="validRoute('procesar', 'descuento')">
+                                        <a-input @keyup="addDiscountFuncProduct" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
+                                            <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                                        </a-input>
+                                    </template>
+                                    <template v-else>
+                                        <a-tooltip>
+                                            <template slot="title">
+                                                No tiene permisos para aplicar descuento
+                                            </template>
+                                            <a-input class="w-100" type="number" placeholder="Descuento" disabled v-model="itemData.discountService">
+                                                <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                                            </a-input>
+                                        </a-tooltip>
+                                    </template>
                                 </div>
                             </div>
                             <base-button @click="addItem('product')" class="float-right mt-1" size="sm" type="primary">Agregar item</base-button>
@@ -239,12 +263,24 @@
                             {{column.item.name}}
                         </template>
                         <template slot="discount-slot" slot-scope="record, column, index">
-                            <a-input v-if="column.tag == 'service'" :disabled="column.ifDiscount" v-on:keyup="addDiscountTable(record, index)" v-model="column.discount">
-                                <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
-                            </a-input>
-                            <a-input v-else :disabled="column.ifDiscount" v-on:keyup="addDiscountTableProduct(record, index)" v-model="column.discount">
-                                <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
-                            </a-input>
+                            <template v-if="validRoute('procesar', 'descuento')">
+                                <a-input v-if="column.tag == 'service'" :disabled="column.ifDiscount" v-on:keyup="addDiscountTable(record, index)" v-model="column.discount">
+                                    <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                                </a-input>
+                                <a-input v-else :disabled="column.ifDiscount" v-on:keyup="addDiscountTableProduct(record, index)" v-model="column.discount">
+                                    <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                                </a-input>
+                            </template>
+                            <template v-else>
+                                <a-tooltip>
+                                    <template slot="title">
+                                        No tiene permisos para aplicar descuento
+                                    </template>
+                                    <a-input class="w-100" type="number" placeholder="Descuento" disabled v-model="column.discount">
+                                        <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
+                                    </a-input>
+                                </a-tooltip>
+                            </template>
                         </template>
                         <template slot="additional-slot" slot-scope="record, column">
                             <template v-if="column.tag == 'service'">
@@ -1072,7 +1108,7 @@ export default {
                     this.registerClient.valid = false
                 }
             }else{
-                this.cashFunds.valid = this.cashFunds.cashName != '' && this.cashFunds.cashAmount > 0 ? true : false
+                this.cashFunds.valid = this.cashFunds.cashName != '' ? true : false
             }
         },
         registerFund(){

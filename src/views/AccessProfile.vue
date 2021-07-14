@@ -2,32 +2,33 @@
 <template>
     <div>
         <base-header class="header d-flex align-items-center"
-                     style="min-height: 300px; background-image: url(img/theme/syswa-gestion.png); background-size: cover; background-position: center;">
+                     style="min-height: 300px; background-image: url(img/theme/access.png); background-size: cover; background-position: center;">
             <!-- Mask -->
-            <span class="mask bg-gradient-success opacity-8"></span>
+            <span class="mask bg-gradient-success opacity-5"></span>
             <!-- Header container -->
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="display-2 text-white">Perfiles de acceso</h1>
+                        <h1 class="display-2 text-white mb-0">Perfiles de acceso</h1>
+                        <p class="text-white mt-0">Sección dedicada a la creación de perfiles de accesos, que se le asignen a los usuarios.</p>
                     </div>
                     
                 </div>
             </div>
-            <base-button @click="modals.modal1 = true" class="float-right mr-0" style="margin-top:-60px;" size="sm" type="success">
+            <base-button @click="modals.modal1 = true" class="float-right mr-5" style="margin-top:-50px;" size="sm" type="success">
                 <a-icon type="idcard" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                 Registrar
             </base-button>
         </base-header>
 
-        <div class="container-fluid mt--7">
+        <div class="container-fluid mt--7 pb-2">
             <div class="row">
                 <div class="col-xl-8 col-sm-12 order-xl-2 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
                         <!-- <button class="putoBoton">
                             aja qlq
                         </button> -->
-                        <base-button v-if="IfSelect" v-on:click="removeProfile" class="putoBoton" size="sm" type="danger">
+                        <base-button v-if="IfSelect && profileSelect.name != 'Gerente'" v-on:click="removeProfile" class="putoBoton" size="sm" type="danger">
                             <i class="fa fa-ban float-left mt-1"></i>
                             Eliminar
                         </base-button>
@@ -56,13 +57,13 @@
                     </div>
                 </div>
                 <div class="col-xl-2 col-sm-12 order-xl-1">
-                    <card shadow type="secondary">
-                        <div slot="header" class="bg-white border-0">
-                            <div class="row align-items-center">
+                    <card shadow type="secondary" >
+                        <!-- <div slot="body" class="bg-white border-0"> -->
+                            <div class="row align-items-center py-2">
                                 <h3 class="mb-2 w-100 text-center">Perfiles</h3>
                                 <base-button size="sm" v-for="(profile, index) in accessProfiles" :key="profile.profile" class="w-100 mt-2 mx-auto" :outline="profileSelect.name == profile.profile ? false : true" type="primary" v-on:click="selectProfile(profile.profile, profile.routes, index)">{{profile.profile}}</base-button>
                             </div>
-                        </div>
+                        <!-- </div> -->
                     </card>
                 </div>
             </div>
@@ -158,51 +159,55 @@ export default {
             ],
             routesProfiles: [
                 {
-                    route: 'Procesar', 
+                    route: 'procesar', 
                     valid: false,
                     functions: [
-                        {function: 'editar', name:'Editar cliente', valid: false},
+                        {function: 'editar_cliente', name:'Editar cliente', valid: false},
                         {function: 'nuevo_cliente', name:'Registrar cliente', valid: false},
-                        {function: 'nuevo_servicio', name:'Registrar servicio', valid: false},
                         {function: 'descuento', name:'Ingresar descuento', valid: false}
                     ]
                 },
                 {
-                    route: 'Metricas',
+                    route: 'metricas',
                     valid: false,
                     functions: [
                         {function: 'filtrar', name:'Filtrar', valid: false}
                     ]
                 },
                 {
-                    route: 'Usuarios', 
+                    route: 'usuarios', 
                     valid: false,
                     functions: [
                         {function: 'registrar', name:'Registar', valid: false},
                         {function: 'editar', name:'Editar', valid: false},
-                        {function: 'eliminar', name:'Eliminar', valid: false}
+                        {function: 'eliminar', name:'Eliminar', valid: false},
+                        {function: 'perfiles', name:'Gestionar perfiles', valid: false}
                     ]
                 },
                 {
-                    route: 'Ventas', 
+                    route: 'ventas', 
                     valid: false,
                     functions: [
                         {function: 'filtrar', name:'Filtrar', valid: false},
                         {function: 'anular', name:'Anular', valid: false},
-                        {function: 'detalle', name:'Ver detalle', valid: false}
+                        {function: 'detalle', name:'Ver detalle', valid: false},
+                        {function: 'correo', name:'Enviar correo', valid: false},
+                        {function: 'reporte', name:'Descargar reporte', valid: false}
                     ]
                 },
                 {
-                    route: 'Servicios',
+                    route: 'servicios',
                     valid: false,
                     functions: [
                         {function: 'ingresar', name:'Registrar', valid: false},
                         {function: 'editar', name:'Editar', valid: false},
-                        {function: 'activaciones', name:'Activar o Desactivar', valid: false}
+                        {function: 'eliminar', name:'Eliminar', valid: false},
+                        {function: 'activaciones', name:'Activar o Desactivar', valid: false},
+                        {function: 'categoria', name:'Gestionar categorias', valid: false}
                     ]
                 },
                 {
-                    route: 'Empleados', 
+                    route: 'empleados', 
                     valid: false,
                     functions: [
                         {function: 'registrar', name:'Registrar', valid: false},
@@ -216,7 +221,7 @@ export default {
                     ]
                 },
                 {
-                    route: 'Clientes', 
+                    route: 'clientes', 
                     valid: false,
                     functions: [
                         {function: 'filtrar', name:'Filtrar', valid: false},
@@ -224,29 +229,32 @@ export default {
                         {function: 'editar', name:'Editar', valid: false},
                         {function: 'detalle', name:'Ver detalle', valid: false},
                         {function: 'eliminar', name:'Eliminar', valid: false},
-                        {function: 'correos', name:'Envio de correos', valid: false}
+                        {function: 'correos', name:'Envio de correos', valid: false},
+                        {function: 'excel', name:'Descargar excel', valid: false}
                     ]
                 },
                 {
-                    route: 'Inventario', 
+                    route: 'inventario', 
                     valid: false,
                     functions: [
-                        {function: 'filtrar', name:'Filtrar', valid: false},
-                        {function: 'registrar', name:'Registrar', valid: false},
-                        {function: 'editar', name:'Editar', valid: false},
-                        {function: 'detalle', name:'Ver detalle', valid: false},
-                        {function: 'eliminar', name:'Eliminar', valid: false}
+                        {function: 'cerrar', name:'Cerrar inventario', valid: false},
+                        {function: 'cambiar_tipo', name:'Cambiar tipo', valid: false}
                     ]
                 },
                 {
-                    route: 'Gastos', 
+                    route: 'gastos', 
                     valid: false,
                     functions: [
-                        {function: 'registrar', name:'Registrar', valid: false},
+                        {function: 'registrar_bono', name:'Registrar bono', valid: false},
+                        {function: 'registrar_gasto', name:'Registrar gasto', valid: false},
+                        {function: 'registrar_inversion', name:'Registrar inversion', valid: false},
+                        {function: 'cierre', name:'Cerrar gastos', valid: false},
+                        {function: 'filtrar', name:'Filtrar registros', valid: false},
+                        {function: 'eliminar', name:'Borrar gastos', valid: false}
                     ]
                 },
                 {
-                    route: 'Agendamiento', 
+                    route: 'agendamiento', 
                     valid: false,
                     functions: [
                         {function: 'filtrar', name:'Filtrar', valid: false},
@@ -256,23 +264,22 @@ export default {
                         {function: 'eliminar', name:'Eliminar cita', valid: false},
                         {function: 'cerrar', name:'Cerrar cita', valid: false},
                         {function: 'finalizar', name:'Finalizar cita', valid: false},
-                        {function: 'procesar', name:'Procesar', valid: false}
+                        {function: 'confirmacion', name:'Enviar confirmacion', valid: false}
                     ]
                 },
                 {
-                    route: 'Caja', 
+                    route: 'caja', 
                     valid: false,
                     functions: [
                         {function: 'visualizar', name:'Ver cierres', valid: false},
-                        {function: 'filtrar', name:'Filtrar', valid: false},
                         {function: 'cerrar', name:'hacer cierre', valid: false},
                         {function: 'fondo', name:'Ingresar fondos', valid: false},
                         {function: 'reporte', name:'Ver reporte del cierre', valid: false},
-                        {function: 'editar', name:'Editar cierre', valid: false},
+                        {function: 'editar', name:'Editar cierre', valid: false}
                     ]
                 },
                 {
-                    route: 'Pedidos', 
+                    route: 'pedidos', 
                     valid: false,
                     functions: [
                         {function: 'filtrar', name:'Filtrar', valid: false},
@@ -284,12 +291,23 @@ export default {
                     ]
                 },
                 {
-                    route: 'Bodega', 
+                    route: 'bodega', 
                     valid: false,
-                    functions: []
+                    functions: [
+                        {function: 'registrar_producto', name:'Registrar producto', valid: false},
+                        {function: 'editar_producto', name:'Editar producto', valid: false},
+                        {function: 'eliminar_producto', name:'Eliminar producto', valid: false},
+                        {function: 'anexar_productos', name:'Anexar productos', valid: false},
+                        {function: 'gestion_sucursales', name:'Gestionar sucursales', valid: false},
+                        {function: 'cierre_bodega', name:'Cerrar bodega', valid: false},
+                        {function: 'registrar_proveedores', name:'Registrar proveerdor', valid: false},
+                        {function: 'editar_proveedor', name:'Editar proveerdor', valid: false},
+                        {function: 'eliminar_proveedor', name:'Eliminar proveerdor', valid: false},
+                        {function: 'ver_historial_compras', name:'Ver historiales', valid: false}
+                    ]
                 },
                 {
-                    route: 'Sucursales', 
+                    route: 'sucursales', 
                     valid: false,
                     functions: [
                         {function: 'cambiar', name:'Elegir sucursal', valid: false},
