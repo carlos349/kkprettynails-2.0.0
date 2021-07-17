@@ -33,7 +33,7 @@
                 </div>
             </div>
         </base-header>
-        <a-modal v-model="modals.modal1" class="modalReport" :width="800" :footer="null" :closable="true" >
+        <a-modal v-model="modals.modal1" class="modalReport" width="70%" :footer="null" :closable="true" >
             <div class="mx-2" id="htmlPrint">
                 <template v-if="dataSale != null">
                     <h2>Detalle de la venta (ID: {{dataSale.uuid}}) <b v-if="!dataSale.status"># Anulada</b></h2>
@@ -41,7 +41,7 @@
                         <template slot="title">
                             <span>Anular venta</span>
                         </template>
-                        <base-button v-if="dataSale.status" @click="cancelSale(dataSale._id)" size="sm" class="mr-2 float-right" type="warning">
+                        <base-button :disabled="validRoute('ventas', 'anular') ? false : true" v-if="dataSale.status" @click="cancelSale(dataSale._id)" size="sm" class="mr-2 float-right" type="warning">
                             <a-icon type="close-circle" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -49,7 +49,7 @@
                         <template slot="title">
                             <span>Imprimir reporte</span>
                         </template>
-                        <base-button @click="printReport(dataSale._id)" size="sm" class="mr-2 float-right" type="secondary">
+                        <base-button :disabled="validRoute('ventas', 'reporte') ? false : true" @click="printReport(dataSale._id)" size="sm" class="mr-2 float-right" type="secondary">
                             <a-icon type="printer" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -57,7 +57,7 @@
                         <template slot="title">
                             <span>Enviar correo</span>
                         </template>
-                        <base-button size="sm" class="mr-2 float-right" type="secondary">
+                        <base-button :disabled="validRoute('ventas', 'correo') ? false : true" size="sm" class="mr-2 float-right" type="secondary">
                             <a-icon type="mail" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -88,7 +88,7 @@
                         </div>
                         <div class="col-md-4 mt-2">
                             <label for="date" style="margin-bottom:0px;"><b>Vuelto</b></label><br>
-                            <span class="ml-1">{{dataSale.totals.total - dataSale.totals.totalPay | formatPrice}}</span>
+                            <span class="ml-1">{{((dataSale.totals.total - dataSale.totals.totalPay) * (-1)) | formatPrice}}</span>
                         </div>
                     </div>
                     <h3 class="mt-3">Abonos</h3>
@@ -117,9 +117,20 @@
                         <template slot="total-slot" slot-scope="record, column">
                             {{column.totalItem | formatPrice}}
                         </template>
+                        <template slot="price-slot" slot-scope="record, column">
+                            {{column.price | formatPrice}}
+                        </template>
+                        <template slot="add-slot" slot-scope="record, column">
+                            <template v-if="column.type == 'service'">
+                                {{column.additionalsTotal | formatPrice}}
+                            </template>
+                            <template v-else>
+                                {{column.quantityProduct}}
+                            </template>
+                        </template>
                         <template slot="type-slot" slot-scope="record, column">
-                            <span v-if="column.type == 'service'">Servicio, Empleada: {{column.employe.name}}</span>
-                            <span v-else>Producto, Cantidad: {{column.quantityProduct}}</span>
+                            <span v-if="column.type == 'service'">Servicio, {{column.employe.name}}</span>
+                            <span v-else>Producto</span>
                         </template>
                     </a-table>
                 </template>
@@ -443,22 +454,36 @@ export default {
                     title: 'Nombre',
                     dataIndex: 'item.name',
                     key: 'item.name',
-                    width: '30%',
-                },
-                {
-                    title: 'Total',
-                    dataIndex: 'totalItem',
-                    key: 'totalItem',
-                    width: '20%',
-                    scopedSlots: { customRender: 'total-slot' }
+                    width: "20%"
                 },
                 {
                     title: 'Tipo',
                     dataIndex: 'type',
                     key: 'type',
-                    width: '50%',
-                    scopedSlots: { customRender: 'type-slot' }
-                }
+                    scopedSlots: { customRender: 'type-slot' },
+                    width: "30%"
+                },
+                {
+                    title: 'Precio',
+                    dataIndex: 'price',
+                    key: 'price',
+                    scopedSlots: { customRender: 'price-slot' },
+                    width: "15%"
+                },
+                {
+                    title: 'Adicional/Cantidad',
+                    dataIndex: 'additionalsTotal',
+                    key: 'additionalsTotal',
+                    scopedSlots: { customRender: 'add-slot' },
+                    width: "20%"
+                },
+                {
+                    title: 'Total',
+                    dataIndex: 'totalItem',
+                    key: 'totalItem',
+                    scopedSlots: { customRender: 'total-slot' },
+                    width: "15%"
+                }  
             ],
             columns: [
                 {

@@ -10,7 +10,7 @@
                     <p class="mb-0 display-2 text-white">Inventario</p>
                     <p class="text-white">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
                 </div>
-                <base-button class="float-right mt-7" size="sm" @click="modals.modal4 = true" type="danger">
+                <base-button :disabled="validRoute('inventario', 'cerrar') ? false : true" class="float-right mt-7" size="sm" @click="modals.modal4 = true" type="danger">
                     <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
                     <!-- <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" /> -->
                     Cerrar inventario
@@ -83,7 +83,7 @@
                                     
                                 </template>
                                 <template slot="typeProduct" slot-scope="record, column">
-                                    <a-dropdown>
+                                    <a-dropdown :disabled="validRoute('inventario', 'cambiar_tipo') ? false : true">
                                         <a-menu slot="overlay">
                                             <template>
                                                 <a-menu-item  v-on:click="productTypeEdit('Materia prima', column._id)"> 
@@ -329,6 +329,7 @@ import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import EventBus from '../components/EventBus'
+import jwtDecode from 'jwt-decode';
 // COMPONENTS
 
 import mixinUserToken from '../mixins/mixinUserToken'
@@ -641,133 +642,152 @@ export default {
                 "x-database-connect": endPoint.database,
                 'x-access-token':localStorage.userToken
             }
-        },    
+        },
+        auth: [] 
       };
     },
     created(){
       this.getBranch();
       this.getUserData();
+      this.getToken()
     },
     methods: {
-      getUserData(){
-          this.firstNameUser = localStorage.firstname  
-          this.lastNameUser = localStorage.lastname
-          this.emailUser = localStorage.email
-          this.idUser = localStorage._id
-      },
-      getBranch(){
-        this.branchName = localStorage.branchName  
-        this.branch = localStorage.branch
-        this.getProducts();
-        this.getHistory();
-        this.getHistoryClosed();
-      },
-      async getProducts() {
-        this.countProduct = []
-        this.productState = true
-        try{
-          const getProducts = await axios.get(endPoint.endpointTarget+'/stores/getinventorybybranch/'+ this.branch, this.configHeader)
-          if (getProducts) {
-            this.products = getProducts.data.data
-            for (let index = 0; index < this.products.length; index++) {
-              var ideal = (this.products[index].quantity + this.products[index].entry) - this.products[index].consume
-              this.countProduct.push({id:this.products[index]._id,count:'',ideal:ideal,measure:this.products[index].measure,product:this.products[index].product,difference:''})
-            } 
-            this.productState = false
-          }else{
-            this.products = []
-            this.productState = false
-          }
-        }catch(err){
-          console.log(err)
-        }
-      },
-      async getHistory() {
-        try{
-          const getHistory = await axios.get(endPoint.endpointTarget+'/stores/gethistorybybranch/'+ this.branch, this.configHeader)
-          if (getHistory) {
-            this.dataHistory = getHistory.data.data
-            this.productState = false
-          }else{
-            this.dataHistory = []
-            this.productState = false
-          }
-        }catch(err){
-          console.log(err)
-        }
-      },
-      async getHistoryClosed() {
-        
-        try{
-          const getHistoryClosed = await axios.get(endPoint.endpointTarget+'/stores/gethistoryclosedbybranch/'+ this.branch, this.configHeader)
-          if (getHistoryClosed) {
-            this.productState = false
-            this.dataHistoryClosed = getHistoryClosed.data.data
-          }else{
-            this.dataHistoryClosed = []
-            this.productState = false
-          }
-        }catch(err){
-          console.log(err)
-        }
-      },
-      handleSearch(selectedKeys, confirm, dataIndex) {
-        confirm();
-        this.searchText = selectedKeys[0];
-        this.searchedColumn = dataIndex;
-      },
-      handleReset(clearFilters) {
-        clearFilters();
-        this.searchText = '';
-      },
-      formatDate(date) {
-        let dateFormat = new Date(date)
-        return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
-      },
-      formatPrice(value) {
-          let val = (value/1).toFixed(2).replace('.', ',')
-          return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-      },
-      closeInventory(){
-        axios.post(endPoint.endpointTarget+'/stores/closeinventorybybranch', {
-          branch: this.branch,
-          firstNameUser: this.firstNameUser,
-          lastNameUser: this.lastNameUser,
-          emailUser: this.emailUser,
-          idUser: this.idUser, 
-          products:this.countProduct
-        }, this.configHeader)
-        .then(res => {
-          if (res.data.status === 'ok') {
-            this.$swal({
-              type: 'success',
-              icon: 'success',
-              title: 'Cierre realizado con exito',
-              showConfirmButton: false,
-              timer: 1500
-            })
+        getUserData(){
+            this.firstNameUser = localStorage.firstname  
+            this.lastNameUser = localStorage.lastname
+            this.emailUser = localStorage.email
+            this.idUser = localStorage._id
+        },
+        validRoute(route, type){
+            for (let index = 0; index < this.auth.length; index++) {
+                const element = this.auth[index];
+                if (element.ruta == route) {
+                    for (let i = 0; i < element.validaciones.length; i++) {
+                        if (type == element.validaciones[i]) { 
+                            return true
+                        } 
+                    }
+                }
+            }
+        },
+        getToken(){
+            const token = localStorage.userToken
+            const decoded = jwtDecode(token)  
+            this.auth = decoded.access
+        },
+        getBranch(){
+            this.branchName = localStorage.branchName  
+            this.branch = localStorage.branch
             this.getProducts();
-            this.getHistoryClosed()
-            this.modals.modal4 = false
-          }
-          else{
+            this.getHistory();
+            this.getHistoryClosed();
+        },
+        async getProducts() {
+            this.countProduct = []
+            this.productState = true
+            try{
+            const getProducts = await axios.get(endPoint.endpointTarget+'/stores/getinventorybybranch/'+ this.branch, this.configHeader)
+            if (getProducts) {
+                this.products = getProducts.data.data
+                for (let index = 0; index < this.products.length; index++) {
+                var ideal = (this.products[index].quantity + this.products[index].entry) - this.products[index].consume
+                this.countProduct.push({id:this.products[index]._id,count:'',ideal:ideal,measure:this.products[index].measure,product:this.products[index].product,difference:''})
+                } 
+                this.productState = false
+            }else{
+                this.products = []
+                this.productState = false
+            }
+            }catch(err){
+            console.log(err)
+            }
+        },
+        async getHistory() {
+            try{
+            const getHistory = await axios.get(endPoint.endpointTarget+'/stores/gethistorybybranch/'+ this.branch, this.configHeader)
+            if (getHistory) {
+                this.dataHistory = getHistory.data.data
+                this.productState = false
+            }else{
+                this.dataHistory = []
+                this.productState = false
+            }
+            }catch(err){
+            console.log(err)
+            }
+        },
+        async getHistoryClosed() {
+            
+            try{
+            const getHistoryClosed = await axios.get(endPoint.endpointTarget+'/stores/gethistoryclosedbybranch/'+ this.branch, this.configHeader)
+            if (getHistoryClosed) {
+                this.productState = false
+                this.dataHistoryClosed = getHistoryClosed.data.data
+            }else{
+                this.dataHistoryClosed = []
+                this.productState = false
+            }
+            }catch(err){
+            console.log(err)
+            }
+        },
+        handleSearch(selectedKeys, confirm, dataIndex) {
+            confirm();
+            this.searchText = selectedKeys[0];
+            this.searchedColumn = dataIndex;
+        },
+        handleReset(clearFilters) {
+            clearFilters();
+            this.searchText = '';
+        },
+        formatDate(date) {
+            let dateFormat = new Date(date)
+            return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
+        },
+        formatPrice(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        closeInventory(){
+            axios.post(endPoint.endpointTarget+'/stores/closeinventorybybranch', {
+            branch: this.branch,
+            firstNameUser: this.firstNameUser,
+            lastNameUser: this.lastNameUser,
+            emailUser: this.emailUser,
+            idUser: this.idUser, 
+            products:this.countProduct
+            }, this.configHeader)
+            .then(res => {
+            if (res.data.status === 'ok') {
+                this.$swal({
+                type: 'success',
+                icon: 'success',
+                title: 'Cierre realizado con exito',
+                showConfirmButton: false,
+                timer: 1500
+                })
+                this.getProducts();
+                this.getHistoryClosed()
+                this.modals.modal4 = false
+            }
+            else{
+                this.$swal({
+                type: 'error',
+                title: 'Ya se hizo un cierre este mes',
+                showConfirmButton: false,
+                timer: 1500
+                })
+            }
+            })
+            .catch(err => {
             this.$swal({
-              type: 'error',
-              title: 'Ya se hizo un cierre este mes',
-              showConfirmButton: false,
-              timer: 1500
+                type: 'error',
+                title: 'Cierre NO realizado',
+                showConfirmButton: false,
+                timer: 1500
+                })
             })
-          }
-        })
-        .catch(err => {
-          this.$swal({
-              type: 'error',
-              title: 'Cierre NO realizado',
-              showConfirmButton: false,
-              timer: 1500
-            })
-        })
-      },
+        },
         productTypeEdit(type, id){
             axios.put(endPoint.endpointTarget+'/stores/changetype/'+id,{
                 productType: type

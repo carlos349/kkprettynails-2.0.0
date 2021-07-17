@@ -1,17 +1,22 @@
 <template>
     <div>
-       <base-header class="header pb-5 pt-5 pt-lg-8 d-flex align-items-center"
+       <base-header class="header pb-3 pt-5 pt-lg-8 d-flex align-items-center"
                      style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
-            <div class="container-fluid d-flex align-items-center">
-                <div class="row">
-                    <div class="col-12">
-                        <h1 class="display-2 text-white">Reporte del cierre ({{formatDate(closes.createdAt)}})</h1>
-                        <base-button v-if="validRoute('caja', 'editar')" @click="modals.modal1 = true" type="success">Editar montos manuales</base-button> <br>
-                        <a v-on:click="back" class="btn btn-primary text-white cursor-pointer mt-1">Regresar</a>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-absolute">
+                        <p class="mb-0 display-2 text-white">Reporte del cierre ({{closes.createdAt | formatDate}})</p>
                     </div>
+                    <base-button class="float-right mt-6 mr-2" size="sm" :disabled="validRoute('caja', 'editar') ? false : true" @click="modals.modal1 = true" type="default">
+                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.8em;" />
+                        Editar montos manuales
+                    </base-button>    
+                    <base-button v-on:click="back" class="float-right mt-6 mr-2" size="sm" type="warning">
+                        <a-icon type="rollback" style="vertical-align:1px;font-size:1.8em;" />
+                    </base-button>  
                 </div>
             </div>
         </base-header> 

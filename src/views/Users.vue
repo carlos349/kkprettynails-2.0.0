@@ -11,7 +11,7 @@
                         <p class="mb-0 display-2 text-white">Usuarios</p>
                         <p class="text-white">Sección dedicada a registrar y administrar los accesos necesarios para cada usuario dentro del sistema.</p>
                     </div>
-                    <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('usuarios', 'registrar') ? false : true" @click="redirect" type="primary">
+                    <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('usuarios', 'perfiles') ? false : true" @click="redirect" type="primary">
                         <a-icon type="user" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Perfiles
                     </base-button>
@@ -119,12 +119,10 @@
                                     </a-form-item>
                                 </div>
                             </div>
-                            
                             <div class="text-center">
                                 <base-button type="primary" v-if="registerUser.valid == false" disabled class="my-2">Registrar</base-button>
                                 <base-button type="primary" v-on:click="registerUsers()" v-else class="my-2">Registrar</base-button>
                             </div>
-                            
                         </form>
                     </template>
                 </div>
@@ -449,19 +447,14 @@
                     <template slot="title">
                         <span>Agregar accesos</span>
                     </template>
-                    <base-button v-if="validRoute('usuarios', 'editar')" icon="ni ni-badge" v-on:click="dataEdit(column.access, column._id, column.email)" size="sm"  type="success" >
-                    </base-button>
-                    <base-button v-else size="sm" icon="ni ni-badge" type="success" disabled>
+                    <base-button :disabled="validRoute('usuarios', 'editar') ? false : true" icon="ni ni-badge" v-on:click="dataEdit(column.access, column._id, column.email)" size="sm"  type="success" >
                     </base-button>
                 </a-tooltip>
                 <a-tooltip placement="top">
                     <template slot="title">
-                    <span>Eliminar</span>
+                        <span>Eliminar</span>
                     </template>
-                    <base-button v-if="validRoute('usuarios', 'eliminar')"  size="sm" v-on:click="deleteUser(column._id)" type="warning" icon="fas fa-trash"></base-button>     
-                    <base-button v-else size="sm" slot="title" type="warning" icon="fas fa-trash" disabled>
-                        
-                    </base-button> 
+                    <base-button :disabled="validRoute('usuarios', 'eliminar') ? false : true" size="sm" v-on:click="deleteUser(column._id)" type="warning" icon="fas fa-trash"></base-button>
                 </a-tooltip>
             </template>
         </a-table>
@@ -546,9 +539,8 @@ export default {
                 route: 'procesar', 
                 valid: false,
                 functions: [
-                    {function: 'editar', name:'Editar cliente', valid: false},
+                    {function: 'editar_cliente', name:'Editar cliente', valid: false},
                     {function: 'nuevo_cliente', name:'Registrar cliente', valid: false},
-                    {function: 'nuevo_servicio', name:'Registrar servicio', valid: false},
                     {function: 'descuento', name:'Ingresar descuento', valid: false}
                 ]
             },
@@ -565,7 +557,8 @@ export default {
                 functions: [
                     {function: 'registrar', name:'Registar', valid: false},
                     {function: 'editar', name:'Editar', valid: false},
-                    {function: 'eliminar', name:'Eliminar', valid: false}
+                    {function: 'eliminar', name:'Eliminar', valid: false},
+                    {function: 'perfiles', name:'Gestionar perfiles', valid: false}
                 ]
             },
             {
@@ -574,7 +567,9 @@ export default {
                 functions: [
                     {function: 'filtrar', name:'Filtrar', valid: false},
                     {function: 'anular', name:'Anular', valid: false},
-                    {function: 'detalle', name:'Ver detalle', valid: false}
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'correo', name:'Enviar correo', valid: false},
+                    {function: 'reporte', name:'Descargar reporte', valid: false}
                 ]
             },
             {
@@ -583,7 +578,9 @@ export default {
                 functions: [
                     {function: 'ingresar', name:'Registrar', valid: false},
                     {function: 'editar', name:'Editar', valid: false},
-                    {function: 'activaciones', name:'Activar o Desactivar', valid: false}
+                    {function: 'eliminar', name:'Eliminar', valid: false},
+                    {function: 'activaciones', name:'Activar o Desactivar', valid: false},
+                    {function: 'categoria', name:'Gestionar categorias', valid: false}
                 ]
             },
             {
@@ -609,25 +606,28 @@ export default {
                     {function: 'editar', name:'Editar', valid: false},
                     {function: 'detalle', name:'Ver detalle', valid: false},
                     {function: 'eliminar', name:'Eliminar', valid: false},
-                    {function: 'correos', name:'Envio de correos', valid: false}
+                    {function: 'correos', name:'Envio de correos', valid: false},
+                    {function: 'excel', name:'Descargar excel', valid: false}
                 ]
             },
             {
                 route: 'inventario', 
                 valid: false,
                 functions: [
-                    {function: 'filtrar', name:'Filtrar', valid: false},
-                    {function: 'registrar', name:'Registrar', valid: false},
-                    {function: 'editar', name:'Editar', valid: false},
-                    {function: 'detalle', name:'Ver detalle', valid: false},
-                    {function: 'eliminar', name:'Eliminar', valid: false}
+                    {function: 'cerrar', name:'Cerrar inventario', valid: false},
+                    {function: 'cambiar_tipo', name:'Cambiar tipo', valid: false}
                 ]
             },
             {
                 route: 'gastos', 
                 valid: false,
                 functions: [
-                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'registrar_bono', name:'Registrar bono', valid: false},
+                    {function: 'registrar_gasto', name:'Registrar gasto', valid: false},
+                    {function: 'registrar_inversion', name:'Registrar inversion', valid: false},
+                    {function: 'cierre', name:'Cerrar gastos', valid: false},
+                    {function: 'filtrar', name:'Filtrar registros', valid: false},
+                    {function: 'eliminar', name:'Borrar gastos', valid: false}
                 ]
             },
             {
@@ -641,7 +641,7 @@ export default {
                     {function: 'eliminar', name:'Eliminar cita', valid: false},
                     {function: 'cerrar', name:'Cerrar cita', valid: false},
                     {function: 'finalizar', name:'Finalizar cita', valid: false},
-                    {function: 'procesar', name:'Procesar', valid: false}
+                    {function: 'confirmacion', name:'Enviar confirmacion', valid: false}
                 ]
             },
             {
@@ -649,11 +649,10 @@ export default {
                 valid: false,
                 functions: [
                     {function: 'visualizar', name:'Ver cierres', valid: false},
-                    {function: 'filtrar', name:'Filtrar', valid: false},
                     {function: 'cerrar', name:'hacer cierre', valid: false},
                     {function: 'fondo', name:'Ingresar fondos', valid: false},
                     {function: 'reporte', name:'Ver reporte del cierre', valid: false},
-                    {function: 'editar', name:'Editar cierre', valid: false},
+                    {function: 'editar', name:'Editar cierre', valid: false}
                 ]
             },
             {
@@ -671,7 +670,18 @@ export default {
             {
                 route: 'bodega', 
                 valid: false,
-                functions: []
+                functions: [
+                    {function: 'registrar_producto', name:'Registrar producto', valid: false},
+                    {function: 'editar_producto', name:'Editar producto', valid: false},
+                    {function: 'eliminar_producto', name:'Eliminar producto', valid: false},
+                    {function: 'anexar_productos', name:'Anexar productos', valid: false},
+                    {function: 'gestion_sucursales', name:'Gestionar sucursales', valid: false},
+                    {function: 'cierre_bodega', name:'Cerrar bodega', valid: false},
+                    {function: 'registrar_proveedores', name:'Registrar proveerdor', valid: false},
+                    {function: 'editar_proveedor', name:'Editar proveerdor', valid: false},
+                    {function: 'eliminar_proveedor', name:'Eliminar proveerdor', valid: false},
+                    {function: 'ver_historial_compras', name:'Ver historiales', valid: false}
+                ]
             },
             {
                 route: 'sucursales', 
@@ -1163,30 +1173,32 @@ export default {
                 icon: '',
                 type:''
             }
-            if (route == 'metricas') {
-                this.functions = [
+
+            const dictRoutes = {
+                metricas: [
                     {function: 'filtrar', name:'Filtrar', valid: false}
-                ]
-            }else if (route == 'usuarios') {
-                this.functions = [
+                ],
+                usuarios: [
                     {function: 'registrar', name:'Registar', valid: false},
                     {function: 'editar', name:'Editar', valid: false},
-                    {function: 'eliminar', name:'Eliminar', valid: false}
-                ]
-            }else if (route == 'ventas') {
-                this.functions = [
+                    {function: 'eliminar', name:'Eliminar', valid: false},
+                    {function: 'perfiles', name:'Gestionar perfiles', valid: false}
+                ],
+                ventas: [
                     {function: 'filtrar', name:'Filtrar', valid: false},
                     {function: 'anular', name:'Anular', valid: false},
                     {function: 'detalle', name:'Ver detalle', valid: false},
-                ]
-            }else if (route == 'servicios') {
-                this.functions = [
+                    {function: 'correo', name:'Enviar correo', valid: false},
+                    {function: 'reporte', name:'Descargar reporte', valid: false}
+                ],
+                servicios: [
                     {function: 'ingresar', name:'Registrar', valid: false},
                     {function: 'editar', name:'Editar', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false},
                     {function: 'activaciones', name:'Activar o Desactivar', valid: false},
-                ]
-            }else if (route == 'empleados') {
-                this.functions = [
+                    {function: 'categoria', name:'Gestionar categorias', valid: false}
+                ],
+                empleado: [
                     {function: 'registrar', name:'Registrar', valid: false},
                     {function: 'detalle', name:'Ver detalle', valid: false},
                     {function: 'editar', name:'Editar', valid: false},
@@ -1194,40 +1206,38 @@ export default {
                     {function: 'cerrar ventas', name:'Cerrar ventas', valid: false},
                     {function: 'eliminar', name: 'Eliminar', valid: false},
                     {function: 'adelantos', name: 'Adelantos o Bonos', valid: false},
-                    {function: 'correos', name: 'Envio de correos', valid: false},
-                ]
-            }else if (route == 'clientes') {
-                this.functions = [
+                    {function: 'correos', name: 'Envio de correos', valid: false}
+                ],
+                clientes: [
+                    {function: 'filtrar', name:'Filtrar', valid: false},
+                    {function: 'registrar', name:'Registrar', valid: false},
+                    {function: 'editar', name:'Editar', valid: false},
+                    {function: 'detalle', name:'Ver detalle', valid: false},
+                    {function: 'eliminar', name:'Eliminar', valid: false},
+                    {function: 'correos', name:'Envio de correos', valid: false},
+                    {function: 'excel', name:'Descargar excel', valid: false}
+                ],
+                pedidos: [
                     {function: 'filtrar', name:'Filtrar', valid: false},
                     {function: 'registrar', name:'Registrar', valid: false},
                     {function: 'editar', name:'Editar', valid: false},
                     {function: 'detalle', name:'Ver detalle', valid: false},
                     {function: 'eliminar', name:'Eliminar', valid: false},
                     {function: 'correos', name:'Envio de correos', valid: false}
-                ]
-            }else if (route == 'pedidos') {
-                this.functions = [
-                    {function: 'filtrar', name:'Filtrar', valid: false},
-                    {function: 'registrar', name:'Registrar', valid: false},
-                    {function: 'editar', name:'Editar', valid: false},
-                    {function: 'detalle', name:'Ver detalle', valid: false},
-                    {function: 'eliminar', name:'Eliminar', valid: false},
-                    {function: 'correos', name:'Envio de correos', valid: false}
-                ]
-            }else if (route == 'inventario') {
-                this.functions = [
-                    {function: 'filtrar', name:'Filtrar', valid: false},
-                    {function: 'registrar', name:'Registrar', valid: false},
-                    {function: 'editar', name:'Editar', valid: false},
-                    {function: 'detalle', name:'Ver detalle', valid: false},
-                    {function: 'eliminar', name:'Eliminar', valid: false}
-                ]
-            }else if (route == 'gastos') {
-                this.functions = [
-                    {function: 'registrar', name:'Registrar', valid: false},
-                ]
-            }else if (route == 'agendamiento') {
-                this.functions = [
+                ],
+                inventario: [
+                    {function: 'cerrar', name:'Cerrar inventario', valid: false},
+                    {function: 'cambiar_tipo', name:'Cambiar tipo', valid: false}
+                ],
+                gastos: [
+                    {function: 'registrar_bono', name:'Registrar bono', valid: false},
+                    {function: 'registrar_gasto', name:'Registrar gasto', valid: false},
+                    {function: 'registrar_inversion', name:'Registrar inversion', valid: false},
+                    {function: 'cierre', name:'Cerrar gastos', valid: false},
+                    {function: 'filtrar', name:'Filtrar registros', valid: false},
+                    {function: 'eliminar', name:'Borrar gastos', valid: false}
+                ],
+                agendamiento: [
                     {function: 'filtrar', name:'Filtrar', valid: false},
                     {function: 'agendar', name:'Agendar', valid: false},
                     {function: 'todas', name:'Ver todas las agendas', valid: false},
@@ -1235,31 +1245,41 @@ export default {
                     {function: 'eliminar', name:'Eliminar cita', valid: false},
                     {function: 'cerrar', name:'Cerrar cita', valid: false},
                     {function: 'finalizar', name:'Finalizar cita', valid: false},
-                    {function: 'procesar', name:'Procesar', valid: false}
-                ]
-            }else if (route == 'caja') {
-                this.functions = [
+                    {function: 'confirmacion', name:'Enviar confirmacion', valid: false}
+                ],
+                caja: [
                     {function: 'visualizar', name:'Ver cierres', valid: false},
-                    {function: 'filtrar', name:'Filtrar', valid: false},
                     {function: 'cerrar', name:'hacer cierre', valid: false},
                     {function: 'fondo', name:'Ingresar fondos', valid: false},
                     {function: 'reporte', name:'Ver reporte del cierre', valid: false},
-                    {function: 'editar', name:'Editar cierre', valid: false},
-                ]
-            }else if (route == 'procesar') {
-                this.functions = [
-                    {function: 'editar', name:'Editar cliente', valid: false},
+                    {function: 'editar', name:'Editar cierre', valid: false}
+                ],
+                procesar: [
+                    {function: 'editar_cliente', name:'Editar cliente', valid: false},
                     {function: 'nuevo_cliente', name:'Registrar cliente', valid: false},
-                    {function: 'nuevo_servicio', name:'Registrar servicio', valid: false},
-                    {function: 'descuento', name:'Ingresar descuento', valid: false},
-                ]
-            }else if (route == 'sucursales') {
-                this.functions = [
+                    {function: 'descuento', name:'Ingresar descuento', valid: false}
+                ],
+                sucursales: [
                     {function: 'cambiar', name:'Elegir sucursal', valid: false},
                     {function: 'registrar', name:'Registrar sucursal', valid: false},
-                    {function: 'configurar', name:'Configurar sucursal', valid: false},
+                    {function: 'configurar', name:'Configurar sucursal', valid: false}
+                ],
+                bodega: [
+                    {function: 'registrar_producto', name:'Registrar producto', valid: false},
+                    {function: 'editar_producto', name:'Editar producto', valid: false},
+                    {function: 'eliminar_producto', name:'Eliminar producto', valid: false},
+                    {function: 'anexar_productos', name:'Anexar productos', valid: false},
+                    {function: 'gestion_sucursales', name:'Gestionar sucursales', valid: false},
+                    {function: 'cierre_bodega', name:'Cerrar bodega', valid: false},
+                    {function: 'registrar_proveedores', name:'Registrar proveerdor', valid: false},
+                    {function: 'editar_proveedor', name:'Editar proveerdor', valid: false},
+                    {function: 'eliminar_proveedor', name:'Eliminar proveerdor', valid: false},
+                    {function: 'ver_historial_compras', name:'Ver historiales', valid: false}
                 ]
             }
+            
+            this.functions = dictRoutes[route]
+
             for (let index = 0; index < this.functions.length; index++) {
                 const element = this.functions[index];
                 for (let indexTwo = 0; indexTwo < this.routesSelecteds[this.position].validaciones.length; indexTwo++) {
@@ -1284,7 +1304,8 @@ export default {
                         }
                     }
                 }
-
+                console.log(this.routesSelecteds)
+                console.log(this.routes)
             }else{
                 this.routes[position].valid = true
                 this.routesSelecteds.push({ruta: route, validaciones: []})
@@ -1357,7 +1378,7 @@ export default {
                         EventBus.$emit('loggedin-user', this.routesSelecteds)
                     }
                     localStorage.setItem('userToken', res.data.token)
-                    this.routesSelecteds = []
+                    this.modals.modal4 = false
                 }else{
                     this.modals = {
                         modal1: false,
@@ -1575,6 +1596,7 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    EventBus.$emit('loggedin-user', routes)
                     this.getUsers()
                     this.linkLender = ''
                     this.modals.modal2 = false

@@ -529,7 +529,7 @@
                             </base-input>
                         </div>
                         <div class="col-2">
-                            <base-button type="success" class="float-right" @click="newCategory">
+                            <base-button type="success" class="float-right" :disabled="nameCategory != '' ? false : true" @click="newCategory">
                                 Agregar
                             </base-button>
                         </div>

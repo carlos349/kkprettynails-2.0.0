@@ -29,7 +29,7 @@
                 </div>
                 <div class="col-md-4 mt-2">
                     <label for="date" style="margin-bottom:0px;"><b>Vuelto</b></label><br>
-                    <span class="ml-1">{{dataSale.totals.total - dataSale.totals.totalPay | formatPrice}}</span>
+                    <span class="ml-1">{{((dataSale.totals.total - dataSale.totals.totalPay) * (-1)) | formatPrice}}</span>
                 </div>
             </div>
             <h3 class="mt-3">Abonos</h3>
@@ -58,9 +58,20 @@
                 <template slot="total-slot" slot-scope="record, column">
                     {{column.totalItem | formatPrice}}
                 </template>
+                <template slot="price-slot" slot-scope="record, column">
+                    {{column.price | formatPrice}}
+                </template>
+                <template slot="add-slot" slot-scope="record, column">
+                    <template v-if="column.type == 'service'">
+                        {{column.additionalsTotal | formatPrice}}
+                    </template>
+                    <template v-else>
+                        {{column.quantityProduct}}
+                    </template>
+                </template>
                 <template slot="type-slot" slot-scope="record, column">
-                    <span v-if="column.type == 'service'">Servicio, Empleada: {{column.employe.name}}</span>
-                    <span v-else>Producto, Cantidad: {{column.quantityProduct}}</span>
+                    <span v-if="column.type == 'service'">Servicio, {{column.employe.name}}</span>
+                    <span v-else>Producto</span>
                 </template>
             </a-table>
         </template>
@@ -85,21 +96,35 @@ export default {
                     title: 'Nombre',
                     dataIndex: 'item.name',
                     key: 'item.name',
-                    width: '30%',
-                },
-                {
-                    title: 'Total',
-                    dataIndex: 'totalItem',
-                    key: 'totalItem',
-                    width: '20%',
-                    scopedSlots: { customRender: 'total-slot' }
+                    width: "20%"
                 },
                 {
                     title: 'Tipo',
                     dataIndex: 'type',
                     key: 'type',
-                    width: '50%',
-                    scopedSlots: { customRender: 'type-slot' }
+                    scopedSlots: { customRender: 'type-slot' },
+                    width: "30%"
+                },
+                {
+                    title: 'Precio',
+                    dataIndex: 'price',
+                    key: 'price',
+                    scopedSlots: { customRender: 'price-slot' },
+                    width: "15%"
+                },
+                {
+                    title: 'Adicional/Cantidad',
+                    dataIndex: 'additionalsTotal',
+                    key: 'additionalsTotal',
+                    scopedSlots: { customRender: 'add-slot' },
+                    width: "20%"
+                },
+                {
+                    title: 'Total',
+                    dataIndex: 'totalItem',
+                    key: 'totalItem',
+                    scopedSlots: { customRender: 'total-slot' },
+                    width: "15%"
                 }
             ]
         }
