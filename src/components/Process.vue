@@ -81,6 +81,7 @@
                                     <currency-input
                                         v-model="itemData.price"
                                         locale="de"
+                                        @keyup="recalculatedPrice"
                                         :disabled="readyClient"
                                         class="ant-input w-100 mb-3"
                                         style="margin-top:-10px;"
@@ -178,6 +179,7 @@
                                     <currency-input
                                         v-model="itemData.price"
                                         locale="de"
+                                        @keyup="recalculatedPrice"
                                         :disabled="readyClient"
                                         class="ant-input w-100 mb-3"
                                         style="margin-top:-10px;"
@@ -1590,6 +1592,10 @@ export default {
                 this.itemData.price = this.itemData.realPrice
             }
         },
+        recalculatedPrice(){
+            this.itemData.quantityProduct = ''
+            this.itemData.realPrice = this.itemData.price
+        },
         addDiscountTable(record, key){
             var discount = record < 10 ? '0'+record : record
             if (this.serviceSelecteds[key].discount > 0) {
@@ -1976,6 +1982,9 @@ export default {
         })
         EventBus.$on('reloadMicroservices', status => {
             this.getMicroservices()
+        })
+        EventBus.$on('loggedin-user', status => {
+            this.auth = status
         })
     }
 }
