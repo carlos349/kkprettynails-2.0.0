@@ -463,8 +463,8 @@ export default {
                         type: 'warning',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Estoy seguro',
-                        cancelButtonText: 'No, evitar acción',
+                        confirmButtonText: 'Si',
+                        cancelButtonText: 'No, cancelar',
                         showCloseButton: true,
                         showLoaderOnConfirm: true
                     }).then((result) => {

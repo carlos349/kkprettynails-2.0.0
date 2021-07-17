@@ -36,20 +36,25 @@
                     <template>
                         <form role="form">
                             <div class="row p-4">
-                                <a-select class="w-75 mb-2 mx-auto" placeholder="Seleccione la sucursal"
-                                :allowClear="true"
-                                @change="selectBranch">
-                                    <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
-                                        {{branch.name}}
-                                    </a-select-option>
-                                </a-select> <br>
-                                <label class="col-12 text-center">Imagen de perfil</label>
-                                <input type="file" id="fileProfile" style="padding:2px" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input w-75 mx-auto mb-2 pb-2" >
+                                <div class="col-md-6">
+                                    <a-select class="w-100 mx-auto mb-2"  placeholder="Seleccione la sucursal"
+                                    :allowClear="true"
+                                    @change="selectBranch">
+                                        <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
+                                            {{branch.name}}
+                                        </a-select-option>
+                                    </a-select>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- <label class="col-12 text-center">Imagen de perfil</label> -->
+                                    <input type="file" id="fileProfile" style="padding:2px" placeholder="Imagen de perfil" ref="file" v-on:change="handleFileUpload()" class="ant-input mb-2 mx-auto" >
+                                </div>
                                 <div class="col-md-6">
                                     <a-input 
                                     v-model="registerUser.name"
                                     placeholder="Nombre"
-                                    class="mb-2 "
+                                    class="mb-2"
+                                    size="large"
                                     v-on:change="validRegister()">
                                         <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
                                         <i slot="suffix" class="fa fa-asterisk text-danger"></i>
@@ -60,6 +65,7 @@
                                     v-model="registerUser.lastname"
                                     placeholder="Apellido"
                                     class=""
+                                    size="large"
                                     v-on:change="validRegister()">
                                         <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
                                         <i slot="suffix" class="fa fa-asterisk text-danger"></i>
@@ -69,6 +75,7 @@
                                     <a-input 
                                         v-model="registerUser.email"
                                         placeholder="Correo"
+                                        size="large"
                                         v-on:keyup="validFields('c')"
                                         class="mb-0">
                                         <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
@@ -77,20 +84,12 @@
                                 </div>
                                 <div class="col-md-6">
                                     <a-form-item
-                                    :validate-status="registerUser.c ? 'success' : 'error'"
-                                    :help="registerUser.c ? '' : 'Los correos deben coincidir'">
-                                        <a-input :id="registerUser.c ? 'success' : 'error'" v-model="registerUser.emailConfirm" placeholder="Confirmar correo" v-on:keyup="validFields('c')">
-                                            <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
-                                        </a-input>
-                                    </a-form-item>
-                                </div>
-                                <div class="col-md-6">
-                                    <a-form-item
                                     class="m-0"
                                     :validate-status="registerUser.password.length > 8 ? 'success' : 'error'">
                                         <a-input-password 
                                         v-model="registerUser.password"
                                         placeholder="contraseña"
+                                        size="large"
                                         :id="registerUser.password.length > 8 ? 'success' : 'error'"
                                         v-on:keyup="validFields('p')"
                                         class="mb-2">
@@ -101,9 +100,20 @@
                                 </div>
                                 <div class="col-md-6">
                                     <a-form-item
+                                    :validate-status="registerUser.c ? 'success' : 'error'"
+                                    
+                                    :help="registerUser.c ? '' : 'Los correos deben coincidir'">
+                                        <a-input size="large" :id="registerUser.c ? 'success' : 'error'" v-model="registerUser.emailConfirm" placeholder="Confirmar correo" v-on:keyup="validFields('c')">
+                                            <a-icon slot="prefix" type="mail" style="color:rgba(0,0,0,.25)" />
+                                        </a-input>
+                                    </a-form-item>
+                                    
+                                </div>
+                                <div class="col-md-6">
+                                    <a-form-item
                                     :validate-status="registerUser.p && registerUser.password.length > 8 ? 'success' : 'error'"
                                     :help="registerUser.p && registerUser.password.length > 8 ? '' : 'Las contraseñas deben coincidir y tener más de 8 caracteres'">
-                                        <a-input-password :id="registerUser.p && registerUser.password.length > 8 ? 'success' : 'error'" v-model="registerUser.passwordConfirm" placeholder="Confirmar contraseña" v-on:keyup="validFields('p')">
+                                        <a-input-password :id="registerUser.p && registerUser.password.length > 8 ? 'success' : 'error'" size="large" v-model="registerUser.passwordConfirm" placeholder="Confirmar contraseña" v-on:keyup="validFields('p')">
                                             <a-icon slot="prefix" type="key" style="color:rgba(0,0,0,.25)" />
                                         </a-input-password>
                                     </a-form-item>
@@ -139,9 +149,9 @@
                     </div>
                 </template>
                 <template>
-                    <a-select class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione la sucursal"  @change="selectEmploye" size="large">
+                    <a-select class="input-group-alternative w-100 mb-4 mt-2" show-search default-value="Seleccione el prestador"  @change="selectEmploye" size="large">
                         <a-select-option v-for="lender of lenderNames" :key="lender._id" :value="lender._id">
-                            {{lender.firstName}} {{lender.lastName}} / {{lender.document}}
+                            {{lender.firstName}} {{lender.lastName}} ({{lender.document}})
                         </a-select-option>
                     </a-select>
                     <base-button type="default" v-on:click="estatusEdit(profileSelect, false, routesSelect, idSelect)">
@@ -582,7 +592,7 @@ export default {
         },
         validFields(field){
             if (field == 'c') {
-                this.registerUser.c = this.registerUser.email == this.registerUser.emailConfirm ? true : false
+                this.registerUser.c = this.registerUser.email.toLowerCase() == this.registerUser.emailConfirm.toLowerCase() ? true : false
                 this.validRegister()
             }
             if (field == 'p') {

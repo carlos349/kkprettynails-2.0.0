@@ -636,7 +636,7 @@ export default {
                 if (res.data.status == 'client create') {
                     this.modals = {
                         modal2: true,
-                        message: "Se registro el cliente con exito",
+                        message: "Se registro el cliente con éxito",
                         icon: 'ni ni-check-bold ni-5x',
                         type: 'success'
                     }
@@ -791,7 +791,7 @@ export default {
                         if (res.data.status == 'ok') {
                             this.modals = {
                                 modal2: true,
-                                message: "Cliente borrado con exito",
+                                message: "Cliente borrado con éxito",
                                 icon: 'ni ni-check-bold ni-5x',
                                 type: 'success'
                             }
@@ -842,7 +842,7 @@ export default {
                 if (res.data.status == 'update client') {
                     this.modals = {
                         modal2: true,
-                        message: "El cliente ha sido editado con exito",
+                        message: "El cliente ha sido editado con éxito",
                         icon: 'ni ni-check-bold ni-5x',
                         type: 'success'
                     }

@@ -862,6 +862,13 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                         showConfirmButton: false,
                         timer: 1500
                     })
+                }else if (this.modelStart.businessLocation.length < 10) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'La dirección debe contener mas de 10 caracteres',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
                 else{
                     this.$swal({

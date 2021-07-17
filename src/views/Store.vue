@@ -395,6 +395,7 @@
                           addon-left-icon="fa fa-bell">
                     </base-input>
                     <currency-input
+                        v-if="validForm != 1"
                         locale="de"
                         placeholder="Precio por unidad"
                         addon-left-icon="ni ni-money-coins"
