@@ -68,7 +68,7 @@
                                                     <template v-if="ifMicro">
                                                         <a-tooltip placement="top">
                                                             <template slot="title">
-                                                                <span>Marque el adicional deseado, en caso de aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                                <span>Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
                                                             </template>
                                                             <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
                                                             <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
@@ -846,7 +846,7 @@
             location(){
                 this.$swal({
                     icon: 'success',
-                    title: '¡Cita creada con exito!',
+                    title: '¡Cita creada con éxito!',
                     showConfirmButton: false,
                     timer: 3000
                 })

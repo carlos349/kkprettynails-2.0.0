@@ -571,7 +571,7 @@ export default {
                 if (res.data.status == 'bonus') {
                     this.modals = {
                         modal1: true,
-                        message: "Se registro el bono con exito",
+                        message: "Se registro el bono con éxito",
                         icon: 'ni ni-check-bold ni-5x',
                         type: 'success'
                     }
@@ -594,7 +594,7 @@ export default {
                 }else{
                     this.modals = {
                         modal1: true,
-                        message: "Se registro el avance con exito",
+                        message: "Se registro el avance con éxito",
                         icon: 'ni ni-check-bold ni-5x',
                         type: 'success'
                     }

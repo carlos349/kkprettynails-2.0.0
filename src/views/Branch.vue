@@ -131,7 +131,8 @@
                                         Número de contacto
                                     </label>
                                     <div class="col-12 pl-3 pr-0 mt-0 pt-0">
-                                        <VuePhoneNumberInput v-model="modelStart.businessPhone" @update="phoneData = $event" 
+                                        <VuePhoneNumberInput v-model="modelStart.businessPhone" @update="phoneData = $event"
+                                        default-country-code="CL" 
                                         :translations="{
                                             countrySelectorLabel: 'Código de país',
                                             countrySelectorError: 'Elije un país',

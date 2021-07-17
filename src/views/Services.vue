@@ -821,7 +821,7 @@ export default {
             if (this.categories.length == 0) {
                 this.$swal({
 					icon: 'error',
-					title: 'Debes crear una categoria primero',
+					title: 'Registra una categoria \n Debes registrar una categoria para continuar',
 					showConfirmButton: false,
 					timer: 2500
 				})
@@ -831,11 +831,11 @@ export default {
         },
         deleteService(id){
             this.$swal({
-				title: '\n¿Desea eliminar este servicio?',
-				text: 'No puede revertir esta acción',
+				title: '¿Eliminar servicio?',
+				text: '¡Recuerda! no se puede revertir esta acción',
 				icon: 'warning',
 				showCancelButton: true,
-				confirmButtonText: 'Estoy seguro',
+				confirmButtonText: 'Si',
 				cancelButtonText: 'No, evitar acción',
 				showCloseButton: true,
 				showLoaderOnConfirm: true

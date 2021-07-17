@@ -182,7 +182,7 @@
                                                                     <template style="z-index: 100" v-if="ifMicro">
                                                                         <a-tooltip placement="top">
                                                                             <template slot="title">
-                                                                                <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                                                <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
                                                                             </template>
                                                                             <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
                                                                                 <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
@@ -819,25 +819,28 @@
                         <a-icon style="vertical-align: unset;" type="search" />
                     </a-button>
                 </a-tooltip>
-                <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent col-12 mt-3" v-if="finalBlockEdit"  style="height:25vh; padding-right: 25px;">
-                    <div class="col-12" v-for="block in finalBlockEdit" :key="block">
-                        <base-button v-if="block.validator == true" v-on:click="selectBlockEdit(block.hour)" size="sm" class="col-12" type="success">
-                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                            <span>Disponible</span>
-                        </base-button>
-                        <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                            <span>Ocupado</span>
-                        </base-button>
-                        <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                            <span>Seleccionado</span>
-                        </base-button>
-                        <base-button v-else size="sm" style="cursor:not-allowed" disabled class="col-12" type="secondary">
-                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                            <span>No seleccionable</span>
-                        </base-button>
-                    </div>
+                <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent noScroll col-12 mt-3" v-if="finalBlockEdit"  style="height:25vh; padding-right: 25px;">
+                    <a-spin :spinning="spinningEdit">
+                        <div class="col-12" v-for="block in finalBlockEdit" :key="block">
+                            <base-button v-if="block.validator == true" v-on:click="selectBlockEdit(block.hour)" size="sm" class="col-12" type="success">
+                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                <span>Disponible</span>
+                            </base-button>
+                            <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                <span>Ocupado</span>
+                            </base-button>
+                            <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                <span>Seleccionado</span>
+                            </base-button>
+                            <base-button v-else size="sm" style="cursor:not-allowed" disabled class="col-12" type="secondary">
+                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                <span>No seleccionable</span>
+                            </base-button>
+                        </div>
+                    </a-spin>
+                    
                 </vuescroll>
                 <div class="text-center">
                     <base-button v-on:click="editDate()" class="mt-3" type="default">Editar</base-button>
@@ -1609,7 +1612,7 @@ export default {
         },
         configDatePickerEdit: {
             allowInput: true,
-            dateFormat: 'm-d-Y',
+            dateFormat: 'd-m-Y',
             locale: Spanish, // locale for this instance only
             minDate: new Date(),
             maxDate: '', 
@@ -1701,6 +1704,7 @@ export default {
         radio1: "radio1",
         radio2: "radio3"
         },
+        spinningEdit: false,
         endId:'',
         endServices:[],
         endClient: '',
@@ -2326,6 +2330,9 @@ export default {
             }
         },
         changeMin(valid){
+            setTimeout(() => {
+                this.spinningEdit = true
+            }, 5);
             if (valid) {
                 if (this.minLessEdit > 0) {
                     this.minLessEdit = this.minLessEdit - 15
@@ -2353,13 +2360,21 @@ export default {
                     }
                 } 
             }
+            setTimeout(() => {
+                this.searchBlockEdit()
+            }, 500);
             console.log(this.selectedEvent.duration)
         },
         editEmployeDate(value){
             this.employeForSearchEdit = value.id
             this.selectedEvent.employe = value
+            this.searchBlockEdit()
         },
         searchBlockEdit(){
+            setTimeout(() => {
+                this.spinningEdit = true
+            }, 5);
+            
             this.blockFirstEdit.forEach(element => {
                 if (element.validator == 'select') {
                     element.validator = true
@@ -2374,6 +2389,9 @@ export default {
             .then(res => {
                 this.finalBlockEdit = res.data.blockEmploye
                 this.validEditBlock = true
+                setTimeout(() => {
+                    this.spinningEdit = false
+                }, 1000);
             })
         },
         selectClient(value){
@@ -2651,7 +2669,7 @@ export default {
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',
-                                        title: 'Cita creada con exito',
+                                        title: 'Cita creada con éxito',
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
@@ -2876,14 +2894,21 @@ export default {
         },
         changeDateEdit(){
             setTimeout(() => {
+                this.spinningEdit = true
+            }, 5);
+
+            setTimeout(() => {
+                const split = this.selectedEvent.createdAt.split('-')
+                var finalDate = split[1]+'-'+split[0]+'-'+split[2]
+                console.log(finalDate)
                 axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                    date: this.selectedEvent.createdAt,
+                    date: finalDate,
                     branch: this.branch
                 }, this.configHeader)
                 .then(res => {
                     this.availableEmployesEdit = res.data.array
                     axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                        date: this.selectedEvent.createdAt,
+                        date: finalDate,
                         employes: res.data.array,
                         timedate: this.selectedEvent.duration,
                         employesServices: this.selectedEvent.services[0].employes,
@@ -2906,10 +2931,11 @@ export default {
                         .then(res => {
                             this.finalBlockEdit = res.data.blockEmploye
                             this.validEditBlock = true
+                            this.searchBlockEdit()
                         })
                     })
                 })
-            }, 200);
+            }, 500);
         },
         selectEmployeEdit(name, date){
             const getDay = new Date(date+' 10:00').getDay()
@@ -3079,11 +3105,12 @@ export default {
                     valid = false
 
                     this.$swal({
+                        icon: 'warning',
                         title: '¿Uno o mas de los servicios agregados se finalizaran sin servicios adicionales, deseas continuar?',
                         text: 'No puedes revertir esta acción',
                         type: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Estoy seguro',
+                        confirmButtonText: 'Si',
                         cancelButtonText: 'No, evitar acción',
                         showCloseButton: true,
                         showLoaderOnConfirm: true
@@ -3128,6 +3155,7 @@ export default {
                         else{
                             this.$swal({
                                 type: 'info',
+                                icon: 'info',
                                 title: 'Acción cancelada',
                                 showConfirmButton: false,
                                 timer: 1500
@@ -3175,11 +3203,12 @@ export default {
         },
         deleteDate(id,cliente){
             this.$swal({
+                icon:'warning',
                 title: '¿Está seguro de borrar la cita?',
                 text: 'No puedes revertir esta acción',
                 type: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Estoy seguro',
+                confirmButtonText: 'Si',
                 cancelButtonText: 'No, evitar acción',
                 showCloseButton: true,
                 showLoaderOnConfirm: true
@@ -3191,6 +3220,7 @@ export default {
                         if(res.data.status == 'deleted'){
                         this.$swal({
                             type: 'success',
+                            icon: 'success',
                             title: 'Cita eliminada',
                             showConfirmButton: false,
                             timer: 1500
@@ -3215,6 +3245,7 @@ export default {
                 else{
                     this.$swal({
                         type: 'info',
+                        icon: 'info',
                         title: 'Acción cancelada',
                         showConfirmButton: false,
                         timer: 1500
@@ -4392,6 +4423,9 @@ export default {
             }
             if (this.ifServices && validService) {
                 this.validWizard = true
+                for (let l = 0; l < 20; l++) {
+                    $('#block'+l).toggle('slow')
+                }
                 if ( this.registerDae.date != '') {
                     for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                         const element = this.registerDae.serviceSelectds[index];
@@ -4990,5 +5024,9 @@ export default {
         vertical-align: sub;
         margin-right: 5px;
     } 
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
     
 </style>
