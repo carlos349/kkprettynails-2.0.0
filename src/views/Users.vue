@@ -188,7 +188,7 @@
                 </template>
                 <template>
                     <a-select class="input-group-alternative w-100 mb-4 mt-2" show-search default-value="Seleccione el prestador"  @change="selectEmploye" size="large">
-                        <a-select-option v-for="lender of lenderNames" :key="lender._id" :value="lender._id">
+                        <a-select-option v-for="lender of lenderNames" :key="lender._id" :value="lender.firstName + ' ' + lender.lastName + ' (' + lender.document + ')'">
                             {{lender.firstName}} {{lender.lastName}} ({{lender.document}})
                         </a-select-option>
                     </a-select>
@@ -929,8 +929,8 @@ export default {
             this.registerUser.branch = value
             this.validRegister()
         },
-        selectEmploye(value){
-            this.linkLender = value
+        selectEmploye(key){
+            this.linkLender = key.key
         },
         changeCommission(){
             this.accessProfiles[this.selectedProfile].commission = this.accessProfiles[this.selectedProfile].commission == true ? false : true

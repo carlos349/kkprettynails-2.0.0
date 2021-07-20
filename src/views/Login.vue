@@ -468,13 +468,16 @@
         <modal :show.sync="modals.modal2"
                body-classes="p-4"
                modal-classes="modal-dialog-centered modal-md">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                       <h3>Confirme su correo</h3> 
+                        <a-icon style="font-size: 10em; margin-bottom:30px" type="lock" />
+                       <h3>¿Tienes problemas para entrar?</h3>
+                       <p><em>Introduce tu correo y te enviaremos un enlace para que vuelvas a entrar a tu cuenta.</em></p> 
                     </div>
                 </template>
                 <template>
@@ -486,7 +489,7 @@
                             v-model="emailRenew">
                         </base-input>
                         <div class="text-center">
-                            <base-button type="primary" v-on:click="SendNewPass">Enviar</base-button>
+                            <base-button type="primary" :disabled="emailRenew.includes('@') ? false : true" v-on:click="SendNewPass">Enviar enlace de acceso</base-button>
                         </div>
                     </form>
                 </template>

@@ -84,7 +84,23 @@
                         </router-link>
                         <base-button v-else disabled class="text-center" icon="ni ni-settings-gear-65" size="sm" type="default" >
                             Configurar
-                        </base-button> 
+                        </base-button>
+                        <a-tooltip class="ml-2" placement="top">
+                            <template slot="title">
+                            <span>Activar / Desactivar</span>
+                            </template>
+                            <template v-if="validRoute('servicios', 'activaciones')">
+                                <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(column._id)"></base-button>
+                                <base-button class="text-center" v-else size="sm" type="danger" v-on:click="changeStatus(column._id)">
+                                    <a-icon type="close" style="vertical-align:1px;" />
+                                </base-button> 
+                    
+                            </template>
+                            <template v-else>
+                                <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" disabled></base-button>
+                                <base-button class="text-center" v-else icon="ni ni-fat-remove" size="sm" type="danger" disabled></base-button> 
+                            </template>
+                        </a-tooltip> 
                 </template>
                 <template slot="format-date" slot-scope="record, column">
                     {{formatDate(column.createdAt)}}
@@ -771,6 +787,24 @@ export default {
                 this.status.branch = 'finish'
             }
         },
+        changeStatus(id){
+            axios.put(endPoint.endpointTarget+'/branches/changeActive/'+id, {
+                id: id
+            }, this.configHeader)
+            .then(res => {
+                this.getBranch()
+                EventBus.$emit('newBranch', status)
+                // this.emitMethod()
+            })
+            .catch(err => {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Problemas tecnicos',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
+        },
         prevStep(step){
             if (step == 'date') {
                 this.status.branch = 'process'
@@ -865,7 +899,7 @@ export default {
                                 branch: registerBranch.data.data._id,
                                 blockHour: this.modelStart.blockHour,
                                 businessName: this.modelStart.businessName,
-                                businessPhone: phoneData,
+                                businessPhone: this.phoneData,
                                 businessType: this.modelStart.businessType,
                                 businessLocation: this.modelStart.businessLocation,
                                 typesPay: this.modelStart.typesPay,

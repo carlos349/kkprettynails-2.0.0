@@ -604,18 +604,150 @@
         </template>
     </modal>
 
-    <modal  modal-classes="modal-dialog-centered modal-md" :show.sync="modalAdminProduct.modal1">
-        <h6 slot="header" class="modal-title" id="modal-title-default">Gestion de sucursales</h6>
-        <base-button v-for="branch in branches" :key="branch" class="col-12 mt-1" v-on:click="getInventoryByBranch(branch._id, branch.name)" type="primary">
-            <span class="float-left">{{branch.name}}</span>
-            <span class="float-right ml-1">{{branch.productsCount}}</span> 
-            <a-tooltip placement="topLeft">
-                <template slot="title">
-                    <span>Productos totales.</span>
+    <modal  modal-classes="modal-dialog-centered modal-xl" :show.sync="modalAdminProduct.modal1">
+        <h6 slot="header" class="modal-title" id="modal-title-default">Gestión de sucursales</h6>
+        <div class="row mb-5">
+            <div class="col-md-6 mx-auto">
+                     <a-select class="input-group-alternative w-100 mx-auto" show-search default-value="Seleccione una sucursal"  @change="selectEmploye" size="large">
+                    <a-select-option v-for="branch of branches" :key="branch._id" :value="branch.name" v-on:click="getInventoryByBranch(branch._id, branch.name)">
+                        {{branch.name}}
+                    </a-select-option>
+                </a-select>
+            </div>
+            <div class="col-md-3 mx-auto">
+                    <base-button type="success" :disabled="branchDataValid" class="mx-auto" @click="modalAdminProduct.modal3 = true, selectLoad()">Agregar un producto
+                </base-button>
+            </div>
+            
+            
+        </div>
+        
+        <a-empty v-if="branchDataValid == true">
+            <span slot="description"> Selecciona una sucursal </span>
+        </a-empty>
+        <a-config-provider v-else>
+            <template #renderEmpty>
+                <div style="text-align: center">
+                    <a-icon type="warning" style="font-size: 20px" />
+                    <h2>Esta sucursal no posee ningun producto</h2>
+                </div>
+            </template>
+            <a-table :columns="columnsBranchData" :data-source="branchData" :scroll="getScreen">
+                <div
+                    slot="filterDropdown"
+                    slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                    style="padding: 8px"
+                    >
+                    <a-input
+                        v-ant-ref="c => (searchInput = c)"
+                        :placeholder="`Buscar por nombre`"
+                        :value="selectedKeys[0]"
+                        style="width: 188px; margin-bottom: 8px; display: block;"
+                        @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                        @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    />
+                    <a-button
+                        type="primary"
+                        icon="search"
+                        size="small"
+                        style="width: 90px; margin-right: 8px"
+                        @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    >
+                        Buscar
+                    </a-button>
+                    <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                        resetear
+                    </a-button>
+                </div>
+                <a-icon
+                    slot="filterIcon"
+                    slot-scope="filtered"
+                    type="search"
+                    :style="{ color: filtered ? '#108ee9' : undefined }"
+                />
+                <template slot="customRender" slot-scope="text, record, index, column">
+                    <span v-if="searchText && searchedColumn === column.dataIndex">
+                        <template
+                        v-for="(fragment, i) in text
+                            .toString()
+                            .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                        >
+                        <mark
+                            v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                            :key="i"
+                            class="highlight"
+                            >{{ fragment }}</mark
+                        >
+                        <template v-else>{{ fragment }}</template>
+                        </template>
+                    </span>
+                    <template v-else>
+                        {{ text }}
+                    </template>
                 </template>
-                <a-icon class="float-right" style="cursor: pointer;vertical-align: -0.4em;font-size:1.4em" type="inbox" />
-            </a-tooltip>      
-        </base-button>
+
+                <template slot="actions" class="mx-auto" slot-scope="record, column">
+                    <base-button size="sm" class=" mr-0" type="danger" @click="deleteProductByBranch(column)" icon="fa fa-trash"></base-button>
+                    <base-button size="sm" class="ml-1" type="primary" @click="modalAdminProduct.modal4 = true, idForAlert = column._id, branchAlert = column.alertTotal" icon="ni ni-bell-55"></base-button>
+                </template>
+                <template slot="total" slot-scope="record,column">
+                    <span class="text-danger" v-if="(parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume) < column.alertTotal">
+                    {{(parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume)}}
+                    <a-tooltip placement="topLeft">
+                        <template slot="title">
+                            <span>Bajo en stock</span>
+                        </template>
+                        <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.1em;font-size:1.1em" type="exclamation-circle" />
+                    </a-tooltip>
+                    </span>
+                    <span v-else>
+                    {{(parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume)}}
+                    </span>
+                    
+                </template>
+                <template slot="add" class="mx-auto" slot-scope="record, column, index">
+                    
+                    <base-button size="sm" class="float-right ml-2" type="success" @click="addToProductBranch(column._id, column.storeId, column.measure, index)" icon="fa fa-plus"></base-button>
+                    <a-input
+                        :placeholder="'Ingrese cantidad en '+column.measure"
+                        class="w-75 ml-auto float-right"
+                        v-model="branchEntry[index].count"
+                    />
+                </template>
+                <template slot="format-date" slot-scope="record, column">
+                    {{formatDate(column.createdAt)}}
+                </template>
+            </a-table>
+        </a-config-provider>
+        
+        <!-- <base-button v-for="(branch, index) in branchData" :key="branch" class="col-12 mb-1" style="cursor:default" size="sm" type="secondary">
+            <div class="row p-0">
+                <div class="col-3 p-0">
+                    <span style="vertical-align: -0.4em;" class="text-danger" v-if="(parseFloat(branch.quantity) + parseFloat(branch.entry)) - parseFloat(branch.consume) < branch.alertTotal">
+                        {{branch.product}}
+                        <a-tooltip placement="topLeft">
+                            <template slot="title">
+                                <span>Este producto necesita ser reabastecido.</span>
+                            </template>
+                            <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.1em;font-size:1.1em" type="exclamation-circle" />
+                        </a-tooltip>
+                    </span>
+                    <span style="vertical-align: -0.4em;" v-else>
+                        {{branch.product}}
+                    </span>
+                </div>
+                <div v-if="branchEntry != []" class="col-10 row p-0">
+                    <a-input
+                        :placeholder="'Ingrese cantidad en '+branch.measure"
+                        class="w-75 ml-auto float-right"
+                        v-model="branchEntry[index].count"
+                    />
+                    <base-button size="sm" class="float-right ml-auto" type="success" @click="addToProductBranch(branch._id, branch.storeId, branch.measure, index)" icon="fa fa-plus"></base-button>
+                    
+                </div>
+                
+            </div>
+        </base-button> -->
         <template slot="footer">
             <base-button type="link" class="ml-auto" @click="modalAdminProduct.modal1 = false">Cerrar
             </base-button>
@@ -623,7 +755,10 @@
     </modal>
     <modal  modal-classes="modal-dialog-centered modal-lg" :show.sync="modalAdminProduct.modal2">
         <h6 slot="header" class="modal-title" id="modal-title-default">Gestionar productos de sucursal </h6>
-        <a-empty v-if="branchData.length == 0">
+        <a-empty v-if="branchData == 0">
+            <span slot="description"> Selecciona una sucursal </span>
+        </a-empty>
+        <a-empty v-if="branchData == []">
             <span slot="description"> Esta sucursal no posee ningun producto registrado </span>
         </a-empty>
         <base-button v-for="(branch, index) in branchData" :key="branch" class="col-12 mb-1" style="cursor:default" size="sm" type="secondary">
@@ -644,7 +779,7 @@
                         {{branch.product}}
                     </span>
                 </div>
-                <div class="col-7 row p-0">
+                <div v-if="branchEntry != []" class="col-7 row p-0">
                     <a-input
                         :placeholder="'Ingrese cantidad en '+branch.measure"
                         class="w-75 ml-auto float-right"
@@ -726,7 +861,8 @@ export default {
         historyClosed:[],
         validForm:0,
         branches:[],
-        branchData:[],
+        branchDataValid:true,
+        branchData: [],
         selectedBranchName: '',
         branchEntry: [],
         branchAlert: null,
@@ -789,6 +925,66 @@ export default {
         searchText: '',
         searchInput: null,
         searchedColumn: '',
+        columnsBranchData: [
+            {
+                title: 'Productos',
+                dataIndex: 'product',
+                key: 'product',
+                sorter: (a, b) => {
+                     if (a.product > b.product) {
+                        return -1;
+                    }
+                    if (b.product > a.product) {
+                        return 1;
+                    }
+                    return 0;
+                },
+                sortDirections: ['descend', 'ascend'],
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'customRender',
+                },
+                onFilter: (value, record) => record.product.toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
+            },
+            {
+                title: 'Medida',
+                dataIndex: 'measure',
+                width: 120,
+                key: 'price',
+                scopedSlots: { customRender: 'price' },
+                sorter: (a, b) => a.price - b.price,
+            },
+            {
+                title: 'Agregar cantidades',
+                dataIndex: '_id',
+                key: '_id',
+                scopedSlots: {
+                    customRender: 'add',
+                },
+            },
+            {
+                title: 'Total',
+                width: 120,
+                key: '_id',
+                scopedSlots: { customRender: 'total' },
+                sorter: (a, b) => (a.quantity + a.entry - a.consume) - (b.quantity + b.entry - b.consume),
+            },
+            {
+                title: 'Acciones',
+                dataIndex: '_id',
+                width: 150,
+                key: '_id',
+                scopedSlots: { customRender: 'actions' }
+            }
+        ],
         columns: [
             {
                 title: 'Producto',
@@ -1360,6 +1556,8 @@ export default {
             this.selectedBranch = branch
             this.selectedBranchName = branchName
             this.branchEntry = []
+            this.branchData = []
+            this.branchDataValid = false
             try{
                 const getInventoryByBranch = await axios.get(endPoint.endpointTarget+'/stores/getinventorybybranch/'+branch, this.configHeader)
                 if (getInventoryByBranch.data.status == 'ok') {
@@ -1367,9 +1565,6 @@ export default {
                     for (let i = 0; i < this.branchData.length; i++) {
                         this.branchEntry.push({count: ''})
                     }
-                    this.modalAdminProduct.modal2 = true
-                }else{
-                    this.modalAdminProduct.modal2 = true
                 }
             }catch(err){
                 this.$swal({
@@ -1434,6 +1629,7 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                            this.modalAdminProduct.modal3 = false
                             this.getInventoryByBranch(this.selectedBranch)
                             this.getBranches()
                             this.productsForBranch = []
@@ -1511,6 +1707,7 @@ export default {
                                                 showConfirmButton: false,
                                                 timer: 1500
                                             })
+                                            this.getInventoryByBranch(this.selectedBranch, this.selectedBranchName)
                                             this.branchEntry = []
                                             for (let i = 0; i < this.branchData.length; i++) {
                                                 this.branchEntry.push({count: ''})

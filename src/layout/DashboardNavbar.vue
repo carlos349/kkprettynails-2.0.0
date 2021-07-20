@@ -17,7 +17,7 @@
           <li class="nav-item">
             <a-dropdown :disabled="validRoute('sucursales', 'cambiar') ? false : true">
               <a-menu slot="overlay" @click="selectBranch">
-                <a-menu-item class="font-weight-bold" v-for="branch of branches" :key="branch._id+'/'+branch.name" > 
+                <a-menu-item class="font-weight-bold" v-for="branch of branches" :key="branch._id+'/'+branch.name" :disabled="branch.active ? false : true"> 
                   <a-icon type="shop" style="vertical-align:1px;" />{{branch.name}} 
                 </a-menu-item>
               </a-menu>
@@ -327,6 +327,9 @@
           this.imgUser = status.image
         }
         console.log(this.imgUser)
+      })
+      EventBus.$on('newBranch', status => {
+        this.getBranches()
       })
       this.socket.on('notify', (data) => {
         this.notifications.push(data)

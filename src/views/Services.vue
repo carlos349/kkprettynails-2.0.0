@@ -821,9 +821,9 @@ export default {
             if (this.categories.length == 0) {
                 this.$swal({
 					icon: 'error',
-					title: 'Registra una categoria \n Debes registrar una categoria para continuar',
-					showConfirmButton: false,
-					timer: 2500
+					title: 'Registra una categoria',
+                    text: 'Debes registrar una categoria para continuar',
+					showConfirmButton: true
 				})
             }else{
                 this.modals.modal1 = true
@@ -835,8 +835,8 @@ export default {
 				text: '¡Recuerda! no se puede revertir esta acción',
 				icon: 'warning',
 				showCancelButton: true,
-				confirmButtonText: 'Si',
-				cancelButtonText: 'No, evitar acción',
+				confirmButtonText: 'Sí',
+				cancelButtonText: 'No, cancelar',
 				showCloseButton: true,
 				showLoaderOnConfirm: true
 			}).then((result) => {

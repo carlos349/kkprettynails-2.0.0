@@ -137,10 +137,13 @@
                         <hr class="w-50 mb-0 mt-0">
                         <div class="row p-4 pt-0 pl-5">
                           <div class="col-12 row mb-3">
-                            <a-switch class="mx-auto" :checked="configData.datesPolitics.onlineDates" @click="changeDatePolitic('onlineDates')" checked-children="Agendamiento online" un-checked-children="Agendamiento online" />
-                            <a-switch class="mx-auto" :checked="configData.datesPolitics.editDates" @click="changeDatePolitic('editDates')" checked-children="Permitir editar citas" un-checked-children="Permitir editar citas" />
-                            <a-switch class="mx-auto" :checked="configData.datesPolitics.microServices" @click="changeDatePolitic('microServices')" checked-children="Microservicios" un-checked-children="Microservicios" />
-                            <a-switch class="mx-auto" :checked="configData.datesPolitics.deleteDates" @click="changeDatePolitic('deleteDates')" checked-children="Permitir eliminar citas" un-checked-children="Permitir eliminar citas" />
+                            <p class="mx-auto"> <strong class="mr-2">Agendamiento online </strong> <a-switch class="mr-3" :checked="configData.datesPolitics.onlineDates" @click="changeDatePolitic('onlineDates')"/></p>
+
+                            <p class="mx-auto"> <strong class="mr-2">Permitir eliminar citas</strong> <a-switch  :checked="configData.datesPolitics.deleteDates" @click="changeDatePolitic('deleteDates')" /></p>
+                            
+                            <p class="mx-auto"> <strong class="mr-2">Microservicios </strong> <a-switch class="mr-3" :checked="configData.datesPolitics.microServices" @click="changeDatePolitic('microServices')" /></p>
+
+                            
                           </div>
                           <div class="col-4">
                             <h5 class="text-center">Días</h5>
