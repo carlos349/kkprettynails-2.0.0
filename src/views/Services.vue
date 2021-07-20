@@ -401,7 +401,7 @@
                         <span>Editar</span>
                         </template>
                         <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch)"></base-button>
-                        <base-button v-else icon="ni ni-fat-add" size="sm" type="default" disabled class="text-center" ></base-button>
+                        <base-button v-else icon="fa fa-edit" size="sm" type="default" disabled class="text-center" ></base-button>
                     </a-tooltip>
     
                     <a-tooltip placement="top">

@@ -134,7 +134,6 @@
                         <div v-if="process == 'branch'" class="branch mt-1">
                             <div class="row mt-2">
                                 <div class="col-md-6 col-sm-12">
-                                    <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.05em;" type="question-circle" />
                                     <label class="ml-2" for="branch">
                                         Nombre de la sucursal
                                     </label>
@@ -150,8 +149,8 @@
                                         Número de contacto
                                     </label>
                                     <div class="col-12 pl-3 pr-0 mt-0 pt-0">
-                                        <VuePhoneNumberInput v-model="modelStart.businessPhone" @update="phoneData = $event"
-                                        default-country-code="CL" 
+                                        <VuePhoneNumberInput v-model="modelStart.businessPhone.formatNational" @update="modelStart.businessPhone = $event" 
+                                        :default-country-code="modelStart.businessPhone.countryCode"
                                         :translations="{
                                             countrySelectorLabel: 'Código de país',
                                             countrySelectorError: 'Elije un país',
@@ -159,6 +158,30 @@
                                             example: 'Ejemplo :'
                                         }"/>
                                     </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <a-tooltip>
+                                        <template slot="title">
+                                            Debe ser un correo valido
+                                        </template>
+                                        <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.05em;" type="question-circle" />
+                                    </a-tooltip>
+                                    <label class="ml-2" for="branch">
+                                        Correo
+                                    </label>
+                                    <base-input class="input-group-alternative"
+                                        placeholder="Correo de la sucursal"
+                                        addon-left-icon="ni ni-email-83"
+                                        @keyup="verifyEmail()"
+                                        v-model="modelStart.email"
+                                        :valid="verifyEmailVar">
+                                    </base-input>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <label class="ml-2" for="branch">
+                                        Logo de la sucursal
+                                    </label><br>
+                                    <input type="file" id="fileProfile" ref="file" v-on:change="handleFileUpload()" placeholder="seleccione logo" class="form-control input-group-alternative" />
                                 </div>
                                 <div class="col-md-6 col-sm-12">
                                     <label class="ml-2 w-100" for="location">
@@ -466,9 +489,21 @@ export default {
                 first_name: '',
                 last_name: '',
                 branch: '',
+                email: '',
                 businessName: '',
                 businessPhoneCode: '+56',
-                businessPhone: '',
+                businessPhone: {
+                    "countryCode": "CL", 
+                    "isValid": false, 
+                    "phoneNumber": "", 
+                    "countryCallingCode": "", 
+                    "formattedNumber": "", 
+                    "nationalNumber": "", 
+                    "formatInternational": "", 
+                    "formatNational": "", 
+                    "uri": "", 
+                    "e164": ""
+                },
                 businessType: 'Seleccione',
                 businessLocation: '',
                 blockHour: [
@@ -573,6 +608,7 @@ export default {
                 '22:30',
                 '23:00',
             ],
+            verifyEmailVar: false,
             progress: false,
             days: {
                 monday: 'danger',
@@ -628,6 +664,7 @@ export default {
                     ellipsis: true,
                 }
             ],
+            file: ''
         }
     },
     created(){
@@ -734,13 +771,32 @@ export default {
             // }
             this.modelStart.businessPhone = number
         },
+        verifyEmail(){
+            if (this.modelStart.email.split('@')[1]) {
+                if (this.modelStart.email.split('@')[1].split('.')[0]) {
+                    this.verifyEmailVar = true
+                }else{
+                    this.verifyEmailVar = false
+                }
+            }else{
+                this.verifyEmailVar = false
+            }
+            console.log(this.verifyEmailVar)
+        },
         nextStep(step){
             if (step == 'branch') {
-                if (this.modelStart.businessName.length >= 4 && this.phoneData.isValid && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione') {
+                if (this.modelStart.businessName.length >= 4 && this.modelStart.businessPhone.isValid && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione' && this.verifyEmailVar) {
                     this.status.branch = 'finish'
                     this.status.date = 'process'
                     this.process = 'date'
-                }else if (this.phoneData.isValid == false) {
+                }else if(!this.verifyEmailVar){
+                    this.$swal({
+                        icon: 'error',
+                        title: 'El correo es invalido',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (this.modelStart.businessPhone.isValid == false) {
                     this.$swal({
                         icon: 'error',
                         title: 'Debe escribir un número de teléfono valido',
@@ -750,7 +806,7 @@ export default {
                 }else{
                     this.$swal({
                         icon: 'error',
-                        title: 'Llene todos los campos.',
+                        title: 'Ningún campo puede quedar en rojo',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -820,6 +876,9 @@ export default {
                 this.process = 'sale'
             }
         },
+        handleFileUpload(){
+            this.file = this.$refs.file.files[0]
+        },
         insertTypePay(){
             if (this.modelStart.typesPay.length < 8) {
                 if (this.typePay.length > 4) {
@@ -885,9 +944,22 @@ export default {
               }
           }
         },
+        createFormData(branch){
+            var formData = new FormData()
+            // formData.append('branch', branch)
+            // formData.append('blockHour', this.modelStart.blockHour)
+            // formData.append('businessName', this.modelStart.businessName)
+            // formData.append('businessPhone', this.modelStart.businessPhone)
+            // formData.append('businessType', this.modelStart.businessType)
+            // formData.append('businessLocation', this.modelStart.businessLocation)
+            // formData.append('email', this.modelStart.email)
+            // formData.append('typesPay', this.modelStart.typesPay)
+            // formData.append('currency', this.modelStart.currency)
+            formData.append('image', this.file)
+            return formData
+        },
         async finishProcess(){
             this.calculatedHour()
-            var phone = this.modelStart.businessPhoneCode + ' ' + this.modelStart.businessPhone
             if (this.modelStart.typesPay.length > 1) {
                 try {
                     const registerBranch = await axios.post(endPoint.endpointTarget+'/branches', {
@@ -895,29 +967,75 @@ export default {
                     }, this.configHeader)
                     if (registerBranch.data.status == 'ok') {
                         try {
-                            const registerConf = await axios.post(endPoint.endpointTarget+'/configurations', {
-                                branch: registerBranch.data.data._id,
-                                blockHour: this.modelStart.blockHour,
-                                businessName: this.modelStart.businessName,
-                                businessPhone: this.phoneData,
-                                businessType: this.modelStart.businessType,
-                                businessLocation: this.modelStart.businessLocation,
-                                typesPay: this.modelStart.typesPay,
-                                currency: this.modelStart.currency
-                            }, this.configHeader)
-                            if (registerConf.data.status == 'ok') {
-                                this.$swal({
-                                    type: 'success',
-                                    icon: 'success',
-                                    title: 'Registro de la sucursal, exitoso.',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                this.getBranches()
-                                this.modals.modal1 = false
-                                EventBus.$emit('newBranch', status)
+                            var formData = new FormData()
+                            formData.append('image', this.file)
+                            const config = {headers: {'Content-Type': 'multipart/form-data', 'x-access-token': localStorage.userToken, "x-database-connect": endPoint.database }}
+                            try {
+                                const uploadImage = await axios.post(endPoint.endpointTarget+'/configurations/uploadLogo', formData, config)
+                                if (uploadImage.data.status == 'ok') {
+                                    const registerConf = await axios.post(endPoint.endpointTarget+'/configurations', {
+                                        'branch': registerBranch.data.data._id,
+                                        'blockHour': this.modelStart.blockHour,
+                                        'businessName': this.modelStart.businessName,
+                                        'businessPhone': this.modelStart.businessPhone,
+                                        'businessType': this.modelStart.businessType,
+                                        'businessLocation': this.modelStart.businessLocation,
+                                        'email': this.modelStart.email,
+                                        'typesPay': this.modelStart.typesPay,
+                                        'currency': this.modelStart.currency,
+                                        'file': uploadImage.data.file
+                                    }, this.configHeader)
+                                    if (registerConf.data.status == 'ok') {
+                                        this.$swal({
+                                            type: 'success',
+                                            icon: 'success',
+                                            title: 'Registro de la sucursal, exitoso.',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                        this.getBranches()
+                                        this.modals.modal1 = false
+                                        EventBus.$emit('newBranch', status)
+                                    }
+                                }else{
+                                    const registerConf = await axios.post(endPoint.endpointTarget+'/configurations', {
+                                        'branch': registerBranch.data.data._id,
+                                        'blockHour': this.modelStart.blockHour,
+                                        'businessName': this.modelStart.businessName,
+                                        'businessPhone': this.modelStart.businessPhone,
+                                        'businessType': this.modelStart.businessType,
+                                        'businessLocation': this.modelStart.businessLocation,
+                                        'email': this.modelStart.email,
+                                        'typesPay': this.modelStart.typesPay,
+                                        'currency': this.modelStart.currency,
+                                        'file': ''
+                                    }, this.configHeader)
+                                    if (registerConf.data.status == 'ok') {
+                                        this.$swal({
+                                            type: 'success',
+                                            icon: 'success',
+                                            title: 'Registro de la sucursal, exitoso.',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                        this.getBranches()
+                                        this.modals.modal1 = false
+                                        EventBus.$emit('newBranch', status)
+                                    }
+                                }
+                            }catch(err){
+                                console.log(err)
                             }
+                            
                         }catch(err){console.log(err)}
+                    }else{
+                       this.$swal({
+                            type: 'error',
+                            icon: 'error',
+                            title: 'Sucursal ya existente',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }) 
                     }
                 }catch(err){console.log(err)}
             }else{

@@ -117,6 +117,9 @@
                         <template slot="total-slot" slot-scope="record, column">
                             {{column.totalItem | formatPrice}}
                         </template>
+                        <template slot="dicount-slot" slot-scope="record, column">
+                            {{column.discount}} %
+                        </template>
                         <template slot="price-slot" slot-scope="record, column">
                             {{column.price | formatPrice}}
                         </template>
@@ -454,14 +457,14 @@ export default {
                     title: 'Nombre',
                     dataIndex: 'item.name',
                     key: 'item.name',
-                    width: "20%"
+                    width: "15%"
                 },
                 {
                     title: 'Tipo',
                     dataIndex: 'type',
                     key: 'type',
                     scopedSlots: { customRender: 'type-slot' },
-                    width: "30%"
+                    width: "25%"
                 },
                 {
                     title: 'Precio',
@@ -476,6 +479,13 @@ export default {
                     key: 'additionalsTotal',
                     scopedSlots: { customRender: 'add-slot' },
                     width: "20%"
+                },
+                {
+                    title: 'Descuento',
+                    dataIndex: 'discount',
+                    key: 'discount',
+                    width: "10%",
+                    scopedSlots: { customRender: 'dicount-slot' }
                 },
                 {
                     title: 'Total',

@@ -180,10 +180,10 @@
 
                     <a-tooltip placement="top">
                         <template slot="title">
-                            <span>Detalles</span>
+                            <span>Editar</span>
                         </template>
-                        <base-button v-if="validRoute('empleados', 'detalle')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch)" icon="ni ni-bullet-list-67"></base-button>
-                        <base-button v-else disabled size="sm" type="default" icon="ni ni-bullet-list-67"></base-button>
+                        <base-button v-if="validRoute('empleados', 'editar')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch)" icon="fa fa-edit"></base-button>
+                        <base-button v-else disabled size="sm" type="default" icon="fa fa-edit"></base-button>
                     </a-tooltip>
                     
                     <a-tooltip placement="top">

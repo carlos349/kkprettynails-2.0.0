@@ -49,7 +49,7 @@
                                 <div v-for="(route, index) in routesProfiles" :key="route.ruta" class="col-md-4">
                                     <base-button class="w-100 mt-2" :type="route.valid ? 'success' : 'danger'" @click="openFunctionalities(index, route.route)">
                                         <i :class="route.valid ? 'ni ni-check-bold' : 'fa fa-ban'" class="float-left mt-1"></i>
-                                        <span class="text-center">{{route.route}}</span>
+                                        <span class="text-center">{{route.route.charAt(0).toUpperCase()}}{{route.route.slice(1)}}</span>
                                     </base-button>
                                 </div>
                             </div>
@@ -117,13 +117,17 @@ import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import EventBus from '../components/EventBus'
+import jwtDecode from 'jwt-decode'
 import mixinUserToken from '../mixins/mixinUserToken'
 import BaseButton from '../components/BaseButton.vue'
 export default {
-  components: { BaseButton },
-    mixins: [mixinUserToken],
+    components: { BaseButton },
+    mixins: [mixinUserToken],                
     data() {
+        const token = localStorage.userToken
+		const decoded = jwtDecode(token)
         return {
+            id: decoded._id,
             configHeader: {
                 headers:{
                     "x-database-connect": endPoint.database, 
@@ -211,7 +215,6 @@ export default {
                     valid: false,
                     functions: [
                         {function: 'registrar', name:'Registrar', valid: false},
-                        {function: 'detalle', name:'Ver detalle', valid: false},
                         {function: 'editar', name:'Editar', valid: false},
                         {function: 'reportes', name:'Ver reporte', valid: false},
                         {function: 'cerrar ventas', name:'Cerrar ventas', valid: false},
@@ -464,15 +467,44 @@ export default {
                     profiles: this.accessProfiles
                 }, this.configHeader)
                 if(changeProfile.data.status == 'ok'){
-                    this.$swal({
-                        type: 'success',
-                        icon: 'success',
-                        toast: true,
-                        position: 'top-end',
-                        title: 'Cambio exitoso',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
+                    try {
+                        var routes = []
+                        for (const access of this.accessProfiles) {
+                            if (access.profile == this.profileSelect.name) {
+                                routes = access.routes
+                            }
+                        }
+                        const updateUsers = await axios.put(endPoint.endpointTarget+'/configurations/editAccessUsers/'+this.profileSelect.name, {
+                            access: routes,
+                            id: this.id
+                        }, this.configHeader)
+                        console.log(updateUsers)
+                        if (updateUsers.data.status == "reload") {
+                            EventBus.$emit('loggedin-user', routes)
+                            localStorage.setItem('userToken', updateUsers.data.token)
+                            this.$swal({
+                                type: 'success',
+                                icon: 'success',
+                                toast: true,
+                                position: 'top-end',
+                                title: 'Cambio exitoso',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else{
+                            this.$swal({
+                                type: 'success',
+                                icon: 'success',
+                                toast: true,
+                                position: 'top-end',
+                                title: 'Cambio exitoso',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    }catch(err){
+                        console.log(err)
+                    }
                 }
             } catch (error) {
                 console.log(error)

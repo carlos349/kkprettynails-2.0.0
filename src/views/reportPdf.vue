@@ -54,9 +54,12 @@
             <hr class="mt-3 mb-1">
             <h3 class="mt-3">ítems</h3>
             <hr class="mt-1 mb-1">
-            <a-table :columns="columnsReport" :pagination="false" :data-source="dataSale.items">
+            <a-table :columns="columnsReport" :loading="progress" :data-source="dataSale.items" :scroll="getScreen">
                 <template slot="total-slot" slot-scope="record, column">
                     {{column.totalItem | formatPrice}}
+                </template>
+                <template slot="dicount-slot" slot-scope="record, column">
+                    {{column.discount}} %
                 </template>
                 <template slot="price-slot" slot-scope="record, column">
                     {{column.price | formatPrice}}
@@ -96,14 +99,14 @@ export default {
                     title: 'Nombre',
                     dataIndex: 'item.name',
                     key: 'item.name',
-                    width: "20%"
+                    width: "15%"
                 },
                 {
                     title: 'Tipo',
                     dataIndex: 'type',
                     key: 'type',
                     scopedSlots: { customRender: 'type-slot' },
-                    width: "30%"
+                    width: "25%"
                 },
                 {
                     title: 'Precio',
@@ -120,12 +123,19 @@ export default {
                     width: "20%"
                 },
                 {
+                    title: 'Descuento',
+                    dataIndex: 'discount',
+                    key: 'discount',
+                    width: "10%",
+                    scopedSlots: { customRender: 'dicount-slot' }
+                },
+                {
                     title: 'Total',
                     dataIndex: 'totalItem',
                     key: 'totalItem',
                     scopedSlots: { customRender: 'total-slot' },
                     width: "15%"
-                }
+                }  
             ]
         }
     },
