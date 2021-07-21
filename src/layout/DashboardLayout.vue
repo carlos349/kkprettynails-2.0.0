@@ -105,9 +105,7 @@
       EventBus.$on('loggedin-user', status => {
         this.changeAccess(status)
       })
-      EventBus.$on('newBranch', status => {
-        this.getBranches()
-      })
+      
     }
   };
 </script>
