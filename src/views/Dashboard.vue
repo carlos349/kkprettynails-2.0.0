@@ -169,7 +169,7 @@
                   </a-select>
                 </div>
                 <div class="col-md-4">
-                  <base-button @click="filterGraph" style="margin-top:10px;" size="sm" type="success">
+                  <base-button @click="filterGraph" size="sm" type="success">
                       <a-icon type="filter" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                       Filtrar
                   </base-button>
@@ -179,8 +179,11 @@
             <template>
               <div class="row mt-2">
                 <div class="col-md-8">
-                  <apexchart v-if="change" ref="chartApis" :height="350" :options="chartOptions" :series="graphData"></apexchart>
-                  <apexchart v-else ref="chartApisDaily" :height="350" :options="chartDaily" :series="graphDataDaily"></apexchart>
+                  <a-spin :spinning="loadingChart">
+                    <apexchart v-show="change" class="borderClass" ref="chartApis" :height="350" :options="chartOptions" :series="graphData"></apexchart>
+
+                    <apexchart v-show="noChange" class="borderClass" ref="chartApisDaily" :height="350" :options="chartDaily" :series="graphDataDaily"></apexchart>
+                  </a-spin>
                 </div>
                 <div class="col-md-4">
                   <stats-card title="Promedios"
@@ -251,31 +254,69 @@
           totalSale: 0,
           totalItems: 0
         },
+        loadingChart: true,
         chartOptions: {
-            chart: {
-              type: 'line',
-              height: 350
+          chart: {
+            type: 'line',
+            height: 350
+          },
+          stroke: {
+            curve: 'smooth'
+          },
+          fill: {
+            colors: ['#172b4d', '#E91E63', '#9C27B0', '#ff4500', '#5603ad', '#ffeb3b', '#f5f5f5', '#4caf50']
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: function (value) {
+              let val = (value/1).toFixed(2).replace('.', ',')
+              return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
             },
-            dataLabels: {
-              enabled: false
+            offsetY: -20,
+            style: {
+              fontSize: '12px',
+              fontWeight: '300',
+              colors: ["#24292e"]
+            }
+          },
+          title: {
+            text: "Gráfica por día",
+            align: 'left'
+          },
+          grid: {
+            row: {
+              colors: ['#24292e', 'transparent'], // takes an array which will be repeated on columns
+              opacity: 0.5
             },
-            title: {
-              text: "Gráfica por día",
-              align: 'left'
+          },
+          xaxis: {
+            type: 'datetime'
+          },
+          tooltip: {
+            x: {
+              type:'datetime',
+              format: 'dd MMM yyyy'
             },
-            markers: {
-              size: 0,
-              style: 'hollow',
-            },
-            xaxis: {
-              type: 'datetime'
-            },
-            tooltip: {
-              x: {
-                type:'datetime',
-                format: 'dd MMM yyyy'
+            y: [
+              {
+                title: {
+                  formatter: function (val) {
+                    return val+' $'
+                  }
+                }
               }
+            ]
+          },
+          theme: {
+            mode: 'dark', 
+            palette: 'palette1', 
+            monochrome: {
+              enabled: false,
+              color: '#172b4d',
+              shadeTo: 'dark',
+              shadeIntensity: 0.65
             },
+          },
         },
         prevMonth: {
           totalSale: 0,
@@ -289,19 +330,40 @@
         graphData: [],
         graphType: '',
         change: true,
+        noChange: false,
         chartDaily: {
           chart: {
             height: 350,
-            type: 'line',
+            type: 'area',
             zoom: {
               enabled: false
             }
           },
           dataLabels: {
-            enabled: false
+            enabled: true,
+            formatter: function (value) {
+              let val = (value/1).toFixed(2).replace('.', ',')
+              return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+            },
+            offsetY: -20,
+            style: {
+              fontSize: '12px',
+              fontWeight: '300',
+              colors: ["#304758"]
+            }
+          },
+          theme: {
+              mode: 'dark', 
+              palette: 'palette1', 
+              monochrome: {
+                enabled: false,
+                color: '#255aee',
+                shadeTo: 'light',
+                shadeIntensity: 0.65
+              },
           },
           stroke: {
-            curve: 'straight'
+            curve: 'smooth'
           },
           title: {
             text: 'Producción diaria',
@@ -309,7 +371,7 @@
           },
           grid: {
             row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+              colors: ['#24292e', 'transparent'], // takes an array which will be repeated on columns
               opacity: 0.5
             },
           },
@@ -340,6 +402,9 @@
         this.getPayData()
         this.getDataSale()
         this.getDataService()
+        this.getDailyGraph()
+        $('#second').css({'display': 'none'})
+        // document.getElementById("second").style.display = "none";
       },
       selectDate(dates, dateString){
         this.dateFilter = dateString
@@ -349,9 +414,23 @@
         this.graphType = value
         console.log(this.graphType)
       },
+      async getDailyGraph(){
+        try {
+          const getSales = await axios.post(`${endPoint.endpointTarget}/metrics/diaryPromedies`, {
+            branch: this.branch,
+            dates: this.dateFilter
+          }, this.configHeader)
+          this.graphDataDaily = getSales.data.series
+          console.log(getSales)
+        }catch(err){
+          console.log(err)
+        }
+      },
       async filterGraph(){
         if (this.graphType == "diaryPromedies") {
+          this.loadingChart = true
           this.change = false
+          this.noChange = true
           try {
             const getSales = await axios.post(`${endPoint.endpointTarget}/metrics/${this.graphType}`, {
               branch: this.branch,
@@ -359,41 +438,14 @@
             }, this.configHeader)
             console.log(getSales)
             this.graphDataDaily = getSales.data.series
-            this.chartDaily = {
-              chart: {
-                height: 350,
-                type: 'line',
-                zoom: {
-                  enabled: false
-                }
-              },
-              dataLabels: {
-                enabled: false
-              },
-              stroke: {
-                curve: 'straight'
-              },
-              title: {
-                text: 'Producción diaria',
-                align: 'left'
-              },
-              grid: {
-                row: {
-                  colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                  opacity: 0.5
-                },
-              },
-              xaxis: {
-                type: 'category',
-                categories: getSales.data.categories
-              },
-            }
-            console.log(this.$refs.chartApisDaily)
-            this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true)
+            this.loadingChart = false
           }catch(err){
             console.log(err)
           }
         }else{
+          this.loadingChart = true
+          this.change = true
+          this.noChange = false
           try {
             const getSales = await axios.post(`${endPoint.endpointTarget}/metrics/${this.graphType}`, {
               branch: this.branch,
@@ -401,8 +453,8 @@
             }, this.configHeader)
             console.log(getSales)
             this.graphData = getSales.data.series
-            this.change = true
-            this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
+            this.loadingChart = false
+            // this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
           }catch(err){
             console.log(err)
           }
@@ -416,7 +468,8 @@
           }, this.configHeader)
           this.promedySales = getSales.data.total / getSales.data.series.length
           this.graphData = getSales.data.series
-          this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
+          this.loadingChart = false
+          // this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
         }catch(err){
           console.log(err)
         }
@@ -477,3 +530,8 @@
     }
   };
 </script>
+<style>
+.borderClass div svg{
+  border-radius: 10px;
+}
+</style>
