@@ -53,7 +53,7 @@ export default new Router({
       children: [
         {
           path: '/dashboard',
-          name: 'Metricas',
+          name: '',
           component: () => import('./views/Dashboard.vue')
         },
         {

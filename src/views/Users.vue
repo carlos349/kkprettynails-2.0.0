@@ -11,7 +11,7 @@
                         <p class="mb-0 display-2 text-white">Usuarios</p>
                         <p class="text-white">Sección dedicada a registrar y administrar los accesos necesarios para cada usuario dentro del sistema.</p>
                     </div>
-                    <base-button class="float-right mt-7 mr-0" size="sm" @click="redirect" type="primary">
+                    <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('usuarios', 'perfiles') ? false : true" @click="redirect" type="primary">
                         <a-icon type="user" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Perfiles
                     </base-button>
