@@ -257,26 +257,28 @@
         loadingChart: true,
         chartOptions: {
           chart: {
-            type: 'line',
+            type: 'bar',
             height: 350
           },
-          stroke: {
-            curve: 'smooth'
-          },
-          fill: {
-            colors: ['#172b4d', '#E91E63', '#9C27B0', '#ff4500', '#5603ad', '#ffeb3b', '#f5f5f5', '#4caf50']
+          
+          plotOptions: {
+            bar: {
+              borderRadius: 10,
+              dataLabels: {
+                position: 'top', // top, center, bottom
+              },
+            }
           },
           dataLabels: {
             enabled: true,
             formatter: function (value) {
               let val = (value/1).toFixed(2).replace('.', ',')
-              return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+              return value > 600 ? '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : value
             },
             offsetY: -20,
             style: {
               fontSize: '12px',
-              fontWeight: '300',
-              colors: ["#24292e"]
+              colors: ["#304758"]
             }
           },
           title: {
@@ -285,7 +287,7 @@
           },
           grid: {
             row: {
-              colors: ['#24292e', 'transparent'], // takes an array which will be repeated on columns
+              colors: ['#FFFAE2', 'transparent'], // takes an array which will be repeated on columns
               opacity: 0.5
             },
           },
@@ -308,12 +310,12 @@
             ]
           },
           theme: {
-            mode: 'dark', 
+            mode: 'light', 
             palette: 'palette1', 
             monochrome: {
               enabled: false,
               color: '#172b4d',
-              shadeTo: 'dark',
+              shadeTo: 'light',
               shadeIntensity: 0.65
             },
           },
@@ -343,7 +345,7 @@
             enabled: true,
             formatter: function (value) {
               let val = (value/1).toFixed(2).replace('.', ',')
-              return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+              return value > 600 ? '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : value
             },
             offsetY: -20,
             style: {
@@ -353,7 +355,7 @@
             }
           },
           theme: {
-              mode: 'dark', 
+              mode: 'light', 
               palette: 'palette1', 
               monochrome: {
                 enabled: false,
@@ -371,7 +373,7 @@
           },
           grid: {
             row: {
-              colors: ['#24292e', 'transparent'], // takes an array which will be repeated on columns
+              colors: ['#FFFAE2', 'transparent'], // takes an array which will be repeated on columns
               opacity: 0.5
             },
           },
@@ -532,6 +534,10 @@
 </script>
 <style>
 .borderClass div svg{
-  border-radius: 10px;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.apexcharts-toolbar div svg{
+  box-shadow: none;
 }
 </style>
