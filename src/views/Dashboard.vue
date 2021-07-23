@@ -1,133 +1,17 @@
 <template>
     <div>
-        <base-header v-if="validRoute('metricas', 'filtrar')" class="header pb-5 pt-2 pt-lg-4 d-flex align-items-center"
+        <base-header class="header pb-5 pt-2 pt-lg-4 d-flex align-items-center"
             style="min-height: 50px; background-image: url(img/theme/reportes.jpg); background-size: cover; background-position: center top;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Card stats -->
             <div class="row">
-                <div class="col-12">
-                    <div class="text-absolute" style="top:10%;">
-                        <p class="mb-0 display-4 text-white">Reportes</p>
-                    </div>
-                    <div class="row p-0">
-                      <div class="col-md-3 px-1">
-                          <stats-card title="Comparación de ventas"
-                              type="gradient-orange"
-                              :sub-title="thisMonth.totalSale | formatPrice"
-                              icon="ni ni-basket"
-                              class="mt-6">
-                              <template slot="footer">
-                                  <span :class="percentTotalSale >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
-                                      <i :class="percentTotalSale >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
-                                      {{percentTotalSale}}%
-                                  </span><br>
-                                  <span class="text-nowrap">
-                                      Mes pasado 
-                                      <small class="text-muted">  
-                                          {{prevMonth.totalSale | formatPrice}}
-                                      </small>
-                                      <br><br>
-                                  </span>
-                              </template>
-                          </stats-card>
-                      </div>
-                      <div class="col-md-3 px-1">
-                          <stats-card title="Comparación de items"
-                              type="gradient-orange"
-                              :sub-title="thisMonth.totalItems"
-                              icon="ni ni-bell-55"
-                              class="mt-6">
-                              <template slot="footer">
-                                  <span :class="percentTotalItems >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
-                                      <i :class="percentTotalItems >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
-                                      {{percentTotalItems}}%
-                                  </span><br>
-                                  <span class="text-nowrap">
-                                      Mes pasado 
-                                      <small class="text-muted">  
-                                          {{prevMonth.totalItems}}
-                                      </small>
-                                      <br><br>
-                                  </span>
-                              </template>
-                          </stats-card>
-                      </div>
-                      <div class="col-md-3 px-1">
-                          <stats-card title="Totales"
-                              type="gradient-orange"
-                              sub-title="Tipos de pago"
-                              icon="ni ni-credit-card"
-                              class="mt-6">
-                              <template slot="footer">
-                                  <span v-for="pay of paysData" :key="pay.type" class="text-nowrap">
-                                      {{pay.type}} 
-                                      <small class="text-muted">  
-                                          {{pay.total | formatPrice}}
-                                      </small>
-                                      <br>
-                                  </span>
-                              </template>
-                          </stats-card>
-                      </div>
-                      <div class="col-md-3 px-1">
-                          <stats-card title="Promedios"
-                              type="gradient-orange"
-                              sub-title="Ventas y servicios"
-                              icon="ni ni-atom"
-                              class="mt-6">
-                              <template slot="footer">
-                                 <p>
-                                  Promedio ventas {{promedySales | formatPrice}}<br>
-                                  Promedio servicios {{promedyServices | formatPrice}}
-                                </p>
-                              </template>
-                          </stats-card>
-                      </div>
-                    </div>
+              <div class="col-12 py-5">
+                <div class="text-absolute" style="top:10%;">
+                  <p class="mb-0 mt-4 display-4 text-white">Reportes</p>
                 </div>
+              </div>
             </div>
-        </base-header>
-        <base-header v-else type="gradient-success" class="pb-6 pb-8 pt-5 pt-md-8">
-          <!-- Card stats -->
-            <!-- <div class="row">
-                <div class="col-xl-3 col-lg-6">
-                  <stats-card title="Servicios del mes"
-                    type="gradient-orange"
-                    :sub-title="servicesLender"
-                    icon="ni ni-single-02"
-                    class="mb-1 mb-xl-0"
-                  >
-                  </stats-card>
-                </div>
-                <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Avances del mes"
-                      type="gradient-orange"
-                      :sub-title="'$ '+formatPrice(lenderAvancements)"
-                      icon="ni ni-single-02"
-                      class="mb-1 mb-xl-0"
-                    >
-                    </stats-card>
-                </div>
-                <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Bonos del mes"
-                      type="gradient-green"
-                      :sub-title="'$ '+formatPrice(lenderBonus)"
-                      icon="ni ni-single-02"
-                      class="mb-1 mb-xl-0"
-                    >
-                    </stats-card>
-                </div>
-                <div class="col-xl-3 col-lg-6">
-                    <stats-card title="Total generado"
-                      type="gradient-info"
-                      :sub-title="'$ '+formatPrice(lenderComission)"
-                      icon="ni ni-single-02"
-                      class="mb-1 mb-xl-0"
-                    >
-                    </stats-card>
-                </div>
-            </div> -->
         </base-header>
         <!--Charts-->
         <template v-if="validRoute('metricas', 'filtrar')"> 
@@ -166,12 +50,14 @@
                     <a-select-option value="totalExpenses">
                       Gastos totales
                     </a-select-option>
+                    <a-select-option value="totalsTypesPays">
+                      Tipos de pago
+                    </a-select-option>
                   </a-select>
                 </div>
                 <div class="col-md-4">
-                  <base-button @click="filterGraph" size="sm" type="success">
-                      <a-icon type="filter" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                      Filtrar
+                  <base-button :disabled="validRoute('metricas', 'filtrar') ? false : true" @click="filterGraph" size="sm" type="default">
+                      <a-icon type="filter" style="vertical-align:1px;font-size:1.6em;" />
                   </base-button>
                 </div>
               </div>
@@ -186,12 +72,109 @@
                   </a-spin>
                 </div>
                 <div class="col-md-4">
-                  <stats-card title="Promedios"
+                  <stats-card title="Comparación de ventas"
                       type="gradient-orange"
                       :sub-title="thisMonth.totalSale | formatPrice"
-                      icon="ni ni-chart-bar-32"
-                      class="mt-2">
+                      icon="ni ni-basket"
+                      class="mt-1">
+                      <template slot="footer">
+                          <span :class="percentTotalSale >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
+                              <i :class="percentTotalSale >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
+                              {{percentTotalSale}}%
+                          </span>
+                          <span class="text-nowrap">
+                              Mes pasado 
+                              <small class="text-muted">  
+                                  {{prevMonth.totalSale | formatPrice}}
+                              </small>
+                          </span>
+                      </template>
                   </stats-card>
+                  <stats-card title="Comparación de items"
+                      type="gradient-orange"
+                      :sub-title="thisMonth.totalItems"
+                      icon="ni ni-bell-55"
+                      class="mt-1">
+                      <template slot="footer">
+                          <span :class="percentTotalItems >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
+                              <i :class="percentTotalItems >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
+                              {{percentTotalItems}}%
+                          </span>
+                          <span class="text-nowrap">
+                              Mes pasado 
+                              <small class="text-muted">  
+                                  {{prevMonth.totalItems}}
+                              </small>
+                          </span>
+                      </template>
+                  </stats-card>
+                  <stats-card title="Promedios"
+                      type="gradient-orange"
+                      sub-title="Ventas y servicios"
+                      icon="ni ni-atom"
+                      class="mt-1">
+                      <template slot="footer">
+                          <p>
+                          Promedio ventas {{promedySales | formatPrice}}<br>
+                          Promedio servicios {{promedyServices | formatPrice}}
+                        </p>
+                      </template>
+                  </stats-card>
+                </div>
+              </div>
+            </template>
+          </card>
+          <card 
+            class="mt-2"
+            shadow>
+            <template slot="header">
+              <div class="row">
+                <div class="col-md-4">
+                  <a-select default-value="Produccion anual" class="w-100" @change="selectTypeAnual">
+                    <a-select-option value="anualProduction">
+                      Producción anual
+                    </a-select-option>
+                    <a-select-option value="anualServices">
+                      Servicios anuales
+                    </a-select-option>
+                    <a-select-option value="dataExpense">
+                      Gastos vs Ganancias anuales
+                    </a-select-option>
+                    <a-select-option value="dataEmploye">
+                      Detalle de empleado
+                    </a-select-option>
+                  </a-select>
+                </div>
+                <div v-show="serviceChart" class="col-md-4">
+                  <a-select :default-value="services[0].name" class="w-100" @change="selectService">
+                    <a-select-option v-for="service of services" :key="service._id" :value="service._id">
+                      {{service.name}}
+                    </a-select-option>
+                  </a-select>
+                </div>
+                <div v-show="employeChart" class="col-md-4">
+                  <a-select :default-value="employes[0].firstName+' '+employes[0].lastName" class="w-100" @change="selectEmploye">
+                    <a-select-option v-for="employe of employes" :key="employe._id" :value="employe._id">
+                      {{employe.firstName}} {{employe.lastName}}
+                    </a-select-option>
+                  </a-select>
+                </div>
+                <div class="col-md-4">
+                  <base-button :disabled="validRoute('metricas', 'filtrar') ? false : true" @click="filterAnualGraph" size="sm" type="default">
+                      <a-icon type="filter" style="vertical-align:1px;font-size:1.6em;" />
+                  </base-button>
+                </div>
+              </div>
+            </template>
+            <template>
+              <div class="row mt-2">
+                <div class="col-md-8">
+                  <a-spin :spinning="loadingChartAnual">
+                    <apexchart class="borderClass" ref="chartApisAnual" :height="350" :options="chartOptionsAnual" :series="graphDataAnual"></apexchart>
+                  </a-spin>
+                </div>
+                <div class="col-md-4">
+                  
                 </div>
               </div>
             </template>
@@ -255,7 +238,8 @@
           totalItems: 0
         },
         loadingChart: true,
-        chartOptions: {
+        loadingChartAnual: true,
+        chartOptionsAnual: {
           chart: {
             type: 'bar',
             height: 350
@@ -278,21 +262,23 @@
             offsetY: -20,
             style: {
               fontSize: '12px',
-              colors: ["#304758"]
+              colors: ["#304758"],
+              rotate: 180
             }
           },
           title: {
-            text: "Gráfica por día",
+            text: "Gráfica anual",
             align: 'left'
           },
           grid: {
             row: {
-              colors: ['#FFFAE2', 'transparent'], // takes an array which will be repeated on columns
+              colors: ['#f7fafc', '#f5f5f5'], // takes an array which will be repeated on columns
               opacity: 0.5
             },
           },
           xaxis: {
-            type: 'datetime'
+            type: "category",
+            categories: ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
           },
           tooltip: {
             x: {
@@ -320,6 +306,57 @@
             },
           },
         },
+        chartOptions: {
+          chart: {
+            type: 'bar',
+            height: 350
+          },
+          
+          plotOptions: {
+            bar: {
+              borderRadius: 10,
+              dataLabels: {
+                position: 'top', // top, center, bottom
+              },
+            }
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: function (value) {
+              let val = (value/1).toFixed(2).replace('.', ',')
+              return value > 600 ? '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : value
+            },
+            offsetY: -20,
+            style: {
+              fontSize: '12px',
+              colors: ["#304758"],
+              rotate: 180
+            }
+          },
+          title: {
+            text: "Gráfica por día",
+            align: 'left'
+          },
+          grid: {
+            row: {
+              colors: ['#f7fafc', '#f5f5f5'], // takes an array which will be repeated on columns
+              opacity: 0.5
+            },
+          },
+          xaxis: {
+            type: 'datetime'
+          },
+          theme: {
+            mode: 'light', 
+            palette: 'palette1', 
+            monochrome: {
+              enabled: false,
+              color: '#172b4d',
+              shadeTo: 'light',
+              shadeIntensity: 0.65
+            },
+          },
+        },
         prevMonth: {
           totalSale: 0,
           totalItems: 0
@@ -330,6 +367,7 @@
         promedySales: 0,
         promedyServices: 0,
         graphData: [],
+        graphDataAnual: [],
         graphType: '',
         change: true,
         noChange: false,
@@ -382,7 +420,13 @@
             categories: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado']
           }
         },
-        graphDataDaily: []
+        graphDataDaily: [],
+        serviceChart: false,
+        employeChart: false,
+        services: [],
+        serviceSelect: '',
+        employes: [],
+        employeSelect: ''
       };
     },
     created(){
@@ -401,10 +445,13 @@
         this.branch = localStorage.branch
         this.getSales()
         this.getItems()
-        this.getPayData()
+        // this.getPayData()
         this.getDataSale()
         this.getDataService()
         this.getDailyGraph()
+        this.getChartAnual()
+        this.getServices()
+        this.getEmployes()
         $('#second').css({'display': 'none'})
         // document.getElementById("second").style.display = "none";
       },
@@ -412,9 +459,57 @@
         this.dateFilter = dateString
         console.log(this.dateFilter)
       },
+      async getServices(){
+        this.serviceState = true
+        try {
+          const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
+          if (services.data.status == 'ok') {
+              this.services = services.data.data
+              this.serviceSelect = this.services[0]._id
+          }else{
+              this.services = []
+              this.serviceSelect = ''
+          }
+        }catch(err){
+          console.log(err)
+        }
+      },
+      async getEmployes(){
+        try{
+          const getByBranch = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+this.branch, this.configHeader)
+          if (getByBranch.data.data.length > 0) {
+            this.employes = getByBranch.data.data
+            this.employeSelect = this.employes[0]._id
+          }else{
+            this.employes = []
+            this.employeSelect = ''
+          }
+        }catch(err){
+            res.send(err)
+        }
+      },
       selectType(value){
         this.graphType = value
         console.log(this.graphType)
+      },
+      selectService(value){
+        this.serviceSelect = value 
+      },
+      selectEmploye(value){
+        this.employeSelect = value
+      },
+      selectTypeAnual(value){
+        this.graphAnualType = value
+        if (value == "anualServices") {
+          this.serviceChart = true
+          this.employeChart = false
+        }else if (value == "dataEmploye") {
+          this.employeChart = true
+          this.serviceChart = false
+        }else{
+          this.serviceChart = false
+          this.employeChart = false
+        }
       },
       async getDailyGraph(){
         try {
@@ -428,8 +523,79 @@
           console.log(err)
         }
       },
+      async getChartAnual(){
+        try {
+          const getSales = await axios.post(`${endPoint.endpointTarget}/metrics/anualProduction`, {
+            branch: this.branch
+          }, this.configHeader)
+          this.graphDataAnual = getSales.data.series
+          this.loadingChartAnual = false
+        }catch(err){
+          console.log(err)
+        }
+      },
+      async filterAnualGraph(){
+        this.loadingChartAnual = true
+        try {
+          const getData = await axios.post(`${endPoint.endpointTarget}/metrics/${this.graphAnualType}`, {
+            branch: this.branch,
+            id: this.graphAnualType == "anualServices" ? this.serviceSelect : this.employeSelect
+          }, this.configHeader)
+          this.graphDataAnual = getData.data.series
+          this.chartOptionsAnual = {
+            chart: {
+              height: 350,
+              type: 'bar',
+              zoom: {
+                enabled: false
+              }
+            },
+            dataLabels: {
+              enabled: true,
+              formatter: function (value) {
+                let val = (value/1).toFixed(2).replace('.', ',')
+                return value > 600 ? '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : value
+              },
+              offsetY: -20,
+              style: {
+                fontSize: '12px',
+                fontWeight: '300',
+                colors: ["#304758"]
+              }
+            },
+            theme: {
+              mode: 'light', 
+              palette: 'palette1', 
+              monochrome: {
+                enabled: false,
+                color: '#255aee',
+                shadeTo: 'light',
+                shadeIntensity: 0.65
+              },
+            },
+            title: {
+              text: 'Gastos totales',
+              align: 'left'
+            },
+            grid: {
+              row: {
+                colors: ['#FFFAE2', 'transparent'], // takes an array which will be repeated on columns
+                opacity: 0.5
+              },
+            },
+            xaxis: {
+              type: "category",
+              categories: getData.data.categories
+            }
+          }
+          this.$refs.chartApisAnual.updateOptions(this.chartOptionsAnual, false, true, true)
+          this.loadingChartAnual = false
+        }catch(err){
+          console.log(err)
+        }
+      },
       async filterGraph(){
-        if (this.graphType == "diaryPromedies") {
+        if (this.graphType == "diaryPromedies" || this.graphType == "totalExpenses" || this.graphType == "commissionsByEmploye" || this.graphType == "servicesByEmploye" || this.graphType == "totalByEmploye" || this.graphType == "totalsTypesPays") {
           this.loadingChart = true
           this.change = false
           this.noChange = true
@@ -440,6 +606,53 @@
             }, this.configHeader)
             console.log(getSales)
             this.graphDataDaily = getSales.data.series
+            this.chartDaily = {
+              chart: {
+                height: 350,
+                type: 'bar',
+                zoom: {
+                  enabled: false
+                }
+              },
+              dataLabels: {
+                enabled: true,
+                formatter: function (value) {
+                  let val = (value/1).toFixed(2).replace('.', ',')
+                  return value > 600 ? '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : value
+                },
+                offsetY: -20,
+                style: {
+                  fontSize: '12px',
+                  fontWeight: '300',
+                  colors: ["#304758"]
+                }
+              },
+              theme: {
+                mode: 'light', 
+                palette: 'palette1', 
+                monochrome: {
+                  enabled: false,
+                  color: '#255aee',
+                  shadeTo: 'light',
+                  shadeIntensity: 0.65
+                },
+              },
+              title: {
+                text: 'Gastos totales',
+                align: 'left'
+              },
+              grid: {
+                row: {
+                  colors: ['#FFFAE2', 'transparent'], // takes an array which will be repeated on columns
+                  opacity: 0.5
+                },
+              },
+              xaxis: {
+                type: "category",
+                categories: getSales.data.categories
+              }
+            }
+            this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true, true)
             this.loadingChart = false
           }catch(err){
             console.log(err)
