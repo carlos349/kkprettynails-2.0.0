@@ -8,122 +8,13 @@
             <div class="row">
               <div class="col-12 py-5">
                 <div class="text-absolute" style="top:10%;">
-                  <p class="mb-0 mt-4 display-4 text-white">Reportes</p>
+                  <p class="mb-0 mt-4 display-2 text-white">Reportes</p>
                 </div>
               </div>
             </div>
         </base-header>
         <!--Charts-->
         <template v-if="validRoute('metricas', 'filtrar')"> 
-          <card 
-            shadow>
-            <template slot="header">
-              <div class="row">
-                <div class="col-md-4">
-                  <a-range-picker
-                    :ranges="{ Today: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }"
-                    format="MM-DD-YYYY"
-                    @change="selectDate"
-                    class="w-100"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <a-select default-value="Produccion total" class="w-100" @change="selectType">
-                    <a-select-option value="totalSales">
-                      Producción total
-                    </a-select-option>
-                    <a-select-option value="totalServices">
-                      Servicios totales
-                    </a-select-option>
-                    <a-select-option value="totalByEmploye">
-                      Produccion por empleado
-                    </a-select-option>
-                    <a-select-option value="commissionsByEmploye">
-                      Comision por empleado
-                    </a-select-option>
-                    <a-select-option value="servicesByEmploye">
-                      Servicios por empleado
-                    </a-select-option>
-                    <a-select-option value="diaryPromedies">
-                      Promedios diarios
-                    </a-select-option>
-                    <a-select-option value="totalExpenses">
-                      Gastos totales
-                    </a-select-option>
-                    <a-select-option value="totalsTypesPays">
-                      Tipos de pago
-                    </a-select-option>
-                  </a-select>
-                </div>
-                <div class="col-md-4">
-                  <base-button :disabled="validRoute('metricas', 'filtrar') ? false : true" @click="filterGraph" size="sm" type="default">
-                      <a-icon type="filter" style="vertical-align:1px;font-size:1.6em;" />
-                  </base-button>
-                </div>
-              </div>
-            </template>
-            <template>
-              <div class="row mt-2">
-                <div class="col-md-8">
-                  <a-spin :spinning="loadingChart">
-                    <apexchart v-show="change" class="borderClass" ref="chartApis" :height="350" :options="chartOptions" :series="graphData"></apexchart>
-
-                    <apexchart v-show="noChange" class="borderClass" ref="chartApisDaily" :height="350" :options="chartDaily" :series="graphDataDaily"></apexchart>
-                  </a-spin>
-                </div>
-                <div class="col-md-4">
-                  <stats-card title="Comparación de ventas"
-                      type="gradient-orange"
-                      :sub-title="thisMonth.totalSale | formatPrice"
-                      icon="ni ni-basket"
-                      class="mt-1">
-                      <template slot="footer">
-                          <span :class="percentTotalSale >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
-                              <i :class="percentTotalSale >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
-                              {{percentTotalSale}}%
-                          </span>
-                          <span class="text-nowrap">
-                              Mes pasado 
-                              <small class="text-muted">  
-                                  {{prevMonth.totalSale | formatPrice}}
-                              </small>
-                          </span>
-                      </template>
-                  </stats-card>
-                  <stats-card title="Comparación de items"
-                      type="gradient-orange"
-                      :sub-title="thisMonth.totalItems"
-                      icon="ni ni-bell-55"
-                      class="mt-1">
-                      <template slot="footer">
-                          <span :class="percentTotalItems >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
-                              <i :class="percentTotalItems >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
-                              {{percentTotalItems}}%
-                          </span>
-                          <span class="text-nowrap">
-                              Mes pasado 
-                              <small class="text-muted">  
-                                  {{prevMonth.totalItems}}
-                              </small>
-                          </span>
-                      </template>
-                  </stats-card>
-                  <stats-card title="Promedios"
-                      type="gradient-orange"
-                      sub-title="Ventas y servicios"
-                      icon="ni ni-atom"
-                      class="mt-1">
-                      <template slot="footer">
-                          <p>
-                          Promedio ventas {{promedySales | formatPrice}}<br>
-                          Promedio servicios {{promedyServices | formatPrice}}
-                        </p>
-                      </template>
-                  </stats-card>
-                </div>
-              </div>
-            </template>
-          </card>
           <card 
             class="mt-2"
             shadow>
@@ -168,13 +59,105 @@
             </template>
             <template>
               <div class="row mt-2">
-                <div class="col-md-8">
+                <div class="col-md-12">
                   <a-spin :spinning="loadingChartAnual">
                     <apexchart class="borderClass" ref="chartApisAnual" :height="350" :options="chartOptionsAnual" :series="graphDataAnual"></apexchart>
                   </a-spin>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                   
+                </div> -->
+              </div>
+            </template>
+          </card>
+          <card 
+            class="mt-2"
+            shadow>
+            <template slot="header">
+              <div class="row">
+                <div class="col-md-4">
+                  <a-range-picker
+                    :ranges="{ Today: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }"
+                    format="MM-DD-YYYY"
+                    @change="selectDate"
+                    class="w-100"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <a-select default-value="Produccion total" class="w-100" @change="selectType">
+                    <a-select-option value="totalSales">
+                      Producción total
+                    </a-select-option>
+                    <a-select-option value="totalServices">
+                      Servicios totales
+                    </a-select-option>
+                    <a-select-option value="totalByEmploye">
+                      Produccion por empleado
+                    </a-select-option>
+                    <a-select-option value="commissionsByEmploye">
+                      Comision por empleado
+                    </a-select-option>
+                    <a-select-option value="servicesByEmploye">
+                      Servicios por empleado
+                    </a-select-option>
+                    <a-select-option value="diaryTotals">
+                      Totales diarios
+                    </a-select-option>
+                    <a-select-option value="diaryPromedies">
+                      Promedios diarios
+                    </a-select-option>
+                    <a-select-option value="totalExpenses">
+                      Gastos totales
+                    </a-select-option>
+                    <a-select-option value="totalsTypesPays">
+                      Tipos de pago
+                    </a-select-option>
+                    <a-select-option value="totalPerService">
+                      Total por servicios
+                    </a-select-option>
+                    <a-select-option value="totalPerProducts">
+                      Total por productos
+                    </a-select-option>
+                  </a-select>
+                </div>
+                <div class="col-md-4">
+                  <base-button class="forBug" :disabled="validRoute('metricas', 'filtrar') ? false : true" @click="filterGraph" size="sm" type="default">
+                      <a-icon type="filter" style="vertical-align:1px;font-size:1.6em;" />
+                  </base-button>
+                </div>
+              </div>
+            </template>
+            <template>
+              <div class="row mt-2">
+                <div class="col-md-8">
+                  <a-spin :spinning="loadingChart">
+                    <apexchart v-show="change" class="borderClass" ref="chartApis" :height="350" :options="chartOptions" :series="graphData"></apexchart>
+
+                    <apexchart v-show="noChange" class="borderClass" ref="chartApisDaily" :height="350" :options="chartDaily" :series="graphDataDaily"></apexchart>
+
+                    <apexchart v-show="noChangeTwo" class="borderClass" ref="chartApisService" :height="350" :options="chartService" :series="graphDataService"></apexchart>
+                  </a-spin>
+                </div>
+                <div class="col-md-4">
+                  <stats-card title="Promedios"
+                      type="gradient-orange"
+                      sub-title="Ventas y servicios"
+                      icon="ni ni-atom"
+                      class="mt-1">
+                      <template slot="footer">
+                          <p style="line-height: 2.2;">
+                            Promedio ventas <strong>{{promedySales | formatPrice}}</strong><br>
+                            Promedio servicios <strong>{{promedyServices}}</strong><br>
+                            Proyección de ventas 
+                            <a-input style="width: 15%" @keyup="calculatedSaleProjection" type="number" placeholder="Días" v-model="projection.sales"/>
+                            <strong> {{salesProjection | formatPrice}}</strong><br>
+                            Proyección de servicios
+                            <a-input style="width: 15%" @keyup="calculatedServiceProjection" type="number" placeholder="Días" v-model="projection.service"/>
+                            <strong> {{serviceProjection}}</strong><br>
+                            Total de gastos <strong> {{expenseTotal | formatPrice}}</strong>
+                          </p>
+                      </template>
+                  </stats-card>
                 </div>
               </div>
             </template>
@@ -365,12 +348,38 @@
         percentTotalItems: 0,
         paysData: [],
         promedySales: 0,
+        totalSale: 0,
+        totalServices: 0,
         promedyServices: 0,
+        projection: {
+          sales: '',
+          service: ''
+        },
         graphData: [],
         graphDataAnual: [],
-        graphType: '',
+        graphType: 'totalSales',
         change: true,
         noChange: false,
+        noChangeTwo: false,
+        chartService: {
+          chart: {
+            width: "100%",
+            type: 'pie',
+          },
+          labels: [],
+          responsive: [{
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: 200
+              },
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }]
+        },
+        graphDataService: [],
         chartDaily: {
           chart: {
             height: 350,
@@ -426,7 +435,12 @@
         services: [],
         serviceSelect: '',
         employes: [],
-        employeSelect: ''
+        employeSelect: '',
+        thisClick: true,
+        workDays: 0,
+        salesProjection: 0,
+        serviceProjection: 0,
+        expenseTotal: 0
       };
     },
     created(){
@@ -452,12 +466,34 @@
         this.getChartAnual()
         this.getServices()
         this.getEmployes()
+        this.getDataDays()
+        this.getExpenseTotal()
         $('#second').css({'display': 'none'})
         // document.getElementById("second").style.display = "none";
       },
       selectDate(dates, dateString){
         this.dateFilter = dateString
         console.log(this.dateFilter)
+      },
+      calculatedSaleProjection(){
+        if (this.projection.sales > 0) {
+          console.log(this.totalSale, this.workDays, this.projection.sales)
+          this.salesProjection = (this.totalSale / this.workDays) * parseInt(this.projection.sales)
+        }
+      },
+      calculatedServiceProjection(){
+        if (this.projection.service > 0) {
+          this.serviceProjection = (this.totalServices / this.workDays ) * parseInt(this.projection.service)
+        }
+      },
+      async getExpenseTotal(){
+        this.serviceState = true
+        try {
+          const expenses = await axios.get(endPoint.endpointTarget+'/metrics/'+this.branch, this.configHeader)
+          this.expenseTotal = expenses.data.total
+        }catch(err){
+          console.log(err)
+        }
       },
       async getServices(){
         this.serviceState = true
@@ -595,10 +631,53 @@
         }
       },
       async filterGraph(){
-        if (this.graphType == "diaryPromedies" || this.graphType == "totalExpenses" || this.graphType == "commissionsByEmploye" || this.graphType == "servicesByEmploye" || this.graphType == "totalByEmploye" || this.graphType == "totalsTypesPays") {
+        if (this.graphType == "totalPerService" || this.graphType == "totalPerProducts") {
           this.loadingChart = true
           this.change = false
+          this.noChange = false
+          
+          try{
+            const getSales = await axios.post(`${endPoint.endpointTarget}/metrics/${this.graphType}`, {
+              branch: this.branch,
+              dates: this.dateFilter
+            }, this.configHeader)
+            this.graphDataService = getSales.data.series
+            this.chartService = {
+              chart: {
+                width: "100%",
+                type: 'pie',
+              },
+              labels: getSales.data.labels,
+              responsive: [{
+                breakpoint: 480,
+                options: {
+                  chart: {
+                    width: 200
+                  },
+                  legend: {
+                    position: 'bottom'
+                  }
+                }
+              }]
+            }
+            this.$refs.chartApisService.updateOptions(this.chartService, true, true, true)
+            this.noChangeTwo = true
+            setTimeout(() => {
+              if (this.thisClick) {
+                $('.forBug').click()
+                this.thisClick = false
+              }
+            }, 200);
+            this.loadingChart = false
+          }catch(err){
+            console.log(err)
+          }
+        }else if (this.graphType == "diaryPromedies" || this.graphType == "diaryTotals" || this.graphType == "totalExpenses" || this.graphType == "commissionsByEmploye" || this.graphType == "servicesByEmploye" || this.graphType == "totalByEmploye" || this.graphType == "totalsTypesPays") {
+          this.loadingChart = true
+          this.change = false
+          this.noChangeTwo = false
           this.noChange = true
+          this.thisClick = true
           try {
             const getSales = await axios.post(`${endPoint.endpointTarget}/metrics/${this.graphType}`, {
               branch: this.branch,
@@ -659,8 +738,10 @@
           }
         }else{
           this.loadingChart = true
-          this.change = true
           this.noChange = false
+          this.noChangeTwo = false
+          this.change = true
+          this.thisClick = true
           try {
             const getSales = await axios.post(`${endPoint.endpointTarget}/metrics/${this.graphType}`, {
               branch: this.branch,
@@ -681,9 +762,20 @@
             branch: this.branch,
             dates: this.dateFilter
           }, this.configHeader)
-          this.promedySales = getSales.data.total / getSales.data.series.length
+          this.totalSale = getSales.data.total
           this.graphData = getSales.data.series
           this.loadingChart = false
+          // this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
+        }catch(err){
+          console.log(err)
+        }
+      },
+      async getDataDays(){
+        try {
+          const getDays = await axios.get(`${endPoint.endpointTarget}/metrics/getDays/${this.branch}`, this.configHeader)
+          this.promedySales = this.totalSale / getDays.data.quantity
+          this.promedyServices = this.totalServices / getDays.data.quantity
+          this.workDays = getDays.data.quantity > 0 ? getDays.data.quantity : 1
           // this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
         }catch(err){
           console.log(err)
@@ -695,7 +787,7 @@
             branch: this.branch,
             dates: this.dateFilter
           }, this.configHeader)
-          this.promedyServices = getServices.data.total / getServices.data.series.length
+          this.totalServices = getServices.data.total
         }catch(err){
           console.log(err)
         }
