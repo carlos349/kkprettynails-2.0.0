@@ -37,14 +37,14 @@
                   </a-select>
                 </div>
                 <div v-show="serviceChart" class="col-md-4">
-                  <a-select :default-value="services[0].name" class="w-100" @change="selectService">
+                  <a-select v-if="services[0]" :default-value="services[0].name" class="w-100" @change="selectService">
                     <a-select-option v-for="service of services" :key="service._id" :value="service._id">
                       {{service.name}}
                     </a-select-option>
                   </a-select>
                 </div>
                 <div v-show="employeChart" class="col-md-4">
-                  <a-select :default-value="employes[0].firstName+' '+employes[0].lastName" class="w-100" @change="selectEmploye">
+                  <a-select v-if="employes[0]" :default-value="employes[0].firstName+' '+employes[0].lastName" class="w-100" @change="selectEmploye">
                     <a-select-option v-for="employe of employes" :key="employe._id" :value="employe._id">
                       {{employe.firstName}} {{employe.lastName}}
                     </a-select-option>
@@ -294,7 +294,6 @@
             type: 'bar',
             height: 350
           },
-          
           plotOptions: {
             bar: {
               borderRadius: 10,
@@ -309,7 +308,7 @@
               let val = (value/1).toFixed(2).replace('.', ',')
               return value > 600 ? '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : value
             },
-            offsetY: -20,
+            offsetY: -25,
             style: {
               fontSize: '12px',
               colors: ["#304758"],
@@ -328,17 +327,7 @@
           },
           xaxis: {
             type: 'datetime'
-          },
-          theme: {
-            mode: 'light', 
-            palette: 'palette1', 
-            monochrome: {
-              enabled: false,
-              color: '#172b4d',
-              shadeTo: 'light',
-              shadeIntensity: 0.65
-            },
-          },
+          }
         },
         prevMonth: {
           totalSale: 0,
@@ -361,24 +350,29 @@
         change: true,
         noChange: false,
         noChangeTwo: false,
-        chartService: {
-          chart: {
-            width: "100%",
-            type: 'pie',
-          },
-          labels: [],
-          responsive: [{
-            breakpoint: 480,
-            options: {
-              chart: {
-                width: 200
-              },
-              legend: {
-                position: 'bottom'
-              }
-            }
-          }]
-        },
+        // chartService: {
+        //   chart: {
+        //     width: "100%",
+        //     type: 'pie',
+        //   },
+        //   labels: [],
+        //   legend: {
+        //     position: 'right',
+        //     offsetY: 0,
+        //     height: 230,
+        //   },
+        //   responsive: [{
+        //     breakpoint: 480,
+        //     options: {
+        //       chart: {
+        //         width: 200
+        //       },
+        //       legend: {
+        //         position: 'bottom'
+        //       }
+        //     }
+        //   }]
+        // },
         graphDataService: [],
         chartDaily: {
           chart: {
@@ -462,7 +456,7 @@
         // this.getPayData()
         this.getDataSale()
         this.getDataService()
-        this.getDailyGraph()
+        // this.getDailyGraph()
         this.getChartAnual()
         this.getServices()
         this.getEmployes()
@@ -478,7 +472,7 @@
       calculatedSaleProjection(){
         if (this.projection.sales > 0) {
           console.log(this.totalSale, this.workDays, this.projection.sales)
-          this.salesProjection = (this.totalSale / this.workDays) * parseInt(this.projection.sales)
+          this.salesProjection = (this.totalSale / this.workDays) * (parseInt(this.projection.sales) + this.workDays)
         }
       },
       calculatedServiceProjection(){
@@ -489,7 +483,7 @@
       async getExpenseTotal(){
         this.serviceState = true
         try {
-          const expenses = await axios.get(endPoint.endpointTarget+'/metrics/'+this.branch, this.configHeader)
+          const expenses = await axios.get(endPoint.endpointTarget+'/metrics/getExpensesTotal/'+this.branch, this.configHeader)
           this.expenseTotal = expenses.data.total
         }catch(err){
           console.log(err)
@@ -641,13 +635,25 @@
               branch: this.branch,
               dates: this.dateFilter
             }, this.configHeader)
+            setTimeout(() => {
+              if (this.thisClick) {
+                $('.forBug').click()
+                this.thisClick = false
+              }
+            }, 200);
             this.graphDataService = getSales.data.series
             this.chartService = {
               chart: {
-                width: "100%",
-                type: 'pie',
+                type: 'donut',
+                width: '100%'
               },
+              type: "donut",
               labels: getSales.data.labels,
+              legend: {
+                position: 'right',
+                offsetY: 0,
+                height: 230,
+              },
               responsive: [{
                 breakpoint: 480,
                 options: {
@@ -660,14 +666,9 @@
                 }
               }]
             }
-            this.$refs.chartApisService.updateOptions(this.chartService, true, true, true)
+            this.$refs.chartApisService.updateOptions(this.chartService, true, false, false)
             this.noChangeTwo = true
-            setTimeout(() => {
-              if (this.thisClick) {
-                $('.forBug').click()
-                this.thisClick = false
-              }
-            }, 200);
+            
             this.loadingChart = false
           }catch(err){
             console.log(err)
@@ -717,7 +718,7 @@
                 },
               },
               title: {
-                text: 'Gastos totales',
+                text: 'Gráficas por categorias',
                 align: 'left'
               },
               grid: {
