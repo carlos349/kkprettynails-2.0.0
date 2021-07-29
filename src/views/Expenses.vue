@@ -144,16 +144,16 @@
                     </div>
                     <div class="float-left mt-2">
                         <label style="margin-left:-10px;" for="date" class="text-white">Busque por fecha</label><br>
-                        <a-range-picker :disabled="validRoute('gastos', 'registrar') ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" style="margin-left:-10px;width:55%;" :locale="locale" />
-                        <base-button class="ml-2" style="margin-top:-5px;" size="sm"  :disabled="validRoute('gastos', 'registrar') ? false : true"  v-on:click="findExpenses" type="success">
+                        <a-range-picker :disabled="validRoute('gastos', 'filtrar') ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" style="margin-left:-10px;width:55%;" :locale="locale" />
+                        <base-button class="ml-2" style="margin-top:-5px;" size="sm"  :disabled="validRoute('gastos', 'filtrar') ? false : true"  v-on:click="findExpenses" type="success">
                             <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
                         </base-button>
                     </div>
-                    <base-button style="margin-right:-10px; margin-top:3.3em;" class="float-right" size="sm"  :disabled="validRoute('gastos', 'registrar') ? false : true"  v-on:click="modals.modal1 = true" type="success">
+                    <base-button style="margin-right:-10px; margin-top:3.3em;" class="float-right" size="sm"  v-on:click="modals.modal1 = true" type="success">
                         <a-icon type="wallet" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
                         Registrar
                     </base-button>
-                    <base-button class="float-right mr-2" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'registrar') ? false : true"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
+                    <base-button class="float-right mr-2" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'registrar_inversion') ? false : true"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
                         <a-icon type="book" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
                         Inversión mensual
                     </base-button>
@@ -193,10 +193,10 @@
             <template>
                 <h3 class="text-center w-100">Seleccione el tipo de gasto</h3>
                 <center>
-                    <base-button @click="modals.modal1 = false, modals.modal2 = true" class="w-25" type="default">
+                    <base-button :disabled="validRoute('gastos', 'registrar_bono') ? false : true" @click="modals.modal1 = false, modals.modal2 = true" class="w-25" type="default">
                         Bono
                     </base-button>
-                    <base-button @click="modals.modal1 = false, modals.modal3 = true" type="primary">
+                    <base-button :disabled="validRoute('gastos', 'registrar_gasto') ? false : true" @click="modals.modal1 = false, modals.modal3 = true" type="primary">
                         Gasto mensual
                     </base-button>  
                 </center>
@@ -436,6 +436,7 @@ export default {
             this.getTotal() 
         },
         validRoute(route, type){
+            console.log(route, type)
             for (let index = 0; index < this.auth.length; index++) {
                 const element = this.auth[index];
                 if (element.ruta == route) {
@@ -446,6 +447,7 @@ export default {
                     }
                 }
             }
+            
         },
         async getTotalSales(){
             try {
@@ -461,48 +463,76 @@ export default {
         },
         closeReinvestment(){
             if (this.reinvestmentValid && this.reinvestmentId != '') {
-                const expenseTotal = this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual + this.thisMonth.Comision
-                this.$swal({
-                        title: '¿Desea realizar el cierre?',
-                        type: 'warning',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Si',
-                        cancelButtonText: 'No, cancelar',
-                        showCloseButton: true,
-                        showLoaderOnConfirm: true
-                    }).then((result) => {
-                        if(result.value) {
-                            const type = 'circles'
-                            const loading = this.$vs.loading({
-                                type
-                            })
-                            
-                            axios.post(`${endPoint.endpointTarget}/expenses/closeExpenses`, {
-                                reinvestment: this.reinvestmentTotal,
-                                sales: this.totalSales,
-                                expenses: expenseTotal,
-                                totalFinal: this.totalFinal,
-                                branch: this.branch,
-                                reinvestmentId: this.reinvestmentId 
-                            }, this.configHeader)
-                            .then(res => {
-                                if(res.data.status == 'ok'){
-                                    loading.close()
-                                    var windowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
-                                    window.open(`${endPoint.endpointTarget}/static/reportExpenses.pdf`, 'Report', windowFeatures)
-                                    this.getBranch()
-                                }
-                            })
-                        }else{
-                            this.$swal({
-                                icon: 'info',
-                                title: 'Acción cancelada',
-                                showConfirmButton: false,
-                                timer: 2000
-                            })
-                        }
-                    })
+                axios.post(`${endPoint.endpointTarget}/expenses/validclose`, {
+                    branch: this.branch
+                }, this.configHeader)
+                .then(valid =>{
+                    if (valid.data.status == 'bad employes') {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Debes hacer un cierre de todos tus empleados',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                    }if (valid.data.status == 'bad inventories') {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Debes hacer un cierre del inventario',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                    }if (valid.data.status == 'bad cashfound') {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Debes hacer un cierre de caja',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                    }if (valid.data.status == 'ok') {
+                        const expenseTotal = this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual + this.thisMonth.Comision
+                        this.$swal({
+                            title: '¿Desea realizar el cierre?',
+                            type: 'warning',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Si',
+                            cancelButtonText: 'No, cancelar',
+                            showCloseButton: true,
+                            showLoaderOnConfirm: true
+                        }).then((result) => {
+                            if(result.value) {
+                                const type = 'circles'
+                                const loading = this.$vs.loading({
+                                    type
+                                })
+                                
+                                axios.post(`${endPoint.endpointTarget}/expenses/closeExpenses`, {
+                                    reinvestment: this.reinvestmentTotal,
+                                    sales: this.totalSales,
+                                    expenses: expenseTotal,
+                                    totalFinal: this.totalFinal,
+                                    branch: this.branch,
+                                    reinvestmentId: this.reinvestmentId 
+                                }, this.configHeader)
+                                .then(res => {
+                                    if(res.data.status == 'ok'){
+                                        loading.close()
+                                        var windowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
+                                        window.open(`${endPoint.endpointTarget}/static/reportExpenses.pdf`, 'Report', windowFeatures)
+                                        this.getBranch()
+                                    }
+                                })
+                            }else{
+                                this.$swal({
+                                    icon: 'info',
+                                    title: 'Acción cancelada',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                })
+                            }
+                        })
+                    }
+                })
             }else{
                 this.$swal({
 					icon: 'error',

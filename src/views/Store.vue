@@ -394,15 +394,21 @@
                           v-model="dataProduct.alertTotal"
                           addon-left-icon="fa fa-bell">
                     </base-input>
-                    <currency-input
-                        v-if="validForm != 1"
-                        locale="de"
-                        placeholder="Precio por unidad"
-                        addon-left-icon="ni ni-money-coins"
-                        v-model="dataProduct.price"
-                        class="form-control mb-3"
-                        style="margin-top:-10px;"
-                    />	
+                    <a-tooltip placement="right">
+                        <template slot="title">
+                        <span>Introduzca precio por {{dataProduct.measure}}</span>
+                        </template>
+                        <currency-input
+                            v-if="validForm != 1"
+                            locale="de"
+                            :placeholder="'Precio por ' + dataProduct.measure"
+                            addon-left-icon="ni ni-money-coins"
+                            v-model="dataProduct.price"
+                            class="form-control mb-3"
+                            style="margin-top:-10px;"
+                        />
+                    </a-tooltip>
+                    	
                     <base-button icon="fa fa-plus" @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" v-if="validForm == 3" class="mb-2" size="sm" type="success">Registrar provedor</base-button>
                     <a-select class="input-group-alternative w-100 mb-4 mt-2" v-if="validForm == 3" default-value="Seleccione un provedor"   size="large">
                         <a-select-option v-for="provider of providers" :key="provider" @click="selectProviderForProduct(provider)" :value="provider">

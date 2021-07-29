@@ -5,6 +5,7 @@ import AuthLayout from '@/layout/AuthLayout'
 import AgendLayout from '@/views/DatesClient'
 import ConfirmLayout from '@/views/DatesConfirm'
 import reportPdf from '@/views/reportPdf'
+import reportPdfEmploye from '@/views/reportPdfEmploye'
 import reportExpense from '@/views/reportExpense'
 Vue.use(Router)
 
@@ -48,6 +49,14 @@ export default new Router({
       ] 
     },
     {
+      path: '/pdfReportEmploye',
+      redirect: 'reportPdfEmploye',
+      component: reportPdfEmploye,
+      children: [
+        {
+          path: '/reportPdfEmploye',
+          name: '',
+          component: () => import('./views/reportPdfEmploye.vue')
       path: '/reporteGasto',
       redirect: 'reportExpense',
       component: reportExpense,

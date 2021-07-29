@@ -130,6 +130,13 @@ input[type=number]::-webkit-outer-spin-button {
     .responsiveImageProfile{
         margin-bottom: 3rem;
     }
+    .aggendMin .form-group {
+        margin-bottom: 0 !important
+    }
+}
+
+.ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    padding: 6px !important;
 }
 
 

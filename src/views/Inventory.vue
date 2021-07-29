@@ -80,6 +80,13 @@
                                   <span v-else>
                                     {{(parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume)}}
                                   </span>
+                                  <a-tooltip placement="top">
+                                        <template slot="title">
+                                            <span>Devolver cantidad a bodega</span>
+                                        </template>
+                                        <base-button v-if="column.productType == 'Materia prima'" :disabled="(parseFloat(column.entry)) - parseFloat(column.consume) == 0 ? true : false" size="sm" class="ml-2 mr-0" type="danger" @click="lessInventory = '', modals.modal6 = true, selectedProduct = column._id, totalValidLess = parseFloat(column.entry) - parseFloat(column.consume)"><a-icon type="export" style="vertical-align: .13em;font-size: 1.1em;"/></base-button>
+                                    </a-tooltip>
+                                  
                                     
                                 </template>
                                 <template slot="typeProduct" slot-scope="record, column">
@@ -320,7 +327,25 @@
             <base-button type="link" class="ml-auto" @click="modals.modal5 = false">Cerrar</base-button>
         </template>
     </modal>
-
+    <modal :show.sync="modals.modal6"
+           body-classes="p-0"
+           modal-classes="modal-dialog-centered modal-sm">
+           <h6 slot="header" class="modal-title" id="modal-title-default">Devolver a bodega</h6>
+        <card type="secondary" shadow
+            header-classes="bg-white pb-5"
+            body-classes="px-lg-5 py-lg-5"
+            class="border-0">
+            <template>
+                <div style="margin-top: -15%" class="text-muted mb-3 text-center">
+                    Ingrese cantidad
+                </div>
+            </template>
+            <a-input-number size="large" placeholder="Cantidad" class="w-100" :min="1" v-model="lessInventory"/>
+            <div class="text-center">
+                <base-button type="warning" :disabled="lessInventory > 0 && lessInventory <= totalValidLess ? false : true" v-on:click="returnToStore()" class="my-2">Devolver</base-button>
+            </div>
+        </card>
+    </modal>
   </div>
 </template>
 <script>
@@ -346,7 +371,11 @@ export default {
         modals: {
           modal4: false,
           modal5: false,
+          modal6: false
         },
+        lessInventory:'',
+        totalValidLess: '',
+        selectedProduct: '',
         productState: true,
         products: [],
         searchText: '',
@@ -674,6 +703,34 @@ export default {
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+        },
+        returnToStore(){
+            axios.put(endPoint.endpointTarget+'/stores/returntostore/'+ this.selectedProduct , {
+                less: this.lessInventory
+            }, this.configHeader)
+            .then(res => {
+                if (res.data.status === 'ok') {
+                    this.$swal({
+                    type: 'success',
+                    icon: 'success',
+                    title: 'Devolución exitosa',
+                    showConfirmButton: false,
+                    timer: 1500
+                    })
+                    this.getProducts();
+                    this.getHistoryClosed()
+                    this.modals.modal6 = false
+                }
+            })
+            .catch(err => {
+            this.$swal({
+                type: 'error',
+                title: 'Problemas tecnicos',
+                showConfirmButton: false,
+                timer: 1500
+                })
+            })
+            
         },
         getBranch(){
             this.branchName = localStorage.branchName  

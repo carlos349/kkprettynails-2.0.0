@@ -7,12 +7,20 @@
             <!-- Header container -->
                 <div class="row">
                     <div class="col-12">
-                        <div class="text-absolute">
-                            <p class="mb-0 display-2 text-white">Agenda</p>
+                        <div class="text-absolute col-12">
+                            <center v-if="hideText == 'display:none'">
+                                <p style="margin-top:-10%" class="display-1 text-white text-center mx-auto">Agenda</p>
+                            </center>
+                            
+                            <p v-else class="mb-0 display-2 text-white">Agenda</p>
                             <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         </div>
 
-                        <base-button class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                        <base-button v-if="hideText == 'display:none'" class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                            <a-icon type="form" style="vertical-align:1px;font-size:1.5em;" />
+                        </base-button>
+
+                        <base-button v-else class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
                             <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                             Agendar
                         </base-button>
@@ -311,6 +319,7 @@
                         </template>
                         <center>
                             <a-select
+                                v-if="hideText != 'display:none'"
                                 ref="clientSelect"
                                 show-search
                                 placeholder="Selecciona un cliente"
@@ -326,16 +335,33 @@
                                     {{client.firstName}} {{client.lastName}} ({{client.email}})
                                 </a-select-option>
                             </a-select>
+                            <a-select
+                                v-else
+                                ref="clientSelect"
+                                show-search
+                                placeholder="Selecciona un cliente"
+                                class="w-100 mb-2"
+                                :allowClear="true"
+                                option-filter-prop="children"
+                                :filter-option="filterOption"
+                            >
+                                <a-select-option v-on:click="selectClient('register')" class="text-success" value="register">
+                                    Registrar cliente
+                                </a-select-option>
+                                <a-select-option v-for="client in clients" :key="client" :value="client.firstName + ' ' + client.lastName + ' (' + client.email + ')'" v-on:click="selectClient(client)">
+                                    {{client.firstName}} {{client.lastName}} ({{client.email}})
+                                </a-select-option>
+                            </a-select>
                         </center>
                         
                         <div  class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-3 aggendMin">
                                 <base-input v-on:keyup="validRegister()" placeholder="Nombre" v-model="dataClient.firstName" addon-left-icon="ni ni-circle-08"></base-input>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 aggendMin">
                                 <base-input v-on:keyup="validRegister()" placeholder="Apellido" v-model="dataClient.lastName" addon-left-icon="ni ni-circle-08"></base-input>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 aggendMin">
                                 <base-input v-on:keyup="validRegister()" placeholder="Correo" v-model="dataClient.email" addon-left-icon="ni ni-key-25"></base-input>
                             </div>
                             
@@ -564,7 +590,7 @@
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true && this.configurations.datesPolitics.editDates" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true && this.configurations.datesPolitics.editDates" v-on:click="dataEdit()" class="col-md-6 col-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Editar</span>  
@@ -573,7 +599,7 @@
                                     </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true, plusMicroFinally()" class="col-md-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true, plusMicroFinally()" class="col-md-6 col-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Finalizar</span>  
@@ -583,7 +609,7 @@
                                     </div>
                                 </template>
                                 <template v-if="validRoute('agendamiento', 'cerrar') ">
-                                    <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent._id)" class="col-md-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent._id)" class="col-md-6 col-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Cerrar</span>  
@@ -593,7 +619,7 @@
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar') && this.configurations.datesPolitics.deleteDates" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar') && this.configurations.datesPolitics.deleteDates" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 col-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Borrar</span>  
@@ -602,7 +628,7 @@
                                     </center>
                                 </div>
 
-                                <div class="col-md-6 mx-auto mt-2">
+                                <div class="col-md-6 col-7 mx-auto mt-2">
                                     <center>
                                         <div v-if="selectedEvent.process == true && validRoute('agendamiento', 'confirmacion')">
                                             <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation" type="success" class="mx-auto col-12">
@@ -710,7 +736,7 @@
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
-                <div style="margin-top:-10% !important" class="text-center">
+                <div style="margin-top:-5% !important" class="text-center">
                     <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}} <br> <i  class="fa fa-clock"></i> {{moment(selectedEvent.start).format('LT')}} / {{moment(selectedEvent.end).format('LT')}}</base-button>
                 </div>
                 <dd v-if="dateData.fechaEditPick == ''" class="text-danger text-center">Debe seleccionar una fecha</dd>
@@ -729,20 +755,22 @@
                 </div>
                 <center>
                     <div class="row col-12 p-0 m-0">
-                        <div style="margin-top: -6px" class="col-md-2 p-0">
+                        <div style="margin-top: -6px" class="col-md-2 col-2 p-0">
                             <span class="minLess text-danger"> -{{minLessEdit}}</span>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-4">
                             <a-button v-on:click="changeMin(false)"  type="danger">
-                                <a-icon style="vertical-align: unset;" type="minus-circle" />Restar minutos
+                                <a-icon style="vertical-align: unset;" type="minus-circle" /> 
+                                <span v-if="hideText != 'display:none'">Restar minutos</span>
                             </a-button>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-4">
                             <a-button v-on:click="changeMin(true)" class="text-white" style="background-color:#2dce89" type="success">
-                                Agregar minutos<a-icon style="vertical-align: unset;" type="plus-circle" />
+                                <span v-if="hideText != 'display:none'">Agregar minutos</span>
+                                <a-icon style="vertical-align: unset;" type="plus-circle" />
                             </a-button>
                         </div>
-                        <div style="margin-top: -8px" class="col-md-2 p-0">
+                        <div style="margin-top: -8px" class="col-md-2 col-2 p-0">
                              <span class="minAdd"> +{{minAddEdit}}</span>
                         </div>
                         
@@ -750,7 +778,7 @@
                     <span class="minAdd text-default"> Duración: {{selectedEvent.duration}} Min</span>
                 </center>
                 <hr>
-                <a-select class="col-12 col-md-9 mx-1" :default-value="selectedEvent.employe.name" >
+                <a-select class="col-9 col-md-9 mx-1" :default-value="selectedEvent.employe.name" >
                     <a-select-option v-for="employe in selectedEvent.services[0].employes" :key="employe" @click="editEmployeDate(employe)" :value="employe.name">
                         {{employe.name}}
                     </a-select-option>
@@ -759,7 +787,7 @@
                     <template slot="title">
                     <span>Buscar horario</span>
                     </template>
-                    <a-button class="text-white col-12 col-md-2 mx-1" @click="searchBlockEdit()" style="background-color:#2dce89" type="success">
+                    <a-button class="text-white col-2 col-md-2 mx-1" @click="searchBlockEdit()" style="background-color:#2dce89" type="success">
                         <a-icon style="vertical-align: unset;" type="search" />
                     </a-button>
                 </a-tooltip>
@@ -4855,7 +4883,7 @@ export default {
     }
    
     .vue-form-wizard .wizard-btn{
-        min-width: 130px !important;
+        min-width: 100px !important;
     }
     .fixed-top{
         margin-left:30%;
@@ -4941,9 +4969,6 @@ export default {
     .ps__thumb-y{
         height: 44px !important;
     }
-    .historicalClientTable .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
-        padding: 6px !important;
-    }
     .qloq button{
         padding: 3px !important;
         margin-right: 30px !important;
@@ -4969,8 +4994,7 @@ export default {
         margin-right: 5px;
     } 
 
-    ::-webkit-scrollbar {
-        display: none;
-    }
+
+    
     
 </style>
