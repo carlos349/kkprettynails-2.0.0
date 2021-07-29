@@ -559,11 +559,11 @@ export default {
         },
         registerEmployes(){
             if (this.validHoursDays() == 'hora atras') {
-                this.$swal({
+                this.$swal.fire({
                     icon: 'error',
-                    title: 'La hora de un dia tiene el horario incorrecto.',
-                    showConfirmButton: false,
-                    timer: 1500
+                    title: '¡Oh oh! Horario incorrecto. Revise el principio y fin de los horarios seleccionados.',
+                    showConfirmButton: true,
+                    // timer: 1500
                 })
             }else{
                 if (this.registerEmploye.firstName.length > 3 && this.registerEmploye.lastName.length > 3 && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
@@ -596,11 +596,11 @@ export default {
                         }
                     })
                 }else{
-                    this.$swal({
+                    this.$swal.fire({
                         icon: 'error',
-                        title: 'Llene todos los datos y seleccione al menos un dia.',
-                        showConfirmButton: false,
-                        timer: 1500
+                        title: 'Recuerda completar los datos y el horario de descanso en los días seleccionados.',
+                        showConfirmButton: true,
+                        // timer: 1500
                     })
                 }
             }

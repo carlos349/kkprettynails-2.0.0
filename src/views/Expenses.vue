@@ -524,6 +524,8 @@ export default {
                     this.reinvestmentValid = false
                     this.reinvestmentId = reinvestment.data.data._id
                 }
+                console.log(this.reinvestmentTotal)
+                console.log(reinvestment)
             }catch(err){
                 console.log(err)
             }
