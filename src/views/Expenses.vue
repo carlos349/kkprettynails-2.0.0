@@ -157,6 +157,10 @@
                         <a-icon type="book" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
                         Inversión mensual
                     </base-button>
+                    <base-button @click="openReport" class="float-right mr-2" style="margin-top:3.3em;" size="sm" type="danger">
+                        <a-icon type="file-pdf" class="mr-2" style="vertical-align:1px;font-size:1.5em;"/>
+                        Reporte
+                    </base-button>
                     <base-button @click="closeReinvestment" class="float-right mr-2" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'registrar') ? false : true" type="danger">
                         <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
                         Cierre
@@ -744,6 +748,12 @@ export default {
             return (
                 option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
             );
+        },
+        openReport(){
+            let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
+width=0,height=0,left=-1000,top=-1000`;
+            var win = window.open(endPoint.url+'/#/reporteGasto?branch='+this.branch, '_blank', params)
+            win.focus();
         }
     },
     mounted (){

@@ -9,6 +9,7 @@
               <div class="col-12 py-5">
                 <div class="text-absolute" style="top:10%;">
                   <p class="mb-0 mt-4 display-2 text-white">Reportes</p>
+                  <p class="text-white">Sección dedicada a reportes y gráficos que permiten visualizar los indicadores de tu negocio.</p>
                 </div>
               </div>
             </div>
@@ -78,6 +79,7 @@
                 <div class="col-md-4">
                   <a-range-picker
                     :ranges="{ Today: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }"
+                    :default-value="[moment(dateFormat), moment().endOf('month')]"
                     format="MM-DD-YYYY"
                     @change="selectDate"
                     class="w-100"
@@ -147,14 +149,33 @@
                       <template slot="footer">
                           <p style="line-height: 2.2;">
                             Promedio ventas <strong>{{promedySales | formatPrice}}</strong><br>
-                            Promedio servicios <strong>{{promedyServices}}</strong><br>
+                            Promedio servicios <strong>{{promedyServices.toFixed(2)}}</strong><br>
+                            <a-tooltip placement="topLeft">
+                                <template slot="title">
+                                    <span>(Total ventas del mes / días trabajados) x (Días a trabajar en el mes - días trabajados)</span>
+                                </template>
+                                <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                            </a-tooltip>
                             Proyección de ventas 
-                            <a-input style="width: 15%" @keyup="calculatedSaleProjection" type="number" placeholder="Días" v-model="projection.sales"/>
+                            <a-input style="width: 15%" @keyup="calculatedProjection" type="number" placeholder="Días" v-model="projection"/>
                             <strong> {{salesProjection | formatPrice}}</strong><br>
+                            <a-tooltip placement="topLeft">
+                                <template slot="title">
+                                    <span>(Total servicios del mes / días trabajados) x (Días a trabajar en el mes - días trabajados)</span>
+                                </template>
+                                <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                            </a-tooltip>
                             Proyección de servicios
-                            <a-input style="width: 15%" @keyup="calculatedServiceProjection" type="number" placeholder="Días" v-model="projection.service"/>
+                            <a-input style="width: 15%" @keyup="calculatedProjection" type="number" placeholder="Días" v-model="projection"/>
                             <strong> {{serviceProjection}}</strong><br>
+                            <a-tooltip placement="topLeft">
+                                <template slot="title">
+                                    <span>Gastos totales del mes</span>
+                                </template>
+                                <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                            </a-tooltip>
                             Total de gastos <strong> {{expenseTotal | formatPrice}}</strong>
+                            
                           </p>
                       </template>
                   </stats-card>
@@ -207,6 +228,7 @@
             "x-access-token": localStorage.userToken
           }
         },
+        dateFormat: (new Date().getMonth()+1)+'-01-'+new Date().getFullYear(),
         moment: moment,
         dateFilter: [
           [(new Date().getMonth()+1)+'-01-'+new Date().getFullYear()],
@@ -434,7 +456,9 @@
         workDays: 0,
         salesProjection: 0,
         serviceProjection: 0,
-        expenseTotal: 0
+        expenseTotal: 0,
+        projection: 0,
+        projectioId: ''
       };
     },
     created(){
@@ -463,21 +487,44 @@
         this.getDataDays()
         this.getExpenseTotal()
         $('#second').css({'display': 'none'})
+        this.getPorjection()
+        
         // document.getElementById("second").style.display = "none";
       },
       selectDate(dates, dateString){
         this.dateFilter = dateString
         console.log(this.dateFilter)
       },
-      calculatedSaleProjection(){
-        if (this.projection.sales > 0) {
-          console.log(this.totalSale, this.workDays, this.projection.sales)
-          this.salesProjection = (this.totalSale / this.workDays) * (parseInt(this.projection.sales) + this.workDays)
+      calculatedProjection(){
+        if (this.projection > 0) {
+          console.log(this.totalSale, this.workDays, this.projection)
+          this.salesProjection = (this.totalSale / this.workDays) * (parseInt(this.projection) - this.workDays)
+          this.serviceProjection = (this.totalServices / this.workDays ) * (parseInt(this.projection)- this.workDays)
+          setTimeout(() => {
+            this.updateProjection()
+          }, 500);
         }
       },
-      calculatedServiceProjection(){
-        if (this.projection.service > 0) {
-          this.serviceProjection = (this.totalServices / this.workDays ) * parseInt(this.projection.service)
+      async updateProjection(){
+        try {
+          const projection = await axios.put(endPoint.endpointTarget+'/metrics/updateProjection/'+this.projectioId, {
+            days: this.projection
+          }, this.configHeader)
+        }catch(err){
+          console.log(err)
+        }
+      },
+      async getPorjection(){
+        try {
+          const projection = await axios.get(endPoint.endpointTarget+'/metrics/getProjection/'+this.branch, this.configHeader)
+          this.projection = projection.data.data.days
+          this.projectioId = projection.data.data._id
+          if (projection.data.status == 'ok') {
+            this.calculatedProjection()
+          }
+          console.log(projection)
+        }catch(err){
+          console.log(err)
         }
       },
       async getExpenseTotal(){
