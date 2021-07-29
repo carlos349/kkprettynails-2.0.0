@@ -11,7 +11,7 @@
                             option-filter-prop="children"
                             :filter-option="filterOption"
                             :allowClear="true"
-                            class="mb-2 w-75 clientSelect"
+                            class="mb-2 col-md-7 col-8 clientSelect"
                             :class="screenWidthInput"
                             v-model="registerClient.select"
                             @change="chooseClient">
@@ -35,12 +35,13 @@
                         <input readonly class="ant-input w-100" placeholder="Telefono" v-model="registerClient.phone.formatInternational"/>
                     </div>
                 </div>
-                <div class="card-container">
+                <div class="card-container mt-1">
                     <a-tabs type="card">
                         <a-tab-pane key="1">
                             <span slot="tab">
                                 <a-icon type="plus-circle" style="vertical-align: 1.5px;" />
-                                Servicios
+                                <span v-if="hideText != 'display:none'">Servicios</span>
+                                
                             </span>
                             <div class="row">
                                 <div class="col-md-6">
@@ -116,7 +117,7 @@
                                         v-model="microSelect.name"
                                         :allowClear="true"
                                         :class="screenWidthInput"
-                                        class="mt-1 thisSelect"
+                                        class="mt-1 mr-1 thisSelect"
                                         @change="chooseAditional">
                                         <a-select-option v-for="micro of microservices" :key="micro.microService" :value="micro.microService+'/'+micro.price">
                                             {{micro.microService}}
@@ -127,12 +128,14 @@
                                         locale="de"
                                         :disabled="readyClient"
                                         :class="screenWidth"
-                                        class="ant-input ml-1 mt-1"
+                                        class="ant-input mt-1 mr-1 mb-3 col-8"
                                     />
                                     <a-button :disabled="microValid" @click="addAdditional" class="ml-3 mt-1" type="primary" shape="round">
                                         <a-icon type="plus" style="vertical-align: 1.5px;"/>
                                     </a-button>
+                                    
                                 </div>
+                                
                                 <div class="col-md-6" style="margin-top: -5px;">
                                     <label for="Micros" style="margin-top:-20px;">Adicionales seleccionados</label><br>
                                     <template v-if="microserviceSelecteds.length > 0">
@@ -145,12 +148,14 @@
                                     </template>
                                 </div>
                             </div>
+                            <hr class="mt-3 mb-2">
                             <base-button @click="addItem('service')" class="float-right mt-1" size="sm" type="primary">Agregar item</base-button>
                         </a-tab-pane>
                         <a-tab-pane key="2">
                             <span slot="tab">
                                 <a-icon type="shopping" style="vertical-align: 1.5px;"/>
-                                Productos
+                                <span v-if="hideText != 'display:none'">Productos</span>
+                                
                             </span>
                             <div class="row p-2">
                                 <div class="col-md-6">
@@ -209,7 +214,8 @@
                         <a-tab-pane key="3">
                             <span slot="tab">
                                 <a-icon type="schedule" style="vertical-align: 1.5px;"/>
-                                Citas finalizadas
+                                <span v-if="hideText != 'display:none'">Citas finalizadas</span>
+                                
                             </span>
                             <a-config-provider>
                                 <template #renderEmpty>
@@ -710,7 +716,9 @@ import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+import mixinHideText from '../mixins/mixinHideText'
 export default {
+    mixins: [mixinHideText],
     components: {
         vueCustomScrollbar,
         VueBootstrap4Table,

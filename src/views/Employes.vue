@@ -523,7 +523,7 @@ export default {
         },
         reportEmploye(id){
             localStorage.setItem('idReportEmploye', id)
-            router.push({path: '/reportEmploye'})
+            router.push({path: '/reporteEmpleado'})
         },
         proccess(){
             if (this.tipeForm == "Registrar") {

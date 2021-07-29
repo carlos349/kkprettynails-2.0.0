@@ -62,6 +62,36 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-sm-12">
+                                    <a-tooltip>
+                                        <template slot="title">
+                                            Debe ser un correo valido
+                                        </template>
+                                        <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.05em;" type="question-circle" />
+                                    </a-tooltip>
+                                    <label class="ml-2" for="branch">
+                                        Correo
+                                    </label>
+                                    <base-input class="input-group-alternative"
+                                        placeholder="Correo de la sucursal"
+                                        addon-left-icon="ni ni-email-83"
+                                        @keyup="verifyEmail()"
+                                        v-model="modelStart.email"
+                                        :valid="verifyEmailVar">
+                                    </base-input>
+                                </div>
+                                <a-tooltip placement="top">
+                                    <template slot="title">
+                                    <span>Luego de crear la sucursal podras agregar tu logo en configuraciones</span>
+                                    </template>
+                                    <div class="col-md-6 col-sm-12">
+                                        <label class="ml-2" for="branch">
+                                            Logo de la sucursal
+                                        </label><br>
+                                        <input type="file" id="fileProfile" disabled ref="file" v-on:change="handleFileUpload()" placeholder="seleccione logo" class="form-control input-group-alternative" />
+                                    </div>
+                                </a-tooltip>
+                                
+                                <div class="col-md-6 col-sm-12">
                                     <label class="ml-2 w-100" for="credentials">
                                         Dirección del local
                                     </label>
@@ -83,7 +113,7 @@
                                             style="width: 100%;height: 43px;"
                                             class="input-group-alternative"
                                             size="large"
-                                            v-model="this.modelStart.businessType"
+                                            v-model="modelStart.businessType"
                                             :filter-option="filterOption"
                                             @change="handleChange"
                                         >
@@ -538,6 +568,7 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                 sale: 'wait',
                 final: 'wait'
             },
+            verifyEmailVar: false,
             process: 'branch',
             typePass: 'password',
             typePay: '',
@@ -695,6 +726,18 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
         viewPass(){
             this.typePass = this.typePass == 'password' ? '' : 'password'
         },
+        verifyEmail(){
+            if (this.modelStart.email.split('@')[1]) {
+                if (this.modelStart.email.split('@')[1].split('.')[0]) {
+                    this.verifyEmailVar = true
+                }else{
+                    this.verifyEmailVar = false
+                }
+            }else{
+                this.verifyEmailVar = false
+            }
+            console.log(this.verifyEmailVar)
+        },
         calculatedHour(){
           for (const day of this.modelStart.blockHour) {
             var SumHours, SumMinutes, TotalMinutes
@@ -705,6 +748,9 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                 day.time = TotalMinutes
               }
           }
+        },
+        handleFileUpload(){
+            this.file = this.$refs.file.files[0]
         },
         async finishProcess(){
             this.calculatedHour()
@@ -717,41 +763,50 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                     console.log(registerBranch.data.status)
                     if (registerBranch.data.status == 'ok') {
                         try {
-                            const registerConf = await axios.post(endPoint.endpointTarget+'/configurations/createConfigCertificate', {
-                                branch: registerBranch.data.data._id,
-                                secretKey: this.modelStart.credential,
-                                blockHour: this.modelStart.blockHour,
-                                businessName: this.modelStart.businessName,
-                                businessPhone: this.phoneData,
-                                businessType: this.modelStart.businessType,
-                                businessLocation: this.modelStart.businessLocation,
-                                typesPay: this.modelStart.typesPay,
-                                currency: this.modelStart.currency
-                            }, this.configHeader)
-                            if (registerConf.data.status == 'ok') {
-                                const registerUser = await axios.post(endPoint.endpointTarget+'/users/createUserCertificate', {
+                            var formData = new FormData()
+                            formData.append('image', this.file)
+                            const config = {headers: {'Content-Type': 'multipart/form-data', 'x-access-token': localStorage.userToken, "x-database-connect": endPoint.database }}
+                            try {
+                                const registerConf = await axios.post(endPoint.endpointTarget+'/configurations/createConfigCertificate', {
                                     branch: registerBranch.data.data._id,
                                     secretKey: this.modelStart.credential,
-                                    first_name: this.modelStart.first_name,
-                                    last_name: this.modelStart.last_name,
+                                    blockHour: this.modelStart.blockHour,
+                                    businessName: this.modelStart.businessName,
+                                    businessPhone: this.phoneData,
                                     email: this.modelStart.email,
-                                    password: this.modelStart.password
+                                    file:'',
+                                    businessType: this.modelStart.businessType,
+                                    businessLocation: this.modelStart.businessLocation,
+                                    typesPay: this.modelStart.typesPay,
+                                    currency: this.modelStart.currency
                                 }, this.configHeader)
-                                if (registerUser) {
-                                    const registerFirstProfile = await axios.post(endPoint.endpointTarget+'/configurations/addFirstProfile', {
-                                        secretKey: this.modelStart.credential
+                                if (registerConf.data.status == 'ok') {
+                                    const registerUser = await axios.post(endPoint.endpointTarget+'/users/createUserCertificate', {
+                                        branch: registerBranch.data.data._id,
+                                        secretKey: this.modelStart.credential,
+                                        first_name: this.modelStart.first_name,
+                                        last_name: this.modelStart.last_name,
+                                        email: this.modelStart.email,
+                                        password: this.modelStart.password
                                     }, this.configHeader)
-                                    this.$swal({
-                                        type: 'success',
-                                        icon: 'success',
-                                        title: 'Registro exitoso, por favor ingrese.',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        location.reload()
-                                    }, 2000);
+                                    if (registerUser) {
+                                        const registerFirstProfile = await axios.post(endPoint.endpointTarget+'/configurations/addFirstProfile', {
+                                            secretKey: this.modelStart.credential
+                                        }, this.configHeader)
+                                        this.$swal({
+                                            type: 'success',
+                                            icon: 'success',
+                                            title: 'Registro exitoso, por favor ingrese.',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                        setTimeout(() => {
+                                            location.reload()
+                                        }, 2000);
+                                    }
                                 }
+                            }catch(err){
+                                console.log(err)
                             }
                         }catch(err){console.log(err)}
                     }
@@ -854,10 +909,17 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
         },
         nextStep(step){
             if (step == 'branch') {
-                if (this.modelStart.businessName.length >= 4 && this.phoneData.isValid && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione') {
+                if (this.modelStart.businessName.length >= 4 && this.phoneData.isValid && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione' && this.verifyEmailVar) {
                     this.status.branch = 'finish'
                     this.status.date = 'process'
                     this.process = 'date'
+                }else if(!this.verifyEmailVar){
+                    this.$swal({
+                        icon: 'error',
+                        title: 'El correo es invalido',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }else if (this.phoneData.isValid == false) {
                     this.$swal({
                         icon: 'error',

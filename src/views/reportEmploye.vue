@@ -10,7 +10,7 @@
                     <div class="col-12">
                         <h1 class="display-2 hidden text-white">Reporte de {{nameLender}}</h1>
                         
-                        <base-button v-if="validRoute('empleados', 'detalle')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
+                        <base-button v-if="validRoute('empleados', 'reportes')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
                         <base-button v-else disabled type="success">Datos avanzados</base-button>
                         <base-button v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
                         <base-button v-else disabled type="danger">Cerrar ventas</base-button>
@@ -46,11 +46,6 @@
                 <template>
                     <tabs fill class="flex-column flex-md-row">
                         <card shadow>
-                            <tab-pane>
-                                <span slot="title">
-                                    <i class="ni ni-cloud-upload-96"></i>
-                                    Datos
-                                </span>
                                 <div class="description">
                                     <base-button type="secondary" class="w-100 mb-1 mt-3">
                                         <span class="float-left">Fecha</span>
@@ -77,8 +72,7 @@
                                         <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalComission + lenderBonus - advancement)}}</badge>
                                     </base-button>
                                 </div>
-                            </tab-pane>
-                            <tab-pane title="Profile" v-if="validRoute('empleados', 'cerrar ventas')">
+                            <!-- <tab-pane title="Profile" v-if="validRoute('empleados', 'cerrar ventas')">
                                 <span slot="title" >
                                     <i class="ni ni-bell-55 mr-2"></i>
                                     Adelantos o bonos
@@ -118,10 +112,10 @@
                                         <base-button type="primary" v-else v-on:click="registerExpense">Registrar</base-button>
                                     </div>
                                 </form>    
-                            </tab-pane>
+                            </tab-pane> -->
                         </card>
                     </tabs>
-                    <vue-custom-scrollbar class="maxHeight">
+                    <!-- <vue-custom-scrollbar class="maxHeight">
                         <vue-bootstrap4-table :rows="lendeAdvancements" :columns="columnsLender" :classes="classes" :config="configLender" >
                             <template slot="format-total" slot-scope="props">
                                 <span>{{formatPrice(props.row.total)}}</span>
@@ -130,7 +124,7 @@
                                 <span>{{formatDate(props.row.date)}}</span>
                             </template>
                         </vue-bootstrap4-table>
-                    </vue-custom-scrollbar >
+                    </vue-custom-scrollbar > -->
                 </template>
             </card>
         </modal>
@@ -173,34 +167,90 @@
             </div>
             
         </div>
-        <vue-bootstrap4-table :rows="sales" :columns="columns" class="printPadding" :classes="classes" id="tbH" :config="config">
-            <template slot="format-total" slot-scope="props">
-                <span>{{formatPrice(props.row.total)}}</span>
+        <a-config-provider>
+            <template #renderEmpty>
+                <div style="text-align: center">
+                    <a-icon type="warning" style="font-size: 20px" />
+                    <h2>Empleado no posee ventas registradas</h2>
+                </div>
             </template>
-            <template slot="format-comission" slot-scope="props">
-                <span>{{formatPrice(props.row.comision)}}</span>
-            </template>
-            <template slot="format-date" slot-scope="props">
-                <span>{{formatDate(props.row.fecha)}}</span>
-            </template>
-            <template slot="reportSale" slot-scope="props">
-                <base-button icon="ni ni-bullet-list-67" size="sm" type="primary" v-on:click="servicesSale(props.row.servicios)">Servicios</base-button>
-            </template>
-            <template slot="cancelSale" slot-scope="props">
-                <base-button block size="sm" type="default" v-on:click="cancelSale(props.row._id, props.row.servicios, props.row.EmployeComision)">Anular</base-button>
-            </template>
-            <template slot="pagination-info" slot-scope="props">
-                Actuales {{props.currentPageRowsLength}} | 
-                Filtrados {{props.filteredRowsLength}} | 
-                Registros totales {{props.originalRowsLength}}
-            </template>
-            <template slot="selected-rows-info" slot-scope="props">
-                Total Number of rows selected : {{props.selectedItemsCount}}
-            </template>
-            <template slot="result-info" slot-scope="props">
-                Si? : {{props.selectedItemsCount}}
-            </template>
-        </vue-bootstrap4-table>
+            <a-table :columns="columns" :loading="progress" :data-source="sales" :scroll="getScreen">
+                <div
+                    slot="filterDropdown"
+                    slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                    style="padding: 8px"
+                    >
+                    <a-input
+                        v-ant-ref="c => (searchInput = c)"
+                        :placeholder="`Buscar por nombre`"
+                        :value="selectedKeys[0]"
+                        style="width: 188px; margin-bottom: 8px; display: block;"
+                        @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                        @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    />
+                    <a-button
+                        type="primary"
+                        icon="search"
+                        size="small"
+                        style="width: 90px; margin-right: 8px"
+                        @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    >
+                        Buscar
+                    </a-button>
+                    <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                        resetear
+                    </a-button>
+                </div>
+                <a-icon
+                    slot="filterIcon"
+                    slot-scope="filtered"
+                    type="search"
+                    :style="{ color: filtered ? '#108ee9' : undefined }"
+                />
+                <template slot="customRender" slot-scope="text, record, index, column">
+                    <span v-if="searchText && searchedColumn === column.dataIndex">
+                        <template
+                        v-for="(fragment, i) in text
+                            .toString()
+                            .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                        >
+                        <mark
+                            v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                            :key="i"
+                            class="highlight"
+                            >{{ fragment }}</mark
+                        >
+                        <template v-else>{{ fragment }}</template>
+                        </template>
+                    </span>
+                    <template v-else>
+                        {{ text }}
+                    </template>
+                </template>
+                <template slot="date-format" slot-scope="record, column">
+                    {{column.createdAt | formatDate}}
+                </template>
+                <template slot="localGain" slot-scope="record, column">
+                    {{column.commission | formatPrice}}
+                </template>
+                
+                <template slot="total" slot-scope="record, column">
+                    {{column.total | formatPrice}}
+                </template>
+                <template slot="reportSale" slot-scope="record, column">
+                    <template v-if="validRoute('ventas', 'detalle')" >
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                                <span>Anular venta</span>
+                            </template>
+                            <base-button size="sm" type="danger" v-on:click="nullSale(column.saleData._id, column.id)">
+                                <a-icon type="stop" style="vertical-align:1.5px;font-size:1.3em;" />
+                            </base-button>
+                        </a-tooltip>
+                    </template>
+                </template>
+            </a-table>
+        </a-config-provider>
         <div class="container-fluid hide">
             <vue-bootstrap4-table :rows="lendeAdvancements" :columns="columnsLender" :classes="classes" :config="configLender" >
                 <template slot="format-total" slot-scope="props">
@@ -353,6 +403,12 @@ export default {
                     searchDebounceRate: 200,                      
                 },
             },
+            configHeader: {
+                headers:{
+                    "x-database-connect": endPoint.database,
+                    'x-access-token':localStorage.userToken
+                    }
+            },
             configLender: {
                 card_title: "Adelantos",
                 checkbox_rows: false,
@@ -376,86 +432,65 @@ export default {
             },
             columns: [
                 {
-                    label: "Fecha",
-                    name: "fecha",
-                    slot_name:"format-date",
-                    // filter: {
-                    //     type: "simple",
-                    //     placeholder: "id"
-                    // },
-                    sort: true,
+                    title: 'Fecha',
+                    dataIndex: 'createdAt',
+                    key: 'createdAt',
+                    scopedSlots: { customRender: 'date-format' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                    ellipsis: true,
                 },
                 {
-                    label: "Cliente",
-                    name: "cliente",
-                    // filter: {
-                    //     type: "simple",
-                    //     placeholder: "Enter first name"
-                    // },
-                    sort: true,
+                    title: 'UUID de venta',
+                    dataIndex: 'saleData.uuid',
+                    key: 'saleData.uuid',
+                    scopedSlots: { customRender: 'uuid-format' },
                 },
                 {
-                    label: "Comisión",
-                    name: "comision",
-                    slot_name:"format-comission",
-                    sort: true,
+                    title: 'Cliente',
+                    dataIndex: 'client',
+                    key: 'client',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'client-slot' }
                 },
                 {
-                    label: "Total",
-                    name: "total",
-                    slot_name:"format-total",
-                    // filter: {
-                    //     type: "simple",
-                    //     placeholder: "Enter country"
-                    // },
+                    title: 'Servicio',
+                    dataIndex: 'service',
+                    key: 'service',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'service-slot' }
                 },
                 {
-                    label: "Detalle",
-                    name: "_id",
-                    slot_name:"reportSale",
-                    // filter: {
-                    //     type: "simple",
-                    //     placeholder: "Enter country"
-                    // },
+                    title: 'Comisión',
+                    dataIndex: 'commission',
+                    key: 'commission',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'commission' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => a.commission - b.commission
                 },
                 {
-                    label: "Anular venta",
-                    name: "_id",
-                    slot_name:"cancelSale",
-                    // filter: {
-                    //     type: "simple",
-                    //     placeholder: "Enter country"
-                    // },
-                }
+                    title: 'Total',
+                    dataIndex: 'total',
+                    key: 'totals.total',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'total' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => a.total - b.total
+                },
+                {
+                    title: 'Anular',
+                    dataIndex: '_id',
+                    key: '_id',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'reportSale' },
+                },
             ],
-            config: {
-                card_title: "Tabla de ventas",
-                checkbox_rows: false,
-                rows_selectable : true,
-                highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
-                rows_selectable: true,
-                per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
-                global_search: {
-                    placeholder: "Enter custom Search text",
-                    visibility: false,
-                    case_sensitive: false
-                },
-                show_refresh_button: false,
-                show_reset_button: false,  
-                selected_rows_info: true,
-                preservePageOnDataChange : true,
-                pagination_info : true
-            },
-            classes: {
-                table: "table-bordered table-striped"
-            },
         }
     },
     created(){
         this.getData()
-        this.getAdvancements()
         this.getToken()
-        this.getBonus()
         $(document).ready(function(){
             setTimeout(() => {
                $("input[placeholder='Go to page']").hide(); 
@@ -468,6 +503,7 @@ export default {
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+            this.branch = localStorage.branch
         },
         back(){
             window.history.go(-1);
@@ -531,28 +567,6 @@ export default {
                     }
                 }, 1500);
             }
-        },
-        getAdvancements(){
-            axios.get(endPoint.endpointTarget+'/manicuristas/advancements/'+this.id)
-            .then(res => {	
-                
-                this.lendeAdvancements = []
-                this.lendeAdvancements = res.data
-            })
-            .catch(err => {
-                console.error(err)
-            })
-        },
-        getBonus(){
-            axios.get(endPoint.endpointTarget+'/manicuristas/getBonusByEmploye/'+this.id)
-            .then(res => {	
-                console.log(res.data)
-                this.lenderBonuses = []
-                this.lenderBonuses = res.data
-            })
-            .catch(err => {
-                console.error(err)
-            })
         },
         validRegister(){
             this.dataExpense.valid = this.dataExpense.reason != '' && this.dataExpense.amount > 0 ? true : false
@@ -624,35 +638,76 @@ export default {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
+        async nullSale(id, idItem){
+            this.$swal({
+                title: '¿Estás seguro de que deseas anular la venta?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No, cancelar',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
+            })
+            .then(result => {
+                if (result.value) {
+                    axios.put(endPoint.endpointTarget+'/employes/nullsale/'+id, {
+                        id:idItem
+                    }, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Venta anulada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.getData()
+                            // try{
+                            //    const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
+                            //     userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                            //     userImage:localStorage.getItem('imageUser'),
+                            //     detail:'Anuló una venta del día '+this.formatDate(this.arreglo.fecha),
+                            //     link: 'Ventas'
+                            //     })
+                            //     if (notify) {
+                            //         this.socket.emit('sendNotification', notify.data)
+                            //     }  
+                            // }catch(err){
+                            //     console.log(err)
+                            // }
+                             
+                        }else{
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Problemas tecnicos',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })                    
+                }else{
+                    this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
+                }
+            })
+            
+        },
         getData(){
             const date = new Date()
             this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
-            console.log(this.fecha)
-            axios.get(endPoint.endpointTarget+'/employe/justOneById/'+this.id)
+            axios.get(endPoint.endpointTarget+'/employes/justOneById/'+this.id, this.configHeader)
             .then(resData => {
                 
-                this.code = resData.data._id
-                this.nameLender = resData.data.nombre
-                this.totalComission = resData.data.comision
-                this.lenderBonus = resData.data.bonus
-                this.advancement = resData.data.advancement
-                const identification = resData.data.nombre+':'+resData.data.documento
-                axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrest/'+identification)
+                this.code = resData.data.data._id
+                this.nameLender = resData.data.data.firstName + ' ' + resData.data.data.lastName
+                this.totalComission = resData.data.data.commission
+                this.lenderBonus = resData.data.data.bonus
+                this.advancement = resData.data.data.advancement
+                axios.get(endPoint.endpointTarget+'/employes/salesbyemploye/'+this.id, this.configHeader)
                 .then(res => {
-                    console.log(res)
-                    this.sales = res.data
-                    this.dateInit = res.data[0].fecha
+                    this.sales = res.data.data
+                    this.dateInit = res.data.data[0].createdAt
                     let totals = 0
                     let comissions = 0
-                    for (let index = 0; index < res.data.length; index++) {
-                        totals = parseFloat(res.data[index].total) + parseFloat(totals)
-                        comissions = parseFloat(res.data[index].comision) + parseFloat(comissions)
-                    }
-                    this.totalSale = totals
-                })
-                axios.get(endPoint.endpointTarget+'/manicuristas/SalesByPrestAll/'+identification)
-                .then(res => {
-                    this.salesTotal = res.data
                 })
             })
             .catch(err => {
@@ -666,22 +721,37 @@ export default {
         printReport(){
             this.$swal({
                 title: '¿Estás seguro de hacer el Cierre?',
-                type: 'warning',
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Si hacer Cierre',
-                cancelButtonText: 'No hacer Cierre',
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No, cancelar',
                 showCloseButton: true,
                 showLoaderOnConfirm: true
             })
             .then(result => {
                 if (result.value) {
-                    axios.put(endPoint.endpointTarget+'/manicuristas/ClosePrest/'+this.code)
+                    axios.put(endPoint.endpointTarget+'/employes/closeemploye/'+this.code, {}, this.configHeader)
                     .then(res => {
-                        if (res.data.status == 'ok') {
-                            print()
-                            setTimeout(()=> {
-                                router.push({path:'/Empleados'})
-                            }, 1000) 
+                        if (res.data.status == 'employe closed') {
+                            axios.post(`${endPoint.endpointTarget}/expenses/`, {
+                                branch: this.branch,
+                                detail: 'Pago de comisión de '+ this.nameLender ,
+                                employe: this.code,
+                                amount: this.totalComission,
+                                type: "Comisión",
+                            }, this.configHeader)
+                            .then(res => {
+                                if (res.data.status == 'ok') {
+                                    let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,height=0,left=-1000,top=-1000`;
+                                    var win = window.open(endPoint.url+'/#/reportPdfEmploye?id='+this.code, '_blank', params)
+                                    win.focus();
+                                    setTimeout(()=> {
+                                        router.push({path:'/Empleados'})
+                                    }, 1000) 
+                                }
+                            }).catch(err => {
+                                console.log(err)
+                            })
                         }else{
                             this.$swal('Error en el cierre', 'Hubo un error', 'error')
                         }
@@ -723,37 +793,6 @@ export default {
     .hide{
         display: none;
     }
-    @media print {
-        .card-footer {
-            display :  none;
-        }
-        #sidenav-main{
-            display: none;
-        }
-        .main-content{
-            margin-left: 0 !important;
-        }
-        .btn{
-            display: none;
-        }
-        .hide{
-            display: block;
-            
-        }
-        #tbH td:last-child, #tbH th:last-child{
-            display: none !important;
-        }
-        
-        .hidden{
-            display: none;
-        }
-        .printPadding{
-            padding-left: 40px;
-            padding-right: 40px;
-        }
-        .card-header{
-            text-align: center;
-        }
-    }
+    
     
 </style>
