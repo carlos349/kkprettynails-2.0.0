@@ -171,13 +171,13 @@
                                 <h4 class="text-center text-uppercase">Fechas disponibles</h4>
                                 <base-input addon-left-icon="ni ni-calendar-grid-58">
                                     <flat-picker slot-scope="{focus, blur}"
-                                                @on-change="openCalendar(),load1 = true"
-                                                @on-open="focus"
-                                                @on-close="blur"
-                                                :config="configDatePicker"
-                                                class="form-control datepicker"
-                                                v-model="registerDae.date"
-                                                placeholder="Seleccione una fecha">
+                                        @on-change="openCalendar(), load1 = true"
+                                        @on-open="focus"
+                                        @on-close="blur"
+                                        :config="configDatePicker"
+                                        class="form-control datepicker"
+                                        v-model="registerDae.date"
+                                        placeholder="Seleccione una fecha">
                                     </flat-picker>
                                 </base-input>
                                 
@@ -624,7 +624,7 @@
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar') && this.configurations.datesPolitics.deleteDates" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 col-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 col-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Borrar</span>  
@@ -932,7 +932,7 @@
                             {{column.dateBlocking | formatDate}}
                         </template>
                         <template slot="delete-slot" slot-scope="record, column">
-                            <base-button @click="deleteHour(column._id)" size="sm" type="default">
+                            <base-button @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end)" size="sm" type="danger">
                                 <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
                             </base-button>
                         </template>
@@ -946,16 +946,25 @@
         <a-modal v-model="modals.modal4" title="Registrar bloqueo" width="30%" :closable="true" >
             <template>
                 <label for="date">Fecha</label>
-                <a-date-picker :locale="locale" @change="selectDateBlock" class="w-100" />
+                <a-date-picker placeholder="Seleccione fecha" class="w-100" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" />
                 <label class="mt-2" for="employe">Empleado</label>
-                <a-select class="w-100">
-                    <a-select-option placeholder="Seleccione empleado" v-for="employe of employeShow" :key="employe._id" @click="selectEmployeHour(employe)" :value="jack">
+                <a-select class="w-100" placeholder="Seleccione empleado">
+                    <a-select-option v-for="employe of employeShow" :key="employe._id" @click="selectEmployeHour(employe)" :value="employe._id">
                         {{employe.name}}
                     </a-select-option>
                 </a-select>
+                <label class="mt-2" for="time">Horarios</label><br>
+                <div class="row px-3">
+                    <div class="col-6 px-1 pr-0">
+                        <a-time-picker class="w-100" @change="selectStartHour" placeholder="Inicio de bloqueo" :minute-step="15" format="HH:mm" />
+                    </div>
+                    <div class="col-6 px-1 pl-0">
+                        <a-time-picker class="w-100" @change="selectEndHour" placeholder="Fin de bloqueo" :minute-step="15" format="HH:mm" />
+                    </div>
+                </div>
             </template>
             <template slot="footer">
-                <base-button size="sm" type="default">Bloquear</base-button>
+                <base-button @click="blockingHour" size="sm" type="default">Bloquear</base-button>
             </template>
         </a-modal>
     </div>
@@ -1006,7 +1015,13 @@ export default {
                 'x-access-token':localStorage.userToken
             }
         },
-        locale: locale,
+        hourBlocking: {
+            dateBlocking: '',
+            employe: {},
+            start: '',
+            end: ''
+        },
+        locale,
         datesBlocking: [],
         minAddEdit:0,
         minLessEdit:0,
@@ -1312,7 +1327,7 @@ export default {
         img1:'',
         img2:'',
         design:'',
-        selectedEvent:[],
+        selectedEvent: {},
         payCash:0,
         payTransfer:0,
         payOthers:0,
@@ -1419,10 +1434,99 @@ export default {
             console.log(this.auth)
         },
         selectDateBlock(date, dateString){
-            console.log(date, dateString)
+            this.hourBlocking.dateBlocking = dateString
+        },
+        selectStartHour(value){
+            this.hourBlocking.start = moment(value).format("HH:mm")
+        },
+        selectEndHour(value){
+            this.hourBlocking.end = moment(value).format("HH:mm")
         },
         selectEmployeHour(employe){
-            console.log(employe)
+            this.hourBlocking.employe = {
+                name: employe.name,
+                id: employe._id
+            }
+        },
+        async getBlockingHours(){
+            try {
+                const blockHour = await axios.get(`${endPoint.endpointTarget}/dates/getBlockingHours/${this.branch}`, this.configHeader)
+                console.log(blockHour)
+                if (blockHour.data.status == 'ok') {
+                    this.datesBlocking = blockHour.data.data
+                }else{
+                    this.datesBlocking = []
+                }
+            }catch(err){
+                console.log(err)
+            }
+        },
+        async deleteHour(id, employe, dateBlocking, start, end){
+            try {
+                const blockHour = await axios.post(`${endPoint.endpointTarget}/dates/deleteBlockingHour`, {
+                    id: id,
+                    branch: this.branch,
+                    dateBlocking: dateBlocking,
+                    employe: employe,
+                    start: start,
+                    end: end
+                }, this.configHeader)
+                console.log(blockHour)
+                if (blockHour.data.status == 'ok') {
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Bloqueo eliminado con éxito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getBlockingHours()
+                }
+            }catch(err){
+
+            }
+        },
+        async blockingHour(){
+            var splitDate = this.hourBlocking.dateBlocking.split('-')
+            try {
+                const generateLenders = await axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                    date: splitDate[1]+'-'+splitDate[0]+'-'+splitDate[2],
+                    branch: this.branch
+                }, this.configHeader)
+                try {
+                    const blockHour = await axios.post(`${endPoint.endpointTarget}/dates/createBlockingHour`, {
+                        branch: this.branch,
+                        dateBlocking: this.hourBlocking.dateBlocking,
+                        employe: this.hourBlocking.employe,
+                        start: this.hourBlocking.start,
+                        end: this.hourBlocking.end,
+                        employes: generateLenders.data.array
+                    }, this.configHeader)
+                    console.log(blockHour)
+                    if (blockHour.data.status == 'ok') {
+                        this.$swal({
+                            icon: 'success',
+                            title: 'Bloqueo creado con éxito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.getBlockingHours()
+                        this.hourBlocking = {
+                            dateBlocking: '',
+                            employe: {},
+                            start: '',
+                            end: ''
+                        }
+                        this.modals.modal4 = false
+                        this.modals.modal3 = true
+                    }
+                }catch(err){
+
+                }
+            }catch(err){
+                res.send(err)
+            }
+            
+            
         },
         getBranch(){
             this.branchName = localStorage.branchName  
@@ -1435,6 +1539,7 @@ export default {
             this.getCategories()
             this.getEmployes()
             this.getDates()
+            this.getBlockingHours()
         },
         logEvents(change, event){
             console.log(change)

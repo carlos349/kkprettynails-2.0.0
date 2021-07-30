@@ -152,7 +152,7 @@
                             Promedio servicios <strong>{{promedyServices.toFixed(2)}}</strong><br>
                             <a-tooltip placement="topLeft">
                                 <template slot="title">
-                                    <span>(Total ventas del mes / días trabajados) x (Días a trabajar en el mes - días trabajados)</span>
+                                    <span>Debe indicar la cantidad de días laborales del mes en curso, para calcular la proyección de venta total a final de mes</span>
                                 </template>
                                 <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
                             </a-tooltip>
@@ -161,7 +161,7 @@
                             <strong> {{salesProjection | formatPrice}}</strong><br>
                             <a-tooltip placement="topLeft">
                                 <template slot="title">
-                                    <span>(Total servicios del mes / días trabajados) x (Días a trabajar en el mes - días trabajados)</span>
+                                    <span>Debe indicar la cantidad de días laborales del mes en curso, para calcular la proyección de servicios totales a final de mes</span>
                                 </template>
                                 <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
                             </a-tooltip>
@@ -498,8 +498,8 @@
       calculatedProjection(){
         if (this.projection > 0) {
           console.log(this.totalSale, this.workDays, this.projection)
-          this.salesProjection = (this.totalSale / this.workDays) * (parseInt(this.projection) - this.workDays)
-          this.serviceProjection = (this.totalServices / this.workDays ) * (parseInt(this.projection)- this.workDays)
+          this.salesProjection = (this.totalSale / this.workDays) * (parseInt(this.projection))
+          this.serviceProjection = (this.totalServices / this.workDays ) * (parseInt(this.projection))
           setTimeout(() => {
             this.updateProjection()
           }, 500);
