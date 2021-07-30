@@ -17,12 +17,17 @@
                         </div>
 
                         <base-button v-if="hideText == 'display:none'" class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
-                            <a-icon type="form" style="vertical-align:1px;font-size:1.5em;" />
+                            <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
                         </base-button>
 
                         <base-button v-else class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
-                            <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                            <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                             Agendar
+                        </base-button>
+
+                        <base-button class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true , initialState()"  type="warning">
+                            <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                            Bloqueos
                         </base-button>
 
                         <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mt-7 mr-0 qloq" size="sm">
@@ -590,7 +595,7 @@
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true && this.configurations.datesPolitics.editDates" v-on:click="dataEdit()" class="col-md-6 col-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 col-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Editar</span>  
@@ -913,418 +918,46 @@
                 </div>
             </card>
         </modal>
-        <modal :show.sync="dateModals.modal4"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-xl">
-            <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar</h5>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                <vue-custom-scrollbar ref="table" class="listDatesEnd maxHeightEdit w-100">
-                    <vue-bootstrap4-table :rows="closedDates" :columns="columnsDatesClosed" :classes="classes" :config="configDatesClosed" v-on:on-select-row="selected" v-on:on-all-select-rows="selectedAll" v-on:on-unselect-row="unSelected" v-on:on-all-unselect-rows="unSelectedAll" >
-                        <template slot="format-date" slot-scope="props">
-                            {{formatDate(props.row.date)}}
-                        </template>
-                        <template slot="format-total" slot-scope="props">
-                            {{formatPrice(props.row.total)}}
-                        </template>
-                    </vue-bootstrap4-table> 
-                    <!-- pressDate -->
-                </vue-custom-scrollbar>
-                <div class="text-center mt-2">
-                    <base-button icon="fa fa-calendar-check" v-on:click="ProccessSelectedDates()" class="col-auto mx-auto" type="success">Procesar</base-button> 
-                </div>
-            </card>
-        </modal>
-        <modal :show.sync="dateModals.modal5"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered borderOnly modal-xl">
-            <h5 slot="header" class="modal-title" id="modal-title-notification">Pendiente por procesar</h5>
-            <card  type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes=""
-                  class="border-0">
-                  <!-- <div v-bind:style="{  'height': '42px', 'z-index' : '1000' }" v-on:click="dateModals.modal6 = true, codeArticulo = ''" class="p-2 menuVerRedoAgenda navSCodeAgenda" >
-                        <div class="row">
-                            <div class="col-2 pt-1">
-                                <font-awesome-icon class="icons" style="color:#172b4d;font-size:1em" icon="pager" />
-                            </div>
-                            <div class="col-10 pl-4 pt-1">
-                                <b style="font-size:14px;">Validar código</b>	
-                            </div>
-                        </div>
-                    </div> -->
-                  <div v-on:click="noBlank">
-                    <div class="row">
-                        <div class="col-sm-12 tbCell">
-                            <a-table :pagination="false"  :columns="columnsEndSelectedDates" size="middle" :data-source="selectedDates.closedArray">
-                                <template slot="descuento" slot-scope="text, record, index">
-                                    <a-tooltip placement="top">
-                                        <template slot="title">
-                                        <span v-if="discPerEmploye(index)">Su servicio no permite descuentos</span>
-                                        <span v-else>{{record.typeDiscount}}</span>
-                                        </template>
-                                        <base-input 
-                                            type="text"
-                                            v-model="record.descuento"
-                                            placeholder="%"
-                                            :disabled="discPerEmploye(index)"
-                                            v-on:click="cleanDiscount(index)"
-                                            v-on:keyup="changePrice(index)"
-                                            class="w-50 mt-3"
-                                            
-                                            >
-                                        </base-input>
-                                    </a-tooltip>
-                                </template>
-                                <template slot="diseño" slot-scope="text">
-                                    <p>{{formatPrice(text)}} $ </p>
-                                </template>
-                                <template slot="total" slot-scope="text">
-                                    <p>{{formatPrice(text)}} $</p>
-                                </template>
-                                <template slot="expandedRowRender" slot-scope="record, index">
-                                    <div class="row mb-4">
-                                        <dt>Servicio(s): </dt>
-                                        <div  v-for="(service, index) of record.services" class="row ml-3" > 
-                                            <div v-if="index == 0">
-                                                {{' '+service.servicio}} 
-                                            </div>
-                                            <div v-else>
-                                                , {{service.servicio}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row">
-                                        <a-tooltip placement="top">
-                                            <template slot="title">
-                                            <span>Efectivo </span>
-                                            </template>
-                                            <div class="col-3">
-                                                <div class="input-group mb-2">
-                                                    <div v-on:click="hundredPorcent('efectivo',index)" v-on:mouseenter="hundredMouseOver('efectivo')" v-on:mouseleave="hundredMouseNonOver('efectivo')" class="input-group-prepend text-center w-25 hundred">
-                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                                            <b class="efectivo" style="font-size:0.6em;display:none">100%</b>
-                                                        <font-awesome-icon  class="efectivo" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>	
-                                                        </span>
-                                                        
-                                                    </div>
-                                                    <currency-input
-                                                        v-model="record.payCash"
-                                                        locale="de"
-                                                        placeholder="Efectivo"
-                                                        class="form-control"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </a-tooltip>
-                                        <a-tooltip placement="top">
-                                            <template slot="title">
-                                            <span>Transferencia</span>
-                                            </template>
-                                            <div class="col-3">
-                                                <div  class="input-group mb-2">
-                                                    <div  v-on:click="hundredPorcent('trasnferencia',index)" v-on:mouseenter="hundredMouseOver('trasnferencia')" v-on:mouseleave="hundredMouseNonOver('trasnferencia')" class="input-group-prepend text-center w-25 hundred">
-                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                                            <b class="trasnferencia" style="font-size:0.6em;display:none">100%</b>
-                                                        <font-awesome-icon  class="trasnferencia" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>	
-                                                        </span>
-                                                    </div>
-                                                    <currency-input
-                                                        v-model="record.payTransfer"
-                                                        locale="de"
-                                                        placeholder="Transferencia"
-                                                        class="form-control"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </a-tooltip>
-                                        <a-tooltip placement="top">
-                                            <template slot="title">
-                                            <span>Otros</span>
-                                            </template>
-                                            <div class="col-3">
-                                                <div  class="input-group mb-2">
-                                                    <div v-on:click="hundredPorcent('others',index)" v-on:mouseenter="hundredMouseOver('others')" v-on:mouseleave="hundredMouseNonOver('others')" class="input-group-prepend text-center w-25 hundred">
-                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                                            <b class="others" style="font-size:0.6em;display:none">100%</b>
-                                                        <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>	
-                                                        </span>
-                                                    </div>
-                                                    <currency-input
-                                                        v-model="record.payOthers"
-                                                        locale="de"
-                                                        placeholder="Otros"
-                                                        class="form-control"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </a-tooltip>
-                                        <a-tooltip placement="top">
-                                            <template slot="title">
-                                            <span>Código de pedido</span>
-                                            </template>
-                                            <div class="col-3">
-                                                <div  class="input-group mb-2">
-                                                    <div class="input-group-prepend w-25 text-center ">
-                                                        <span style="background-color: #e9ecef;" class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                                            <font-awesome-icon  class="others" style="font-size:1em; color:#6BB2E5" icon="shopping-cart"/>	
-                                                        </span>
-                                                    </div>
-                                                    <currency-input
-                                                        v-model="record.payOrder"
-                                                        locale="de"
-                                                        readonly
-                                                        placeholder="Código de pedido"
-                                                        class="form-control"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </a-tooltip>
-                                        <a-tooltip placement="top">
-                                            <template slot="title">
-                                            <span>Débito</span>
-                                            </template>
-                                            <div class="col-4 mx-auto">
-                                                <div class="input-group mb-2">
-                                                    <div v-on:click="hundredPorcent('debit',index)" v-on:mouseenter="hundredMouseOver('debit')" v-on:mouseleave="hundredMouseNonOver('debit')" class="input-group-prepend text-center w-25 hundred">
-                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                                            <b class="debit" style="font-size:0.6em;display:none">100%</b>
-                                                            <img style="width:98%;padding-left:1px" class="debit"  src="../assets/trans1.png" alt="">	
-                                                        </span>
-                                                    </div>
-                                                    <currency-input
-                                                        v-model="record.payDebit"
-                                                        locale="de"
-                                                        placeholder="Débito"
-                                                        class="form-control"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </a-tooltip>
-                                        <a-tooltip placement="top">
-                                            <template slot="title">
-                                            <span>Crédito</span>
-                                            </template>
-                                            <div class="col-4 mx-auto">
-                                                <div class="input-group mb-2">
-                                                    <div v-on:click="hundredPorcent('credit',index)" v-on:mouseenter="hundredMouseOver('credit')" v-on:mouseleave="hundredMouseNonOver('credit')" class="input-group-prepend text-center w-25 hundred">
-                                                        <span class="inputsVenta w-100 input-group-text" id="inputGroup-sizing-lg">
-                                                            <b class="credit" style="font-size:0.6em;display:none">100%</b>
-                                                            <img class="credit" style="width:98%;padding-left:1px"  src="../assets/trans1.png" alt="">	
-                                                        </span>
-                                                    </div>
-                                                    <currency-input
-                                                        v-model="record.payCredit"
-                                                        locale="de"
-                                                        placeholder="Crédito"
-                                                        class="form-control"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </a-tooltip>
-                                        
-                                    </div>
-                                    
-                                </template>
-                            </a-table>
-                        </div>
-                        
-                        
-                        
-                        <div class="col-3 mx-auto mt-2">
-                            <base-button type="secondary" class="col-12">
-                                <span class="float-left">Total</span>
-                                <badge v-if="loading == false" style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.total)}} $</badge>
-                                <div v-else>
-                                    <a-spin size="small" class="float-right" />
-                                </div>
-                            </base-button>
-                        </div>
-                        <div class="col-3 mx-auto mt-2">
-                            <base-button type="secondary" class="col-12">
-                                <span class="float-left">Diseño</span>
-                                <badge style="font-size:1em !important" class="text-default float-right"  type="success">{{this.formatPrice(selectedDates.design)}} $</badge>
-                            </base-button>
-                        </div>
-                    </div>
-                    <div class="text-muted text-center mb-1 mt-2">
-                        Medios de pago
-                    </div>
-                    <div class="row">
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Todo efectivo</span>
-                            </template>
-                            <div class="col-2">
-                                <div class="input-group mb-2">
-                                    <div v-on:click="hundredPorcent('allEfectivo',0)" class="input-group-prepend text-center w-100 hundred">
-                                        <span style="border-radius:0.375rem !important" class="inputsVenta allEfectivo w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <font-awesome-icon  class="" style="font-size:1em; color:#6BB2E5" icon="money-bill-wave"/>
-                                         <dt class="ml-2"> Todo efectivo </dt>	
-                                        </span>
-                                        
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </a-tooltip>
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Todo transferencia</span>
-                            </template>
-                            <div class="col-2">
-                                <div  class="input-group mb-2">
-                                    <div  v-on:click="hundredPorcent('allTransferencia',0)" class="input-group-prepend text-center w-100 hundred">
-                                        <span style="border-radius:0.375rem !important" class="inputsVenta allTransferencia w-100 input-group-text" id="inputGroup-sizing-lg">
-                                        <font-awesome-icon  class="" style="font-size:1em; color:#6BB2E5" icon="money-check-alt"/>
-                                        <dt class="ml-1"> Todo transferencia </dt>	
-                                        </span>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </a-tooltip>
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Todo otros</span>
-                            </template>
-                            <div class="col-2">
-                                <div  class="input-group mb-2">
-                                    <div v-on:click="hundredPorcent('allOthers',0)" class="input-group-prepend text-center w-100 hundred">
-                                        <span style="border-radius:0.375rem !important" class="inputsVenta allOthers w-100 input-group-text" id="inputGroup-sizing-lg">
-                                            
-                                        <font-awesome-icon  class="" style="font-size:1em; color:#6BB2E5" icon="hand-holding-usd"/>
-                                        <dt class="ml-3"> Todo otros </dt>		
-                                        </span>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </a-tooltip>
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Todo débito</span>
-                            </template>
-                            <div class="col-3 mx-auto">
-                                <div class="input-group mb-2">
-                                    <div v-on:click="hundredPorcent('allDebit',0)" class="input-group-prepend text-center w-100 hundred">
-                                        <span style="border-radius:0.375rem !important" class="inputsVenta allDebit w-100 input-group-text" id="inputGroup-sizing-lg">
-                                            
-                                            <img style="width:15%;padding-left:1px" class=""  src="../assets/trans1.png" alt="">	
-                                            <dt class="ml-5"> Todo débito </dt>	
-                                        </span>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </a-tooltip>
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                            <span>Todo crédito</span>
-                            </template>
-                            <div class="col-3 mx-auto">
-                                <div class="input-group mb-2">
-                                    <div v-on:click="hundredPorcent('allCredit',0)" class="input-group-prepend text-center w-100 hundred">
-                                        <span style="border-radius:0.375rem !important" class="inputsVenta allCredit w-100 input-group-text" id="inputGroup-sizing-lg">
-                                            
-                                            <img class="" style="width:15%;padding-left:1px"  src="../assets/trans1.png" alt="">
-                                            <dt class="ml-5"> Todo crédito </dt>	
-                                        </span>
-                                    </div>
-                                    	
-                                </div>
-                            </div>
-                        </a-tooltip>
-                        
-                    </div>
-                    <div class="text-center mt-">
-                        <base-button icon="fa fa-calendar-check" v-on:click="processSelected" :disabled="loading" class="col-4 mx-auto" type="success">Procesar</base-button> 
-                    </div>
-                  </div>
-                
-            </card>
-        </modal>   
-        <modal :show.sync="dateModals.modal6"
-                body-classes="p-0"
-                modal-classes="modal-dialog-centered modal-md">
-                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-                <card type="secondary" shadow
-                    header-classes="bg-white pb-5"
-                    body-classes="px-lg-5 "
-                    class="border-0">
-                    <template>
-                        <div style="margin-top:-10%" class="text-muted text-center mb-3">
-                            <h3>Validación de código</h3>
+        <a-modal v-model="modals.modal3" title="Horarios bloqueados" width="50%" :closable="true" >
+            <template>
+                <a-config-provider>
+                    <template #renderEmpty>
+                        <div style="text-align: center">
+                            <a-icon type="warning" style="font-size: 20px" />
+                            <h2>Sin bloqueos registrados</h2>
                         </div>
                     </template>
-                    <template>
-                        <form role="form">
-                            <base-input 
-                                alternative
-                                class="mb-3"
-                                placeholder="Código"
-                                v-model="codeArticulo"
-                                addon-left-icon="ni ni-key-25">
-                            </base-input>
-                            
-                            
-                            <base-button type="default" v-on:click="validCode()">
-                                Verificar
-                            </base-button> 
-                        </form>
-                </template>
-                </card>
-            </modal>
-            <modal :show.sync="dateModals.modal7"
-                body-classes="p-0"
-                modal-classes="modal-dialog-centered modal-md">
-                
-                <card type="secondary" shadow
-                    header-classes="bg-white pb-5"
-                    body-classes="px-lg-5 py-lg-5"
-                    class="border-0">
-                    
-                    <template>
-                        <div class="col-sm-12">
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Comprador <br> </span>
-                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{compradorArticulo}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Medio de pago <br> </span>
-                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{medioPagoArticulo}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Articulo <br> </span>
-                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Monto del pedido <br> </span>
-                                        <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{totalArticulo}}</badge>
-                                    </base-button>
-                                    <base-button class="col-12  p-2 mt-1" type="secondary">
-                                        <span class="text-center"> Estado <br> </span>
-                                        <badge v-if="estadoArticulo == 'Nconfirmado'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
-                                        <badge v-else-if="estadoArticulo == 'confirmado'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
-                                        <badge v-else style="font-size:0.8em !important" type="default" class="text-default mt-2">Usado</badge>
-                                    </base-button>
-                                    
-                                </div>
-                                <center>
-                                    <base-button v-if="estadoArticulo == 'confirmado'" type="success" class="mt-5" v-on:click="verifyCode()">
-                                        Validar
-                                    </base-button>
-                                    <base-button v-else type="default" disabled class="mt-5">
-                                        Validar
-                                    </base-button> 
-                                </center>
-                                
-                </template>
-                </card>
-            </modal> 
+                    <a-table :columns="columns" :data-source="datesBlocking" >
+                        <template slot="date-slot" slot-scope="record, column">
+                            {{column.dateBlocking | formatDate}}
+                        </template>
+                        <template slot="delete-slot" slot-scope="record, column">
+                            <base-button @click="deleteHour(column._id)" size="sm" type="default">
+                                <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
+                            </base-button>
+                        </template>
+                    </a-table>
+                </a-config-provider> 
+            </template>
+            <template slot="footer">
+                <base-button @click="modals.modal3 = false, modals.modal4 = true" size="sm" type="default">bloquear horario</base-button>
+            </template>
+        </a-modal>
+        <a-modal v-model="modals.modal4" title="Registrar bloqueo" width="30%" :closable="true" >
+            <template>
+                <label for="date">Fecha</label>
+                <a-date-picker :locale="locale" @change="selectDateBlock" class="w-100" />
+                <label class="mt-2" for="employe">Empleado</label>
+                <a-select class="w-100">
+                    <a-select-option placeholder="Seleccione empleado" v-for="employe of employeShow" :key="employe._id" @click="selectEmployeHour(employe)" :value="jack">
+                        {{employe.name}}
+                    </a-select-option>
+                </a-select>
+            </template>
+            <template slot="footer">
+                <base-button size="sm" type="default">Bloquear</base-button>
+            </template>
+        </a-modal>
     </div>
 </template>
 <script>
@@ -1343,6 +976,7 @@ import io from 'socket.io-client';
 import { Carousel, Slide } from 'vue-carousel';
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+import locale from 'ant-design-vue/es/date-picker/locale/es_ES';
 import moment from 'moment'
 //Back - End 
 import jwtDecode from 'jwt-decode'
@@ -1372,6 +1006,8 @@ export default {
                 'x-access-token':localStorage.userToken
             }
         },
+        locale: locale,
+        datesBlocking: [],
         minAddEdit:0,
         minLessEdit:0,
         moment,
@@ -1481,6 +1117,35 @@ export default {
                 ellipsis: true,
                 scopedSlots: { customRender: 'total' },
                 sorter: (a, b) => a.total - b.total,
+            }
+        ],
+        columns: [
+            { 
+                title: 'Fecha',
+                dataIndex: 'dateBlocking',
+                key: 'dateBlocking',
+                scopedSlots: { customRender: 'date-slot' } 
+            },
+            { 
+                title: 'Empleado',
+                dataIndex: 'employe.name',
+                key: 'employe.name'
+            },
+            { 
+                title: 'Desde',
+                dataIndex: 'start',
+                key: 'start'
+            },
+            { 
+                title: 'Hasta',
+                dataIndex: 'end',
+                key: 'end' 
+            },
+            { 
+                title: 'Eliminar',
+                dataIndex: '_id',
+                key: '_id',
+                scopedSlots: { customRender: 'delete-slot' } 
             }
         ],
         columnsDatesClosed: [{
@@ -1658,6 +1323,8 @@ export default {
         modals: {
             modal1:false,
             modal2: false,
+            modal3: false,
+            modal4: false,
             message: "",
             icon: '',
             type:''
@@ -1750,6 +1417,12 @@ export default {
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
             console.log(this.auth)
+        },
+        selectDateBlock(date, dateString){
+            console.log(date, dateString)
+        },
+        selectEmployeHour(employe){
+            console.log(employe)
         },
         getBranch(){
             this.branchName = localStorage.branchName  
@@ -4970,7 +4643,7 @@ export default {
         height: 44px !important;
     }
     .qloq button{
-        padding: 3px !important;
+        padding: 5px !important;
         margin-right: 30px !important;
     }
     .none{

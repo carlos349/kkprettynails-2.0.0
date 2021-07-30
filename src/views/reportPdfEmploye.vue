@@ -15,7 +15,7 @@
                         <h2>Empleado no posee ventas registradas</h2>
                     </div>
                 </template>
-                <a-table :columns="columns" :data-source="sales">
+                <a-table :columns="columns" :data-source="sales" :pagination="false">
                     <div
                         slot="filterDropdown"
                         slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"

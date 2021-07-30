@@ -57,6 +57,10 @@ export default new Router({
           path: '/reportPdfEmploye',
           name: '',
           component: () => import('./views/reportPdfEmploye.vue')
+        }
+      ]
+    },
+    {
       path: '/reporteGasto',
       redirect: 'reportExpense',
       component: reportExpense,
