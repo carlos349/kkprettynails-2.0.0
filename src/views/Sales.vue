@@ -57,7 +57,7 @@
                         <template slot="title">
                             <span>Enviar correo</span>
                         </template>
-                        <base-button :disabled="validRoute('ventas', 'correo') ? false : true" size="sm" class="mr-2 float-right" type="secondary">
+                        <base-button @click="sendSale(dataSale._id)" :disabled="validRoute('ventas', 'correo') ? false : true" size="sm" class="mr-2 float-right" type="secondary">
                             <a-icon type="mail" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -585,6 +585,13 @@ export default {
             }else{
                 this.dateFindExcel = []
             }
+        },
+        sendSale(id){
+            axios.get(endPoint.endpointTarget+'/mails/salemail/'+id, this.configHeader)
+            .then(res => {
+                console.log(res)
+                
+            })
         },
         async getClient(){
             try{

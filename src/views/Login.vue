@@ -800,6 +800,16 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                                             showConfirmButton: false,
                                             timer: 1500
                                         })
+                                        try{
+                                            const welcome = await axios.post(endPoint.endpointTarget+'/mails/welcome', {
+                                                firstName: this.modelStart.first_name,
+                                                email: this.modelStart.email
+                                            }, this.configHeader)
+                                            
+                                        }catch(err){
+                                            console.log(err)
+                                        }
+                                        
                                         setTimeout(() => {
                                             location.reload()
                                         }, 2000);

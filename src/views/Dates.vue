@@ -7,30 +7,30 @@
             <!-- Header container -->
                 <div class="row">
                     <div class="col-12">
-                        <div class="text-absolute col-12">
+                        <div class="text-absolute mb-5 col-12">
                             <center v-if="hideText == 'display:none'">
-                                <p style="margin-top:-10%" class="display-1 text-white text-center mx-auto">Agenda</p>
+                                <p style="margin-top:-10%" class="display-1 text-white mb-5 text-center mx-auto">Agenda</p>
                             </center>
                             
                             <p v-else class="mb-0 display-2 text-white">Agenda</p>
                             <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         </div>
-
-                        <base-button v-if="hideText == 'display:none'" class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                        <div class="mt-7">
+                            <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
                             <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
                         </base-button>
 
-                        <base-button v-else class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                        <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
                             <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                             Agendar
                         </base-button>
 
-                        <base-button class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true , initialState()"  type="warning">
+                        <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true , initialState()"  type="warning">
                             <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                             Bloqueos
                         </base-button>
 
-                        <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mt-7 mr-0 qloq" size="sm">
+                        <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mr-0 qloq" size="sm">
                             <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                     {{employeByDate}}
                             </base-button>
@@ -48,6 +48,8 @@
                                 </base-button>
                             </li>
                         </base-dropdown>
+                        </div>
+                        
                         <div v-if="filter == true" class="ml-2">
                             <img class="avatar rounded-circle" :src="img2" />
                         </div>
@@ -73,7 +75,7 @@
                 </modal>
                   <!-- WIZARD -->
                 
-                <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
+                <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
                     <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
@@ -633,7 +635,7 @@
                                     </center>
                                 </div>
 
-                                <div class="col-md-6 col-7 mx-auto mt-2">
+                                <div class="col-md-6 col-12 mx-auto mt-2">
                                     <center>
                                         <div v-if="selectedEvent.process == true && validRoute('agendamiento', 'confirmacion')">
                                             <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation" type="success" class="mx-auto col-12">
@@ -641,7 +643,7 @@
                                                 <span class="float-left">Confirmada</span> 
                                             </base-button>
 
-                                            <base-button outline size="sm" v-else class="mx-auto col-12" style="padding-left:10px;padding-right:10px" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                            <base-button outline size="sm" v-else class="mx-auto col-11" style="padding-left:10px;padding-right:10px" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
                                                 <i style="margin-top:3px" class="ni ni-send float-right"></i>
                                                 <span class="float-left">Enviar confirmación</span>  
                                             </base-button>
@@ -760,22 +762,22 @@
                 </div>
                 <center>
                     <div class="row col-12 p-0 m-0">
-                        <div style="margin-top: -6px" class="col-md-2 col-2 p-0">
+                        <div style="margin-top: -6px" class="col-md-2 col-3 p-0">
                             <span class="minLess text-danger"> -{{minLessEdit}}</span>
                         </div>
-                        <div class="col-md-4 col-4">
+                        <div class="col-md-4 col-3">
                             <a-button v-on:click="changeMin(false)"  type="danger">
                                 <a-icon style="vertical-align: unset;" type="minus-circle" /> 
                                 <span v-if="hideText != 'display:none'">Restar minutos</span>
                             </a-button>
                         </div>
-                        <div class="col-md-4 col-4">
+                        <div class="col-md-4 col-3">
                             <a-button v-on:click="changeMin(true)" class="text-white" style="background-color:#2dce89" type="success">
                                 <span v-if="hideText != 'display:none'">Agregar minutos</span>
                                 <a-icon style="vertical-align: unset;" type="plus-circle" />
                             </a-button>
                         </div>
-                        <div style="margin-top: -8px" class="col-md-2 col-2 p-0">
+                        <div style="margin-top: -8px" class="col-md-2 col-3 p-0">
                              <span class="minAdd"> +{{minAddEdit}}</span>
                         </div>
                         

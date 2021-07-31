@@ -49,6 +49,18 @@ export default new Router({
       ] 
     },
     {
+      path: '/reporteGasto',
+      redirect: 'reportExpense',
+      component: reportExpense,
+      children: [
+        {
+          path: '/reportExpense',
+          name: '',
+          component: () => import('./views/reportExpense.vue')
+        }
+      ]
+    },
+    {
       path: '/pdfReportEmploye',
       redirect: 'reportPdfEmploye',
       component: reportPdfEmploye,
@@ -59,18 +71,6 @@ export default new Router({
           component: () => import('./views/reportPdfEmploye.vue')
         }
       ]
-    },
-    {
-      path: '/reporteGasto',
-      redirect: 'reportExpense',
-      component: reportExpense,
-      children: [
-        {
-          path: '/reportExpense',
-          name: '',
-          component: () => import('./views/reportExpense.vue')
-        }
-      ] 
     },
     {
       path: '/dashboard',
