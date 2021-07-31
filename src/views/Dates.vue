@@ -68,7 +68,7 @@
                 </modal>
                   <!-- WIZARD -->
                 
-                <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!">
+                <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
                     <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
@@ -628,7 +628,7 @@
                                     </center>
                                 </div>
 
-                                <div class="col-md-6 col-7 mx-auto mt-2">
+                                <div class="col-md-6 col-12 mx-auto mt-2">
                                     <center>
                                         <div v-if="selectedEvent.process == true && validRoute('agendamiento', 'confirmacion')">
                                             <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation" type="success" class="mx-auto col-12">
@@ -636,7 +636,7 @@
                                                 <span class="float-left">Confirmada</span> 
                                             </base-button>
 
-                                            <base-button outline size="sm" v-else class="mx-auto col-12" style="padding-left:10px;padding-right:10px" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                            <base-button outline size="sm" v-else class="mx-auto col-11" style="padding-left:10px;padding-right:10px" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
                                                 <i style="margin-top:3px" class="ni ni-send float-right"></i>
                                                 <span class="float-left">Enviar confirmación</span>  
                                             </base-button>
@@ -755,22 +755,22 @@
                 </div>
                 <center>
                     <div class="row col-12 p-0 m-0">
-                        <div style="margin-top: -6px" class="col-md-2 col-2 p-0">
+                        <div style="margin-top: -6px" class="col-md-2 col-3 p-0">
                             <span class="minLess text-danger"> -{{minLessEdit}}</span>
                         </div>
-                        <div class="col-md-4 col-4">
+                        <div class="col-md-4 col-3">
                             <a-button v-on:click="changeMin(false)"  type="danger">
                                 <a-icon style="vertical-align: unset;" type="minus-circle" /> 
                                 <span v-if="hideText != 'display:none'">Restar minutos</span>
                             </a-button>
                         </div>
-                        <div class="col-md-4 col-4">
+                        <div class="col-md-4 col-3">
                             <a-button v-on:click="changeMin(true)" class="text-white" style="background-color:#2dce89" type="success">
                                 <span v-if="hideText != 'display:none'">Agregar minutos</span>
                                 <a-icon style="vertical-align: unset;" type="plus-circle" />
                             </a-button>
                         </div>
-                        <div style="margin-top: -8px" class="col-md-2 col-2 p-0">
+                        <div style="margin-top: -8px" class="col-md-2 col-3 p-0">
                              <span class="minAdd"> +{{minAddEdit}}</span>
                         </div>
                         

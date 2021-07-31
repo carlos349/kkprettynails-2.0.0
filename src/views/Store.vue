@@ -417,7 +417,7 @@
                     </a-select>
                     
                     <div class="text-center">
-                        <base-button v-on:click="addProduct()" v-if="validForm == 1" :disabled="dataProduct.product != '' && dataProduct.measure != '' && dataProduct.price != null && dataProduct.alertTotal != '' && dataProduct.price != 0 ? false : true" type="default">Registrar</base-button>
+                        <base-button v-on:click="addProduct()" v-if="validForm == 1" :disabled="dataProduct.product != '' && dataProduct.measure != '' && dataProduct.alertTotal != '' ? false : true" type="default">Registrar</base-button>
                         <base-button v-on:click="updateProducts()" v-if="validForm == 2" type="default">Editar</base-button>
                         
                         <base-button  v-on:click="addMore(dataProduct.id)" :disabled="dataProduct.entry != '' && dataProduct.price != null && dateAdd != '' && dataProduct.price != '' && dataProduct.price != 0 && provider.name != '' ? false : true" v-if="validForm == 3" type="success">Agregar</base-button>

@@ -19,19 +19,19 @@
                                 {{client.firstName}} {{client.lastName}} 
                             </a-select-option>
                         </a-select>
-                        <a-button :disabled="validRoute('procesar', 'editar_cliente') ? false : true" v-if="ifEdit" @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
+                        <a-button :disabled="validRoute('procesar', 'editar_cliente') ? false : true" v-if="ifEdit" @click="modals.modal2 = true" class="ml-1" type="primary" shape="round">
                             <i class="fa fa-user-edit" style="font-size:1.5em;"></i>
                         </a-button>
-                        <a-button :disabled="validRoute('procesar', 'nuevo_cliente') ? false : true" v-else @click="modals.modal2 = true" class="ml-2" type="primary" shape="round">
+                        <a-button :disabled="validRoute('procesar', 'nuevo_cliente') ? false : true" v-else @click="modals.modal2 = true" class="ml-1" type="primary" shape="round">
                             <i class="fa fa-user-plus" style="font-size:1.5em;"></i>
                         </a-button>
                     </div>
                     <div class="col-md-3">
-                        <label for="Client">Correo cliente</label>
+                        <label class="mb-0" for="Client">Correo cliente</label>
                         <input readonly class="ant-input w-100" placeholder="Correo" v-model="registerClient.email"/>
                     </div>
                     <div class="col-md-3">
-                        <label for="Client">Telefono cliente</label>
+                        <label class="mb-0" for="Client">Telefono cliente</label>
                         <input readonly class="ant-input w-100" placeholder="Telefono" v-model="registerClient.phone.formatInternational"/>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                             </span>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="service">Servicio</label>
+                                    <label class="mb-0" for="service">Servicio</label>
                                     <a-select
                                         show-search
                                         placeholder="Seleccione el servicio"
@@ -61,7 +61,7 @@
                                     </a-select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="employe">Empleado</label>
+                                    <label class="mb-0" for="employe">Empleado</label>
                                     <a-select
                                         show-search
                                         placeholder="Seleccione el empleado"
@@ -78,7 +78,7 @@
                                     </a-select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="Client" style="margin-bottom:12px">Precio</label>
+                                    <label for="Client" style="margin-bottom:5px">Precio</label>
                                     <currency-input
                                         v-model="itemData.price"
                                         locale="de"
@@ -89,7 +89,7 @@
                                     />
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="Client" style="margin-bottom:6px">Descuento</label>
+                                    <label class="mb-0" for="Client" style="margin-bottom:6px">Descuento</label>
                                     <template v-if="validRoute('procesar', 'descuento')">
                                         <a-input @keyup="addDiscountFunc" class="w-100" type="number" placeholder="Descuento" :disabled="itemData.discountServiceIf" v-model="itemData.discountService">
                                             <a-icon slot="suffix" type="percentage" style="vertical-align: 1.5px;" />
@@ -130,7 +130,7 @@
                                         :class="screenWidth"
                                         class="ant-input mt-1 mr-1 mb-3 col-8"
                                     />
-                                    <a-button :disabled="microValid" @click="addAdditional" class="ml-3 mt-1" type="primary" shape="round">
+                                    <a-button :disabled="microValid" @click="addAdditional" class="ml-1 mt-1" type="primary" shape="round">
                                         <a-icon type="plus" style="vertical-align: 1.5px;"/>
                                     </a-button>
                                     
