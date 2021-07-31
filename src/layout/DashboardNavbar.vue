@@ -17,7 +17,7 @@
           <li class="nav-item">
             <a-dropdown :disabled="validRoute('sucursales', 'cambiar') ? false : true">
               <a-menu slot="overlay" @click="selectBranch">
-                <a-menu-item class="font-weight-bold" v-for="branch of branches" :key="branch._id+'/'+branch.name" :disabled="branch.active ? false : true"> 
+                <a-menu-item class="font-weight-bold" v-for="branch of branches" :key="branch._id+'/'+branch.name" v-if="branch.active"> 
                   <a-icon type="shop" style="vertical-align:1px;" />{{branch.name}} 
                 </a-menu-item>
               </a-menu>

@@ -7,30 +7,30 @@
             <!-- Header container -->
                 <div class="row">
                     <div class="col-12">
-                        <div class="text-absolute col-12">
+                        <div class="text-absolute mb-5 col-12">
                             <center v-if="hideText == 'display:none'">
-                                <p style="margin-top:-10%" class="display-1 text-white text-center mx-auto">Agenda</p>
+                                <p style="margin-top:-10%" class="display-1 text-white mb-5 text-center mx-auto">Agenda</p>
                             </center>
                             
                             <p v-else class="mb-0 display-2 text-white">Agenda</p>
                             <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         </div>
-
-                        <base-button v-if="hideText == 'display:none'" class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                        <div class="mt-7">
+                            <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
                             <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
                         </base-button>
 
-                        <base-button v-else class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                        <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
                             <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                             Agendar
                         </base-button>
 
-                        <base-button class="float-right mt-7 mr-0 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true , initialState()"  type="warning">
+                        <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true , initialState()"  type="warning">
                             <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                             Bloqueos
                         </base-button>
 
-                        <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mt-7 mr-0 qloq" size="sm">
+                        <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mr-0 qloq" size="sm">
                             <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                     {{employeByDate}}
                             </base-button>
@@ -48,6 +48,8 @@
                                 </base-button>
                             </li>
                         </base-dropdown>
+                        </div>
+                        
                         <div v-if="filter == true" class="ml-2">
                             <img class="avatar rounded-circle" :src="img2" />
                         </div>
