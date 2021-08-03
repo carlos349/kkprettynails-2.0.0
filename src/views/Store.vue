@@ -255,6 +255,11 @@
                                           <template slot="price" slot-scope="record">
                                               {{formatPrice(record)}}
                                           </template>
+                                          <template slot="priceTotal" slot-scope="record, column">
+                                              <span v-if="record != 'Abastecimiento'">{{formatPrice(record * column.entry)}}</span>
+                                              <span v-else>No aplica</span>
+                                          </template>
+                                          
                                       </a-table>
                                   </a-config-provider>    
                               </div>
@@ -1022,7 +1027,7 @@ export default {
                 },
             },
             {
-                title: 'Precio',
+                title: 'Precio promedio',
                 dataIndex: 'price',
                 key: 'price',
                 ellipsis: true,
@@ -1253,11 +1258,19 @@ export default {
                 ellipsis: true
             },
             {
-                title: 'Precio',
+                title: 'Precio por medida',
                 dataIndex: 'price',
                 key: 'price',
                 ellipsis: true,
                 scopedSlots: { customRender: 'price' },
+                sorter: (a, b) => a.price - b.price,
+            },
+            {
+                title: 'Gasto total',
+                dataIndex: 'price',
+                key: 'price',
+                ellipsis: true,
+                scopedSlots: { customRender: 'priceTotal' },
                 sorter: (a, b) => a.price - b.price,
             },
             {

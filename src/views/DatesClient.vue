@@ -7,7 +7,7 @@
         </nav>
         <div class="container-fluid" style="margin-top:8rem;">
             <card shadow>
-                <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atras" next-button-text="Siguiente" finish-button-text="¡Agendar!" ref="wizard"> 
+                <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!" ref="wizard"> 
                     <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
                     <tab-content title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
