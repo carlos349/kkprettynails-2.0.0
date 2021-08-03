@@ -720,10 +720,11 @@ export default {
         },
         printReport(){
             this.$swal({
-                title: '¿Estás seguro de hacer el Cierre?',
+                title: '¿Desea realizar el cierre?',
+                text: 'Esta acción no se puede revertir',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Si',
+                confirmButtonText: 'Sí',
                 cancelButtonText: 'No, cancelar',
                 showCloseButton: true,
                 showLoaderOnConfirm: true
@@ -743,7 +744,7 @@ export default {
                             .then(res => {
                                 if (res.data.status == 'ok') {
                                     let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,height=0,left=-1000,top=-1000`;
-                                    var win = window.open(endPoint.url+'/#/reportPdfEmploye?id='+this.code, '_blank', params)
+                                    var win = window.open(`${endPoint.url}/#/reportPdfEmploye?id=${this.code}&bonus=${this.lenderBonus}&advancement=${this.advancement}`, '_blank', params)
                                     win.focus();
                                     setTimeout(()=> {
                                         router.push({path:'/Empleados'})
@@ -760,7 +761,7 @@ export default {
                         console.log(err)
                     })                   
                 }else{
-                    this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
+                    this.$swal('No se hizo el cierre', 'Acción cancelada', 'info')
                 }
             })
         },

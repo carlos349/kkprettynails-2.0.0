@@ -470,32 +470,36 @@ export default {
                     if (valid.data.status == 'bad employes') {
                         this.$swal({
                             icon: 'error',
-                            title: 'Debes hacer un cierre de todos tus empleados',
-                            showConfirmButton: false,
+                            title: 'Debe realizar cierre de empleados',
+                            text: 'Para continuar debe hacer cierre en sección de empleadas',
+                            showConfirmButton: true,
                             timer: 2000
                         })
                     }if (valid.data.status == 'bad inventories') {
                         this.$swal({
                             icon: 'error',
-                            title: 'Debes hacer un cierre del inventario',
-                            showConfirmButton: false,
+                            title: 'Debe realizar cierre de inventario',
+                            text: 'Para continuar debe hacer cierre en sección de inventario',
+                            showConfirmButton: true,
                             timer: 2000
                         })
                     }if (valid.data.status == 'bad cashfound') {
                         this.$swal({
                             icon: 'error',
-                            title: 'Debes hacer un cierre de caja',
-                            showConfirmButton: false,
+                            title: 'Debe realizar cierre de Caja del día',
+                            text: 'Para continuar debe hacer cierre en sección de caja',
+                            showConfirmButton: true,
                             timer: 2000
                         })
                     }if (valid.data.status == 'ok') {
                         const expenseTotal = this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual + this.thisMonth.Comision
                         this.$swal({
-                            title: '¿Desea realizar el cierre?',
+                            title: '¿Desea realizar el cierre de gastos?',
+                            text: '¡Recuerda! Esta acción no se puede revertir!',
                             type: 'warning',
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonText: 'Si',
+                            confirmButtonText: 'Sí',
                             cancelButtonText: 'No, cancelar',
                             showCloseButton: true,
                             showLoaderOnConfirm: true
