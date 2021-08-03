@@ -731,35 +731,35 @@ export default {
             })
             .then(result => {
                 if (result.value) {
-                    axios.put(endPoint.endpointTarget+'/employes/closeemploye/'+this.code, {}, this.configHeader)
-                    .then(res => {
-                        if (res.data.status == 'employe closed') {
-                            axios.post(`${endPoint.endpointTarget}/expenses/`, {
-                                branch: this.branch,
-                                detail: 'Pago de comisión de '+ this.nameLender ,
-                                employe: this.code,
-                                amount: this.totalComission,
-                                type: "Comisión",
-                            }, this.configHeader)
-                            .then(res => {
-                                if (res.data.status == 'ok') {
-                                    let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,height=0,left=-1000,top=-1000`;
-                                    var win = window.open(`${endPoint.url}/#/reportPdfEmploye?id=${this.code}&bonus=${this.lenderBonus}&advancement=${this.advancement}`, '_blank', params)
-                                    win.focus();
-                                    setTimeout(()=> {
+                    let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,height=0,left=-1000,top=-1000`;
+                    var win = window.open(endPoint.url+'/#/reportPdfEmploye?id='+this.code, '_blank', params)
+                    win.focus();
+                    setTimeout(()=> {
+                        axios.put(endPoint.endpointTarget+'/employes/closeemploye/'+this.code, {}, this.configHeader)
+                        .then(res => {
+                            if (res.data.status == 'employe closed') {
+                                axios.post(`${endPoint.endpointTarget}/expenses/`, {
+                                    branch: this.branch,
+                                    detail: 'Pago de comisión de '+ this.nameLender ,
+                                    employe: this.code,
+                                    amount: this.totalComission,
+                                    type: "Comisión",
+                                }, this.configHeader)
+                                .then(res => {
+                                    if (res.data.status == 'ok') {
                                         router.push({path:'/Empleados'})
-                                    }, 1000) 
-                                }
-                            }).catch(err => {
-                                console.log(err)
-                            })
-                        }else{
-                            this.$swal('Error en el cierre', 'Hubo un error', 'error')
-                        }
-                    }) 
-                    .catch(err => {
-                        console.log(err)
-                    })                   
+                                    }
+                                }).catch(err => {
+                                    console.log(err)
+                                })
+                            }else{
+                                this.$swal('Error en el cierre', 'Hubo un error', 'error')
+                            }
+                        }) 
+                        .catch(err => {
+                            console.log(err)
+                        })  
+                    }, 2500)                  
                 }else{
                     this.$swal('No se hizo el cierre', 'Acción cancelada', 'info')
                 }

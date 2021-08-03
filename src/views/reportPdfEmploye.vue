@@ -4,33 +4,34 @@
             <center>
                 <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre</h1> 
             </center>
-            <div class="row">
-                <div class="col-6">
-                    <strong>Nombre de la empleada:</strong> {{nameLender}}
+            <div class="row mb-3">
+                <div class="col-6 pl-9">
+                    <strong>  Nombre de la empleada:</strong> {{nameLender}}
                 </div>
-                <div class="col-6">
+                <div class="col-6 pl-9">
                     <strong>Comision total:</strong> {{totalComission | formatPrice}}
                 </div>
-                <div class="col-6">
+                <div class="col-6 pl-9">
                     <strong>Fecha de inicio:</strong> {{initDate | formatDate}}
                 </div>
-                <div class="col-6">
+                <div class="col-6 pl-9">
                     <strong>Total de adelantos:</strong> {{advancement | formatPrice}}
                 </div>
-                <div class="col-6">
+                <div class="col-6 pl-9">
                     <strong>Fecha de cierre:</strong> {{closeDate | formatDate}}
                 </div>
-                <div class="col-6">
+                <div class="col-6 pl-9">
                     <strong>Total de bonos:</strong> {{lenderBonus | formatPrice}}
                 </div>
-                <div class="col-6">
+                <div class="col-6 pl-9">
                     <strong>Total servicios:</strong> {{sales.length}}
                 </div>
-                <div class="col-6">
+                <div class="col-6 pl-9">
                     <strong>Total:</strong> {{totalSales | formatPrice}}
                 </div>
             </div>
-            <hr class="mt-0 mb-0">
+            <hr class="mt-2 mb-2">
+            <h1 class="text-center">Servicios realizados</h1>
             <a-config-provider>
                 <template #renderEmpty>
                     <div style="text-align: center">
@@ -137,8 +138,6 @@ export default {
         return {
             auth: [],
             id: this.$route.query.id,
-            lenderBonus: this.$route.query.lenderBonus,
-            advancement: this.$route.query.advancement,
             sales: [],
             salesTotal:[],
             initDate: '',
@@ -148,6 +147,8 @@ export default {
             dataDetail: [],
             nameLender: '',
             totalComission: 0,
+            lenderBonus:0,
+            advancement: '',
             totalSale: 0,
             configDate: {
                 allowInput: true, 
@@ -322,6 +323,9 @@ export default {
             .then(resData => {
                 this.code = resData.data.data._id
                 this.nameLender = resData.data.data.firstName + ' ' + resData.data.data.lastName
+                this.totalComission = resData.data.data.commission
+                this.lenderBonus = resData.data.data.bonus
+                this.advancement = resData.data.data.advancement
                 axios.get(endPoint.endpointTarget+'/employes/salesbyemploye/'+this.id, this.configHeader)
                 .then(res => {
                     console.log(res)
@@ -329,7 +333,6 @@ export default {
                     this.initDate = res.data.data[0].createdAt
                     for (const sale of this.sales) {
                         this.totalSales = this.totalSales + sale.total
-                        this.totalComission = this.totalComission + sale.commission
                     }
                     setTimeout(() => {
                         print()
