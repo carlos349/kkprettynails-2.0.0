@@ -942,15 +942,15 @@
                 </a-config-provider> 
             </template>
             <template slot="footer">
-                <base-button @click="modals.modal3 = false, modals.modal4 = true" size="sm" type="default">bloquear horario</base-button>
+                <base-button @click="modals.modal3 = false, modals.modal4 = true" size="sm" type="default">Bloquear horario</base-button>
             </template>
         </a-modal>
         <a-modal v-model="modals.modal4" title="Registrar bloqueo" width="30%" :closable="true" >
             <template>
                 <label for="date">Fecha</label>
-                <a-date-picker placeholder="Seleccione fecha" class="w-100" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" />
+                <a-date-picker placeholder="Seleccione fecha" class="w-100 clearBlockingDate" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" />
                 <label class="mt-2" for="employe">Empleado</label>
-                <a-select class="w-100" placeholder="Seleccione empleado">
+                <a-select class="w-100 clearBlockingEmploye" allowClear placeholder="Seleccione empleado">
                     <a-select-option v-for="employe of employeShow" :key="employe._id" @click="selectEmployeHour(employe)" :value="employe._id">
                         {{employe.name}}
                     </a-select-option>
@@ -958,10 +958,10 @@
                 <label class="mt-2" for="time">Horarios</label><br>
                 <div class="row px-3">
                     <div class="col-6 px-1 pr-0">
-                        <a-time-picker class="w-100" @change="selectStartHour" placeholder="Inicio de bloqueo" :minute-step="15" format="HH:mm" />
+                        <a-time-picker class="w-100 clearBlockingTime" @change="selectStartHour" placeholder="Inicio de bloqueo" :minute-step="15" format="HH:mm" />
                     </div>
                     <div class="col-6 px-1 pl-0">
-                        <a-time-picker class="w-100" @change="selectEndHour" placeholder="Fin de bloqueo" :minute-step="15" format="HH:mm" />
+                        <a-time-picker class="w-100 clearBlockingTime" @change="selectEndHour" placeholder="Fin de bloqueo" :minute-step="15" format="HH:mm" />
                     </div>
                 </div>
             </template>
@@ -1488,47 +1488,59 @@ export default {
             }
         },
         async blockingHour(){
-            var splitDate = this.hourBlocking.dateBlocking.split('-')
-            try {
-                const generateLenders = await axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                    date: splitDate[1]+'-'+splitDate[0]+'-'+splitDate[2],
-                    branch: this.branch
-                }, this.configHeader)
+            
+            if (this.hourBlocking.dateBlocking != '' && this.hourBlocking.employe.name && this.hourBlocking.start != '' &&  this.hourBlocking.end != '') {
+                var splitDate = this.hourBlocking.dateBlocking.split('-')
                 try {
-                    const blockHour = await axios.post(`${endPoint.endpointTarget}/dates/createBlockingHour`, {
-                        branch: this.branch,
-                        dateBlocking: this.hourBlocking.dateBlocking,
-                        employe: this.hourBlocking.employe,
-                        start: this.hourBlocking.start,
-                        end: this.hourBlocking.end,
-                        employes: generateLenders.data.array
+                    const generateLenders = await axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                        date: splitDate[1]+'-'+splitDate[0]+'-'+splitDate[2],
+                        branch: this.branch
                     }, this.configHeader)
-                    console.log(blockHour)
-                    if (blockHour.data.status == 'ok') {
-                        this.$swal({
-                            icon: 'success',
-                            title: 'Bloqueo creado con éxito',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        this.getBlockingHours()
-                        this.hourBlocking = {
-                            dateBlocking: '',
-                            employe: {},
-                            start: '',
-                            end: ''
+                    try {
+                        const blockHour = await axios.post(`${endPoint.endpointTarget}/dates/createBlockingHour`, {
+                            branch: this.branch,
+                            dateBlocking: this.hourBlocking.dateBlocking,
+                            employe: this.hourBlocking.employe,
+                            start: this.hourBlocking.start,
+                            end: this.hourBlocking.end,
+                            employes: generateLenders.data.array
+                        }, this.configHeader)
+                        if (blockHour.data.status == 'ok') {
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Bloqueo creado con éxito',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.getBlockingHours()
+                            this.hourBlocking = {
+                                dateBlocking: '',
+                                employe: {},
+                                start: '',
+                                end: ''
+                            }
+                            this.modals.modal4 = false
+                            this.modals.modal3 = true
+                            
+
+                            $('.clearBlockingTime .ant-time-picker-clear').click()
+                            $('.clearBlockingDate .ant-calendar-picker-clear').click()
+                            $('.clearBlockingEmploye .ant-select-selection__clear').click()
                         }
-                        this.modals.modal4 = false
-                        this.modals.modal3 = true
+                    }catch(err){
+
                     }
                 }catch(err){
-
+                    res.send(err)
                 }
-            }catch(err){
-                res.send(err)
+            }else{
+                this.$swal({
+                    icon: 'error',
+                    title: 'Debe llenar todos los datos',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
             }
-            
-            
         },
         getBranch(){
             this.branchName = localStorage.branchName  
