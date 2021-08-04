@@ -1,13 +1,37 @@
 <template>
     <div class="mx-2">
         <template>
-            <h2>Reporte de {{nameLender}}</h2>
-        </template>
-        <template>
             <center>
                 <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre</h1> 
             </center>
-            <hr class="mt-0 mb-0">
+            <div class="row mb-3">
+                <div class="col-6 pl-9">
+                    <strong>  Nombre de la empleada:</strong> {{nameLender}}
+                </div>
+                <div class="col-6 pl-9">
+                    <strong>Comision total:</strong> {{totalComission | formatPrice}}
+                </div>
+                <div class="col-6 pl-9">
+                    <strong>Fecha de inicio:</strong> {{initDate | formatDate}}
+                </div>
+                <div class="col-6 pl-9">
+                    <strong>Total de adelantos:</strong> {{advancement | formatPrice}}
+                </div>
+                <div class="col-6 pl-9">
+                    <strong>Fecha de cierre:</strong> {{closeDate | formatDate}}
+                </div>
+                <div class="col-6 pl-9">
+                    <strong>Total de bonos:</strong> {{lenderBonus | formatPrice}}
+                </div>
+                <div class="col-6 pl-9">
+                    <strong>Total servicios:</strong> {{sales.length}}
+                </div>
+                <div class="col-6 pl-9">
+                    <strong>Total:</strong> {{totalSales | formatPrice}}
+                </div>
+            </div>
+            <hr class="mt-2 mb-2">
+            <h1 class="text-center">Servicios realizados</h1>
             <a-config-provider>
                 <template #renderEmpty>
                     <div style="text-align: center">
@@ -116,8 +140,8 @@ export default {
             id: this.$route.query.id,
             sales: [],
             salesTotal:[],
-            dateInit:'',
-            fecha: '',
+            initDate: '',
+            closeDate: '',
             lenderBonuses:[],
             code: '',
             dataDetail: [],
@@ -286,6 +310,7 @@ export default {
                     sorter: (a, b) => a.total - b.total
                 }
             ],
+            totalSales: 0
         }
     },
     created(){
@@ -293,8 +318,7 @@ export default {
     },
     methods: {
         getData(){
-            const date = new Date()
-            this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
+            this.closeDate = new Date()
             axios.get(endPoint.endpointTarget+'/employes/justOneById/'+this.id, this.configHeader)
             .then(resData => {
                 this.code = resData.data.data._id
@@ -304,10 +328,12 @@ export default {
                 this.advancement = resData.data.data.advancement
                 axios.get(endPoint.endpointTarget+'/employes/salesbyemploye/'+this.id, this.configHeader)
                 .then(res => {
+                    console.log(res)
                     this.sales = res.data.data
-                    this.dateInit = res.data.data[0].createdAt
-                    let totals = 0
-                    let comissions = 0
+                    this.initDate = res.data.data[0].createdAt
+                    for (const sale of this.sales) {
+                        this.totalSales = this.totalSales + sale.total
+                    }
                     setTimeout(() => {
                         print()
                         setTimeout(() => {
