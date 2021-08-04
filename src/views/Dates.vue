@@ -570,26 +570,36 @@
                                 <a :href="imgEndpoint+'/static/designs/'+selectedEvent.paypdf" target="_blank" download>Descargar comprobante</a>
                             </base-button>
                             <hr/>
-                            <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <span v-if="selectedEvent.imageLength >= 3"> (Máximo 3)</span></dt>
-                            <div class="row mt-1" v-if="selectedEvent.imageLength < 3">
-                                <label class="col-md-8" for="file">{{nameFile}}</label>
-                                <input type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()" >
-                                <button class="col-md-4 buttonUpload" v-on:click="uploadImageDesign(selectedEvent.id)">
-                                    <b>Enviar</b>
-                                </button>
-                            </div>
-                            <div v-if="selectedEvent.imageLength > 0" class="row mt-1">
-                                <div class="col-md-12">
-                                    <carousel :perPage="1" :autoplayHoverPause="true" :autoplay="true">
-                                        <slide v-for="(images, index) of selectedEvent.image" class="imageHover">
-                                            <img  class="w-100" style="height: 50vh !important;" :src="imgEndpoint+'/static/designs/'+images" alt="">
-                                            <center>
-                                                <base-button type="danger" class="mt-2" size="sm" v-on:click="deleteImage(selectedEvent.image, index, selectedEvent.id)">Eliminar imagen</base-button>
-                                            </center>
-                                        </slide>
-                                    </carousel>
-                                </div>
-                            </div>
+                            <template v-if="selectedEvent.imgDesign">
+                                <a-spin size="large" :spinning="loadImage">
+                                    <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <span v-if="selectedEvent.imgDesign.length >= 3"> (Máximo 3)</span></dt>
+                                    <div class="row mt-1" v-if="selectedEvent.imgDesign.length < 3">
+                                        <label class="col-md-10" for="file">Seleccione imagen</label>
+                                        <input type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()" >
+                                        <button class="col-md-2 buttonUpload" v-on:click="uploadImageDesign(selectedEvent._id, selectedEvent)">
+                                            <i class="ni ni-send" style="font-size: 1.4em;'"></i>
+                                        </button>
+                                        <template v-if="nameFile != 'Seleccione imagen'">
+                                            <div v-for="(image, index) in nameFile.split(',')" :key="image" class="col-12 border border-3 p-2">
+                                                {{image}}
+                                                <i v-on:click="removeImage(index)" class="fa fa-times float-right mt-1 text-danger" style="font-size:1.4em;cursor:pointer;"></i>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div v-if="selectedEvent.imgDesign.length > 0" class="row mt-1">
+                                        <div class="col-md-12">
+                                            <carousel :perPage="1" :autoplayHoverPause="true" :autoplay="true">
+                                                <slide v-for="(images, index) of selectedEvent.imgDesign" :key="images" class="imageHover">
+                                                    <img  class="w-100" style="height: 50vh !important;" :src="images" alt="">
+                                                    <center>
+                                                        <base-button type="danger" class="mt-2" size="sm" v-on:click="deleteImage(selectedEvent.imgDesign, index, selectedEvent._id)">Eliminar imagen</base-button>
+                                                    </center>
+                                                </slide>
+                                            </carousel>
+                                        </div>
+                                    </div>
+                                </a-spin>
+                            </template>
                         </tab-pane>
                         <tab-pane>
                             <span slot="title">
@@ -1264,6 +1274,7 @@ export default {
                 }
             ]          
         },
+        loadImage: false,
         configDatePickerEdit: {
             allowInput: true,
             dateFormat: 'd-m-Y',
@@ -1373,7 +1384,7 @@ export default {
         clientsNames:[],
         lengthClosedDates:0,
         file: '',
-        nameFile:'Click aquí para cargar imagen',
+        nameFile:'Seleccione imagen',
         lenders: [],
         EndDateServices: [],
         loadingEnds:true,
@@ -3389,12 +3400,34 @@ export default {
                 }
             }
         },
+        removeImage(index){
+            // this.file.splice(index, 1)
+            if (this.file.length > 1) {
+                var nameFiles = this.nameFile.split(',')
+                nameFiles.splice(index, 1)
+                for (const key in nameFiles) {
+                    this.nameFile = key == 0 ? nameFiles[key] : this.nameFile +','+nameFiles[key]
+                }
+                var array = []
+                for (const file of this.file) {
+                    array.push(file)
+                }
+                array.splice(index, 1)
+                this.file = array
+                console.log(this.file)
+                console.log(this.nameFile)
+            }else{
+                this.file = []
+                this.nameFile = 'Seleccione imagen'
+            }
+        },
         handleFileUpload(){
-            const LengthImage = this.selectedEvent.image.length + this.$refs.file.files.length
+            const LengthImage = this.selectedEvent.imgDesign.length + this.$refs.file.files.length
             if (LengthImage > 3) {
                 
             }else{
                 this.file = this.$refs.file.files
+                console.log(this.file)
                 if (this.file.length == 3) {
                     this.nameFile = this.file[0].name+', '+this.file[1].name+', '+this.file[2].name
                 }else if (this.file.length == 2) {
@@ -3404,35 +3437,43 @@ export default {
                 }
             }            
         },
-        uploadImageDesign(id){
+        uploadImageDesign(id, event){
+            console.log(event)
+            this.loadImage = true
             let formData = new FormData();
             for (let index = 0; index < this.file.length; index++) {
                 const element = this.file[index];
                 formData.append('image', this.file[index])
             }
             
-            formData.append('imagePrev', this.selectedEvent.image)
-            axios.put(endPoint.endpointTarget+'/citas/uploadDesign/'+id, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
+            formData.append('imagePrev', this.selectedEvent.imgDesign)
+            const header = {
+                headers:{
+                    "x-database-connect": endPoint.database,
+                    'x-access-token':localStorage.userToken,
+                    'Content-Type': 'multipart/form-data'
                 }
-            })
+            }
+            axios.put(endPoint.endpointTarget+'/dates/uploadDesign/'+id, formData, header)
             .then(res => {
                 if (res.data.status == 'ok') {
-                    this.selectedEvent.image = res.data.image
+                    this.loadImage = false
+                    this.selectedEvent.imgDesign = res.data.image
                     this.selectedEvent.imageLength = res.data.image.length
                     this.$refs.file = ''
-                    this.nameFile = 'Click aquí para cargar imagen'
+                    this.nameFile = 'Seleccione imagen'
                 }
             })
         },
         deleteImage(images, index, id){
+            this.loadImage = true
             images.splice(index, 1)
-            axios.put(endPoint.endpointTarget+'/citas/removeImage/'+id, {
+            axios.put(endPoint.endpointTarget+'/dates/removeImage/'+id, {
                 images: images
-            })
+            }, this.configHeader)
             .then(res => {
-                this.selectedEvent.image = images
+                this.loadImage = false
+                this.selectedEvent.imgDesign = images
                 this.selectedEvent.imageLength = this.selectedEvent.imageLength - 1
             })
         },
@@ -4709,12 +4750,14 @@ export default {
     label[for="file"] {
         font-size: 12px;
         font-weight: 600;
-        color: #fff;
-        background-color: #172b4d;
+        color: #0095ff;
+        border: solid 2px #e9ecef;
+        background-color: #fff;
         display: inline-block;
         transition: all .5s;
         cursor: pointer;
-        padding: 10px !important;
+        padding: 8.1px !important;
+        text-decoration-line: underline;
         text-transform: uppercase;
         width: 100%;
         text-align: center;
@@ -4731,7 +4774,7 @@ export default {
         border-bottom-right-radius: 5px;
         color:#fff;
         background-color: #2dce89;
-        height: 38px !important;
+        height: 37px !important;
     }
     .menuVerRedoAgenda{
 	transition: all 0.3s ease-out;

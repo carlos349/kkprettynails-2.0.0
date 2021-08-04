@@ -660,7 +660,8 @@ export default {
                 }else{
                     this.$swal.fire({
                         icon: 'error',
-                        title: 'Recuerda completar los datos y el horario de descanso en los días seleccionados.',
+                        title: '¡Recuerda!',
+                        text: 'Completa los datos y horario de descanso',
                         showConfirmButton: true,
                         // timer: 1500
                     })

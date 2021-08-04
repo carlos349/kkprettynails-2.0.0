@@ -472,30 +472,27 @@ export default {
                             icon: 'error',
                             title: 'Debe realizar cierre de empleados',
                             text: 'Para continuar debe hacer cierre en sección de empleadas',
-                            showConfirmButton: true,
-                            timer: 2000
+                            showConfirmButton: true
                         })
                     }if (valid.data.status == 'bad inventories') {
                         this.$swal({
                             icon: 'error',
                             title: 'Debe realizar cierre de inventario',
                             text: 'Para continuar debe hacer cierre en sección de inventario',
-                            showConfirmButton: true,
-                            timer: 2000
+                            showConfirmButton: true
                         })
                     }if (valid.data.status == 'bad cashfound') {
                         this.$swal({
                             icon: 'error',
                             title: 'Debe realizar cierre de Caja del día',
                             text: 'Para continuar debe hacer cierre en sección de caja',
-                            showConfirmButton: true,
-                            timer: 2000
+                            showConfirmButton: true
                         })
                     }if (valid.data.status == 'ok') {
                         const expenseTotal = this.thisMonth.Inventario + this.thisMonth.Bono + this.thisMonth.Mensual + this.thisMonth.Comision
                         this.$swal({
                             title: '¿Desea realizar el cierre de gastos?',
-                            text: '¡Recuerda! Esta acción no se puede revertir!',
+                            text: '¡Recuerda! Esta acción no se puede revertir',
                             type: 'warning',
                             icon: 'warning',
                             showCancelButton: true,
@@ -540,9 +537,9 @@ export default {
             }else{
                 this.$swal({
 					icon: 'error',
-					title: 'Debe registrar un monto de reinversión para cerrar gastos mensuales',
-					showConfirmButton: false,
-					timer: 2000
+					title: 'Debe registrar reinversión',
+                    text: 'Para continuar debe ingresar un monto de reinversión',
+					showConfirmButton: true
 				})
             }
         },
