@@ -401,12 +401,12 @@
                     </base-input>
                     <a-tooltip placement="right">
                         <template slot="title">
-                        <span>Introduzca precio por {{dataProduct.measure}}</span>
+                        <span>Introduzca gasto total</span>
                         </template>
                         <currency-input
                             v-if="validForm != 1"
                             locale="de"
-                            :placeholder="'Precio por ' + dataProduct.measure"
+                            :placeholder="'Gasto total'"
                             addon-left-icon="ni ni-money-coins"
                             v-model="dataProduct.price"
                             class="form-control mb-3"
@@ -2081,7 +2081,7 @@ export default {
                     product:this.dataProduct.product,
                     entry:this.dataProduct.entry,
                     measure:this.dataProduct.measure,
-                    price:this.dataProduct.price,
+                    price:this.dataProduct.price / this.dataProduct.entry,
                     provider: this.provider.name,
                     firstNameUser: this.firstNameUser,
                     lastNameUser: this.lastNameUser,
