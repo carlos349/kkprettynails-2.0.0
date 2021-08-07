@@ -618,15 +618,22 @@
     <modal  modal-classes="modal-dialog-centered modal-xl" :show.sync="modalAdminProduct.modal1">
         <h6 slot="header" class="modal-title" id="modal-title-default">Gestión de sucursales</h6>
         <div class="row mb-5">
-            <div class="col-md-6 mx-auto">
+            <div class="col-md-4 mx-auto">
                      <a-select class="input-group-alternative w-100 mx-auto" show-search default-value="Seleccione una sucursal"  @change="selectEmploye" size="large">
                     <a-select-option v-for="branch of branches" :key="branch._id" :value="branch.name" v-on:click="getInventoryByBranch(branch._id, branch.name)">
                         {{branch.name}}
                     </a-select-option>
                 </a-select>
             </div>
+            <div class="col-md-4 mx-auto">
+                <a-select v-if="productsForBranch.length > 0" class="input-group-alternative w-100" default-value="Seleccione un producto" size="large">
+                    <a-select-option v-for="product of productsForBranch" :key="product" :value="product.name" @click="selectProductForBranch(product.data)" :disabled="product.disabled">
+                        {{product.name}}
+                    </a-select-option>
+                </a-select>
+            </div>
             <div class="col-md-3 mx-auto">
-                    <base-button type="success" :disabled="branchDataValid" class="mx-auto" @click="modalAdminProduct.modal3 = true, selectLoad()">Agregar un producto
+                <base-button type="success" :disabled="branchDataValid" class="mx-auto" @click="addProductToBranch">Agregar un producto
                 </base-button>
             </div>
             
@@ -719,14 +726,19 @@
                 <template slot="add" class="mx-auto" slot-scope="record, column, index">
                     
                     <base-button size="sm" class="float-right ml-2" type="success" @click="addToProductBranch(column._id, column.storeId, column.measure, index)" icon="fa fa-plus"></base-button>
+                    <base-button size="sm" class="float-right ml-2" type="danger" @click="removeProductsBranch(column._id, column.storeId, index, column.measure, ((column.quantity + column.entry) - column.consume))" icon="fa fa-minus"></base-button>
                     <a-input
-                        :placeholder="'Ingrese cantidad en '+column.measure"
-                        class="w-75 ml-auto float-right"
+                        style="width: 65%"
+                        :placeholder="'Cantidad'"
+                        class="ml-auto float-right"
                         v-model="branchEntry[index].count"
                     />
                 </template>
                 <template slot="format-date" slot-scope="record, column">
                     {{formatDate(column.createdAt)}}
+                </template>
+                <template slot="totalStore" slot-scope="record, column">
+                    {{getQuantity(column.storeId)}}
                 </template>
             </a-table>
         </a-config-provider>
@@ -812,7 +824,7 @@
         <a-empty v-if="productsForBranch.length == 0">
             <span slot="description"> No existen productos en la bodega </span>
         </a-empty>
-        <a-select v-if="productsForBranch.length > 0" class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione un producto"   size="large">
+        <a-select v-if="productsForBranch.length > 0" class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione un producto" size="large">
             <a-select-option v-for="product of productsForBranch" :key="product" :value="product.name" @click="selectProductForBranch(product.data)" :disabled="product.disabled">
                 {{product.name}}
             </a-select-option>
@@ -974,7 +986,14 @@ export default {
                 sorter: (a, b) => a.price - b.price,
             },
             {
-                title: 'Agregar cantidades',
+                title: 'Total bodega',
+                width: 120,
+                key: '_id',
+                scopedSlots: { customRender: 'totalStore' },
+                sorter: (a, b) => (a.quantity + a.entry - a.consume) - (b.quantity + b.entry - b.consume),
+            },
+            {
+                title: 'Agregar / Restar cantidades',
                 dataIndex: '_id',
                 key: '_id',
                 scopedSlots: {
@@ -982,7 +1001,7 @@ export default {
                 },
             },
             {
-                title: 'Total',
+                title: 'Total sucursal',
                 width: 120,
                 key: '_id',
                 scopedSlots: { customRender: 'total' },
@@ -1484,6 +1503,15 @@ export default {
                 this.auth = decoded.access
             }
         },
+        getQuantity(id){
+            var quanty = 0
+            this.products.forEach(element => {
+                if (element._id == id) {
+                    quanty = (element.entry + element.quantity) - element.consume
+                }
+            });
+            return quanty
+        },
         async getProducts() {
             this.countProduct = []
             try{
@@ -1499,7 +1527,7 @@ export default {
                 }
             }catch(err){
                 this.$swal({
-                    type: 'error',
+                    
                     icon: 'error',
                     title: 'Problemas con el servidor',
                     showConfirmButton: false,
@@ -1521,7 +1549,7 @@ export default {
             }
           }catch(err){
             this.$swal({
-                type: 'error',
+                
                 icon: 'error',
                 title: 'Problemas con el servidor',
                 showConfirmButton: false,
@@ -1545,7 +1573,7 @@ export default {
             }
           }catch(err){
             this.$swal({
-                type: 'error',
+                
                 icon: 'error',
                 title: 'Problemas con el servidor',
                 showConfirmButton: false,
@@ -1562,7 +1590,7 @@ export default {
                 }
             }catch(err){
                 this.$swal({
-                    type: 'error',
+                    
                     icon: 'error',
                     title: 'Problemas con el servidor',
                     showConfirmButton: false,
@@ -1584,10 +1612,11 @@ export default {
                     for (let i = 0; i < this.branchData.length; i++) {
                         this.branchEntry.push({count: ''})
                     }
+                    this.selectLoad()
                 }
             }catch(err){
                 this.$swal({
-                    type: 'error',
+                    
                     icon: 'error',
                     title: 'Problemas con el servidor',
                     showConfirmButton: false,
@@ -1623,7 +1652,7 @@ export default {
         addProductToBranch() {
             this.$swal({
                 title: '¿Está seguro que desea agregar este producto?',
-                type: 'warning',
+                
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Estoy seguro',
@@ -1642,7 +1671,7 @@ export default {
                     .then(res => {
                         if (res.data.status == 'product registered') {
                             this.$swal({
-                                type: 'success',
+                                
                                 icon: 'success',
                                 title: 'El producto fue agregado a la sucursal',
                                 showConfirmButton: false,
@@ -1658,7 +1687,7 @@ export default {
                         }
                     }).catch(err => {
                         this.$swal({
-                            type: 'error',
+                            
                             icon: 'error',
                             title: 'Problemas con el servidor',
                             showConfirmButton: false,
@@ -1669,7 +1698,7 @@ export default {
                 }
                 else{
                     this.$swal({
-                        type: 'error',
+                        
                         icon: 'error',
                         title: 'Acción cancelada',
                         showConfirmButton: false,
@@ -1677,6 +1706,102 @@ export default {
                     })
                 }
             })
+        },
+        removeProductsBranch(id,storeId, index, measure, total){
+            axios.get(endPoint.endpointTarget+'/stores/getstorebyid/' + storeId, this.configHeader)
+            .then(res => {
+                if (this.branchEntry[index].count <= total ) {
+                    this.$swal({
+                        title: '¿Está seguro que desea eliminar ' + this.branchEntry[index].count + ' ' + measure + ' de este producto?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Estoy seguro',
+                        cancelButtonText: 'No, evitar acción',
+                        showCloseButton: true,
+                        showLoaderOnConfirm: true
+                    }).then((result) => {
+                        if(result.value) {
+                            axios.post(endPoint.endpointTarget+'/stores/addtobranch',{
+                                branch: this.selectedBranch,
+                                branchName: this.selectedBranchName,
+                                id:id,
+                                storeId: this.productForBranch._id,
+                                product: this.productForBranch.product,
+                                measure: measure,
+                                price: this.productForBranch.price,
+                                entry: -(this.branchEntry[index].count),
+                                firstNameUser: this.firstNameUser,
+                                lastNameUser: this.lastNameUser,
+                                emailUser: this.emailUser,
+                                idUser: this.idUser 
+                            }, this.configHeader)
+                            .then(res => {
+                                if (res.data.status == 'added') {
+                                    axios.post(endPoint.endpointTarget+'/expenses/', {
+                                        branch: this.branch,
+                                        detail: `Se ha restado ${this.branchEntry[index].count} ${measure} de ${this.productForBranch.product} del inventario`,
+                                        amount: -(this.productForBranch.price * this.branchEntry[index].count),
+                                        type: 'Inventario',
+                                    }, this.configHeader)
+                                    .then(res => {
+                                        if (res.data.status == 'ok') {
+                                            this.$swal({
+                                                
+                                                icon: 'success',
+                                                title: 'La cantidad fue restada',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            this.getInventoryByBranch(this.selectedBranch, this.selectedBranchName)
+                                            this.branchEntry = []
+                                            for (let i = 0; i < this.branchData.length; i++) {
+                                                this.branchEntry.push({count: ''})
+                                            }
+                                            this.getProducts()
+                                            this.getHistory()
+                                        }
+                                    }).catch(err => {
+                                        this.$swal({
+                                            icon: 'error',
+                                            title: 'Problemas con el servidor',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                        console.log(err)
+                                    })
+                                }
+                            }).catch(err => {
+                                this.$swal({
+                                    
+                                    icon: 'error',
+                                    title: 'Problemas con el servidor',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                console.log(err)
+                            })
+                        }
+                        else{
+                            this.$swal({
+                                
+                                icon: 'error',
+                                title: 'Acción cancelada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
+                }else{
+                    this.$swal({
+                        
+                        icon: 'error',
+                        title: 'La bodega no dispone de la cantidad ingresada',
+                        showConfirmButton: false,
+                        timer: 2000
+                    })
+                }
+            })
+            
         },
         addToProductBranch(id, storeId, measure, index) {
             axios.get(endPoint.endpointTarget+'/stores/getstorebyid/' + storeId, this.configHeader)
@@ -1686,7 +1811,7 @@ export default {
                     this.productForBranch = res.data.data
                     this.$swal({
                         title: '¿Está seguro que desea agregar ' + this.branchEntry[index].count + ' ' + measure + ' a este producto?',
-                        type: 'warning',
+                        
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: 'Estoy seguro',
@@ -1720,7 +1845,7 @@ export default {
                                     .then(res => {
                                         if (res.data.status == 'ok') {
                                             this.$swal({
-                                                type: 'success',
+                                                
                                                 icon: 'success',
                                                 title: 'La cantidad fue agregada a la sucursal',
                                                 showConfirmButton: false,
@@ -1736,7 +1861,6 @@ export default {
                                         }
                                     }).catch(err => {
                                         this.$swal({
-                                            type: 'error',
                                             icon: 'error',
                                             title: 'Problemas con el servidor',
                                             showConfirmButton: false,
@@ -1747,7 +1871,7 @@ export default {
                                 }
                             }).catch(err => {
                                 this.$swal({
-                                    type: 'error',
+                                    
                                     icon: 'error',
                                     title: 'Problemas con el servidor',
                                     showConfirmButton: false,
@@ -1758,7 +1882,7 @@ export default {
                         }
                         else{
                             this.$swal({
-                                type: 'error',
+                                
                                 icon: 'error',
                                 title: 'Acción cancelada',
                                 showConfirmButton: false,
@@ -1768,7 +1892,7 @@ export default {
                     })
                 }else{
                     this.$swal({
-                        type: 'error',
+                        
                         icon: 'error',
                         title: 'La bodega no dispone de la cantidad ingresada',
                         showConfirmButton: false,
@@ -1781,7 +1905,7 @@ export default {
         deleteProductByBranch(data){
             this.$swal({
             title: '¿Está seguro de eliminar el producto de la sucursal?',
-            type: 'warning',
+            
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Estoy seguro',
@@ -1793,19 +1917,42 @@ export default {
                     axios.delete(endPoint.endpointTarget+'/stores/deleteinventoryproduct/'+data._id, this.configHeader)
                     .then(res => {
                         if (res.data.status == 'product deleted') {
-                            this.$swal({
-                                type: 'success',
-                                icon: 'success',
-                                title: 'El producto fue eliminado con exito',
-                                showConfirmButton: false,
-                                timer: 1500
+                            axios.post(endPoint.endpointTarget+'/expenses/', {
+                                branch: this.branch,
+                                detail: `Producto (${this.productForBranch.product}) eliminado del inventario`,
+                                amount: -(res.data.price * res.data.total),
+                                type: 'Inventario',
+                            }, this.configHeader)
+                            .then(res => {
+                                if (res.data.status == 'ok') {
+                                    this.$swal({
+                                        
+                                        icon: 'success',
+                                        title: 'El producto fue eliminado con exito',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    this.getInventoryByBranch(this.selectedBranch, this.selectedBranchName)
+                                    this.branchEntry = []
+                                    for (let i = 0; i < this.branchData.length; i++) {
+                                        this.branchEntry.push({count: ''})
+                                    }
+                                    this.getProducts()
+                                    this.getHistory()
+                                }
+                            }).catch(err => {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Problemas con el servidor',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                console.log(err)
                             })
-                            this.getProducts()
-                            this.getInventoryByBranch(this.selectedBranch)
                         }
                     }).catch(err => {
                         this.$swal({
-                            type: 'error',
+                            
                             icon: 'error',
                             title: 'Problemas con el servidor',
                             showConfirmButton: false,
@@ -1816,7 +1963,7 @@ export default {
                 }
                 else{
                     this.$swal({
-                        type: 'error',
+                        
                         icon: 'error',
                         title: 'Acción cancelada',
                         showConfirmButton: false,
@@ -1840,7 +1987,7 @@ export default {
                 }
             }catch(err){
                 this.$swal({
-                    type: 'error',
+                    
                     icon: 'error',
                     title: 'Problemas con el servidor',
                     showConfirmButton: false,
@@ -1863,7 +2010,7 @@ export default {
             .then(res => {
                 if (res.data.status == 'ok') {
                     this.$swal({
-                        type: 'success',
+                        
                         icon: 'success',
                         title: 'Alerta actualizada',
                         showConfirmButton: false,
@@ -1874,7 +2021,7 @@ export default {
                 }
             }).catch(err => {
                 this.$swal({
-                    type: 'error',
+                    
                     icon: 'error',
                     title: 'Problemas con el servidor',
                     showConfirmButton: false,
@@ -1893,7 +2040,7 @@ export default {
             .then(res => {  
                 if (res.data.status === 'product registered') {
                     this.$swal({
-                        type: 'success',
+                        
                         icon: 'success',
                         title: '¡Producto registrado con exito!',
                         showConfirmButton: false,
@@ -1904,7 +2051,7 @@ export default {
                     this.modals.modal1 = false
                 }else{
                     this.$swal({
-                        type: 'error',
+                        
                         icon: 'error',
                         title: '¡Producto ya existe!',
                         showConfirmButton: false,
@@ -1913,7 +2060,7 @@ export default {
                 }
             }).catch(err => {
                 this.$swal({
-                    type: 'error',
+                    
                     icon: 'error',
                     title: 'Problemas con el servidor',
                     showConfirmButton: false,
@@ -1956,7 +2103,7 @@ export default {
             .then(res => {
               if (res.data.status === 'provider registered') {
                   this.$swal({
-                    type: 'success',
+                    
                     icon: 'success',
                     title: 'Provedor registrado',
                     showConfirmButton: false,
@@ -1977,7 +2124,7 @@ export default {
                   this.getProviders();
               }else{
                   this.$swal({
-                  type: 'error',
+                  
                   title: 'Provedor existe',
                   showConfirmButton: false,
                   timer: 1500
@@ -1985,7 +2132,7 @@ export default {
               }
             }).catch(err => {
                 this.$swal({
-                    type: 'error',
+                    
                     title: 'Problemas con el servidor',
                     showConfirmButton: false,
                     timer: 1500
@@ -2045,7 +2192,7 @@ export default {
             .then(res => {
               if (res.data.status == 'provider edited') {
                 this.$swal({
-                    type: 'success',
+                    
                     icon: 'success',
                     title: 'Provedor Actualizado',
                     showConfirmButton: false,
@@ -2055,7 +2202,7 @@ export default {
                 this.modals.modal3 = false
               }else{
                 this.$swal({
-                  type: 'error',
+                  
                   icon: 'error',
                   title: 'El nuevo documento del provedor ya se encuentra registrado',
                   showConfirmButton: false,
@@ -2064,7 +2211,7 @@ export default {
               }    
             }).catch(err => {
               this.$swal({
-                type: 'error',
+                
                 title: 'El provedor no fue actualizado intente de nuevo',
                 showConfirmButton: false,
                 timer: 1500
@@ -2091,7 +2238,7 @@ export default {
             }, this.configHeader)
             .then(res => {
                 this.$swal({
-                    type: 'success',
+                    
                     icon: 'success',
                     title: '¡Producto actualizado con exito!',
                     showConfirmButton: false,
@@ -2102,7 +2249,7 @@ export default {
                 this.getHistory()
             }).catch(err => {
                 this.$swal({
-                    type: 'error',
+                    
                     icon: 'error',
                     title: 'El producto no fue actualizado',
                     showConfirmButton: false,
@@ -2118,7 +2265,7 @@ export default {
             this.$swal({
             title: '¿Está seguro de borrar el provedor?',
             text: 'No puedes revertir esta acción',
-            type: 'warning',
+            
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Estoy seguro',
@@ -2131,7 +2278,7 @@ export default {
                     .then(res => {
                         if (res.data.status == 'provider deleted') {
                             this.$swal({
-                                type: 'success',
+                                
                                 icon: 'success',
                                 title: 'Provedor borrado con exito',
                                 showConfirmButton: false,
@@ -2141,7 +2288,7 @@ export default {
                         }
                     }).catch(err => {
                         this.$swal({
-                            type: 'error',
+                            
                             title: 'Problemas con el servidor',
                             showConfirmButton: false,
                             timer: 1500
@@ -2151,7 +2298,7 @@ export default {
                 }
                 else{
                     this.$swal({
-                        type: 'error',
+                        
                         icon: 'error',
                         title: 'Accion cancelada',
                         showConfirmButton: false,
@@ -2164,7 +2311,7 @@ export default {
             this.$swal({
                 title: '¿Está seguro de borrar el producto? tambien se borrara de todas las sucursales donde este registrado.',
                 text: 'No puedes revertir esta acción',
-                type: 'warning',
+                
                 icon:'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Estoy seguro',
@@ -2177,7 +2324,7 @@ export default {
                     .then(res => {
                         if (res.data.status == 'product deleted') {
                             this.$swal({
-                                type: 'success',
+                                
                                 icon: 'success',
                                 title: 'Producto borrado con exito',
                                 showConfirmButton: false,
@@ -2189,7 +2336,7 @@ export default {
                 }
                 else{
                     this.$swal({
-                        type: 'error',
+                        
                         icon: 'error',
                         title: 'Acción cancelada',
                         showConfirmButton: false,
@@ -2209,7 +2356,7 @@ export default {
             .then(res => {
                 if (res.data.status === 'closed') {
                     this.$swal({
-                        type: 'success',
+                        
                         icon: 'success',
                         title: 'Cierre realizado con exito',
                         showConfirmButton: false,
@@ -2220,7 +2367,7 @@ export default {
                 }
                 else{
                     this.$swal({
-                        type: 'error',
+                        
                         title: 'Ya se hizo un cierre este mes',
                         showConfirmButton: false,
                         timer: 1500
@@ -2228,7 +2375,7 @@ export default {
                 }
             }).catch(err => {
                 this.$swal({
-                    type: 'error',
+                    
                     title: 'Problemas tecnicos intente de nuevo',
                     showConfirmButton: false,
                     timer: 1500
@@ -2277,7 +2424,7 @@ export default {
             this.$swal({
               title: '¿Está seguro de editar el producto? tambien se editara de todas las sucursales donde este registrado.',
               text: 'No puedes revertir esta acción',
-              type: 'warning',
+              
               icon:'warning',
               showCancelButton: true,
               confirmButtonText: 'Estoy seguro',
@@ -2295,7 +2442,7 @@ export default {
                     .then(res => {
                         if (res.data.status == 'store edited') {
                             this.$swal({
-                                type: 'success',
+                                
                                 icon: 'success',
                                 title: 'Producto editado correctamente',
                                 showConfirmButton: false,
@@ -2318,7 +2465,7 @@ export default {
                         }
                         else if (res.data.status == 'product already in use') {
                             this.$swal({
-                                type: 'error',
+                                
                                 icon: 'error',
                                 title: 'El nombre del producto ya se encuentra registrado en la bodega',
                                 showConfirmButton: false,
@@ -2326,7 +2473,7 @@ export default {
                             })
                         }else{
                             this.$swal({
-                                type: 'error',
+                                
                                 icon:'error',
                                 title: 'Hubo un problema',
                                 showConfirmButton: false,
@@ -2337,7 +2484,7 @@ export default {
                 }
                 else{
                     this.$swal({
-                        type: 'error',
+                        
                         icon:'error',
                         title: 'Acción cancelada',
                         showConfirmButton: false,
