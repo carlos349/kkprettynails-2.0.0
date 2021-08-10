@@ -161,7 +161,7 @@
                         <a-icon type="file-pdf" class="mr-2" style="vertical-align:1px;font-size:1.5em;"/>
                         Reporte
                     </base-button>
-                    <base-button @click="closeReinvestment" class="float-right mr-2" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'registrar') ? false : true" type="danger">
+                    <base-button @click="closeReinvestment" class="float-right mr-2" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'cierre') ? false : true" type="danger">
                         <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
                         Cierre
                     </base-button>
