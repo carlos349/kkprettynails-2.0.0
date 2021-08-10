@@ -33,13 +33,13 @@
         <!-- MODAL REGISTRAR -->
 
         <modal :show.sync="modals.modal1"
-               body-classes="p-0"
+               body-classes=""
                modal-classes="modal-dialog-centered modal-lg">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
+               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
+            <!-- <card type="secondary" shadow
+                  header-classes="bg-white"
+                  body-classes="px-lg-5 pt-5"
+                  class="border-0"> -->
                 <template>
                     <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
                        <h3>Datos del servicio </h3> 
@@ -130,6 +130,21 @@
                                 <base-radio name="false" value="true" inline class="mb-3 mx-auto" v-model="addDiscount"> <b>Si</b> </base-radio>
                                 <base-radio name="true" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
                             </div>
+                            <div class="col-12 row">
+                                <div class="col-6 pt-4 pl-5">
+                                    <p class="mx-auto font-weight-normal mt-2"> <strong class="mr-2">Aplica abono </strong> <a-switch class="mr-2" :checked="payment" @click="checkPayment()"/></p>
+                                </div>
+                                <div class="col-6">
+                                    <label for="">Monto mínimo de abono</label>
+                                    <currency-input
+                                        v-model="paymentAmount"
+                                        locale="de"
+                                        :disabled="payment ? false : true"
+                                        placeholder="Abono minimo"
+                                        class="form-control w-100"
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <tabs fill class="flex-column flex-md-row">
                             <tab-pane>
@@ -179,7 +194,7 @@
                         </div>
                     </form>
                 </template>
-            </card>
+            <!-- </card> -->
         </modal>
         <modal :show.sync="modals.modal2"
                body-classes="p-0"
@@ -277,6 +292,21 @@
                                 <h3 class="w-100 text-center">¿Aplica descuento?</h3>
                                 <base-radio name="false"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>Si</b> </base-radio>
                                 <base-radio name="true"  inline class="mb-3 mx-auto" v-model="addDiscountEdit"> <b>No</b> </base-radio> 
+                            </div>
+                            <div class="col-12 row">
+                                <div class="col-6 pt-4 pl-5">
+                                    <p class="mx-auto font-weight-normal mt-2"> <strong class="mr-2">Aplica abono </strong> <a-switch class="mr-2" :checked="editPayment" @click="checkPaymentEdit()"/></p>
+                                </div>
+                                <div class="col-6">
+                                    <label for="">Monto mínimo de abono</label>
+                                    <currency-input
+                                        v-model="editPaymentAmount"
+                                        locale="de"
+                                        :disabled="editPayment ? false : true"
+                                        placeholder="Abono minimo"
+                                        class="form-control w-100"
+                                    />
+                                </div>
                             </div>
                         </div>
                         
@@ -400,7 +430,7 @@
                         <template slot="title">
                         <span>Editar</span>
                         </template>
-                        <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch)"></base-button>
+                        <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch, column.prepayment)"></base-button>
                         <base-button v-else icon="fa fa-edit" size="sm" type="default" disabled class="text-center" ></base-button>
                     </a-tooltip>
     
@@ -575,6 +605,10 @@ export default {
                     "x-access-token": localStorage.userToken
                 }
             },
+            payment: false,
+            paymentAmount: 0,
+            editPayment: false,
+            editPaymentAmount: 0,
             alertTable: 'Selecciona un filtro en la parte superior',
             modals: {
                 modal1: false,
@@ -809,6 +843,12 @@ export default {
             clearFilters();
             this.searchText = '';
         },
+        checkPayment(){
+            this.payment = this.payment ? false : true
+        },
+        checkPaymentEdit(){
+            this.editPayment = this.editPayment ? false : true
+        },
         getBranch(){
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
@@ -1014,7 +1054,9 @@ export default {
                         employes: this.lenderSelecteds,
                         products:this.itemSelected,
                         category: this.categoryRegister,
-                        discount: this.addDiscount
+                        discount: this.addDiscount,
+                        prepayment: this.payment,
+                        prepaymentAmount: this.paymentAmount
                     }, this.configHeader).then(res => {
                         if (res.data.status == 'ok') {
                             this.$swal({
@@ -1044,6 +1086,8 @@ export default {
             this.comissionRegister = ''
             this.timeRegister = 'Seleccione el tiempo'
             this.lenderSelecteds = []
+            this.payment = false
+            this.paymentAmount = 0
             this.addDiscount = false
             this.modals.modal1 = false
             $('.maxHeight  thead .vbt-checkbox').click()
@@ -1070,7 +1114,7 @@ export default {
                 }
             }
         },
-        dataEdit(id, lenders, name, time, discount, comission, price, items, category, branch){
+        dataEdit(id, lenders, name, time, discount, comission, price, items, category, branch, prepayment){
             console.log(items)
             this.itemsBox.forEach(element => {
                 element.check = false
@@ -1084,6 +1128,14 @@ export default {
                         this.itemsBox[index].count = element.count
                     }
                 }
+            }
+            console.log(prepayment)
+            if (prepayment) {
+                this.editPayment = prepayment.ifPrepayment
+                this.editPaymentAmount = prepayment.amount
+            }else{
+                this.editPayment = false
+                this.editPaymentAmount = 0
             }
             console.log(this.itemsBox)
             this.EditlenderSelecteds = []
@@ -1167,7 +1219,9 @@ export default {
                         employes: this.EditlenderSelecteds,
                         products:this.EdititemSelected,
                         category: this.editCategoryServicer,
-                        discount: this.addDiscountEdit
+                        discount: this.addDiscountEdit,
+                        prepayment: this.editPayment,
+                        prepaymentAmount: this.editPaymentAmount
 					}, this.configHeader).then(res => {
                         if (res.data.status == 'ok') {
                             this.$swal({
