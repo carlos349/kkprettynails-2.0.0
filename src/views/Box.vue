@@ -365,6 +365,8 @@ export default {
                 if (closing.data.status == 'ok') {
                     if (this.validRoute('caja', 'visualizar')) {
                         this.closing = closing.data.data
+                    }else{
+                        this.closing = []
                     }
                 }
             }catch(err){

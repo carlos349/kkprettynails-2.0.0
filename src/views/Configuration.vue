@@ -338,11 +338,16 @@
                           </a-config-provider>
                       </div>
                       <div v-if="selectedConfig == 'information'">
-                        <div class="w-100 mb-3">
-                          <h1 class=" text-center w-100 my-2">
-                              Información de la sucursal
-                          </h1>
-                          <hr class="w-50 mb-0 mt-0">
+                        <div class="row mb-3">
+                          <div class="col-8">
+                            <h1 class="display-4 ml-4 mt-5">
+                                Información de la sucursal
+                            </h1>
+                          </div>
+                          <div class="col-4">
+                            <img class="mt-3 float-right mr-4" style="widht:80px;height:80px;" :src="configData.bussinessLogo" alt="">
+                          </div>
+                          <hr class="w-50">
                         </div>
                         <div class="row p-4">
                             <div class="col-md-6 col-sm-12">
@@ -371,6 +376,29 @@
                                         example: 'Ejemplo :'
                                     }"/>
                                 </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <a-tooltip>
+                                    <template slot="title">
+                                        Debe ser un correo valido
+                                    </template>
+                                    <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.05em;" type="question-circle" />
+                                </a-tooltip>
+                                <label class="ml-2" for="branch">
+                                    Correo
+                                </label>
+                                <base-input class="input-group-alternative"
+                                    placeholder="Correo de la sucursal"
+                                    addon-left-icon="ni ni-email-83"
+                                    @keyup="verifyEmail()"
+                                    v-model="configData.businessEmail">
+                                </base-input>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label class="ml-2" for="branch">
+                                    Logo de la sucursal
+                                </label><br>
+                                <input type="file" id="fileProfile" ref="file" v-on:change="handleFileUpload()" placeholder="seleccione logo" class="form-control input-group-alternative" />
                             </div>
                             <div class="col-md-6 col-sm-12">
                                 <label class="ml-2 w-100" for="credentials">
@@ -797,6 +825,8 @@
               '22:30',
               '23:00'
           ],
+          file: '',
+          validImage: true
         }
       },
       created(){
@@ -882,6 +912,8 @@
             businessPhone: this.configData.businessPhone,
             businessType: this.configData.businessType,
             businessLocation: this.configData.businessLocation,
+            businessEmail: this.configData.businessEmail,
+            bussinessLogo: this.configData.bussinessLogo,
             currency:  this.configData.currency,
             typesPay: this.configData.typesPay,
             datesPolitics: this.configData.datesPolitics,
@@ -1082,6 +1114,31 @@
         },
         selectClient(value){
           this.selectedClient = value
+        },
+        async handleFileUpload(){
+          this.validImage = false
+          this.file = this.$refs.file.files[0]
+          if (this.file != '') {
+            var formData = new FormData()
+            formData.append('image', this.file)
+            const config = {headers: {'Content-Type': 'multipart/form-data', 'x-access-token': localStorage.userToken, "x-database-connect": endPoint.database }}
+            try{
+              const uploadImage = await axios.post(endPoint.endpointTarget+'/configurations/uploadLogo', formData, config)
+              if (uploadImage.data.status == 'ok') {
+                this.configData.bussinessLogo = uploadImage.data.file
+                this.validImage = true
+              }else{
+                this.$swal({
+                  icon: 'error',
+                  title: 'Problemas al subir imagen',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+              }
+            }catch(err){
+              alert(err)
+            }
+          }
         },
         insertClient(){
           var valid = true
