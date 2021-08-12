@@ -608,6 +608,7 @@ export default {
             
         },
         updateEmploye(){
+            console.log(this.selectedDays)
             if (this.validHoursDays() == 'hora atras') {
                 this.$swal.fire({
                     icon: 'error',
@@ -647,6 +648,7 @@ export default {
                             this.getEmployes()
                             this.initialState(1)
                             EventBus.$emit('reloadLenders', 'reload')
+                            
                         }else{
                             this.$swal({
                                 type: 'error',

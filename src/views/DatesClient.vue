@@ -940,22 +940,22 @@
                     this.validRegister = false
                 }
             },
-            sendConfirmation(id, name, mail, start, end, services, lender){
+            sendConfirmation(id, name, mail, start, end, services, lender, data){
                 const nameFormat = name
                 const contactFormat = mail
                 const startFormat = start
                 const endFormat = end
                 const dateFormat = this.finalDate
-                axios.post(endPoint.endpointTarget+'/dates/sendConfirmation/'+id, {
+                console.log(id + "\n" + name + "\n" + mail + "\n" + services + "\n" + data)
+                console.log(data)
+                axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                     name: nameFormat,
-                    contact: contactFormat,
-                    start: startFormat,
-                    end: endFormat,
+                    branch: this.branchName,
+                    branchId: this.branch,
+                    data: data,
                     date: dateFormat,
-                    service: services,
-                    lenders: lender,
-                    payment: this.registerUser.pay
-                })
+                    email: mail
+                }, this.configHeader)
                 .then(res => {
                     if (res.data.status == 'ok') {
                         console.log(res.data.status)
@@ -1062,7 +1062,7 @@
                                 }, this.configHeader)
                                 .then(res => {
                                     if (res.data.status == "cita creada") {
-                                        this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal)
+                                        this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDate)
                                         this.modals.modal2 = false
                                         this.modals.modal4 = true
                                         
@@ -1086,7 +1086,7 @@
                             .then(res => {
                                 if (res.data.status == "ok") {
                                     this.ifDisabled = false
-                                    this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal)
+                                    this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDate)
                                     this.modals.modal2 = false
                                     this.modals.modal4 = true
                                     $("#overlay").toggle()
