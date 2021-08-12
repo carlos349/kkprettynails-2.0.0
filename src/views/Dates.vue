@@ -97,7 +97,7 @@
                                 </center>
                             </div>
                             <div class="row p-0 mt-2">
-                                <div class="row col-md-12 pl-5">
+                                <div class="showDevice row col-md-12 pl-5">
                                     <div style="width:auto;" class="mx-auto col-12">
                                         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                             <li v-for="(category, index) of categories" class="nav-item responsiveItem" role="presentation">
@@ -130,38 +130,81 @@
                                     </div> 
                                     <div class="col-md-6 col-12">
                                         <h2 class="text-center">Servicios seleccionados</h2>
-                                        <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                            
-                                                <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                                    <div class="row">
-                                                        <template  >
-                                                            <div class="col-lg-12 mt-2">
-                                                                <base-button v-for="(service, index) in registerDae.serviceSelectds" :key="service" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
-                                                                    <span class="float-left ml-2">{{service.name}}</span>
-                                                                    <template style="z-index: 100" v-if="ifMicro">
-                                                                        <a-tooltip placement="top">
-                                                                            <template slot="title">
-                                                                                <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
-                                                                            </template>
-                                                                            <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
-                                                                                <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
-                                                                                    {{micro.microService}}
-                                                                                </badge>
-                                                                            </div>
-                                                                                
-                                                                        </a-tooltip>
-                                                                    </template>
-                                                                    <!-- <badge class="text-default float-right" v- type="white">microservicio</badge>
-                                                                    <badge class="text-default float-right" type="white">otro</badge>
-                                                                    <badge class="text-default float-right" type="white">diseño</badge> -->
-                                                                </base-button>
-                                                            </div>
-                                                        </template>
-                                                    </div>
+                                        <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;">
+                                            <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                                <div class="row">
+                                                    <template  >
+                                                        <div class="col-lg-12 mt-2">
+                                                            <base-button v-for="(service, index) in registerDae.serviceSelectds" :key="service" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
+                                                                <span class="float-left ml-2">{{service.name}}</span>
+                                                                <template style="z-index: 100" v-if="ifMicro">
+                                                                    <a-tooltip placement="top">
+                                                                        <template slot="title">
+                                                                            <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                                        </template>
+                                                                        <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
+                                                                            <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
+                                                                                {{micro.microService}}
+                                                                            </badge>
+                                                                        </div>
+                                                                            
+                                                                    </a-tooltip>
+                                                                </template>
+                                                                <!-- <badge class="text-default float-right" v- type="white">microservicio</badge>
+                                                                <badge class="text-default float-right" type="white">otro</badge>
+                                                                <badge class="text-default float-right" type="white">diseño</badge> -->
+                                                            </base-button>
+                                                        </div>
+                                                    </template>
                                                 </div>
+                                            </div>
                                         </vuescroll>
                                     </div>
+                                </div>
+                                <div class="showPhone col-md-12">
+                                    <base-dropdown class="w-100 mx-auto mb-3 styleDropdown">
+                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
+                                            {{CatSelected}}
+                                        </base-button>
+                                        <b v-for="category of categories" :key="category.name" v-on:click="selectCategoryPhone(category.name)" class="dropdown-item w-100" style="color:#fff;"> {{category.name}} </b>
+                                    </base-dropdown>
+                                    <base-dropdown class="w-100 mx-auto styleDropdown" v-if="servicesPhoneShow">
+                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
+                                            Servicios 
+                                        </base-button>
+                                        <template v-for="service of servicesCat">
+                                            <b :key="service.name" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.name}} </b>
+                                        </template>
+                                    </base-dropdown>
                                     
+                                    <template v-if="registerDae.serviceSelectds[0]">
+                                        <h2 class="mt-3 text-center">Servicios seleccionados</h2>
+                                        <hr>
+                                        <div v-for="(service, index) in registerDae.serviceSelectds" :key="service._id+'asda'+index" class="row" >
+                                            <div class="col-9">
+                                                <base-button style="cursor:default;z-index:1" class="w-100" type="default">
+                                                    <span class="float-left ml-2">{{service.name}}</span><br>
+                                                    <template style="z-index: 100" v-if="ifMicro">
+                                                        <a-tooltip placement="top">
+                                                            <template slot="title">
+                                                                <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                            </template>
+                                                            <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
+                                                                <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-left mt-2">
+                                                                    {{micro.microService}}
+                                                                </badge>
+                                                            </div>
+                                                        </a-tooltip>
+                                                    </template>
+                                                </base-button>
+                                            </div>
+                                            <div class="col-2 pl-0">
+                                                <base-button class="w-100 p-0 py-2 mt-1" v-on:click="lessServicePhone(index, service.price)" type="danger">
+                                                    <a-icon type="close" style="vertical-align:1.5px;font-size:1.6em;" />
+                                                </base-button>
+                                            </div>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </vuescroll>
@@ -1006,6 +1049,7 @@ import endPoint from '../../config-endpoint/endpoint.js'
 import router from '../router'
 import mixinUserToken from '../mixins/mixinUserToken'
 import mixinHideText from '../mixins/mixinHideText'
+import BaseButton from '../components/BaseButton.vue'
 
 export default {
     mixins: [mixinUserToken, mixinHideText],
@@ -1017,7 +1061,8 @@ export default {
         Carousel,
         Slide,
         VuePhoneNumberInput,
-        vuescroll
+        vuescroll,
+        BaseButton
     },
     data() {
       return {
@@ -1372,6 +1417,7 @@ export default {
         radio2: "radio3"
         },
         spinningEdit: false,
+        CatSelected: 'Categorias',
         endId:'',
         endServices:[],
         endClient: '',
@@ -1422,7 +1468,10 @@ export default {
         configurations: {},
         startCalendar: 0,
         endCalendar: 0,
-        hideDays: []
+        hideDays: [],
+        servicesCat: [],
+        serviceSelected: [],
+        servicesPhoneShow:false,
       };
     },
     created(){
@@ -1432,6 +1481,7 @@ export default {
         // this.getServices()
         // this.getUsers()
         this.getBranch()
+        this.device()
         // this.getClosed()
         // this.getCategories()
         
@@ -1473,6 +1523,106 @@ export default {
             }catch(err){
                 console.log(err)
             }
+        },
+        async selectCategoryPhone(name){
+            // for (let j = 0; j < this.serviceSelected.length; j++) {
+            //     const element = this.serviceSelected[j];
+            //     if (element.set == false) {
+            //         this.serviceSelected.splice(j, 1)
+            //         this.servicePhoneCount.splice(j, 1)
+            //     }
+            // }
+            this.servicesPhoneShow = false
+            this.servicesCat = []
+            try {
+                const services = await  axios.post(endPoint.endpointTarget+'/services/servicesByCategory', {
+                    name: name,
+                    branch: this.branch
+                }, this.configHeader)
+                if (services.data.status == 'ok') {
+                    this.servicesPhoneShow = true
+                    this.servicesCat = services.data.data
+                    this.CatSelected = name
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Categoria sin servicios.',
+                        showConfirmButton: false,
+                        timer: 2500
+                    })
+                }
+            }catch (err){
+                console.log(err)
+            }
+        },
+        validObject (){
+            if (this.serviceSelected.length === 0) {
+                return false
+            }else{
+                return true
+            }
+        },
+        device(){
+            if (screen.width < 768) {
+                this.configDatePicker.inline = true
+            }
+        },
+        async selectServicePhone(id){
+            // for (let j = 0; j < this.serviceSelected.length; j++) {
+            //     const element = this.serviceSelected[j];
+            //     if (element.set == false) {
+            //         this.serviceSelected.splice(j, 1)
+            //         this.servicePhoneCount.splice(j, 1)
+            //     }
+            // }
+            try {
+                const service = await axios.get(endPoint.endpointTarget+'/services/getServiceInfo/'+id, this.configHeader)
+                if (service.data.status == 'ok') {
+                    service.data.data.set = false
+                    console.log(service.data.data)
+                    this.serviceSelected.unshift(service.data.data)
+                    this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount)
+                }else{
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error técnico.',
+                        showConfirmButton: false,
+                        timer: 2500
+                    })
+                }
+            }catch(err){
+                console.log(err)
+            }
+        },
+        plusServicePhone(index, service, duration, commission, price, employes, discount){
+            this.ifServices = true
+            for (const employe of employes) {
+                employe.valid = true
+            }
+            var lendersName = [{name: 'Primera disponible', days: '', class: '', valid:true}, ...employes]
+
+            if (this.ifMicro) {
+                var microsService = [{checked: false, duration: 0, microService: "Ninguno", price: 0, position: index}]
+                for (const micro of this.microServices) {
+                    microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
+                }
+                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: []})
+            }else{
+                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,
+                microServices: [], microServiceSelect: []})
+            }
+
+            this.validHour = false
+        },
+        lessServicePhone(index, price){
+            this.registerDae.serviceSelectds.splice(index, 1)
+            if (this.registerDae.serviceSelectds.length == 0) {
+                this.ifServices = false
+                this.validLender()
+                this.validSchedule = false
+                this.posibleLenders = []
+            }
+            this.validHour = false
         },
         async deleteHour(id, employe, dateBlocking, start, end){
             try {
@@ -4829,7 +4979,66 @@ export default {
         margin-right: 5px;
     } 
 
-
-    
-    
+    .showPhone{
+        display: none;
+    }
+    @media only screen and (max-width: 468px)
+    {
+        .styleDropdown .dropdown-menu{
+            width: 100%;
+            left: 0%;
+        }
+        .styleDropdown .dropdown-item{
+            font-size:0.600rem !important;
+        }
+        .name-service{
+            font-size: 1em;
+            z-index:1;
+            max-width: 85%;
+            margin-bottom:20px;
+        }
+        .card-service img{
+            top:-40px;
+        }
+        .responsiveItem{
+            width: 100%;
+        }
+        .borderImageBrand{
+            margin-left:35%;
+        }
+        .showDevice{
+            display: none !important;
+        }
+        .showPhone{
+            display: block;
+        }
+        .card-services-information {
+            padding: 0;
+        }
+        .logoSyswaFooter{
+            height:110px;
+            width:180px
+        }
+        .flatpickr-calendar {
+            left: 0 !important;
+        }
+    }
+    @media only screen and (max-width: 768px)
+    {
+        .card-service{
+            margin-top:10px;
+        }
+        .responsiveButtonsPercent{
+            width: 100% !important;
+        }
+        .wizard-btn{
+        min-width: 80px !important;  
+        }
+        .borderRight{
+            border:none;
+        }
+        .flatpickr-calendar {
+            left: 0 !important;
+        }
+    }
 </style>
