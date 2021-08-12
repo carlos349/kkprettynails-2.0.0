@@ -1,14 +1,14 @@
 
 <template>
     <div>
-        <base-header class="header pb-7 pt-5  d-flex align-items-center"
-                     style="min-height: 400px; background-image: url(img/theme/syswa-gestion.png); background-size: cover; background-position: center;">
+        <base-header class="header pb-3 pt-1  d-flex align-items-center"
+                     style="min-height: 250px; background-image: url(img/theme/configuration.png); background-size: cover; background-position: center;">
             <!-- Mask -->
-            <span class="mask bg-gradient-success opacity-8"></span>
+            <span class="mask bg-gradient-success opacity-4"></span>
             <!-- Header container -->
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
-                    <div class="col-lg-7 col-md-10">
+                    <div class="col-12">
                         <h1 class="display-2 text-white">Configuración de {{configData.businessName}}</h1>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
             </card>
         </modal>
 
-        <div class="container-fluid mt--7">
+        <div class="container-fluid mt--6">
             <div class="row">
                 <div class="col-xl-8 col-sm-12 order-xl-2 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
@@ -339,13 +339,13 @@
                       </div>
                       <div v-if="selectedConfig == 'information'">
                         <div class="row mb-3">
-                          <div class="col-8">
-                            <h1 class="display-4 ml-4 mt-5">
+                          <div class="col-8 mt-1">
+                            <h1 class="display-4 ml-4 mt-4">
                                 Información de la sucursal
                             </h1>
                           </div>
                           <div class="col-4">
-                            <img class="mt-3 float-right mr-4" style="widht:80px;height:80px;" :src="configData.bussinessLogo" alt="">
+                            <img class="mt-1 float-right mr-4" style="widht:80px;height:80px;" :src="configData.bussinessLogo" alt="">
                           </div>
                           <hr class="w-50">
                         </div>

@@ -1,7 +1,7 @@
 <template>
     <div>
         <base-header class="header pb-3 pt-2 pt-lg-4 d-flex align-items-center"
-                     style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
+                     style="min-height: 50px; background-image: url(img/theme/branch.png); background-size: cover; background-position: center 25%;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask opacity-7"></span>
             <!-- Header container -->
@@ -980,6 +980,7 @@ export default {
                                         'businessPhone': this.modelStart.businessPhone,
                                         'businessType': this.modelStart.businessType,
                                         'businessLocation': this.modelStart.businessLocation,
+                                        'route': endPoint.url,
                                         'email': this.modelStart.email,
                                         'typesPay': this.modelStart.typesPay,
                                         'currency': this.modelStart.currency,

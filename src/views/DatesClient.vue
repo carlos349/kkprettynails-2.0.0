@@ -953,17 +953,13 @@
             },
             sendConfirmation(id, name, mail, start, end, services, lender, data){
                 const nameFormat = name
-                const contactFormat = mail
-                const startFormat = start
-                const endFormat = end
                 const dateFormat = this.finalDate
-                console.log(id + "\n" + name + "\n" + mail + "\n" + services + "\n" + data)
-                console.log(data)
                 axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                     name: nameFormat,
                     branch: this.branchName,
                     branchId: this.branch,
                     data: data,
+                    id: id,
                     date: dateFormat,
                     email: mail
                 }, this.configHeader)

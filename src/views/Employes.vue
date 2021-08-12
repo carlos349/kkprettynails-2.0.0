@@ -1,7 +1,7 @@
 <template>
     <div>
         <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
-            style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
+            style="min-height: 50px; background-image: url(img/theme/employes.png); background-size: cover; background-position: center 60%;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->

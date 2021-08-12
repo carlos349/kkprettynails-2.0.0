@@ -2,8 +2,8 @@
     <div class="container">
         <center >
             <div class="mt-9 hidden divShow">
-                <i class="fa fa-check-circle mb-4" style="font-size:15em;color:#2dce89;"></i>
-                <h1>Su cita fue confirmada satifactoriamente</h1>
+                <i class="fa fa-info-circle mb-4" style="font-size:15em;color:#238ae6;"></i>
+                <h1>Su cita fue cancelada satifactoriamente</h1>
             </div>    
         </center> 
     </div>
@@ -33,7 +33,7 @@ export default {
     },
     methods: {
         confirmDate(){
-            axios.put(endPoint.endpointTarget+'/dates/confirmDate/'+this.id, {
+            axios.put(endPoint.endpointTarget+'/dates/removeDate/'+this.id, {
                 id: this.id
             }, this.configHeader)
             .then(res => {
