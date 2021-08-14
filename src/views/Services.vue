@@ -154,7 +154,7 @@
                                     </i>
                                 </span>
                                 <vue-custom-scrollbar ref="tableC" class="maxHeight">
-                                    <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" >
+                                    <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" :footer="false" >
                                         <template slot="validationnnn" slot-scope="props">
                                             <center>
                                                 <base-button v-on:click="unSelected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid == true">
@@ -681,7 +681,7 @@ export default {
                     title: 'Nombre',
                     dataIndex: 'name',
                     key: 'name',
-                    ellipsis: true,
+                    width: '30%',
                     scopedSlots: {
                         filterDropdown: 'filterDropdown',
                         filterIcon: 'filterIcon',
@@ -1052,12 +1052,28 @@ export default {
                 timeService = (this.timeHoursRegister * 60) + parseFloat(this.timeMinutesRegister)
             }
             if (this.serviceRegister == '' || this.priceRegister == 0 || timeService == 0 || this.comissionRegister == '' || this.categoryRegister == 'Categoría') {
-                this.$swal({
-                    icon: 'info',
-                    title: 'Debe rellenar los datos',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                if (this.categoryRegister == 'Categoría') {
+                    this.$swal({
+                        icon: 'info',
+                        title: 'Seleccione categoría',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if(this.priceRegister == 0){
+                    this.$swal({
+                        icon: 'info',
+                        title: 'Debe registrar precio',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if(this.serviceRegister == ''){
+                    this.$swal({
+                        icon: 'info',
+                        title: 'Debe llenar datos en blanco',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
             }else if(this.paymentAmount > this.priceRegister){
                 this.$swal({
                     icon: 'info',
@@ -1069,7 +1085,7 @@ export default {
                 if (this.lenderSelecteds.length == 0) {
                     this.$swal({
                         icon: 'info',
-                        title: 'Debe seleccionar almenos un empleado',
+                        title: 'Debe seleccionar un empleado',
                         showConfirmButton: false,
                         timer: 1500
                     })

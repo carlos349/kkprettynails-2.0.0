@@ -64,24 +64,18 @@
                 <h1 class="heading mt-5">{{modalsDialog.message}}</h1>
             </div>
         </modal>
-        <modal :show.sync="modals.modal1" body-classes="p-0" modal-classes=" modal-xl">
-            <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
-            <card type="secondary" shadow header-classes="bg-white" body-classes="" class="border-0">
-                <modal :show.sync="modals.modal2" :gradient="modals.type" modal-classes="modal-danger modal-dialog-centered">
-                    <div class="py-3 text-center">
-                        <i :class="modals.icon"></i>
-                        <h1 class="heading mt-5">{{modals.message}}</h1>
-                    </div>
-                </modal>
+        <a-modal v-model="modals.modal1" class="modalProcess p-0" width="100%" :closabled="true" :footer="false" >
+            <card type="secondary" shadow header-classes="bg-white" class="border-0 m-0 px-0">
+                
                   <!-- WIZARD -->
                 
-                <form-wizard style="margin-top:-5% !important" ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!">
+                <form-wizard ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
                     <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
                     
                     <tab-content icon="ni ni-bullet-list-67"  title="Servicios" :before-change="validateFirstStep">
-                        <vuescroll :ops="ops" v-on:scroll="scroll()" :class="hideText == 'display:none' ? 'mobileForm' : ''">
+                        <vuescroll :ops="ops" v-on:scroll="scroll()" class="width:100%;" :class="hideText == 'display:none' ? 'mobileForm' : ''">
                             <template>
                                 <div class="text-muted text-center p-0">
                                     Seleccione los servicios
@@ -90,7 +84,6 @@
                             
                             <div class="col-12">
                                 <center>
-                                    
                                     <base-button v-on:click="initialState()" type="secondary" class="text-default">
                                         <font-awesome-icon class="mx-auto"  icon="redo-alt" />
                                     </base-button>
@@ -105,22 +98,37 @@
                                             </li>
                                         </ul>   
                                     </div>
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-md-8 col-12 separateService">
                                         <h2 class="text-center">Servicios</h2>
-                                        <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                        <vuescroll :ops="ops"  v-on:scroll="scroll()" style="width:100%;height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                                             <div class="tab-content" id="pills-tabContent">
                                                 <div v-for="category of categories" :key="category" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                                    <div class="row">
-                                                        <template v-for="(name, index) of services" >
-                                                            <div class="col-lg-12 mt-2" v-if="name.category == category.name && name.active == true" :key="name">
-                                                                <base-button  class="w-100 px-1" v-on:click="plusService(index, name.name, name.duration, name.commission, name.price, name.employes, name.discount, name.products)"  type="default">
-                                                                    <badge class="float-left text-white col-md-3 col-sm-12" pill type="default">
-                                                                        <i class="fas fa-user-check m-0"></i>{{name.employes.length}}
-                                                                        <i class="far fa-clock ml-1"></i> {{name.duration}}Min
-                                                                    </badge>
-                                                                    <span class="float-left">{{name.name}}</span>
-                                                                    <badge class="text-default float-right col-md-1 col-sm-12" type="white">{{countServices[index].count}}</badge>
-                                                                </base-button>
+                                                    <div class="row pl-2">
+                                                        
+                                                        <template v-for="(service, index) of services">
+                                                            <div :key="service.name" class="col-md-6 px-4" v-if="service.category == category.name && service.active == true">
+                                                                <div class="card-service row mt-2" :id="'cardS'+index">
+                                                                    <h3 class="name-service w-100"> {{service.name}}</h3>
+                                                                    <p class="ml-1 mb-0" style="margin-top:-8px;">
+                                                                        <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
+                                                                    </p>
+                                                                    <div class="col-12 pl-0">
+                                                                        <img src="img/brand/calendar.png" alt="">
+                                                                    </div>
+                                                                    
+                                                                    <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;padding-top: 5px !important;">
+                                                                        <div class="price-service ">{{formatPrice(service.price)}} $</div> 
+                                                                    </div>
+                                                                    <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;margin-top:-5px;">
+                                                                        <div class="button-service-group">
+                                                                            <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price)"></i></button>
+                                                                            <span class="span-button-service">{{countServices[index].count}}</span>
+                                                                            <button class="button-service-right" 
+                                                                            v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, 'cardS'+index, service.discount)"
+                                                                            ><i class="fa fa-plus"></i></button>
+                                                                        </div> 
+                                                                    </div>  
+                                                                </div>
                                                             </div>
                                                         </template>
                                                     </div>
@@ -128,34 +136,41 @@
                                             </div>
                                         </vuescroll>
                                     </div> 
-                                    <div class="col-md-6 col-12">
-                                        <h2 class="text-center">Servicios seleccionados</h2>
+                                    <div class="col-md-4 col-12 pt-0">
+                                        <h2 class="text-center" style="margin-top:-3px;">Servicios seleccionados</h2>
                                         <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;">
                                             <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                                <div class="row">
-                                                    <template  >
-                                                        <div class="col-lg-12 mt-2">
-                                                            <base-button v-for="(service, index) in registerDae.serviceSelectds" :key="service" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
-                                                                <span class="float-left ml-2">{{service.name}}</span>
-                                                                <template style="z-index: 100" v-if="ifMicro">
-                                                                    <a-tooltip placement="top">
-                                                                        <template slot="title">
-                                                                            <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
-                                                                        </template>
-                                                                        <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
-                                                                            <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
-                                                                                {{micro.microService}}
-                                                                            </badge>
-                                                                        </div>
-                                                                            
-                                                                    </a-tooltip>
-                                                                </template>
-                                                                <!-- <badge class="text-default float-right" v- type="white">microservicio</badge>
-                                                                <badge class="text-default float-right" type="white">otro</badge>
-                                                                <badge class="text-default float-right" type="white">diseño</badge> -->
-                                                            </base-button>
+                                                <div class="row pl-3">
+                                                    <template v-if="registerDae.serviceSelectds[0]">
+                                                        <div v-for="(service, index) in registerDae.serviceSelectds" :key="service._id+'asda'+index" class="w-100 px-4" >
+                                                            <div class="card-service row mt-2" style="border-bottom: solid 8px #174c8e">
+                                                                <h3 class="name-service"> {{service.name}}</h3>
+                                                                <div class="col-12 pl-0">
+                                                                    <template v-if="ifMicro">
+                                                                        <a-tooltip placement="top">
+                                                                            <template slot="title">
+                                                                                <span>Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                                            </template>
+                                                                            <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
+                                                                            <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
+                                                                                <badge :type="micro.checked ? 'primary' : 'secondary'" class="text-default">
+                                                                                    <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
+                                                                                </badge>
+                                                                            </div>
+                                                                        </a-tooltip>
+                                                                    </template>
+                                                                    <img src="img/brand/calendar.png" alt="">
+                                                                </div>
+                                                                
+                                                                <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
+                                                                    <div class="price-service ">{{formatPrice(service.price)}} $</div> 
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </template>
+                                                    <div v-else>
+                                                        <h2 class="text-center">No ha seleccionado ningun servicio.</h2>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </vuescroll>
@@ -180,28 +195,38 @@
                                     <template v-if="registerDae.serviceSelectds[0]">
                                         <h2 class="mt-3 text-center">Servicios seleccionados</h2>
                                         <hr>
-                                        <div v-for="(service, index) in registerDae.serviceSelectds" :key="service._id+'asda'+index" class="row" >
-                                            <div class="col-9">
-                                                <base-button style="cursor:default;z-index:1" class="w-100" type="default">
-                                                    <span class="float-left ml-2">{{service.name}}</span><br>
-                                                    <template style="z-index: 100" v-if="ifMicro">
+                                        <div v-for="(service, index) in registerDae.serviceSelectds" :key="service._id+'asda'+index" class="w-100" >
+                                            <div class="card-service mt-4" style="border-bottom: solid 8px #174c8e">
+                                                <h2 class="name-service"> {{service.name}}</h2>
+                                                <p class="ml-1 mb-0 w-100" style="margin-top:-8px;">
+                                                    <a-icon type="clock-circle" style="vertical-align:1.5px;" /> 
+                                                    {{fixedHours(service.duration)}}
+                                                </p>
+                                                <div class="col-12 mt-2 p-0">
+                                                    <template v-if="ifMicro">
                                                         <a-tooltip placement="top">
                                                             <template slot="title">
-                                                                <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                                <span>Haga click en los adicionales que desea para este servicio. Se le sumara el costo al total del servicio.</span>
                                                             </template>
-                                                            <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" @click="SelectMicro(index, indexM, micro)">
-                                                                <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-left mt-2">
-                                                                    {{micro.microService}}
+                                                            <span class="ml-1 mt-2 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
+                                                            <br>
+                                                            <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;">
+                                                                <badge style="z-index:100" :type="micro.checked ? 'primary' : 'secondary'" class="text-default">
+                                                                    <p style="font-size:1.3em;" class="mb-0 text-default">{{micro.microService}}</p>
                                                                 </badge>
                                                             </div>
                                                         </a-tooltip>
                                                     </template>
-                                                </base-button>
-                                            </div>
-                                            <div class="col-2 pl-0">
-                                                <base-button class="w-100 p-0 py-2 mt-1" v-on:click="lessServicePhone(index, service.price)" type="danger">
-                                                    <a-icon type="close" style="vertical-align:1.5px;font-size:1.6em;" />
-                                                </base-button>
+                                                    <img style="z-index:0" src="img/brand/calendar.png" alt="">
+                                                </div>
+                                                <div class="row p-1">
+                                                    <div class="col-8 mt-4 p-1" >
+                                                        <div class="price-service w-100">{{formatPrice(service.price)}} $</div> 
+                                                    </div>
+                                                    <div class="col-4 mt-4 p-1" >
+                                                        <div style="border: solid 1px #174c8e;float:right;margin-right:5px;" class="price-service w-50"><a-icon style="vertical-align:1px;" type="close" v-on:click="lessServicePhone(index, service.price)" /></div> 
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </template>
@@ -502,7 +527,7 @@
                 <!-- END WIZARD -->
 
             </card>
-        </modal>
+        </a-modal>
         <vue-custom-scrollbar class="calen" style="height:75vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
             <vue-cal
                 class="calen"
@@ -533,8 +558,8 @@
                modal-classes="modal-dialog-centered modal-md">
             <h5 slot="header" class="modal-title" id="modal-title-notification">
                 {{dateSplit(selectedEvent.start)}} 
-                <span v-if="selectedEvent.typeCreation == 'Web'">(Creado desde la web de agendamientos)</span>
-                <span v-else>(Creado desde el sistema de agendamientos)</span></h5>   
+                <span v-if="selectedEvent.typeCreation == 'Web'">(Web)</span>
+                <span v-else>(Sistema)</span></h5>   
             <card type="secondary" shadow
                   
                   :body-classes="selectedEvent.class"
@@ -1624,6 +1649,27 @@ export default {
             }
             this.validHour = false
         },
+        lessService(index, service, time, card, precio){
+            if (this.countServices[index].count > 0) {
+                this.countServices[index].count--
+                if (this.countServices[index].count == 0) {
+                    $('#'+card).css({'border-bottom': 'solid 8px #e2e3de'})
+                }
+            }
+            for (var i = 0; i < this.registerDae.serviceSelectds.length; i++) {
+                if (this.registerDae.serviceSelectds[i].name == service ) {
+                    this.registerDae.serviceSelectds.splice(i, 1)
+                    break
+                }
+            }
+            if (this.registerDae.serviceSelectds.length == 0) {
+                this.ifServices = false
+                this.validLender()
+                this.validSchedule = false
+                this.posibleLenders = []
+            }
+            this.validHour = false
+        },
         async deleteHour(id, employe, dateBlocking, start, end){
             try {
                 const blockHour = await axios.post(`${endPoint.endpointTarget}/dates/deleteBlockingHour`, {
@@ -2029,8 +2075,6 @@ export default {
                 this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,microServices: [], microServiceSelect: [], products: products})
             }
             this.validHour = false  
-            this.totalPrice = parseFloat(this.totalPrice) + parseFloat(price)
-            console.log(this.registerDae.serviceSelectds)
         },
         plusMicroFinally(){
             this.selectedEvent.services[0].microServiceSelect = this.selectedEvent.microServices
@@ -4352,6 +4396,11 @@ export default {
                 }
             }
         },
+        fixedHours(duration){
+            const hours = parseInt(duration / 60) + ' hr'
+            const minutes = duration - (parseInt(duration / 60) * 60 )  + ' min'
+            return hours+' '+minutes
+        },
         openBlocks(open,indexService){
             $('#'+open).toggle('slow')
             
@@ -4402,9 +4451,9 @@ export default {
             }else{
                 this.$swal({
                     icon: 'error',
-                    title: 'Debe seleccionar un Adicional, en caso de no desear, por favor marque como NINGUNO',
-                    showConfirmButton: false,
-                    timer: 3000
+                    title: 'Seleccione adicional',
+                    text: 'En caso de no desear, marque como ninguno',
+                    showConfirmButton: true
                 })
                 this.validWizard = false
                 return false
@@ -4595,7 +4644,11 @@ export default {
     computed: {
         ifSticky: () => {
             return this.$refs.aggend
-        }
+        },
+        widthModalDate: () => {
+            return screen.width < 780 ? "100%" : "100%"
+        },
+        
     },
     mounted (){
         EventBus.$on('reloadDates', status => {
@@ -5041,5 +5094,8 @@ export default {
         .flatpickr-calendar {
             left: 0 !important;
         }
+    }
+    .vue-form-wizard .wizard-tab-content{
+        padding: 0px !important;
     }
 </style>

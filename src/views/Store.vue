@@ -2259,8 +2259,8 @@ export default {
             text: '¡Recuerda! No podrás revertir esta acción',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Estoy seguro',
-            cancelButtonText: 'No, evitar acción',
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No, cancelar',
             showCloseButton: true,
             showLoaderOnConfirm: true
             }).then((result) => {

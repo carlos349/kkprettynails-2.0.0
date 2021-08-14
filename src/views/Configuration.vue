@@ -20,7 +20,7 @@
             <currency-input
               v-model="configData.microServices[selectedMicroService].price"
               locale="de"
-              placeholder="Precio del microservicio"
+              placeholder="Precio del adicional"
               class="form-control w-100"
             />
             <select class="form-control mt-4" v-model="configData.microServices[selectedMicroService].duration">
@@ -127,7 +127,7 @@
 
                             <p class="mx-auto"> <strong class="mr-2">Permitir eliminar citas</strong> <a-switch  :checked="configData.datesPolitics.deleteDates" @click="changeDatePolitic('deleteDates')" /></p>
                             
-                            <p class="mx-auto"> <strong class="mr-2">Microservicios </strong> <a-switch class="mr-3" :checked="configData.datesPolitics.microServices" @click="changeDatePolitic('microServices')" /></p>
+                            <p class="mx-auto"> <strong class="mr-2">Adicionales </strong> <a-switch class="mr-3" :checked="configData.datesPolitics.microServices" @click="changeDatePolitic('microServices')" /></p>
 
                             
                           </div>
@@ -453,7 +453,7 @@
                               </template>
                               <a-tooltip placement="top">
                                   <template slot="title">
-                                  <span v-if="configData.typesPay.lenght == 0">Para ingresar un microservicio debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
+                                  <span v-if="configData.typesPay.lenght == 0">Para ingresar un adicional debes escribirlo en el cuadro de texto y darle click en <b>Ingresar</b> o presionar la tecla <b>Enter</b> </span>
                                   </template>
                                   <div class="col-md-8" >
                                       <a-list bordered :data-source="configData.microServices">
