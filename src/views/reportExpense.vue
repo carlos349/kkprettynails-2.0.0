@@ -5,12 +5,12 @@
             <div class="col-6">
                 <img src="img/brand/syswa-gestion.png" class="w-50 ml-4" alt="" style="">
             </div>
-            <div class="col-5 pt-5 pl-5 pr-5 border border-5 ml-1 mb-2">
+            <div class="col-5 pt-4 pl-3 pr-3 border border-5 ml-1 mb-2">
                 <p>
                     <strong>Saldo inicial:</strong> {{this.reinvestmentTotal | formatPrice}} <span class="float-right"><strong>Saldo final:</strong> {{this.totalFinal | formatPrice}}</span>
                 </p>
                 <p>
-                    <strong>Ingreso:</strong> {{this.totalSales | formatPrice}} <span class="float-right"><strong>Ganancia:</strong> {{this.gain}}</span>
+                    <strong>Ingreso:</strong> {{this.totalSales | formatPrice}} <span class="float-right"><strong>Ganancia:</strong> {{this.gain.toFixed(1)}}</span>
                 </p>
                 <p>
                     <strong>Egreso:</strong> {{this.totalExpenses | formatPrice}}

@@ -464,18 +464,10 @@
                           v-model="dataProduct.alertTotal"
                           addon-left-icon="fa fa-bell">
                     </base-input>
-                    <currency-input
-                        locale="de"
-                        placeholder="Precio por unidad"
-                        addon-left-icon="ni ni-money-coins"
-                        v-model="dataProduct.price"
-                        class="form-control mb-3"
-                        style="margin-top:-10px;"
-                    />	
                 </form>
             </template>
             <div class="text-center">
-              <base-button v-on:click="editProduct()" :disabled="dataProduct.product != '' && dataProduct.measure != '' && dataProduct.price != null && dataProduct.alertTotal != '' && dataProduct.price != 0 ? false : true" type="default">Editar</base-button>
+              <base-button v-on:click="editProduct()" :disabled="dataProduct.product != '' && dataProduct.measure != '' && dataProduct.alertTotal != '' ? false : true" type="default">Editar</base-button>
             </div>
         </card>
     </modal>
@@ -1541,10 +1533,12 @@ export default {
             const getProviders = await axios.get(endPoint.endpointTarget+'/stores/getproviders', this.configHeader)
             if (getProviders.data.status == 'ok') {
               this.providerTable = getProviders.data.data
+              this.providers = []
               for (let i = 0; i < getProviders.data.data.length; i++) {
                   this.providers.push(getProviders.data.data[i].name)
               }
             }else{
+                this.providers = []
                 this.providerTable = []
             }
           }catch(err){
@@ -1652,7 +1646,6 @@ export default {
         addProductToBranch() {
             this.$swal({
                 title: '¿Está seguro que desea agregar este producto?',
-                
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Estoy seguro',
@@ -1905,7 +1898,6 @@ export default {
         deleteProductByBranch(data){
             this.$swal({
             title: '¿Está seguro de eliminar el producto de la sucursal?',
-            
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Estoy seguro',
@@ -2263,9 +2255,8 @@ export default {
         },
         deleteProvider(id){
             this.$swal({
-            title: '¿Está seguro de borrar el provedor?',
-            text: 'No puedes revertir esta acción',
-            
+            title: '¿Desea eliminar proveedor?',
+            text: '¡Recuerda! No podrás revertir esta acción',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Estoy seguro',
@@ -2311,7 +2302,6 @@ export default {
             this.$swal({
                 title: '¿Está seguro de borrar el producto? tambien se borrara de todas las sucursales donde este registrado.',
                 text: 'No puedes revertir esta acción',
-                
                 icon:'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Estoy seguro',

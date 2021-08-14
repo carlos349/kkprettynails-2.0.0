@@ -471,6 +471,12 @@
                 <template slot="format-commission" slot-scope="record, column">
                     {{column.commission}}%
                 </template>
+                <template slot="prepayment-slot" slot-scope="record, column">
+                    {{column.prepayment.ifPrepayment ? 'Si' : 'No'}}
+                </template>
+                <template slot="discount-slot" slot-scope="record, column">
+                    {{!column.discount ? 'Si' : 'No'}}
+                </template>
             </a-table>
         </a-config-provider> 
         <modal :show.sync="modals.modal3"
@@ -552,7 +558,7 @@
                             <base-input  
                                 alternative
                                 class="pl-1"
-                                placeholder="nombre de la Categoría"
+                                placeholder="Nombre de la categoría"
                                 id="catFocus"
                                 v-model="nameCategory"
                                 addon-left-icon="fa fa-list-ol">
@@ -720,6 +726,22 @@ export default {
                     ellipsis: true,
                 },
                 {
+                    title: 'Abono',
+                    dataIndex: 'prepayment',
+                    key: 'prepayment',
+                    scopedSlots: { customRender: 'prepayment-slot' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => a.duration - b.duration,
+                    ellipsis: true,
+                },
+                {
+                    title: 'Descuento',
+                    dataIndex: 'discount',
+                    key: 'discount',
+                    scopedSlots: { customRender: 'discount-slot' },
+                    ellipsis: true,
+                },
+                {
                     title: 'Acciones',
                     dataIndex: '_id',
                     key: '_id',
@@ -861,8 +883,8 @@ export default {
             if (this.categories.length == 0) {
                 this.$swal({
 					icon: 'error',
-					title: 'Registra una categoria',
-                    text: 'Debes registrar una categoria para continuar',
+					title: 'Registra una categoría',
+                    text: 'Debes registrar una categoría para continuar',
 					showConfirmButton: true
 				})
             }else{
@@ -1029,12 +1051,19 @@ export default {
                 }
                 timeService = (this.timeHoursRegister * 60) + parseFloat(this.timeMinutesRegister)
             }
-            if (this.serviceRegister == '' || this.priceRegister == 0 || timeService == 0 || this.comissionRegister == '') {
+            if (this.serviceRegister == '' || this.priceRegister == 0 || timeService == 0 || this.comissionRegister == '' || this.categoryRegister == 'Categoría') {
                 this.$swal({
                     icon: 'info',
                     title: 'Debe rellenar los datos',
                     showConfirmButton: false,
                     timer: 1500
+                })
+            }else if(this.paymentAmount > this.priceRegister){
+                this.$swal({
+                    icon: 'info',
+                    title: 'Monto de abono no valido',
+                    text: 'El monto de abono no debe superar el precio del servicio',
+                    showConfirmButton: true
                 })
             }else{
                 if (this.lenderSelecteds.length == 0) {
@@ -1192,12 +1221,19 @@ export default {
                 this.editTimeMinutesRegister = this.editTimeMinutesRegister.split(' ')[0]
             }
             timeService = (this.editTimeHoursRegister * 60) + parseFloat(this.editTimeMinutesRegister)
-            if (this.serviceEdit == '' || this.priceEdit == '' || timeService <=0 || this.comissionEdit == '') {
+            if (this.serviceEdit == '' || this.priceEdit == '' || timeService <= 0 || this.comissionEdit == '') {
                 this.$swal({
                     icon: 'error',
                     title: 'Debe rellenar los datos',
                     showConfirmButton: false,
                     timer: 1500
+                })
+            }else if(this.editPaymentAmount > this.priceEdit){
+                this.$swal({
+                    icon: 'info',
+                    title: 'Monto de abono no valido',
+                    text: 'El monto de abono no debe superar el precio del servicio',
+                    showConfirmButton: true
                 })
             }else{
                 if (this.EditlenderSelecteds.length == 0) {

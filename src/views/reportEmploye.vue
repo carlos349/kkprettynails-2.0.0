@@ -732,7 +732,7 @@ export default {
             .then(result => {
                 if (result.value) {
                     let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,height=0,left=-1000,top=-1000`;
-                    var win = window.open(endPoint.url+'/#/reportPdfEmploye?id='+this.code, '_blank', params)
+                    var win = window.open(endPoint.url+'/reportPdfEmploye?id='+this.code, '_blank', params)
                     win.focus();
                     setTimeout(()=> {
                         axios.put(endPoint.endpointTarget+'/employes/closeemploye/'+this.code, {}, this.configHeader)

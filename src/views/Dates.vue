@@ -1836,7 +1836,8 @@ export default {
                 if (decoded.linkLender == '') {
                     this.$swal.fire({
                         icon: 'error',
-                        title: 'Usted no cuenta con permiso para visualizar la agenda. \n Contacte a su supervisor'
+                        title: 'No cuenta con permisos',
+                        text: 'Para visualizar la agenda contacte a su supervisor'
                     })
                 }else{
                     try {

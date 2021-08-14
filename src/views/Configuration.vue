@@ -14,43 +14,29 @@
                 </div>
             </div>
         </base-header>
-
-        <modal  :show.sync="modals.modal1"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                <template>
-                    <div class="text-muted text-center mb-3">
-                        <h3>Edite el microservicio</h3>
-                    </div>
-                </template>
-                <template v-if="configData.microServices[selectedMicroService]">
-                        <base-input placeholder="Nombre del microservicio"  v-model="configData.microServices[selectedMicroService].microService"></base-input>
-                        <currency-input
-                          v-model="configData.microServices[selectedMicroService].price"
-                          locale="de"
-                          placeholder="Precio del microservicio"
-                          class="form-control w-100"
-                        />
-                        <select class="form-control mt-4" v-model="configData.microServices[selectedMicroService].duration">
-                            <option style="color:black;" :value="0">Seleccione la duración</option>
-                            <option style="color:black;" value="15">15 Minutos</option>
-                            <option style="color:black;" value="30">30 Minutos</option>
-                            <option style="color:black;" value="45">45 Minutos</option>
-                            <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
-                        </select>
-                    <center>
-                        <base-button class="mt-4" type="default" v-on:click="updateconfig()">
-                            Editar
-                        </base-button>
-                    </center>
-                </template>
-            </card>
-        </modal>
-
+        <a-modal v-model="modals.modal1" title="Edite el adicional" width="30%" :closable="true" >
+          <template v-if="configData.microServices[selectedMicroService]">
+            <base-input placeholder="Nombre del adicional" v-model="configData.microServices[selectedMicroService].microService"></base-input>
+            <currency-input
+              v-model="configData.microServices[selectedMicroService].price"
+              locale="de"
+              placeholder="Precio del microservicio"
+              class="form-control w-100"
+            />
+            <select class="form-control mt-4" v-model="configData.microServices[selectedMicroService].duration">
+              <option style="color:black;" value="0">0 Minutos</option>
+              <option style="color:black;" value="15">15 Minutos</option>
+              <option style="color:black;" value="30">30 Minutos</option>
+              <option style="color:black;" value="45">45 Minutos</option>
+              <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
+            </select>
+          </template>
+          <template slot="footer">
+            <base-button class="mt-4" size="sm" type="default" v-on:click="updateconfig()">
+              Editar
+            </base-button>
+          </template>
+        </a-modal>
         <div class="container-fluid mt--6">
             <div class="row">
                 <div class="col-xl-8 col-sm-12 order-xl-2 mb-5 mb-xl-0">
@@ -449,7 +435,7 @@
                           </div>
                           <div class="col-md-4">
                               <base-input class="input-group-alternative"
-                                  placeholder="Nombre del microservicio"
+                                  placeholder="Nombre del adicional"
                                   addon-left-icon="fa fa-plus"
                                   v-model="microService"
                                   v-on:keyup.enter="insertMicroService">
@@ -471,7 +457,7 @@
                                   </template>
                                   <div class="col-md-8" >
                                       <a-list bordered :data-source="configData.microServices">
-                                          <a-list-item :class="item.price == 0 || item.duration == 0 ? 'text-danger' : ' text-black' " slot="renderItem" slot-scope="item, index">
+                                          <a-list-item slot="renderItem" slot-scope="item, index">
                                               {{ item.microService }}
                                               <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeMicroService(index)">
                                                   <i class="fa fa-times"></i>
@@ -1055,7 +1041,7 @@
               }else if (this.microService.length <= 2) {
                   this.$swal({
                       icon: 'error',
-                      title: 'El nombre del microservicio debe estar compuesto por mas de 2 caracteres',
+                      title: 'El nombre del adicional debe estar compuesto por mas de 2 caracteres',
                       showConfirmButton: false,
                       timer: 1500
                   })
@@ -1127,6 +1113,7 @@
               if (uploadImage.data.status == 'ok') {
                 this.configData.bussinessLogo = uploadImage.data.file
                 this.validImage = true
+                this.updateconfig()
               }else{
                 this.$swal({
                   icon: 'error',

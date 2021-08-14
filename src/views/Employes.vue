@@ -65,20 +65,20 @@
                         </template>
                         <vue-bootstrap4-table class="text-left styleDays" :rows="days" :columns="columnsDays" :config="configDays">
                             <template slot="name" slot-scope="props">
-                                <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-75 mt-1 ml-1" size="sm" type="success" v-if="props.row.valid">
+                                <base-button :disabled="props.row.valid ? false : true" v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.validator)" class="w-75 mt-1 ml-1" size="sm" type="success" v-if="props.row.validator">
                                     {{props.row.day}}
                                 </base-button>
-                                <base-button v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.valid)" class="w-75 mt-1 ml-1" size="sm" type="danger" v-else>
+                                <base-button :disabled="props.row.valid ? false : true" v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.validator)" class="w-75 mt-1 ml-1" size="sm" type="danger" v-else>
                                     {{props.row.day}}
                                 </base-button>
                             </template>
                             <template slot="validation" slot-scope="props">
-                                <a-select :disabled="props.row.valid == true ? false : true" @change="selectHourInit" style="width:45%" class="ml-1 mt-1 mb-1 input-group-alternative" placeholder="Desde" v-model="props.row.start">
+                                <a-select :disabled="props.row.validator == true ? false : true" @change="selectHourInit" style="width:45%" class="ml-1 mt-1 mb-1 input-group-alternative" placeholder="Desde" v-model="props.row.start">
                                     <a-select-option v-on:click="addHour(props.row.value, props.row.vbt_id)" v-for="i in props.row.hour" :key="i">
                                         {{i}}
                                     </a-select-option>
                                 </a-select>
-                                <a-select :disabled="props.row.valid == true ? false : true" @change="selectHourFinally" style="width:45%" class="ml-1 mt-1 mb-1 input-group-alternative" placeholder="Hasta" v-model="props.row.end">
+                                <a-select :disabled="props.row.validator == true ? false : true" @change="selectHourFinally" style="width:45%" class="ml-1 mt-1 mb-1 input-group-alternative" placeholder="Hasta" v-model="props.row.end">
                                     <a-select-option v-on:click="removeHour(props.row.value, props.row.vbt_id)" v-for="i in props.row.hour" :key="i">
                                         {{i}}
                                     </a-select-option>
@@ -426,7 +426,11 @@ export default {
                 const getHours = await axios.get(endPoint.endpointTarget+'/configurations/getHours/'+this.branch, this.configHeader)
                 if (getHours.data.status == 'ok') {
                     console.log(getHours)
+                    for (const day of getHours.data.data) {
+                        day.validator = false
+                    }
                     this.days = getHours.data.data
+                    console.log(this.days)
                     // this.fromArray = getHours.data.data
                     // this.toArray = false
                 }
@@ -485,8 +489,9 @@ export default {
             }, 200);
         },
         addDay(id, value, valid){
+            console.log(valid)
             if (valid) {
-                this.days[id - 1].valid = false
+                this.days[id - 1].validator = false
                 for (let index = 0; index < this.days.length; index++) {
                     const element = this.days[index];
                     for (let indexTwo = 0; indexTwo < this.selectedDays.length; indexTwo++) {
@@ -499,7 +504,8 @@ export default {
                 console.log(this.selectedDays)
                 this.validRegister()
             }else{
-                this.days[id - 1].valid = true
+                this.days[id - 1].validator = true
+                console.log(this.days)
                 this.selectedDays.push({day: value, hours: []})
             }
         },
@@ -537,7 +543,7 @@ export default {
             console.log(this.days)
             if (this.selectedDays.length > 0) {
                 for (const days of this.days) {
-                    if (days.valid) {
+                    if (days.validator) {
                         if (days.start == "Desde" || days.start == undefined || days.end == "Hasta" || days.end == undefined) {
                             return false
                         }else{
@@ -562,7 +568,8 @@ export default {
             if (this.validHoursDays() == 'hora atras') {
                 this.$swal.fire({
                     icon: 'error',
-                    title: '¡Oh oh! Horario incorrecto. Revise el principio y fin de los horarios seleccionados.',
+                    title: '¡Oh oh! Horario incorrecto',
+                    text: 'Revise el principio y fin de los horarios seleccionados',
                     showConfirmButton: true,
                     // timer: 1500
                 })
@@ -579,7 +586,7 @@ export default {
                         if(res.data.status == 'employe created'){
                             this.$swal({
                                 icon: 'success',
-                                title: '¡Empleado registrado con exito!',
+                                title: '¡Empleado registrado con éxito!',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
@@ -599,7 +606,8 @@ export default {
                 }else{
                     this.$swal.fire({
                         icon: 'error',
-                        title: 'Recuerda completar los datos y el horario de descanso en los días seleccionados.',
+                        title: 'Debe completar los datos',
+                        text: 'Recuerda completar los datos y horarios de descanso en los días seleccionados',
                         showConfirmButton: true,
                         // timer: 1500
                     })
@@ -632,7 +640,7 @@ export default {
                         if(res.data.status == "employe edited"){
                             this.$swal({
                                 icon: 'success',
-                                title: '¡Edición Exitosa!',
+                                title: '¡Edición exitosa!',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
@@ -672,7 +680,8 @@ export default {
 		},
         deleteEmploye(id){
 		    this.$swal({
-                title: '¿Seguro que desea eliminar?',
+                title: '¿Eliminar usuario?',
+                text: '¡Recuerda! No es posible revertir esta acción',
                 type: 'warning',
                 icon:'warning',
                 showCancelButton: true,
@@ -724,7 +733,7 @@ export default {
                 for (let j = 0; j < days.length; j++) {
                     const elementTwo = days[j];
                     if (element.value == elementTwo.day) {
-                        element.valid = true
+                        element.validator = true
                         element.start = elementTwo.hours[0]
                         element.end = elementTwo.hours[1]
                     }
@@ -769,7 +778,7 @@ export default {
             this.dayValid = false
             this.selectedDays = []
             for (let index = 0; index < this.days.length; index++) {
-                this.days[index].valid = false
+                this.days[index].validator = false
             }
             if (val == 2) {
                 this.registerEmploye.show = true

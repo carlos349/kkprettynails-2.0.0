@@ -5,15 +5,15 @@
         <base-button id="processButton" style="margin-left: -50px;" size="sm" v-if="validRoute('procesar')" type="default" icon="ni ni-tag" v-on:click="modals.modal1 = true, openModal()">
         <span style="margin-left:15px;">Procesar</span> 
         </base-button>
+        <sidebar-item v-if="validRoute('agendamiento')" :link="{name: 'Agendamiento', icon: 'ni ni-calendar-grid-58 text-blue', path: '/Agendamiento'}"/>
         <sidebar-item v-if="validRoute('metricas')" :link="{name: 'Reportes', icon: 'ni ni-chart-bar-32 text-primary', path: '/dashboard'}"/>
-        <sidebar-item v-if="validRoute('usuarios')" :link="{name: 'Usuarios', icon: 'ni ni-key-25 text-red', path: '/Usuarios'}"/>
         <sidebar-item v-if="validRoute('ventas')" :link="{name: 'Ventas', icon: 'ni ni-money-coins text-green', path: '/Ventas'}"/>
         <sidebar-item v-if="validRoute('empleados')" :link="{name: 'Empleados', icon: 'ni ni-badge text-info', path: '/Empleados'}"/>
+        <sidebar-item v-if="validRoute('usuarios')" :link="{name: 'Usuarios', icon: 'ni ni-key-25 text-red', path: '/Usuarios'}"/>
         <sidebar-item v-if="validRoute('servicios')" :link="{name: 'Servicios', icon: 'ni ni-bullet-list-67 text-orange', path: '/Servicios'}"/>
         <sidebar-item v-if="validRoute('clientes')" :link="{name: 'Clientes', icon: 'ni ni-circle-08 text-default', path: '/Clientes'}"/>
         <sidebar-item v-if="validRoute('inventario')" :link="{name: 'Inventario', icon: 'ni ni-box-2 text-orange', path: '/Inventario'}"/>
         <sidebar-item v-if="validRoute('gastos')" :link="{name: 'Gastos', icon: 'ni ni-tag text-green', path: '/Gastos'}"/>
-        <sidebar-item v-if="validRoute('agendamiento')" :link="{name: 'Agendamiento', icon: 'ni ni-calendar-grid-58 text-blue', path: '/Agendamiento'}"/>
         <sidebar-item v-if="validRoute('caja')" :link="{name: 'Caja', icon: 'ni ni-archive-2 text-green', path: '/Caja'}"/>
       </template>
     </side-bar>

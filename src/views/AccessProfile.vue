@@ -93,7 +93,7 @@
         <a-modal v-model="modals.modal2" :footer="null" :width="500">
             <template>
                 <div class="text-muted text-center">
-                    <h3>Habilite las funciones de la sección de <span class="text-primary"> <b>{{selectedRouteName}}</b> </span> </h3>
+                    <h3>Habilite las funciones de la sección de <span class="text-primary"> <b>{{selectedRouteName.charAt(0).toUpperCase()}}{{selectedRouteName.slice(1)}}</b> </span> </h3>
                     <p>Activar acceso <a-switch size="small" :checked="routesProfiles[routeSelected].valid" @change="changeActive" /></p>
                 </div>
             </template>
@@ -172,7 +172,7 @@ export default {
                     ]
                 },
                 {
-                    route: 'metricas',
+                    route: 'reportes',
                     valid: false,
                     functions: [
                         {function: 'filtrar', name:'Filtrar', valid: false}
@@ -184,8 +184,7 @@ export default {
                     functions: [
                         {function: 'registrar', name:'Registar', valid: false},
                         {function: 'editar', name:'Editar', valid: false},
-                        {function: 'eliminar', name:'Eliminar', valid: false},
-                        {function: 'perfiles', name:'Gestionar perfiles', valid: false}
+                        {function: 'eliminar', name:'Eliminar', valid: false}
                     ]
                 },
                 {
@@ -265,7 +264,6 @@ export default {
                         {function: 'todas', name:'Ver todas las agendas', valid: false},
                         {function: 'editar', name:'Editar cita', valid: false},
                         {function: 'eliminar', name:'Eliminar cita', valid: false},
-                        {function: 'cerrar', name:'Cerrar cita', valid: false},
                         {function: 'finalizar', name:'Finalizar cita', valid: false},
                         {function: 'confirmacion', name:'Enviar confirmacion', valid: false}
                     ]
@@ -281,18 +279,18 @@ export default {
                         {function: 'editar', name:'Editar cierre', valid: false}
                     ]
                 },
-                {
-                    route: 'pedidos', 
-                    valid: false,
-                    functions: [
-                        {function: 'filtrar', name:'Filtrar', valid: false},
-                        {function: 'registrar', name:'Registrar', valid: false},
-                        {function: 'editar', name:'Editar', valid: false},
-                        {function: 'detalle', name:'Ver detalle', valid: false},
-                        {function: 'eliminar', name:'Eliminar', valid: false},
-                        {function: 'correos', name:'Envio de correos', valid: false}
-                    ]
-                },
+                // {
+                //     route: 'pedidos', 
+                //     valid: false,
+                //     functions: [
+                //         {function: 'filtrar', name:'Filtrar', valid: false},
+                //         {function: 'registrar', name:'Registrar', valid: false},
+                //         {function: 'editar', name:'Editar', valid: false},
+                //         {function: 'detalle', name:'Ver detalle', valid: false},
+                //         {function: 'eliminar', name:'Eliminar', valid: false},
+                //         {function: 'correos', name:'Envio de correos', valid: false}
+                //     ]
+                // },
                 {
                     route: 'bodega', 
                     valid: false,
@@ -393,6 +391,7 @@ export default {
             })
         },
         openFunctionalities(index, route){
+            console.log(index, route)
             if (this.routesProfiles[index].valid) {
                 this.routeSelected = index
                 this.selectedRouteName = route
@@ -411,6 +410,10 @@ export default {
                 }
                 this.modals.modal2 = true
             }else{
+                for (const functions of this.routesProfiles[index].functions) {
+                    functions.valid = false
+                }
+                this.selectedRouteName = route
                 this.routeSelected = index
                 this.modals.modal2 = true
             }

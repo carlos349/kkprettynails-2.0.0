@@ -990,7 +990,7 @@ export default {
                                         this.$swal({
                                             type: 'success',
                                             icon: 'success',
-                                            title: 'Registro de la sucursal, exitoso.',
+                                            title: 'Registro exitoso',
                                             showConfirmButton: false,
                                             timer: 1500
                                         })

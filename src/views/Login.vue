@@ -387,7 +387,7 @@
                                 <div class="col-md-4">
                                     <a-tooltip placement="topLeft">
                                         <template slot="title">
-                                            <span>Debe introducir las credenciales otorgadas para el ingreso al sistema, de no saber cuales son, por favor comunicarse con el soporte técnico.</span>
+                                            <span>Introducir las credenciales otorgadas. De no poseerse, comuníquese con soporte técnico.</span>
                                         </template>
                                         <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
                                     </a-tooltip>
@@ -465,19 +465,28 @@
                         <span class="mb-5"><img style="width:30%" src="img/brand/syswa-isotipo.png"></span> <br><br>
                     </div>
                     <form v-if="loading == false" class="mt-3" role="form">
-                        <base-input class="input-group-alternative mt-4 mb-3"
+                        <div class="row">
+                            <div class="col-12 p-1">
+                                <base-input class="input-group-alternative w-100 mt-4 mb-3"
                                     placeholder="Correo"
                                     addon-left-icon="ni ni-email-83"
                                     v-model="model.email">
-                        </base-input>
-
-                        <base-input class="input-group-alternative"
+                                </base-input>
+                            </div>
+                            <div class="col-10 p-1">
+                                <base-input class="input-group-alternative"
                                     placeholder="Contraseña"
-                                    type="password"
+                                    :type="typePass"
                                     addon-left-icon="ni ni-lock-circle-open"
                                     v-model="model.password">
-                        </base-input>
-
+                                </base-input>
+                            </div>
+                            <div class="col-2 p-1">
+                                <base-button outline type="default" style="float:right;" v-on:click="viewPass">
+                                    <a-icon style="vertical-align: 1px;font-size:1.4em;" type="eye" />
+                                </base-button>
+                            </div>
+                        </div>
                         <div class="text-center">
                             <base-button type="default" v-on:click="login()" class="my-2">Ingresar</base-button> <br>
                             <a v-on:click="modals.modal2 = true"><dt>¿Has olvidado la contraseña?</dt></a> 
@@ -797,7 +806,7 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                                         this.$swal({
                                             type: 'success',
                                             icon: 'success',
-                                            title: 'Registro exitoso, por favor ingrese.',
+                                            title: 'Registro exitoso',
                                             showConfirmButton: false,
                                             timer: 1500
                                         })

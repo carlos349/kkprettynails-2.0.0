@@ -1,8 +1,8 @@
 <template>
     <a-spin size="large" :spinning="spinning">
         <div class="row spin-content">
-            <div class="col-md-8 mb-3 separatorLeft">
-                <div class="row p-0">
+            <div class="col-md-8 mb-3 pl-1 separatorLeft">
+                <div class="row p-0 rounded-lg bg-white mt-1 mr-1 pt-1" style="margin-left:0.20rem">
                     <div class="col-md-6">
                         <label for="Client">Cliente</label><br>
                         <a-select
@@ -11,7 +11,7 @@
                             option-filter-prop="children"
                             :filter-option="filterOption"
                             :allowClear="true"
-                            class="mb-2 col-md-7 col-8 clientSelect"
+                            class="mb-2 w-75 clientSelect"
                             :class="screenWidthInput"
                             v-model="registerClient.select"
                             @change="chooseClient">
@@ -27,11 +27,11 @@
                         </a-button>
                     </div>
                     <div class="col-md-3">
-                        <label class="mb-0" for="Client">Correo cliente</label>
+                        <label class="mb-2" for="Client">Correo cliente</label>
                         <input readonly class="ant-input w-100" placeholder="Correo" v-model="registerClient.email"/>
                     </div>
                     <div class="col-md-3">
-                        <label class="mb-0" for="Client">Telefono cliente</label>
+                        <label class="mb-2" for="Client">Telefono cliente</label>
                         <input readonly class="ant-input w-100" placeholder="Telefono" v-model="registerClient.phone.formatInternational"/>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                                 <span v-if="hideText != 'display:none'">Servicios</span>
                                 
                             </span>
-                            <div class="row">
+                            <div class="row p-2">
                                 <div class="col-md-6">
                                     <label class="mb-0" for="service">Servicio</label>
                                     <a-select
@@ -1026,7 +1026,7 @@ export default {
             try {
                 const pays = await axios.get(endPoint.endpointTarget+'/configurations/'+this.branch, this.configHeader)
                 if (pays.data.status == 'ok') {
-                    
+                    this.typesPay = []
                     for (const element of pays.data.data.typesPay) {
                         this.typesPay.push({
                             type: element,

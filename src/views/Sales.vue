@@ -13,7 +13,7 @@
                         <p class="text-white">Sección dedicada al registro de las ventas de su negocio, podrás filtrar y exportar en excel dichas ventas.</p>
                     </div>
                     <div class="float-right mt-6">
-                        <div class="float-right" style="width:73%;">
+                        <div class="float-right" style="width:76%;">
                             <label for="date" class="text-white">Busque por fecha</label><br>
                             <a-range-picker style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="locale" />
                             <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;" v-if="validRoute('ventas', 'filtrar')"  v-on:click="filterSale" type="success">
@@ -812,7 +812,7 @@ export default {
         printReport(id){
             let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
 width=0,height=0,left=-1000,top=-1000`;
-            var win = window.open(endPoint.url+'/#/reportPdf?id='+id, '_blank', params)
+            var win = window.open(endPoint.url+'/reportPdf?id='+id, '_blank', params)
             win.focus();
         }
     },

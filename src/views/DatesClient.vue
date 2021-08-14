@@ -35,6 +35,9 @@
                                                     <div :key="service.name" class="col-md-4 px-4" v-if="service.category == category.name && service.active == true">
                                                         <div class="card-service row mt-2" :id="'cardS'+index">
                                                             <h3 class="name-service"> {{service.name}}</h3>
+                                                            <p class="ml-1 mb-0" style="margin-top:-8px;">
+                                                                <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
+                                                            </p>
                                                             <div class="col-12 pl-0">
                                                                 <img src="img/brand/calendar.png" alt="">
                                                             </div>
@@ -806,7 +809,8 @@
                         this.getMicroServices()
                         this.$swal({
                             icon: 'success',
-                            title: `Bienvenido ${findClient.data.data.firstName} ya puedes agendar tu cita.`,
+                            title: `¡Bienvenido ${findClient.data.data.firstName}!`,
+                            text: 'Ya puedes agendar tu cita',
                             showConfirmButton: false,
                             timer: 2000
                         })
@@ -1877,6 +1881,12 @@
                         }
                     }, 200);
                 }
+            },
+            fixedHours(duration){
+                const hours = parseInt(duration / 60) + ' hr'
+                const minutes = duration - (parseInt(duration / 60) * 60 )  + ' min'
+
+                return hours+' '+minutes
             },
             openBlocks(open){
                 $('#'+open).toggle('slow')

@@ -149,7 +149,7 @@
                     </div>
                 </template>
                 <template>
-                    <a-select class="input-group-alternative w-100 mb-4 mt-2" show-search default-value="Seleccione el prestador"  @change="selectEmploye" size="large">
+                    <a-select allowClear class="input-group-alternative w-100 mb-4 mt-2 linkLender" show-search default-value="Seleccione el prestador" placeholder="Seleccione el prestador" @change="selectEmploye" size="large">
                         <a-select-option v-for="lender of lenderNames" :key="lender._id" :value="lender.firstName + ' ' + lender.lastName + ' (' + lender.document + ')'">
                             {{lender.firstName}} {{lender.lastName}} ({{lender.document}})
                         </a-select-option>
@@ -220,20 +220,23 @@
             <template slot="status-format" slot-scope="record, column">
                 <a-dropdown>
                     <a-menu slot="overlay" >
-                        <template v-if="accessProfiles.lenght == 0">
-                            <a-menu-item v-on:click="modals.modal8 = true"> 
-                                <a-icon type="user" style="vertical-align: 1.5px;" />
-                                Cree perfiles de acceso 
-                            </a-menu-item>
-                        </template>
-                        <template v-else>
+                        <template>
                             <a-menu-item v-for="profile of accessProfiles" :key="profile.profile" v-on:click="estatusEdit(profile.profile, profile.commission, profile.routes, column._id)"> 
                                 <a-icon type="user" style="vertical-align: 1.5px;" />
                                 {{profile.profile}} 
                             </a-menu-item>
                         </template>
                     </a-menu>
-                    <a-button style="margin-left: 8px; width:95%"> {{column.status}} <a-icon type="down" style="vertical-align:1.5px;" /> </a-button>
+                    <a-button style="margin-left: 8px; width:95%">
+                        <span v-if="column.status == 'Debe asignar'" class="text-danger">
+                            {{column.status}} 
+                            <a-icon type="info-circle" class=" text-danger" style="vertical-align:1.5px;" />
+                        </span>
+                        <span v-else>
+                            {{column.status}}
+                        </span>
+                        <a-icon type="down" style="vertical-align:1.5px;" /> 
+                    </a-button>
                 </a-dropdown>
             </template>
             <template slot="Administrar" slot-scope="record, column">
@@ -644,7 +647,7 @@ export default {
                         this.$swal({
                             icon: 'error',
                             title: 'Accion no permitida',
-                            text: 'No puede eliminar el usuario de origen',
+                            text: 'No es posible eliminar su propio usuario',
                             showConfirmButton: true
                         })
 					}else{
@@ -697,9 +700,13 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    EventBus.$emit('loggedin-user', routes)
+                    var idDecoded = jwtDecode(localStorage.userToken)
+                    if(id == idDecoded._id){
+                        EventBus.$emit('loggedin-user', routes)
+                    }
                     this.getUsers()
                     this.linkLender = ''
+                    $('.linkLender .ant-select-selection__clear').click()
                     this.modals.modal2 = false
                 })
                 .catch(err => {
