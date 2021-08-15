@@ -1,7 +1,7 @@
 <template>
     <div>
         <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
-            style="min-height: 50px; background-image: url(img/theme/users.jpg); background-size: cover; background-position: center top;">
+            style="min-height: 50px; background-image: url(img/theme/metrics.png); background-size: cover; background-position: center center;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
@@ -785,7 +785,7 @@ export default {
         openReport(){
             let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
 width=0,height=0,left=-1000,top=-1000`;
-            var win = window.open(endPoint.url+'/#/reporteGasto?branch='+this.branch, '_blank', params)
+            var win = window.open(endPoint.url+'/reporteGasto?branch='+this.branch, '_blank', params)
             win.focus();
         }
     },

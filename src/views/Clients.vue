@@ -1,7 +1,7 @@
 <template>
     <div>
         <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
-                     style="min-height: 50px; background-image: url(img/theme/clients.jpg); background-size: cover; background-position: center top;">
+                     style="min-height: 50px; background-image: url(img/theme/clients.png); background-size: cover; background-position: center 45%;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
@@ -443,6 +443,7 @@ export default {
                 title: 'Nombre',
                 dataIndex: 'firstName',
                 key: 'firstName',
+                width: '15%',
                 ellipsis: true,
                 sorter: (a, b) => {
                      if (a.firstName > b.firstName) {
@@ -472,6 +473,7 @@ export default {
                 title: 'Apellido',
                 dataIndex: 'lastName',
                 key: 'lastName',
+                width: '15%',
                 ellipsis: true,
                 sorter: (a, b) => {
                      if (a.lastName > b.lastName) {
@@ -500,7 +502,7 @@ export default {
                 title: 'Correo electrónico',
                 dataIndex: 'email',
                 key: 'email',
-                ellipsis: true,
+                width: '25%',
                 scopedSlots: {
                     filterDropdown: 'filterDropdown',
                     filterIcon: 'filterIcon',
@@ -547,7 +549,7 @@ export default {
                 key: '_id',
                 scopedSlots: { customRender: 'actions' }
             }
-                                     ],  
+        ],  
       };
     },
     created(){
@@ -596,11 +598,10 @@ export default {
             this.searchText = '';
         },
         generateExcel(){
-            console.log('gola')
             var Data = []
             for (let index = 0; index < this.clients.length; index++) {
                 const element = this.clients[index];
-                Data.push({Nombre: element.firstName, Apellido: element.lastName, Email: element.email, 'Número de teléfono': element.phone, 'Instagram': element.instagram, Atenciones: element.attends, Recomendador: element.recommender, Recomendaciones: element.recommendations, 'Ultima atencion': this.formatDate(element.lastAttend), 'Cliente desde': this.formatDate(element.createdAt)})
+                Data.push({Nombres: element.firstName +' '+ element.lastName, Email: element.email, 'Número de teléfono': element.phone.formatInternational, 'Instagram': element.instagram, Atenciones: element.attends, Recomendador: element.recommender, Recomendaciones: element.recommendations, 'Ultima atencion': this.$options.filters.formatDate(element.lastAttend), 'Cliente desde': this.$options.filters.formatDate(element.createdAt)})
             }
             var Datos = XLSX.utils.json_to_sheet(Data) 
             var wb = XLSX.utils.book_new() 
@@ -636,43 +637,23 @@ export default {
             }, this.configHeader)
             .then(res => {
                 if (res.data.status == 'client create') {
-                    this.modals = {
-                        modal2: true,
-                        message: "Se registro el cliente con éxito",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3:false,
-                            message: "",
-                            icon: '',
-                            type:''
-                        }
-                        this.initialState(1)
-                        this.getClients()
-                        EventBus.$emit('reloadClients', 'reload')
-                    }, 1500);
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Se registro el cliente con éxito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     
+                    this.initialState(1)
+                    this.getClients()
+                    EventBus.$emit('reloadClients', 'reload')
                 }else{
-                    this.modals = {
-                        modal2: true,
-                        message: "El cliente ya existe",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: true,
-                            modal2: false,
-                            modal3:false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+                    this.$swal({
+                        icon: 'error',
+                        title: 'El cliente ya existe',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             })
         },
@@ -791,44 +772,23 @@ export default {
 					axios.delete(endPoint.endpointTarget+'/clients/'+id, this.configHeader)
 					.then(res => {
                         if (res.data.status == 'ok') {
-                            this.modals = {
-                                modal2: true,
-                                message: "Cliente borrado con éxito",
-                                icon: 'ni ni-check-bold ni-5x',
-                                type: 'success'
-                            }
-                            setTimeout(() => {
-                                this.modals = {
-                                    modal1: false,
-                                    modal2: false,
-                                    modal3:false,
-                                    message: "",
-                                    icon: '',
-                                    type:''
-                                }
-                                this.getClients()
-                                EventBus.$emit('reloadClients', 'reload')
-                            }, 1500);
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Cliente borrado con éxito',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            EventBus.$emit('reloadClients', 'reload')
 						}
 					})
 				}
 				else{
-					this.modals = {
-                        modal2: true,
-                        message: "Acción cancelada",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3:false,
-                            message: "",
-                            icon: '',
-                            type:''
-                        }
-                    }, 1500);
+                    this.$swal({
+                        icon: 'info',
+                        title: 'Acción cancelada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
 				}
 			})
         },
@@ -842,42 +802,22 @@ export default {
             },this.configHeader)
             .then(res => {
                 if (res.data.status == 'update client') {
-                    this.modals = {
-                        modal2: true,
-                        message: "El cliente ha sido editado con éxito",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: false,
-                            modal2: false,
-                            modal3:false,
-                            message: "",
-                            icon: '',
-                            type:''
-                        }
-                        this.getClients();
-                        this.initialState(1)
-                        EventBus.$emit('reloadClients', 'reload')
-                    }, 1500);
+                    this.$swal({
+                        icon: 'success',
+                        title: 'El cliente ha sido editado con éxito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getClients();
+                    this.initialState(1)
+                    EventBus.$emit('reloadClients', 'reload')
                 }else{
-                    this.modals = {
-                        modal2: true,
-                        message: "El email ya existe",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1: true,
-                            modal2: false,
-                            modal3:false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500);
+                    this.$swal({
+                        icon: 'error',
+                        title: 'El email ya existe',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             })
         },

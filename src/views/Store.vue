@@ -1,6 +1,6 @@
 <template>
   <div>
-    <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center" style="min-height: 50px; background-image: url(img/theme/inventario.jpg); background-size: cover; background-position: center top;">
+    <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center" style="min-height: 50px; background-image: url(img/theme/store.png); background-size: cover; background-position: center 70%;">
         <!-- Mask -->
         <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
         <!-- Header container -->
@@ -1535,10 +1535,12 @@ export default {
             const getProviders = await axios.get(endPoint.endpointTarget+'/stores/getproviders', this.configHeader)
             if (getProviders.data.status == 'ok') {
               this.providerTable = getProviders.data.data
+              this.providers = []
               for (let i = 0; i < getProviders.data.data.length; i++) {
                   this.providers.push(getProviders.data.data[i].name)
               }
             }else{
+                this.providers = []
                 this.providerTable = []
             }
           }catch(err){
@@ -1651,7 +1653,6 @@ export default {
         addProductToBranch() {
             this.$swal({
                 title: '¿Está seguro que desea agregar este producto?',
-                
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Estoy seguro',
@@ -1906,7 +1907,6 @@ export default {
         deleteProductByBranch(data){
             this.$swal({
             title: '¿Está seguro de eliminar el producto de la sucursal?',
-            
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Estoy seguro',
@@ -2264,13 +2264,12 @@ export default {
         },
         deleteProvider(id){
             this.$swal({
-            title: '¿Está seguro de borrar el provedor?',
-            text: 'No puedes revertir esta acción',
-            
+            title: '¿Desea eliminar proveedor?',
+            text: '¡Recuerda! No podrás revertir esta acción',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Estoy seguro',
-            cancelButtonText: 'No, evitar acción',
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No, cancelar',
             showCloseButton: true,
             showLoaderOnConfirm: true
             }).then((result) => {
@@ -2312,7 +2311,6 @@ export default {
             this.$swal({
                 title: '¿Está seguro de borrar el producto? tambien se borrara de todas las sucursales donde este registrado.',
                 text: 'No puedes revertir esta acción',
-                
                 icon:'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Estoy seguro',

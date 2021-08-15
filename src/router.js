@@ -4,6 +4,7 @@ import DashboardLayout from '@/layout/DashboardLayout'
 import AuthLayout from '@/layout/AuthLayout'
 import AgendLayout from '@/views/DatesClient'
 import ConfirmLayout from '@/views/DatesConfirm'
+import CancelLayout from '@/views/DatesCancel'
 import reportPdf from '@/views/reportPdf'
 import reportPdfEmploye from '@/views/reportPdfEmploye'
 import reportExpense from '@/views/reportExpense'
@@ -25,14 +26,26 @@ export default new Router({
       ] 
     },
     {
-      path: '/Sectionclientconfirm',
+      path: '/confirmacioncita',
       redirect: 'confirmCliente',
       component: ConfirmLayout,
       children: [
         {
-          path: '/ConfirmacionAgenda',
+          path: '/confirmacioncita',
           name: '',
           component: () => import('./views/DatesConfirm.vue')
+        }
+      ] 
+    },
+    {
+      path: '/cancelarcita',
+      redirect: 'cancelClient',
+      component: CancelLayout,
+      children: [
+        {
+          path: '/cancelarcita',
+          name: '',
+          component: () => import('./views/DatesCancel.vue')
         }
       ] 
     },
