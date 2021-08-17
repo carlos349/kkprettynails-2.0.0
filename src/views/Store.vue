@@ -465,10 +465,11 @@
                           v-model="dataProduct.alertTotal"
                           addon-left-icon="fa fa-bell">
                     </base-input>
+                    	
                 </form>
             </template>
             <div class="text-center">
-              <base-button v-on:click="editProduct()" :disabled="dataProduct.product != '' && dataProduct.measure != '' && dataProduct.alertTotal != '' ? false : true" type="default">Editar</base-button>
+              <base-button v-on:click="editProduct()" :disabled="dataProduct.product != '' && dataProduct.measure != ''  && dataProduct.alertTotal != ''  ? false : true" type="default">Editar</base-button>
             </div>
         </card>
     </modal>
@@ -495,7 +496,7 @@
                     <base-input  alternative
                                 placeholder="RUT de la empresa"
                                 v-model="provider.document"
-                                v-on:change="provider.rut = formatRut(provider.rut)"
+                                v-on:change="provider.document = formatRut(provider.document)"
                                 addon-left-icon="fa fa-key"
                                 addon-right-icon="fas fa-plus text-default">
                     </base-input>
@@ -626,7 +627,7 @@
                 </a-select>
             </div>
             <div class="col-md-3 mx-auto">
-                <base-button type="success" :disabled="branchDataValid" class="mx-auto" @click="addProductToBranch">Agregar un producto
+                <base-button type="success" :disabled="productForBranch != '' ? false : true" class="mx-auto" @click="addProductToBranch">Agregar un producto
                 </base-button>
             </div>
             
@@ -718,12 +719,13 @@
                 </template>
                 <template slot="add" class="mx-auto" slot-scope="record, column, index">
                     
-                    <base-button size="sm" class="float-right ml-2" type="success" @click="addToProductBranch(column._id, column.storeId, column.measure, index)" icon="fa fa-plus"></base-button>
-                    <base-button size="sm" class="float-right ml-2" type="danger" @click="removeProductsBranch(column._id, column.storeId, index, column.measure, ((column.quantity + column.entry) - column.consume))" icon="fa fa-minus"></base-button>
+                    <base-button size="sm" class="float-right ml-2" type="success" :disabled="branchEntry[index].count > 0 ? false : true" @click="addToProductBranch(column._id, column.storeId, column.measure, index)" icon="fa fa-plus"></base-button>
+                    <base-button size="sm" class="float-right ml-2" type="danger" :disabled="branchEntry[index].count > 0 ? false : true" @click="removeProductsBranch(column._id, column.storeId, index, column.measure, ((column.quantity + column.entry) - column.consume))" icon="fa fa-minus"></base-button>
                     <a-input
                         style="width: 65%"
                         :placeholder="'Cantidad'"
                         class="ml-auto float-right"
+                        
                         v-model="branchEntry[index].count"
                     />
                 </template>
@@ -1600,6 +1602,7 @@ export default {
             this.branchEntry = []
             this.branchData = []
             this.branchDataValid = false
+            this.productsForBranch = []
             try{
                 const getInventoryByBranch = await axios.get(endPoint.endpointTarget+'/stores/getinventorybybranch/'+branch, this.configHeader)
                 if (getInventoryByBranch.data.status == 'ok') {
@@ -1607,8 +1610,11 @@ export default {
                     for (let i = 0; i < this.branchData.length; i++) {
                         this.branchEntry.push({count: ''})
                     }
-                    this.selectLoad()
+                    
                 }
+                this.selectLoad()
+                this.productForBranch = ''
+                
             }catch(err){
                 this.$swal({
                     
@@ -1621,6 +1627,7 @@ export default {
             }
         },
         selectLoad(){
+            console.log("aja")
             this.productsForBranch = []
             for (let i = 0; i < this.products.length; i++) {
                 var valid = false
@@ -1674,6 +1681,7 @@ export default {
                             this.modalAdminProduct.modal3 = false
                             this.getInventoryByBranch(this.selectedBranch)
                             this.getBranches()
+                            this.productForBranch = ''
                             this.productsForBranch = []
                             setTimeout(() => {
                                 this.selectLoad()
@@ -1705,6 +1713,7 @@ export default {
             axios.get(endPoint.endpointTarget+'/stores/getstorebyid/' + storeId, this.configHeader)
             .then(res => {
                 if (this.branchEntry[index].count <= total ) {
+                    this.productForBranch = res.data.data
                     this.$swal({
                         title: '¿Está seguro que desea eliminar ' + this.branchEntry[index].count + ' ' + measure + ' de este producto?',
                         icon: 'warning',
@@ -1732,7 +1741,7 @@ export default {
                             .then(res => {
                                 if (res.data.status == 'added') {
                                     axios.post(endPoint.endpointTarget+'/expenses/', {
-                                        branch: this.branch,
+                                        branch: this.selectedBranch,
                                         detail: `Se ha restado ${this.branchEntry[index].count} ${measure} de ${this.productForBranch.product} del inventario`,
                                         amount: -(this.productForBranch.price * this.branchEntry[index].count),
                                         type: 'Inventario',
@@ -1789,7 +1798,7 @@ export default {
                     this.$swal({
                         
                         icon: 'error',
-                        title: 'La bodega no dispone de la cantidad ingresada',
+                        title: 'La sucursal no dispone de la cantidad ingresada',
                         showConfirmButton: false,
                         timer: 2000
                     })
@@ -1831,8 +1840,8 @@ export default {
                             .then(res => {
                                 if (res.data.status == 'added') {
                                     axios.post(endPoint.endpointTarget+'/expenses/', {
-                                        branch: this.branch,
-                                        detail: `Producto (${this.productForBranch.product}) ingresado al inventario`,
+                                        branch: this.selectedBranch,
+                                        detail: `Se agregaron ${this.branchEntry[index].count + " " + measure} de ${this.productForBranch.product}`,
                                         amount: this.productForBranch.price * this.branchEntry[index].count,
                                         type: 'Inventario',
                                     }, this.configHeader)
@@ -1911,8 +1920,8 @@ export default {
                     .then(res => {
                         if (res.data.status == 'product deleted') {
                             axios.post(endPoint.endpointTarget+'/expenses/', {
-                                branch: this.branch,
-                                detail: `Producto (${this.productForBranch.product}) eliminado del inventario`,
+                                branch: this.selectedBranch,
+                                detail: `Producto (${res.data.product}) eliminado del inventario`,
                                 amount: -(res.data.price * res.data.total),
                                 type: 'Inventario',
                             }, this.configHeader)

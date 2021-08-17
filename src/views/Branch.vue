@@ -90,8 +90,8 @@
                             <span>Activar / Desactivar</span>
                             </template>
                             <template v-if="validRoute('servicios', 'activaciones')">
-                                <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(column._id)"></base-button>
-                                <base-button class="text-center" v-else size="sm" type="danger" v-on:click="changeStatus(column._id)">
+                                <base-button class="text-center" v-if="column.active" icon="ni ni-check-bold" size="sm" type="success" v-on:click="changeStatus(column._id, true)"></base-button>
+                                <base-button class="text-center" v-else size="sm" type="danger" v-on:click="changeStatus(column._id, false)">
                                     <a-icon type="close" style="vertical-align:1px;" />
                                 </base-button> 
                     
@@ -664,7 +664,8 @@ export default {
                     ellipsis: true,
                 }
             ],
-            file: ''
+            file: '',
+            activeBranchs:0
         }
     },
     created(){
@@ -697,11 +698,18 @@ export default {
             this.searchText = '';
         },
         async getBranches() {
+            this.activeBranchs = 0
             try {
                 const getBranches = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
                 if (getBranches.data.status == 'ok') {
                     this.branches = getBranches.data.data
+                    this.branches.forEach(element => {
+                        if (element.active) {
+                            this.activeBranchs++
+                        }
+                    });
                 }
+                console.log(this.activeBranchs)
             }catch(err){
                 console.log(err)
             }
@@ -843,23 +851,33 @@ export default {
                 this.status.branch = 'finish'
             }
         },
-        changeStatus(id){
-            axios.put(endPoint.endpointTarget+'/branches/changeActive/'+id, {
-                id: id
-            }, this.configHeader)
-            .then(res => {
-                this.getBranch()
-                EventBus.$emit('newBranch', status)
-                // this.emitMethod()
-            })
-            .catch(err => {
+        changeStatus(id, valid){
+            if (this.activeBranchs <=1 && valid) {
                 this.$swal({
                     icon: 'error',
-                    title: 'Problemas tecnicos',
-                    showConfirmButton: false,
-                    timer: 1500
+                    title: 'Debe haber al menos una sucursal activa',
+                    text: 'La sucursal que intentas desactivar en la unica activa restante',
+                    showConfirmButton: true
                 })
-            })
+            }else{
+                axios.put(endPoint.endpointTarget+'/branches/changeActive/'+id, {
+                    id: id
+                }, this.configHeader)
+                .then(res => {
+                    this.getBranch()
+                    EventBus.$emit('newBranch', status)
+                    // this.emitMethod()
+                })
+                .catch(err => {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Problemas tecnicos',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                })
+            }
+            
         },
         prevStep(step){
             if (step == 'date') {
@@ -894,7 +912,7 @@ export default {
                             timer: 1500
                         })
                     }
-                }else if (this.typePay.length < 4) {
+                }else if (this.typePay.length <= 4) {
                     this.$swal({
                         icon: 'error',
                         title: 'El método de pago debe estar compuesto por mas de 4 caracteres',
