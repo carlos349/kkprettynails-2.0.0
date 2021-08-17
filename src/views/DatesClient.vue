@@ -34,7 +34,7 @@
                                                 <template v-for="(service, index) of services">
                                                     <div :key="service.name" class="col-md-4 px-4" v-if="service.category == category.name && service.active == true">
                                                         <div class="card-service row mt-2" :id="'cardS'+index">
-                                                            <h3 class="name-service"> {{service.name}}</h3>
+                                                            <h3 class="name-service w-100"> {{service.name}}</h3>
                                                             <p class="ml-1 mb-0" style="margin-top:-8px;">
                                                                 <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
                                                             </p>
@@ -95,7 +95,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="showPhone col-md-12 p-0">
+                            <div class="showPhone col-md-12 p-0 pb-2">
                                 <base-dropdown class="w-100 mx-auto mb-3 styleDropdown">
                                     <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
                                         {{CatSelected}}
@@ -116,7 +116,10 @@
                                     <hr>
                                     <div v-for="(service, index) in registerDate.serviceSelectds" :key="service._id+'asda'+index" class="w-100" >
                                         <div class="card-service mt-4" style="border-bottom: solid 8px #174c8e">
-                                            <h2 class="name-service"> {{service.name}} - {{service.duration}} min</h2>
+                                            <h2 class="name-service w-100"> {{service.name}}</h2>
+                                            <p class="ml-1 mb-0" style="margin-top:-8px;">
+                                                <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
+                                            </p>
                                             <div class="col-12 mt-2 p-0">
                                                 <template v-if="ifMicro">
                                                     <a-tooltip placement="top">
@@ -745,8 +748,6 @@
                         if (element.checked && element.microService != 'Ninguno') {
                             element.checked = false
                             this.registerDate.serviceSelectds[index].duration = parseFloat(this.registerDate.serviceSelectds[index].duration) - parseFloat(element.duration)
-                            this.registerDate.serviceSelectds[index].price = this.registerDate.serviceSelectds[index].price - element.price
-                            this.totalPrice = this.totalPrice - this.registerDate.serviceSelectds[index].price
                         }
                     });
                     this.registerDate.serviceSelectds[index].microServices[0].checked = true

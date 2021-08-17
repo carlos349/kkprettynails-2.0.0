@@ -15,7 +15,7 @@
                     <div class="float-right mt-6">
                         <div class="float-right" style="width:76%;">
                             <label for="date" class="text-white">Busque por fecha</label><br>
-                            <a-range-picker style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="locale" />
+                            <a-range-picker ref="datePick" style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="this.es_ES" />
                             <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;" v-if="validRoute('ventas', 'filtrar')"  v-on:click="filterSale" type="success">
                                 <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
                             </base-button>
@@ -262,7 +262,7 @@
                 <div class="row">
                     <div class="col-md-12 mt-2">
                         <label for="date">Filtra por fecha</label>
-                        <a-range-picker class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDateExcel" :locale="locale" />
+                        <a-range-picker class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDateExcel" :locale="this.es_ES" />
                     </div>
                     <div class="col-md-12 mt-2">
                         <label for="lender">¿Filtrar por cliente?</label>
@@ -409,12 +409,16 @@ import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import io from 'socket.io-client';
 import jwtDecode from 'jwt-decode'
-import locale from 'ant-design-vue/es/date-picker/locale/es_ES';
 import XLSX from 'xlsx'
-const moment = require('moment'); // require
 const dateNew = new Date()
 
 import mixinUserToken from '../mixins/mixinUserToken'
+
+import es_ES from 'ant-design-vue/lib/locale-provider/es_ES';
+import moment from 'moment';
+import 'moment/locale/es';
+
+moment.locale('es');
 export default {
     mixins: [mixinUserToken],
     components: {
@@ -451,7 +455,7 @@ export default {
                 dateFormat: 'd-m-Y',
                 locale: Spanish, // locale for this instance only          
             },
-            locale,
+            es_ES,
             columnsReport: [
                 {
                     title: 'Nombre',
@@ -555,7 +559,10 @@ export default {
     },
     created(){
         this.getToken()
-        this.getBranch()   
+        this.getBranch()
+        console.log(this.es_ES)
+        console.log(this.$refs.datePick)
+        // this.$refs
     },
     methods: {
         getToken(){
