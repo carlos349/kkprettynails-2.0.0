@@ -495,7 +495,7 @@
                     <base-input  alternative
                                 placeholder="RUT de la empresa"
                                 v-model="provider.document"
-                                v-on:change="provider.document = formatRut(provider.document)"
+                                v-on:keyup="formatRut(provider.document)"
                                 addon-left-icon="fa fa-key"
                                 addon-right-icon="fas fa-plus text-default">
                     </base-input>
@@ -1652,11 +1652,12 @@ export default {
         },
         addProductToBranch() {
             this.$swal({
-                title: '¿Está seguro que desea agregar este producto?',
+                title: '¿Desea agregar este producto?',
+                text: '¡Recuerda! Se descontará de tu bodega',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Estoy seguro',
-                cancelButtonText: 'No, evitar acción',
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No, cancelar',
                 showCloseButton: true,
                 showLoaderOnConfirm: true
             }).then((result) => {
@@ -1812,8 +1813,8 @@ export default {
                 if (this.branchEntry[index].count <= total ) {
                     this.productForBranch = res.data.data
                     this.$swal({
-                        title: '¿Está seguro que desea agregar ' + this.branchEntry[index].count + ' ' + measure + ' a este producto?',
-                        
+                        title: '¿Desea agregar ' + this.branchEntry[index].count + ' ' + measure + '?',
+                        text: '¡Recuerda! Se descontará de tu bodega',
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: 'Estoy seguro',
@@ -1906,11 +1907,12 @@ export default {
         },
         deleteProductByBranch(data){
             this.$swal({
-            title: '¿Está seguro de eliminar el producto de la sucursal?',
+            title: '¿Desea eliminar el producto?',
+            html: '¡Recuerda! El producto se eliminará de la sucursal: <b>'+ this.selectedBranchName + '</b>',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Estoy seguro',
-            cancelButtonText: 'No, evitar acción',
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No, cancelar',
             showCloseButton: true,
             showLoaderOnConfirm: true
             }).then((result) => {
@@ -1929,7 +1931,7 @@ export default {
                                     this.$swal({
                                         
                                         icon: 'success',
-                                        title: 'El producto fue eliminado con exito',
+                                        title: 'El producto fue eliminado con éxito',
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
@@ -2043,7 +2045,7 @@ export default {
                     this.$swal({
                         
                         icon: 'success',
-                        title: '¡Producto registrado con exito!',
+                        title: '¡Producto registrado con éxito!',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -2241,7 +2243,7 @@ export default {
                 this.$swal({
                     
                     icon: 'success',
-                    title: '¡Producto actualizado con exito!',
+                    title: '¡Producto actualizado con éxito!',
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -2280,7 +2282,7 @@ export default {
                             this.$swal({
                                 
                                 icon: 'success',
-                                title: 'Provedor borrado con exito',
+                                title: 'Provedor borrado con éxito',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
@@ -2309,12 +2311,12 @@ export default {
         },
         deleteItem(id){
             this.$swal({
-                title: '¿Está seguro de borrar el producto? tambien se borrara de todas las sucursales donde este registrado.',
-                text: 'No puedes revertir esta acción',
+                title: '¿Desea eliminar productos de bodega?',
+                text: '¡Recuerda! Se procederá a eliminar de todas las sucursales donde se encuentre registrado y no se podrá revertir esta acción',
                 icon:'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Estoy seguro',
-                cancelButtonText: 'No, evitar acción',
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No, cancelar',
                 showCloseButton: true,
                 showLoaderOnConfirm: true
             }).then((result) => {
@@ -2325,7 +2327,7 @@ export default {
                             this.$swal({
                                 
                                 icon: 'success',
-                                title: 'Producto borrado con exito',
+                                title: 'Producto borrado con éxito',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
@@ -2357,7 +2359,7 @@ export default {
                     this.$swal({
                         
                         icon: 'success',
-                        title: 'Cierre realizado con exito',
+                        title: 'Cierre realizado con éxito',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -2492,17 +2494,20 @@ export default {
                 }
             })
         },
-        formatRut(value) {
-            let around = value.length - 2
-            let concat = ''
-            for (let index = 0; index < value.length; index++) {
-              concat = concat + value[index]
-              if (around == index) {
-                concat = concat + '.'
-              }
-            } 
-            let val = concat.replace('.', '-')
-            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        formatRut(rut) {
+            rut.replace(/[-.]/g,'')
+            const newRut = rut.replace(/\./g,'').replace(/\-/g, '').trim().toLowerCase();
+            const lastDigit = newRut.substr(-1, 1);
+            const rutDigit = newRut.substr(0, newRut.length-1)
+            let format = '';
+            for (let i = rutDigit.length; i > 0; i--) {
+            const e = rutDigit.charAt(i-1);
+            format = e.concat(format);
+            if (i % 3 === 0){
+                format = '.'.concat(format);
+            }
+            }
+            this.provider.document = format.concat('-').concat(lastDigit);
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {

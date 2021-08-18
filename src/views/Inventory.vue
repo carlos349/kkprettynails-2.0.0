@@ -80,14 +80,16 @@
                                   <span v-else>
                                     {{(parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume)}}
                                   </span>
+                                  
+                                    
+                                </template>
+                                <template slot="storeDev" slot-scope="record,column">
                                   <a-tooltip placement="top">
                                         <template slot="title">
                                             <span>Devolver cantidad a bodega</span>
                                         </template>
-                                        <base-button v-if="column.productType == 'Materia prima'" :disabled="(parseFloat(column.entry)) - parseFloat(column.consume) == 0 ? true : false" size="sm" class="ml-2 mr-0" type="danger" @click="lessInventory = '', modals.modal6 = true, selectedProduct = column._id, totalValidLess = parseFloat(column.entry) - parseFloat(column.consume)"><a-icon type="export" style="vertical-align: .13em;font-size: 1.1em;"/></base-button>
+                                        <base-button v-if="column.productType == 'Materia prima'" :disabled="(parseFloat(column.entry)) - parseFloat(column.consume) == 0 ? true : false" size="sm" class="ml-2 mr-0" type="danger" @click="lessInventory = '', modals.modal6 = true, selectedProduct = column, totalValidLess = parseFloat(column.entry) - parseFloat(column.consume)"><a-icon type="export" style="vertical-align: .13em;font-size: 1.1em;"/></base-button>
                                     </a-tooltip>
-                                  
-                                    
                                 </template>
                                 <template slot="typeProduct" slot-scope="record, column">
                                     <a-dropdown :disabled="validRoute('inventario', 'cambiar_tipo') ? false : true">
@@ -471,6 +473,12 @@ export default {
                 sorter: (a, b) => (a.quantity + a.entry - a.consume) - (b.quantity + b.entry - b.consume),
             },
             {
+                title: 'Devolver a bodega',
+                key: '_id',
+                width: 170,
+                scopedSlots: { customRender: 'storeDev' }
+            },
+            {
                 title: 'Tipo de producto',
                 key: '_id',
                 width: 170,
@@ -705,24 +713,43 @@ export default {
             this.auth = decoded.access
         },
         returnToStore(){
-            axios.put(endPoint.endpointTarget+'/stores/returntostore/'+ this.selectedProduct , {
+            axios.put(endPoint.endpointTarget+'/stores/returntostore/'+ this.selectedProduct._id , {
                 less: this.lessInventory
             }, this.configHeader)
             .then(res => {
                 if (res.data.status === 'ok') {
-                    this.$swal({
-                    type: 'success',
-                    icon: 'success',
-                    title: 'Devolución exitosa',
-                    showConfirmButton: false,
-                    timer: 1500
+                    axios.post(endPoint.endpointTarget+'/expenses/', {
+                        branch: this.branch,
+                        detail: `Se ha devuelto ${this.lessInventory} ${this.selectedProduct.measure} de ${this.selectedProduct.product} a la bodega`,
+                        amount: this.selectedProduct.price * this.lessInventory,
+                        type: 'Inventario',
+                    }, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                type: 'success',
+                                icon: 'success',
+                                title: 'Devolución exitosa',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.getProducts();
+                            this.getHistoryClosed()
+                            this.modals.modal6 = false
+                        }
+                    }).catch(err => {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Problemas con el servidor',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        console.log(err)
                     })
-                    this.getProducts();
-                    this.getHistoryClosed()
-                    this.modals.modal6 = false
                 }
             })
             .catch(err => {
+                console.log(err)
             this.$swal({
                 type: 'error',
                 title: 'Problemas tecnicos',
