@@ -77,7 +77,7 @@
                     <tab-content icon="ni ni-bullet-list-67"  title="Servicios" :before-change="validateFirstStep">
                         <vuescroll :ops="ops" v-on:scroll="scroll()" class="width:100%;" :class="hideText == 'display:none' ? 'mobileForm' : ''">
                             <template>
-                                <div class="text-muted text-center p-0">
+                                <div class="text-muted text-center p-0 mt-1 pb-2">
                                     Seleccione los servicios
                                 </div>
                             </template>
@@ -153,7 +153,7 @@
                                                                             </template>
                                                                             <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
                                                                             <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
-                                                                                <badge :type="micro.checked ? 'primary' : 'secondary'" class="text-default">
+                                                                                <badge :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
                                                                                     <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
                                                                                 </badge>
                                                                             </div>
@@ -211,7 +211,7 @@
                                                             <span class="ml-1 mt-2 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
                                                             <br>
                                                             <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;">
-                                                                <badge style="z-index:100" :type="micro.checked ? 'primary' : 'secondary'" class="text-default">
+                                                                <badge style="z-index:100" :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
                                                                     <p style="font-size:1.3em;" class="mb-0 text-default">{{micro.microService}}</p>
                                                                 </badge>
                                                             </div>
@@ -356,18 +356,16 @@
                                                 </template>
                                                 <div class="row col-12 mx-auto">
                                                     <center>
-                                                        <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class="mx-auto">Desde</span>
-                                                        <span style="color:#000;font-weight:600;font-size:1.8em;" class="mx-auto">
+                                                        <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class="mt-3 ml-2">Desde</span>
+                                                        <span style="color:#000;font-weight:600;font-size:1.8em;" class="mr-2">
                                                             {{data.start}}
                                                         </span>
-                                                        <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class="mx-auto">Hasta</span>
-                                                        <span style="color:#000;font-weight:600;font-size:1.8em;" class="mx-auto">
+                                                        <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class=" mt-3">Hasta</span>
+                                                        <span style="color:#000;font-weight:600;font-size:1.8em;" class="">
                                                             {{data.end}}
                                                         </span>
                                                     </center>
-                                                    
                                                 </div>
-                                                
                                             </base-button>
                                         </div>
                                     </div>
@@ -693,16 +691,6 @@
                                     </center>
                                     </div>
                                 </template>
-                                <template v-if="validRoute('agendamiento', 'cerrar') ">
-                                    <div v-if="selectedEvent.process == true" v-on:click="closeDate(selectedEvent._id)" class="col-md-6 col-6 mx-auto mt-2"><center>
-
-                                        <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
-                                            <span class="float-left">Cerrar</span>  
-                                            <span style="margin-top:3px" class="fa fa-times float-right"></span>
-                                        </base-button> 
-                                    </center>
-                                    </div>
-                                </template>
                                 
                                 <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 col-6 mx-auto mt-2">
                                     <center>
@@ -721,12 +709,11 @@
                                                 <span class="float-left">Confirmada</span> 
                                             </base-button>
 
-                                            <base-button outline size="sm" v-else class="mx-auto col-11" style="padding-left:10px;padding-right:10px" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
                                                 <i style="margin-top:3px" class="ni ni-send float-right"></i>
                                                 <span class="float-left">Enviar confirmación</span>  
                                             </base-button>
-                                        </div>
-                                        
+                                        </div>   
                                     </center>
                                 </div>
                                 
@@ -1547,7 +1534,6 @@ export default {
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
-            console.log(this.auth)
         },
         selectDateBlock(date, dateString){
             this.hourBlocking.dateBlocking = dateString
@@ -1567,7 +1553,6 @@ export default {
         async getBlockingHours(){
             try {
                 const blockHour = await axios.get(`${endPoint.endpointTarget}/dates/getBlockingHours/${this.branch}`, this.configHeader)
-                console.log(blockHour)
                 if (blockHour.data.status == 'ok') {
                     this.datesBlocking = blockHour.data.data
                 }else{
@@ -1632,7 +1617,6 @@ export default {
                 const service = await axios.get(endPoint.endpointTarget+'/services/getServiceInfo/'+id, this.configHeader)
                 if (service.data.status == 'ok') {
                     service.data.data.set = false
-                    console.log(service.data.data)
                     this.serviceSelected.unshift(service.data.data)
                     this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount)
                 }else{
@@ -1664,7 +1648,7 @@ export default {
                 this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,
                 microServices: [], microServiceSelect: []})
             }
-
+            this.totalPrice = this.totalPrice + price
             this.validHour = false
         },
         lessServicePhone(index, price){
@@ -1708,7 +1692,6 @@ export default {
                     start: start,
                     end: end
                 }, this.configHeader)
-                console.log(blockHour)
                 if (blockHour.data.status == 'ok') {
                     this.$swal({
                         icon: 'success',
@@ -1790,10 +1773,6 @@ export default {
             this.getDates()
             this.getBlockingHours()
         },
-        logEvents(change, event){
-            console.log(change)
-            console.log(event)
-        },
         async getMicroServices(){
             try {
                 const getMicro = await axios.get(endPoint.endpointTarget+'/configurations/getMicroservice/'+this.branch, this.configHeader)
@@ -1803,7 +1782,6 @@ export default {
                         micro.checked = false
                     }
                     this.ifMicro = true
-                    console.log(this.microServices)
                 }else{
                     this.ifMicro = false
                 }
@@ -1829,26 +1807,11 @@ export default {
             const blockHours = this.configurations.blockHour
             this.configDatePicker.disable = [
                 function(date) {
-                    // var days = 10
-                    // for (const element of blockHours) {
-                    //     if (element.day === date.getDay()) {
-                    //         days = element.status ? element.day : 10
-                    //     }
-                    // }
-                    // console.log(days)
                     return blockHours[date.getDay()].status == true ? false : true;
                 }
             ]
-
             this.configDatePickerEdit.disable = [
                 function(date) {
-                    // var days = 10
-                    // for (const element of blockHours) {
-                    //     if (element.day === date.getDay()) {
-                    //         days = element.status ? element.day : 10
-                    //     }
-                    // }
-                    // console.log(days)
                     return blockHours[date.getDay()].status == true ? false : true;
                 }
             ]
@@ -1902,7 +1865,6 @@ export default {
             } 
         },
         async getDates() {
-            console.log(this.validRoute('agendamiento', 'todas'))
             if (!this.validRoute('agendamiento', 'todas')) {
                 this.events = []
                 const token = localStorage.userToken
@@ -1926,15 +1888,12 @@ export default {
                 try {
                     const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
                     this.events = dates.data.data
-                    console.log(this.events)
                 }catch(err){
                     console.log(err)
                 }
             }
         },
         filterOption(input, option) {
-            console.log(input)
-            console.log(option)
             return (
                 option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
             );
@@ -1969,7 +1928,6 @@ export default {
         getEmployes(){
   			axios.get(endPoint.endpointTarget+'/employes/UsersEmployes/'+this.branch, this.configHeader)
   			.then(res => {
-                console.log(res)
                 this.employeShow = res.data.data
   			})
         },
@@ -2102,6 +2060,7 @@ export default {
             }else{
                 this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,microServices: [], microServiceSelect: [], products: products})
             }
+            this.totalPrice = this.totalPrice + price
             this.validHour = false  
         },
         plusMicroFinally(){
@@ -2117,7 +2076,6 @@ export default {
             }
             
             this.selectedEvent.services.push({name: name, commission: commission, price: price, discount: discount, products: products, index:this.selectedEvent.services.length, microServices: microServices, microServiceSelect:[]})
-            console.log(this.selectedEvent)
         },
         deleteServiceFinally(i){
             this.selectedEvent.services.forEach((element, index) => {
@@ -2363,7 +2321,6 @@ export default {
             setTimeout(() => {
                 this.searchBlockEdit()
             }, 500);
-            console.log(this.selectedEvent.duration)
         },
         editEmployeDate(value){
             this.employeForSearchEdit = value.id
@@ -2471,32 +2428,6 @@ export default {
             .then(res => { this.blockHour = res.data })
             .catch(err => { console.log(err) })
         },
-        selectBloq(hora, i){
-            this.registerDate.start = this.blockHour[i].Horario
-            var sortSp = this.registerDate.start.split(":") 
-            this.registerDate.sort = sortSp[0]+sortSp[1]
-
-            axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
-                employe: this.registerDate.employeSelect,
-                date: this.registerDate.date,
-                time: this.registerDate.duration,
-                resTime : this.registerDate.employeResTime
-            })
-            .then(res => {
-                
-                for (let index = 0 ; index <= this.registerDate.duration /15; index++) {
-                
-                res.data[i].validator = 'select'
-                this.registerDate.end = res.data[i].Horario
-                i++
-                
-                }
-                this.blockHour = res.data
-                })
-                .catch(err => {
-                console.log(err)
-                })
-        },
         sendConfirmationn(id, name, mail, start, end, services, lender){
             const nameFormat = name
             const contactFormat = mail
@@ -2544,7 +2475,6 @@ export default {
                     branch: this.branch
                 }, this.configHeader)
                 .then(res => {
-                    console.log(res)
                     if(res.data.status == true){
                         this.modals = {
                             modal3: true,
@@ -2599,7 +2529,6 @@ export default {
                                         this.registerDae.serviceSelectds[0].valid = true
                                         this.registerDae.serviceSelectds[0].blocks = res.data.data
                                         this.registerDae.block = res.data.data
-                                        console.log(this.registerDae.serviceSelectds[0].blocks)
                                         $('#block0').toggle('slow')
                                     })
                                 })
@@ -2741,7 +2670,6 @@ export default {
                         email: res.data.data.email,
                         phone: res.data.data.phone
                     }
-                    console.log(this.dateClient)
                     setTimeout(() => {
                         this.getClients()
                         EventBus.$emit('reloadClients', 'reload')
@@ -2761,7 +2689,6 @@ export default {
             $(".ant-select-selection__clear").click()
         },
         getDatesByEmploye(id, img, name){
-            console.log(img)
             if (id == "Todos") {
                 this.getDates()
                 this.filter = false
@@ -2811,7 +2738,6 @@ export default {
                 }
                 this.dateData.history = []
                 this.dateData.history = res.data.data.historical
-                console.log(this.dateData.history)
             })
             e.stopPropagation()
         },
@@ -2900,7 +2826,6 @@ export default {
             setTimeout(() => {
                 const split = this.selectedEvent.createdAt.split('-')
                 var finalDate = split[1]+'-'+split[0]+'-'+split[2]
-                console.log(finalDate)
                 axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                     date: finalDate,
                     branch: this.branch
@@ -3097,7 +3022,6 @@ export default {
             
         },
         endDate(data){
-            console.log(data)
             var valid = true
             const dataFinal = data
             data.services.forEach(element => {
@@ -3120,7 +3044,6 @@ export default {
                             dataFinal.services[0].microServiceSelect.forEach(element => {
                                 dataFinal.services[0].price = dataFinal.services[0].price - element.price
                             });
-                            console.log(dataFinal)
                             axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
                                 service:dataFinal.services,
                                 client:dataFinal.client,
@@ -3649,8 +3572,6 @@ export default {
                 }
                 array.splice(index, 1)
                 this.file = array
-                console.log(this.file)
-                console.log(this.nameFile)
             }else{
                 this.file = []
                 this.nameFile = 'Seleccione imagen'
@@ -3662,7 +3583,6 @@ export default {
                 
             }else{
                 this.file = this.$refs.file.files
-                console.log(this.file)
                 if (this.file.length == 3) {
                     this.nameFile = this.file[0].name+', '+this.file[1].name+', '+this.file[2].name
                 }else if (this.file.length == 2) {
@@ -3673,7 +3593,6 @@ export default {
             }            
         },
         uploadImageDesign(id, event){
-            console.log(event)
             this.loadImage = true
             let formData = new FormData();
             for (let index = 0; index < this.file.length; index++) {
@@ -3695,7 +3614,7 @@ export default {
                     this.loadImage = false
                     this.selectedEvent.imgDesign = res.data.image
                     this.selectedEvent.imageLength = res.data.image.length
-                    this.$refs.file = ''
+                    this.file = []
                     this.nameFile = 'Seleccione imagen'
                 }
             })
@@ -3969,12 +3888,10 @@ export default {
                                 }, this.configHeader)
                                 .then(res => {
                                     this.idDatesBlocks = res.data.id
-                                    console.log(this.idDatesBlocks)
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
                                     this.registerDae.serviceSelectds[0].blocks = res.data.data
                                     this.registerDae.block = res.data.data
-                                    console.log(this.registerDae.serviceSelectds[0].blocks)
                                     $('#block0').toggle('slow')
                                     this.load1 = false
                                 })
@@ -3998,12 +3915,10 @@ export default {
                                 }, this.configHeader)
                                 .then(res => {
                                     this.idDatesBlocks = res.data.id
-                                    console.log(this.idDatesBlocks)
                                     this.readyChange = true
                                     this.registerDae.serviceSelectds[0].valid = true
                                     this.registerDae.serviceSelectds[0].blocks = res.data.data
                                     this.registerDae.block = res.data.data
-                                    console.log(this.registerDae.serviceSelectds[0].blocks)
                                     this.load1 = false
                                 })
                             })
@@ -4134,7 +4049,6 @@ export default {
                         break
                     }
                 }
-                console.log(this.registerDae.serviceSelectds[indexService])
                 axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
                     date: this.finalDate,
                     timedate: this.registerDae.serviceSelectds[indexService].duration,
@@ -4160,12 +4074,10 @@ export default {
                         .then(res => {
                             this.registerDae.serviceSelectds[finalIndex].valid = true
                             this.registerDae.serviceSelectds[finalIndex].blocks = res.data.data
-                            console.log(res)
                         })
                     }else{
                         this.validHour = true
                     }
-                    console.log(res)
                 }).catch(err => console.log(err))
                 
                 setTimeout(() => {
@@ -4173,7 +4085,6 @@ export default {
                 }, 500);
             }
             else{
-                console.log('entre')
                 var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].hour.split(":") 
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].hour
                 this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
@@ -4204,7 +4115,6 @@ export default {
                         .then(res => {
                             this.registerDae.serviceSelectds[finalIndex].valid = true
                             this.registerDae.serviceSelectds[finalIndex].blocks = res.data.data
-                            console.log(res)
                         })
                     }else{
                         this.validHour = true
@@ -4295,8 +4205,6 @@ export default {
                     }
                     this.validHour = false
                     if (this.registerDae.serviceSelectds[index - 1].blocksFirst.length > 0) {
-                        console.log('blockFirst')
-                        console.log(this.registerDae.serviceSelectds[index - 1].blocksFirst)
                         axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
                             block: this.registerDae.serviceSelectds[index - 1].blocksFirst,
                             timedate: this.registerDae.serviceSelectds[index].duration,
@@ -4309,7 +4217,6 @@ export default {
                             this.registerDae.serviceSelectds[index].blocksFirst = []
                         })
                     }else{
-                        console.log('blockNormal')
                         axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
                             block: this.registerDae.serviceSelectds[index - 1].blocks,
                             timedate: this.registerDae.serviceSelectds[index].duration,
@@ -4324,7 +4231,6 @@ export default {
                     }
                 }
             }else{
-                console.log(this.registerDae.serviceSelectds[index].blocks)
                 for (const block of this.registerDae.serviceSelectds[index].blocks) {
                     if (block.validator == 'select' && block.employes){
                         block.validator = true
@@ -4339,7 +4245,6 @@ export default {
                     }
                 }
                 if (this.registerDae.serviceSelectds[index].blocksFirst.length > 0) {
-                    console.log(this.registerDae.serviceSelectds[index].blocksFirst)
                     for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
                         const element = this.registerDae.serviceSelectds[j];
                         element.start = ''
@@ -4373,7 +4278,6 @@ export default {
                         firstBlock: false
                     }, this.configHeader)
                     .then(res => {
-                        console.log(res)
                         if (res.data.status == 'ok') {
                             this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
                             this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
@@ -4420,7 +4324,6 @@ export default {
                         firstBlock: false
                     }, this.configHeader)
                     .then(res => {
-                        console.log(res)
                         if (res.data.status == 'ok') {
                             this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
                             this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
@@ -4648,8 +4551,7 @@ export default {
                     }
                 })
         },
-        SelectMicro(index, indexM, microServices) {
-            
+        SelectMicro(index, indexM, microServices) {   
             if (this.registerDae.serviceSelectds[index].microServices[indexM].microService == 'Ninguno') {
                 this.registerDae.serviceSelectds[index].microServices.forEach(element => {
                     if (element.checked && element.microService != 'Ninguno') {
@@ -4661,24 +4563,15 @@ export default {
                 });
                 this.registerDae.serviceSelectds[index].microServices[0].checked = true
             }else{
-                console.log("entre bien")
                 if (this.registerDae.serviceSelectds[index].microServices[indexM].checked) {
                     this.registerDae.serviceSelectds[index].microServices[indexM].checked = false    
                     this.registerDae.serviceSelectds[index].duration = parseFloat(this.registerDae.serviceSelectds[index].duration) - parseFloat(microServices.duration)
-                    this.registerDae.serviceSelectds[index].price = this.registerDae.serviceSelectds[index].price - microServices.price
-                    this.totalPrice = this.totalPrice - microServices.price
                 }else{
-                    console.log("entre bien de nuevo")
-                    console.log(this.totalPrice)
                     this.registerDae.serviceSelectds[index].microServices[0].checked = false
                     this.registerDae.serviceSelectds[index].microServices[indexM].checked = true
                     this.registerDae.serviceSelectds[index].duration = parseFloat(this.registerDae.serviceSelectds[index].duration) + parseFloat(microServices.duration)
-                    this.registerDae.serviceSelectds[index].price = this.registerDae.serviceSelectds[index].price + microServices.price
-                    this.totalPrice = this.totalPrice + microServices.price
                 }
             }
-            console.log(this.registerDae.serviceSelectds[index]) 
-            console.log(this.totalPrice)
         },
     },
     computed: {

@@ -526,16 +526,11 @@
             <modal :show.sync="modals.modal4"
                 body-classes="p-0"
                 modal-classes="modal-dialog-centered modal-md">
-                <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
+                <h4 slot="header" class="modal-title" id="modal-title-default">Registrar monto de apertura</h4>
                 <card type="secondary" shadow
-                    header-classes="bg-white pb-5"
-                    body-classes="px-lg-5 py-lg-5"
+                    header-classes="bg-white"
+                    body-classes="px-lg-2 py-lg-2"
                     class="border-0">
-                    <template>
-                        <div class="text-muted text-center mb-3">
-                            <h3>Registrar monto de apertura</h3>
-                        </div>
-                    </template>
                     <template>
                         <form role="form">
                             <base-input 
@@ -554,10 +549,10 @@
                                 class="form-control mb-3"
                                 style="margin-top:-10px;"
                             />	
-                            <base-button v-if="!cashFunds.valid" type="default" disabled>
+                            <base-button class="float-right" v-if="!cashFunds.valid" type="default" disabled>
                                 Ingresar fondo
                             </base-button>
-                            <base-button v-else type="default" v-on:click="registerFund">
+                            <base-button class="float-right" v-else type="default" v-on:click="registerFund">
                                 Ingresar fondo
                             </base-button> 
                         </form>
@@ -1741,6 +1736,7 @@ export default {
                             showConfirmButton: false,
                             timer: 1000
                         })
+                        EventBus.$emit('reloadSales', 'reload')
                         this.initialState()
                         this.ifProccess = false
                     }else{
@@ -1864,9 +1860,6 @@ export default {
             return (
                 option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
             );
-        },
-        processSale() {
-            
         },
         alertProducts(){
             axios.get(endPoint.endpointTarget+'/inventario/alertProducts')

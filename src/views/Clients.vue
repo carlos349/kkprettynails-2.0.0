@@ -320,7 +320,7 @@
                         :style="{ color: filtered ? '#108ee9' : undefined }"
                     />
                     <template slot="birthday" slot-scope="record">
-                        <span v-if="record">{{formatDateTwo(record)}}</span>
+                        <span v-if="record">{{record | formatDate}}</span>
                         <span v-else>Sin fecha de nacimiento</span>
                     </template>
                     <template slot="actions" slot-scope="record, column">
@@ -362,9 +362,9 @@ import router from '../router'
 import XLSX from 'xlsx'
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import * as moment from 'moment';
-import 'moment/locale/es';
-moment.locale('es');
+import {Spanish} from 'flatpickr/dist/l10n/es.js';
+import moment from 'moment';
+moment.locale('es')
 // COMPONENTS
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
@@ -620,57 +620,90 @@ export default {
                 }
             }
             var date = this.registerClient.birthday
-            if (this.registerClient.birthday.split('-')[1]) {
-                var split = this.registerClient.birthday.split('-')
-                date = split[1]+'-'+split[0]+'-'+split[2]
-            }
-            axios.post(endPoint.endpointTarget+'/clients', {
-                firstName:this.registerClient.firstName,
-                lastName: this.registerClient.lastName,
-                email:this.registerClient.email,
-                recommender:this.registerClient.recommender,
-                idRecomender:idRecomender,
-                phone:this.phoneData,
-                birthday: date,
-                instagram:this.registerClient.instagram,
-                ifCheck: ifCheck
-            }, this.configHeader)
-            .then(res => {
-                if (res.data.status == 'client create') {
-                    this.$swal({
-                        icon: 'success',
-                        title: 'Se registro el cliente con éxito',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    
-                    this.initialState(1)
-                    this.getClients()
-                    EventBus.$emit('reloadClients', 'reload')
+            var validDate = true
+            if (this.registerClient.birthday != '') {
+                if (this.registerClient.birthday.split('-')[1]) {
+                    validDate = true
+                    var split = this.registerClient.birthday.split('-')
+                    date = split[1]+'-'+split[0]+'-'+split[2]
                 }else{
+                    validDate = false
                     this.$swal({
                         icon: 'error',
-                        title: 'El cliente ya existe',
+                        title: 'Fecha invalida',
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }
-            })
+                } 
+            }
+            if(validDate){
+                axios.post(endPoint.endpointTarget+'/clients', {
+                    firstName:this.registerClient.firstName,
+                    lastName: this.registerClient.lastName,
+                    email:this.registerClient.email,
+                    recommender:this.registerClient.recommender,
+                    idRecomender:idRecomender,
+                    phone:this.phoneData,
+                    birthday: date,
+                    instagram:this.registerClient.instagram,
+                    ifCheck: ifCheck
+                }, this.configHeader)
+                .then(res => {
+                    if (res.data.status == 'client create') {
+                        this.$swal({
+                            icon: 'success',
+                            title: 'Se registro el cliente con éxito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        
+                        this.initialState(1)
+                        this.getClients()
+                        EventBus.$emit('reloadClients', 'reload')
+                    }else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'El cliente ya existe',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
+            }  
         },
         validRegister(){
-            if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '' &&this.phoneData.isValid) {
-                if (this.registerClient.email.split('@').length == 2) {
-                    if (this.registerClient.email.split('@')[1].split('.').length == 2) {
-                        this.registerClient.valid = true
+            if (this.registerClient.phone.nationalNumber == "") {
+                if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '') {  
+                    if (this.registerClient.email.split('@').length == 2) {
+                        if (this.registerClient.email.split('@')[1].split('.').length == 2) {
+                            this.registerClient.valid = true
+                        }else{
+                            this.registerClient.valid = false
+                        }
                     }else{
                         this.registerClient.valid = false
                     }
-                }else{
+                }
+                else {
                     this.registerClient.valid = false
                 }
-            }
-            else {
+            }else{
+                console.log('entre')
                 this.registerClient.valid = false
+                if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '' && this.registerClient.phone.isValid) {
+                    if (this.registerClient.email.split('@').length == 2) {
+                        if (this.registerClient.email.split('@')[1].split('.').length == 2) {
+                            this.registerClient.valid = true
+                        }else{
+                            this.registerClient.valid = false
+                        }
+                    }else{
+                        this.registerClient.valid = false
+                    }
+                }
+                else {
+                    this.registerClient.valid = false
+                }
             }
         },
         formatPhone(){

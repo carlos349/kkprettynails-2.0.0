@@ -1,14 +1,26 @@
 <template>
     <div>
-        <base-header class="header pb-5 pt-5 pt-lg-8 d-flex align-items-center"
-                        style="min-height: 50px; background-image: url(img/theme/reportes.jpg); background-size: cover; background-position: center;">
+        <base-header class="header pt-lg-5 pb-3 d-flex align-items-center"
+                        style="min-height: 50px; background-image: url(img/theme/employeReport.png); background-size: cover; background-position: center 35%;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
-            <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-12">
-                        <h1 class="display-2 hidden text-white">Reporte de {{nameLender}}</h1>
+                        <div class="text-absolute">
+                            <p class="mb-0 display-2 text-white">Reporte de {{nameLender}}</p>
+                            <p class="text-white">Sección dedicada al reporte de ventas y comisiones de empleados.</p>
+                        </div>
+                        <base-button class="float-right mt-7" size="sm" v-on:click="back">Regresar</base-button>
+                        <base-button class="float-right mt-7" size="sm" v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
+                        <base-button class="float-right mt-7" size="sm" v-else disabled type="danger">Cerrar ventas</base-button>
+                        <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('empleados', 'reportes')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
+                        <base-button class="float-right mt-7 mr-2" size="sm" v-else disabled type="success">Datos avanzados</base-button>
+                    </div>
+                </div>
+                <!-- <div class="row">
+                    <div class="col-12">
+                        <h1 class="display-2 hidden text-white"></h1>
                         
                         <base-button v-if="validRoute('empleados', 'reportes')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
                         <base-button v-else disabled type="success">Datos avanzados</base-button>
@@ -16,8 +28,7 @@
                         <base-button v-else disabled type="danger">Cerrar ventas</base-button>
                         <base-button v-on:click="back" class="btn btn-primary text-white cursor-pointer">Regresar</base-button>
                     </div>
-                </div>
-            </div>
+                </div> -->
         </base-header>
         <center>
             <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre</h1> 
@@ -230,8 +241,8 @@
                 <template slot="date-format" slot-scope="record, column">
                     {{column.createdAt | formatDate}}
                 </template>
-                <template slot="localGain" slot-scope="record, column">
-                    {{column.commission | formatPrice}}
+                <template slot="commission" slot-scope="record, column">
+                    {{parseFloat(column.commission) | formatPrice}}
                 </template>
                 
                 <template slot="total" slot-scope="record, column">

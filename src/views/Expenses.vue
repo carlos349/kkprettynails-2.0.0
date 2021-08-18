@@ -471,7 +471,7 @@ export default {
                         this.$swal({
                             icon: 'error',
                             title: 'Debe realizar cierre de empleados',
-                            text: 'Para continuar debe hacer cierre en sección de empleadas',
+                            text: 'Para continuar debe hacer cierre en sección de empleados',
                             showConfirmButton: true
                         })
                     }if (valid.data.status == 'bad inventories') {
