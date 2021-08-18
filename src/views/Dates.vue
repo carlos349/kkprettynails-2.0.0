@@ -3061,14 +3061,19 @@ export default {
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
+                                    setTimeout(() => {
+                                       EventBus.$emit('reloadFinallyDates', 'reload') 
+                                    }, 500);
+                                    
                                     this.dateModals.modal1 = false
                                     this.dateModals.modal3 = false
                                     axios.post(endPoint.endpointTarget+'/notifications', {
+                                        branch: this.branch,
                                         userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
                                         userImage:localStorage.getItem('imageUser'),
                                         detail:'Finalizó una cita',
                                         link: 'agendamiento'
-                                    })
+                                    }, this.configHeader)
                                     .then(res => {
                                         this.socket.emit('sendNotification', res.data)
                                     })   

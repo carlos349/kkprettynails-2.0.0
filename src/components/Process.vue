@@ -821,6 +821,13 @@ export default {
                     scopedSlots: { customRender: 'date-slot' }
                 },
                 {
+                    title: 'Cliente',
+                    dataIndex: 'client.name',
+                    key: 'client',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'client-slot' }
+                },
+                {
                     title: 'Servicios',
                     dataIndex: 'service',
                     key: 'service',
@@ -1983,6 +1990,10 @@ export default {
         })
         EventBus.$on('reloadMicroservices', status => {
             this.getMicroservices()
+        })
+        EventBus.$on('reloadFinallyDates', status => {
+            console.log(status)
+            this.getFinallyDates()
         })
         EventBus.$on('loggedin-user', status => {
             this.auth = status
