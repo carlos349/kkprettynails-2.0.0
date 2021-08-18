@@ -95,7 +95,7 @@
                     <template slot="date-format" slot-scope="record, column">
                         {{column.createdAt | formatDate}}
                     </template>
-                    <template slot="localGain" slot-scope="record, column">
+                    <template slot="commission" slot-scope="record, column">
                         {{column.commission | formatPrice}}
                     </template>
                     

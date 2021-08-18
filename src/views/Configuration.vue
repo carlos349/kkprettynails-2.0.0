@@ -127,9 +127,18 @@
 
                             <p class="mx-auto"> <strong class="mr-2">Permitir eliminar citas</strong> <a-switch  :checked="configData.datesPolitics.deleteDates" @click="changeDatePolitic('deleteDates')" /></p>
                             
-                            <p class="mx-auto"> <strong class="mr-2">Adicionales </strong> <a-switch class="mr-3" :checked="configData.datesPolitics.microServices" @click="changeDatePolitic('microServices')" /></p>
-
-                            
+                            <p class="mx-auto"> 
+                              <strong class="mr-2"> 
+                                <a-tooltip placement="topLeft">
+                                    <template slot="title">
+                                        <span>Esto permite visualizar y seleccionar los adicionales creado.</span>
+                                    </template>
+                                    <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                                </a-tooltip>
+                                Adicionales 
+                              </strong> 
+                              <a-switch class="mr-3" :checked="configData.datesPolitics.microServices" @click="changeDatePolitic('microServices')" />
+                            </p>
                           </div>
                           <div class="col-4">
                             <h5 class="text-center">Días</h5>

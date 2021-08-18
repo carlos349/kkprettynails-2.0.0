@@ -502,27 +502,23 @@ export default {
                             showLoaderOnConfirm: true
                         }).then((result) => {
                             if(result.value) {
-                                const type = 'circles'
-                                const loading = this.$vs.loading({
-                                    type
-                                })
-                                
-                                axios.post(`${endPoint.endpointTarget}/expenses/closeExpenses`, {
-                                    reinvestment: this.reinvestmentTotal,
-                                    sales: this.totalSales,
-                                    expenses: expenseTotal,
-                                    totalFinal: this.totalFinal,
-                                    branch: this.branch,
-                                    reinvestmentId: this.reinvestmentId 
-                                }, this.configHeader)
-                                .then(res => {
-                                    if(res.data.status == 'ok'){
-                                        loading.close()
-                                        var windowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";
-                                        window.open(`${endPoint.endpointTarget}/static/reportExpenses.pdf`, 'Report', windowFeatures)
-                                        this.getBranch()
-                                    }
-                                })
+                                this.openReport()
+                                setTimeout(() => {
+                                    axios.post(`${endPoint.endpointTarget}/expenses/closeExpenses`, {
+                                        reinvestment: this.reinvestmentTotal,
+                                        sales: this.totalSales,
+                                        expenses: expenseTotal,
+                                        totalFinal: this.totalFinal,
+                                        branch: this.branch,
+                                        reinvestmentId: this.reinvestmentId 
+                                    }, this.configHeader)
+                                    .then(res => {
+                                        if(res.data.status == 'ok'){
+                                            this.getBranch()
+                                        }
+                                    })
+                                    
+                                }, 2500);
                             }else{
                                 this.$swal({
                                     icon: 'info',

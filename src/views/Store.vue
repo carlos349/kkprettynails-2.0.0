@@ -487,39 +487,38 @@
                 </div>
                 <form role="form">
                     <base-input  alternative
-                                placeholder="Nombre de la empresa"
-                                v-model="provider.name"
-                                v-on:keyup="validProviders()"
-                                addon-left-icon="fa fa-user-tie"
-                                addon-right-icon="fa fa-asterisk text-danger">
+                        placeholder="Nombre de la empresa"
+                        v-model="provider.name"
+                        v-on:keyup="validProviders()"
+                        addon-left-icon="fa fa-user-tie"
+                        addon-right-icon="fa fa-asterisk text-danger">
                     </base-input>
                     <base-input  alternative
-                                placeholder="RUT de la empresa"
-                                v-model="provider.document"
-                                v-on:keyup="formatRut(provider.document)"
-                                addon-left-icon="fa fa-key"
-                                addon-right-icon="fas fa-plus text-default">
+                        placeholder="Datos de identificación"
+                        v-model="provider.document"
+                        v-on:keyup="formatRut(provider.document)"
+                        addon-left-icon="fa fa-key"
+                        addon-right-icon="fas fa-plus text-default">
                     </base-input>
                     <base-input  alternative
-                                placeholder="Contacto de la empresa"
-                                v-model="provider.contact"
-                                v-on:keyup="validProviders()"
-                                addon-left-icon="fa fa-address-book"
-                                addon-right-icon="fa fa-asterisk text-danger"
-                                >
+                        placeholder="Teléfono"
+                        v-model="provider.contact"
+                        v-on:keyup="validProviders()"
+                        addon-left-icon="fa fa-address-book"
+                        addon-right-icon="fa fa-asterisk text-danger">
                     </base-input>
                     <base-input  alternative
-                                placeholder="Contacto adicional"
-                                v-model="provider.contactPlus"
-                                addon-left-icon="fa fa-address-book"
-                                addon-right-icon="fas fa-plus text-default">
+                        placeholder="Correo"
+                        v-model="provider.contactPlus"
+                        addon-left-icon="fa fa-address-book"
+                        addon-right-icon="fas fa-plus text-default">
                     </base-input>
                     <base-input  alternative
-                                placeholder="Dirección de la empresa"
-                                v-model="provider.location"
-                                v-on:keyup="validProviders()"
-                                addon-left-icon="fas fa-route"
-                                addon-right-icon="fa fa-asterisk text-danger">
+                        placeholder="Dirección de la empresa"
+                        v-model="provider.location"
+                        v-on:keyup="validProviders()"
+                        addon-left-icon="fas fa-route"
+                        addon-right-icon="fa fa-asterisk text-danger">
                     </base-input>
                 </form>
             </template>
@@ -1155,7 +1154,7 @@ export default {
                 },
             },
             {
-                title: 'Contacto',
+                title: 'Teléfono',
                 dataIndex: 'contact',
                 key: 'contact',
                 ellipsis: true,
@@ -1174,7 +1173,7 @@ export default {
                 },
             },
             {
-                title: 'Contacto adicional',
+                title: 'Correo',
                 dataIndex: 'contactPlus',
                 key: 'contactPlus',
                 ellipsis: true,
@@ -1653,8 +1652,8 @@ export default {
         },
         addProductToBranch() {
             this.$swal({
-                title: '¿Desea agregar este producto?',
-                text: '¡Recuerda! Se descontará de tu bodega',
+                title:`¿Desea registrar ${this.productForBranch.product} a sucursal?`,
+                text: '¡Recuerda! este producto se registrará en inventario de la sucursal',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Sí',
@@ -1719,8 +1718,8 @@ export default {
                         title: '¿Está seguro que desea eliminar ' + this.branchEntry[index].count + ' ' + measure + ' de este producto?',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Estoy seguro',
-                        cancelButtonText: 'No, evitar acción',
+                        confirmButtonText: 'Sí',
+                        cancelButtonText: 'No, cancelar',
                         showCloseButton: true,
                         showLoaderOnConfirm: true
                     }).then((result) => {
@@ -1818,8 +1817,8 @@ export default {
                         text: '¡Recuerda! Se descontará de tu bodega',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Estoy seguro',
-                        cancelButtonText: 'No, evitar acción',
+                        confirmButtonText: 'Sí',
+                        cancelButtonText: 'No, cancelar',
                         showCloseButton: true,
                         showLoaderOnConfirm: true
                     }).then((result) => {
@@ -2312,7 +2311,7 @@ export default {
         },
         deleteItem(id){
             this.$swal({
-                title: '¿Desea eliminar productos de bodega?',
+                title: '¿Desea eliminar productos?',
                 text: '¡Recuerda! Se procederá a eliminar de todas las sucursales donde se encuentre registrado y no se podrá revertir esta acción',
                 icon:'warning',
                 showCancelButton: true,
@@ -2429,8 +2428,8 @@ export default {
               
               icon:'warning',
               showCancelButton: true,
-              confirmButtonText: 'Estoy seguro',
-              cancelButtonText: 'No, evitar acción',
+              confirmButtonText: 'Sí',
+              cancelButtonText: 'No, cancelar',
               showCloseButton: true,
               showLoaderOnConfirm: true
             }).then((result) => {

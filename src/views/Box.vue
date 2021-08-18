@@ -69,16 +69,13 @@
         <modal :show.sync="modals.modal2"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+               <h4 slot="header" class="modal-title p-0 m-0" id="modal-title-default">
+                   Registrar monto de apertura
+               </h4>
             <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  header-classes="bg-white"
+                  body-classes="px-lg-2 py-lg-2"
                   class="border-0">
-                <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                        <h3>Registrar monto de apertura</h3>
-                    </div>
-                </template>
                 <template>
                     <form role="form">
                         <base-input 
@@ -110,16 +107,13 @@
         <modal :show.sync="modals.modal3"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+               <h4 slot="header" class="modal-title p-0 m-0" id="modal-title-default">
+                   Monto de egreso de la caja
+               </h4>
             <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
+                  header-classes="bg-white"
+                  body-classes="px-lg-2 py-lg-2"
                   class="border-0">
-                <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                        <h3>Monto de egreso de la caja</h3>
-                    </div>
-                </template>
                 <template>
                     <form role="form">
                         <currency-input
@@ -505,7 +499,7 @@ export default {
                         this.modals.modal4 = false
                         this.$swal({
                             icon: 'success',
-                            title: 'Cierre hecho con exito',
+                            title: 'Cierre hecho con éxito',
                             showConfirmButton: false,
                             timer: 1500
                         })

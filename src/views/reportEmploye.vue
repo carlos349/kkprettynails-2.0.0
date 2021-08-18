@@ -5,30 +5,19 @@
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="text-absolute">
-                            <p class="mb-0 display-2 text-white">Reporte de {{nameLender}}</p>
-                            <p class="text-white">Sección dedicada al reporte de ventas y comisiones de empleados.</p>
-                        </div>
-                        <base-button class="float-right mt-7" size="sm" v-on:click="back">Regresar</base-button>
-                        <base-button class="float-right mt-7" size="sm" v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
-                        <base-button class="float-right mt-7" size="sm" v-else disabled type="danger">Cerrar ventas</base-button>
-                        <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('empleados', 'reportes')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
-                        <base-button class="float-right mt-7 mr-2" size="sm" v-else disabled type="success">Datos avanzados</base-button>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-absolute">
+                        <p class="mb-0 display-2 text-white">Reporte de {{nameLender}}</p>
+                        <p class="text-white">Sección dedicada al reporte de ventas y comisiones de empleados.</p>
                     </div>
+                    <base-button class="float-right mt-7" size="sm" v-on:click="back">Regresar</base-button>
+                    <base-button class="float-right mt-7" size="sm" v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
+                    <base-button class="float-right mt-7" size="sm" v-else disabled type="danger">Cerrar ventas</base-button>
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('empleados', 'reportes')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-else disabled type="success">Datos avanzados</base-button>
                 </div>
-                <!-- <div class="row">
-                    <div class="col-12">
-                        <h1 class="display-2 hidden text-white"></h1>
-                        
-                        <base-button v-if="validRoute('empleados', 'reportes')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
-                        <base-button v-else disabled type="success">Datos avanzados</base-button>
-                        <base-button v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
-                        <base-button v-else disabled type="danger">Cerrar ventas</base-button>
-                        <base-button v-on:click="back" class="btn btn-primary text-white cursor-pointer">Regresar</base-button>
-                    </div>
-                </div> -->
+            </div>
         </base-header>
         <center>
             <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre</h1> 
@@ -57,85 +46,34 @@
                 <template>
                     <tabs fill class="flex-column flex-md-row">
                         <card shadow>
-                                <div class="description">
-                                    <base-button type="secondary" class="w-100 mb-1 mt-3">
-                                        <span class="float-left">Fecha</span>
-                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{fecha}}</badge>
-                                    </base-button>
-                                    <base-button type="secondary" class="w-100 mb-1">
-                                        <span class="float-left">Nombre</span>
-                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{nameLender}}</badge>
-                                    </base-button>
-                                    <base-button type="secondary" class="w-100 mb-1">
-                                        <span  class="float-left">Adelantos</span>
-                                        <badge  style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(advancement)}}</badge>
-                                    </base-button>
-                                    <base-button type="secondary" class="w-100 mb-1">
-                                        <span  class="float-left">Bonos</span>
-                                        <badge  style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(lenderBonus)}}</badge>
-                                    </base-button>
-                                    <base-button type="secondary" class="w-100 mb-1">
-                                        <span class="float-left">Comisión total</span>
-                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalComission)}}</badge>
-                                    </base-button>
-                                    <base-button type="secondary" class="w-100 mb-1">
-                                        <span class="float-left">Total</span>
-                                        <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalComission + lenderBonus - advancement)}}</badge>
-                                    </base-button>
-                                </div>
-                            <!-- <tab-pane title="Profile" v-if="validRoute('empleados', 'cerrar ventas')">
-                                <span slot="title" >
-                                    <i class="ni ni-bell-55 mr-2"></i>
-                                    Adelantos o bonos
-                                </span>
-                                <form role="form">
-                                    <base-checkbox class="mb-3 mt-3" v-model="bonus">
-                                        ¿Esta registrando un bono?
-                                    </base-checkbox>
-                                    <base-input alternative
-                                        class="mb-3"
-                                        placeholder="Razón"
-                                        v-on:keyup="validRegister()"
-                                        addon-left-icon="ni ni-single-copy-04"
-                                        v-model="dataExpense.reason">
-                                    </base-input>
-                                    <currency-input
-                                        v-model="dataExpense.amount"
-                                        locale="de"
-                                        v-on:keyup="validRegister()"
-                                        addon-left-icon="ni ni-time-alarm"
-                                        class="form-control mb-3"
-                                        style="margin-top:-10px;"
-                                    />	
-                                    <base-input addon-left-icon="ni ni-calendar-grid-58">
-                                        <flat-picker 
-                                                slot-scope="{focus, blur}"
-                                                @on-open="focus"
-                                                @on-close="blur"
-                                                :config="configDate"
-                                                class="form-control datepicker"
-                                                aria-placeholder="Seleccione una fecha"
-                                                v-model="dates.simple">
-                                        </flat-picker>
-                                    </base-input>
-                                    <div class="text-center">
-                                        <base-button type="primary" v-if="!dataExpense.valid" disabled>Registrar</base-button>
-                                        <base-button type="primary" v-else v-on:click="registerExpense">Registrar</base-button>
-                                    </div>
-                                </form>    
-                            </tab-pane> -->
+                            <div class="description">
+                                <base-button type="secondary" class="w-100 mb-1 mt-3">
+                                    <span class="float-left">Fecha</span>
+                                    <badge style="font-size:.9em" class="float-right text-default" type="success">{{fecha}}</badge>
+                                </base-button>
+                                <base-button type="secondary" class="w-100 mb-1">
+                                    <span class="float-left">Nombre</span>
+                                    <badge style="font-size:.9em" class="float-right text-default" type="success">{{nameLender}}</badge>
+                                </base-button>
+                                <base-button type="secondary" class="w-100 mb-1">
+                                    <span  class="float-left">Adelantos</span>
+                                    <badge  style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(advancement)}}</badge>
+                                </base-button>
+                                <base-button type="secondary" class="w-100 mb-1">
+                                    <span  class="float-left">Bonos</span>
+                                    <badge  style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(lenderBonus)}}</badge>
+                                </base-button>
+                                <base-button type="secondary" class="w-100 mb-1">
+                                    <span class="float-left">Comisión total</span>
+                                    <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalComission)}}</badge>
+                                </base-button>
+                                <base-button type="secondary" class="w-100 mb-1">
+                                    <span class="float-left">Total</span>
+                                    <badge style="font-size:.9em" class="float-right text-default" type="success">{{formatPrice(totalComission + lenderBonus - advancement)}}</badge>
+                                </base-button>
+                            </div>
                         </card>
                     </tabs>
-                    <!-- <vue-custom-scrollbar class="maxHeight">
-                        <vue-bootstrap4-table :rows="lendeAdvancements" :columns="columnsLender" :classes="classes" :config="configLender" >
-                            <template slot="format-total" slot-scope="props">
-                                <span>{{formatPrice(props.row.total)}}</span>
-                            </template>
-                            <template slot="format-date" slot-scope="props">
-                                <span>{{formatDate(props.row.date)}}</span>
-                            </template>
-                        </vue-bootstrap4-table>
-                    </vue-custom-scrollbar > -->
                 </template>
             </card>
         </modal>
@@ -263,7 +201,7 @@
             </a-table>
         </a-config-provider>
         <div class="container-fluid hide">
-            <vue-bootstrap4-table :rows="lendeAdvancements" :columns="columnsLender" :classes="classes" :config="configLender" >
+            <vue-bootstrap4-table :rows="lendeAdvancements" :columns="columnsLender" :config="configLender" >
                 <template slot="format-total" slot-scope="props">
                     <span>{{formatPrice(props.row.total)}}</span>
                 </template>
@@ -271,7 +209,7 @@
                     <span>{{formatDate(props.row.date)}}</span>
                 </template>
             </vue-bootstrap4-table>
-            <vue-bootstrap4-table :rows="lenderBonuses" :columns="columnsBonuses" :classes="classes" :config="configBonuses" >
+            <vue-bootstrap4-table :rows="lenderBonuses" :columns="columnsBonuses" :config="configBonuses" >
                 <template slot="format-reason" slot-scope="props">
                     <span>{{props.row.expense.split(" / ")[0]}}</span>
                 </template>
@@ -322,6 +260,7 @@ export default {
             lenderBonus:0,
             advancement: '',
             totalSale: 0,
+            progress: true,
             modals: {
                 modal1: false,
                 modal2: false,
@@ -707,7 +646,6 @@ export default {
             this.fecha = date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate()
             axios.get(endPoint.endpointTarget+'/employes/justOneById/'+this.id, this.configHeader)
             .then(resData => {
-                
                 this.code = resData.data.data._id
                 this.nameLender = resData.data.data.firstName + ' ' + resData.data.data.lastName
                 this.totalComission = resData.data.data.commission
@@ -716,9 +654,8 @@ export default {
                 axios.get(endPoint.endpointTarget+'/employes/salesbyemploye/'+this.id, this.configHeader)
                 .then(res => {
                     this.sales = res.data.data
-                    this.dateInit = res.data.data[0].createdAt
-                    let totals = 0
-                    let comissions = 0
+                    this.dateInit = res.data.data[0] ? res.data.data[0].createdAt : ''
+                    this.progress = false
                 })
             })
             .catch(err => {
@@ -787,6 +724,11 @@ export default {
                     }
                 }
             }
+        }
+    },
+    computed: {
+        getScreen: () => {
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 'auto' }
         }
     }
 }

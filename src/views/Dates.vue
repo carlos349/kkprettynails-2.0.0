@@ -354,17 +354,17 @@
                                                         </span>
                                                     </span>
                                                 </template>
-                                                <div class="row col-12 mx-auto">
-                                                    <center>
+                                                <div class="w-100">
+                                                    <div class="mx-auto">
                                                         <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class="mt-3 ml-2">Desde</span>
-                                                        <span style="color:#000;font-weight:600;font-size:1.8em;" class="mr-2">
+                                                        <span style="color:#000;font-weight:600;font-size:1.8em;">
                                                             {{data.start}}
                                                         </span>
                                                         <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class=" mt-3">Hasta</span>
                                                         <span style="color:#000;font-weight:600;font-size:1.8em;" class="">
                                                             {{data.end}}
                                                         </span>
-                                                    </center>
+                                                    </div>
                                                 </div>
                                             </base-button>
                                         </div>
@@ -392,32 +392,14 @@
                         </template>
                         <center>
                             <a-select
-                                v-if="hideText != 'display:none'"
                                 ref="clientSelect"
                                 show-search
                                 placeholder="Selecciona un cliente"
-                                class="w-50 mb-2"
+                                class="mb-2"
+                                :class="hideText != 'display:none' ? 'w-50' : 'w-100'"
                                 :allowClear="true"
                                 option-filter-prop="children"
-                                :filter-option="filterOption"
-                            >
-                                <a-select-option v-on:click="selectClient('register')" class="text-success" value="register">
-                                    Registrar cliente
-                                </a-select-option>
-                                <a-select-option v-for="client in clients" :key="client" :value="client.firstName + ' ' + client.lastName + ' (' + client.email + ')'" v-on:click="selectClient(client)">
-                                    {{client.firstName}} {{client.lastName}} ({{client.email}})
-                                </a-select-option>
-                            </a-select>
-                            <a-select
-                                v-else
-                                ref="clientSelect"
-                                show-search
-                                placeholder="Selecciona un cliente"
-                                class="w-100 mb-2"
-                                :allowClear="true"
-                                option-filter-prop="children"
-                                :filter-option="filterOption"
-                            >
+                                :filter-option="filterOption">
                                 <a-select-option v-on:click="selectClient('register')" class="text-success" value="register">
                                     Registrar cliente
                                 </a-select-option>
@@ -3061,22 +3043,20 @@ export default {
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                    setTimeout(() => {
-                                       EventBus.$emit('reloadFinallyDates', 'reload') 
-                                    }, 500);
+                                    EventBus.$emit('reloadFinallyDates', 'reload') 
                                     
                                     this.dateModals.modal1 = false
                                     this.dateModals.modal3 = false
-                                    axios.post(endPoint.endpointTarget+'/notifications', {
-                                        branch: this.branch,
-                                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                                        userImage:localStorage.getItem('imageUser'),
-                                        detail:'Finalizó una cita',
-                                        link: 'agendamiento'
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.socket.emit('sendNotification', res.data)
-                                    })   
+                                    // axios.post(endPoint.endpointTarget+'/notifications', {
+                                    //     branch: this.branch,
+                                    //     userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
+                                    //     userImage:localStorage.getItem('imageUser'),
+                                    //     detail:'Finalizó una cita',
+                                    //     link: 'agendamiento'
+                                    // }, this.configHeader)
+                                    // .then(res => {
+                                    //     this.socket.emit('sendNotification', res.data)
+                                    // })   
                                 }
                             })
                         }
@@ -3114,6 +3094,7 @@ export default {
                             showConfirmButton: false,
                             timer: 1500
                         })
+                        EventBus.$emit('reloadFinallyDates', 'reload')
                         this.dateModals.modal1 = false
                         this.dateModals.modal3 = false
                         axios.post(endPoint.endpointTarget+'/notifications', {
