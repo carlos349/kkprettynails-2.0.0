@@ -97,130 +97,155 @@
                 </template>
             </card>
         </modal>
-        <div class="container-fluid hide">
-            <div class="row">
-                <div class="col-6">
-                    <dt class="col-sm-12">Nombre del empleado: <b>{{nameLender}}</b> </dt>
-                    <dt class="col-sm-12">Fecha de Inicio: <b>{{formatDate(dateInit)}}</b> </dt>
-                    <dt class="col-sm-12">Fecha de Cierre: <b>{{formatDate(new Date())}}</b> </dt>
-                    <dt class="col-sm-12">Servicios totales del mes: <b>{{sales.length}}</b> </dt>
-                    <dt class="col-sm-12">Servicios totales: <b>{{salesTotal.length}}</b> </dt>
-                </div>
-                <div class="col-6">
-                    <dt class="col-sm-12">Comisión Total: <b>{{formatPrice(totalComission)}}</b> </dt>
-                    <dt class="col-sm-12">Total de Adelantos: <b>{{formatPrice(advancement)}}</b> </dt>
-                    <dt class="col-sm-12">Total de Bonos: <b>{{formatPrice(lenderBonus)}}</b> </dt>
-                    <dt class="col-sm-12">Total: <b>{{formatPrice(totalComission + lenderBonus - advancement)}}</b> </dt>
-                    <dt class="col-sm-12">Porcentaje de Servicios Realizados: <b>{{(sales.length * 100) / salesTotal.length}}%</b> </dt>
-                </div>
-            </div>
-            
-        </div>
-        <a-config-provider>
-            <template #renderEmpty>
-                <div style="text-align: center">
-                    <a-icon type="warning" style="font-size: 20px" />
-                    <h2>Empleado no posee ventas registradas</h2>
-                </div>
-            </template>
-            <a-table :columns="columns" :loading="progress" :data-source="sales" :scroll="getScreen">
-                <div
-                    slot="filterDropdown"
-                    slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                    style="padding: 8px"
-                    >
-                    <a-input
-                        v-ant-ref="c => (searchInput = c)"
-                        :placeholder="`Buscar por nombre`"
-                        :value="selectedKeys[0]"
-                        style="width: 188px; margin-bottom: 8px; display: block;"
-                        @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                        @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                    />
-                    <a-button
-                        type="primary"
-                        icon="search"
-                        size="small"
-                        style="width: 90px; margin-right: 8px"
-                        @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                    >
-                        Buscar
-                    </a-button>
-                    <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
-                        resetear
-                    </a-button>
-                </div>
-                <a-icon
-                    slot="filterIcon"
-                    slot-scope="filtered"
-                    type="search"
-                    :style="{ color: filtered ? '#108ee9' : undefined }"
-                />
-                <template slot="customRender" slot-scope="text, record, index, column">
-                    <span v-if="searchText && searchedColumn === column.dataIndex">
-                        <template
-                        v-for="(fragment, i) in text
-                            .toString()
-                            .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
-                        >
-                        <mark
-                            v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                            :key="i"
-                            class="highlight"
-                            >{{ fragment }}</mark
-                        >
-                        <template v-else>{{ fragment }}</template>
-                        </template>
+        <tabs fill class="flex-column flex-md-row inventory inventoryTabs">
+            <card class="tablesExpense" shadow>
+                 <tab-pane>
+                    <span class="p-2" slot="title">
+                        <i class="ni ni-shop"></i>
+                        Ventas sin cerrar
                     </span>
-                    <template v-else>
-                        {{ text }}
-                    </template>
-                </template>
-                <template slot="date-format" slot-scope="record, column">
-                    {{column.createdAt | formatDate}}
-                </template>
-                <template slot="commission" slot-scope="record, column">
-                    {{parseFloat(column.commission) | formatPrice}}
-                </template>
-                
-                <template slot="total" slot-scope="record, column">
-                    {{column.total | formatPrice}}
-                </template>
-                <template slot="reportSale" slot-scope="record, column">
-                    <template v-if="validRoute('ventas', 'detalle')" >
-                        <a-tooltip placement="top">
-                            <template slot="title">
-                                <span>Anular venta</span>
+                    <a-config-provider>
+                        <template #renderEmpty>
+                            <div style="text-align: center">
+                                <a-icon type="warning" style="font-size: 20px" />
+                                <h2>Empleado no posee ventas registradas</h2>
+                            </div>
+                        </template>
+                        <a-table :columns="columns" :loading="progress" :data-source="sales" :scroll="getScreen">
+                            <div
+                                slot="filterDropdown"
+                                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                                style="padding: 8px"
+                                >
+                                <a-input
+                                    v-ant-ref="c => (searchInput = c)"
+                                    :placeholder="`Buscar por nombre`"
+                                    :value="selectedKeys[0]"
+                                    style="width: 188px; margin-bottom: 8px; display: block;"
+                                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                                />
+                                <a-button
+                                    type="primary"
+                                    icon="search"
+                                    size="small"
+                                    style="width: 90px; margin-right: 8px"
+                                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                                >
+                                    Buscar
+                                </a-button>
+                                <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                                    resetear
+                                </a-button>
+                            </div>
+                            <a-icon
+                                slot="filterIcon"
+                                slot-scope="filtered"
+                                type="search"
+                                :style="{ color: filtered ? '#108ee9' : undefined }"
+                            />
+                            <template slot="customRender" slot-scope="text, record, index, column">
+                                <span v-if="searchText && searchedColumn === column.dataIndex">
+                                    <template
+                                    v-for="(fragment, i) in text
+                                        .toString()
+                                        .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                                    >
+                                    <mark
+                                        v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                                        :key="i"
+                                        class="highlight"
+                                        >{{ fragment }}</mark
+                                    >
+                                    <template v-else>{{ fragment }}</template>
+                                    </template>
+                                </span>
+                                <template v-else>
+                                    {{ text }}
+                                </template>
                             </template>
-                            <base-button size="sm" type="danger" v-on:click="nullSale(column.saleData._id, column.id)">
-                                <a-icon type="stop" style="vertical-align:1.5px;font-size:1.3em;" />
-                            </base-button>
-                        </a-tooltip>
-                    </template>
+                            <template slot="date-format" slot-scope="record, column">
+                                {{column.createdAt | formatDate}}
+                            </template>
+                            <template slot="commission" slot-scope="record, column">
+                                {{parseFloat(column.commission) | formatPrice}}
+                            </template>
+                            
+                            <template slot="total" slot-scope="record, column">
+                                {{column.total | formatPrice}}
+                            </template>
+                            <template slot="reportSale" slot-scope="record, column">
+                                <template v-if="validRoute('ventas', 'detalle')" >
+                                    <a-tooltip placement="top">
+                                        <template slot="title">
+                                            <span>Anular venta</span>
+                                        </template>
+                                        <base-button size="sm" type="danger" v-on:click="nullSale(column.saleData._id, column.id)">
+                                            <a-icon type="stop" style="vertical-align:1.5px;font-size:1.3em;" />
+                                        </base-button>
+                                    </a-tooltip>
+                                </template>
+                            </template>
+                        </a-table>
+                    </a-config-provider>
+                 </tab-pane>
+                 <tab-pane>
+                    <span class="p-2" slot="title">
+                        <i class="ni ni-calendar-grid-58"></i>
+                        Historial de cierre
+                    </span>
+                    <a-config-provider>
+                        <template #renderEmpty>
+                            <div style="text-align: center">
+                                <a-icon type="warning" style="font-size: 20px" />
+                                <h2>Empleado sin historial.</h2>
+                            </div>
+                        </template>
+                        <a-table :columns="columnsHistory" :loading="progress" :data-source="historyCloses" :scroll="getScreen">
+                            <template slot="commission-slot" slot-scope="record, column">
+                                {{column.commission | formatPrice}}
+                            </template>
+                            <template slot="advancement-slot" slot-scope="record, column">
+                                {{column.advancement | formatPrice}}
+                            </template>
+                            <template slot="bonus-slot" slot-scope="record, column">
+                                {{column.bonus | formatPrice}}
+                            </template>
+                            <template slot="format-date" slot-scope="record, column">
+                                {{column.createdAt | formatDate}}
+                            </template>
+                            <template slot="action-slot" slot-scope="record, column">
+                                <a-tooltip placement="top">
+                                    <template slot="title">
+                                        <span>Ver informe</span>
+                                    </template>
+                                    <base-button size="sm" type="default" @click="modals.modal4 = true, dataHistoryClosedReport = column" icon="ni ni-bullet-list-67"></base-button>
+                                </a-tooltip>
+                            </template>
+                        </a-table>
+                    </a-config-provider>
+                 </tab-pane>
+            </card>
+        </tabs>
+        <a-modal v-model="modals.modal4" width="60%" :footer="null" :closable="true" >
+            <template>
+                <h3 class="text-center w-100">Informe de cierre</h3>
+                <template v-if="dataHistoryClosedReport.employe">
+                    <a-table :columns="columnsHistoryEmploye" :data-source="dataHistoryClosedReport.sales" :scroll="getScreen">
+                        <template slot="date-format" slot-scope="record, column">
+                            {{column.createdAt | formatDate}}
+                        </template>
+                        <template slot="commission" slot-scope="record, column">
+                            {{parseFloat(column.commission) | formatPrice}}
+                        </template>
+                        
+                        <template slot="total" slot-scope="record, column">
+                            {{column.total | formatPrice}}
+                        </template>
+                    </a-table>
                 </template>
-            </a-table>
-        </a-config-provider>
-        <div class="container-fluid hide">
-            <vue-bootstrap4-table :rows="lendeAdvancements" :columns="columnsLender" :config="configLender" >
-                <template slot="format-total" slot-scope="props">
-                    <span>{{formatPrice(props.row.total)}}</span>
-                </template>
-                <template slot="format-date" slot-scope="props">
-                    <span>{{formatDate(props.row.date)}}</span>
-                </template>
-            </vue-bootstrap4-table>
-            <vue-bootstrap4-table :rows="lenderBonuses" :columns="columnsBonuses" :config="configBonuses" >
-                <template slot="format-reason" slot-scope="props">
-                    <span>{{props.row.expense.split(" / ")[0]}}</span>
-                </template>
-                <template slot="format-total" slot-scope="props">
-                    <span>{{formatPrice(props.row.figure)}}</span>
-                </template>
-                <template slot="format-date" slot-scope="props">
-                    <span>{{formatDate(props.row.date)}}</span>
-                </template>
-            </vue-bootstrap4-table>
-        </div>
+            </template>
+        </a-modal>
     </div>
 </template>
 <script>
@@ -265,6 +290,7 @@ export default {
                 modal1: false,
                 modal2: false,
                 modal3: false,
+                modal4: false,
                 message: "",
                 icon: '',
                 type:''
@@ -283,6 +309,91 @@ export default {
             },
             bonus: false,
             lendeAdvancements: [],
+            columnsHistoryEmploye: [
+                {
+                    title: 'Fecha',
+                    dataIndex: 'createdAt',
+                    key: 'createdAt',
+                    scopedSlots: { customRender: 'date-format' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                    ellipsis: true,
+                },
+                {
+                    title: 'UUID de venta',
+                    dataIndex: 'saleData.uuid',
+                    key: 'saleData.uuid',
+                    scopedSlots: { customRender: 'uuid-format' },
+                },
+                {
+                    title: 'Cliente',
+                    dataIndex: 'client',
+                    key: 'client',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'client-slot' }
+                },
+                {
+                    title: 'Servicio',
+                    dataIndex: 'service',
+                    key: 'service',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'service-slot' }
+                },
+                {
+                    title: 'Comisión',
+                    dataIndex: 'commission',
+                    key: 'commission',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'commission' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => a.commission - b.commission
+                },
+                {
+                    title: 'Total',
+                    dataIndex: 'total',
+                    key: 'totals.total',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'total' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => a.total - b.total
+                }
+            ],
+            historyCloses: [],
+            dataHistoryClosedReport: {},
+            columnsHistory: [
+                {
+                    title: 'Fecha',
+                    dataIndex: 'createdAt',
+                    key: 'createdAt',
+                    scopedSlots: { customRender: 'format-date' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                },
+                {
+                    title: 'Comision',
+                    dataIndex: 'commission',
+                    key: 'commission',
+                    scopedSlots: { customRender: 'commission-slot' }
+                },
+                {
+                    title: 'Avances',
+                    dataIndex: 'advancement',
+                    key: 'advancement',
+                    scopedSlots: { customRender: 'advancement-slot' }
+                },
+                {
+                    title: 'Bonos',
+                    dataIndex: 'bonus',
+                    key: 'bonus',
+                    scopedSlots: { customRender: 'bonus-slot' }
+                },
+                {
+                    title: 'Ver informe',
+                    dataIndex: '_id',
+                    key: '_id',
+                    scopedSlots: { customRender: 'action-slot' }
+                }
+            ],
             columnsLender: [
                 {
                     label: "Razón",
@@ -447,6 +558,7 @@ export default {
             }, 200);
             
         });
+        this.getHistoryCloses()
     },
     methods: {
         getToken(){
@@ -462,6 +574,19 @@ export default {
             this.dataDetail = Data
             this.modals.modal3 = true
             
+        },
+        async getHistoryCloses(){
+            try {
+                const getHistory = await axios.get(`${endPoint.endpointTarget}/employes/historyCloses/${this.id}`, this.configHeader)
+                console.log(getHistory)
+                if (getHistory.data.status == 'ok') {
+                    this.historyCloses = getHistory.data.data
+                }else{
+                    this.historyCloses = []
+                }
+            }catch(err){
+                console.log(err)
+            }
         },
         async cancelSale(id,servicios, comission){
             console.log(comission)
@@ -683,7 +808,16 @@ export default {
                     var win = window.open(endPoint.url+'/reportPdfEmploye?id='+this.code, '_blank', params)
                     win.focus();
                     setTimeout(()=> {
-                        axios.put(endPoint.endpointTarget+'/employes/closeemploye/'+this.code, {}, this.configHeader)
+                        axios.put(endPoint.endpointTarget+'/employes/closeemploye/'+this.code, {
+                            sales: this.sales,
+                            bonus: this.lenderBonus,
+                            advancement: this.advancement,
+                            commission: this.totalComission,
+                            employe: {
+                                name: this.nameLender,
+                                id: this.id
+                            }
+                        }, this.configHeader)
                         .then(res => {
                             if (res.data.status == 'employe closed') {
                                 axios.post(`${endPoint.endpointTarget}/expenses/`, {
@@ -747,6 +881,17 @@ export default {
     .hide{
         display: none;
     }
-    
-    
+    .inventory .nav-item .active{
+        background-color:#172b4d !important;
+        color: white !important;
+    }
+    .inventory .nav-link {
+        color: #172b4d !important;
+    }
+    .inventory .card-header{
+        display:none;
+    }
+    .tablesExpense .card-body{
+        padding: 0px !important;
+    }
 </style>

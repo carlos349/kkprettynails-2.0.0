@@ -168,27 +168,67 @@
                 </div>
             </div>
         </base-header>
-        <a-config-provider>
-            <template #renderEmpty>
-                <div style="text-align: center">
-                    <a-icon type="warning" style="font-size: 20px" />
-                    <h2>Sucursal sin gastos registrados.</h2>
-                </div>
-            </template>
-            <a-table :columns="columns" :loading="progress" :data-source="expenses" :scroll="getScreen">
-                <template slot="format-date" slot-scope="record, column">
-                    {{column.createdAt | formatDate}}
-                </template>
-                <template slot="total-slot" slot-scope="record, column">
-                    {{column.amount | formatPrice}}
-                </template>
-                <template slot="action-slot" slot-scope="record, column">
-                    <base-button v-if="column.type == 'Bono' || column.type == 'Mensual'" :disabled="validRoute('gastos', 'eliminar') ? false : true" @click="deleteExpense(column._id, column.type, column.employe, column.amount)" size="sm" type="danger">
-                        <a-icon type="close-circle" style="vertical-align:1.5px;" />
-                    </base-button>
-                </template>
-            </a-table>
-        </a-config-provider>
+        <tabs fill class="flex-column flex-md-row inventory inventoryTabs">
+            <card class="tablesExpense" shadow>
+                <tab-pane>
+                    <span class="p-2" slot="title">
+                        <i class="ni ni-shop"></i>
+                        Tabla de gastos
+                    </span>
+                    <a-config-provider>
+                        <template #renderEmpty>
+                            <div style="text-align: center">
+                                <a-icon type="warning" style="font-size: 20px" />
+                                <h2>Sucursal sin gastos registrados.</h2>
+                            </div>
+                        </template>
+                        <a-table :columns="columns" :loading="progress" :data-source="expenses" :scroll="getScreen">
+                            <template slot="format-date" slot-scope="record, column">
+                                {{column.createdAt | formatDate}}
+                            </template>
+                            <template slot="total-slot" slot-scope="record, column">
+                                {{column.amount | formatPrice}}
+                            </template>
+                            <template slot="action-slot" slot-scope="record, column">
+                                <base-button v-if="column.type == 'Bono' || column.type == 'Mensual'" :disabled="validRoute('gastos', 'eliminar') ? false : true" @click="deleteExpense(column._id, column.type, column.employe, column.amount)" size="sm" type="danger">
+                                    <a-icon type="close-circle" style="vertical-align:1.5px;" />
+                                </base-button>
+                            </template>
+                        </a-table>
+                    </a-config-provider>
+                </tab-pane>
+                <tab-pane>
+                    <span class="p-2" slot="title">
+                        <i class="ni ni-calendar-grid-58"></i>
+                        Historial de cierres
+                    </span>
+                    <a-config-provider>
+                        <template #renderEmpty>
+                            <div style="text-align: center">
+                                <a-icon type="warning" style="font-size: 20px" />
+                                <h2>Sucursal sin historial.</h2>
+                            </div>
+                        </template>
+                        <a-table :columns="columnsHistory" :loading="progress" :data-source="historyExpenses" :scroll="getScreen">
+                            <template slot="expenses-slot" slot-scope="record, column">
+                                {{column.expenses.length}}
+                            </template>
+                            <template slot="format-date" slot-scope="record, column">
+                                {{column.createdAt | formatDate}}
+                            </template>
+                            <template slot="action-slot" slot-scope="record, column">
+                                <a-tooltip placement="top">
+                                    <template slot="title">
+                                        <span>Ver informe</span>
+                                    </template>
+                                    <base-button size="sm" type="default" @click="modals.modal5 = true, dataHistoryClosedReport = column" icon="ni ni-bullet-list-67"></base-button>
+                                </a-tooltip>
+                            </template>
+                        </a-table>
+                    </a-config-provider>
+                </tab-pane>
+            </card>
+        </tabs>
         <a-modal v-model="modals.modal1" :footer="null" >
             <template>
                 <h3 class="text-center w-100">Seleccione el tipo de gasto</h3>
@@ -295,6 +335,18 @@
                 </base-button>
             </template>
         </a-modal>
+        <a-modal v-model="modals.modal5" width="60%" :footer="null" :closable="true" >
+            <template>
+                <h3 class="text-center w-100">Informe de cierre</h3>
+                <template v-if="dataHistoryClosedReport.branch">
+                    <a-table :columns="columnsHistoryExpenses" :loading="progress" :data-source="dataHistoryClosedReport.expenses" :scroll="getScreen">
+                        <template slot="total-slot" slot-scope="record, column">
+                            {{column.amount | formatPrice}}
+                        </template>
+                    </a-table>
+                </template>
+            </template>
+        </a-modal>
     </div>
 </template>
 <script>
@@ -331,7 +383,8 @@ export default {
                 modal1: false,
                 modal2: false,
                 modal3: false,
-                modal4: false
+                modal4: false,
+                modal5: false
             },
             registerExpense: {
                 detail: '',
@@ -346,8 +399,65 @@ export default {
                     "x-access-token": localStorage.userToken
                 }
             },
+            dataHistoryClosedReport: {},
             branchName: '',
             branch: '',
+            columnsHistoryExpenses: [
+                {
+                    title: 'Fecha',
+                    dataIndex: 'createdAt',
+                    key: 'createdAt',
+                    width: "20%"
+                },
+                {
+                    title: 'Tipo',
+                    dataIndex: 'typee',
+                    key: 'typee',
+                    width: "20%"
+                },
+                {
+                    title: 'Descripción',
+                    dataIndex: 'detaill',
+                    key: 'detaill',
+                    width: "40%"
+                },
+                {
+                    title: 'Total',
+                    dataIndex: 'total',
+                    key: 'total',
+                    scopedSlots: { customRender: 'total-slot' },
+                    sorter: (a, b) => a.total - b.total,
+                    width: "20%"
+                }
+            ],
+            columnsHistory: [
+                {
+                    title: 'Fecha',
+                    dataIndex: 'createdAt',
+                    key: 'createdAt',
+                    scopedSlots: { customRender: 'format-date' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                },
+                {
+                    title: 'Gastos',
+                    dataIndex: 'expenses',
+                    key: 'expenses',
+                    scopedSlots: { customRender: 'expenses-slot' }
+                },
+                ,
+                {
+                    title: 'Total',
+                    dataIndex: 'totals.totalFinal',
+                    key: 'totals.totalFinal'
+                },
+                {
+                    title: 'Ver informe',
+                    dataIndex: '_id',
+                    key: '_id',
+                    scopedSlots: { customRender: 'action-slot' }
+                }
+            ],
             columns: [
                 {
                     title: 'Fecha',
@@ -381,6 +491,7 @@ export default {
                     scopedSlots: { customRender: 'action-slot' }
                 }
             ],
+            historyExpenses: [],
             expenses: [],
             typeRegister: '',
             employes: [],
@@ -434,9 +545,9 @@ export default {
             this.getTotalSales()
             this.getReinvestment()
             this.getTotal() 
+            this.getHistoryExpenses()
         },
         validRoute(route, type){
-            console.log(route, type)
             for (let index = 0; index < this.auth.length; index++) {
                 const element = this.auth[index];
                 if (element.ruta == route) {
@@ -447,15 +558,24 @@ export default {
                     }
                 }
             }
-            
+        },
+        async getHistoryExpenses(){
+            try {
+                const getHistory = await axios.get(`${endPoint.endpointTarget}/expenses/historyExpenses/${this.branch}`, this.configHeader)
+                if (getHistory.data.status == 'ok') {
+                    this.historyExpenses = getHistory.data.data
+                }else{
+                    this.historyExpenses = []
+                }
+            }catch(err){
+                console.log(err)
+            }
         },
         async getTotalSales(){
             try {
                 const getTotal = await axios.get(`${endPoint.endpointTarget}/sales/totalSales/${this.branch}`, this.configHeader)
-                console.log(getTotal)
                 if (getTotal.data.status == 'ok') {
                     this.totalSales = getTotal.data.data
-                    console.log(this.totalSales)
                 }
             }catch(err){
                 console.log(err)
@@ -551,8 +671,6 @@ export default {
                     this.reinvestmentValid = false
                     this.reinvestmentId = reinvestment.data.data._id
                 }
-                console.log(this.reinvestmentTotal)
-                console.log(reinvestment)
             }catch(err){
                 console.log(err)
             }
@@ -590,7 +708,6 @@ export default {
             }, 200);
         },
         selectDate(date, dateString){
-            console.log(date, dateString)
             if (date) {
                 this.dateFind = dateString
             }else{
@@ -607,7 +724,6 @@ export default {
                     if (expenses.data.status == 'ok') {
                         this.expenses = expenses.data.data
                         this.progress = false
-                        console.log(this.expenses)
                     }else{
                         this.expenses = []
                         this.progress = false
@@ -691,7 +807,6 @@ export default {
             }
         },
         deleteExpense(id, type, employe, total){
-            // console.log(id, type, employe, total)
             axios.put(`${endPoint.endpointTarget}/expenses/${id}`, {
                 type: type,
                 idEmploye: employe,
@@ -792,11 +907,23 @@ width=0,height=0,left=-1000,top=-1000`;
     },
     computed: {
         getScreen: () => {
-            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 'auto' }
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 280 }
         }
     }
 }
 </script>
 <style>
-
+.inventory .nav-item .active{
+    background-color:#172b4d !important;
+    color: white !important;
+}
+.inventory .nav-link {
+    color: #172b4d !important;
+}
+.inventory .card-header{
+    display:none;
+}
+.tablesExpense .card-body{
+    padding: 0px !important;
+}
 </style>

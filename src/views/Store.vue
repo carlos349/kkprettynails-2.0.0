@@ -1652,7 +1652,7 @@ export default {
         },
         addProductToBranch() {
             this.$swal({
-                title:`¿Desea registrar ${this.productForBranch.product} a sucursal?`,
+                title:`¿Registrar ${this.productForBranch.product} a sucursal?`,
                 text: '¡Recuerda! este producto se registrará en inventario de la sucursal',
                 icon: 'warning',
                 showCancelButton: true,
