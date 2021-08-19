@@ -15,7 +15,7 @@
             </div>
         </base-header>
         <!--Charts-->
-        <template v-if="validRoute('metricas', 'filtrar')"> 
+        <template v-if="validRoute('reportes', 'filtrar')"> 
           <card 
             class="mt-2"
             shadow>
@@ -52,7 +52,7 @@
                   </a-select>
                 </div>
                 <div class="col-md-4">
-                  <base-button :disabled="validRoute('metricas', 'filtrar') ? false : true" @click="filterAnualGraph" size="sm" type="default">
+                  <base-button :disabled="validRoute('reportes', 'filtrar') ? false : true" @click="filterAnualGraph" size="sm" type="default">
                       <a-icon type="filter" style="vertical-align:1px;font-size:1.6em;" />
                   </base-button>
                 </div>
@@ -123,7 +123,7 @@
                   </a-select>
                 </div>
                 <div class="col-md-4">
-                  <base-button class="forBug" :disabled="validRoute('metricas', 'filtrar') ? false : true" @click="filterGraph" size="sm" type="default">
+                  <base-button class="forBug" :disabled="validRoute('reportes', 'filtrar') ? false : true" @click="filterGraph" size="sm" type="default">
                       <a-icon type="filter" style="vertical-align:1px;font-size:1.6em;" />
                   </base-button>
                 </div>

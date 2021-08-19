@@ -500,13 +500,18 @@
                         addon-left-icon="fa fa-key"
                         addon-right-icon="fas fa-plus text-default">
                     </base-input>
-                    <base-input  alternative
-                        placeholder="Teléfono"
-                        v-model="provider.contact"
-                        v-on:keyup="validProviders()"
-                        addon-left-icon="fa fa-address-book"
-                        addon-right-icon="fa fa-asterisk text-danger">
-                    </base-input>
+
+                    <VuePhoneNumberInput v-model="provider.contact.formatNational"
+                        class="mb-4"
+                        @update="provider.contact = $event"
+                        :default-phoner-number="provider.contact.nationalNumber"
+                        :default-country-code="provider.contact.countryCode"
+                        :translations="{
+                        countrySelectorLabel: 'Código de país',
+                        countrySelectorError: 'Elije un país',
+                        phoneNumberLabel: 'Número de teléfono',
+                        example: 'Ejemplo :'
+                    }"/>
                     <base-input  alternative
                         placeholder="Correo"
                         v-model="provider.contactPlus"
@@ -862,13 +867,16 @@ import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import jwtDecode from 'jwt-decode';
 // COMPONENTS
+import VuePhoneNumberInput from 'vue-phone-number-input';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
 import mixinUserToken from '../mixins/mixinUserToken'
 export default {
     mixins: [mixinUserToken],
     components: {
         flatPicker,
-        vueCustomScrollbar
+        vueCustomScrollbar,
+        VuePhoneNumberInput
     },
     data() {
       return {
@@ -895,7 +903,18 @@ export default {
         provider:{
           name:'No entender',
           document:'',
-          contact:'',
+          contact: {
+                "countryCode": "CL", 
+                "isValid": false, 
+                "phoneNumber": "", 
+                "countryCallingCode": "", 
+                "formattedNumber": "", 
+                "nationalNumber": "", 
+                "formatInternational": "", 
+                "formatNational": "", 
+                "uri": "", 
+                "e164": ""
+          },
           contactPlus:'',
           location:'',
         },
@@ -1155,8 +1174,8 @@ export default {
             },
             {
                 title: 'Teléfono',
-                dataIndex: 'contact',
-                key: 'contact',
+                dataIndex: 'contact.formatInternational',
+                key: 'contact.formatInternational',
                 ellipsis: true,
                 scopedSlots: {
                     filterDropdown: 'filterDropdown',
@@ -2115,7 +2134,18 @@ export default {
                   this.provider = {
                     name:'',
                     rut:'',
-                    contact:'',
+                    contact:{
+                        "countryCode": "CL", 
+                        "isValid": false, 
+                        "phoneNumber": "", 
+                        "countryCallingCode": "", 
+                        "formattedNumber": "", 
+                        "nationalNumber": "", 
+                        "formatInternational": "", 
+                        "formatNational": "", 
+                        "uri": "", 
+                        "e164": ""
+                    },
                     contactPlus:'',
                     direction:'',
                   }
@@ -2150,14 +2180,25 @@ export default {
             this.dataProduct.price = ''
             }
             if (type == 2) {
-            this.provider = {
-                name:'',
-                rut:'',
-                contact:'',
-                contactPlus:'',
-                direction:'',
-            }
-            this.providerSup.validProvider = true
+                this.provider = {
+                    name:'',
+                    rut:'',
+                    contact:{
+                        "countryCode": "CL", 
+                        "isValid": false, 
+                        "phoneNumber": "", 
+                        "countryCallingCode": "", 
+                        "formattedNumber": "", 
+                        "nationalNumber": "", 
+                        "formatInternational": "", 
+                        "formatNational": "", 
+                        "uri": "", 
+                        "e164": ""
+                    },
+                    contactPlus:'',
+                    direction:'',
+                }
+                this.providerSup.validProvider = true
             }
             if(type == 3){
             this.dataProduct = {
@@ -2384,7 +2425,7 @@ export default {
             })
         },
         validProviders(){
-            if (this.provider.name != '' && this.provider.contact != '' && this.provider.location != '') {
+            if (this.provider.name != '' && this.provider.contact.isValid && this.provider.location != '') {
               this.providerSup.validProvider = false
             }
             else{
@@ -2395,7 +2436,7 @@ export default {
             this.provider = {
               name:name,
               document:document,  
-              contact:contact,
+              contact: contact,
               contactPlus:contactPlus,
               location:location,
               id:id

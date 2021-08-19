@@ -335,7 +335,7 @@
                 </base-button>
             </template>
         </a-modal>
-        <a-modal v-model="modals.modal5" width="60%" :footer="null" :closable="true" >
+        <a-modal v-model="modals.modal5" width="60%" :closable="true" >
             <template>
                 <h3 class="text-center w-100">Informe de cierre</h3>
                 <template v-if="dataHistoryClosedReport.branch">
@@ -345,6 +345,11 @@
                         </template>
                     </a-table>
                 </template>
+            </template>
+            <template slot="footer">
+                <base-button @click="reportHistory" size="sm" type="primary">
+                    Imprimir reporte
+                </base-button>
             </template>
         </a-modal>
     </div>
@@ -897,6 +902,12 @@ export default {
             let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
 width=0,height=0,left=-1000,top=-1000`;
             var win = window.open(endPoint.url+'/reporteGasto?branch='+this.branch, '_blank', params)
+            win.focus();
+        },
+        reportHistory(){
+            let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
+width=0,height=0,left=-1000,top=-1000`;
+            var win = window.open(endPoint.url+'/reporteGastoHistorial?id='+this.dataHistoryClosedReport._id, '_blank', params)
             win.focus();
         }
     },

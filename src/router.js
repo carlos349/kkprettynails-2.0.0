@@ -8,6 +8,7 @@ import CancelLayout from '@/views/DatesCancel'
 import reportPdf from '@/views/reportPdf'
 import reportPdfEmploye from '@/views/reportPdfEmploye'
 import reportExpense from '@/views/reportExpense'
+import reportHistoryExpense from '@/views/reportHistoryExpense'
 Vue.use(Router)
 
 export default new Router({
@@ -70,6 +71,18 @@ export default new Router({
           path: '/reportExpense',
           name: '',
           component: () => import('./views/reportExpense.vue')
+        }
+      ]
+    },
+    {
+      path: '/reporteGastoHistorial',
+      redirect: 'reportHistoryExpense',
+      component: reportHistoryExpense,
+      children: [
+        {
+          path: '/reportHistoryExpense',
+          name: '',
+          component: () => import('./views/reportHistoryExpense.vue')
         }
       ]
     },

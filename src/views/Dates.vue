@@ -1989,7 +1989,7 @@ export default {
                     this.$swal({
 							type: 'success',
                             icon: 'success',
-							title: 'Cliente editado con exito',
+							title: 'Cliente editado con éxito',
 							showConfirmButton: false,
 							timer: 1500
 						})
@@ -2548,7 +2548,7 @@ export default {
                                         this.$swal({
                                             type: 'success',
                                             icon: 'success',
-                                            title: 'Cita creada con exito',
+                                            title: 'Cita creada con éxito',
                                             showConfirmButton: false,
                                             timer: 1500
                                         })
@@ -2642,7 +2642,7 @@ export default {
                     this.$swal({
                         type: 'success',
                         icon: 'success',
-                        title: 'Se registro el cliente con exito, ya puede continuar',
+                        title: 'Se registro el cliente con éxito, ya puede continuar',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -3039,7 +3039,7 @@ export default {
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',
-                                        title: 'Cita finalizada con exito',
+                                        title: 'Cita finalizada con éxito',
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
@@ -3090,7 +3090,7 @@ export default {
                         this.$swal({
                             type: 'success',
                             icon: 'success',
-                            title: 'Cita finalizada con exito',
+                            title: 'Cita finalizada con éxito',
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -3113,12 +3113,12 @@ export default {
         deleteDate(id,cliente){
             this.$swal({
                 icon:'warning',
-                title: '¿Está seguro de borrar la cita?',
-                text: 'No puedes revertir esta acción',
+                title: '¿Desea eliminar cita?',
+                text: '¡Recuerda! Se procederá a eliminar del calendario y no se podrá revertir esta acción',
                 type: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Si',
-                cancelButtonText: 'No, evitar acción',
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No, cancelar',
                 showCloseButton: true,
                 showLoaderOnConfirm: true
             })
@@ -3638,7 +3638,7 @@ export default {
                     this.getClosed()
                     this.$swal({
                         type: 'success',
-                        title: 'Cita finalizada con exito',
+                        title: 'Cita finalizada con éxito',
                         showConfirmButton: false,
                         timer: 1500
                     })
