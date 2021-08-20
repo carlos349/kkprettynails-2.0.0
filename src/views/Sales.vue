@@ -596,7 +596,14 @@ export default {
         sendSale(id){
             axios.get(endPoint.endpointTarget+'/mails/salemail/'+id, this.configHeader)
             .then(res => {
-                console.log(res)
+                if (res) {
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Enviado con éxito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
                 
             })
         },

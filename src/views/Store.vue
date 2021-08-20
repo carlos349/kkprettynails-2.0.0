@@ -18,7 +18,8 @@
                     <a-icon type="shopping-cart" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                     Proveedores
                 </base-button>
-                <base-button :disabled="validRoute('bodega', 'gestion_sucursales') ? false : true" class="float-right mt-7 mr-2" size="sm" @click="modalAdminProduct.modal1 = true, productsCount()" type="success">
+                <base-button :disabled="validRoute('bodega', 'gestion_sucursales') ? false : true" class="float-right mt-7 mr-2" size="sm" @click="modalAdminProduct.modal1 = true,selectLoad()
+                productForBranch = ''" type="success">
                     <a-icon type="shop" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                     Sucursales
                 </base-button>
@@ -529,7 +530,7 @@
         </card>
     </modal>
     <modal :show.sync="modals.modal4" modal-classes="modal-dialog-centered modal-lg">
-      <h6 slot="header" class="modal-title" id="modal-title-default">Cierre de inventario</h6>
+      <h6 slot="header" class="modal-title" id="modal-title-default">Cierre de bodega</h6>
       <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
         <div class="row p-2 m-2">
           <div class="col-6">
@@ -1717,10 +1718,11 @@ export default {
                     this.productForBranch = res.data.data
                     this.$swal({
                         title: '¿Está seguro que desea eliminar ' + this.branchEntry[index].count + ' ' + measure + ' de este producto?',
+                        html: '¡Recuerda! se descontará de la sucursal: <b>'+ this.selectedBranchName + '</b>',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Estoy seguro',
-                        cancelButtonText: 'No, evitar acción',
+                        confirmButtonText: 'Si',
+                        cancelButtonText: 'No, cancelar',
                         showCloseButton: true,
                         showLoaderOnConfirm: true
                     }).then((result) => {
@@ -2348,41 +2350,56 @@ export default {
             })
         },
         closeStore(){
-            axios.post(endPoint.endpointTarget+'/stores/closestore', {
-                firstNameUser: this.firstNameUser,
-                lastNameUser: this.lastNameUser,
-                emailUser: this.emailUser,
-                idUser: this.idUser, 
-                products:this.countProduct
-            }, this.configHeader)
-            .then(res => {
-                if (res.data.status === 'closed') {
+            var valid = true
+            this.countProduct.forEach(element => {
+                if (element.count == '' || element.count == null ) {
+                    valid = false
+                }
+            });
+            if (valid) {
+                axios.post(endPoint.endpointTarget+'/stores/closestore', {
+                    firstNameUser: this.firstNameUser,
+                    lastNameUser: this.lastNameUser,
+                    emailUser: this.emailUser,
+                    idUser: this.idUser, 
+                    products:this.countProduct
+                }, this.configHeader)
+                .then(res => {
+                    if (res.data.status === 'closed') {
+                        this.$swal({
+                            icon: 'success',
+                            title: 'Cierre realizado con éxito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.getProducts();
+                        this.getHistoryClosed()
+                    }
+                    else{
+                        this.$swal({
+                            icon:'error',
+                            title: 'Ya se hizo un cierre este mes',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }).catch(err => {
                     this.$swal({
-                        
-                        icon: 'success',
-                        title: 'Cierre realizado con éxito',
+                        icon:'error',
+                        title: 'Problemas tecnicos intente de nuevo',
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    this.getProducts();
-                    this.getHistoryClosed()
-                }
-                else{
-                    this.$swal({
-                        
-                        title: 'Ya se hizo un cierre este mes',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            }).catch(err => {
+                })
+            }else{
                 this.$swal({
-                    
-                    title: 'Problemas tecnicos intente de nuevo',
+                    icon:'error',
+                    title: 'Debes llenar todos los campos',
                     showConfirmButton: false,
                     timer: 1500
                 })
-            })
+            }
+            
         },
         validProviders(){
             if (this.provider.name != '' && this.provider.contact != '' && this.provider.location != '') {

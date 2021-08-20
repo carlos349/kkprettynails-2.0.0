@@ -721,7 +721,7 @@ export default {
                     axios.post(endPoint.endpointTarget+'/expenses/', {
                         branch: this.branch,
                         detail: `Se ha devuelto ${this.lessInventory} ${this.selectedProduct.measure} de ${this.selectedProduct.product} a la bodega`,
-                        amount: this.selectedProduct.price * this.lessInventory,
+                        amount: -(this.selectedProduct.price * this.lessInventory),
                         type: 'Inventario',
                     }, this.configHeader)
                     .then(res => {

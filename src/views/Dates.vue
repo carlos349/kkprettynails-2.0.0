@@ -1522,6 +1522,7 @@ export default {
         // this.getUsers()
         this.getBranch()
         this.device()
+        this.getUserData()
         // this.getClosed()
         // this.getCategories()
         
@@ -1772,6 +1773,12 @@ export default {
             this.getEmployes()
             this.getDates()
             this.getBlockingHours()
+        },
+        getUserData(){
+            this.firstNameUser = localStorage.firstname  
+            this.lastNameUser = localStorage.lastname
+            this.emailUser = localStorage.email
+            this.idUser = localStorage._id
         },
         async getMicroServices(){
             try {
@@ -3069,8 +3076,8 @@ export default {
                                     this.dateModals.modal3 = false
                                     axios.post(endPoint.endpointTarget+'/notifications', {
                                         branch: this.branch,
-                                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                                        userImage:localStorage.getItem('imageUser'),
+                                        userName:firstNameUser + " " + lastNameUser,
+                                        userImage:null,
                                         detail:'Finalizó una cita',
                                         link: 'agendamiento'
                                     }, this.configHeader)
