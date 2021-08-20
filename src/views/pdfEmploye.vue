@@ -2,23 +2,17 @@
     <div class="mx-2">
         <template>
             <center>
-                <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre</h1> 
+                <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre {{initDate | formatDate}}</h1> 
             </center>
             <div class="row mb-3">
                 <div class="col-6 pl-9">
-                    <strong>  Nombre de la empleada:</strong> {{nameLender}}
+                    <strong> Nombre de la empleada:</strong> {{nameLender}}
                 </div>
                 <div class="col-6 pl-9">
                     <strong>Comision total:</strong> {{totalComission | formatPrice}}
                 </div>
                 <div class="col-6 pl-9">
-                    <strong>Fecha de inicio:</strong> {{initDate | formatDate}}
-                </div>
-                <div class="col-6 pl-9">
                     <strong>Total de adelantos:</strong> {{advancement | formatPrice}}
-                </div>
-                <div class="col-6 pl-9">
-                    <strong>Fecha de cierre:</strong> {{closeDate | formatDate}}
                 </div>
                 <div class="col-6 pl-9">
                     <strong>Total de bonos:</strong> {{lenderBonus | formatPrice}}
@@ -281,15 +275,13 @@ export default {
                     title: 'Cliente',
                     dataIndex: 'client',
                     key: 'client',
-                    ellipsis: true,
-                    scopedSlots: { customRender: 'client-slot' }
+                    ellipsis: true
                 },
                 {
                     title: 'Servicio',
                     dataIndex: 'service',
                     key: 'service',
-                    ellipsis: true,
-                    scopedSlots: { customRender: 'service-slot' }
+                    ellipsis: true
                 },
                 {
                     title: 'Comisión',
@@ -303,7 +295,7 @@ export default {
                 {
                     title: 'Total',
                     dataIndex: 'total',
-                    key: 'totals.total',
+                    key: 'total',
                     ellipsis: true,
                     scopedSlots: { customRender: 'total' },
                     defaultSortOrder: 'descend',
@@ -319,28 +311,23 @@ export default {
     methods: {
         getData(){
             this.closeDate = new Date()
-            axios.get(endPoint.endpointTarget+'/employes/justOneById/'+this.id, this.configHeader)
+            axios.get(endPoint.endpointTarget+'/employes/getHistoryEmploye/'+this.id, this.configHeader)
             .then(resData => {
-                this.code = resData.data.data._id
-                this.nameLender = resData.data.data.firstName + ' ' + resData.data.data.lastName
+                this.nameLender = resData.data.data.employe.name
                 this.totalComission = resData.data.data.commission
                 this.lenderBonus = resData.data.data.bonus
                 this.advancement = resData.data.data.advancement
-                axios.get(endPoint.endpointTarget+'/employes/salesbyemploye/'+this.id, this.configHeader)
-                .then(res => {
-                    console.log(res)
-                    this.sales = res.data.data
-                    this.initDate = res.data.data[0].createdAt
-                    for (const sale of this.sales) {
-                        this.totalSales = this.totalSales + sale.total
-                    }
+                this.sales = resData.data.data.sales
+                this.initDate = resData.data.data.createdAt
+                for (const sale of this.sales) {
+                    this.totalSales = this.totalSales + sale.total
+                }
+                setTimeout(() => {
+                    print()
                     setTimeout(() => {
-                        print()
-                        setTimeout(() => {
-                            window.close()
-                        }, 200);
+                        window.close()
                     }, 200);
-                })
+                }, 200);
             })
             .catch(err => {
                 console.log(err )

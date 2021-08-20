@@ -1976,11 +1976,16 @@ export default {
         EventBus.$on('reloadLenders', status => {
             this.getLenders()
         })
+        EventBus.$on('reloadFinallyDates', status => {
+            console.log(status)
+            this.getFinallyDates()
+        })
         EventBus.$on('reloadClients', status => {
             this.getClient()
         })
         EventBus.$on('openModal', status => {
             this.initialState()
+            this.getFinallyDates()
         })
         EventBus.$on('changeBranch', status => {
             this.getBranch()
@@ -1990,10 +1995,6 @@ export default {
         })
         EventBus.$on('reloadMicroservices', status => {
             this.getMicroservices()
-        })
-        EventBus.$on('reloadFinallyDates', status => {
-            console.log(status)
-            this.getFinallyDates()
         })
         EventBus.$on('loggedin-user', status => {
             this.auth = status

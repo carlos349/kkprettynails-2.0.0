@@ -129,8 +129,8 @@
                                                         <span class="ml-1 mt-2 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
                                                         <br>
                                                         <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;">
-                                                            <badge style="z-index:100" :type="micro.checked ? 'primary' : 'secondary'" class="text-default">
-                                                                <p style="font-size:1.3em;" class="mb-0 text-default">{{micro.microService}}</p>
+                                                            <badge style="z-index:100" :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
+                                                                <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
                                                             </badge>
                                                         </div>
                                                     </a-tooltip>
@@ -255,26 +255,33 @@
                                             <center>
                                             <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
                                             </center>
-                                            <a-tooltip placement="top">
-                                                <template slot="title">
-                                                    <span>Adicionales: 
-                                                        <template v-if="data.microServiceSelect.length > 0">
-                                                            <span v-for="micros of data.microServiceSelect" :key="micros.name">
-                                                                {{micros.name}}
-                                                            </span>  
-                                                        </template>
-                                                        <template v-else>
-                                                            <span>
-                                                                No se seleccionó adicional
-                                                            </span>  
-                                                        </template>
-                                                    </span>
-                                                </template>
+                                            
                                                 <base-button type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
-                                                    <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.name}}</span> </badge><br>
+                                                    <badge class="mx-auto ml-2" type="default" style="background-color:#174c8e;">
+                                                        
+                                                        <span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.name}}
+                                                            
+                                                        </span> 
+                                                    </badge><a-tooltip placement="top">
+                                                                <template slot="title">
+                                                                    <span>Adicionales: 
+                                                                        <template v-if="data.microServiceSelect.length > 0">
+                                                                            <span v-for="micros of data.microServiceSelect" :key="micros.name">
+                                                                                {{micros.name}}
+                                                                            </span>  
+                                                                        </template>
+                                                                        <template v-else>
+                                                                            <span>
+                                                                                No se seleccionó adicional
+                                                                            </span>  
+                                                                        </template>
+                                                                    </span>
+                                                                </template>
+                                                                <a-icon class="mr-1" style="cursor: pointer;vertical-align: 0.1em;font-size:1.3em;" type="question-circle" />
+                                                            </a-tooltip><br>
                                                     <span class="mx-auto" style="font-size:1.2em;">{{data.realEmploye}}</span>
                                                 </base-button>
-                                            </a-tooltip>
+                                            
                                             <div style="background-color:#f8fcfd;">
                                                 <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
                                                     <span style="color:#000;font-weight:600;font-size:.96em;text-transform:none;">Desde las</span> 

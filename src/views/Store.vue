@@ -488,39 +488,43 @@
                 </div>
                 <form role="form">
                     <base-input  alternative
-                                placeholder="Nombre de la empresa"
-                                v-model="provider.name"
-                                v-on:keyup="validProviders()"
-                                addon-left-icon="fa fa-user-tie"
-                                addon-right-icon="fa fa-asterisk text-danger">
+                        placeholder="Nombre de la empresa"
+                        v-model="provider.name"
+                        v-on:keyup="validProviders()"
+                        addon-left-icon="fa fa-user-tie"
+                        addon-right-icon="fa fa-asterisk text-danger">
                     </base-input>
                     <base-input  alternative
-                                placeholder="RUT de la empresa"
-                                v-model="provider.document"
-                                v-on:keyup="formatRut(provider.document)"
-                                addon-left-icon="fa fa-key"
-                                addon-right-icon="fas fa-plus text-default">
+                        placeholder="Datos de identificación"
+                        v-model="provider.document"
+                        v-on:keyup="formatRut(provider.document)"
+                        addon-left-icon="fa fa-key"
+                        addon-right-icon="fas fa-plus text-default">
+                    </base-input>
+
+                    <VuePhoneNumberInput v-model="provider.contact.formatNational"
+                        class="mb-4"
+                        @update="provider.contact = $event"
+                        :default-phoner-number="provider.contact.nationalNumber"
+                        :default-country-code="provider.contact.countryCode"
+                        :translations="{
+                        countrySelectorLabel: 'Código de país',
+                        countrySelectorError: 'Elije un país',
+                        phoneNumberLabel: 'Número de teléfono',
+                        example: 'Ejemplo :'
+                    }"/>
+                    <base-input  alternative
+                        placeholder="Correo"
+                        v-model="provider.contactPlus"
+                        addon-left-icon="fa fa-address-book"
+                        addon-right-icon="fas fa-plus text-default">
                     </base-input>
                     <base-input  alternative
-                                placeholder="Contacto de la empresa"
-                                v-model="provider.contact"
-                                v-on:keyup="validProviders()"
-                                addon-left-icon="fa fa-address-book"
-                                addon-right-icon="fa fa-asterisk text-danger"
-                                >
-                    </base-input>
-                    <base-input  alternative
-                                placeholder="Contacto adicional"
-                                v-model="provider.contactPlus"
-                                addon-left-icon="fa fa-address-book"
-                                addon-right-icon="fas fa-plus text-default">
-                    </base-input>
-                    <base-input  alternative
-                                placeholder="Dirección de la empresa"
-                                v-model="provider.location"
-                                v-on:keyup="validProviders()"
-                                addon-left-icon="fas fa-route"
-                                addon-right-icon="fa fa-asterisk text-danger">
+                        placeholder="Dirección de la empresa"
+                        v-model="provider.location"
+                        v-on:keyup="validProviders()"
+                        addon-left-icon="fas fa-route"
+                        addon-right-icon="fa fa-asterisk text-danger">
                     </base-input>
                 </form>
             </template>
@@ -614,8 +618,8 @@
         <h6 slot="header" class="modal-title" id="modal-title-default">Gestión de sucursales</h6>
         <div class="row mb-5">
             <div class="col-md-4 mx-auto">
-                     <a-select class="input-group-alternative w-100 mx-auto" show-search default-value="Seleccione una sucursal"  @change="selectEmploye" size="large">
-                    <a-select-option v-for="branch of branches" :key="branch._id" :value="branch.name" v-on:click="getInventoryByBranch(branch._id, branch.name)">
+                <a-select class="input-group-alternative w-100 mx-auto" show-search default-value="Seleccione una sucursal"  @change="selectEmploye" size="large">
+                    <a-select-option v-for="branch of branches" :key="branch._id" v-if="branch.active" :value="branch.name" v-on:click="getInventoryByBranch(branch._id, branch.name)">
                         {{branch.name}}
                     </a-select-option>
                 </a-select>
@@ -864,13 +868,16 @@ import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
 import jwtDecode from 'jwt-decode';
 // COMPONENTS
+import VuePhoneNumberInput from 'vue-phone-number-input';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
 import mixinUserToken from '../mixins/mixinUserToken'
 export default {
     mixins: [mixinUserToken],
     components: {
         flatPicker,
-        vueCustomScrollbar
+        vueCustomScrollbar,
+        VuePhoneNumberInput
     },
     data() {
       return {
@@ -897,7 +904,18 @@ export default {
         provider:{
           name:'No entender',
           document:'',
-          contact:'',
+          contact: {
+                "countryCode": "CL", 
+                "isValid": false, 
+                "phoneNumber": "", 
+                "countryCallingCode": "", 
+                "formattedNumber": "", 
+                "nationalNumber": "", 
+                "formatInternational": "", 
+                "formatNational": "", 
+                "uri": "", 
+                "e164": ""
+          },
           contactPlus:'',
           location:'',
         },
@@ -1156,9 +1174,9 @@ export default {
                 },
             },
             {
-                title: 'Contacto',
-                dataIndex: 'contact',
-                key: 'contact',
+                title: 'Teléfono',
+                dataIndex: 'contact.formatInternational',
+                key: 'contact.formatInternational',
                 ellipsis: true,
                 scopedSlots: {
                     filterDropdown: 'filterDropdown',
@@ -1175,7 +1193,7 @@ export default {
                 },
             },
             {
-                title: 'Contacto adicional',
+                title: 'Correo',
                 dataIndex: 'contactPlus',
                 key: 'contactPlus',
                 ellipsis: true,
@@ -1654,8 +1672,8 @@ export default {
         },
         addProductToBranch() {
             this.$swal({
-                title: '¿Desea agregar este producto?',
-                text: '¡Recuerda! Se descontará de tu bodega',
+                title:`¿Registrar ${this.productForBranch.product} a sucursal?`,
+                text: '¡Recuerda! este producto se registrará en inventario de la sucursal',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Sí',
@@ -1721,7 +1739,11 @@ export default {
                         html: '¡Recuerda! se descontará de la sucursal: <b>'+ this.selectedBranchName + '</b>',
                         icon: 'warning',
                         showCancelButton: true,
+<<<<<<< HEAD
                         confirmButtonText: 'Si',
+=======
+                        confirmButtonText: 'Sí',
+>>>>>>> 81f868aba68cc35db00ef037ce13c7af0f35ee48
                         cancelButtonText: 'No, cancelar',
                         showCloseButton: true,
                         showLoaderOnConfirm: true
@@ -1820,8 +1842,8 @@ export default {
                         text: '¡Recuerda! Se descontará de tu bodega',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Estoy seguro',
-                        cancelButtonText: 'No, evitar acción',
+                        confirmButtonText: 'Sí',
+                        cancelButtonText: 'No, cancelar',
                         showCloseButton: true,
                         showLoaderOnConfirm: true
                     }).then((result) => {
@@ -2118,7 +2140,18 @@ export default {
                   this.provider = {
                     name:'',
                     rut:'',
-                    contact:'',
+                    contact:{
+                        "countryCode": "CL", 
+                        "isValid": false, 
+                        "phoneNumber": "", 
+                        "countryCallingCode": "", 
+                        "formattedNumber": "", 
+                        "nationalNumber": "", 
+                        "formatInternational": "", 
+                        "formatNational": "", 
+                        "uri": "", 
+                        "e164": ""
+                    },
                     contactPlus:'',
                     direction:'',
                   }
@@ -2153,14 +2186,25 @@ export default {
             this.dataProduct.price = ''
             }
             if (type == 2) {
-            this.provider = {
-                name:'',
-                rut:'',
-                contact:'',
-                contactPlus:'',
-                direction:'',
-            }
-            this.providerSup.validProvider = true
+                this.provider = {
+                    name:'',
+                    rut:'',
+                    contact:{
+                        "countryCode": "CL", 
+                        "isValid": false, 
+                        "phoneNumber": "", 
+                        "countryCallingCode": "", 
+                        "formattedNumber": "", 
+                        "nationalNumber": "", 
+                        "formatInternational": "", 
+                        "formatNational": "", 
+                        "uri": "", 
+                        "e164": ""
+                    },
+                    contactPlus:'',
+                    direction:'',
+                }
+                this.providerSup.validProvider = true
             }
             if(type == 3){
             this.dataProduct = {
@@ -2314,7 +2358,7 @@ export default {
         },
         deleteItem(id){
             this.$swal({
-                title: '¿Desea eliminar productos de bodega?',
+                title: '¿Desea eliminar productos?',
                 text: '¡Recuerda! Se procederá a eliminar de todas las sucursales donde se encuentre registrado y no se podrá revertir esta acción',
                 icon:'warning',
                 showCancelButton: true,
@@ -2402,7 +2446,7 @@ export default {
             
         },
         validProviders(){
-            if (this.provider.name != '' && this.provider.contact != '' && this.provider.location != '') {
+            if (this.provider.name != '' && this.provider.contact.isValid && this.provider.location != '') {
               this.providerSup.validProvider = false
             }
             else{
@@ -2413,7 +2457,7 @@ export default {
             this.provider = {
               name:name,
               document:document,  
-              contact:contact,
+              contact: contact,
               contactPlus:contactPlus,
               location:location,
               id:id
@@ -2441,13 +2485,12 @@ export default {
         },
         editProduct(){
             this.$swal({
-              title: '¿Está seguro de editar el producto? tambien se editara de todas las sucursales donde este registrado.',
-              text: 'No puedes revertir esta acción',
-              
+              title: `¿Desea editar el producto ${this.dataProduct.product}?`,
+              text: '¡Recuerda! También se editara de todas las sucursales donde está registrado. No puedes revertir esta acción.',
               icon:'warning',
               showCancelButton: true,
-              confirmButtonText: 'Estoy seguro',
-              cancelButtonText: 'No, evitar acción',
+              confirmButtonText: 'Sí',
+              cancelButtonText: 'No, cancelar',
               showCloseButton: true,
               showLoaderOnConfirm: true
             }).then((result) => {

@@ -40,7 +40,7 @@
                                     <a-select class="w-100 mx-auto mb-2"  placeholder="Seleccione la sucursal"
                                     :allowClear="true"
                                     @change="selectBranch">
-                                        <a-select-option v-for="branch of branches" :key="branch._id" :value="branch._id">
+                                        <a-select-option v-for="branch of branches" :key="branch._id" v-if="branch.active" :value="branch._id">
                                             {{branch.name}}
                                         </a-select-option>
                                     </a-select>
