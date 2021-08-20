@@ -3054,7 +3054,6 @@ export default {
                                     
                                     this.dateModals.modal1 = false
                                     this.dateModals.modal3 = false
-<<<<<<< HEAD
                                     axios.post(endPoint.endpointTarget+'/notifications', {
                                         branch: this.branch,
                                         userName:firstNameUser + " " + lastNameUser,
@@ -3065,18 +3064,6 @@ export default {
                                     .then(res => {
                                         this.socket.emit('sendNotification', res.data)
                                     })   
-=======
-                                    // axios.post(endPoint.endpointTarget+'/notifications', {
-                                    //     branch: this.branch,
-                                    //     userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                                    //     userImage:localStorage.getItem('imageUser'),
-                                    //     detail:'Finalizó una cita',
-                                    //     link: 'agendamiento'
-                                    // }, this.configHeader)
-                                    // .then(res => {
-                                    //     this.socket.emit('sendNotification', res.data)
-                                    // })   
->>>>>>> 81f868aba68cc35db00ef037ce13c7af0f35ee48
                                 }
                             })
                         }

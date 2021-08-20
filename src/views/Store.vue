@@ -1739,11 +1739,7 @@ export default {
                         html: '¡Recuerda! se descontará de la sucursal: <b>'+ this.selectedBranchName + '</b>',
                         icon: 'warning',
                         showCancelButton: true,
-<<<<<<< HEAD
-                        confirmButtonText: 'Si',
-=======
                         confirmButtonText: 'Sí',
->>>>>>> 81f868aba68cc35db00ef037ce13c7af0f35ee48
                         cancelButtonText: 'No, cancelar',
                         showCloseButton: true,
                         showLoaderOnConfirm: true
