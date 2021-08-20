@@ -9,6 +9,7 @@ import reportPdf from '@/views/reportPdf'
 import reportPdfEmploye from '@/views/reportPdfEmploye'
 import reportExpense from '@/views/reportExpense'
 import reportHistoryExpense from '@/views/reportHistoryExpense'
+import pdfEmploye from '@/views/pdfEmploye'
 Vue.use(Router)
 
 export default new Router({
@@ -95,6 +96,18 @@ export default new Router({
           path: '/reportPdfEmploye',
           name: '',
           component: () => import('./views/reportPdfEmploye.vue')
+        }
+      ]
+    },
+    {
+      path: '/pdfCierreEmpleado',
+      redirect: 'pdfEmploye',
+      component: pdfEmploye,
+      children: [
+        {
+          path: '/pdfEmploye',
+          name: '',
+          component: () => import('./views/pdfEmploye.vue')
         }
       ]
     },

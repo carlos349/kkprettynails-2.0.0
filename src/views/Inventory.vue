@@ -256,25 +256,23 @@
     <modal :show.sync="modals.modal4" modal-classes="modal-dialog-centered modal-lg">
       <h6 slot="header" class="modal-title" id="modal-title-default">Cierre de inventario</h6>
       <vue-custom-scrollbar style="height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-        <div class="row p-2 m-2">
-          <div class="col-6">
+        <div class="row m-2 ml-0">
+          <div class="col-6 pl-2">
             Nombre del producto
           </div>
-          <div class="col-6 text-left">
+          <div class="col-6 pl-2 text-left">
             Total real
           </div>
         </div> 
-        <div v-for="(data, index) in products" :key="index" class="row p-2 m-2">
+        <hr class="mt-1 mb-2">
+        <div v-for="(data, index) in products" :key="index" class="row m-1">
           <dt class="col-6 mt-2">{{data.product}}</dt>
-
-          <base-input class="col-6" v-model="countProduct[index].count" :placeholder="'Ingrese cantidad en '+data.measure"></base-input>
+          <base-input class="col-6" v-model="countProduct[index].count" type="Number" :placeholder="'Ingrese cantidad en '+data.measure"></base-input>
         </div>
       </vue-custom-scrollbar> 
       
       <template slot="footer">
-          <base-button v-on:click="closeInventory" type="default">Cerrar inventario</base-button>
-          <base-button type="link" class="ml-auto" @click="modals.modal4 = false">Salir
-          </base-button>
+          <base-button class="float-rigth" v-on:click="closeInventory" type="default">Cerrar inventario</base-button>
       </template>
     </modal>
     <modal  modal-classes="modal-dialog-centered modal-xl" :show.sync="modals.modal5">
@@ -833,44 +831,49 @@ export default {
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         closeInventory(){
-            axios.post(endPoint.endpointTarget+'/stores/closeinventorybybranch', {
-            branch: this.branch,
-            firstNameUser: this.firstNameUser,
-            lastNameUser: this.lastNameUser,
-            emailUser: this.emailUser,
-            idUser: this.idUser, 
-            products:this.countProduct
-            }, this.configHeader)
-            .then(res => {
-            if (res.data.status === 'ok') {
-                this.$swal({
-                type: 'success',
-                icon: 'success',
-                title: 'Cierre realizado con exito',
-                showConfirmButton: false,
-                timer: 1500
-                })
-                this.getProducts();
-                this.getHistoryClosed()
-                this.modals.modal4 = false
+            var valid = true
+            for (const product of this.countProduct) {
+                if (product.count == '' || parseInt(product.count) < 0) {
+                    valid = false
+                    break
+                }
             }
-            else{
+            if (valid) {
+                axios.post(endPoint.endpointTarget+'/stores/closeinventorybybranch', {
+                    branch: this.branch,
+                    firstNameUser: this.firstNameUser,
+                    lastNameUser: this.lastNameUser,
+                    emailUser: this.emailUser,
+                    idUser: this.idUser, 
+                    products:this.countProduct
+                }, this.configHeader)
+                .then(res => {
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Cierre realizado con exito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getProducts();
+                    this.getHistoryClosed()
+                    this.modals.modal4 = false
+                })
+                .catch(err => {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                })
+            }else{
                 this.$swal({
-                type: 'error',
-                title: 'Ya se hizo un cierre este mes',
-                showConfirmButton: false,
-                timer: 1500
+                    icon: 'error',
+                    title: 'Complete todos los productos',
+                    showConfirmButton: false,
+                    timer: 1500
                 })
             }
-            })
-            .catch(err => {
-            this.$swal({
-                type: 'error',
-                title: 'Cierre NO realizado',
-                showConfirmButton: false,
-                timer: 1500
-                })
-            })
         },
         productTypeEdit(type, id){
             axios.put(endPoint.endpointTarget+'/stores/changetype/'+id,{

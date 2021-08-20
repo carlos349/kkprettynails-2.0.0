@@ -617,8 +617,8 @@
         <h6 slot="header" class="modal-title" id="modal-title-default">Gestión de sucursales</h6>
         <div class="row mb-5">
             <div class="col-md-4 mx-auto">
-                     <a-select class="input-group-alternative w-100 mx-auto" show-search default-value="Seleccione una sucursal"  @change="selectEmploye" size="large">
-                    <a-select-option v-for="branch of branches" :key="branch._id" :value="branch.name" v-on:click="getInventoryByBranch(branch._id, branch.name)">
+                <a-select class="input-group-alternative w-100 mx-auto" show-search default-value="Seleccione una sucursal"  @change="selectEmploye" size="large">
+                    <a-select-option v-for="branch of branches" :key="branch._id" v-if="branch.active" :value="branch.name" v-on:click="getInventoryByBranch(branch._id, branch.name)">
                         {{branch.name}}
                     </a-select-option>
                 </a-select>
@@ -2464,9 +2464,8 @@ export default {
         },
         editProduct(){
             this.$swal({
-              title: '¿Está seguro de editar el producto? tambien se editara de todas las sucursales donde este registrado.',
-              text: 'No puedes revertir esta acción',
-              
+              title: `¿Desea editar el producto ${this.dataProduct.product}?`,
+              text: '¡Recuerda! También se editara de todas las sucursales donde está registrado. No puedes revertir esta acción.',
               icon:'warning',
               showCancelButton: true,
               confirmButtonText: 'Sí',

@@ -11,7 +11,9 @@
                         <p class="mb-0 display-2 text-white">Reporte de {{nameLender}}</p>
                         <p class="text-white">Sección dedicada al reporte de ventas y comisiones de empleados.</p>
                     </div>
-                    <base-button class="float-right mt-7" size="sm" v-on:click="back">Regresar</base-button>
+                    <base-button v-on:click="back" class="float-right mt-7 mr-2" size="sm" type="warning">
+                        <a-icon type="rollback" style="vertical-align:1px;font-size:1.4em;" />
+                    </base-button>  
                     <base-button class="float-right mt-7" size="sm" v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
                     <base-button class="float-right mt-7" size="sm" v-else disabled type="danger">Cerrar ventas</base-button>
                     <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('empleados', 'reportes')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
@@ -227,7 +229,7 @@
                  </tab-pane>
             </card>
         </tabs>
-        <a-modal v-model="modals.modal4" width="60%" :footer="null" :closable="true" >
+        <a-modal v-model="modals.modal4" width="60%" :closable="true" >
             <template>
                 <h3 class="text-center w-100">Informe de cierre</h3>
                 <template v-if="dataHistoryClosedReport.employe">
@@ -244,6 +246,11 @@
                         </template>
                     </a-table>
                 </template>
+            </template>
+            <template slot="footer">
+                <base-button @click="reportHistory" size="sm" type="primary">
+                    Imprimir reporte
+                </base-button>
             </template>
         </a-modal>
     </div>
@@ -790,6 +797,12 @@ export default {
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        reportHistory(){
+            let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
+width=0,height=0,left=-1000,top=-1000`;
+            var win = window.open(endPoint.url+'/pdfCierreEmpleado?id='+this.dataHistoryClosedReport._id, '_blank', params)
+            win.focus();
         },
         printReport(){
             this.$swal({

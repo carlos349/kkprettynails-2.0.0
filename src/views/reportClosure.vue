@@ -192,7 +192,7 @@ export default {
                     this.modals.modal1 = false
                     this.$swal({
                         icon: 'success',
-                        title: 'Totales editados.',
+                        title: 'Edición exitosa.',
                         showConfirmButton: false,
                         timer: 1500
                     })
