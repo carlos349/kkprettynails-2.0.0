@@ -722,7 +722,8 @@ export default {
         },
         async nullSale(id, idItem){
             this.$swal({
-                title: '¿Estás seguro de que deseas anular la venta?',
+                title: '¿Desea anular la venta?',
+                text: "¡Recuerda! Esta acción no se podrá revertir",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Si',

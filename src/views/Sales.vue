@@ -751,7 +751,8 @@ export default {
                         }else{
                             this.$swal({
                                 icon: 'error',
-                                title: 'error al anular, si persiste pongase en contacto con el proveedor del servicio',
+                                title: 'Error para anular la venta',
+                                text: "Si persiste, contacte a soporte técnico",
                                 showConfirmButton: false,
                                 timer: 2500
                             })
