@@ -627,23 +627,19 @@ export default {
                             showLoaderOnConfirm: true
                         }).then((result) => {
                             if(result.value) {
-                                this.openReport()
-                                setTimeout(() => {
-                                    axios.post(`${endPoint.endpointTarget}/expenses/closeExpenses`, {
-                                        reinvestment: this.reinvestmentTotal,
-                                        sales: this.totalSales,
-                                        expenses: expenseTotal,
-                                        totalFinal: this.totalFinal,
-                                        branch: this.branch,
-                                        reinvestmentId: this.reinvestmentId 
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        if(res.data.status == 'ok'){
-                                            this.getBranch()
-                                        }
-                                    })
-                                    
-                                }, 2500);
+                                axios.post(`${endPoint.endpointTarget}/expenses/closeExpenses`, {
+                                    reinvestment: this.reinvestmentTotal,
+                                    sales: this.totalSales,
+                                    expenses: expenseTotal,
+                                    totalFinal: this.totalFinal,
+                                    branch: this.branch,
+                                    reinvestmentId: this.reinvestmentId 
+                                }, this.configHeader)
+                                .then(res => {
+                                    if(res.data.status == 'ok'){
+                                        this.getBranch()
+                                    }
+                                })
                             }else{
                                 this.$swal({
                                     icon: 'info',

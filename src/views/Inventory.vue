@@ -88,7 +88,9 @@
                                         <template slot="title">
                                             <span>Devolver cantidad a bodega</span>
                                         </template>
-                                        <base-button v-if="column.productType == 'Materia prima'" :disabled="(parseFloat(column.entry)) - parseFloat(column.consume) == 0 ? true : false" size="sm" class="ml-2 mr-0" type="danger" @click="lessInventory = '', modals.modal6 = true, selectedProduct = column, totalValidLess = parseFloat(column.entry) - parseFloat(column.consume)"><a-icon type="export" style="vertical-align: .13em;font-size: 1.1em;"/></base-button>
+                                        <base-button v-if="column.productType == 'Materia prima'" 
+                                        :disabled="(parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume) == 0 ? true : false" 
+                                        size="sm" class="ml-2 mr-0" type="danger" @click="lessInventory = '', modals.modal6 = true, selectedProduct = column, totalValidLess = (parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume)"><a-icon type="export" style="vertical-align: .13em;font-size: 1.1em;"/></base-button>
                                     </a-tooltip>
                                 </template>
                                 <template slot="typeProduct" slot-scope="record, column">

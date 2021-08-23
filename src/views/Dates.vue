@@ -874,125 +874,63 @@
             </card>
         </modal>
         <modal :show.sync="dateModals.modal3"
-               body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
             <h5 slot="header" class="modal-title" id="modal-title-notification">Finalizar cita - {{dateSplit(selectedEvent.start)}}</h5>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes=""
-                  class="border-0">
-                <div class="form-group" style="margin-top:-15px;">
-                    <center>
-                        <div class="row">
-                            <div  class="col-12 col-md-12 p-1 mb-2">
-                                <dt class="text-center">Servicios actuales</dt>
-                                <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:18vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">   
-                                    <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                        <div class="row">
-                                            <template  >
-                                                <div class="col-lg-12 mt-2">
-                                                    <!-- <base-button style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
-                                                        <span class="float-left ml-2">{{selectedEvent.title}}</span>
-                                                        <template style="z-index: 100">
-                                                            <div class="ml-1" style="z-index:100" v-for="micro in selectedEvent.microServices" :key="micro.microService">
-                                                                <badge  style="cursor: pointer" type="primary" class="text-white ml-1 float-right">
-                                                                    {{micro.name}}
-                                                                </badge>
-                                                            </div>
-                                                        </template>
-                                                    </base-button> -->
-                                                    <base-button v-for="(service, index) in selectedEvent.services" :key="service" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
-                                                    <a-icon class="float-left" style="vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;"  @click="deleteServiceFinally(service.index)" type="close" />
-                                                        <span class="float-left ml-2">{{service.name}}</span>
-                                                        <template style="z-index: 100" v-if="ifMicro">
-                                                            <a-tooltip placement="top">
-                                                                <template slot="title">
-                                                                    <span v-if="hideText != 'display:none'">Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
-                                                                </template>
-                                                                <template v-if="index == 0" style="z-index: 100">
-                                                                    <div class="ml-1" style="z-index:100" v-for="micro in selectedEvent.microServices" :key="micro.microService">
-                                                                        <badge  style="cursor: pointer" type="primary" class="text-white ml-1 float-right">
-                                                                            {{micro.name}}
-                                                                        </badge>
-                                                                    </div>
-                                                                </template>
-                                                                <div class="ml-1" v-else style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)">
-                                                                    <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
-                                                                        {{micro.microService}}
-                                                                    </badge>
-                                                                </div>
-                                                                
-                                                                <!-- <div class="ml-1" style="z-index:100" v-for="micro in service.microServices" :key="micro.microService">
-                                                                    <badge  style="cursor: pointer" type="primary" class="text-default ml-1 float-right">
-                                                                        {{micro.microService}}
-                                                                    </badge>
-                                                                </div> -->
-                                                                    
-                                                            </a-tooltip>
-                                                        </template>
-                                                        <!-- <badge class="text-default float-right" v- type="white">microservicio</badge>
-                                                        <badge class="text-default float-right" type="white">otro</badge>
-                                                        <badge class="text-default float-right" type="white">diseño</badge> -->
-                                                    </base-button>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </div>
-                            </vuescroll>
-                                <!-- <base-button style="cursor:default" type="primary" size="sm" :class="selectedEvent.class + ' mx-1'">{{service.name}} <a-icon style="vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;" v-if="service.index" @click="deleteServiceFinally(service.index)" type="close" /> </base-button> -->
-                            </div>
-                        </div>
-                    </center>
+            <div class="row">
+                <h4 class="w-100" style="margin-top:-10px;">Agregar mas servicios</h4>
+                <div class="w-100 mx-auto pb-2">
+                    <a-select
+                        show-search
+                        placeholder="Seleccione el servicio"
+                        option-filter-prop="children"
+                        class="w-50"
+                        :filter-option="filterOption">
+                        <a-select-option v-for="service of services" :key="service._id" v-on:click="plusServiceFinally(service.name, service.commission, service.price, service.discount, service.products)" :value="service._id">
+                            {{service.name}}
+                        </a-select-option>
+                    </a-select>
                 </div>
-                
-                <hr class="my-3">
-                <dt class="mt-3 text-center">Agregar mas servicios</dt>
-                <div style="width:auto;" class="mx-auto col-12">
-                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                        <li v-for="(category, index) of categories" class="nav-item responsiveItem" role="presentation">
-                            <button class="categoryButtonFinally categoryButton mt-1 text-uppercase responsiveItem" :id="'catFinally'+index" data-toggle="pill" :href="'#v-pillsFinally-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCatFinally('catFinally'+index)">{{category.name}}</button>
-                        </li>
-                    </ul>   
-                </div>
-                <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:13vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                    <div class="tab-content" id="pills-tabContent">
-                        <div v-for="category of categories" :key="category" class="tab-pane fade" :id="'v-pillsFinally-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <div class="mt-2 mb-2 w-75 mx-auto bg-light" style="height:2px;"></div>
+                <div class="col-12 p-1 mb-1">
+                    <h4 class="w-100">Servicios actuales</h4>
+                    <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:18vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">   
+                        <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
                             <div class="row">
-                                <template v-for="name of services" >
-                                    <div class="col-lg-6 col-md-6 col-12 mt-2" v-if="name.category == category.name && name.active == true" :key="name">
-                                        <base-button  class="w-100 px-1" v-on:click="plusServiceFinally(name.name, name.commission, name.price, name.discount, name.products)"  type="default">
-                                            <span class="float-left">{{name.name}}</span>
+                                <template  >
+                                    <div class="col-lg-12 mt-2">
+                                        <base-button v-for="(service, index) in selectedEvent.services" :key="service" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
+                                        <a-icon class="float-left" style="vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;"  @click="deleteServiceFinally(service.index)" type="close" />
+                                            <span class="float-left ml-2">{{service.name}}</span>
+                                            <template style="z-index: 100" v-if="ifMicro">
+                                                <a-tooltip placement="top">
+                                                    <template slot="title">
+                                                        <span v-if="hideText != 'display:none'">Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
+                                                    </template>
+                                                    <template v-if="index == 0" style="z-index: 100">
+                                                        <div class="ml-1" style="z-index:100" v-for="micro in selectedEvent.microServices" :key="micro.microService">
+                                                            <badge  style="cursor: pointer" type="primary" class="text-white ml-1 float-right">
+                                                                {{micro.name}}
+                                                            </badge>
+                                                        </div>
+                                                    </template>
+                                                    <div class="ml-1" v-else style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)">
+                                                        <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
+                                                            {{micro.microService}}
+                                                        </badge>
+                                                    </div>
+                                                </a-tooltip>
+                                            </template>
                                         </base-button>
                                     </div>
                                 </template>
                             </div>
                         </div>
-                    </div>
                 </vuescroll>
-
-                <hr class="my-3">
-                <dt class="mt-3 text-center">Costo de adicionales</dt>
-                <div class="row">
-                    <template v-for="(service, index) of selectedEvent.services" >
-                        <div class="col-lg-6 col-md-6 col-12 mt-2">
-                            <base-button  class="w-100 px-1"  type="default">
-                                <span v-on:click="microPrice(service, index)" class="text-center">{{service.name}}</span> <br>
-                                <currency-input
-                                    locale="de"
-                                    v-if="showCurrencyMicro"
-                                    :placeholder="'Costo de diseño'"
-                                    addon-left-icon="ni ni-money-coins"
-                                    v-model="service.microPrice"
-                                    class="form-control mb-3"
-                                />
-                            </base-button> 
-                        </div>
-                    </template>
                 </div>
-                <div class="text-center">
-                    <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
-                </div>
-            </card>
+            </div>
+            <div class="text-center">
+                <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
+            </div>
         </modal>
         <a-modal v-model="modals.modal3" title="Horarios bloqueados" width="50%" :closable="true" >
             <template>
