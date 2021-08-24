@@ -25,7 +25,7 @@
                                 Agendar
                             </base-button>
 
-                            <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true , initialState()"  type="warning">
+                            <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true"  type="warning">
                                 <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                                 Bloqueos
                             </base-button>
@@ -2143,6 +2143,7 @@ export default {
         },
         initialState(){
             $(".ant-select-selection__clear").click()
+            this.modals.modal3 = false
             this.$refs.wizard.reset()
             this.registerDate = {
                 services:[],
