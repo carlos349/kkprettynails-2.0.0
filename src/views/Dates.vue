@@ -2401,64 +2401,53 @@ export default {
                 }, this.configHeader)
                 .then(res => {
                     if(res.data.status == true){
-                        this.modals = {
-                            modal3: true,
-                            message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.",
-                            icon: 'ni ni-fat-remove ni-5x',
-                            type: 'danger'
+                        this.$swal({
+                            icon: 'error',
+                            title: '¡Disculpe!',
+                            text: 'El horario fue tomado recientemente, vuelva a agendar su cita.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.$refs.wizard.prevTab()
+                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                            const element = this.registerDae.serviceSelectds[index];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.class = ''
+                            element.blocks = []
+                            element.blocksFirst = []
+                            element.valid = false
+                            element.employe = 'Primera disponible'
+                            element.employeImg = ''
+                            element.employeId = ''
+                            element.realEmploye = 'Primera disponible'
                         }
+                        this.validHour = false
                         setTimeout(() => {
-                            this.modals = {
-                                modal1:false,
-                                modal2:false,
-                                modal3: false,
-                                modal4: false,
-                                modal5: false,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            }
-                            this.$refs.wizard.prevTab()
-                            for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                                const element = this.registerDae.serviceSelectds[index];
-                                element.start = ''
-                                element.end = ''
-                                element.sort = ''
-                                element.class = ''
-                                element.blocks = []
-                                element.blocksFirst = []
-                                element.valid = false
-                                element.employe = 'Primera disponible'
-                                element.employeImg = ''
-                                element.employeId = ''
-                                element.realEmploye = 'Primera disponible'
-                            }
-                            this.validHour = false
-                            setTimeout(() => {
-                                axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                            axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                                date: this.finalDate,
+                                branch: this.branch
+                            }, this.configHeader)
+                            .then(res => {
+                                this.getDay = res.data.day
+                                this.availableslenders = res.data.array
+                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
                                     date: this.finalDate,
+                                    employes: res.data.array,
+                                    timedate: this.registerDae.serviceSelectds[0].duration,
+                                    employesServices: this.registerDae.serviceSelectds[0].employes,
                                     branch: this.branch
                                 }, this.configHeader)
                                 .then(res => {
-                                    this.getDay = res.data.day
-                                    this.availableslenders = res.data.array
-                                    axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                        date: this.finalDate,
-                                        employes: res.data.array,
-                                        timedate: this.registerDae.serviceSelectds[0].duration,
-                                        employesServices: this.registerDae.serviceSelectds[0].employes,
-                                        branch: this.branch
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.readyChange = true
-                                        this.registerDae.serviceSelectds[0].valid = true
-                                        this.registerDae.serviceSelectds[0].blocks = res.data.data
-                                        this.registerDae.block = res.data.data
-                                        $('#block0').toggle('slow')
-                                    })
+                                    this.readyChange = true
+                                    this.registerDae.serviceSelectds[0].valid = true
+                                    this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                    this.registerDae.block = res.data.data
+                                    $('#block0').toggle('slow')
                                 })
-                            }, 200);  
-                        }, 5000);
+                            })
+                        }, 200);
                     }else{
                         var blockEdit = []
                         if (this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst.length > 0) {
