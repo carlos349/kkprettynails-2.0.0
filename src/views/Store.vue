@@ -928,6 +928,7 @@ export default {
         providers:[],
         providerTable:[],
         dateAdd:'',
+        productState: false,
         addValid:true,
         configDatePicker: {
           allowInput: true,
@@ -1699,7 +1700,7 @@ export default {
                                 timer: 1500
                             })
                             this.modalAdminProduct.modal3 = false
-                            this.getInventoryByBranch(this.selectedBranch)
+                            this.getInventoryByBranch(this.selectedBranch, this.selectedBranchName)
                             this.getBranches()
                             this.productForBranch = ''
                             this.productsForBranch = []
@@ -1734,6 +1735,7 @@ export default {
             .then(res => {
                 if (this.branchEntry[index].count <= total ) {
                     this.productForBranch = res.data.data
+                    console.log(this.productForBranch)
                     this.$swal({
                         title: '¿Está seguro que desea eliminar ' + this.branchEntry[index].count + ' ' + measure + ' de este producto?',
                         html: '¡Recuerda! se descontará de la sucursal: <b>'+ this.selectedBranchName + '</b>',
@@ -1940,6 +1942,7 @@ export default {
                 if(result.value) {
                     axios.delete(endPoint.endpointTarget+'/stores/deleteinventoryproduct/'+data._id, this.configHeader)
                     .then(res => {
+                        console.log(res)
                         if (res.data.status == 'product deleted') {
                             axios.post(endPoint.endpointTarget+'/expenses/', {
                                 branch: this.selectedBranch,

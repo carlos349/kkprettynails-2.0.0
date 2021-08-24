@@ -748,8 +748,9 @@ export default {
                             })
                         }else{
                             this.$swal({
-                                icon: 'Error para anular la venta',
-                                title: 'Si persiste, contacte a soporte técnico',
+                                icon: 'error',
+                                title: 'Error para anular la venta',
+                                text: 'Si persiste, contacte a soporte técnico',
                                 showConfirmButton: true
                             })
                         }
