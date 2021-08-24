@@ -150,7 +150,7 @@
                 </template>
                 <template>
                     <a-select allowClear class="input-group-alternative w-100 mb-4 mt-2 linkLender" show-search default-value="Seleccione el prestador" placeholder="Seleccione el prestador" @change="selectEmploye" size="large">
-                        <a-select-option v-for="lender of lenderNames" :key="lender._id" :value="lender.firstName + ' ' + lender.lastName + ' (' + lender.document + ')'">
+                        <a-select-option v-for="lender of lenderNames" :key="lender._id" :value="lender._id">
                             {{lender.firstName}} {{lender.lastName}} ({{lender.document}})
                         </a-select-option>
                     </a-select>
@@ -431,7 +431,9 @@ export default {
             this.validRegister()
         },
         selectEmploye(key){
-            this.linkLender = key.key
+            console.log(key)
+            this.linkLender = key
+            console.log(this.linkLender)
         },
         redirect(){
             router.push({path: '/perfilesAcceso'})

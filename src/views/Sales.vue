@@ -15,7 +15,7 @@
                     <div class="float-right mt-6">
                         <div class="float-right" style="width:76%;">
                             <label for="date" class="text-white">Busque por fecha</label><br>
-                            <a-range-picker ref="datePick" style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="this.es_ES" />
+                            <a-range-picker ref="datePick" style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" />
                             <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;" v-if="validRoute('ventas', 'filtrar')"  v-on:click="filterSale" type="success">
                                 <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
                             </base-button>
@@ -262,7 +262,7 @@
                 <div class="row">
                     <div class="col-md-12 mt-2">
                         <label for="date">Filtra por fecha</label>
-                        <a-range-picker class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDateExcel" :locale="this.es_ES" />
+                        <a-range-picker class="rangeInput" :locale="es_ES" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDateExcel" />
                     </div>
                     <div class="col-md-12 mt-2">
                         <label for="lender">¿Filtrar por cliente?</label>
@@ -561,8 +561,6 @@ export default {
         this.getToken()
         this.getBranch()
         console.log(this.es_ES)
-        console.log(this.$refs.datePick)
-        // this.$refs
     },
     methods: {
         getToken(){
@@ -713,7 +711,7 @@ export default {
         },
         cancelSale(id){
             this.$swal({
-				title: '\n¿Desea anular la venta?',
+				title: '¿Desea anular la venta?',
 				text: 'No puede revertir esta acción',
 				icon: 'warning',
 				showCancelButton: true,
@@ -750,10 +748,9 @@ export default {
                             })
                         }else{
                             this.$swal({
-                                icon: 'error',
-                                title: 'error al anular, si persiste pongase en contacto con el proveedor del servicio',
-                                showConfirmButton: false,
-                                timer: 2500
+                                icon: 'Error para anular la venta',
+                                title: 'Si persiste, contacte a soporte técnico',
+                                showConfirmButton: true
                             })
                         }
                     })

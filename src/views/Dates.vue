@@ -16,42 +16,38 @@
                             <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         </div>
                         <div class="mt-7">
-                            <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
-                            <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
-                        </base-button>
-
-                        <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
-                            <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                            Agendar
-                        </base-button>
-
-                        <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true , initialState()"  type="warning">
-                            <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                            Bloqueos
-                        </base-button>
-
-                        <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mr-0 qloq" size="sm">
-                            <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
-                                    {{employeByDate}}
+                                <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                                <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
                             </base-button>
-                            <li v-on:click="getDatesByEmploye('Todos')">
-                                <base-button class="dropdown-item" href="#">
-                                    <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+
+                            <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                                <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                                Agendar
+                            </base-button>
+
+                            <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true , initialState()"  type="warning">
+                                <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                                Bloqueos
+                            </base-button>
+
+                            <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mr-0 qloq" size="sm">
+                                <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                        {{employeByDate}}
                                 </base-button>
-                            </li>
-                            <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
-                                <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                                    <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                </base-button>
-                                <base-button v-else class="dropdown-item" href="#">
-                                    <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                </base-button>
-                            </li>
-                        </base-dropdown>
-                        </div>
-                        
-                        <div v-if="filter == true" class="ml-2">
-                            <img class="avatar rounded-circle" :src="img2" />
+                                <li v-on:click="getDatesByEmploye('Todos')">
+                                    <base-button class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+                                    </base-button>
+                                </li>
+                                <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
+                                    <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                    </base-button>
+                                    <base-button v-else class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                    </base-button>
+                                </li>
+                            </base-dropdown>
                         </div>
                     </div>
                 </div>
@@ -1796,6 +1792,7 @@ export default {
                 this.events = []
                 const token = localStorage.userToken
                 const decoded = jwtDecode(token)
+                console.log(decoded)
                 if (decoded.linkLender == '') {
                     this.$swal.fire({
                         icon: 'error',

@@ -17,11 +17,13 @@
           <li class="nav-item">
             <a-dropdown :disabled="validRoute('sucursales', 'cambiar') ? false : true">
               <a-menu slot="overlay" @click="selectBranch">
-                <a-menu-item class="font-weight-bold" v-for="branch of branches" :key="branch._id+'/'+branch.name" v-if="branch.active"> 
-                  <a-icon type="shop" style="vertical-align:1px;" />{{branch.name}} 
-                </a-menu-item>
+                <template v-for="branch of branches">
+                  <a-menu-item class="font-weight-bold" :key="branch._id+'/'+branch.name" v-if="branch.active"> 
+                    <a-icon type="shop" style="vertical-align:1px;" />{{branch.name}} 
+                  </a-menu-item>
+                </template>
               </a-menu>
-              <a-button class="mb-2 bg-default text-white font-weight-bold w-100" style="border:none;" > {{this.branchName}} <a-icon type="down" style="vertical-align:1px;" /> </a-button>
+              <a-button class="mb-2 bg-default text-white font-weight-bold w-100" style="border:none;" > {{branchName}} <a-icon type="down" style="vertical-align:1px;" /> </a-button>
             </a-dropdown>
           </li>
           <li class="nav-item dropdown">
@@ -218,16 +220,25 @@
         if (token) {
           const decoded = jwtDecode(token)
           this.auth = decoded.access
-          console.log(this.auth)
+          this.branch = decoded.branch
+          for (const branch of this.branches) {
+            if (branch._id == this.branch) {
+              this.branchName = branch.name
+              localStorage.setItem('branch', this.branch)
+              localStorage.setItem('branchName', this.branchName)
+              break
+            }
+          }
         }
       },
       validRoute(route, type){
+        console.log(this.auth)
         for (let index = 0; index < this.auth.length; index++) {
           const element = this.auth[index];
           if (element.ruta == route) {
             for (let i = 0; i < element.validaciones.length; i++) {
               if (type == element.validaciones[i]) { 
-                  return true
+                return true
               } 
             }
           }
@@ -320,6 +331,9 @@
 
     },
     mounted() {
+      EventBus.$on('loggedin', status => {
+        this.getToken()
+      })
       EventBus.$on('dataChange', status => {
         console.log(status)
         this.nombre = status.nombre + ' ' + status.apellido

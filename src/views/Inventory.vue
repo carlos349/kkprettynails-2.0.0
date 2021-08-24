@@ -852,7 +852,7 @@ export default {
                 .then(res => {
                     this.$swal({
                         icon: 'success',
-                        title: 'Cierre realizado con exito',
+                        title: 'Cierre realizado con éxito',
                         showConfirmButton: false,
                         timer: 1500
                     })

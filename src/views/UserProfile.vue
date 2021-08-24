@@ -1,7 +1,7 @@
 <template>
     <div>
-        <base-header class="header pb-7 pt-5  d-flex align-items-center"
-                     style="min-height: 400px; background-image: url(img/theme/profile.png); background-size: cover; background-position: center 25%;">
+        <base-header class="header pb-5 pt-2  d-flex align-items-center"
+                     style="min-height: 300px; background-image: url(img/theme/profile.png); background-size: cover; background-position: center 25%;">
             <!-- Mask -->
             <span class="mask bg-gradient-success opacity-7"></span>
             <!-- Header container -->
@@ -9,15 +9,15 @@
                 <div class="row">
                     <div class="col-lg-7 col-md-10">
                         <h1 class="display-2 text-white">Hola {{model.first_name}}</h1>
-                        <p class="text-white mt-0 mb-5">Este es tu perfil, puedes ver tu progreso trabajando para KKPrettyNails, en las diferentes secciones. Tambien puedes editar tus datos.</p>
-                        <base-button class="mb-5" type="info" v-on:click="inspector = true">Editar perfil</base-button>
-                        <base-button class="mb-5" type="info" v-on:click="modals.modal2 = true">Cambiar contraseña</base-button>
+                        <p class="text-white mt-0 mb-2">Este es tu perfil, puedes ver tu progreso trabajando para KKPrettyNails, en las diferentes secciones. Tambien puedes editar tus datos.</p>
+                        <base-button size="sm" class="mb-2" type="info" v-on:click="inspector = true">Editar perfil</base-button>
+                        <base-button size="sm" class="mb-2" type="info" v-on:click="modals.modal2 = true">Cambiar contraseña</base-button>
                     </div>
                 </div>
             </div>
         </base-header>
 
-        <div class="container-fluid mt--7">
+        <div class="container-fluid mt--6">
             <div class="row">
                 <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="card-body pt-0 pt-md-4">
-                            <div class="row mt-4">
+                            <div class="row mt-2">
                                 <div class="col">
                                     <div class="card-profile-stats d-flex justify-content-center mt-md-5">
                                     </div>
@@ -43,16 +43,14 @@
                                     {{model.first_name}} {{model.last_name}}
                                 </h3>
                                 <div class="h5">
-                                    <p v-if="model.status == 1">Gerente</p>
-                                    <p v-if="model.status == 2">Personal de caja</p>
-                                    <p v-if="model.status == 3">Prestadora</p>
+                                    <p>{{model.status}}</p>
                                 </div>
                             </div>
                             <hr class="my-4" />
                             <p>{{model.email}} <template v-if="model.about != ''">—</template> {{model.about}}</p>
                         </div>
                     </div>
-                    <card v-if="model.status == 3" class="mt-3" shadow type="secondary">
+                    <card v-if="model.linkLender != ''" class="mt-3" shadow type="secondary">
                         <div slot="header" class="bg-white border-0">
                             <div class="row align-items-center">
                                 <div class="col-8">
@@ -83,113 +81,184 @@
                     </card>
                 </div>
 
-                <div class="col-xl-8 order-xl-1">
-                    <card shadow type="secondary">
+                <div class="col-xl-8">
+                    <card shadow type="secondary" body-classes="p-0">
                         <div slot="header" class="bg-white border-0">
                             <div class="row align-items-center">
-                                <div class="col-8">
-                                    <h3 class="mb-0">Mi perfil</h3>
+                                <div class="col-2">
+                                    <h3 class="mb-0" style="cursor:pointer;" :style="selectType == 'Profile' ? 'text-decoration: underline;' : 'text-decoration:none;'" @click="selectMenu('Profile')">Mi perfil</h3>
+                                </div>
+                                <div class="col-8" v-if="model.linkLender != ''">
+                                    <h3 class="mb-0" style="cursor:pointer;" :style="selectType == 'Sales' ? 'text-decoration: underline;' : 'text-decoration:none;'" @click="selectMenu('Sales')">Servicios</h3>
                                 </div>
                             </div>
                         </div>
-                        <template>
-                            <form @submit.prevent>
-                                <h6 class="heading-small text-muted mb-4">Información de usuario</h6>
-                                <div class="pl-lg-4">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <base-input v-if="inspector"
-                                                alternative=""
-                                                label="Nombre"
-                                                placeholder="Username"
-                                                input-classes="form-control-alternative"
-                                                v-model="model.first_name"
-                                            />
-                                            <base-input v-else
-                                                disabled alternative=""
-                                                label="Nombre"
-                                                placeholder="Username"
-                                                input-classes="form-control-alternative"
-                                                v-model="model.first_name"
-                                            />
+                        <template v-if="selectType == 'Profile'">
+                            <div class="p-2">
+                                <form @submit.prevent>
+                                    <h6 class="heading-small text-muted mb-4 mt-1">Información de usuario</h6>
+                                    <div class="pl-lg-4">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <base-input v-if="inspector"
+                                                    alternative=""
+                                                    label="Nombre"
+                                                    placeholder="Username"
+                                                    input-classes="form-control-alternative"
+                                                    v-model="model.first_name"
+                                                />
+                                                <base-input v-else
+                                                    disabled alternative=""
+                                                    label="Nombre"
+                                                    placeholder="Username"
+                                                    input-classes="form-control-alternative"
+                                                    v-model="model.first_name"
+                                                />
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <base-input v-if="inspector"
+                                                    alternative=""
+                                                    label="Apellido"
+                                                    placeholder="jesse@example.com"
+                                                    input-classes="form-control-alternative"
+                                                    v-model="model.last_name"
+                                                />
+                                                <base-input v-else
+                                                    disabled alternative=""
+                                                    label="Apellido"
+                                                    placeholder="jesse@example.com"
+                                                    input-classes="form-control-alternative"
+                                                    v-model="model.last_name"
+                                                />
+                                            </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <base-input v-if="inspector"
-                                                alternative=""
-                                                label="Apellido"
-                                                placeholder="jesse@example.com"
-                                                input-classes="form-control-alternative"
-                                                v-model="model.last_name"
-                                            />
-                                            <base-input v-else
-                                                disabled alternative=""
-                                                label="Apellido"
-                                                placeholder="jesse@example.com"
-                                                input-classes="form-control-alternative"
-                                                v-model="model.last_name"
-                                            />
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <base-input v-if="inspector"
+                                                    alternative=""
+                                                    label="Correo"
+                                                    placeholder="First name"
+                                                    input-classes="form-control-alternative"
+                                                    v-model="model.email"
+                                                />
+                                                <base-input v-else
+                                                    disabled alternative=""
+                                                    label="Correo"
+                                                    placeholder="Last name"
+                                                    input-classes="form-control-alternative"
+                                                    v-model="model.email"
+                                                />
+                                            </div>
+                                            <div class="col-lg-6 form-group">
+                                                <label><strong>Imagen de perfil</strong></label>
+                                                <input v-if="inspector" type="file" id="fileProfile" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
+                                                <input v-else type="file" id="fileProfile" ref="file" disabled class="form-control mb-3" >
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <base-input v-if="inspector"
-                                                alternative=""
-                                                label="Correo"
-                                                placeholder="First name"
-                                                input-classes="form-control-alternative"
-                                                v-model="model.email"
-                                            />
-                                            <base-input v-else
-                                                disabled alternative=""
-                                                label="Correo"
-                                                placeholder="Last name"
-                                                input-classes="form-control-alternative"
-                                                v-model="model.email"
-                                            />
-                                        </div>
-                                        <div class="col-lg-6 form-group">
-                                            <label><strong>Imagen de perfil</strong></label>
-                                            <input v-if="inspector" type="file" id="fileProfile" ref="file" v-on:change="handleFileUpload()" class="form-control mb-3" >
-                                            <input v-else type="file" id="fileProfile" ref="file" disabled class="form-control mb-3" >
+                                    <hr class="my-4" />
+                                    <!-- Description -->
+                                    <h6 class="heading-small text-muted mb-2">Sobre ti</h6>
+                                    <div class="pl-lg-4">
+                                        <div class="form-group">
+                                            <base-input alternative="" label="Sobre mi - proximamente">
+                                                <textarea v-if="inspector" v-model="model.about" rows="4" class="form-control form-control-alternative" placeholder="Unas palabras sobre ti..."></textarea>
+                                                <textarea v-else disabled v-model="model.about" rows="4" class="form-control form-control-alternative" placeholder="Unas palabras sobre ti..."></textarea>
+                                            </base-input>
                                         </div>
                                     </div>
-                                </div>
-                                <hr class="my-4" />
-                                <!-- Description -->
-                                <h6 class="heading-small text-muted mb-4">Sobre ti</h6>
-                                <div class="pl-lg-4">
-                                    <div class="form-group">
-                                        <base-input alternative="" label="Sobre mi - proximamente">
-                                            <textarea v-if="inspector" v-model="model.about" rows="4" class="form-control form-control-alternative" placeholder="Unas palabras sobre ti..."></textarea>
-                                            <textarea v-else disabled v-model="model.about" rows="4" class="form-control form-control-alternative" placeholder="Unas palabras sobre ti..."></textarea>
-                                        </base-input>
+                                    <base-button class="float-right" v-if="inspector" type="info" v-on:click="editProfile">Editar</base-button>
+                                    <base-button class="float-left" v-if="inspector" type="danger" v-on:click="inspector = false">Cancelar</base-button>
+                                </form>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <a-config-provider>
+                                <template #renderEmpty>
+                                    <div style="text-align: center">
+                                        <a-icon type="warning" style="font-size: 20px" />
+                                        <h2>No posee ventas registradas</h2>
                                     </div>
-                                </div>
-                                <base-button class="float-right" v-if="inspector" type="info" v-on:click="editProfile">Editar</base-button>
-                                <base-button class="float-left" v-if="inspector" type="danger" v-on:click="inspector = false">Cancelar</base-button>
-                            </form>
+                                </template>
+                                <a-table :columns="columns" :data-source="sales" :scroll="getScreen">
+                                    <div
+                                        slot="filterDropdown"
+                                        slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                                        style="padding: 8px"
+                                        >
+                                        <a-input
+                                            v-ant-ref="c => (searchInput = c)"
+                                            :placeholder="`Buscar por nombre`"
+                                            :value="selectedKeys[0]"
+                                            style="width: 188px; margin-bottom: 8px; display: block;"
+                                            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                                            @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                                        />
+                                        <a-button
+                                            type="primary"
+                                            icon="search"
+                                            size="small"
+                                            style="width: 90px; margin-right: 8px"
+                                            @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                                        >
+                                            Buscar
+                                        </a-button>
+                                        <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                                            resetear
+                                        </a-button>
+                                    </div>
+                                    <a-icon
+                                        slot="filterIcon"
+                                        slot-scope="filtered"
+                                        type="search"
+                                        :style="{ color: filtered ? '#108ee9' : undefined }"
+                                    />
+                                    <template slot="customRender" slot-scope="text, record, index, column">
+                                        <span v-if="searchText && searchedColumn === column.dataIndex">
+                                            <template
+                                            v-for="(fragment, i) in text
+                                                .toString()
+                                                .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                                            >
+                                            <mark
+                                                v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                                                :key="i"
+                                                class="highlight"
+                                                >{{ fragment }}</mark
+                                            >
+                                            <template v-else>{{ fragment }}</template>
+                                            </template>
+                                        </span>
+                                        <template v-else>
+                                            {{ text }}
+                                        </template>
+                                    </template>
+                                    <template slot="date-format" slot-scope="record, column">
+                                        {{column.createdAt | formatDate}}
+                                    </template>
+                                    <template slot="commission" slot-scope="record, column">
+                                        {{parseFloat(column.commission) | formatPrice}}
+                                    </template>
+                                    
+                                    <template slot="total" slot-scope="record, column">
+                                        {{column.total | formatPrice}}
+                                    </template>
+                                    <template slot="reportSale" slot-scope="record, column">
+                                        <template v-if="validRoute('ventas', 'detalle')" >
+                                            <a-tooltip placement="top">
+                                                <template slot="title">
+                                                    <span>Anular venta</span>
+                                                </template>
+                                                <base-button size="sm" type="danger" v-on:click="nullSale(column.saleData._id, column.id)">
+                                                    <a-icon type="stop" style="vertical-align:1.5px;font-size:1.3em;" />
+                                                </base-button>
+                                            </a-tooltip>
+                                        </template>
+                                    </template>
+                                </a-table>
+                            </a-config-provider>
                         </template>
                     </card>
-                </div>
-                 <div v-if="model.status == 3" class="col-xl-12 order-xl-3 mt-3">
-                    <vue-bootstrap4-table :rows="sales" :columns="columnsLender" :classes="classes" :config="configLender" >
-                        <template slot="format-date" slot-scope="props">
-                            <span>{{formatDate(props.row.fecha)}}</span>
-                        </template>
-                        <template slot="format-services" slot-scope="props">
-                            <template v-for="(service, index) of props.row.services">
-                                <span v-if="index == 0" :key="service">
-                                    {{service.service}}
-                                </span>
-                                <span v-else :key="service">
-                                    - {{service.service}} 
-                                </span>
-                            </template>
-                        </template>
-                        <template slot="format-amount" slot-scope="props">
-                            <span>{{formatPrice(props.row.commission)}}</span>
-                        </template>
-                    </vue-bootstrap4-table>
                 </div>
             </div>
         </div>
@@ -274,6 +343,7 @@
 			const decoded = jwtDecode(token)
             return {
                 id: decoded._id,
+                selectType: 'Profile',
                 model: {
                     first_name: '',
                     last_name: '',
@@ -300,6 +370,55 @@
                     valid: null,
                     validAll: null
                 },
+                columns: [
+                    {
+                        title: 'Fecha',
+                        dataIndex: 'createdAt',
+                        key: 'createdAt',
+                        scopedSlots: { customRender: 'date-format' },
+                        defaultSortOrder: 'descend',
+                        sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                        ellipsis: true,
+                    },
+                    {
+                        title: 'UUID de venta',
+                        dataIndex: 'saleData.uuid',
+                        key: 'saleData.uuid',
+                        scopedSlots: { customRender: 'uuid-format' },
+                    },
+                    {
+                        title: 'Cliente',
+                        dataIndex: 'client',
+                        key: 'client',
+                        ellipsis: true,
+                        scopedSlots: { customRender: 'client-slot' }
+                    },
+                    {
+                        title: 'Servicio',
+                        dataIndex: 'service',
+                        key: 'service',
+                        ellipsis: true,
+                        scopedSlots: { customRender: 'service-slot' }
+                    },
+                    {
+                        title: 'Comisión',
+                        dataIndex: 'commission',
+                        key: 'commission',
+                        ellipsis: true,
+                        scopedSlots: { customRender: 'commission' },
+                        defaultSortOrder: 'descend',
+                        sorter: (a, b) => a.commission - b.commission
+                    },
+                    {
+                        title: 'Total',
+                        dataIndex: 'total',
+                        key: 'totals.total',
+                        ellipsis: true,
+                        scopedSlots: { customRender: 'total' },
+                        defaultSortOrder: 'descend',
+                        sorter: (a, b) => a.total - b.total
+                    }
+                ],
                 haveImage: '',
                 lenderBonus: 0,
                 advancement: 0,
@@ -307,54 +426,6 @@
                 sales: [],
                 comision: 0,
                 fecha: '',
-                columnsLender: [
-                    {
-                        label: "Fecha",
-                        name: "createdAt",
-                        // filter: {
-                        //     type: "simple",
-                        //     placeholder: "id"
-                        // },
-                        slot_name: "format-date",
-                        sort: true,
-                    },
-                    {
-                        label: "Servicios",
-                        name: "services",
-                        slot_name: "format-services",
-                        sort: false,
-                    },
-                    {
-                        label: "Ingreso",
-                        name: "commission",
-                        slot_name: "format-amount",
-                        sort: false,
-                    }
-                ],
-                configLender: {
-                    card_title: "Mis ventas del mes",
-                    checkbox_rows: false,
-                    rows_selectable : false,
-                    highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
-                    per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
-                    show_refresh_button: false,
-                    show_reset_button: false,  
-                    selected_rows_info: false,
-                    preservePageOnDataChange : true,
-                    pagination_info : false,
-                    pagination: true,
-                    global_search: {
-                        placeholder: "Busque el prestador",
-                        visibility: false,
-                        case_sensitive: false,
-                        showClearButton: true,
-                        searchOnPressEnter: false,
-                        searchDebounceRate: 200,                      
-                    },
-                },
-                classes: {
-                    table: "table-bordered table-striped"
-                },
                 configHeader: {
                     headers:{
                         "x-database-connect": endPoint.database, 
@@ -376,6 +447,9 @@
             validRegister(){
                 this.pass.validAll = this.pass.lastPass && this.pass.valid == true ? true : false
             },
+            selectMenu(type){
+                this.selectType = type
+            },
             async getData() {
 				try{
 					const user = await axios.get(endPoint.endpointTarget+'/users/'+this.id, this.configHeader)
@@ -387,6 +461,7 @@
                     this.model.access = user.data.data.LastAccess
                     this.model.about = user.data.data.about
 					this.model.image = user.data.data.userImage
+                    this.model.linkLender = user.data.data.linkLender
                     this.haveImage = user.data.data.userImage
 				}catch(err) {
 					this.$swal({
@@ -452,7 +527,6 @@
 				
 			},
             async getYourSales(){
-                console.log('hola')
 				const ident = localStorage.userToken
 				const decoded = jwtDecode(ident)
 				const link = decoded.linkLender
