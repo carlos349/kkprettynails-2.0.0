@@ -2,7 +2,7 @@
     <div class="mx-2">
         <template>
             <center>
-                <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierre</h1> 
+                <h1  class="display-2 pb-3 mb-3 hide text-center text-white">Reporte de cierressssssss</h1> 
             </center>
             <div class="row mb-3">
                 <div class="col-6 pl-9">
@@ -331,8 +331,12 @@ export default {
                     console.log(res)
                     this.sales = res.data.data
                     this.initDate = res.data.data[0].createdAt
-                    for (const sale of this.sales) {
-                        this.totalSales = this.totalSales + sale.total
+                    for (const sale in this.sales) {
+                        if(sale == 0){
+                            this.totalSales = this.totalSales + sale.total
+                        }else if(this.sales[sale].saleData.uuid != this.sales[sale - 1].saleData.uuid) {
+                            this.totalSales = this.totalSales + sale.total
+                        }
                     }
                     setTimeout(() => {
                         print()

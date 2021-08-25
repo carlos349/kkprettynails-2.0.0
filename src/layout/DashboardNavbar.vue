@@ -336,7 +336,7 @@
       })
       EventBus.$on('dataChange', status => {
         console.log(status)
-        this.nombre = status.nombre + ' ' + status.apellido
+        this.nombre = status.name + ' ' + status.lastname
         if (status.image != "") {
           this.imgUser = status.image
         }

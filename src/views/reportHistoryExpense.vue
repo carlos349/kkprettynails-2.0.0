@@ -5,15 +5,15 @@
             <div class="col-6">
                 <img src="img/brand/syswa-gestion.png" class="w-50 ml-4" alt="" style="">
             </div>
-            <div class="col-5 pt-4 pl-3 pr-3 border border-5 ml-1 mb-2">
+            <div class="col-5 pt-3 pl-2 pr-2 border border-5 ml-1 mb-2">
                 <p>
                     <strong>Saldo inicial:</strong> {{this.reinvestmentTotal}} <span class="float-right"><strong>Saldo final:</strong> {{this.totalFinal}}</span>
                 </p>
                 <p>
-                    <strong>Ingreso:</strong> {{this.totalSales}} <span class="float-right"><strong>Ganancia:</strong> {{this.gain}}</span>
+                    <strong>Ingreso:</strong> {{this.totalSales}} <span class="float-right"><strong>Ganancia:</strong> {{this.gain}}%</span>
                 </p>
                 <p>
-                    <strong>Egreso:</strong> {{this.totalExpenses}}
+                    <strong>Egreso:</strong> {{this.totalExpenses}}<span class="float-right"><strong>Gasto Inventario:</strong> {{this.inventoryTotal | formatPrice}}</span>
                 </p>
             </div>
         </div>
@@ -60,6 +60,7 @@ export default {
                 10: 'Noviembre',
                 11: 'Diciembre'
             },
+            inventoryTotal: 0,
             id: this.$route.query.id,
             columnsReport: [
                 {
@@ -111,6 +112,11 @@ export default {
                 this.expenses = getHistory.data.data.expenses
                 this.month = new Date(getHistory.data.data.createdAt).getMonth(),
                 this.year = new Date(getHistory.data.data.createdAt).getFullYear()
+                for (const expense of this.expenses) {
+                    if (expense.detaill == 'Stock en inventario') {
+                        this.inventoryTotal = this.inventoryTotal + expense.amount
+                    }
+                }
             }catch(err){
                 console.log(err)
             }

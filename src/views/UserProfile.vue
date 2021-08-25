@@ -86,10 +86,10 @@
                         <div slot="header" class="bg-white border-0">
                             <div class="row align-items-center">
                                 <div class="col-2">
-                                    <h3 class="mb-0" style="cursor:pointer;" :style="selectType == 'Profile' ? 'text-decoration: underline;' : 'text-decoration:none;'" @click="selectMenu('Profile')">Mi perfil</h3>
+                                    <h3 class="mb-0 text-info" style="cursor:pointer;" :style="selectType == 'Profile' ? 'text-decoration: underline;' : 'text-decoration:none;'" @click="selectMenu('Profile')">Mi perfil</h3>
                                 </div>
                                 <div class="col-8" v-if="model.linkLender != ''">
-                                    <h3 class="mb-0" style="cursor:pointer;" :style="selectType == 'Sales' ? 'text-decoration: underline;' : 'text-decoration:none;'" @click="selectMenu('Sales')">Servicios</h3>
+                                    <h3 class="mb-0 text-info" style="cursor:pointer;" :style="selectType == 'Sales' ? 'text-decoration: underline;' : 'text-decoration:none;'" @click="selectMenu('Sales')">Servicios</h3>
                                 </div>
                             </div>
                         </div>
@@ -597,9 +597,8 @@
                             "x-database-connect": endPoint.database
 						}
                     })
-                    console.log(image)
 					this.$swal({
-                        type: 'success',
+                        icon: 'success',
                         title: 'Usuario editado con éxito',
                         showConfirmButton: false,
                         timer: 1500

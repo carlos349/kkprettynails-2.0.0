@@ -119,6 +119,15 @@
   .modal-lg {
       max-width: 400px !important;
   }
+  #processButton{
+    width:60% ;
+  }
+  img{
+    margin-top:15px;
+  }
+  .navbar-toggler{
+    margin-top: 15px
+  }
 }
  table  .text-center{
       text-align: left !important;

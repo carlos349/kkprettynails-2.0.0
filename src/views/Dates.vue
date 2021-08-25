@@ -651,7 +651,7 @@
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 col-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Editar</span>  
@@ -660,7 +660,7 @@
                                     </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true, plusMicroFinally()" class="col-md-6 col-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true, plusMicroFinally()" class="col-md-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Finalizar</span>  
@@ -670,7 +670,7 @@
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 col-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Borrar</span>  
@@ -679,7 +679,7 @@
                                     </center>
                                 </div>
 
-                                <div class="col-md-6 col-12 mx-auto mt-2">
+                                <div class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <div v-if="selectedEvent.process == true && validRoute('agendamiento', 'confirmacion')">
                                             <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation" type="success" class="mx-auto col-12">
@@ -687,9 +687,9 @@
                                                 <span class="float-left">Confirmada</span> 
                                             </base-button>
 
-                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation(selectedEvent._id, selectedEvent.client, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.employe)">
                                                 <i style="margin-top:3px" class="ni ni-send float-right"></i>
-                                                <span class="float-left">Enviar confirmación</span>  
+                                                <span class="float-left">Confirmación</span>  
                                             </base-button>
                                         </div>   
                                     </center>
@@ -768,7 +768,7 @@
                                             <span v-for="service in record" :key="service">{{service.service}}</span>
                                         </template>
                                         <template slot="total" slot-scope="record, column">
-                                            $ {{formatPrice(column.total)}}
+                                            {{column.totals.total | formatPrice}}
                                         </template>
                                     </a-table>
                                 </a-config-provider>
@@ -1469,14 +1469,19 @@ export default {
         },
         async getBlockingHours(){
             try {
-                const blockHour = await axios.get(`${endPoint.endpointTarget}/dates/getBlockingHours/${this.branch}`, this.configHeader)
-                if (blockHour.data.status == 'ok') {
-                    this.datesBlocking = blockHour.data.data
-                }else{
-                    this.datesBlocking = []
+                const getDeletes = await axios.get(`${endPoint.endpointTarget}/dates/deleteBlockingHours/${this.branch}`, this.configHeader)
+                try {
+                    const blockHour = await axios.get(`${endPoint.endpointTarget}/dates/getBlockingHours/${this.branch}`, this.configHeader)
+                    if (blockHour.data.status == 'ok') {
+                        this.datesBlocking = blockHour.data.data
+                    }else{
+                        this.datesBlocking = []
+                    }
+                }catch(err){
+                    console.log(err)
                 }
             }catch(err){
-                console.log(err)
+                res.send()
             }
         },
         async selectCategoryPhone(name){
@@ -2354,30 +2359,53 @@ export default {
             .catch(err => { console.log(err) })
         },
         sendConfirmationn(id, name, mail, start, end, services, lender){
-            const nameFormat = name
-            const contactFormat = mail
-            const startFormat = start
-            const endFormat = end
-            const dateFormat = this.finalDate
-            
-            axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
-                name: nameFormat,
-                contact: contactFormat,
-                start: startFormat,
-                end: endFormat,
-                date: dateFormat,
-                service: services,
-                lenders: lender,
-                payment: 'No especificado'
+            this.$swal({
+                icon: 'info',
+                title: '¿Desea enviar confirmación?',
+                text: 'Correo del cliente '+mail,
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No, cancelar acción',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
             })
-            .then(res => {
-                if (res.data.status == 'ok') {
+            .then((result) => {
+                if(result.value) {
+                    const nameFormat = name
+                    const contactFormat = mail
+                    const startFormat = start
+                    const endFormat = end
+                    const dateFormat = this.finalDate
                     
+                    axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
+                        name: nameFormat,
+                        contact: contactFormat,
+                        start: startFormat,
+                        end: endFormat,
+                        date: dateFormat,
+                        service: services,
+                        lenders: lender,
+                        payment: 'No especificado'
+                    })
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Envío exitoso!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }else{
+
                 }
             })
-            .catch(err => {
-                console.log(err)
-            })
+            
         },
         register(){
             if (this.dataClient.valid && this.dataClient.valid2) {
@@ -3705,45 +3733,53 @@ export default {
 			}
         },
         sendConfirmation(id, name, start, end, services, lender){
-            
-            const nameFormat = this.formatName(name)
-            const contactFormat = this.formatContact(name)
-            const startFormat = this.dateSplitHours(start)
-            const endFormat = this.dateSplitHours(end)
-            const dateFormat = this.dateSplit(start)
-            axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
-                name: nameFormat,
-                contact: contactFormat,
-                start: startFormat,
-                end: endFormat,
-                date: dateFormat,
-                service: services,
-                lenders: lender,
-                payment: 'No especificado'
+            console.log(id, name, start, end, services, lender)
+            this.$swal({
+                icon: 'info',
+                title: '¿Desea enviar confirmación?',
+                text: 'Correo del cliente '+name.email,
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No, cancelar acción',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
             })
-            .then(res => {
-                if (res.data.status == 'ok') {
-                    this.dateModals.modal1 = false
-                    this.modalsDialog = {
-                        modal2: true,
-                        message: "Se envio el correo de confirmacion, satisfactoriamente",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modalsDialog = {
-                            modal2: false,
-                            message: "",
-                            icon: '',
-                            type: ''
+            .then((result) => {
+                if(result.value) {
+                    const nameFormat = this.formatName(name)
+                    const contactFormat = this.formatContact(name)
+                    const startFormat = this.dateSplitHours(start)
+                    const endFormat = this.dateSplitHours(end)
+                    const dateFormat = this.dateSplit(start)
+                    axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
+                        name: nameFormat,
+                        contact: contactFormat,
+                        start: startFormat,
+                        end: endFormat,
+                        date: dateFormat,
+                        service: services,
+                        lenders: lender,
+                        payment: 'No especificado'
+                    })
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Envío exitoso!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                         }
-                        this.dateModals.modal1 = true
-                    }, 1500);
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }else{
+
                 }
             })
-            .catch(err => {
-                console.log(err)
-            })
+            
         },
         openCalendar(){
             setTimeout(() => {
@@ -4944,6 +4980,25 @@ export default {
         }
         .flatpickr-calendar {
             left: 0 !important;
+        }
+        .vuecal__event-title{
+            font-size: 1em;
+        }
+        .vuecal__event-time{
+            font-size: 0.8em;
+        }
+        .vuecal__event-content{
+            font-size: 0.9em;
+        }
+        .day-split-header{
+            font-size: 0.8em;
+        }
+        .avatar-sm {
+            width: 26px;
+            height: 26px;
+            font-size: 0.875rem;
+            margin-top: -3px;
+            margin-left: 3px;
         }
     }
     .vue-form-wizard .wizard-tab-content{

@@ -10,10 +10,10 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Ventas</p>
-                        <p class="text-white">Sección dedicada al registro de las ventas de su negocio, podrás filtrar y exportar en excel dichas ventas.</p>
+                        <p class="text-white hideText">Sección dedicada al registro de las ventas de su negocio, podrás filtrar y exportar en excel dichas ventas.</p>
                     </div>
                     <div class="float-right mt-6">
-                        <div class="float-right" style="width:76%;">
+                        <div class="float-right widthDiv">
                             <label for="date" class="text-white">Busque por fecha</label><br>
                             <a-range-picker ref="datePick" style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" />
                             <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;" v-if="validRoute('ventas', 'filtrar')"  v-on:click="filterSale" type="success">
@@ -864,5 +864,18 @@ width=0,height=0,left=-1000,top=-1000`;
     }
     .modalReport div .ant-modal{
         top: 10px !important;
+    }
+    .widthDiv{
+        width: 76%;
+    }
+    @media only screen and (max-width: 768px)
+    {
+        .hideText{
+            display: none;
+        }
+        .widthDiv{
+            width: 100%;
+            margin-top:20px;
+        }
     }
 </style>

@@ -319,8 +319,13 @@ export default {
                 this.advancement = resData.data.data.advancement
                 this.sales = resData.data.data.sales
                 this.initDate = resData.data.data.createdAt
-                for (const sale of this.sales) {
-                    this.totalSales = this.totalSales + sale.total
+                
+                for (const sale in this.sales) {
+                    if(sale == 0){
+                        this.totalSales = this.totalSales + this.sales[sale].total
+                    }else if(this.sales[sale].saleData.uuid != this.sales[sale - 1].saleData.uuid) {
+                        this.totalSales = this.totalSales + this.sales[sale].total
+                    }
                 }
                 setTimeout(() => {
                     print()
