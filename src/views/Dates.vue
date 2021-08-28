@@ -16,42 +16,38 @@
                             <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         </div>
                         <div class="mt-7">
-                            <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
-                            <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
-                        </base-button>
-
-                        <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
-                            <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                            Agendar
-                        </base-button>
-
-                        <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true , initialState()"  type="warning">
-                            <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                            Bloqueos
-                        </base-button>
-
-                        <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mr-0 qloq" size="sm">
-                            <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
-                                    {{employeByDate}}
+                                <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                                <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
                             </base-button>
-                            <li v-on:click="getDatesByEmploye('Todos')">
-                                <base-button class="dropdown-item" href="#">
-                                    <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+
+                            <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
+                                <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                                Agendar
+                            </base-button>
+
+                            <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true"  type="warning">
+                                <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                                Bloqueos
+                            </base-button>
+
+                            <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mr-0 qloq" size="sm">
+                                <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                        {{employeByDate}}
                                 </base-button>
-                            </li>
-                            <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
-                                <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                                    <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                </base-button>
-                                <base-button v-else class="dropdown-item" href="#">
-                                    <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                </base-button>
-                            </li>
-                        </base-dropdown>
-                        </div>
-                        
-                        <div v-if="filter == true" class="ml-2">
-                            <img class="avatar rounded-circle" :src="img2" />
+                                <li v-on:click="getDatesByEmploye('Todos')">
+                                    <base-button class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+                                    </base-button>
+                                </li>
+                                <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
+                                    <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                    </base-button>
+                                    <base-button v-else class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                    </base-button>
+                                </li>
+                            </base-dropdown>
                         </div>
                     </div>
                 </div>
@@ -511,7 +507,7 @@
         <vue-custom-scrollbar class="calen" style="height:75vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
             <vue-cal
                 class="calen"
-                :locale="locale"
+                :locale="localee"
                 :events="events"
                 :time-from="startCalendar"
                 :time-to="endCalendar"
@@ -655,7 +651,7 @@
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 col-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Editar</span>  
@@ -664,7 +660,7 @@
                                     </center>
                                 </div>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true, plusMicroFinally()" class="col-md-6 col-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true, plusMicroFinally()" class="col-md-6 mx-auto mt-2"><center>
 
                                         <base-button outline size="sm" class="mx-auto col-12" type="default">
                                             <span class="float-left">Finalizar</span>  
@@ -674,7 +670,7 @@
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 col-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente)" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Borrar</span>  
@@ -683,7 +679,7 @@
                                     </center>
                                 </div>
 
-                                <div class="col-md-6 col-12 mx-auto mt-2">
+                                <div class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <div v-if="selectedEvent.process == true && validRoute('agendamiento', 'confirmacion')">
                                             <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation" type="success" class="mx-auto col-12">
@@ -691,9 +687,9 @@
                                                 <span class="float-left">Confirmada</span> 
                                             </base-button>
 
-                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation(selectedEvent.confirmationId, selectedEvent.cliente, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.empleada)">
+                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation(selectedEvent._id, selectedEvent.client, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.employe)">
                                                 <i style="margin-top:3px" class="ni ni-send float-right"></i>
-                                                <span class="float-left">Enviar confirmación</span>  
+                                                <span class="float-left">Confirmación</span>  
                                             </base-button>
                                         </div>   
                                     </center>
@@ -772,7 +768,7 @@
                                             <span v-for="service in record" :key="service">{{service.service}}</span>
                                         </template>
                                         <template slot="total" slot-scope="record, column">
-                                            $ {{formatPrice(column.total)}}
+                                            {{column.totals.total | formatPrice}}
                                         </template>
                                     </a-table>
                                 </a-config-provider>
@@ -1364,7 +1360,7 @@ export default {
         closedDates:[],
         employeShow:[],
         services:[],
-        locale: 'es',
+        localee: 'es',
         filter: false,
         events: [],
         lender:"",
@@ -1502,14 +1498,19 @@ export default {
         },
         async getBlockingHours(){
             try {
-                const blockHour = await axios.get(`${endPoint.endpointTarget}/dates/getBlockingHours/${this.branch}`, this.configHeader)
-                if (blockHour.data.status == 'ok') {
-                    this.datesBlocking = blockHour.data.data
-                }else{
-                    this.datesBlocking = []
+                const getDeletes = await axios.get(`${endPoint.endpointTarget}/dates/deleteBlockingHours/${this.branch}`, this.configHeader)
+                try {
+                    const blockHour = await axios.get(`${endPoint.endpointTarget}/dates/getBlockingHours/${this.branch}`, this.configHeader)
+                    if (blockHour.data.status == 'ok') {
+                        this.datesBlocking = blockHour.data.data
+                    }else{
+                        this.datesBlocking = []
+                    }
+                }catch(err){
+                    console.log(err)
                 }
             }catch(err){
-                console.log(err)
+                res.send()
             }
         },
         async selectCategoryPhone(name){
@@ -1826,6 +1827,7 @@ export default {
                 this.events = []
                 const token = localStorage.userToken
                 const decoded = jwtDecode(token)
+                console.log(decoded)
                 if (decoded.linkLender == '') {
                     this.$swal.fire({
                         icon: 'error',
@@ -2203,6 +2205,7 @@ export default {
         },
         initialState(){
             $(".ant-select-selection__clear").click()
+            this.modals.modal3 = false
             this.$refs.wizard.reset()
             this.registerDate = {
                 services:[],
@@ -2413,30 +2416,53 @@ export default {
             .catch(err => { console.log(err) })
         },
         sendConfirmationn(id, name, mail, start, end, services, lender){
-            const nameFormat = name
-            const contactFormat = mail
-            const startFormat = start
-            const endFormat = end
-            const dateFormat = this.finalDate
-            
-            axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
-                name: nameFormat,
-                contact: contactFormat,
-                start: startFormat,
-                end: endFormat,
-                date: dateFormat,
-                service: services,
-                lenders: lender,
-                payment: 'No especificado'
+            this.$swal({
+                icon: 'info',
+                title: '¿Desea enviar confirmación?',
+                text: 'Correo del cliente '+mail,
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No, cancelar acción',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
             })
-            .then(res => {
-                if (res.data.status == 'ok') {
+            .then((result) => {
+                if(result.value) {
+                    const nameFormat = name
+                    const contactFormat = mail
+                    const startFormat = start
+                    const endFormat = end
+                    const dateFormat = this.finalDate
                     
+                    axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
+                        name: nameFormat,
+                        contact: contactFormat,
+                        start: startFormat,
+                        end: endFormat,
+                        date: dateFormat,
+                        service: services,
+                        lenders: lender,
+                        payment: 'No especificado'
+                    })
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Envío exitoso!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }else{
+
                 }
             })
-            .catch(err => {
-                console.log(err)
-            })
+            
         },
         register(){
             if (this.dataClient.valid && this.dataClient.valid2) {
@@ -2460,64 +2486,53 @@ export default {
                 }, this.configHeader)
                 .then(res => {
                     if(res.data.status == true){
-                        this.modals = {
-                            modal3: true,
-                            message: "¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.",
-                            icon: 'ni ni-fat-remove ni-5x',
-                            type: 'danger'
+                        this.$swal({
+                            icon: 'error',
+                            title: '¡Disculpe!',
+                            text: 'El horario fue tomado recientemente, vuelva a agendar su cita.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.$refs.wizard.prevTab()
+                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                            const element = this.registerDae.serviceSelectds[index];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.class = ''
+                            element.blocks = []
+                            element.blocksFirst = []
+                            element.valid = false
+                            element.employe = 'Primera disponible'
+                            element.employeImg = ''
+                            element.employeId = ''
+                            element.realEmploye = 'Primera disponible'
                         }
+                        this.validHour = false
                         setTimeout(() => {
-                            this.modals = {
-                                modal1:false,
-                                modal2:false,
-                                modal3: false,
-                                modal4: false,
-                                modal5: false,
-                                message: "",
-                                icon: '',
-                                type: ''
-                            }
-                            this.$refs.wizard.prevTab()
-                            for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                                const element = this.registerDae.serviceSelectds[index];
-                                element.start = ''
-                                element.end = ''
-                                element.sort = ''
-                                element.class = ''
-                                element.blocks = []
-                                element.blocksFirst = []
-                                element.valid = false
-                                element.employe = 'Primera disponible'
-                                element.employeImg = ''
-                                element.employeId = ''
-                                element.realEmploye = 'Primera disponible'
-                            }
-                            this.validHour = false
-                            setTimeout(() => {
-                                axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                            axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                                date: this.finalDate,
+                                branch: this.branch
+                            }, this.configHeader)
+                            .then(res => {
+                                this.getDay = res.data.day
+                                this.availableslenders = res.data.array
+                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
                                     date: this.finalDate,
+                                    employes: res.data.array,
+                                    timedate: this.registerDae.serviceSelectds[0].duration,
+                                    employesServices: this.registerDae.serviceSelectds[0].employes,
                                     branch: this.branch
                                 }, this.configHeader)
                                 .then(res => {
-                                    this.getDay = res.data.day
-                                    this.availableslenders = res.data.array
-                                    axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                        date: this.finalDate,
-                                        employes: res.data.array,
-                                        timedate: this.registerDae.serviceSelectds[0].duration,
-                                        employesServices: this.registerDae.serviceSelectds[0].employes,
-                                        branch: this.branch
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.readyChange = true
-                                        this.registerDae.serviceSelectds[0].valid = true
-                                        this.registerDae.serviceSelectds[0].blocks = res.data.data
-                                        this.registerDae.block = res.data.data
-                                        $('#block0').toggle('slow')
-                                    })
+                                    this.readyChange = true
+                                    this.registerDae.serviceSelectds[0].valid = true
+                                    this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                    this.registerDae.block = res.data.data
+                                    $('#block0').toggle('slow')
                                 })
-                            }, 200);  
-                        }, 5000);
+                            })
+                        }, 200);
                     }else{
                         var blockEdit = []
                         if (this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst.length > 0) {
@@ -3779,45 +3794,53 @@ export default {
 			}
         },
         sendConfirmation(id, name, start, end, services, lender){
-            
-            const nameFormat = this.formatName(name)
-            const contactFormat = this.formatContact(name)
-            const startFormat = this.dateSplitHours(start)
-            const endFormat = this.dateSplitHours(end)
-            const dateFormat = this.dateSplit(start)
-            axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
-                name: nameFormat,
-                contact: contactFormat,
-                start: startFormat,
-                end: endFormat,
-                date: dateFormat,
-                service: services,
-                lenders: lender,
-                payment: 'No especificado'
+            console.log(id, name, start, end, services, lender)
+            this.$swal({
+                icon: 'info',
+                title: '¿Desea enviar confirmación?',
+                text: 'Correo del cliente '+name.email,
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No, cancelar acción',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
             })
-            .then(res => {
-                if (res.data.status == 'ok') {
-                    this.dateModals.modal1 = false
-                    this.modalsDialog = {
-                        modal2: true,
-                        message: "Se envio el correo de confirmacion, satisfactoriamente",
-                        icon: 'ni ni-check-bold ni-5x',
-                        type: 'success'
-                    }
-                    setTimeout(() => {
-                        this.modalsDialog = {
-                            modal2: false,
-                            message: "",
-                            icon: '',
-                            type: ''
+            .then((result) => {
+                if(result.value) {
+                    const nameFormat = this.formatName(name)
+                    const contactFormat = this.formatContact(name)
+                    const startFormat = this.dateSplitHours(start)
+                    const endFormat = this.dateSplitHours(end)
+                    const dateFormat = this.dateSplit(start)
+                    axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
+                        name: nameFormat,
+                        contact: contactFormat,
+                        start: startFormat,
+                        end: endFormat,
+                        date: dateFormat,
+                        service: services,
+                        lenders: lender,
+                        payment: 'No especificado'
+                    })
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                icon: 'success',
+                                title: 'Envío exitoso!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                         }
-                        this.dateModals.modal1 = true
-                    }, 1500);
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }else{
+
                 }
             })
-            .catch(err => {
-                console.log(err)
-            })
+            
         },
         openCalendar(){
             setTimeout(() => {
@@ -5018,6 +5041,25 @@ export default {
         }
         .flatpickr-calendar {
             left: 0 !important;
+        }
+        .vuecal__event-title{
+            font-size: 1em;
+        }
+        .vuecal__event-time{
+            font-size: 0.8em;
+        }
+        .vuecal__event-content{
+            font-size: 0.9em;
+        }
+        .day-split-header{
+            font-size: 0.8em;
+        }
+        .avatar-sm {
+            width: 26px;
+            height: 26px;
+            font-size: 0.875rem;
+            margin-top: -3px;
+            margin-left: 3px;
         }
     }
     .vue-form-wizard .wizard-tab-content{

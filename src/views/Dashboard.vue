@@ -9,7 +9,7 @@
               <div class="col-12 py-5">
                 <div class="text-absolute" style="top:10%;">
                   <p class="mb-0 mt-4 display-2 text-white">Reportes</p>
-                  <p class="text-white">Sección dedicada a reportes y gráficos que permiten visualizar los indicadores de tu negocio.</p>
+                  <p class="text-white hideText">Sección dedicada a reportes y gráficos que permiten visualizar los indicadores de tu negocio.</p>
                 </div>
               </div>
             </div>

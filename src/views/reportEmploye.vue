@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Reporte de {{nameLender}}</p>
-                        <p class="text-white">Sección dedicada al reporte de ventas y comisiones de empleados.</p>
+                        <p class="text-white hideText">Sección dedicada al reporte de ventas y comisiones de empleados.</p>
                     </div>
                     <base-button v-on:click="back" class="float-right mt-7 mr-2" size="sm" type="warning">
                         <a-icon type="rollback" style="vertical-align:1px;font-size:1.4em;" />

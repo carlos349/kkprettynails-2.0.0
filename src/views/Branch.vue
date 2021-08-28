@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Sucursales</p>
-                        <p class="text-white">Esta es la sección administrativa de tus sucursales, aquí podrás registrar, editar y visualizar todas tus sucursales.</p>
+                        <p class="text-white hideText">Esta es la sección administrativa de tus sucursales, aquí podrás registrar, editar y visualizar todas tus sucursales.</p>
                     </div>
                     <base-button :disabled="validRoute('sucursales', 'registrar') ? false : true" class="float-right mt-7" size="sm" type="success" style="font-size:1em;" @click="modals.modal1 = true" ><a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" /> Registrar</base-button>
                 </div>

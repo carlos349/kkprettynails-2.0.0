@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Empleados</p>
-                        <p class="text-white">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
+                        <p class="text-white hideText">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
                     </div>
                     <base-button class="float-right mt-7" size="sm" :disabled="validRoute('empleados', 'registrar') ? false : true" @click="modals.modal1 = true , initialState(2)" type="success">
                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />

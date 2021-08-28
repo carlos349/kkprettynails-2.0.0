@@ -78,6 +78,7 @@
         }
       },
       openModal(){
+        this.toggleSidebar()
         EventBus.$emit('openModal', 'reload')
       },
       changeAccess(status){
@@ -118,6 +119,15 @@
 @media (max-width: 692px){
   .modal-lg {
       max-width: 400px !important;
+  }
+  #processButton{
+    width:60% ;
+  }
+  img{
+    margin-top:15px;
+  }
+  .navbar-toggler{
+    margin-top: 15px
   }
 }
  table  .text-center{

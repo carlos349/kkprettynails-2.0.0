@@ -8,7 +8,7 @@
             <div class="col-12">
                 <div class="text-absolute">
                     <p class="mb-0 display-2 text-white">Inventario</p>
-                    <p class="text-white">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
+                    <p class="text-white hideText">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
                 </div>
                 <base-button :disabled="validRoute('inventario', 'cerrar') ? false : true" class="float-right mt-7" size="sm" @click="modals.modal4 = true" type="danger">
                     <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
@@ -852,7 +852,7 @@ export default {
                 .then(res => {
                     this.$swal({
                         icon: 'success',
-                        title: 'Cierre realizado con exito',
+                        title: 'Cierre realizado con éxito',
                         showConfirmButton: false,
                         timer: 1500
                     })

@@ -1035,18 +1035,10 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                 email: this.model.email,
                 password: this.model.password
             }, this.configHeader).then(res => {
-                if(res.data.error == 'pass incorrecto'){
+                if(res.data.error == 'pass incorrecto' || res.data.error == 'User does not exist'){
                     this.$swal({
                         type: 'error',
-                        title: 'Contraseña incorrecta',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    this.loading = false
-                }else if(res.data.error == 'User does not exist'){
-                    this.$swal({
-                        type: 'error',
-                        title: 'No esta registrado',
+                        title: 'Usuario o Contraseña incorrecta',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -1079,17 +1071,6 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
             })
         },
         async emitMethod(status) {
-            const configHeader = {
-                headers: {
-                    "x-database-connect": endPoint.database, 
-                    "x-access-token": localStorage.userToken
-                }
-            }
-            try {
-                const getBranches = await axios.get(endPoint.endpointTarget+'/branches', configHeader)
-                localStorage.setItem('branch', getBranches.data.data[0]._id)
-                localStorage.setItem('branchName', getBranches.data.data[0].name)
-            }catch(err){console.log(err)}
             EventBus.$emit('loggedin', status)
             localStorage.setItem('logged-in', status)
         },

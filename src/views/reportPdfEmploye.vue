@@ -331,8 +331,12 @@ export default {
                     console.log(res)
                     this.sales = res.data.data
                     this.initDate = res.data.data[0].createdAt
-                    for (const sale of this.sales) {
-                        this.totalSales = this.totalSales + sale.total
+                    for (const sale in this.sales) {
+                        if(sale == 0){
+                            this.totalSales = this.totalSales + sale.total
+                        }else if(this.sales[sale].saleData.uuid != this.sales[sale - 1].saleData.uuid) {
+                            this.totalSales = this.totalSales + sale.total
+                        }
                     }
                     setTimeout(() => {
                         print()
