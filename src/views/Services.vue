@@ -1073,6 +1073,13 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                }else if(timeService == 0){
+                    this.$swal({
+                        icon: 'info',
+                        title: 'Debe completar horas y minutos',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             }else if(this.paymentAmount > this.priceRegister){
                 this.$swal({

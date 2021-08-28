@@ -31,8 +31,8 @@
                         <input readonly class="ant-input w-100" placeholder="Correo" v-model="registerClient.email"/>
                     </div>
                     <div class="col-md-3">
-                        <label class="mb-2" for="Client">Telefono cliente</label>
-                        <input readonly class="ant-input w-100" placeholder="Telefono" v-model="registerClient.phone.formatInternational"/>
+                        <label class="mb-2" for="Client">Teléfono cliente</label>
+                        <input readonly class="ant-input w-100" placeholder="Teléfono" v-model="registerClient.phone.formatInternational"/>
                     </div>
                 </div>
                 <div class="card-container mt-1">
@@ -481,7 +481,7 @@
                                 v-on:change="validRegister(1)"
                                 type="number"
                                 max-count="100"
-                                placeholder="comision (%)"
+                                placeholder="comisión (%)"
                                 addon-left-icon="ni ni-money-coins"
                                 v-model="registerService.comissionRegister">
                             </base-input>

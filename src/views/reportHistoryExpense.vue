@@ -2,19 +2,42 @@
     <div class="mx-2">
         <h1 class="text-center mt-2">Reporte preliminar de gastos mes {{dict[month]}} {{year}}</h1>
         <div class="row">
-            <div class="col-6">
-                <img src="img/brand/syswa-gestion.png" class="w-50 ml-4" alt="" style="">
+            <div class="col-4">
+                <img src="img/brand/syswa-gestion.png" class="w-100 mt-2">
             </div>
-            <div class="col-5 pt-3 pl-2 pr-2 border border-5 ml-1 mb-2">
-                <p>
-                    <strong>Saldo inicial:</strong> {{this.reinvestmentTotal}} <span class="float-right"><strong>Saldo final:</strong> {{this.totalFinal}}</span>
-                </p>
-                <p>
-                    <strong>Ingreso:</strong> {{this.totalSales}} <span class="float-right"><strong>Ganancia:</strong> {{this.gain}}%</span>
-                </p>
-                <p>
-                    <strong>Egreso:</strong> {{this.totalExpenses}}<span class="float-right"><strong>Gasto Inventario:</strong> {{this.inventoryTotal | formatPrice}}</span>
-                </p>
+            <div class="col-8 pt-3 border border-5 mb-2 row">
+                <div class="col-4 p-0">
+                    <p><strong>Saldo inicial:</strong> {{this.reinvestmentTotal}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Saldo final:</strong> {{this.totalFinal}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Ganancia:</strong> {{this.totalFinal}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Ingreso:</strong> {{this.totalSales}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Egreso:</strong> {{this.totalExpenses}}</p>
+                </div>
+                <div class="col-12">
+                    <hr class="mt-0 mb-2">
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Comisión:</strong> {{this.totalExpenses}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Gasto mensual:</strong> {{this.inventoryTotal | formatPrice}}</p>
+                </div>
+                <div class="col-12">
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Bonos:</strong> {{this.totalExpenses}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Gasto Inventario:</strong> {{this.inventoryTotal | formatPrice}}</p>
+                </div>
             </div>
         </div>
         <a-config-provider>
@@ -93,7 +116,10 @@ export default {
             totalSales: 0,
             totalExpenses: 0,
             totalFinal: 0,
-            expenses: []
+            expenses: [],
+            bonus: 0,
+            monthly: 0,
+            commission: 0
         }
     },
     created(){
@@ -110,6 +136,9 @@ export default {
                 this.totalFinal = getHistory.data.data.totals.totalFinal
                 this.gain = getHistory.data.data.totals.gain
                 this.expenses = getHistory.data.data.expenses
+                this.bonus = getHistory.data.data.totals.bonus
+                this.monthly = getHistory.data.data.totals.monthly
+                this.commission = getHistory.data.data.totals.commission
                 this.month = new Date(getHistory.data.data.createdAt).getMonth(),
                 this.year = new Date(getHistory.data.data.createdAt).getFullYear()
                 for (const expense of this.expenses) {

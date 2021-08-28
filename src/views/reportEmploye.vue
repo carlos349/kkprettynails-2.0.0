@@ -377,7 +377,7 @@ export default {
                     sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
                 },
                 {
-                    title: 'Comision',
+                    title: 'Comisión',
                     dataIndex: 'commission',
                     key: 'commission',
                     scopedSlots: { customRender: 'commission-slot' }
@@ -818,44 +818,45 @@ width=0,height=0,left=-1000,top=-1000`;
             })
             .then(result => {
                 if (result.value) {
-                    let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,height=0,left=-1000,top=-1000`;
-                    var win = window.open(endPoint.url+'/reportPdfEmploye?id='+this.code, '_blank', params)
-                    win.focus();
-                    setTimeout(()=> {
-                        axios.put(endPoint.endpointTarget+'/employes/closeemploye/'+this.code, {
-                            sales: this.sales,
-                            bonus: this.lenderBonus,
-                            advancement: this.advancement,
-                            commission: this.totalComission,
-                            employe: {
-                                name: this.nameLender,
-                                id: this.id
-                            }
-                        }, this.configHeader)
-                        .then(res => {
-                            if (res.data.status == 'employe closed') {
-                                axios.post(`${endPoint.endpointTarget}/expenses/`, {
-                                    branch: this.branch,
-                                    detail: 'Pago de comisión de '+ this.nameLender ,
-                                    employe: this.code,
-                                    amount: this.totalComission,
-                                    type: "Comisión",
-                                }, this.configHeader)
-                                .then(res => {
-                                    if (res.data.status == 'ok') {
-                                        router.push({path:'/Empleados'})
-                                    }
-                                }).catch(err => {
-                                    console.log(err)
-                                })
-                            }else{
-                                this.$swal('Error en el cierre', 'Hubo un error', 'error')
-                            }
-                        }) 
-                        .catch(err => {
-                            console.log(err)
-                        })  
-                    }, 2500)                  
+                    axios.put(endPoint.endpointTarget+'/employes/closeemploye/'+this.code, {
+                        sales: this.sales,
+                        bonus: this.lenderBonus,
+                        advancement: this.advancement,
+                        commission: this.totalComission,
+                        employe: {
+                            name: this.nameLender,
+                            id: this.id
+                        }
+                    }, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == 'employe closed') {
+                            axios.post(`${endPoint.endpointTarget}/expenses/`, {
+                                branch: this.branch,
+                                detail: 'Pago de comisión de '+ this.nameLender ,
+                                employe: this.code,
+                                amount: this.totalComission,
+                                type: "Comision",
+                            }, this.configHeader)
+                            .then(res => {
+                                if (res.data.status == 'ok') {
+                                    this.getHistoryCloses()
+                                    this.$swal({
+                                        icon: 'success',
+                                        title: 'Cierre exitoso',
+                                        text: 'Para visualizar reporte verifique el historial',
+                                        showConfirmButton: true
+                                    })
+                                }
+                            }).catch(err => {
+                                console.log(err)
+                            })
+                        }else{
+                            this.$swal('Error en el cierre', 'Hubo un error', 'error')
+                        }
+                    }) 
+                    .catch(err => {
+                        console.log(err)
+                    })                 
                 }else{
                     this.$swal('No se hizo el cierre', 'Acción cancelada', 'info')
                 }

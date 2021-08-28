@@ -22,7 +22,7 @@
             <template slot="header">
               <div class="row">
                 <div class="col-md-4">
-                  <a-select default-value="Produccion anual" class="w-100" @change="selectTypeAnual">
+                  <a-select default-value="Producción anual" class="w-100" @change="selectTypeAnual">
                     <a-select-option value="anualProduction">
                       Producción anual
                     </a-select-option>
@@ -86,7 +86,7 @@
                   />
                 </div>
                 <div class="col-md-4">
-                  <a-select default-value="Produccion total" class="w-100" @change="selectType">
+                  <a-select default-value="Producción total" class="w-100" @change="selectType">
                     <a-select-option value="totalSales">
                       Producción total
                     </a-select-option>
@@ -94,10 +94,10 @@
                       Servicios totales
                     </a-select-option>
                     <a-select-option value="totalByEmploye">
-                      Produccion por empleado
+                      Producción por empleado
                     </a-select-option>
                     <a-select-option value="commissionsByEmploye">
-                      Comision por empleado
+                      Comisión por empleado
                     </a-select-option>
                     <a-select-option value="servicesByEmploye">
                       Servicios por empleado

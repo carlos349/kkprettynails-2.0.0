@@ -633,7 +633,10 @@ export default {
                                     expenses: expenseTotal,
                                     totalFinal: this.totalFinal,
                                     branch: this.branch,
-                                    reinvestmentId: this.reinvestmentId 
+                                    reinvestmentId: this.reinvestmentId,
+                                    bonus: this.thisMonth.Bono,
+                                    monthly: this.thisMonth.Mensual,
+                                    commission: this.thisMonth.Comision
                                 }, this.configHeader)
                                 .then(res => {
                                     if(res.data.status == 'ok'){
