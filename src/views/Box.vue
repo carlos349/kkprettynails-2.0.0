@@ -414,13 +414,14 @@ export default {
                     this.getFunds()
                     this.cashFunds.inspector = false
                     axios.post(endPoint.endpointTarget+'/notifications', {
-                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                        userImage:localStorage.getItem('imageUser'),
+                        branch: this.branch,
+                        userName:this.firstNameUser + " " + this.lastNameUser,
+                        userImage:this.imgUser,
                         detail:'Registro un fondo de caja',
                         link: 'Caja'
-                    })
+                    }, this.configHeader)
                     .then(res => {
-                        this.socket.emit('sendNotification', res.data)
+                        this.socket.emit('sendNotification', res.data.data)
                     }) 
 				}
 			})
@@ -508,8 +509,9 @@ export default {
                         this.modals.modal4 = false
                         this.cashFunds.inspector = true
                         axios.post(endPoint.endpointTarget+'/notifications', {
-                            userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                            userImage:localStorage.getItem('imageUser'),
+                            branch: this.branch,
+                            userName:this.firstNameUser + " " + this.lastNameUser,
+                            userImage:this.imgUser,
                             detail:'Hizo un cierre de caja',
                             link: 'Caja'
                         })

@@ -44,9 +44,9 @@ export default {
                         userImage:localStorage.getItem('imageUser'),
                         detail:'Confirmo su cita para el día '+this.formatDateTwo(res.data.data.date),
                         link: 'agendamiento'
-                    })
+                    }, this.configHeader)
                     .then(res => {
-                        this.socket.emit('sendNotification', res.data)
+                        this.socket.emit('sendNotification', res.data.data)
                     })
                     setTimeout(() => {
                         window.location = "https://kkprettynails.cl"

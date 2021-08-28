@@ -101,10 +101,9 @@ Vue.use(CKEditor);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueFormWizard)
 Vue.component('apexchart', VueApexCharts)
-
 Vue.use(new VueSocketIO({
     debug: true,
-    connection: SocketIO(endPoint.endpointTarget)
+    connection: endPoint.endpointTarget,
   })
 );
 Vue.use(VueProgress)

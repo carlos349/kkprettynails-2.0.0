@@ -567,6 +567,9 @@ export default {
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+            this.firstNameUser = localStorage.firstname  
+            this.lastNameUser = localStorage.lastname
+            this.imgUser = localStorage.imgUser
         },
         getBranch(){
             this.branchName = localStorage.branchName  
@@ -736,14 +739,14 @@ export default {
                             this.dataSale.status = false
                             axios.post(endPoint.endpointTarget+'/notifications', {
                                 branch: this.branch,
-                                userName: localStorage.getItem('firstname') + " " + localStorage.getItem('lastname'),
-                                userImage: localStorage.getItem('imageUser'),
+                                userName:this.firstNameUser + " " + this.lastNameUser,
+                                userImage:this.imgUser,
                                 detail: 'Anuló una venta del día '+this.formatDate(this.dataSale.createdAt),
                                 link: 'Ventas'
-                            }).then(res => {
+                            }, this.configHeader).then(res => {
                                 console.log(res)
                                 if (res.data.status == 'ok') {
-                                    this.socket.emit('sendNotification', notify.data)
+                                    this.socket.emit('sendNotification', res.data.data)
                                 } 
                             })
                         }else{

@@ -1050,6 +1050,7 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                     const token = localStorage.userToken
                     const decoded = jwtDecode(token)
                     localStorage.setItem('firstname', decoded.first_name)
+                    localStorage.setItem('_id', decoded._id)
                     localStorage.setItem('lastname', decoded.last_name)
                     localStorage.setItem('email', decoded.email)
                     localStorage.setItem('imageUser', decoded.userImage)
