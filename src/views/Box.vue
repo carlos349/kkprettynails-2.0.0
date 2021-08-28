@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Caja</p>
-                        <p class="text-white">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
+                        <p class="text-white hideText">Sección dedicada a la administración de sus empleados. Donde podrá obtener detalle de sus ventas y comisiones correspondientes.</p>
                     </div>
                     <template v-if="cashFunds.inspector">
                         <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('caja', 'fondo') ? false : true"  v-on:click="modals.modal2 = true" type="success">

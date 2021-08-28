@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Servicios</p>
-                        <p class="text-white">Sección dedicada a registrar, editar, eliminar o activar e inactivar servicios de su negocio.</p>
+                        <p class="text-white hideText">Sección dedicada a registrar, editar, eliminar o activar e inactivar servicios de su negocio.</p>
                     </div>
                     <base-button class="float-right mt-7 mr-0" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="modals.modal5 = true" type="primary">
                         <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />

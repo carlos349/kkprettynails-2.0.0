@@ -8,7 +8,7 @@
             <div class="col-12">
                 <div class="text-absolute">
                     <p class="mb-0 display-2 text-white">Bodega</p>
-                    <p class="text-white">Sección dedicada al control y gestión de productos, insumos y proveedores.</p>
+                    <p class="text-white hideText">Sección dedicada al control y gestión de productos, insumos y proveedores.</p>
                 </div>
                 <base-button class="float-right mt-7 mr-0" :disabled="validRoute('bodega', 'cierre_bodega') ? false : true" size="sm" @click="modals.modal4 = true" type="warning">
                     <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>

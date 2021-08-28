@@ -78,6 +78,7 @@
         }
       },
       openModal(){
+        this.toggleSidebar()
         EventBus.$emit('openModal', 'reload')
       },
       changeAccess(status){

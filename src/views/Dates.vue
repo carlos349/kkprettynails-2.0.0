@@ -507,7 +507,7 @@
         <vue-custom-scrollbar class="calen" style="height:75vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
             <vue-cal
                 class="calen"
-                :locale="locale"
+                :locale="localee"
                 :events="events"
                 :time-from="startCalendar"
                 :time-to="endCalendar"
@@ -1332,7 +1332,7 @@ export default {
         closedDates:[],
         employeShow:[],
         services:[],
-        locale: 'es',
+        localee: 'es',
         filter: false,
         events: [],
         lender:"",

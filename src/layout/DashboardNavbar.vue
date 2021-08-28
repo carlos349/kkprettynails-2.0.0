@@ -230,6 +230,7 @@
             }
           }
         }
+        console.log(this.branchName )
       },
       validRoute(route, type){
         console.log(this.auth)
