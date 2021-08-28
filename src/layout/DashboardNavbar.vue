@@ -49,7 +49,7 @@
                             <h4 class="mb-0 text-sm">{{notification.userName}}</h4>
                           </div>
                           <div class="text-right text-muted">
-                            <small>{{momentTime(notification.date)}}</small>
+                            <small>{{momentTime(notification.createdAt)}}</small>
                           </div>
                         </div>
                         <p class="text-sm mb-0">{{formatDetail(notification.detail)}} <br> {{notification.detail.split('~')[1]}}</p>
@@ -205,7 +205,7 @@
       this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
     },
     created() {
-      // this.getNotifications()
+      this.getNotifications()
       this.getBranches()
       this.getToken()
     },
@@ -281,10 +281,16 @@
         console.log('cerro')
       },
       getNotifications(){
-        axios.get(endPoint.endpointTarget+'/notifications/noViews/'+this.idUser) 
+        const configHeader = {
+          headers: {
+              "x-database-connect": endPoint.database, 
+              "x-access-token": localStorage.userToken
+          }
+        }
+        axios.get(endPoint.endpointTarget+'/notifications/noviews/'+this.idUser, configHeader) 
         .then(res => {
-          this.notifications = res.data
-          this.activeNotifications = res.data.length
+          this.notifications = res.data.data
+          this.activeNotifications = res.data.data.length
           if (this.activeNotifications < 10) {
             this.pxSep = "pxSix"
           }else if (this.activeNotifications < 100) {
@@ -293,12 +299,20 @@
             this.pxSep = "pxSixPlusTwo"
           }
           this.all = true
+          console.log("si me corri!"+ this.activeNotifications)
+          console.log(res.data.data)
         })
       },
       validateNotifications(){
-        axios.get(endPoint.endpointTarget+'/notifications/validateViews/'+this.idUser) 
+        const configHeader = {
+          headers: {
+              "x-database-connect": endPoint.database, 
+              "x-access-token": localStorage.userToken
+          }
+        }
+        axios.get(endPoint.endpointTarget+'/notifications/validateviews/'+this.idUser, configHeader) 
         .then(res => {
-          this.notifications = res.data
+          this.notifications = res.data.data
           this.activeNotifications = 0
           this.all = true
         })
@@ -308,12 +322,18 @@
         return moment(dateNoti, "YYYYMMDD").fromNow();
       },
       getAll() {
+        const configHeader = {
+          headers: {
+              "x-database-connect": endPoint.database, 
+              "x-access-token": localStorage.userToken
+          }
+        }
         setTimeout(() => {
           $(".dDeste").dropdown('toggle')
         }, 100);
-        axios.get(endPoint.endpointTarget+'/notifications/getAll') 
+        axios.get(endPoint.endpointTarget+'/notifications/getall', configHeader) 
         .then(res => {
-          this.notifications = res.data
+          this.notifications = res.data.data
           this.all = false
         })
       }
@@ -334,7 +354,6 @@
       this.socket.on('notify', (data) => {
         this.notifications.push(data)
         this.activeNotifications++
-        
       });
     }
   };

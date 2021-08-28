@@ -906,14 +906,14 @@
                                                     <template slot="title">
                                                         <span v-if="hideText != 'display:none'">Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
                                                     </template>
-                                                    <template v-if="index == 0" style="z-index: 100">
+                                                    <!-- <template v-if="index == 0" style="z-index: 100">
                                                         <div class="ml-1" style="z-index:100" v-for="micro in selectedEvent.microServices" :key="micro.microService">
                                                             <badge  style="cursor: pointer" type="primary" class="text-white ml-1 float-right">
                                                                 {{micro.name}}
                                                             </badge>
                                                         </div>
-                                                    </template>
-                                                    <div class="ml-1" v-else style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)">
+                                                    </template> -->
+                                                    <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)">
                                                         <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
                                                             {{micro.microService}}
                                                         </badge>
@@ -931,6 +931,25 @@
             <div class="text-center">
                 <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
             </div>
+        </modal>
+        <modal :show.sync="modals.modal5"
+            body-classes="p-0"
+            modal-classes="modal-dialog-centered modal-sm">
+            <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
+            <card type="secondary" shadow
+                header-classes="bg-white pb-5"
+                body-classes="px-lg-5 py-lg-5"
+                class="border-0">
+                <template>
+                    <div style="margin-top: -15%" class="text-muted mb-3 text-center">
+                        Precio del microservicio
+                    </div>
+                </template>
+                <a-input-number size="large" placeholder="Precio" class="w-100" :min="1" v-model="microPriceClick"/>
+                <div class="text-center">
+                    <base-button type="warning" :disabled="microPriceClick > 0 ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
+                </div>
+            </card>
         </modal>
         <a-modal v-model="modals.modal3" title="Horarios bloqueados" width="50%" :closable="true" >
             <template>
@@ -959,8 +978,15 @@
         </a-modal>
         <a-modal v-model="modals.modal4" title="Registrar bloqueo" width="30%" :closable="true" >
             <template>
-                <label for="date">Fecha</label>
-                <a-date-picker placeholder="Seleccione fecha" class="w-100 clearBlockingDate" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" />
+                <label for="date">Fechas</label>
+                <flat-picker 
+                    style="padding-top: 15px;padding-bottom: 15px;height:0"
+                    :config="configDatePicker"
+                    class="form-control clearBlockingDate"
+                    v-model="hourBlocking.dateBlocking"
+                    placeholder="Seleccione una fecha">
+                </flat-picker>
+                <!-- <a-date-picker placeholder="Seleccione fecha" class="w-100 clearBlockingDate" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" /> -->
                 <label class="mt-2" for="employe">Empleado</label>
                 <a-select class="w-100 clearBlockingEmploye" allowClear placeholder="Seleccione empleado">
                     <a-select-option v-for="employe of employeShow" :key="employe._id" @click="selectEmployeHour(employe)" :value="employe._id">
@@ -1180,6 +1206,8 @@ export default {
                 scopedSlots: { customRender: 'delete-slot' } 
             }
         ],
+        microPriceClick: 0,
+        microPriceIndex:'',
         columnsDatesClosed: [{
                 label: "Fecha",
                 name: "date",
@@ -1358,6 +1386,7 @@ export default {
             modal2: false,
             modal3: false,
             modal4: false,
+            modal5: false,
             message: "",
             icon: '',
             type:''
@@ -1697,8 +1726,9 @@ export default {
         getUserData(){
             this.firstNameUser = localStorage.firstname  
             this.lastNameUser = localStorage.lastname
-            this.emailUser = localStorage.email
+            this.imgUser = localStorage.imgUser
             this.idUser = localStorage._id
+            console.log(localStorage)
         },
         async getMicroServices(){
             try {
@@ -1994,6 +2024,21 @@ export default {
             this.showCurrencyMicro = true
             this.selectedEvent.services[0].microServiceSelect = this.selectedEvent.microServices
             this.microPrice(this.selectedEvent.services, 0)
+            var microServices = [{checked: false, microService: "Ninguno"}]
+            for (const micro of this.microServices) {
+                var valid = true
+                this.selectedEvent.services[0].microServiceSelect.forEach(element => {
+                    if (element.name == micro.microService) {
+                        microServices.push({checked: true, duration: micro.duration, microService: micro.microService, price: micro.price})
+                        valid = false
+                    }
+                });
+                if (valid) {
+                    microServices.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price})
+                }
+                
+            }
+            this.selectedEvent.services[0].microServices = microServices
             console.log(this.selectedEvent)
         },
         plusServiceFinally(name, commission, price, discount, products){
@@ -2036,12 +2081,24 @@ export default {
                     }
                 }
                 if (valid) {
-                    this.selectedEvent.services[index].microServiceSelect.push({name: micro.microService, duration: micro.duration, price:micro.price})
+                    this.microPriceClick = micro.price
+                    this.microPriceIndex = {
+                        name: micro.microService, 
+                        duration: micro.duration,
+                        index: index,
+                    }
+                    this.modals.modal5 = true
+                    
                 }
             }
             this.microPrice(this.selectedEvent.services, index)
             console.log(this.selectedEvent.services[index])
             console.log(valid)
+        },
+        changeMicroPrice(){
+            this.selectedEvent.services[this.microPriceIndex.index].microServiceSelect.push({name: this.microPriceIndex.name, duration: this.microPriceIndex.duration, price:this.microPriceClick})
+            this.modals.modal5 = false
+            console.log(this.selectedEvent.services[this.microPriceIndex.index].microServiceSelect)
         },
         validateWizardOne(){
             if (this.registerDate.services != '' && this.registerDate.design != false) { 
@@ -2994,13 +3051,13 @@ export default {
                                     this.dateModals.modal3 = false
                                     axios.post(endPoint.endpointTarget+'/notifications', {
                                         branch: this.branch,
-                                        userName:firstNameUser + " " + lastNameUser,
-                                        userImage:null,
+                                        userName:this.firstNameUser + " " + this.lastNameUser,
+                                        userImage:this.imgUser,
                                         detail:'Finalizó una cita',
                                         link: 'agendamiento'
                                     }, this.configHeader)
                                     .then(res => {
-                                        this.socket.emit('sendNotification', res.data)
+                                        this.socket.emit('sendNotification', res.data.data)
                                     })   
                                 }
                             })
@@ -3043,13 +3100,14 @@ export default {
                         this.dateModals.modal1 = false
                         this.dateModals.modal3 = false
                         axios.post(endPoint.endpointTarget+'/notifications', {
-                            userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                            userImage:localStorage.getItem('imageUser'),
+                            branch: this.branch,
+                            userName:this.firstNameUser + " " + this.lastNameUser,
+                            userImage:this.imgUser,
                             detail:'Finalizó una cita',
                             link: 'agendamiento'
-                        })
+                        },this.configHeader)
                         .then(res => {
-                            this.socket.emit('sendNotification', res.data)
+                            this.socket.emit('sendNotification', res.data.data)
                         })   
                     }
                 })
@@ -3083,14 +3141,15 @@ export default {
                         this.dateModals.modal1 = false
                         this.getDates();
                         axios.post(endPoint.endpointTarget+'/notifications', {
-                            userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                            userImage:localStorage.getItem('imageUser'),
-                            detail:`Eliminó la cita de ${cliente.split(' / ')[0]} (${cliente.split(' / ')[1]}) ~
+                            branch: this.branch,
+                            userName:this.firstNameUser + " " + this.lastNameUser,
+                            userImage:this.imgUser,
+                            detail:`Eliminó la cita de ${res.data.data.client.name}) ~
                             el ${this.formatDate(new Date())}`,
                             link: 'agendamiento'
-                        })
+                        }, this.configHeader)
                         .then(res => {
-                            this.socket.emit('sendNotification', res.data)
+                            this.socket.emit('sendNotification', res.data.data)
                         }) 
                         
                         }
@@ -3357,13 +3416,14 @@ export default {
                         
                         this.getClosed()
                         axios.post(endPoint.endpointTarget+'/notifications', {
-                            userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                            userImage:localStorage.getItem('imageUser'),
+                            branch: this.branch,
+                            userName:this.firstNameUser + " " + this.lastNameUser,
+                            userImage:this.imgUser,
                             detail:'Procesó citas finalizadas',
                             link: 'agendamiento'
                         })
                         .then(res => {
-                            this.socket.emit('sendNotification', res.data)
+                            this.socket.emit('sendNotification', res.data.data)
                         })
                         setTimeout(() => {
                             this.modalsDialog = {
@@ -3596,13 +3656,14 @@ export default {
                     this.designEndDate = ''
                     $('.conteoServ').text('0')
                     axios.post(endPoint.endpointTarget+'/notifications', {
-                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                        userImage:localStorage.getItem('imageUser'),
+                        branch: this.branch,
+                        userName:this.firstNameUser + " " + this.lastNameUser,
+                        userImage:this.imgUser,
                         detail:'Finalizó una cita',
                         link: 'agendamiento'
-                    })
+                    }, this.configHeader)
                     .then(res => {
-                        this.socket.emit('sendNotification', res.data)
+                        this.socket.emit('sendNotification', res.data.data)
                     })   
                 }
             })

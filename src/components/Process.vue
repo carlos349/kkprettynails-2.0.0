@@ -1887,13 +1887,14 @@ export default {
                         } 
                     } 
                     axios.post(endPoint.endpointTarget+'/notifications', {
-                        userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                        userImage:localStorage.getItem('imageUser'),
+                        branch: this.branch,
+                        userName:this.firstNameUser + " " + this.lastNameUser,
+                        userImage:this.imgUser,
                         detail: Detail,
                         link: 'Inventario'
-                    })
+                    }, this.configHeader)
                     .then(res => {
-                        this.socket.emit('sendNotification', res.data)
+                        this.socket.emit('sendNotification', res.data.data)
                     })
                 }
             })

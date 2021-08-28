@@ -15,6 +15,10 @@
                         <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Correos
                     </base-button>
+                    <base-button class="float-right mt-7 mr-0" size="sm" @click="notificationProof()" type="primary">
+                        <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                        Probar notificacion
+                    </base-button>
                     <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('clientes', 'registrar') ? false : true" @click="generateExcel" type="success">
                         <a-icon type="file-excel" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Excel
@@ -359,6 +363,7 @@ import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
 import router from '../router'
 import XLSX from 'xlsx'
+import io from 'socket.io-client';
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
@@ -389,6 +394,7 @@ export default {
             dateFormat: 'd-m-Y',
             locale: Spanish
         },
+        socket : io(endPoint.endpointTarget),
         clientState: true,
         phoneData: {isValid: false},
         registerClient: {
@@ -548,7 +554,10 @@ export default {
                 key: '_id',
                 scopedSlots: { customRender: 'actions' }
             }
-        ],  
+        ],
+        firstNameUser: '',
+        lastNameUser: '',
+        branch: '' 
       };
     },
     created(){
@@ -565,6 +574,9 @@ export default {
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+            this.firstNameUser = localStorage.firstname  
+            this.lastNameUser = localStorage.lastname
+            this.branch = localStorage.branch
         },
         async getClients(){
             this.progress = false
@@ -606,6 +618,21 @@ export default {
             var wb = XLSX.utils.book_new() 
             XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
             XLSX.writeFile(wb, 'Clientes.xlsx') 
+        },
+        notificationProof(){
+            axios.post(endPoint.endpointTarget+'/notifications', {
+                branch: this.branch,
+                userName:this.firstNameUser + " " + this.lastNameUser,
+                userImage:null,
+                detail:'Finalizó una cita',
+                link: 'agendamiento'
+            }, this.configHeader)
+            .then(res => {
+                this.socket.emit('sendNotification', res.data.data)
+                .then(res =>{
+                    console.log(res)
+                })
+            }) 
         },
         registerClients(){
             var ifCheck = this.registerClient.discount ? 0 : 1

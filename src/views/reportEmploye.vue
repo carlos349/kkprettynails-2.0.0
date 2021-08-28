@@ -182,7 +182,7 @@
                                         <template slot="title">
                                             <span>Anular venta</span>
                                         </template>
-                                        <base-button size="sm" type="danger" v-on:click="nullSale(column.saleData._id, column.id)">
+                                        <base-button size="sm" type="danger" v-on:click="nullSale(column.saleData._id, column.id, column.createdAt)">
                                             <a-icon type="stop" style="vertical-align:1.5px;font-size:1.3em;" />
                                         </base-button>
                                     </a-tooltip>
@@ -573,6 +573,9 @@ export default {
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
             this.branch = localStorage.branch
+            this.firstNameUser = localStorage.firstname  
+            this.lastNameUser = localStorage.lastname
+            this.imgUser = localStorage.imgUser
         },
         back(){
             window.history.go(-1);
@@ -622,11 +625,12 @@ export default {
                 }, 1500);
                 this.getData()
                 const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
-                    userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                    userImage:localStorage.getItem('imageUser'),
+                    branch: this.branch,
+                    userName:this.firstNameUser + " " + this.lastNameUser,
+                    userImage:this.imgUser,
                     detail:'Anuló una venta del día '+this.formatDate(this.arreglo.fecha),
                     link: 'Ventas'
-                })
+                }, this.configHeader)
                 if (notify) {
                     this.socket.emit('sendNotification', notify.data)
                 }   
@@ -720,7 +724,7 @@ export default {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
-        async nullSale(id, idItem){
+        async nullSale(id, idItem, date){
             this.$swal({
                 title: '¿Desea anular la venta?',
                 text: "¡Recuerda! Esta acción no se podrá revertir",
@@ -745,19 +749,16 @@ export default {
                                 timer: 1500
                             })
                             this.getData()
-                            // try{
-                            //    const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
-                            //     userName:localStorage.getItem('nombre') + " " + localStorage.getItem('apellido'),
-                            //     userImage:localStorage.getItem('imageUser'),
-                            //     detail:'Anuló una venta del día '+this.formatDate(this.arreglo.fecha),
-                            //     link: 'Ventas'
-                            //     })
-                            //     if (notify) {
-                            //         this.socket.emit('sendNotification', notify.data)
-                            //     }  
-                            // }catch(err){
-                            //     console.log(err)
-                            // }
+                                axios.post(endPoint.endpointTarget+'/notifications', {
+                                branch: this.branch,
+                                userName:this.firstNameUser + " " + this.lastNameUser,
+                                userImage:this.imgUser,
+                                detail:'Anuló una venta del día ' + this.formatDate(date),
+                                link: 'Ventas'
+                                }, this.configHeader)
+                                .then(not =>{
+                                    this.socket.emit('sendNotification', notify.data)
+                                }) 
                              
                         }else{
                             this.$swal({
