@@ -15,10 +15,10 @@
                         <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Correos
                     </base-button>
-                    <base-button class="float-right mt-7 mr-0" size="sm" @click="notificationProof()" type="primary">
+                    <!-- <base-button class="float-right mt-7 mr-0" size="sm" @click="notificationProof()" type="primary">
                         <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Probar notificacion
-                    </base-button>
+                    </base-button> -->
                     <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('clientes', 'registrar') ? false : true" @click="generateExcel" type="success">
                         <a-icon type="file-excel" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Excel

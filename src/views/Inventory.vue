@@ -384,6 +384,9 @@ export default {
         searchInput: null,
         searchedColumn: '',
         dataHistoryClosedReport: [],
+        dataForLess:{
+
+        },
         columns: [
             {
                 title: 'Producto',
@@ -713,51 +716,88 @@ export default {
             this.auth = decoded.access
         },
         returnToStore(){
-            axios.put(endPoint.endpointTarget+'/stores/returntostore/'+ this.selectedProduct._id , {
-                less: this.lessInventory
-            }, this.configHeader)
+            axios.get(endPoint.endpointTarget+'/stores/getstorebyid/' + this.selectedProduct.storeId, this.configHeader)
             .then(res => {
-                if (res.data.status === 'ok') {
-                    axios.post(endPoint.endpointTarget+'/expenses/', {
-                        branch: this.branch,
-                        detail: `Se ha devuelto ${this.lessInventory} ${this.selectedProduct.measure} de ${this.selectedProduct.product} a la bodega`,
-                        amount: -(this.selectedProduct.price * this.lessInventory),
-                        type: 'Inventario',
-                    }, this.configHeader)
-                    .then(res => {
-                        if (res.data.status == 'ok') {
+                this.$swal({
+                    title: '¿Está seguro que desea eliminar ' + this.lessInventory + ' ' + res.data.data.measure + ' de este producto?',
+                    html: '¡Recuerda! se descontará de la sucursal: <b>'+ this.branchName + '</b>',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí',
+                    cancelButtonText: 'No, cancelar',
+                    showCloseButton: true,
+                    showLoaderOnConfirm: true
+                }).then((result) => {
+                    if(result.value) {
+                        console.log("majomeno?")
+                        axios.post(endPoint.endpointTarget+'/stores/addtobranch',{
+                            branch: this.branch,
+                            branchName: this.branchName,
+                            id:this.selectedProduct._id,
+                            storeId: this.selectedProduct.storeId,
+                            product: this.selectedProduct.product,
+                            measure: this.selectedProduct.measure,
+                            price: this.selectedProduct.price,
+                            entry: -(this.lessInventory),
+                            firstNameUser: this.firstNameUser,
+                            lastNameUser: this.lastNameUser,
+                            emailUser: this.emailUser,
+                            idUser: this.idUser,
+                            inv:true 
+                        }, this.configHeader)
+                        .then(res => {
+                            if (res.data.status == 'added') {
+                                axios.post(endPoint.endpointTarget+'/expenses/', {
+                                    branch: this.branch,
+                                    detail: `Se ha devuelto ${this.lessInventory} ${this.selectedProduct.measure} de ${this.selectedProduct.product} a la bodega`,
+                                    amount: -(this.selectedProduct.price * this.lessInventory),
+                                    type: 'Inventario',
+                                }, this.configHeader)
+                                .then(res => {
+                                    if (res.data.status == 'ok') {
+                                        this.$swal({
+                                            
+                                            icon: 'success',
+                                            title: 'La cantidad fue devuelta',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                        this.getProducts();
+                                        this.getHistoryClosed()
+                                        this.modals.modal6 = false
+                                    }
+                                }).catch(err => {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Problemas con el servidor',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    console.log(err)
+                                })
+                            }
+                        }).catch(err => {
                             this.$swal({
-                                type: 'success',
-                                icon: 'success',
-                                title: 'Devolución exitosa',
+                                
+                                icon: 'error',
+                                title: 'Problemas con el servidor',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                            this.getProducts();
-                            this.getHistoryClosed()
-                            this.modals.modal6 = false
-                        }
-                    }).catch(err => {
+                            console.log(err)
+                        })
+                    }
+                    else{
                         this.$swal({
+                            
                             icon: 'error',
-                            title: 'Problemas con el servidor',
+                            title: 'Acción cancelada',
                             showConfirmButton: false,
                             timer: 1500
                         })
-                        console.log(err)
-                    })
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            this.$swal({
-                type: 'error',
-                title: 'Problemas tecnicos',
-                showConfirmButton: false,
-                timer: 1500
+                    }
                 })
             })
-            
         },
         getBranch(){
             this.branchName = localStorage.branchName  
