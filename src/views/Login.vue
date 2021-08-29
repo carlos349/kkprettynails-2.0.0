@@ -99,7 +99,7 @@
                                         placeholder="Dirección"
                                         addon-left-icon="fa fa-location-arrow"
                                         v-model="modelStart.businessLocation"
-                                        :valid="modelStart.businessLocation.length >= 4 ? true : false">
+                                        :valid="modelStart.businessLocation.length >= 2 ? true : false">
                                     </base-input>
                                 </div>
                                 <div class="col-md-6 col-sm-12">
@@ -929,7 +929,7 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
         },
         nextStep(step){
             if (step == 'branch') {
-                if (this.modelStart.businessName.length >= 4 && this.phoneData.isValid && this.modelStart.businessLocation.length >= 10 && this.modelStart.businessType != 'Seleccione' && this.verifyEmailVar) {
+                if (this.modelStart.businessName.length >= 4 && this.phoneData.isValid && this.modelStart.businessLocation.length >= 2 && this.modelStart.businessType != 'Seleccione' && this.verifyEmailVar) {
                     this.status.branch = 'finish'
                     this.status.date = 'process'
                     this.process = 'date'
@@ -947,10 +947,10 @@ import 'vue-phone-number-input/dist/vue-phone-number-input.css';
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (this.modelStart.businessLocation.length < 10) {
+                }else if (this.modelStart.businessLocation.length < 2) {
                     this.$swal({
                         icon: 'error',
-                        title: 'La dirección debe contener mas de 10 caracteres',
+                        title: 'La dirección debe contener más de 2 caractéres',
                         showConfirmButton: false,
                         timer: 1500
                     })

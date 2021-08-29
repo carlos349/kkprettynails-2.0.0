@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="text-absolute">
                         <p class="mb-0 display-2 text-white">Clientes</p>
-                        <p class="text-white hideText">Sección dedicada a la administración de sus clientes, podrás enviar correos electrónicos y exportar en excel la base de datos de sus clientes.</p>
+                        <p class="text-white hideText">Sección dedicada a la administración de sus clientes, podrá enviar correos electrónicos y exportar en excel la base de datos de sus clientes.</p>
                     </div>
                     <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('clientes', 'correos') ? false : true" @click="modals.modal3 = true" type="primary">
                         <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
@@ -85,7 +85,7 @@
                                                 addon-right-icon="fa fa-asterisk text-danger">
                                     </base-input>
                                     <div class="col-12 mb-2 p-0">
-                                        <VuePhoneNumberInput v-model="registerClient.phone.formatNational" @update="phoneData = $event, registerClient.phone = $event, validRegister()"
+                                        <VuePhoneNumberInput v-model="registerClient.phone.formatNational" @update="registerClient.phone = $event, validRegister()"
                                         :default-phoner-number="registerClient.phone.nationalNumber"
                                         :default-country-code="registerClient.phone.countryCode"
                                         :translations="{
@@ -174,7 +174,7 @@
                         
                         <div class="col-12 mb-4 p-0">
                             <VuePhoneNumberInput v-model="registerClient.phone.nationalNumber" 
-                                @update="phoneData = $event, registerClient.phone = $event, validRegister()" 
+                                @update="registerClient.phone = $event, validRegister()" 
                                 :default-phoner-number="registerClient.phone.nationalNumber"
                                 :default-country-code="registerClient.phone.countryCode"
                                 :translations="{
@@ -287,7 +287,7 @@
                 <template #renderEmpty>
                     <div style="text-align: center">
                         <a-icon type="warning" style="font-size: 20px" />
-                        <h2>No hay ningun cliente registrado</h2>
+                        <h2>No hay ningún cliente registrado</h2>
                     </div>
                 </template>
                 <a-table :columns="columns" :loading="clientState" :data-source="clients" :scroll="getScreen">
@@ -669,7 +669,7 @@ export default {
                     email:this.registerClient.email,
                     recommender:this.registerClient.recommender,
                     idRecomender:idRecomender,
-                    phone:this.phoneData,
+                    phone:this.registerClient.phone,
                     birthday: date,
                     instagram:this.registerClient.instagram,
                     ifCheck: ifCheck

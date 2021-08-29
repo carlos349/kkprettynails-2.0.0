@@ -31,7 +31,7 @@
                             <template #renderEmpty>
                                 <div style="text-align: center">
                                     <a-icon type="warning" style="font-size: 20px" />
-                                    <h2>No hay ningun producto registrado</h2>
+                                    <h2>No hay ningún producto registrado</h2>
                                 </div>
                             </template>
                             <a-table :columns="columns" :loading="productState" :data-source="products" :scroll="getScreen">
@@ -136,7 +136,7 @@
                                       <template #renderEmpty>
                                           <div style="text-align: center">
                                               <a-icon type="warning" style="font-size: 20px" />
-                                              <h2>No hay ningun registro de historial</h2>
+                                              <h2>No hay ningún registro de historial</h2>
                                           </div>
                                       </template>
                                       <a-table :columns="columnsHistory" :loading="productState" :data-source="dataHistory" :scroll="getScreen">
@@ -195,7 +195,7 @@
                                       <template #renderEmpty>
                                           <div style="text-align: center">
                                               <a-icon type="warning" style="font-size: 20px" />
-                                              <h2>No hay ningun registro de cierre</h2>
+                                              <h2>No hay ningún registro de cierre</h2>
                                           </div>
                                       </template>
                                       <a-table :columns="columnsHistoryClosed" :loading="productState" :data-source="dataHistoryClosed" :scroll="getScreen">
@@ -285,7 +285,7 @@
                     <template #renderEmpty>
                         <div style="text-align: center">
                             <a-icon type="warning" style="font-size: 20px" />
-                            <h2>No hay ningun registro</h2>
+                            <h2>No hay ningún registro</h2>
                         </div>
                     </template>
                     <a-table :columns="columnsHistoryClosedReport" :loading="productState" :data-source="dataHistoryClosedReport" :scroll="getScreen">

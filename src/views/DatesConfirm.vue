@@ -40,9 +40,9 @@ export default {
                 if (res.data.status == 'ok') {
                     $('.divShow').show('slow')
                     axios.post(endPoint.endpointTarget+'/notifications', {
-                        userName:'Cliente: '+res.data.data.client,
-                        userImage:localStorage.getItem('imageUser'),
-                        detail:'Confirmo su cita para el día '+this.formatDateTwo(res.data.data.date),
+                        userName: 'Cliente: '+res.data.data.client,
+                        userImage: localStorage.getItem('imageUser'),
+                        detail: 'Confirmo su cita para el día '+this.formatDateTwo(res.data.data.date),
                         link: 'agendamiento'
                     }, this.configHeader)
                     .then(res => {

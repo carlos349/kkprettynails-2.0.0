@@ -8,7 +8,7 @@
             <div class="col-12">
                 <div class="text-absolute">
                     <p class="mb-0 display-2 text-white">Bodega</p>
-                    <p class="text-white hideText">Sección dedicada al control y gestión de productos, insumos y proveedores.</p>
+                    <p class="text-white">Total STOCK - {{totalStock | formatPrice}}</p>
                 </div>
                 <base-button class="float-right mt-7 mr-0" :disabled="validRoute('bodega', 'cierre_bodega') ? false : true" size="sm" @click="modals.modal4 = true" type="warning">
                     <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
@@ -43,7 +43,7 @@
                             <template #renderEmpty>
                                 <div style="text-align: center">
                                     <a-icon type="warning" style="font-size: 20px" />
-                                    <h2>No hay ningun producto registrado</h2>
+                                    <h2>No hay ningún producto registrado</h2>
                                 </div>
                             </template>
                             <a-table :columns="columns" :loading="productState" :data-source="products" :scroll="getScreen">
@@ -138,7 +138,7 @@
                             <template #renderEmpty>
                                 <div style="text-align: center">
                                     <a-icon type="warning" style="font-size: 20px" />
-                                    <h2>No hay ningun provedor registrado</h2>
+                                    <h2>No hay ningún provedor registrado</h2>
                                 </div>
                             </template>
                             <a-table :columns="columnsProviders" :loading="productState" :data-source="providerTable" :scroll="getScreen">
@@ -647,7 +647,7 @@
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
-                    <h2>Esta sucursal no posee ningun producto</h2>
+                    <h2>Esta sucursal no posee ningún producto</h2>
                 </div>
             </template>
             <a-table :columns="columnsBranchData" :data-source="branchData" :scroll="getScreen">
@@ -783,7 +783,7 @@
             <span slot="description"> Selecciona una sucursal </span>
         </a-empty>
         <a-empty v-if="branchData == []">
-            <span slot="description"> Esta sucursal no posee ningun producto registrado </span>
+            <span slot="description"> Esta sucursal no posee ningún producto registrado </span>
         </a-empty>
         <base-button v-for="(branch, index) in branchData" :key="branch" class="col-12 mb-1" style="cursor:default" size="sm" type="secondary">
             <div class="row p-0">
@@ -1488,7 +1488,8 @@ export default {
         idUser: '',
         dataHistory: '',
         branchName: '',
-        branch: ''
+        branch: '',
+        totalStock: 0
       };
     },
     created(){
@@ -1537,7 +1538,9 @@ export default {
                     for (let index = 0; index < this.products.length; index++) {
                         var ideal = (this.products[index].quantity + this.products[index].entry) - this.products[index].consume
                         this.countProduct.push({id:this.products[index]._id,count:'',ideal:ideal,measure:this.products[index].measure,product:this.products[index].product,difference:''})
-                    } 
+                        this.totalStock = this.totalStock + (((this.products[index].quantity + this.products[index].entry) - this.products[index].consume) * this.products[index].price) 
+                    }
+                    
                 }else{
                     this.products = []
                 }

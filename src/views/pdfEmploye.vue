@@ -9,7 +9,7 @@
                     <strong> Nombre de la empleada:</strong> {{nameLender}}
                 </div>
                 <div class="col-6 pl-9">
-                    <strong>Comision total:</strong> {{totalComission | formatPrice}}
+                    <strong>Comisión total:</strong> {{totalComission | formatPrice}}
                 </div>
                 <div class="col-6 pl-9">
                     <strong>Total de adelantos:</strong> {{advancement | formatPrice}}

@@ -165,7 +165,7 @@
                                                         </div>
                                                     </template>
                                                     <div v-else>
-                                                        <h2 class="text-center">No ha seleccionado ningun servicio.</h2>
+                                                        <h2 class="text-center">No ha seleccionado ningún servicio.</h2>
                                                     </div>
                                                 </div>
                                             </div>
