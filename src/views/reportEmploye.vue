@@ -178,11 +178,11 @@
                             </template>
                             <template slot="reportSale" slot-scope="record, column">
                                 <template v-if="validRoute('ventas', 'detalle')" >
-                                    <a-tooltip placement="top">
+                                    <a-tooltip placement="right">
                                         <template slot="title">
                                             <span>Anular venta</span>
                                         </template>
-                                        <base-button size="sm" type="danger" v-on:click="nullSale(column.saleData._id, column.id, column.createdAt)">
+                                        <base-button size="sm" type="danger" v-on:click="nullSale(column.saleData._id, column.id, column.createdAt, column.saleData)">
                                             <a-icon type="stop" style="vertical-align:1.5px;font-size:1.3em;" />
                                         </base-button>
                                     </a-tooltip>
@@ -724,57 +724,68 @@ export default {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
-        async nullSale(id, idItem, date){
-            this.$swal({
-                title: '¿Desea anular la venta?',
-                text: "¡Recuerda! Esta acción no se podrá revertir",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Si',
-                cancelButtonText: 'No, cancelar',
-                showCloseButton: true,
-                showLoaderOnConfirm: true
-            })
-            .then(result => {
-                if (result.value) {
-                    axios.put(endPoint.endpointTarget+'/employes/nullsale/'+id, {
-                        id:idItem,
-                        idEmploye:this.id,
-                        commission: this.totalComission
-                    }, this.configHeader)
-                    .then(res => {
-                        if (res.data.status == 'ok') {
-                            this.$swal({
-                                icon: 'success',
-                                title: 'Venta anulada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            this.getData()
-                                axios.post(endPoint.endpointTarget+'/notifications', {
-                                branch: this.branch,
-                                userName:this.firstNameUser + " " + this.lastNameUser,
-                                userImage:this.imgUser,
-                                detail:'Anuló una venta del día ' + this.formatDate(date),
-                                link: 'Ventas'
-                                }, this.configHeader)
-                                .then(not =>{
-                                    this.socket.emit('sendNotification', notify.data)
-                                }) 
-                             
-                        }else{
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Problemas tecnicos',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
-                    })                    
-                }else{
-                    this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
-                }
-            })
+        async nullSale(id, idItem, date, data){
+            console.log(data.typesPay.length)
+            if (data.typesPay.length > 1) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Esta venta posee mas de un tipo de pago',
+                    html: 'Para anularla debe hacerlo desde la sección <b>Ventas</b>',
+                    showConfirmButton: true
+                })
+            }else{
+                this.$swal({
+                    title: '¿Desea anular la venta?',
+                    text: "¡Recuerda! Esta acción no se podrá revertir",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Si',
+                    cancelButtonText: 'No, cancelar',
+                    showCloseButton: true,
+                    showLoaderOnConfirm: true
+                })
+                .then(result => {
+                    if (result.value) {
+                        axios.put(endPoint.endpointTarget+'/employes/nullsale/'+id, {
+                            id:idItem,
+                            idEmploye:this.id,
+                            commission: this.totalComission
+                        }, this.configHeader)
+                        .then(res => {
+                            if (res.data.status == 'ok') {
+                                this.$swal({
+                                    icon: 'success',
+                                    title: 'Venta anulada',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                this.getData()
+                                    axios.post(endPoint.endpointTarget+'/notifications', {
+                                    branch: this.branch,
+                                    userName:this.firstNameUser + " " + this.lastNameUser,
+                                    userImage:this.imgUser,
+                                    detail:'Anuló una venta del día ' + this.formatDate(date),
+                                    link: 'Ventas'
+                                    }, this.configHeader)
+                                    .then(not =>{
+                                        this.socket.emit('sendNotification', notify.data)
+                                    }) 
+                                
+                            }else{
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Problemas tecnicos',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }
+                        })                    
+                    }else{
+                        this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
+                    }
+                })
+            }
+            
             
         },
         getData(){
