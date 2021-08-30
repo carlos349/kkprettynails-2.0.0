@@ -2,19 +2,42 @@
     <div class="mx-2">
         <h1 class="text-center mt-2">Reporte preliminar de gastos mes {{dict[month]}} {{year}}</h1>
         <div class="row">
-            <div class="col-6">
-                <img src="img/brand/syswa-gestion.png" class="w-50 ml-4" alt="" style="">
+            <div class="col-4">
+                <img src="img/brand/syswa-gestion.png" class="w-100 mt-2">
             </div>
-            <div class="col-5 pt-4 pl-3 pr-3 border border-5 ml-1 mb-2">
-                <p>
-                    <strong>Saldo inicial:</strong> {{this.reinvestmentTotal | formatPrice}} <span class="float-right"><strong>Saldo final:</strong> {{this.totalFinal | formatPrice}}</span>
-                </p>
-                <p>
-                    <strong>Ingreso:</strong> {{this.totalSales | formatPrice}} <span class="float-right"><strong>Ganancia:</strong> {{this.gain.toFixed(1)}}</span>
-                </p>
-                <p>
-                    <strong>Egreso:</strong> {{this.totalExpenses | formatPrice}}
-                </p>
+            <div class="col-8 pt-3 border border-5 mb-2 row">
+                <div class="col-4 p-0">
+                    <p><strong>Saldo inicial:</strong> {{this.reinvestmentTotal | formatPrice}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Saldo final:</strong> {{this.totalFinal | formatPrice}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Ganancia:</strong> {{this.gain.toFixed(1)}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Ingreso:</strong> {{this.totalSales | formatPrice}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Egreso:</strong> {{this.totalExpenses | formatPrice}}</p>
+                </div>
+                <div class="col-12">
+                    <hr class="mt-0 mb-2">
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Comisión:</strong> {{this.commission | formatPrice}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Gasto mensual:</strong> {{this.monthly | formatPrice}}</p>
+                </div>
+                <div class="col-12">
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Bonos:</strong> {{this.bonus | formatPrice}}</p>
+                </div>
+                <div class="col-4 p-0">
+                    <p><strong>Gasto Inventario:</strong> {{this.inventoryTotal | formatPrice}}</p>
+                </div>
             </div>
         </div>
         <a-config-provider>
@@ -92,6 +115,10 @@ export default {
                     width: "20%"
                 } 
             ],
+            commission: 0,
+            monthly: 0,
+            bonus: 0,
+            inventoryTotal: 0,
             reinvestmentTotal: 0,
             totalSales: 0,
             totalExpenses: 0,
@@ -112,6 +139,10 @@ export default {
                 const expenses = await axios.get(`${endPoint.endpointTarget}/expenses/${this.branch}`, this.configHeader)
                 this.expenses = expenses.data.data.expenses
                 this.totalExpenses = expenses.data.data.expenseTotals.Inventario + expenses.data.data.expenseTotals.Bono + expenses.data.data.expenseTotals.Mensual + expenses.data.data.expenseTotals.Comision
+                this.commission = expenses.data.data.expenseTotals.Comision
+                this.monthly = expenses.data.data.expenseTotals.Mensual
+                this.bonus = expenses.data.data.expenseTotals.Bono
+                this.inventoryTotal = expenses.data.data.expenseTotals.Inventario
                 console.log(expenses)
             }catch(err){
                 console.log(err)
@@ -149,7 +180,7 @@ export default {
                 setTimeout(() => {
                     window.close()
                 }, 200);
-            }, 200);
+            }, 500);
         }
     }
 }

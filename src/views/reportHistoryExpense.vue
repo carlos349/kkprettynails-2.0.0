@@ -1,6 +1,6 @@
 <template>
     <div class="mx-2">
-        <h1 class="text-center mt-2">Reporte preliminar de gastos mes {{dict[month]}} {{year}}</h1>
+        <h1 class="text-center mt-2">Reporte de gastos mes {{dict[month]}} {{year}}</h1>
         <div class="row">
             <div class="col-4">
                 <img src="img/brand/syswa-gestion.png" class="w-100 mt-2">
@@ -13,7 +13,7 @@
                     <p><strong>Saldo final:</strong> {{this.totalFinal}}</p>
                 </div>
                 <div class="col-4 p-0">
-                    <p><strong>Ganancia:</strong> {{this.totalFinal}}</p>
+                    <p><strong>Ganancia:</strong> {{this.gain}}</p>
                 </div>
                 <div class="col-4 p-0">
                     <p><strong>Ingreso:</strong> {{this.totalSales}}</p>
@@ -25,21 +25,23 @@
                     <hr class="mt-0 mb-2">
                 </div>
                 <div class="col-4 p-0">
-                    <p><strong>Comisión:</strong> {{this.totalExpenses}}</p>
+                    <p><strong>Comisión:</strong> {{this.commission}}</p>
                 </div>
                 <div class="col-4 p-0">
-                    <p><strong>Gasto mensual:</strong> {{this.inventoryTotal | formatPrice}}</p>
+                    <p><strong>Gasto mensual:</strong> {{this.monthly}}</p>
                 </div>
                 <div class="col-12">
                 </div>
                 <div class="col-4 p-0">
-                    <p><strong>Bonos:</strong> {{this.totalExpenses}}</p>
+                    <p><strong>Bonos:</strong> {{this.bonus}}</p>
                 </div>
                 <div class="col-4 p-0">
                     <p><strong>Gasto Inventario:</strong> {{this.inventoryTotal | formatPrice}}</p>
                 </div>
             </div>
         </div>
+
+
         <a-config-provider>
             <template #renderEmpty>
                 <div style="text-align: center">
