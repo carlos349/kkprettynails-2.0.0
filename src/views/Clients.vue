@@ -15,10 +15,6 @@
                         <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Correos
                     </base-button>
-                    <base-button class="float-right mt-7 mr-0" size="sm" @click="notificationProof()" type="primary">
-                        <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                        Probar notificacion
-                    </base-button>
                     <base-button class="float-right mt-7 mr-2" size="sm" :disabled="validRoute('clientes', 'registrar') ? false : true" @click="generateExcel" type="success">
                         <a-icon type="file-excel" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Excel
@@ -618,21 +614,6 @@ export default {
             var wb = XLSX.utils.book_new() 
             XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
             XLSX.writeFile(wb, 'Clientes.xlsx') 
-        },
-        notificationProof(){
-            axios.post(endPoint.endpointTarget+'/notifications', {
-                branch: this.branch,
-                userName:this.firstNameUser + " " + this.lastNameUser,
-                userImage:null,
-                detail:'Finalizó una cita',
-                link: 'agendamiento'
-            }, this.configHeader)
-            .then(res => {
-                this.socket.emit('sendNotification', res.data.data)
-                .then(res =>{
-                    console.log(res)
-                })
-            }) 
         },
         registerClients(){
             var ifCheck = this.registerClient.discount ? 0 : 1
