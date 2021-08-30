@@ -258,8 +258,9 @@
                                               {{formatPrice(record)}}
                                           </template>
                                           <template slot="priceTotal" slot-scope="record, column">
-                                              <span v-if="record != 'Abastecimiento'">{{formatPrice(record * column.entry)}}</span>
-                                              <span v-else>No aplica</span>
+                                              <span v-if="record == 'Abastecimiento' ">No aplica</span>
+                                              <span v-else-if="record == 'Devolución' ">No aplica</span>
+                                              <span v-else>{{formatPrice(record * column.entry)}}</span>
                                           </template>
                                           
                                       </a-table>
@@ -1762,7 +1763,8 @@ export default {
                                 firstNameUser: this.firstNameUser,
                                 lastNameUser: this.lastNameUser,
                                 emailUser: this.emailUser,
-                                idUser: this.idUser 
+                                idUser: this.idUser ,
+                                inv:false
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == 'added') {
@@ -2226,7 +2228,7 @@ export default {
             return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
         },
         formatPrice(value) {
-            if (value == 'Abastecimiento') {
+            if (value == 'Abastecimiento' || value == 'Devolución') {
                 return value
             }else{
                 let val = (value/1).toFixed(2).replace('.', ',')

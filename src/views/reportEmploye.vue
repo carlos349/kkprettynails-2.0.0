@@ -738,7 +738,9 @@ export default {
             .then(result => {
                 if (result.value) {
                     axios.put(endPoint.endpointTarget+'/employes/nullsale/'+id, {
-                        id:idItem
+                        id:idItem,
+                        idEmploye:this.id,
+                        commission: this.totalComission
                     }, this.configHeader)
                     .then(res => {
                         if (res.data.status == 'ok') {

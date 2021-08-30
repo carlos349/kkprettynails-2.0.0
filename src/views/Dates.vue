@@ -528,7 +528,7 @@
                 </template>
             </vue-cal>
         </vue-custom-scrollbar>
-        <modal :show.sync="dateModals.modal1"
+        <modal :show.sync="dateModals.modal1" style="z-index:1"
                body-classes="p-0"
                :header-classes="selectedEvent.class"
                modal-classes="modal-dialog-centered modal-md">
@@ -869,7 +869,7 @@
                 </div>
             </card>
         </modal>
-        <modal :show.sync="dateModals.modal3"
+        <modal :show.sync="dateModals.modal3" style="z-index:3"
                modal-classes="modal-dialog-centered modal-lg">
             <h5 slot="header" class="modal-title" id="modal-title-notification">Finalizar cita - {{dateSplit(selectedEvent.start)}}</h5>
             <div class="row">
@@ -928,7 +928,8 @@
                 <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
             </div>
         </modal>
-        <modal :show.sync="modals.modal5"
+        
+        <modal :show.sync="modals.modal9"
             body-classes="p-0"
             modal-classes="modal-dialog-centered modal-sm">
             <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
@@ -947,6 +948,19 @@
                 </div>
             </card>
         </modal>
+        <a-modal v-model="modals.modal5" style="z-index:10000" :footer="null" title="Precio del microservicio" width="50%" @cancel="changeMicroPrice" :closable="false">
+            <template>
+                <card type="secondary" shadow
+                header-classes="bg-white pb-5"
+                body-classes="px-lg-5 py-lg-5"
+                class="border-0">
+                <a-input-number size="large" placeholder="Precio" class="w-100" :min="1" v-model="microPriceClick"/>
+                <div class="text-center">
+                    <base-button type="warning" :disabled="microPriceClick > 0 ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
+                </div>
+            </card>
+            </template>
+        </a-modal>
         <a-modal v-model="modals.modal3" title="Horarios bloqueados" width="50%" :closable="true" >
             <template>
                 <a-config-provider>

@@ -775,6 +775,7 @@ export default {
                     for (let i = 0; i < element.validaciones.length; i++) {
                         if (type == element.validaciones[i]) { 
                             return true
+                            
                         } 
                     }
                 }
