@@ -700,7 +700,7 @@
                             
                             <dt class="mt-4 text-center">Histórico de cliente </dt>
                             <vue-custom-scrollbar class="maxHeightHistorical">
-                                <a-config-provider>
+                                <a-config-provider :locale="es_ES">
                                     <template #renderEmpty>
                                         <div style="text-align: center">
                                             <a-icon type="warning" style="font-size: 20px" />
@@ -928,49 +928,29 @@
                 <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
             </div>
         </modal>
-        
-        <modal :show.sync="modals.modal9"
-            body-classes="p-0"
-            modal-classes="modal-dialog-centered modal-sm">
-            <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                header-classes="bg-white pb-5"
-                body-classes="px-lg-5 py-lg-5"
-                class="border-0">
-                <template>
-                    <div style="margin-top: -15%" class="text-muted mb-3 text-center">
-                        Precio del microservicio
-                    </div>
-                </template>
-                <a-input-number size="large" placeholder="Precio" class="w-100" :min="1" v-model="microPriceClick"/>
-                <div class="text-center">
-                    <base-button type="warning" :disabled="microPriceClick > 0 ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
-                </div>
-            </card>
-        </modal>
-        <a-modal v-model="modals.modal5" style="z-index:10000" :footer="null" title="Precio del microservicio" width="50%" @cancel="changeMicroPrice" :closable="false">
+        <a-modal v-model="modals.modal5" style="z-index:10000" width="30%" title="Precio del microservicio" @cancel="changeMicroPrice" :closable="false">
             <template>
-                <card type="secondary" shadow
-                header-classes="bg-white pb-5"
-                body-classes="px-lg-5 py-lg-5"
-                class="border-0">
-                <a-input-number size="large" placeholder="Precio" class="w-100" :min="1" v-model="microPriceClick"/>
-                <div class="text-center">
-                    <base-button type="warning" :disabled="microPriceClick > 0 ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
-                </div>
-            </card>
+                
+                <currency-input
+                    v-model="microPriceClick"
+                    locale="de"
+                    class="form-control w-100"
+                />
+            </template>
+            <template slot="footer">
+                <base-button type="warning" size="sm" :disabled="microPriceClick >= 0 || microPriceClick != '' ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
             </template>
         </a-modal>
         <a-modal v-model="modals.modal3" title="Horarios bloqueados" width="50%" :closable="true" >
             <template>
-                <a-config-provider>
+                <a-config-provider :locale="es_ES">
                     <template #renderEmpty>
                         <div style="text-align: center">
                             <a-icon type="warning" style="font-size: 20px" />
                             <h2>Sin bloqueos registrados</h2>
                         </div>
                     </template>
-                    <a-table :columns="columns" :data-source="datesBlocking" >
+                    <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen" >
                         <template slot="date-slot" slot-scope="record, column">
                             {{column.dateBlocking | formatDate}}
                         </template>
@@ -1046,8 +1026,9 @@ import mixinUserToken from '../mixins/mixinUserToken'
 import mixinHideText from '../mixins/mixinHideText'
 import BaseButton from '../components/BaseButton.vue'
 
-export default {
-    mixins: [mixinUserToken, mixinHideText],
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES, mixinHideText],
     components: {
         VueCal,
         VueBootstrap4Table,
@@ -4610,7 +4591,9 @@ export default {
         widthModalDate: () => {
             return screen.width < 780 ? "100%" : "100%"
         },
-        
+        getScreen: () => {
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 280 }
+        }
     },
     mounted (){
         EventBus.$on('reloadDates', status => {

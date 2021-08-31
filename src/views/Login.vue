@@ -321,7 +321,7 @@
                                         </a-select-option>
                                     </a-select>
                                 </div>
-                                <a-config-provider>
+                                <a-config-provider :locale="es_ES">
                                     <template  #renderEmpty>
                                         <div style="text-align: center">
                                             <a-icon type="warning" style="font-size: 20px" />
@@ -552,8 +552,9 @@ import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
-
+import mixinES from '../mixins/mixinES'
   export default {
+    mixins: [mixinES],
     name: 'login',
     components: {
         VuePhoneNumberInput

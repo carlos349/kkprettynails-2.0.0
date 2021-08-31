@@ -40,7 +40,7 @@
                 </div>
             </div>
         </div>
-        <a-config-provider>
+        <a-config-provider :locale="es_ES">
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
@@ -61,7 +61,9 @@
 <script>
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
-export default {
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinES],
     data(){
         return {
             configHeader: {

@@ -41,9 +41,6 @@ import VueCarousel from 'vue-carousel';
 import Antd from 'ant-design-vue';
 import formatPrice from '@/plugins/formatPrice';
 import 'ant-design-vue/dist/antd.css';
-import * as moment from 'moment';
-import 'moment/locale/es';
-moment.locale('es');
 import formatDate from '@/plugins/formatDate';
 import vuescroll from 'vuescroll';
 import VuePhoneNumberInput from 'vue-phone-number-input';
@@ -51,10 +48,16 @@ import { KinesisContainer, KinesisElement } from 'vue-kinesis'
 import VueHtmlToPaper from 'vue-html-to-paper';
 import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css'
+const moment = require('moment')
+require('moment/locale/es')
 
 // You can set global config here.
 Vue.use(vuescroll)
-
+ 
+Vue.use(require('vue-moment'), {
+    moment
+})
+console.log(Vue.moment().locale())
 /* STYLES */
 import VueFormWizard from 'vue-form-wizard'
 

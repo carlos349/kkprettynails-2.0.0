@@ -26,7 +26,7 @@
             </div>
             <hr class="mt-2 mb-2">
             <h1 class="text-center">Servicios realizados</h1>
-            <a-config-provider>
+            <a-config-provider :locale="es_ES">
                 <template #renderEmpty>
                     <div style="text-align: center">
                         <a-icon type="warning" style="font-size: 20px" />
@@ -127,7 +127,9 @@
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import mixinUserToken from '../mixins/mixinUserToken'
-export default {
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES],
     data(){
         return {
             auth: [],

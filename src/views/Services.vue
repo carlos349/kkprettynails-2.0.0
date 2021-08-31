@@ -75,15 +75,15 @@
                                 />
 
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4 marginIf">
                                 <select class="form-control mb-3" v-model="categoryRegister">
                                     <option style="color:black;">Categoría</option>
                                     <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
                                 </select>
                             </div>
                             
-                            <div class="col-md-6 row ml-1" style="margin-top:-10px;"> 
-                                <label class="ml-5">
+                            <div class="col-md-6 row ml-1 mb-3" style="margin-top:-10px;"> 
+                                <label class="ml-5 mb-3">
                                     Tiempo del servicio
                                 </label>
                                 <div class="col-6 px-1" style="margin-top:-10px;">
@@ -131,7 +131,7 @@
                                 <base-radio name="true" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
                             </div>
                             <div class="col-12 row">
-                                <div class="col-6 pt-4 pl-5">
+                                <div class="col-6 pt-4 pl-3">
                                     <p class="mx-auto font-weight-normal mt-2"> <strong class="mr-2">Aplica abono </strong> <a-switch class="mr-2" :checked="payment" @click="checkPayment()"/></p>
                                 </div>
                                 <div class="col-6">
@@ -364,7 +364,7 @@
                 </template>
             </card>
         </modal>
-        <a-config-provider>
+        <a-config-provider :locale="es_ES">
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
@@ -589,8 +589,9 @@ import Modal from '@/components/Modal'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import mixinUserToken from '../mixins/mixinUserToken'
 
-export default {
-    mixins: [mixinUserToken],
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES],
     components: {
         VueBootstrap4Table,
         Modal,

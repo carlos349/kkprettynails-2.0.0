@@ -15,7 +15,7 @@
                     <div class="float-right mt-6">
                         <div class="float-right widthDiv">
                             <label for="date" class="text-white">Busque por fecha</label><br>
-                            <a-range-picker ref="datePick" style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" />
+                            <a-range-picker ref="datePick" style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" :placeholder="['Desde', 'Hasta']" />
                             <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;" v-if="validRoute('ventas', 'filtrar')"  v-on:click="filterSale" type="success">
                                 <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
                             </base-button>
@@ -290,7 +290,7 @@
                 </div>
             </template>
         </modal>
-        <a-config-provider>
+        <a-config-provider :locale="es_ES">
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
@@ -419,8 +419,9 @@ import moment from 'moment';
 import 'moment/locale/es';
 
 moment.locale('es');
-export default {
-    mixins: [mixinUserToken],
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES],
     components: {
         flatPicker,
         VueBootstrap4Table

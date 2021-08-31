@@ -7,7 +7,7 @@
             <!-- Header container -->
             <div class="row">
                 <div class="col-12">
-                    <div class="text-absolute" style="top:10%;">
+                    <div class="text-absolute topExpense">
                         <p class="mb-0 display-4 text-white">Gastos</p>
                     </div>
                     <div class="row p-0">
@@ -36,7 +36,7 @@
                                 type="gradient-orange"
                                 :sub-title="thisMonth.Bono | formatPrice"
                                 icon="ni ni-trophy"
-                                class="mt-6">
+                                class="marginTopCards">
                                 <template slot="footer">
                                     <span :class="percentBonus >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                         <i :class="percentBonus >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -56,7 +56,7 @@
                                 type="gradient-orange"
                                 :sub-title="thisMonth.Comision | formatPrice"
                                 icon="ni ni-money-coins"
-                                class="mt-6">
+                                class="marginTopCards">
                                 <template slot="footer">
                                     <span :class="percentCommission >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                         <i :class="percentCommission >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -76,7 +76,7 @@
                                 type="gradient-orange"
                                 :sub-title="thisMonth.Mensual | formatPrice"
                                 icon="ni ni-shop"
-                                class="mt-6">
+                                class="marginTopCards">
                                 <template slot="footer">
                                     <span :class="percentMonth >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                         <i :class="percentMonth >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -96,7 +96,7 @@
                                 type="gradient-orange"
                                 :sub-title="totalExpenses | formatPrice"
                                 icon="ni ni-trophy"
-                                class="mt-6">
+                                class="marginTopCards">
                                 <template slot="footer">
                                     <span :class="percentTotalExpenses >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                         <i :class="percentTotalExpenses >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -120,7 +120,7 @@
                                     type="gradient-orange"
                                     :sub-title="totalFinal | formatPrice"
                                     icon="ni ni-sound-wave"
-                                    class="mt-6">
+                                    class="marginTopCards">
                                     <template slot="footer">
                                         <span :class="totalFinal >= 0 ? 'text-success' : 'text-danger'" class="mr-2">
                                             <i :class="totalFinal >= 0 ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"></i> 
@@ -153,15 +153,15 @@
                         <a-icon type="wallet" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
                         Registrar
                     </base-button>
-                    <base-button class="float-right mr-2" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'registrar_inversion') ? false : true"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
+                    <base-button class="float-right mr-1" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'registrar_inversion') ? false : true"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
                         <a-icon type="book" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
-                        Inversión mensual
+                        Inversión
                     </base-button>
                     <base-button @click="openReport" class="float-right mr-2" style="margin-top:3.3em;" size="sm" type="danger">
                         <a-icon type="file-pdf" class="mr-2" style="vertical-align:1px;font-size:1.5em;"/>
                         Reporte
                     </base-button>
-                    <base-button @click="closeReinvestment" class="float-right mr-2" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'cierre') ? false : true" type="danger">
+                    <base-button @click="closeReinvestment" class="float-right mr-1" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'cierre') ? false : true" type="danger">
                         <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
                         Cierre
                     </base-button>
@@ -175,7 +175,7 @@
                         <i class="ni ni-shop"></i>
                         Tabla de gastos
                     </span>
-                    <a-config-provider>
+                    <a-config-provider :locale="es_ES">
                         <template #renderEmpty>
                             <div style="text-align: center">
                                 <a-icon type="warning" style="font-size: 20px" />
@@ -202,7 +202,7 @@
                         <i class="ni ni-calendar-grid-58"></i>
                         Historial de cierres
                     </span>
-                    <a-config-provider>
+                    <a-config-provider :locale="es_ES">
                         <template #renderEmpty>
                             <div style="text-align: center">
                                 <a-icon type="warning" style="font-size: 20px" />
@@ -366,8 +366,9 @@ import locale from 'ant-design-vue/es/date-picker/locale/es_ES';
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import mixinUserToken from '../mixins/mixinUserToken'
-export default {
-    mixins: [mixinUserToken],
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES],
     components: {
         flatPicker
     },
@@ -640,6 +641,12 @@ export default {
                                 }, this.configHeader)
                                 .then(res => {
                                     if(res.data.status == 'ok'){
+                                        this.$swal({
+                                            icon: 'success',
+                                            title: 'Cierre exitoso',
+                                            text: 'Para visualizar reporte verifique el historial',
+                                            showConfirmButton: true
+                                        })
                                         this.getBranch()
                                     }
                                 })

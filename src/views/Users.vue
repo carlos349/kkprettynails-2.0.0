@@ -215,7 +215,7 @@
                 </template>
                 </template>
             <template slot="date-format" class="text-left" slot-scope="record, column">
-                {{column.lastAccess | formatDate}}
+                {{column.lastAccess | moment("DD-MM-YYYY")}}
             </template>
             <template slot="status-format" slot-scope="record, column">
                 <a-dropdown>
@@ -260,9 +260,6 @@ import EventBus from '../components/EventBus'
 // COMPONENTS
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import vueCustomScrollbar from 'vue-custom-scrollbar'
-import * as moment from 'moment';
-import 'moment/locale/es';
-moment.locale('es');
 import mixinUserToken from '../mixins/mixinUserToken'
 
 export default {

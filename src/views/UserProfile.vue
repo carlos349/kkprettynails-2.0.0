@@ -173,7 +173,7 @@
                             </div>
                         </template>
                         <template v-else>
-                            <a-config-provider>
+                            <a-config-provider :locale="es_ES">
                                 <template #renderEmpty>
                                     <div style="text-align: center">
                                         <a-icon type="warning" style="font-size: 20px" />
@@ -332,8 +332,9 @@
     import 'moment/locale/es';
     moment.locale('es');
     import mixinUserToken from '../mixins/mixinUserToken'
+    import mixinES from '../mixins/mixinES'
     export default {
-        mixins: [mixinUserToken],
+        mixins: [mixinUserToken, mixinES],
         name: 'user-profile',
         components: {
             VueBootstrap4Table

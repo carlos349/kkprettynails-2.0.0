@@ -102,12 +102,27 @@ input[type=number]::-webkit-outer-spin-button {
     position: absolute;
     top:30%;
 }
+.marginTopCards{
+    margin-top: 4.5rem;
+}
+.topExpense{
+    top:10%;
+}
 @media screen and (max-width: 768px){
     .display-2{
         font-size: 8vw;
     }
     .hideText{
         display: none;
+    }
+    .marginIf{
+        margin-top: 1.5rem;
+    }
+    .topExpense{
+        top:2%;
+    }
+    .marginTopCards{
+        margin-top: 0.5rem;
     }
     .headMob{
         font-size: 3vw;
