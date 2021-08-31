@@ -870,7 +870,7 @@
             </card>
         </modal>
         <modal :show.sync="dateModals.modal3" style="z-index:3"
-               modal-classes="modal-dialog-centered modal-lg">
+               modal-classes="modal-dialog-centered modal-xl">
             <h5 slot="header" class="modal-title" id="modal-title-notification">Finalizar cita - {{dateSplit(selectedEvent.start)}}</h5>
             <div class="row">
                 <h4 class="w-100" style="margin-top:-10px;">Agregar mas servicios</h4>
@@ -3035,9 +3035,7 @@ import mixinES from '../mixins/mixinES'
                     })
                     .then((result) => {
                         if(result.value) {
-                            dataFinal.services[0].microServiceSelect.forEach(element => {
-                                dataFinal.services[0].price = dataFinal.services[0].price - element.price
-                            });
+                            
                             axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
                                 service:dataFinal.services,
                                 client:dataFinal.client,

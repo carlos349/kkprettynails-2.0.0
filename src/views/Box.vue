@@ -331,6 +331,7 @@ export default {
             typesPaySystem: [],
             typesPayManual: []
         }
+
     },
     created(){
         this.getToken()
@@ -340,6 +341,10 @@ export default {
         getBranch(){
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
+            this.firstNameUser = localStorage.firstname  
+            this.lastNameUser = localStorage.lastname
+            this.imgUser = localStorage.imgUser
+            this.idUser = localStorage._id
             this.getClosing()
             this.getFunds()
         },
