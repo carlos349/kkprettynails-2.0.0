@@ -730,8 +730,8 @@ import mixinES from '../mixins/mixinES'
             if (data.typesPay.length > 1) {
                 this.$swal({
                     icon: 'error',
-                    title: 'Esta venta posee mas de un tipo de pago',
-                    html: 'Para anularla debe hacerlo desde la sección <b>Ventas</b>',
+                    title: 'Por los tipos de pago',
+                    html: 'Debes hacer la anulación en la sección de <b>Ventas</b>',
                     showConfirmButton: true
                 })
             }else{
