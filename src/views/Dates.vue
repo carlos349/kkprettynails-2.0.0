@@ -700,7 +700,7 @@
                             
                             <dt class="mt-4 text-center">Histórico de cliente </dt>
                             <vue-custom-scrollbar class="maxHeightHistorical">
-                                <a-config-provider>
+                                <a-config-provider :locale="es_ES">
                                     <template #renderEmpty>
                                         <div style="text-align: center">
                                             <a-icon type="warning" style="font-size: 20px" />
@@ -933,49 +933,29 @@
                 <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
             </div>
         </modal>
-        
-        <modal :show.sync="modals.modal9"
-            body-classes="p-0"
-            modal-classes="modal-dialog-centered modal-sm">
-            <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                header-classes="bg-white pb-5"
-                body-classes="px-lg-5 py-lg-5"
-                class="border-0">
-                <template>
-                    <div style="margin-top: -15%" class="text-muted mb-3 text-center">
-                        Precio del microservicio
-                    </div>
-                </template>
-                <a-input-number size="large" placeholder="Precio" class="w-100" :min="1" v-model="microPriceClick"/>
-                <div class="text-center">
-                    <base-button type="warning" :disabled="microPriceClick > 0 ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
-                </div>
-            </card>
-        </modal>
-        <a-modal v-model="modals.modal5" style="z-index:10000" :footer="null" title="Precio del microservicio" width="50%" @cancel="changeMicroPrice" :closable="false">
+        <a-modal v-model="modals.modal5" style="z-index:10000" width="30%" title="Precio del microservicio" @cancel="changeMicroPrice" :closable="false">
             <template>
-                <card type="secondary" shadow
-                header-classes="bg-white pb-5"
-                body-classes="px-lg-5 py-lg-5"
-                class="border-0">
-                <a-input-number size="large" placeholder="Precio" class="w-100" :min="1" v-model="microPriceClick"/>
-                <div class="text-center">
-                    <base-button type="warning" :disabled="microPriceClick > 0 ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
-                </div>
-            </card>
+                
+                <currency-input
+                    v-model="microPriceClick"
+                    locale="de"
+                    class="form-control w-100"
+                />
+            </template>
+            <template slot="footer">
+                <base-button type="warning" size="sm" :disabled="microPriceClick >= 0 || microPriceClick != '' ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
             </template>
         </a-modal>
-        <a-modal v-model="modals.modal3" title="Horarios bloqueados" width="50%" :closable="true" >
+        <a-modal v-model="modals.modal3" title="Horarios bloqueados" :width="widthModals" :closable="true" >
             <template>
-                <a-config-provider>
+                <a-config-provider :locale="es_ES">
                     <template #renderEmpty>
                         <div style="text-align: center">
                             <a-icon type="warning" style="font-size: 20px" />
                             <h2>Sin bloqueos registrados</h2>
                         </div>
                     </template>
-                    <a-table :columns="columns" :data-source="datesBlocking" >
+                    <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen" >
                         <template slot="date-slot" slot-scope="record, column">
                             {{column.dateBlocking | formatDate}}
                         </template>
@@ -991,7 +971,7 @@
                 <base-button @click="modals.modal3 = false, modals.modal4 = true" size="sm" type="default">Bloquear horario</base-button>
             </template>
         </a-modal>
-        <a-modal v-model="modals.modal4" title="Registrar bloqueo" width="30%" :closable="true" >
+        <a-modal v-model="modals.modal4" title="Registrar bloqueo" :width="widthModals" :closable="true" >
             <template>
                 <label for="date">Fechas</label>
                 <flat-picker 
@@ -1051,8 +1031,9 @@ import mixinUserToken from '../mixins/mixinUserToken'
 import mixinHideText from '../mixins/mixinHideText'
 import BaseButton from '../components/BaseButton.vue'
 
-export default {
-    mixins: [mixinUserToken, mixinHideText],
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES, mixinHideText],
     components: {
         VueCal,
         VueBootstrap4Table,
@@ -3160,28 +3141,27 @@ export default {
                     axios.delete(endPoint.endpointTarget+'/dates/' + id, this.configHeader)
                     .then(res => {
                         if(res.data.status == 'deleted'){
-                        this.$swal({
-                            type: 'success',
-                            icon: 'success',
-                            title: 'Cita eliminada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        this.events = []
-                        this.dateModals.modal1 = false
-                        this.getDates();
-                        axios.post(endPoint.endpointTarget+'/notifications', {
-                            branch: this.branch,
-                            userName:this.firstNameUser + " " + this.lastNameUser,
-                            userImage:this.imgUser,
-                            detail:`Eliminó la cita de ${res.data.data.client.name}) ~
-                            el ${this.formatDate(new Date())}`,
-                            link: 'agendamiento'
-                        }, this.configHeader)
-                        .then(res => {
-                            this.socket.emit('sendNotification', res.data.data)
-                        }) 
-                        
+                            this.$swal({
+                                type: 'success',
+                                icon: 'success',
+                                title: 'Cita eliminada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.events = []
+                            this.dateModals.modal1 = false
+                            this.getDates();
+                            axios.post(endPoint.endpointTarget+'/notifications', {
+                                branch: this.branch,
+                                userName:this.firstNameUser + " " + this.lastNameUser,
+                                userImage:this.imgUser,
+                                detail:`Eliminó la cita de ${res.data.data.client.name}) ~
+                                el ${this.formatDate(new Date())}`,
+                                link: 'agendamiento'
+                            }, this.configHeader)
+                            .then(res => {
+                                this.socket.emit('sendNotification', res.data.data)
+                            }) 
                         }
                     })
                 }
@@ -4611,7 +4591,12 @@ export default {
         widthModalDate: () => {
             return screen.width < 780 ? "100%" : "100%"
         },
-        
+        getScreen: () => {
+            return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 280 }
+        },
+        widthModals: () => {
+            return screen.width < 780 ? '95%' : '50%'
+        }
     },
     mounted (){
         EventBus.$on('reloadDates', status => {

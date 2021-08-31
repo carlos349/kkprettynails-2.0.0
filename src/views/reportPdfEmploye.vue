@@ -32,7 +32,7 @@
             </div>
             <hr class="mt-2 mb-2">
             <h1 class="text-center">Servicios realizados</h1>
-            <a-config-provider>
+            <a-config-provider :locale="es_ES">
                 <template #renderEmpty>
                     <div style="text-align: center">
                         <a-icon type="warning" style="font-size: 20px" />
@@ -104,28 +104,6 @@
                     </template>
                 </a-table>
             </a-config-provider>
-
-            <!-- <div class="container-fluid hide">
-                <vue-bootstrap4-table :rows="lendeAdvancements" :columns="columnsLender" :classes="classes" :config="configLender" >
-                    <template slot="format-total" slot-scope="props">
-                        <span>{{formatPrice(props.row.total)}}</span>
-                    </template>
-                    <template slot="format-date" slot-scope="props">
-                        <span>{{formatDate(props.row.date)}}</span>
-                    </template>
-                </vue-bootstrap4-table>
-                <vue-bootstrap4-table :rows="lenderBonuses" :columns="columnsBonuses" :classes="classes" :config="configBonuses" >
-                    <template slot="format-reason" slot-scope="props">
-                        <span>{{props.row.expense.split(" / ")[0]}}</span>
-                    </template>
-                    <template slot="format-total" slot-scope="props">
-                        <span>{{formatPrice(props.row.figure)}}</span>
-                    </template>
-                    <template slot="format-date" slot-scope="props">
-                        <span>{{formatDate(props.row.date)}}</span>
-                    </template>
-                </vue-bootstrap4-table>
-            </div> -->
         </template>
     </div>
 </template>
@@ -133,7 +111,9 @@
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import mixinUserToken from '../mixins/mixinUserToken'
-export default {
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES],
     data(){
         return {
             auth: [],

@@ -26,7 +26,7 @@
                 </div>
             </div>
         </base-header>
-        <a-config-provider>
+        <a-config-provider :locale="es_ES">
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
@@ -45,7 +45,7 @@
                     {{formatPrice(totalFind(column.system) - totalFind(column.manual))}}
                 </template>
                 <template slot="format-date" slot-scope="record, column">
-                    {{formatDate(column.createdAt)}}
+                    {{column.createdAt | formatDate}}
                 </template>
                 <template slot="Admin" slot-scope="record, column">
                     <a-tooltip placement="top">
@@ -203,12 +203,10 @@ import io from 'socket.io-client';
 // COMPONENTS
 import EventBus from '../components/EventBus'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
-import * as moment from 'moment';
-import 'moment/locale/es';
-moment.locale('es');
 import mixinUserToken from '../mixins/mixinUserToken'
+import mixinES from '../mixins/mixinES'
 export default {
-    mixins: [mixinUserToken],
+    mixins: [mixinUserToken, mixinES],
     components: {
         VueBootstrap4Table 
     },
@@ -377,10 +375,6 @@ export default {
                 })
                 router.push({name: 'login'})
             }
-        },
-        formatDate(date) {
-            let dateFormat = new Date(date)
-            return moment(dateFormat).format('DD-MM-YYYY');
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')

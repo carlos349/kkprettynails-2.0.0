@@ -106,7 +106,7 @@
                         <i class="ni ni-shop"></i>
                         Ventas sin cerrar
                     </span>
-                    <a-config-provider>
+                    <a-config-provider :locale="es_ES">
                         <template #renderEmpty>
                             <div style="text-align: center">
                                 <a-icon type="warning" style="font-size: 20px" />
@@ -196,7 +196,7 @@
                         <i class="ni ni-calendar-grid-58"></i>
                         Historial de cierre
                     </span>
-                    <a-config-provider>
+                    <a-config-provider :locale="es_ES">
                         <template #renderEmpty>
                             <div style="text-align: center">
                                 <a-icon type="warning" style="font-size: 20px" />
@@ -268,8 +268,9 @@ import flatPicker from "vue-flatpickr-component";
 import io from 'socket.io-client';
 import "flatpickr/dist/flatpickr.css";
 import mixinUserToken from '../mixins/mixinUserToken'
-export default {
-    mixins: [mixinUserToken],
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES],
     components: {
         VueBootstrap4Table,
         vueCustomScrollbar,
@@ -729,8 +730,8 @@ export default {
             if (data.typesPay.length > 1) {
                 this.$swal({
                     icon: 'error',
-                    title: 'Esta venta posee mas de un tipo de pago',
-                    html: 'Para anularla debe hacerlo desde la sección <b>Ventas</b>',
+                    title: 'Por los tipos de pago',
+                    html: 'Debes hacer la anulación en la sección de <b>Ventas</b>',
                     showConfirmButton: true
                 })
             }else{

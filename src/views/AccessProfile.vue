@@ -32,7 +32,7 @@
                             <i class="fa fa-ban float-left mt-1"></i>
                             Eliminar
                         </base-button>
-                        <a-config-provider>
+                        <a-config-provider :locale="es_ES">
                             <template #renderEmpty>
                                 <div style="text-align: center">
                                     <a-icon type="info-circle" style="font-size: 60px" />
@@ -114,15 +114,15 @@
 
 <script>
 import axios from 'axios'
-import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
 import mixinUserToken from '../mixins/mixinUserToken'
 import BaseButton from '../components/BaseButton.vue'
+import mixinES from '../mixins/mixinES'
 export default {
     components: { BaseButton },
-    mixins: [mixinUserToken],                
+    mixins: [mixinUserToken, mixinES],                
     data() {
         const token = localStorage.userToken
 		const decoded = jwtDecode(token)

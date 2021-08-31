@@ -51,7 +51,7 @@
                             <h4 class="mb-0 text-sm">{{notification.userName}}</h4>
                           </div>
                           <div class="text-right text-muted">
-                            <small>{{momentTime(notification.createdAt)}}</small>
+                            <small>{{notification.createdAt | moment("from", "now")}}</small>
                           </div>
                         </div>
                         <p class="text-sm mb-0">{{formatDetail(notification.detail)}} <br> {{notification.detail.split('~')[1]}}</p>
@@ -171,12 +171,10 @@
   import endPoint from '../../config-endpoint/endpoint.js'
   import EventBus from '../components/EventBus'
   import io from 'socket.io-client';
-  import * as moment from 'moment';
   import jwtDecode from 'jwt-decode'
-  import 'moment/locale/es';
   import { Empty } from 'ant-design-vue';
   import vueCustomScrollbar from 'vue-custom-scrollbar'
-  moment.locale('es');
+
   export default {
     components: {
         vueCustomScrollbar
@@ -328,10 +326,6 @@
           this.activeNotifications = 0
           this.all = true
         })
-      },
-      momentTime(value) {
-        const dateNoti = new Date(value)
-        return moment(dateNoti, "YYYYMMDD").fromNow();
       },
       getAll() {
         const configHeader = {

@@ -42,7 +42,7 @@
         </div>
 
 
-        <a-config-provider>
+        <a-config-provider :locale="es_ES">
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
@@ -60,7 +60,9 @@
 <script>
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
-export default {
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinES],
     data(){
         return {
             configHeader: {
@@ -144,7 +146,7 @@ export default {
                 this.month = new Date(getHistory.data.data.createdAt).getMonth(),
                 this.year = new Date(getHistory.data.data.createdAt).getFullYear()
                 for (const expense of this.expenses) {
-                    if (expense.detaill == 'Stock en inventario') {
+                    if (expense.typee == 'Inventario') {
                         this.inventoryTotal = this.inventoryTotal + expense.amount
                     }
                 }

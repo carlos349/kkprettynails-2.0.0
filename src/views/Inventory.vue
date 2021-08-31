@@ -27,7 +27,7 @@
                 </span>
                 <template>
                     <div class="p-2">
-                        <a-config-provider>
+                        <a-config-provider :locale="es_ES">
                             <template #renderEmpty>
                                 <div style="text-align: center">
                                     <a-icon type="warning" style="font-size: 20px" />
@@ -132,7 +132,7 @@
                             </span>
                             <template>
                               <div class="p-2">
-                                  <a-config-provider>
+                                  <a-config-provider :locale="es_ES">
                                       <template #renderEmpty>
                                           <div style="text-align: center">
                                               <a-icon type="warning" style="font-size: 20px" />
@@ -191,7 +191,7 @@
                             </span>
                             <template>
                               <div class="p-2">
-                                  <a-config-provider>
+                                  <a-config-provider :locale="es_ES">
                                       <template #renderEmpty>
                                           <div style="text-align: center">
                                               <a-icon type="warning" style="font-size: 20px" />
@@ -281,7 +281,7 @@
         <h6 slot="header" class="modal-title" id="modal-title-default">Informe de cierre</h6>
         <template>
             <div class="p-2">
-                <a-config-provider>
+                <a-config-provider :locale="es_ES">
                     <template #renderEmpty>
                         <div style="text-align: center">
                             <a-icon type="warning" style="font-size: 20px" />
@@ -360,8 +360,9 @@ import jwtDecode from 'jwt-decode';
 // COMPONENTS
 
 import mixinUserToken from '../mixins/mixinUserToken'
-export default {
-    mixins: [mixinUserToken],
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES],
     components: {
         vueCustomScrollbar
     },

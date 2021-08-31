@@ -16,7 +16,7 @@
             </div>
             
         </base-header>
-        <a-config-provider>
+        <a-config-provider :locale="es_ES">
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
@@ -103,7 +103,7 @@
                         </a-tooltip> 
                 </template>
                 <template slot="format-date" slot-scope="record, column">
-                    {{formatDate(column.createdAt)}}
+                    {{column.createdAt | formatDate}}
                 </template>
             </a-table>
         </a-config-provider>
@@ -412,7 +412,7 @@
                                         </a-select-option>
                                     </a-select>
                                 </div>
-                                <a-config-provider>
+                                <a-config-provider :locale="es_ES">
                                     <template  #renderEmpty>
                                         <div style="text-align: center">
                                             <a-icon type="warning" style="font-size: 20px" />
@@ -454,13 +454,11 @@ import jwtDecode from 'jwt-decode'
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 import EventBus from '../components/EventBus'
-import * as moment from 'moment';
-import 'moment/locale/es';
-moment.locale('es');
 //mixin
 import mixinUserToken from '../mixins/mixinUserToken'
+import mixinES from '../mixins/mixinES'
 export default {
-    mixins: [mixinUserToken],
+    mixins: [mixinUserToken, mixinES],
     components: {
         VuePhoneNumberInput
     },
@@ -713,10 +711,6 @@ export default {
             }catch(err){
                 console.log(err)
             }
-        },
-        formatDate(date) {
-            let dateFormat = new Date(date)
-            return moment(dateFormat).format('DD-MM-YYYY');
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')

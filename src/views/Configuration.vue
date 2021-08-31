@@ -41,7 +41,7 @@
             <div class="row">
                 <div class="col-xl-8 col-sm-12 order-xl-2 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
-                      <a-config-provider>
+                      <a-config-provider :locale="es_ES">
                         <template #renderEmpty>
                           <div style="text-align: center">
                             <a-icon type="info-circle" style="font-size: 60px" />
@@ -92,7 +92,7 @@
                                   </a-select-option>
                               </a-select>
                           </div>
-                          <a-config-provider>
+                          <a-config-provider :locale="es_ES">
                               <template  #renderEmpty>
                                   <div style="text-align: center">
                                       <a-icon type="warning" style="font-size: 20px"/>
@@ -308,7 +308,7 @@
                                   Ingresar
                               </base-button>
                           </div>
-                          <a-config-provider>
+                          <a-config-provider :locale="es_ES">
                               <template  #renderEmpty>
                                   <div style="text-align: center">
                                       <a-icon type="warning" style="font-size: 20px"/>
@@ -453,7 +453,7 @@
                                   Ingresar
                               </base-button>
                           </div>
-                          <a-config-provider>
+                          <a-config-provider :locale="es_ES">
                               <template  #renderEmpty>
                                   <div style="text-align: center">
                                       <a-icon type="warning" style="font-size: 20px"/>
@@ -510,14 +510,12 @@
   import vueCustomScrollbar from 'vue-custom-scrollbar'
   import jwtDecode from 'jwt-decode'
   import EventBus from '../components/EventBus'
-  import * as moment from 'moment';
-  import 'moment/locale/es';
   import VuePhoneNumberInput from 'vue-phone-number-input';
   import 'vue-phone-number-input/dist/vue-phone-number-input.css';
-  moment.locale('es');
   import mixinUserToken from '../mixins/mixinUserToken'
-    export default {
-      mixins: [mixinUserToken],
+  import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES],
       components: {
           VueBootstrap4Table,
           vueCustomScrollbar,

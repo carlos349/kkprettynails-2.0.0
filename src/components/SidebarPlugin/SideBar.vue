@@ -41,6 +41,14 @@
                             <i class="ni ni-single-02"></i>
                             <span>Mi perfil</span>
                         </router-link>
+                        <router-link v-if="validRoutee('sucursales')" to="/sucursales" class="dropdown-item">
+                            <a-icon type="shop" style="vertical-align:1px;" />
+                            <span>Sucursales</span>
+                        </router-link>
+                        <router-link v-if="validRoutee('bodega')" to="/store" class="dropdown-item">
+                            <i class="ni ni-box-2"></i>
+                            <span>Bodega</span>
+                        </router-link>
                         <!-- <router-link to="/profile" class="dropdown-item">
                             <i class="ni ni-settings-gear-65"></i>
                             <span>Ajustes</span>
@@ -88,7 +96,8 @@
 <script>
   import NavbarToggleButton from '@/components/NavbarToggleButton'
   import endPoint from '.../../../config-endpoint/endpoint.js'
-  
+  import EventBus from '../EventBus'
+  import jwtDecode from 'jwt-decode'
   export default {
     name: 'sidebar',
     components: {
@@ -98,7 +107,8 @@
       return {
         haveImage: localStorage.imageUser,
         imgUser: endPoint.imgEndpoint + localStorage.imageUser,
-        screen: screen.width
+        screen: screen.width,
+        auth: []
       }
     },
     props: {
@@ -123,13 +133,37 @@
         autoClose: this.autoClose
       };
     },
+    created(){
+      this.getToken()
+    },
     methods: {
       closeSidebar() {
         this.$sidebar.displaySidebar(false)
       },
       showSidebar() {
         this.$sidebar.displaySidebar(true)
+      },
+      validRoutee(route){
+        console.log(this.auth, route)
+        for (let index = 0; index < this.auth.length; index++) {
+          const element = this.auth[index];
+          if (element.ruta == route) {
+            return true
+          }
+        }
+      },
+      getToken(){
+        const token = localStorage.userToken
+        if (token) {
+          const decoded = jwtDecode(token)
+          this.auth = decoded.access
+        }
       }
+    },
+    mounted() {
+      EventBus.$on('loggedin', status => {
+        this.getToken()
+      })
     },
     beforeDestroy() {
       if (this.$sidebar.showSidebar) {

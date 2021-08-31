@@ -110,7 +110,7 @@
             </template>
         </a-modal>
         <!-- TABLA DE CLIENTES -->
-        <a-config-provider>
+        <a-config-provider :locale="es_ES">
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
@@ -203,7 +203,7 @@
                     </a-tooltip>
                 </template>
             </a-table>
-        </a-config-provider>    
+        </a-config-provider>  
     </div>
 </template>
 <script>
@@ -214,12 +214,12 @@ import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
-
 // COMPONENTS
 
 import mixinUserToken from '../mixins/mixinUserToken'
+import mixinES from '../mixins/mixinES'
 export default {
-    mixins: [mixinUserToken],
+    mixins: [mixinUserToken, mixinES],
     components: {
         VueBootstrap4Table 
     },

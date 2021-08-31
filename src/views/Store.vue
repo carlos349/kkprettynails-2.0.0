@@ -39,7 +39,7 @@
                 </span>
                 <template>
                     <div class="p-2">
-                        <a-config-provider>
+                        <a-config-provider :locale="es_ES">
                             <template #renderEmpty>
                                 <div style="text-align: center">
                                     <a-icon type="warning" style="font-size: 20px" />
@@ -134,7 +134,7 @@
                 </span>
                 <template>
                     <div class="p-2">
-                        <a-config-provider>
+                        <a-config-provider :locale="es_ES">
                             <template #renderEmpty>
                                 <div style="text-align: center">
                                     <a-icon type="warning" style="font-size: 20px" />
@@ -211,7 +211,7 @@
                             </span>
                             <template>
                               <div class="p-2">
-                                  <a-config-provider>
+                                  <a-config-provider :locale="es_ES">
                                       <template #renderEmpty>
                                           <div style="text-align: center">
                                               <a-icon type="warning" style="font-size: 20px" />
@@ -276,7 +276,7 @@
                             </span>
                             <template>
                               <div class="p-2">
-                                  <a-config-provider>
+                                  <a-config-provider :locale="es_ES">
                                       <template #renderEmpty>
                                           <div style="text-align: center">
                                               <a-icon type="warning" style="font-size: 20px" />
@@ -327,7 +327,7 @@
                                               <template slot="title">
                                                 <span>Ver informe</span>
                                               </template>
-                                              <base-button size="sm" type="default" @click="modals.modal5 = true ,validForm = 2, dataHistoryClosedReport = column.products" icon="ni ni-bullet-list-67"></base-button>
+                                              <base-button size="sm" type="default" @click="modals.modal5 = true ,validForm = 2, dataHistoryClosedReport = column.products, dateReport = column.createdAt" icon="ni ni-bullet-list-67"></base-button>
                                             </a-tooltip>
                                           </template>
                                       </a-table>
@@ -559,11 +559,10 @@
       </template>
     </modal>
     <modal  modal-classes="modal-dialog-centered modal-xl" :show.sync="modals.modal5">
-        <h6 slot="header" class="modal-title" id="modal-title-default">Informe de cierre</h6>
-
+        <h4 slot="header" class="modal-title" id="modal-title-default">Informe de cierre</h4>
         <template>
             <div class="p-2">
-                <a-config-provider>
+                <a-config-provider :locale="es_ES">
                     <template #renderEmpty>
                         <div style="text-align: center">
                             <a-icon type="warning" style="font-size: 20px" />
@@ -610,7 +609,8 @@
 
         <template slot="footer">
             
-            <base-button type="link" class="ml-auto" @click="modalAdminProduct.modal1 = false">Cerrar
+            <base-button type="default" class="ml-auto" @click="printExcel">
+                Imprimir excel
             </base-button>
         </template>
     </modal>
@@ -643,7 +643,7 @@
         <a-empty v-if="branchDataValid == true">
             <span slot="description"> Selecciona una sucursal </span>
         </a-empty>
-        <a-config-provider v-else>
+        <a-config-provider :locale="es_ES" v-else>
             <template #renderEmpty>
                 <div style="text-align: center">
                     <a-icon type="warning" style="font-size: 20px" />
@@ -871,10 +871,11 @@ import jwtDecode from 'jwt-decode';
 // COMPONENTS
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
-
+import XLSX from 'xlsx'
 import mixinUserToken from '../mixins/mixinUserToken'
-export default {
-    mixins: [mixinUserToken],
+import mixinES from '../mixins/mixinES'
+  export default {
+    mixins: [mixinUserToken, mixinES],
     components: {
         flatPicker,
         vueCustomScrollbar,
@@ -1239,6 +1240,7 @@ export default {
                 scopedSlots: { customRender: 'actions' }
             }
         ],
+        dateReport: '',
         columnsHistory: [
             {
                 title: 'Fecha',
@@ -2486,6 +2488,22 @@ export default {
                 alertTotal:alertTotal,
                 id:id
             }
+        },
+        printExcel(){
+            var data = []
+            for (const column of this.dataHistoryClosedReport) {
+                data.push({
+                    Producto: column.product,
+                    Medida: column.measure,
+                    "En stock": column.count,
+                    "Total ideal": column.ideal,
+                    Diferencia: column.difference
+                })
+            }
+            var Datos = XLSX.utils.json_to_sheet(data) 
+            var wb = XLSX.utils.book_new() 
+            XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
+            XLSX.writeFile(wb, 'Reporte del '+this.formatDate(this.dateReport)+'.xlsx') 
         },
         editProduct(){
             this.$swal({

@@ -1,7 +1,7 @@
 <template>
     <div>
         <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
-                     style="min-height: 50px; background-image: url(img/theme/clients.png); background-size: cover; background-position: center 45%;">
+                style="min-height: 50px; background-image: url(img/theme/clients.png); background-size: cover; background-position: center 45%;">
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
@@ -26,7 +26,6 @@
                 </div>
             </div>
         </base-header>
-        
 
         <!-- MODAL REGISTRAR -->
 
@@ -114,7 +113,7 @@
                                 <div class="row">
                                     <base-button v-if="registerClient.birthday" class="col-12 mt-3" type="secondary">
                                         <span class="text-left">Fecha de nacimiento</span>
-                                        <badge class="text-default" type="success">{{formatDateTwo(registerClient.birthday)}}</badge>
+                                        <badge class="text-default" type="success">{{registerClient.birthday | formatDate}}</badge>
                                     </base-button>
                                     <base-button class="col-12 mt-1" type="secondary">
                                         <span>Participación</span>
@@ -130,11 +129,11 @@
                                     </base-button>
                                     <base-button class="col-12 mt-1" type="secondary">
                                         <span>Cliente desde</span>
-                                        <badge class="text-default" type="success">{{formatDate(registerClient.createdAt)}}</badge>
+                                        <badge class="text-default" type="success">{{registerClient.createdAt | formatDate}}</badge>
                                     </base-button>
                                     <base-button class="col-12 mt-1" type="secondary">
                                         <span>Ultima atención</span>
-                                        <badge class="text-default" type="success">{{formatDate(registerClient.lastAttend)}}</badge>
+                                        <badge class="text-default" type="success">{{registerClient.lastAttend | formatDate}}</badge>
                                     </base-button>
                                 </div>
                             </tab-pane>
@@ -279,7 +278,7 @@
 
         <!-- TABLA DE CLIENTES -->
         <template>
-            <a-config-provider>
+            <a-config-provider :locale="es_ES">
                 <template #renderEmpty>
                     <div style="text-align: center">
                         <a-icon type="warning" style="font-size: 20px" />
@@ -363,15 +362,15 @@ import io from 'socket.io-client';
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
-import moment from 'moment';
-moment.locale('es')
+
 // COMPONENTS
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 
 import mixinUserToken from '../mixins/mixinUserToken'
+import mixinES from '../mixins/mixinES'
 export default {
-    mixins: [mixinUserToken],
+    mixins: [mixinUserToken, mixinES],
     components: {
         VueBootstrap4Table,
         flatPicker,
@@ -787,14 +786,6 @@ export default {
                 _id: _id
             }
             console.log(this.registerClient)
-        },
-        formatDate(date) {
-            let dateFormat = new Date(date)
-			return moment(dateFormat).format("DD-MM-YYYY")
-        },
-        formatDateTwo(date) {
-            let dateFormat = new Date(date)
-			return moment(dateFormat).format("MMMM Do YYYY")
         },
         deleteClient(id){
 			this.$swal({
