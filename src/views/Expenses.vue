@@ -6,7 +6,7 @@
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
             <div class="row">
-                <div class="col-12">
+                <div class="col-12 ml-0">
                     <div class="text-absolute topExpense">
                         <p class="mb-0 display-4 text-white">Gastos</p>
                     </div>
@@ -149,20 +149,19 @@
                             <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
                         </base-button>
                     </div>
-                    <base-button style="margin-right:-10px; margin-top:3.3em;" class="float-right" size="sm"  v-on:click="modals.modal1 = true" type="success">
-                        <a-icon type="wallet" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
+                    <base-button style="margin-top:3.3em;" class="float-right" size="sm"  v-on:click="modals.modal1 = true" type="success">
+                        <a-icon type="wallet" class="mr-1" style="vertical-align:1px;font-size:1.5em;" />
                         Registrar
                     </base-button>
                     <base-button class="float-right mr-1" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'registrar_inversion') ? false : true"  v-on:click="modals.modal4 = true, getReinvestment()" type="default">
-                        <a-icon type="book" class="mr-2" style="vertical-align:1px;font-size:1.5em;" />
+                        <a-icon type="book" class="mr-1" style="vertical-align:1px;font-size:1.5em;" />
                         Inversión
                     </base-button>
-                    <base-button @click="openReport" class="float-right mr-2" style="margin-top:3.3em;" size="sm" type="danger">
-                        <a-icon type="file-pdf" class="mr-2" style="vertical-align:1px;font-size:1.5em;"/>
-                        Reporte
+                    <base-button @click="openReport" class="float-right mr-1" style="margin-top:3.3em;" size="sm" type="danger">
+                        <a-icon type="file-pdf" class="mr-1" style="vertical-align:1px;font-size:1.5em;"/>
                     </base-button>
                     <base-button @click="closeReinvestment" class="float-right mr-1" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'cierre') ? false : true" type="danger">
-                        <i class="fa fa-archive mr-2" style="vertical-align:1px;font-size:1.2em;"></i>
+                        <i class="fa fa-archive mr-1" style="vertical-align:1px;font-size:1.2em;"></i>
                         Cierre
                     </base-button>
                 </div>

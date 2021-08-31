@@ -146,7 +146,7 @@ import mixinES from '../mixins/mixinES'
                 this.month = new Date(getHistory.data.data.createdAt).getMonth(),
                 this.year = new Date(getHistory.data.data.createdAt).getFullYear()
                 for (const expense of this.expenses) {
-                    if (expense.detaill == 'Stock en inventario') {
+                    if (expense.typee == 'Inventario') {
                         this.inventoryTotal = this.inventoryTotal + expense.amount
                     }
                 }

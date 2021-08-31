@@ -941,7 +941,7 @@
                 <base-button type="warning" size="sm" :disabled="microPriceClick >= 0 || microPriceClick != '' ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
             </template>
         </a-modal>
-        <a-modal v-model="modals.modal3" title="Horarios bloqueados" width="50%" :closable="true" >
+        <a-modal v-model="modals.modal3" title="Horarios bloqueados" :width="widthModals" :closable="true" >
             <template>
                 <a-config-provider :locale="es_ES">
                     <template #renderEmpty>
@@ -966,7 +966,7 @@
                 <base-button @click="modals.modal3 = false, modals.modal4 = true" size="sm" type="default">Bloquear horario</base-button>
             </template>
         </a-modal>
-        <a-modal v-model="modals.modal4" title="Registrar bloqueo" width="30%" :closable="true" >
+        <a-modal v-model="modals.modal4" title="Registrar bloqueo" :width="widthModals" :closable="true" >
             <template>
                 <label for="date">Fechas</label>
                 <flat-picker 
@@ -3138,28 +3138,27 @@ import mixinES from '../mixins/mixinES'
                     axios.delete(endPoint.endpointTarget+'/dates/' + id, this.configHeader)
                     .then(res => {
                         if(res.data.status == 'deleted'){
-                        this.$swal({
-                            type: 'success',
-                            icon: 'success',
-                            title: 'Cita eliminada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        this.events = []
-                        this.dateModals.modal1 = false
-                        this.getDates();
-                        axios.post(endPoint.endpointTarget+'/notifications', {
-                            branch: this.branch,
-                            userName:this.firstNameUser + " " + this.lastNameUser,
-                            userImage:this.imgUser,
-                            detail:`Eliminó la cita de ${res.data.data.client.name}) ~
-                            el ${this.formatDate(new Date())}`,
-                            link: 'agendamiento'
-                        }, this.configHeader)
-                        .then(res => {
-                            this.socket.emit('sendNotification', res.data.data)
-                        }) 
-                        
+                            this.$swal({
+                                type: 'success',
+                                icon: 'success',
+                                title: 'Cita eliminada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.events = []
+                            this.dateModals.modal1 = false
+                            this.getDates();
+                            axios.post(endPoint.endpointTarget+'/notifications', {
+                                branch: this.branch,
+                                userName:this.firstNameUser + " " + this.lastNameUser,
+                                userImage:this.imgUser,
+                                detail:`Eliminó la cita de ${res.data.data.client.name}) ~
+                                el ${this.formatDate(new Date())}`,
+                                link: 'agendamiento'
+                            }, this.configHeader)
+                            .then(res => {
+                                this.socket.emit('sendNotification', res.data.data)
+                            }) 
                         }
                     })
                 }
@@ -4591,6 +4590,9 @@ import mixinES from '../mixins/mixinES'
         },
         getScreen: () => {
             return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 280 }
+        },
+        widthModals: () => {
+            return screen.width < 780 ? '95%' : '50%'
         }
     },
     mounted (){
