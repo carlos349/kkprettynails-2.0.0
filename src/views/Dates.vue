@@ -889,39 +889,44 @@
                 <div class="mt-2 mb-2 w-75 mx-auto bg-light" style="height:2px;"></div>
                 <div class="col-12 p-1 mb-1">
                     <h4 class="w-100">Servicios actuales</h4>
-                    <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:18vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">   
+
+                    <vuescroll v-on:scroll="scroll()" style="height:23vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                        
                         <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                            <div class="row">
-                                <template  >
-                                    <div class="col-lg-12 mt-2">
-                                        <base-button v-for="(service, index) in selectedEvent.services" :key="service" style="cursor:default;z-index:1" class="w-100 px-1 mb-2" type="default">
-                                        <a-icon class="float-left" style="vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;"  @click="deleteServiceFinally(service.index)" type="close" />
-                                            <span class="float-left ml-2">{{service.name}}</span>
-                                            <template style="z-index: 100" v-if="ifMicro">
-                                                <a-tooltip placement="top">
-                                                    <template slot="title">
-                                                        <span v-if="hideText != 'display:none'">Haga click en los microservicios que desea para este servicio. Se le sumara el costo al total del servicio.</span>
-                                                    </template>
-                                                    <!-- <template v-if="index == 0" style="z-index: 100">
-                                                        <div class="ml-1" style="z-index:100" v-for="micro in selectedEvent.microServices" :key="micro.microService">
-                                                            <badge  style="cursor: pointer" type="primary" class="text-white ml-1 float-right">
-                                                                {{micro.name}}
+                            <div class="row pl-3">
+                                <template>
+                                    <div v-for="(service, index) in selectedEvent.services" :key="service"  class="col-4 px-4" >
+                                        <div class="card-service row mt-2" style="border-bottom: solid 8px #174c8e">
+                                            <h3 class="name-service"> {{service.name}}</h3>
+                                            <div class="col-12 pl-0">
+                                                <template v-if="ifMicro">
+                                                    <a-tooltip placement="top">
+                                                        <template slot="title">
+                                                            <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                        </template>
+                                                        <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
+                                                        <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
+                                                            <badge :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
+                                                                <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
                                                             </badge>
                                                         </div>
-                                                    </template> -->
-                                                    <div class="ml-1" style="z-index:100" v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)">
-                                                        <badge  style="cursor: pointer" :type="micro.checked ? 'primary' : 'secondary'" class="text-default ml-1 float-right">
-                                                            {{micro.microService}}
-                                                        </badge>
-                                                    </div>
-                                                </a-tooltip>
-                                            </template>
-                                        </base-button>
+                                                    </a-tooltip>
+                                                </template>
+                                                <img src="img/brand/calendar.png" alt="">
+                                            </div>
+                                            
+                                            <div class="col-md-12 col-sm-12 mt-2 row" style="padding: 0px !important;padding-top: 5px !important;">
+                                                <div class="price-service col-6 ml-3">{{formatPrice(service.price)}} $</div>
+                                                <div class="col-2 float-right"> <a-icon style="font-size:1.7em;vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;"  @click="deleteServiceFinally(service.index)" type="delete" /> </div>
+                                                
+                                            </div>
+                                        </div>
                                     </div>
                                 </template>
                             </div>
                         </div>
-                </vuescroll>
+                    </vuescroll>
+                    
                 </div>
             </div>
             <div class="text-center">
@@ -3102,9 +3107,7 @@ export default {
                 }
             });
             if (valid){
-                dataFinal.services[0].microServiceSelect.forEach(element => {
-                    dataFinal.services[0].price = dataFinal.services[0].price - element.price
-                });
+                
                 axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
                     service:data.services,
                     client:data.client,
