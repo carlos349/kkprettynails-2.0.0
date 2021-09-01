@@ -260,6 +260,7 @@
                                           <template slot="priceTotal" slot-scope="record, column">
                                               <span v-if="record == 'Abastecimiento' ">No aplica</span>
                                               <span v-else-if="record == 'Devolución' ">No aplica</span>
+                                              <span v-else-if="record == 'Descartamiento' ">No aplica</span>
                                               <span v-else>{{formatPrice(record * column.entry)}}</span>
                                           </template>
                                           
@@ -1947,7 +1948,20 @@ import mixinES from '../mixins/mixinES'
             showLoaderOnConfirm: true
             }).then((result) => {
                 if(result.value) {
-                    axios.delete(endPoint.endpointTarget+'/stores/deleteinventoryproduct/'+data._id, this.configHeader)
+                    axios.post(endPoint.endpointTarget+'/stores/deleteinventoryproduct',{
+                        id:data._id,
+                        storeId:data.storeId,
+                        branch: this.selectedBranch,
+                        branchName: this.selectedBranchName,
+                        firstNameUser: this.firstNameUser,
+                        lastNameUser: this.lastNameUser,
+                        emailUser: this.emailUser,
+                        idUser: this.idUser,
+                        price: 'Descartamiento',
+                        product: data.product,
+                        entry: data.entry,
+                        measure: data.measure
+                    }, this.configHeader)
                     .then(res => {
                         console.log(res)
                         if (res.data.status == 'product deleted') {
@@ -2230,7 +2244,7 @@ import mixinES from '../mixins/mixinES'
             return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
         },
         formatPrice(value) {
-            if (value == 'Abastecimiento' || value == 'Devolución') {
+            if (value == 'Abastecimiento' || value == 'Devolución' || value == 'Descartamiento') {
                 return value
             }else{
                 let val = (value/1).toFixed(2).replace('.', ',')
@@ -2374,7 +2388,13 @@ import mixinES from '../mixins/mixinES'
                 showLoaderOnConfirm: true
             }).then((result) => {
                 if(result.value) {
-                    axios.delete(endPoint.endpointTarget+'/stores/deletestoreproduct/'+id, this.configHeader)
+                    axios.post(endPoint.endpointTarget+'/stores/deletestoreproduct',{
+                        id:id,
+                        firstNameUser: this.firstNameUser,
+                        lastNameUser: this.lastNameUser,
+                        emailUser: this.emailUser,
+                        idUser: this.idUser
+                    }, this.configHeader)
                     .then(res => {
                         if (res.data.status == 'product deleted') {
                             this.$swal({
@@ -2385,6 +2405,7 @@ import mixinES from '../mixins/mixinES'
                                 timer: 1500
                             })
                             this.getProducts()
+                            this.getHistory()
                         }
                     })
                 }

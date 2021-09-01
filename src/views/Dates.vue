@@ -25,7 +25,7 @@
                                 Agendar
                             </base-button>
 
-                            <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true"  type="warning">
+                            <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
                                 <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                                 Bloqueos
                             </base-button>
@@ -890,7 +890,7 @@
                 <div class="col-12 p-1 mb-1">
                     <h4 class="w-100">Servicios actuales</h4>
 
-                    <vuescroll v-on:scroll="scroll()" style="height:23vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                    <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:40vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                         
                         <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
                             <div class="row pl-3">
@@ -973,28 +973,30 @@
         </a-modal>
         <a-modal v-model="modals.modal4" title="Registrar bloqueo" :width="widthModals" :closable="true" >
             <template>
-                <label for="date">Fechas</label>
-                <flat-picker 
-                    style="padding-top: 15px;padding-bottom: 15px;height:0"
-                    :config="configDatePicker"
-                    class="form-control clearBlockingDate"
-                    v-model="hourBlocking.dateBlocking"
-                    placeholder="Seleccione una fecha">
-                </flat-picker>
+                
                 <!-- <a-date-picker placeholder="Seleccione fecha" class="w-100 clearBlockingDate" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" /> -->
-                <label class="mt-2" for="employe">Empleado</label>
+                <label class="mt-2" for="employe">Empleado <span class="text-danger" v-if="blokedBlock == true">Necesitas seleccionar un empleado</span> </label>
                 <a-select class="w-100 clearBlockingEmploye" allowClear placeholder="Seleccione empleado">
                     <a-select-option v-for="employe of employeShow" :key="employe._id" @click="selectEmployeHour(employe)" :value="employe._id">
                         {{employe.name}}
                     </a-select-option>
                 </a-select>
+                <label for="date">Fechas</label>
+                <flat-picker 
+                    style="padding-top: 15px;padding-bottom: 15px;height:0"
+                    :config="configDatePickerBlocked"
+                    class="form-control clearBlockingDate"
+                    :disabled="blokedBlock"
+                    v-model="hourBlocking.dateBlocking"
+                    placeholder="Seleccione una fecha">
+                </flat-picker>
                 <label class="mt-2" for="time">Horarios</label><br>
                 <div class="row px-3">
                     <div class="col-6 px-1 pr-0">
-                        <a-time-picker class="w-100 clearBlockingTime" @change="selectStartHour" placeholder="Inicio de bloqueo" :minute-step="15" format="HH:mm" />
+                        <a-time-picker class="w-100 clearBlockingTime" :disabled="blokedBlock" @change="selectStartHour" placeholder="Inicio de bloqueo" :minute-step="15" format="HH:mm" />
                     </div>
                     <div class="col-6 px-1 pl-0">
-                        <a-time-picker class="w-100 clearBlockingTime" @change="selectEndHour" placeholder="Fin de bloqueo" :minute-step="15" format="HH:mm" />
+                        <a-time-picker class="w-100 clearBlockingTime" :disabled="blokedBlock" @change="selectEndHour" placeholder="Fin de bloqueo" :minute-step="15" format="HH:mm" />
                     </div>
                 </div>
             </template>
@@ -1060,6 +1062,7 @@ import mixinES from '../mixins/mixinES'
             end: ''
         },
         locale,
+        blokedBlock: true,
         showCurrencyMicro:true,
         datesBlocking: [],
         minAddEdit:0,
@@ -1291,17 +1294,24 @@ import mixinES from '../mixins/mixinES'
         },
         dateMax:'',
         configDatePicker: {
-        allowInput: true,
-        dateFormat: 'd-m-Y',
-        locale: Spanish, // locale for this instance only
-        minDate: new Date(),
-        "disable": [
-                function(date) {
-                    // return true to disable
-                    return false;
+            allowInput: true,
+            dateFormat: 'd-m-Y',
+            locale: Spanish, // locale for this instance only
+            minDate: new Date(),
+            "disable": [
+                    function(date) {
+                        // return true to disable
+                        return false;
 
-                }
-            ]          
+                    }
+                ]          
+        },
+        configDatePickerBlocked: {
+            allowInput: true,
+            dateFormat: 'd-m-Y',
+            locale: Spanish, // locale for this instance only
+            minDate: new Date(),
+            enable: []        
         },
         loadImage: false,
         configDatePickerEdit: {
@@ -1495,6 +1505,17 @@ import mixinES from '../mixins/mixinES'
                 name: employe.name,
                 id: employe._id
             }
+            this.configDatePickerBlocked.enable = []
+            for (let i = 0; i < employe.days.length; i++) {
+                const element = employe.days[i];
+                this.configDatePickerBlocked.enable.push(
+                    function(date) {
+                        return (date.getDay() === element.day );
+
+                    } 
+                )    
+            }
+            this.blokedBlock = false
         },
         async getBlockingHours(){
             try {
