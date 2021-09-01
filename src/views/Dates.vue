@@ -895,7 +895,7 @@
                         <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
                             <div class="row pl-3">
                                 <template>
-                                    <div v-for="(service, index) in selectedEvent.services" :key="service"  class="col-4 px-4" >
+                                    <div v-for="(service, index) in selectedEvent.services" :key="service"  class="col-md-4 px-4" >
                                         <div class="card-service row mt-2" style="border-bottom: solid 8px #174c8e">
                                             <h3 class="name-service"> {{service.name}}</h3>
                                             <div class="col-12 pl-0">
@@ -933,7 +933,7 @@
                 <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
             </div>
         </modal>
-        <a-modal v-model="modals.modal5" style="z-index:10000" width="30%" title="Precio del microservicio" @cancel="changeMicroPrice" :closable="false">
+        <a-modal v-model="modals.modal5" style="z-index:10000" :width="widthModals" title="Precio del microservicio" @cancel="changeMicroPrice" :closable="false">
             <template>
                 
                 <currency-input
