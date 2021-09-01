@@ -906,7 +906,7 @@
                                                         </template>
                                                         <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
                                                         <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
-                                                            <badge :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
+                                                            <badge v-if="MALDITOVUE" :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
                                                                 <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
                                                             </badge>
                                                         </div>
@@ -933,7 +933,7 @@
                 <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
             </div>
         </modal>
-        <a-modal v-model="modals.modal5" style="z-index:10000" :width="widthModals" title="Precio del microservicio" @cancel="changeMicroPrice" :closable="false">
+        <a-modal v-model="modals.modal5" style="z-index:10000" :width="widthModals" title="Precio del microservicio" @cancel="changeMicroPrice" :closable="true">
             <template>
                 
                 <currency-input
@@ -1388,6 +1388,7 @@ import mixinES from '../mixins/mixinES'
         payCredit:0,
         payOrder:0,
         servicesFinish:[],
+        MALDITOVUE: true,
         modals: {
             modal1:false,
             modal2: false,
@@ -2084,6 +2085,7 @@ import mixinES from '../mixins/mixinES'
             if (micro.microService == 'Ninguno') {
                 this.selectedEvent.services[index].microServices.forEach(element => {
                     element.checked = false
+                    
                 });
                 this.selectedEvent.services[index].microServices[0].checked = true
                 this.selectedEvent.services[index].microServiceSelect = []
@@ -2115,6 +2117,8 @@ import mixinES from '../mixins/mixinES'
                     
                 }
             }
+            this.MALDITOVUE = false
+            this.MALDITOVUE = true
             this.microPrice(this.selectedEvent.services, index)
             console.log(this.selectedEvent.services[index])
             console.log(valid)
