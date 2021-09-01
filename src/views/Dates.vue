@@ -330,7 +330,7 @@
                         </div> 
                     </tab-content>
                     <tab-content title="Información" icon="fa fa-question-circle">
-                        <vue-custom-scrollbar class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                        <vue-custom-scrollbar v-on:scroll.native="fixClient()" class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                         <div class="row">
                             <div class="col-md-8 col-sm-12" >
                                 <div class="row">
@@ -389,7 +389,7 @@
                         <center>
                             <a-select
                                 ref="clientSelect"
-                                show-search
+                                :show-search="fixSearch"
                                 placeholder="Selecciona un cliente"
                                 class="mb-2"
                                 :class="hideText != 'display:none' ? 'w-50' : 'w-100'"
@@ -1153,6 +1153,7 @@ import mixinES from '../mixins/mixinES'
                 scrollingY: true,
             }
         },
+        fixSearch: true,
         searchText: '',
         searchInput: null,
         searchedColumn: '',
@@ -4581,6 +4582,12 @@ import mixinES from '../mixins/mixinES'
                             
                     }
                 })
+        },
+        fixClient(){
+            this.fixSearch = false
+            setTimeout(() => {
+                this.fixSearch = true
+            }, 100);
         },
         SelectMicro(index, indexM, microServices) {   
             if (this.registerDae.serviceSelectds[index].microServices[indexM].microService == 'Ninguno') {
