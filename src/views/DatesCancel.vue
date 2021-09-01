@@ -41,8 +41,9 @@ export default {
                     $('.divShow').show('slow')
                     axios.post(endPoint.endpointTarget+'/notifications', {
                         userName:'Cliente: '+res.data.data.client,
-                        userImage:localStorage.getItem('imageUser'),
-                        detail:'Canceló su cita para el día '+this.formatDateTwo(res.data.data.date),
+                        userImage: '',
+                        detail: 'Canceló su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
+                        branch: res.data.data.branch,
                         link: 'agendamiento'
                     }, this.configHeader)
                     .then(res => {
