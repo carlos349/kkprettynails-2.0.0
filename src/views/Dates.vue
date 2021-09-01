@@ -2594,6 +2594,7 @@ import mixinES from '../mixins/mixinES'
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == "ok") {
+                                    this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae)
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',
@@ -2606,7 +2607,6 @@ import mixinES from '../mixins/mixinES'
                                     this.modals.modal1 = false
                                     this.getDates()
                                     this.initialState()
-                                    this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
                                     this.modals.modal2 = false
                                 }    
                             })
@@ -3788,54 +3788,27 @@ import mixinES from '../mixins/mixinES'
 			}
 			}
         },
-        sendConfirmation(id, name, start, end, services, lender){
-            console.log(id, name, start, end, services, lender)
-            this.$swal({
-                icon: 'info',
-                title: '¿Desea enviar confirmación?',
-                text: 'Correo del cliente '+name.email,
-                type: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Sí',
-                cancelButtonText: 'No, cancelar acción',
-                showCloseButton: true,
-                showLoaderOnConfirm: true
-            })
-            .then((result) => {
-                if(result.value) {
-                    const nameFormat = this.formatName(name)
-                    const contactFormat = this.formatContact(name)
-                    const startFormat = this.dateSplitHours(start)
-                    const endFormat = this.dateSplitHours(end)
-                    const dateFormat = this.dateSplit(start)
-                    axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
-                        name: nameFormat,
-                        contact: contactFormat,
-                        start: startFormat,
-                        end: endFormat,
-                        date: dateFormat,
-                        service: services,
-                        lenders: lender,
-                        payment: 'No especificado'
-                    })
-                    .then(res => {
-                        if (res.data.status == 'ok') {
-                            this.$swal({
-                                icon: 'success',
-                                title: 'Envío exitoso!',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-                }else{
-
+        sendConfirmation(id, name, mail, start, end, services, lender, data){
+            const nameFormat = name
+            const dateFormat = this.finalDate
+            axios.post(endPoint.endpointTarget+'/mails/dateMail', {
+                name: nameFormat,
+                branch: this.branchName,
+                branchId: this.branch,
+                data: data,
+                id: id,
+                date: dateFormat,
+                email: mail
+            }, this.configHeader)
+            .then(res => {
+                console.log(res)
+                if (res.data.status == 'ok') {
+                    console.log(res.data.status)
                 }
             })
-            
+            .catch(err => {
+                console.log(err)
+            })
         },
         openCalendar(){
             setTimeout(() => {
