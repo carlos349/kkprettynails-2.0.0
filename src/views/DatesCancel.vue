@@ -40,7 +40,7 @@ export default {
                 if (res.data.status == 'ok') {
                     $('.divShow').show('slow')
                     axios.post(endPoint.endpointTarget+'/notifications', {
-                        userName:'Cliente: '+res.data.data.client,
+                        userName:'Cliente: '+res.data.data.client.name,
                         userImage: '',
                         detail: 'Canceló su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
                         branch: res.data.data.branch,

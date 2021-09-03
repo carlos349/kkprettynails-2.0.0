@@ -40,7 +40,7 @@ export default {
                 if (res.data.status == 'ok') {
                     $('.divShow').show('slow')
                     axios.post(endPoint.endpointTarget+'/notifications', {
-                        userName: 'Cliente: '+res.data.data.client,
+                        userName: 'Cliente: '+res.data.data.client.name,
                         userImage: '',
                         detail: 'Confirmo su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
                         branch: res.data.data.branch,
@@ -49,9 +49,9 @@ export default {
                     .then(res => {
                         this.socket.emit('sendNotification', res.data.data)
                     })
-                    setTimeout(() => {
-                        window.location = "https://kkprettynails.cl"
-                    }, 2000);
+                    // setTimeout(() => {
+                    //     window.location = "https://kkprettynails.cl"
+                    // }, 2000);
                 }
             })
         },
