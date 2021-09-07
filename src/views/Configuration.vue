@@ -890,7 +890,7 @@
               if (day.status) {
                 SumHours  = (parseInt(day.end.split(':')[0] - parseInt(day.start.split(':')[0])) * 60)
                 SumMinutes = parseInt(day.start.split(':')[1]) - parseInt(day.end.split(':')[1])
-                TotalMinutes = SumHours + SumMinutes
+                TotalMinutes = SumHours - SumMinutes
                 day.time = TotalMinutes
               }
           }
