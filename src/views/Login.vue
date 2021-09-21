@@ -720,6 +720,8 @@ import mixinES from '../mixins/mixinES'
         localStorage.removeItem('email')
         localStorage.removeItem('imageUser')
         localStorage.removeItem('status')
+        localStorage.removeItem('branch')
+        localStorage.removeItem('branchName')
     },
     created(){
         this.getBranches()

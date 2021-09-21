@@ -966,13 +966,13 @@
         },
         removeMicroService(index){
           this.$swal({
-            title: '¿Está seguro de borrar el microservicio? Se eliminara toda su configuración',
-            text: 'No puedes revertir esta acción',
+            title: '¿Desea eliminar adicional?',
+            text: '¡Recuerda! Se eliminará de toda su configuración. Esta acción no se puede revertir',
             type: 'warning',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Estoy seguro',
-            cancelButtonText: 'No, evitar acción',
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No, cancelar acción',
             showCloseButton: true,
             showLoaderOnConfirm: true
           }).then((result) => {
@@ -984,7 +984,7 @@
               this.$swal({
                   type: 'error',
                   icon: 'error',
-                  title: 'Accion cancelada',
+                  title: 'Acción cancelada',
                   showConfirmButton: false,
                   timer: 1500
               })
