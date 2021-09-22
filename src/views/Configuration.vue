@@ -1045,6 +1045,15 @@
                   this.configData.microServices.push({microService:this.microService, price:0, duration:0})
                   this.microService = ''
                   this.updateconfig()
+                  setTimeout(() => {
+                    this.$swal({
+                      icon: 'info',
+                      title: 'Adicional creado',
+                      text: '¡Recuerda configurarlo!',
+                      showConfirmButton: true
+                    })
+                    
+                  }, 500);
               }else if (this.microService.length <= 2) {
                   this.$swal({
                       icon: 'error',

@@ -14,51 +14,39 @@
                 </div>
             </div>
         </base-header>
-        
-        <EmailEditor class="w-100 h-100" ref="emailEditor"
-            v-on:load="editorLoaded"
-            
-            :locale="locale"
-            />
-
-            <!-- <div class="w-100" > -->
-                <!-- <div class="col-md-8 templates"> -->
-                    
-                <!-- </div> -->
-                <!-- <div style="border-radius:5px" class="col-md-4 pt-3">
-                    
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-default" id="basic-addon1">De:</span>
-                        </div>
-                        <input readonly v-model="de" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1">
-                    </div>
-                    <p style="color:#8b8a89" class="font-italic float-right">*Estas enviando el E-Mail a {{mailsQuantity}} personas</p>
-                    <div class="input-group mb-3">
-                        
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-default" id="basic-addon1">Para:</span>
-                        </div>
-                        <input v-model="mails" type="text" v-on:change="countMails" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1">
-                    </div>
-                    <div class="input-group mb-3">
+        <!-- <div class="w-100"> -->
+        <EmailEditor 
+            class="w-100 h-100" 
+            ref="emailEditor"
+            :tools="tools"
+            :locale="locale"/>
+        <!-- </div> -->
+        <div class="container-fluid p-0">
+            <div class="row p-2" >
+                <div class="col-4">
+                    <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text bg-default" id="basic-addon1">Asunto:</span>
                         </div>
                         <input v-model="subject" type="text" class="form-control pl-2" placeholder="Asunto.." aria-label="Username" aria-describedby="basic-addon1">
                     </div>
-                    <div class="ck-styles">
-                        
-                        <ckeditor  @input="changeTextarea()" :editor="editor" v-model="editorData" ></ckeditor>
+                </div>
+                <div class="col-6">
+                    <!-- <label for="text">*Estas enviando el E-Mail a {{mailsQuantity}} personas</label><br> -->
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-default" id="basic-addon1">Para:</span>
+                        </div>
+                        <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/>
                     </div>
-                </div> -->
-                <!-- <div style="background-color:rgba(238, 238, 238, 0.623);border-radius:5px" class="col-1">
-                    
-                </div> -->
-            <!-- </div> -->
-            <!-- <button class="btn btn-default float-right mb-2 buttonSend" v-on:click="SendMail">
-                <i class="fa fa-paper-plane"></i>
-            </button> -->
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-default" v-on:click="SendMail">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -72,21 +60,30 @@ export default {
     mixins: [mixinUserToken],
     data() {
         return {
-            select: 0,
-            de: 'info@kkprettynails.cl',
+            configHeader: {
+                headers:{
+                    "x-database-connect": endPoint.database, 
+                    "x-access-token": localStorage.userToken
+                }
+            },
             mails: '',
-            mailsQuantity: '',
             subject: '',
             minHeight: '80vh',
             locale: 'es',
             projectId: 0,
+            branch: localStorage.branch,
             tools: {
-                // disable image tool
-                image: {
-                    enabled: false,
-                },
+                button: { enabled: true },
+                divider: { enabled: true },
+                form: { enabled: true },
+                heading: { enabled: true },
+                image: { enabled: true },
+                menu: { enabled: true },
+                social: { enabled: true },
+                text: { enabled: true },
+                timer: { enabled: true },
+                html: { enabled: true }
             },
-            options: {},
             appearance: {
                 theme: 'dark',
                 panels: {
@@ -95,6 +92,7 @@ export default {
                     },
                 },
             },
+            email: ''
         };
         
     },
@@ -102,69 +100,69 @@ export default {
         EmailEditor
     },
     created(){
-        // this.getMails()
-        // setTimeout(() => {
-            
-        //     $('.blockbuilder-branding').css({'display': 'none'})
-        // }, 5000);
+        this.getMails()
+        this.getEmailSend()
     },
     methods: {
-        // async getMails(){
-        //     const mails = await axios(endPoint.endpointTarget+'/clients/mails')
-        //     for (let index = 0; index < mails.data.length; index++) {
-        //         const element = mails.data[index]
-        //         var splitCorreo, ig, id
-        //         if (element.correoCliente) {
-        //             splitCorreo = element.correoCliente.split('.com')
-        //             if (splitCorreo.length == 2) {
-        //                 if (this.mails == '') {
-        //                     this.mails = element.correoCliente
-        //                 }else{
-        //                     this.mails = this.mails + ', ' + element.correoCliente
-        //                 }
-        //             }
-        //         }
-        //         if (element.identidad) {
-        //             id = element.identidad.split('.com')
-        //             if (id.length == 2) {
-        //                 if (this.mails == '') {
-        //                     this.mails = element.identidad
-        //                 }else{
-        //                     this.mails = this.mails + ', ' + element.identidad
-        //                 }
-        //             }
-        //         }
-        //         if (element.instagramCliente) {
-        //             ig = element.instagramCliente.split('.com')
-        //             if (ig.length == 2) {
-        //                 if (this.mails == '') {
-        //                     this.mails = element.instagramCliente
-        //                 }else{
-        //                     this.mails = this.mails + ', ' + element.instagramCliente
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     const splitMails = this.mails.split(',')
-        //     this.mailsQuantity = splitMails.length
-        // },
-        // countMails(){
-        //     const splitMails = this.mails.split(',')
-        //     this.mailsQuantity = splitMails.length
-        //     const count = this.mails.length
-        //     console.log(this.mails[count - 1])
-        //     if (this.mails[count - 1] == ',') {
-        //         this.mailsQuantity = this.mailsQuantity - 1
-        //     }
-        // },
-        saveDesign() {
-            this.$refs.emailEditor.editor.saveDesign((design) => {
-                console.log('saveDesign', design);
-            });
+        async getMails(){
+            try {
+                const getEmail = await axios.get(`${endPoint.endpointTarget}/clients/getEmails`, this.configHeader)
+                if (getEmail.data.status == 'ok') {
+                    this.mails = getEmail.data.data
+                    this.mails = "carlos.gomes349@gmail.com"
+                }
+            }catch(err){
+                this.$swal({
+                    icon: 'error',
+                    title: 'Problemas de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
         },
-        exportHtml() {
+        async getEmailSend(){
+            try {
+                const getEmail = await axios.get(`${endPoint.endpointTarget}/configurations/${this.branch}`, this.configHeader)
+                if (getEmail.data.status == 'ok') {
+                    this.email = getEmail.data.data.businessEmail
+                    this.email = "carlos.gomes349@gmail.com"
+                    console.log(this.email)
+                }
+            }catch(err){
+                this.$swal({
+                    icon: 'error',
+                    title: 'Problemas de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        },
+        SendMail() {
             this.$refs.emailEditor.editor.exportHtml((data) => {
-                console.log('exportHtml', data);
+                axios.post(`${endPoint.endpointTarget}/clients/sendPromotionEmail`, {
+                    email: this.email,
+                    clients: this.mails,
+                    subject: this.subject,
+                    html: data.html
+                }, this.configHeader)
+                .then(res => {
+                    console.log(res)
+                    if (res.data.status == 'ok') {
+                        this.$swal({
+                            icon: 'success',
+                            title: 'Correo enviado con éxito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }).catch(err => {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Problemas de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                })
             });
         },
     }
@@ -200,10 +198,5 @@ export default {
         height:auto;
         background-color:#fff;
         padding-bottom: 10px;
-    }
-    .buttonSend{
-        position:absolute;
-        top:35%;
-        right: 2%;
     }
 </style>
