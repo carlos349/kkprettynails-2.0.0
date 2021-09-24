@@ -2075,11 +2075,22 @@ import mixinES from '../mixins/mixinES'
             this.selectedEvent.services.push({name: name, commission: commission, price: price, discount: discount, products: products, index:this.selectedEvent.services.length, microServices: microServices, microServiceSelect:[]})
         },
         deleteServiceFinally(i){
-            this.selectedEvent.services.forEach((element, index) => {
-                if (i == element.index) {
-                    this.selectedEvent.services.splice(index, 1)
-                }
-            }); 
+            if (this.selectedEvent.services.length > 1) {
+                this.selectedEvent.services.forEach((element, index) => {
+                    if (i == element.index) {
+                        this.selectedEvent.services.splice(index, 1)
+                    }
+                }); 
+            }else{
+                this.$swal({
+                    icon: 'error',
+                    title: 'Debe haber al menos 1 servicio',
+                    text: 'Se debe seleccionar al menos un servicio para poder eliminar otro',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK'
+                })
+            }
+            
         },
         SelectMicroFinally(index, micro, indexM){
             if (micro.microService == 'Ninguno') {
