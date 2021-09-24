@@ -264,11 +264,14 @@
         }
       },
       selectBranch(value){
+        console.log(value.key.split('/')[0], this.branch)
         if (value.key.split('/')[0] != this.branch) {
           localStorage.setItem('branch', value.key.split('/')[0])
           localStorage.setItem('branchName', value.key.split('/')[1])
           this.branch = value.key.split('/')[0]
           this.branchName = value.key.split('/')[1]
+          console.log(this.branch)
+          console.log(this.branchName)
           EventBus.$emit('changeBranch', true)
         }
       },

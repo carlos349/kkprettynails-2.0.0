@@ -976,7 +976,7 @@
                 
                 <!-- <a-date-picker placeholder="Seleccione fecha" class="w-100 clearBlockingDate" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" /> -->
                 <label class="mt-2" for="employe">Empleado <span class="text-danger" v-if="blokedBlock == true">Necesitas seleccionar un empleado</span> </label>
-                <a-select class="w-100 clearBlockingEmploye" allowClear placeholder="Seleccione empleado">
+                <a-select class="w-100 clearBlockingEmploye" allowClear placeholder="Seleccione empleado" @change="validBlockeBlock">
                     <a-select-option v-for="employe of employeShow" :key="employe._id" @click="selectEmployeHour(employe)" :value="employe._id">
                         {{employe.name}}
                     </a-select-option>
@@ -1804,8 +1804,10 @@ import mixinES from '../mixins/mixinES'
                 var splitEnd = this.configurations.blockHour[new Date(event.startDate).getDay()].end.split(':')
                 var start = parseFloat(splitStart[0]+splitStart[1]) * 0.60
                 var end = parseFloat(splitEnd[0]+splitEnd[1]) * 0.60
-                this.startCalendar = start
+                this.startCalendar = parseInt(splitStart[1]) == 30 ? start + 12 : start
                 this.endCalendar = end
+                console.log(this.startCalendar)
+                console.log(this.endCalendar)
                 for (let index = 0; index < this.employeShow.length; index++) {
                     const name = this.employeShow[index];
                     for (let j = 0; j < event.events.length; j++) {
@@ -2500,6 +2502,9 @@ import mixinES from '../mixins/mixinES'
                 }
             })
             
+        },
+        validBlockeBlock(value){
+            this.blokedBlock = value == undefined ? true : false
         },
         register(){
             if (this.dataClient.valid && this.dataClient.valid2) {

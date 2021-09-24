@@ -890,7 +890,7 @@
               if (day.status) {
                 SumHours  = (parseInt(day.end.split(':')[0] - parseInt(day.start.split(':')[0])) * 60)
                 SumMinutes = parseInt(day.start.split(':')[1]) - parseInt(day.end.split(':')[1])
-                TotalMinutes = SumHours + SumMinutes
+                TotalMinutes = SumHours - SumMinutes
                 day.time = TotalMinutes
               }
           }
@@ -966,13 +966,13 @@
         },
         removeMicroService(index){
           this.$swal({
-            title: '¿Está seguro de borrar el microservicio? Se eliminara toda su configuración',
-            text: 'No puedes revertir esta acción',
+            title: '¿Desea eliminar adicional?',
+            text: '¡Recuerda! Se eliminará de toda su configuración. Esta acción no se puede revertir',
             type: 'warning',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Estoy seguro',
-            cancelButtonText: 'No, evitar acción',
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No, cancelar acción',
             showCloseButton: true,
             showLoaderOnConfirm: true
           }).then((result) => {
@@ -984,7 +984,7 @@
               this.$swal({
                   type: 'error',
                   icon: 'error',
-                  title: 'Accion cancelada',
+                  title: 'Acción cancelada',
                   showConfirmButton: false,
                   timer: 1500
               })
@@ -1045,6 +1045,15 @@
                   this.configData.microServices.push({microService:this.microService, price:0, duration:0})
                   this.microService = ''
                   this.updateconfig()
+                  setTimeout(() => {
+                    this.$swal({
+                      icon: 'info',
+                      title: 'Adicional creado',
+                      text: '¡Recuerda configurarlo!',
+                      showConfirmButton: true
+                    })
+                    
+                  }, 500);
               }else if (this.microService.length <= 2) {
                   this.$swal({
                       icon: 'error',

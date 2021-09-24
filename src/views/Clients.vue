@@ -11,7 +11,7 @@
                         <p class="mb-0 display-2 text-white">Clientes</p>
                         <p class="text-white hideText">Sección dedicada a la administración de sus clientes, podrá enviar correos electrónicos y exportar en excel la base de datos de sus clientes.</p>
                     </div>
-                    <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('clientes', 'correos') ? false : true" @click="modals.modal3 = true" type="primary">
+                    <base-button class="float-right mt-7 mr-0" size="sm" :disabled="validRoute('clientes', 'correos') ? false : true" @click="redirect()" type="primary">
                         <a-icon type="mail" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Correos
                     </base-button>
@@ -223,55 +223,7 @@
                 <h1 class="heading mt-5">{{modals.message}}</h1>
             </div>
         </modal>
-        <modal :show.sync="modals.modal3"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
-                <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                        Elija la plantilla de diseño para su correo
-                    </div>
-                </template>
-                <template>
-                    <div class="row p-3">
-                        <div class="col-4 p-1">
-                            <div class="template" v-on:click="selectTemplate(1)">
-                                <img src="../assets/template-1.png" style="width:100%;" alt="">
-                            </div>
-                        </div>
-                        <div class="col-4 p-1">
-                            <div class="template" v-on:click="selectTemplate(2)">
-                                <img src="../assets/template-2.png" style="width:100%;" alt="">
-                            </div>
-                        </div>
-                        <div class="col-4 p-1">
-                            <div class="template" v-on:click="selectTemplate(3)">
-                                <img src="../assets/template-3.png" style="width:100%;" alt="">
-                            </div>
-                        </div>
-                        <div class="col-4 p-1">
-                            <div class="template" v-on:click="selectTemplate(4)">
-                                <img src="../assets/template-4.png" style="width:100%;" alt="">
-                            </div>
-                        </div>
-                        <div class="col-4 p-1">
-                            <div class="template" v-on:click="selectTemplate(5)">
-                                <img src="../assets/template-5.png" style="width:100%;" alt="">
-                            </div>
-                        </div>
-                        <div class="col-4 p-1">
-                            <div class="template" v-on:click="selectTemplate(6)">
-                                <img src="../assets/template-6.png" style="width:100%;" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </card>
-        </modal>
+        
         <base-alert class="positionAlert" type="success" v-if="successRegister">
             <strong>Registrado!</strong> Has registrado al cliente con exito!
         </base-alert>
@@ -867,20 +819,8 @@ export default {
                 }
             }
         },
-        selectTemplate(select){
-            this.modals = {
-                modal1: false,
-                modal2: false,
-                modal3:false,
-                message: "",
-                icon: '',
-                type: ''
-            }
-            setTimeout(() => {
-               localStorage.setItem('selectTemplate', select)
-                router.push({path: 'Correo'}) 
-            }, 200);
-			
+        redirect(){
+            router.push({path: 'Correo'}) 
 		}
     },
     computed: {
