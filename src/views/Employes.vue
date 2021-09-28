@@ -634,6 +634,7 @@ export default {
                         days: this.selectedDays,
                         lastName: this.registerEmploye.lastName,
                         branch: this.branch,
+                        validBlocked:false,
                         dayValid: this.dayValid
                     }, this.configHeader)
                     .then(res => {

@@ -1503,10 +1503,13 @@ import mixinES from '../mixins/mixinES'
             this.hourBlocking.end = moment(value).format("HH:mm")
         },
         selectEmployeHour(employe){
+            console.log(employe)
             this.hourBlocking.employe = {
                 name: employe.name,
+                document: employe.document,
                 id: employe._id
             }
+            console.log(this.hourBlocking.employe)
             this.configDatePickerBlocked.enable = []
             for (let i = 0; i < employe.days.length; i++) {
                 const element = employe.days[i];
@@ -1657,6 +1660,7 @@ import mixinES from '../mixins/mixinES'
             this.validHour = false
         },
         async deleteHour(id, employe, dateBlocking, start, end){
+            console.log(employe)
             try {
                 const blockHour = await axios.post(`${endPoint.endpointTarget}/dates/deleteBlockingHour`, {
                     id: id,
@@ -1667,13 +1671,33 @@ import mixinES from '../mixins/mixinES'
                     end: end
                 }, this.configHeader)
                 if (blockHour.data.status == 'ok') {
-                    this.$swal({
-                        icon: 'success',
-                        title: 'Bloqueo eliminado con éxito',
-                        showConfirmButton: false,
-                        timer: 1500
+                    axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+employe.id, this.configHeader)
+                    .then(res => {
+                        if(res.data.status == "ok"){
+                            axios.put(endPoint.endpointTarget+'/employes', {
+                                id:employe.id,
+                                firstName: res.data.data.firstName,
+                                document: res.data.data.document,
+                                lastName: res.data.data.lastName,
+                                days: res.data.data.days,
+                                branch: this.branch,
+                                validBlocked:true,
+                                dayValid: true
+                            }, this.configHeader)
+                            .then(res => {
+                                if(res.data.status == "employe edited"){
+                                    this.$swal({
+                                        icon: 'success',
+                                        title: 'Bloqueo eliminado con éxito',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    this.getBlockingHours()
+                                }
+                            })
+                        }
                     })
-                    this.getBlockingHours()
+                    
                 }
             }catch(err){
 
@@ -1913,6 +1937,7 @@ import mixinES from '../mixins/mixinES'
   			axios.get(endPoint.endpointTarget+'/employes/UsersEmployes/'+this.branch, this.configHeader)
   			.then(res => {
                 this.employeShow = res.data.data
+                console.log(this.employeShow)
   			})
         },
         async getServices(){
