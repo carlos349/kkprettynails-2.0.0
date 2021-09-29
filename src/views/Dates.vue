@@ -1317,7 +1317,9 @@ import mixinES from '../mixins/mixinES'
         loadImage: false,
         configDatePickerEdit: {
             allowInput: true,
-            dateFormat: 'd-m-Y',
+            altInput: true,
+            altFormat: 'd-m-Y',
+            dateFormat: 'm-d-Y',
             locale: Spanish, // locale for this instance only
             minDate: new Date(),
             maxDate: '', 
