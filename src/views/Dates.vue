@@ -120,7 +120,7 @@
                                                                             <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price)"></i></button>
                                                                             <span class="span-button-service">{{countServices[index].count}}</span>
                                                                             <button class="button-service-right" 
-                                                                            v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, 'cardS'+index, service.discount)"
+                                                                            v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, service.discount, service.products)"
                                                                             ><i class="fa fa-plus"></i></button>
                                                                         </div> 
                                                                     </div>  
@@ -566,7 +566,13 @@
                             <dt class="text-center">Detalles de la cita</dt>
                             <a-tooltip placement="top">
                                 <template slot="title">
-                                <span v-if="selectedEvent.client">{{selectedEvent.client.email}} - {{selectedEvent.client.phone.formatInternational}}</span>
+                                    <span v-if="selectedEvent.client">
+                                        {{selectedEvent.client.email}} 
+                                        <span v-if="selectedEvent.client.phone">
+                                            - {{selectedEvent.client.phone.formatInternational}}
+
+                                        </span>
+                                    </span>
                                 </template>
                                 <base-button v-if="selectedEvent.client" class="mt-2 col-12" size="sm" type="secondary">
                                     <span >Cliente:</span>
@@ -1604,7 +1610,7 @@ import mixinES from '../mixins/mixinES'
                 if (service.data.status == 'ok') {
                     service.data.data.set = false
                     this.serviceSelected.unshift(service.data.data)
-                    this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount)
+                    this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products)
                 }else{
                     this.$swal({
                         icon: 'error',
@@ -2679,7 +2685,7 @@ import mixinES from '../mixins/mixinES'
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == "ok") {
-                                    this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae)
+                                    // this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae)
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',
