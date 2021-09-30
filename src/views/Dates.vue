@@ -651,14 +651,19 @@
                                 Avanzados
                             </span>
                             <div class="row">
-                                <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
-                                    <center>
-                                        <base-button outline size="sm" class="mx-auto col-12" type="default">
-                                            <span class="float-left">Editar</span>  
-                                            <span style="margin-top:3px" class="fa fa-edit float-right"></span>
-                                        </base-button> 
-                                    </center>
-                                </div>
+                                <a-tooltip placement="top">
+                                    <template slot="title">
+                                        <span v-if="editDisabled">No puedes editar una cita caducada</span>
+                                    </template>
+                                    <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
+                                        <center>
+                                            <base-button :disabled="editDisabled" outline size="sm" class="mx-auto col-12" type="default">
+                                                <span class="float-left">Editar</span>  
+                                                <span style="margin-top:3px" class="fa fa-edit float-right"></span>
+                                            </base-button>
+                                        </center>
+                                    </div>
+                                </a-tooltip>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
                                     <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true, plusMicroFinally()" class="col-md-6 mx-auto mt-2"><center>
 
@@ -1099,6 +1104,7 @@ import mixinES from '../mixins/mixinES'
             end: '',
             valid: true
         },
+        editDisabled: true,
         blockCountValid:0,
         blockCountArray:[],
         radioDomingos:{
@@ -1744,6 +1750,14 @@ import mixinES from '../mixins/mixinES'
                             $('.clearBlockingTime .ant-time-picker-clear').click()
                             $('.clearBlockingDate .ant-calendar-picker-clear').click()
                             $('.clearBlockingEmploye .ant-select-selection__clear').click()
+                        }else{
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Bloqueo ocupado',
+                                text: 'Las horas seleccionadas ya estan ocupadas por este empleado',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                         }
                     }catch(err){
 
@@ -2791,6 +2805,13 @@ import mixinES from '../mixins/mixinES'
         onEventClick(event, e){
             this.selectedEvent = event
             this.dateModals.modal1 = true
+            if (new Date(this.selectedEvent.createdAt).valueOf() < new Date().valueOf()) {
+                this.editDisabled = true
+                console.log("ya basta")
+            }else{
+                this.editDisabled = false
+                console.log("coño")
+            }
             axios.get(endPoint.endpointTarget+'/clients/findOne/'+this.selectedEvent.client.id, this.configHeader)
             .then(res => {
                 if (res.data.data.attends == 0) {
