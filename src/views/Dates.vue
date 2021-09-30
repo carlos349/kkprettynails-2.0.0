@@ -120,7 +120,7 @@
                                                                             <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price)"></i></button>
                                                                             <span class="span-button-service">{{countServices[index].count}}</span>
                                                                             <button class="button-service-right" 
-                                                                            v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, 'cardS'+index, service.discount)"
+                                                                            v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, service.discount, service.products)"
                                                                             ><i class="fa fa-plus"></i></button>
                                                                         </div> 
                                                                     </div>  
@@ -1609,7 +1609,7 @@ import mixinES from '../mixins/mixinES'
                 if (service.data.status == 'ok') {
                     service.data.data.set = false
                     this.serviceSelected.unshift(service.data.data)
-                    this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount)
+                    this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products)
                 }else{
                     this.$swal({
                         icon: 'error',
