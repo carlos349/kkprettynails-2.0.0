@@ -356,8 +356,8 @@
                 <template slot="date-format" slot-scope="record, column">
                     {{column.createdAt | formatDate}}
                 </template>
-                <template slot="localGain" slot-scope="record, column">
-                    {{column.localGain | formatPrice}}
+                <template slot="totalCommission" slot-scope="record, column">
+                    {{calculateCommission(column.items) | formatPrice}}
                 </template>
                 
                 <template slot="total" slot-scope="record, column">
@@ -518,13 +518,12 @@ import mixinES from '../mixins/mixinES'
                     scopedSlots: { customRender: 'client-slot' }
                 },
                 {
-                    title: 'Ganacia local',
+                    title: 'Comisión total',
                     dataIndex: 'localGain',
                     key: 'localGain',
                     ellipsis: true,
-                    scopedSlots: { customRender: 'localGain' },
+                    scopedSlots: { customRender: 'totalCommission' },
                     defaultSortOrder: 'descend',
-                    sorter: (a, b) => a.localGain - b.localGain
                 },
                 {
                     title: 'Total',
@@ -625,6 +624,15 @@ import mixinES from '../mixins/mixinES'
                 })
                 router.push({name: 'login'})
             }
+        },
+        calculateCommission(data){
+            var totalCommission = 0
+            data.forEach(element => {
+                if (element.type == "service") {
+                    totalCommission = totalCommission + element.employe.commission
+                }
+            });
+            return totalCommission
         },
         async getEmployes(){
             try {
