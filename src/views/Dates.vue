@@ -2108,6 +2108,9 @@ import mixinES from '../mixins/mixinES'
                         microServices.push({checked: true, duration: micro.duration, microService: micro.microService, price: micro.price})
                         valid = false
                     }
+                    if (element.name == 'Ninguno') {
+                        microServices[0].checked = true
+                    }
                 });
                 if (valid) {
                     microServices.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price})
