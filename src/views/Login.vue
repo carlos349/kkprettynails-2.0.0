@@ -1059,6 +1059,7 @@ import mixinES from '../mixins/mixinES'
                     localStorage.setItem('imageUser', decoded.userImage)
                     localStorage.setItem('showNav', true)
                     localStorage.setItem('status', decoded.status)
+                    localStorage.setItem('branch', decoded.branch)
                     router.push({path: '/Agendamiento'})
                     this.emitMethod(decoded.status)
                 }

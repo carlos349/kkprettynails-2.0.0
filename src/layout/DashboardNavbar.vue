@@ -220,6 +220,7 @@
           this.auth = decoded.access
           this.branch = decoded.branch
           for (const branch of this.branches) {
+            console.log(branch._id, this.branch, branch._id == this.branch)
             if (branch._id == this.branch) {
               this.branchName = branch.name
               localStorage.setItem('branch', this.branch)
@@ -285,7 +286,8 @@
         try {
           const getBranches = await axios.get(endPoint.endpointTarget+'/branches', configHeader)
           if (getBranches.data.status == 'ok') {
-              this.branches = getBranches.data.data
+            this.branches = getBranches.data.data
+            this.getToken()
           }
         }catch(err){console.log(err)}
       },
@@ -350,7 +352,7 @@
     },
     mounted() {
       EventBus.$on('loggedin', status => {
-        this.getToken()
+        this.getBranches()
       })
       EventBus.$on('dataChange', status => {
         console.log(status)

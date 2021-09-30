@@ -566,7 +566,13 @@
                             <dt class="text-center">Detalles de la cita</dt>
                             <a-tooltip placement="top">
                                 <template slot="title">
-                                <span v-if="selectedEvent.client">{{selectedEvent.client.email}} - {{selectedEvent.client.phone.formatInternational}}</span>
+                                    <span v-if="selectedEvent.client">
+                                        {{selectedEvent.client.email}} 
+                                        <span v-if="selectedEvent.client.phone">
+                                            - {{selectedEvent.client.phone.formatInternational}}
+
+                                        </span>
+                                    </span>
                                 </template>
                                 <base-button v-if="selectedEvent.client" class="mt-2 col-12" size="sm" type="secondary">
                                     <span >Cliente:</span>
@@ -2661,7 +2667,7 @@ import mixinES from '../mixins/mixinES'
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == "ok") {
-                                    this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae)
+                                    // this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae)
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',
