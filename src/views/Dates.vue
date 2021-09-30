@@ -884,7 +884,8 @@
                         show-search
                         placeholder="Seleccione el servicio"
                         option-filter-prop="children"
-                        class="w-50"
+                        class="w-50 thisSelect"
+                        :allowClear="true"
                         :filter-option="filterOption">
                         <a-select-option v-for="service of services" :key="service._id" v-on:click="plusServiceFinally(service.name, service.commission, service.price, service.discount, service.products)" :value="service._id">
                             {{service.name}}
@@ -2089,6 +2090,7 @@ import mixinES from '../mixins/mixinES'
             this.validHour = false  
         },
         plusMicroFinally(){
+            $('.thisSelect .ant-select-selection__clear').click()
             this.showCurrencyMicro = true
             this.selectedEvent.services[0].microServiceSelect = this.selectedEvent.microServices
             this.microPrice(this.selectedEvent.services, 0)
