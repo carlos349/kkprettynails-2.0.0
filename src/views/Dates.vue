@@ -698,15 +698,13 @@
                                                 <span class="float-left">Confirmada</span> 
                                             </base-button>
 
-                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation(selectedEvent._id, selectedEvent.client, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.employe)">
+                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation(selectedEvent._id, selectedEvent.client.name, selectedEvent.client.email, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.employe, selectedEvent)">
                                                 <i style="margin-top:3px" class="ni ni-send float-right"></i>
                                                 <span class="float-left">Confirmación</span>  
                                             </base-button>
                                         </div>   
                                     </center>
                                 </div>
-                                
-                                
                             </div>
                             
                             <dt class="mt-4 text-center">Histórico de cliente </dt>
@@ -2688,7 +2686,7 @@ import mixinES from '../mixins/mixinES'
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == "ok") {
-                                    // this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae)
+                                    this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae)
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',
@@ -3891,7 +3889,7 @@ import mixinES from '../mixins/mixinES'
         },
         sendConfirmation(id, name, mail, start, end, services, lender, data){
             const nameFormat = name
-            const dateFormat = this.finalDate
+            const dateFormat = this.finalDate == "" ? start : this.finalDate
             axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                 name: nameFormat,
                 branch: this.branchName,
