@@ -25,7 +25,7 @@
                                 Agendar
                             </base-button>
 
-                            <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
+                            <base-button v-if="false" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
                                 <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                                 Bloqueos
                             </base-button>
@@ -2668,7 +2668,7 @@ import mixinES from '../mixins/mixinES'
                                         $(".ant-select-selection__clear").click()
                                         this.getDates()
                                         this.initialState()
-                                        // this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
+                                        this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
                                         this.modals.modal2 = false
                                         this.ifDisabled = false
                                     }    
