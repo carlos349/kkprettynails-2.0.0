@@ -25,7 +25,7 @@
                                 Agendar
                             </base-button>
 
-                            <base-button v-if="false" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
+                            <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
                                 <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                                 Bloqueos
                             </base-button>

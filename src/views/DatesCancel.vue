@@ -3,7 +3,8 @@
         <center >
             <div class="mt-9 hidden divShow">
                 <i class="fa fa-info-circle mb-4" style="font-size:15em;color:#238ae6;"></i>
-                <h1>Su cita fue cancelada satifactoriamente</h1>
+                <!-- <h1>Su cita fue cancelada satifactoriamente</h1> -->
+                <h1>Comuniquese con el local para cancelar cita</h1>
             </div>    
         </center> 
     </div>
@@ -33,27 +34,27 @@ export default {
     },
     methods: {
         confirmDate(){
-            axios.put(endPoint.endpointTarget+'/dates/removeDate/'+this.id, {
-                id: this.id
-            }, this.configHeader)
-            .then(res => {
-                if (res.data.status == 'ok') {
+            // axios.put(endPoint.endpointTarget+'/dates/removeDate/'+this.id, {
+            //     id: this.id
+            // }, this.configHeader)
+            // .then(res => {
+            //     if (res.data.status == 'ok') {
                     $('.divShow').show('slow')
-                    axios.post(endPoint.endpointTarget+'/notifications', {
-                        userName:'Cliente: '+res.data.data.client.name,
-                        userImage: '',
-                        detail: 'Canceló su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
-                        branch: res.data.data.branch,
-                        link: 'agendamiento'
-                    }, this.configHeader)
-                    .then(res => {
-                        this.socket.emit('sendNotification', res.data.data)
-                    })
+                    // axios.post(endPoint.endpointTarget+'/notifications', {
+                    //     userName:'Cliente: '+res.data.data.client.name,
+                    //     userImage: '',
+                    //     detail: 'Canceló su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
+                    //     branch: res.data.data.branch,
+                    //     link: 'agendamiento'
+                    // }, this.configHeader)
+                    // .then(res => {
+                    //     this.socket.emit('sendNotification', res.data.data)
+                    // })
                     setTimeout(() => {
                         window.location = "https://kkprettynails.cl"
                     }, 2000);
-                }
-            })
+            //     }
+            // })
         },
         formatDateTwo(date) {
             let dateFormat = new Date(date)
