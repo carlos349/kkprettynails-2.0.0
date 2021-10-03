@@ -70,9 +70,6 @@ export default {
                             .then(res => {
                                 this.socket.emit('sendNotification', res.data.data)
                             })
-                            setTimeout(() => {
-                                window.location = "https://kkprettynails.cl"
-                            }, 2000);
                         }
                     })
                     .catch(err => {
