@@ -547,9 +547,9 @@ export default {
                         if (days.start == "Desde" || days.start == undefined || days.end == "Hasta" || days.end == undefined) {
                             return false
                         }else{
-                            if (parseInt(days.end.split(':')[0]) <= parseInt(days.start.split(':')[0])) {
+                            if (parseInt(days.end.split(':')[0]) < parseInt(days.start.split(':')[0])) {
                                 if (parseInt(days.end.split(':')[0]) == parseInt(days.start.split(':')[0])) {
-                                    if (parseInt(days.end.split(':')[1]) <= parseInt(days.start.split(':')[1])) {
+                                    if (parseInt(days.end.split(':')[1]) < parseInt(days.start.split(':')[1])) {
                                        return 'hora atras' 
                                     }
                                 }else{

@@ -64,7 +64,7 @@
             <card type="secondary" shadow header-classes="bg-white" class="border-0 m-0 px-0">
                 
                   <!-- WIZARD -->
-                
+                <a-spin :spinning="spinningDate">
                 <form-wizard ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
                     <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
@@ -499,7 +499,7 @@
                         </vue-custom-scrollbar>
                     </tab-content>
                 </form-wizard>
-
+                </a-spin>
                 <!-- END WIZARD -->
 
             </card>
@@ -1071,6 +1071,7 @@ import mixinES from '../mixins/mixinES'
             start: '',
             end: ''
         },
+        spinningDate: false,
         locale,
         blokedBlock: true,
         showCurrencyMicro:true,
@@ -2557,6 +2558,7 @@ import mixinES from '../mixins/mixinES'
             this.blokedBlock = value == undefined ? true : false
         },
         register(){
+            this.spinningDate = true
             if (this.dataClient.valid && this.dataClient.valid2) {
                     this.ifDisabled = true
                 var employeFinal = ''
@@ -2578,6 +2580,7 @@ import mixinES from '../mixins/mixinES'
                 }, this.configHeader)
                 .then(res => {
                     if(res.data.status == true){
+                        this.spinningDate = false
                         this.$swal({
                             icon: 'error',
                             title: '¡Disculpe!',
@@ -2654,6 +2657,7 @@ import mixinES from '../mixins/mixinES'
                                 }, this.configHeader)
                                 .then(res => {
                                     if (res.data.status == "ok") {
+                                        this.spinningDate = false
                                         this.$swal({
                                             type: 'success',
                                             icon: 'success',
@@ -2686,6 +2690,7 @@ import mixinES from '../mixins/mixinES'
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == "ok") {
+                                    this.spinningDate = false
                                     this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae)
                                     this.$swal({
                                         type: 'success',
@@ -2705,9 +2710,18 @@ import mixinES from '../mixins/mixinES'
                         }
                     }
                 }).catch(err => {
+                    this.spinningDate = false
+                    this.$swal({
+                        type: 'error',
+                        icon: 'error',
+                        title: 'Error de conexión, verifique si tiene conexión a internet.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     console.log(err)
                 }) 
             }else{
+                this.spinningDate = false
                 this.$swal({
                     type: 'error',
                     icon: 'error',
