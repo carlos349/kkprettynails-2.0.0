@@ -33,11 +33,9 @@ export default {
     },
     methods: {
         confirmDate(){
-            axios.put(endPoint.endpointTarget+'/dates/removeDate/'+this.id, {
-                id: this.id
-            }, this.configHeader)
+            axios.delete(endPoint.endpointTarget+'/dates/'+this.id, this.configHeader)
             .then(res => {
-                if (res.data.status == 'ok') {
+                if (res.data.status == 'deleted') {
                     $('.divShow').show('slow')
                     var micro = ''
                     res.data.data.microServices.forEach((element,index)=> {
