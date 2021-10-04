@@ -2,7 +2,7 @@
     <div class="font">
         <nav class="headerStyles" id="upView">  
             <div class="borderImageBrand">
-                <img src="img/brand/logokk.png" class="imageBrand" alt="" >
+                <img src="img/brand/kkspa.png" class="imageBrand" alt="" >
             </div>
         </nav>
         <div class="container-fluid" style="margin-top:8rem;">
@@ -10,7 +10,7 @@
                 <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!" ref="wizard"> 
                     <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
-                    <tab-content title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
+                    <tab-content class="mt-4" title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
                         <div v-if="desactive">
                             <center>
                                 <h1 class="text-center w-50 mt-4">

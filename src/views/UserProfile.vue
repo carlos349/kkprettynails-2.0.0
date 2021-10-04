@@ -31,7 +31,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body pt-0 pt-md-4">
+                        <div class="card-body pt-0 pt-md-4 responsiveName">
                             <div class="row mt-2">
                                 <div class="col">
                                     <div class="card-profile-stats d-flex justify-content-center mt-md-5">
@@ -85,10 +85,10 @@
                     <card shadow type="secondary" body-classes="p-0">
                         <div slot="header" class="bg-white border-0">
                             <div class="row align-items-center">
-                                <div class="col-2">
+                                <div class="col-md-2 col-6">
                                     <h3 class="mb-0 text-info" style="cursor:pointer;" :style="selectType == 'Profile' ? 'text-decoration: underline;' : 'text-decoration:none;'" @click="selectMenu('Profile')">Mi perfil</h3>
                                 </div>
-                                <div class="col-8" v-if="model.linkLender != ''">
+                                <div class="col-md-8 col-6" v-if="model.linkLender != ''">
                                     <h3 class="mb-0 text-info" style="cursor:pointer;" :style="selectType == 'Sales' ? 'text-decoration: underline;' : 'text-decoration:none;'" @click="selectMenu('Sales')">Servicios</h3>
                                 </div>
                             </div>
@@ -625,7 +625,11 @@
 					// router.push({name: 'login'})
 				}
 			}, 
+        },
+        computed: {
+            getScreen: () => {
+                return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 280 }
+            }
         }
     };
 </script>
-<style></style>
