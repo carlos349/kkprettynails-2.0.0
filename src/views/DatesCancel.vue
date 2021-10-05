@@ -37,45 +37,46 @@ export default {
             .then(res => {
                 if (res.data.status == 'deleted') {
                     $('.divShow').show('slow')
-                    var micro = ''
-                    res.data.data.microServices.forEach((element,index)=> {
-                        if (res.data.data.microServices[index + 1]) {
-                            micro = micro + element.name + ' - '
-                        }else{
-                            micro = micro + element.name
-                        }
-                    });
-                    axios.post(endPoint.endpointTarget+'/mails/responseDate', {
-                        client: res.data.data.content,
-                        email: res.data.branchEmail,
-                        branchName: res.data.branchName,
-                        start: res.data.data.start.split(" ")[1],
-                        end: res.data.data.end.split(" ")[1],
-                        date: res.data.data.start.split(" ")[0],
-                        employe: res.data.data.employe.name,
-                        service: res.data.data.title,
-                        micro: micro,
-                        logo: res.data.logo,
-                        confirmed: false
-                    }, this.configHeader)
-                    .then(res => {
-                        if (res.data.status == 'ok') {
-                            axios.post(endPoint.endpointTarget+'/notifications', {
-                                userName:'Cliente: '+res.data.data.client.name,
-                                userImage: '',
-                                detail: 'Canceló su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
-                                branch: res.data.data.branch,
-                                link: 'agendamiento'
-                            }, this.configHeader)
-                            .then(res => {
-                                this.socket.emit('sendNotification', res.data.data)
-                            })
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-                    
+                    if (res.data.data) {
+                        var micro = ''
+                        res.data.data.microServices.forEach((element,index)=> {
+                            if (res.data.data.microServices[index + 1]) {
+                                micro = micro + element.name + ' - '
+                            }else{
+                                micro = micro + element.name
+                            }
+                        });
+                        axios.post(endPoint.endpointTarget+'/mails/responseDate', {
+                            client: res.data.data.content,
+                            email: res.data.branchEmail,
+                            branchName: res.data.branchName,
+                            start: res.data.data.start.split(" ")[1],
+                            end: res.data.data.end.split(" ")[1],
+                            date: res.data.data.start.split(" ")[0],
+                            employe: res.data.data.employe.name,
+                            service: res.data.data.title,
+                            micro: micro,
+                            logo: res.data.logo,
+                            confirmed: false
+                        }, this.configHeader)
+                        .then(res => {
+                            if (res.data.status == 'ok') {
+                                axios.post(endPoint.endpointTarget+'/notifications', {
+                                    userName:'Cliente: '+res.data.data.client.name,
+                                    userImage: '',
+                                    detail: 'Canceló su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
+                                    branch: res.data.data.branch,
+                                    link: 'agendamiento'
+                                }, this.configHeader)
+                                .then(res => {
+                                    this.socket.emit('sendNotification', res.data.data)
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                    }
                 }
             })
         },
