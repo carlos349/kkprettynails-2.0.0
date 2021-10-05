@@ -873,7 +873,7 @@
                     timer: 3000
                 })
                 setTimeout(() => {
-                    window.location = 'https://kkprettynails.cl/'
+                    window.location = 'https://kkspa.cl/'
                 }, 3000);
                 
             },
