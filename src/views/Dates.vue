@@ -417,7 +417,7 @@
                             </div>
                             
                             <div class="col-md-6">
-                                <VuePhoneNumberInput v-if="dataClient.valid && dataClient.phone" v-model="dataClient.phone.formatNational" @update="phoneData = $event, registerClient.phone = $event, validRegister()"
+                                <VuePhoneNumberInput v-if="dataClient.valid && dataClient.phone" v-model="dataClient.phone.formatNational" @update="dataClient.phone = $event, validRegister()"
                                     :default-phoner-number="dataClient.phone.nationalNumber"
                                     :default-country-code="dataClient.phone.countryCode" 
                                     :translations="{
@@ -427,7 +427,7 @@
                                         example: 'Ejemplo :'
                                     }"
                                 />
-                                <VuePhoneNumberInput v-else v-model="dataClient.phone" @update="dataClient.phone = $event, validRegister()" 
+                                <VuePhoneNumberInput v-else v-model="dataClient.phone.formatNational" @update="dataClient.phone = $event, validRegister()" :default-country-code="dataClient.phone.countryCode" :default-phoner-number="dataClient.phone.nationalNumber"
                                 :translations="{
                                     countrySelectorLabel: 'Código de país',
                                     countrySelectorError: 'Elije un país',
@@ -1287,7 +1287,18 @@ import mixinES from '../mixins/mixinES'
             firstName: '',
             lastName: '',
             email: '',
-            phone: '',
+            phone: {
+                "countryCode": "CL", 
+                "isValid": false, 
+                "phoneNumber": "", 
+                "countryCallingCode": "", 
+                "formattedNumber": "", 
+                "nationalNumber": "", 
+                "formatInternational": "", 
+                "formatNational": "", 
+                "uri": "", 
+                "e164": ""
+            },
             instagram: '',
             attends: '',
             recommender: '',
@@ -2755,7 +2766,7 @@ import mixinES from '../mixins/mixinES'
                 email:this.dataClient.email,
                 recommender:this.dataClient.recommender,
                 idRecomender:this.dataClient.idRecommender,
-                phone:this.phoneData,
+                phone:this.dataClient.phone,
                 birthday: date,
                 instagram:this.dataClient.instagram,
                 ifCheck: ifCheck
