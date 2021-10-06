@@ -710,6 +710,7 @@
             this.$swal({
                 icon: 'success',
                 title: 'Agendamiento en mantenimiento.',
+                html: '<p>Para agendamiento contacta al <br> +56 9 7262 8949</p>',
                 showConfirmButton: true
             })
         },
