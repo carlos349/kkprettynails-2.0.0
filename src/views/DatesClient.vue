@@ -707,6 +707,11 @@
         created(){
             this.getBranches()
             this.device()
+            this.$swal({
+                icon: 'success',
+                title: 'Agendamiento en mantenimiento.',
+                showConfirmButton: true
+            })
         },
         methods: {
             handleFileUpload(){
@@ -1140,7 +1145,8 @@
                 try {
                     const categories = await axios.get(endPoint.endpointTarget+'/services/getCategoriesForClients/'+this.branch, this.configHeader)
                     if (categories.data.status == 'ok') {
-                        this.categories = categories.data.data
+                        // this.categories = categories.data.data
+                        this.categories = []
                     }else{
                         this.categories = []
                     }
