@@ -707,6 +707,12 @@
         created(){
             this.getBranches()
             this.device()
+            this.$swal({
+                icon: 'success',
+                title: 'Agendamiento en mantenimiento.',
+                html: '<p>Para agendamiento contacta al <br> +56 9 7262 8949</p>',
+                showConfirmButton: true
+            })
         },
         methods: {
             handleFileUpload(){
@@ -873,7 +879,7 @@
                     timer: 3000
                 })
                 setTimeout(() => {
-                    window.location = 'https://kkprettynails.cl/'
+                    window.location = 'https://kkspa.cl/'
                 }, 3000);
                 
             },
@@ -1140,7 +1146,8 @@
                 try {
                     const categories = await axios.get(endPoint.endpointTarget+'/services/getCategoriesForClients/'+this.branch, this.configHeader)
                     if (categories.data.status == 'ok') {
-                        this.categories = categories.data.data
+                        // this.categories = categories.data.data
+                        this.categories = []
                     }else{
                         this.categories = []
                     }
