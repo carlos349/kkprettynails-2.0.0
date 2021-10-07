@@ -968,9 +968,15 @@
                     this.validRegister = false
                 }
             },
+            dateSplit2(value){
+                const date = new Date(value).format('DD MM YYYY')
+                var formatDate = date.split(' ')
+                return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
+            },
             sendConfirmation(id, name, mail, start, end, services, lender, data){
                 const nameFormat = name
                 const dateFormat = this.finalDate
+                dateFormat = this.dateSplit2(dateFormat)
                 axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                     name: nameFormat,
                     branch: this.branchName,
@@ -978,7 +984,9 @@
                     data: data,
                     id: id,
                     date: dateFormat,
-                    email: mail
+                    email: mail,
+                    servicesFinal: data.serviceSelectds,
+                    valid: true
                 }, this.configHeader)
                 .then(res => {
                     if (res.data.status == 'ok') {
