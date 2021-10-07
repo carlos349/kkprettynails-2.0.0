@@ -564,7 +564,6 @@
 
     //frontend
     import flatPicker from "vue-flatpickr-component";
-    import moment from 'moment'
     import {Spanish} from 'flatpickr/dist/l10n/es.js';
     import vueCustomScrollbar from 'vue-custom-scrollbar'
     import VuePhoneNumberInput from 'vue-phone-number-input';
@@ -585,7 +584,6 @@
                 branches: [],
                 branchName: '',
                 day: 0,
-                moment,
                 configDate: {
                     inline:false,
                     allowInput: false,
@@ -973,14 +971,15 @@
                 }
             },
             dateSplit2(value){
-                const date = this.moment(new Date(value)).format('DD MM YYYY')
-                var formatDate = date.split(' ')
-                return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
+                var formatDate = value.split('-')
+                return formatDate[1]+'-'+formatDate[0]+'-'+formatDate[2]
             },
             sendConfirmation(id, name, mail, start, end, services, lender, data){
                 const nameFormat = name
                 var dateFormat = this.finalDate
+                console.log(dateFormat)
                 dateFormat = this.dateSplit2(dateFormat)
+                console.log(dateFormat)
                 axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                     name: nameFormat,
                     branch: this.branchName,
