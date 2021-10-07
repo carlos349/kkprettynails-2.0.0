@@ -698,7 +698,7 @@
                                                 <span class="float-left">Confirmada</span> 
                                             </base-button>
 
-                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation(selectedEvent._id, selectedEvent.client.name, selectedEvent.client.email, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.employe, selectedEvent)">
+                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation([selectedEvent], selectedEvent.client.name, selectedEvent.client.email, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.employe, selectedEvent, false, dateSplit2(selectedEvent.start),selectedEvent.start, selectedEvent.end )">
                                                 <i style="margin-top:3px" class="ni ni-send float-right"></i>
                                                 <span class="float-left">Confirmación</span>  
                                             </base-button>
@@ -2670,7 +2670,7 @@ import mixinES from '../mixins/mixinES'
                                         $(".ant-select-selection__clear").click()
                                         this.getDates()
                                         this.initialState()
-                                        this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal)
+                                        this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal,this.registerDae,true)
                                         this.modals.modal2 = false
                                         this.ifDisabled = false
                                     }    
@@ -2691,7 +2691,7 @@ import mixinES from '../mixins/mixinES'
                             .then(res => {
                                 if (res.data.status == "ok") {
                                     this.spinningDate = false
-                                    this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae)
+                                    this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae, true)
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',
@@ -2854,6 +2854,11 @@ import mixinES from '../mixins/mixinES'
             e.stopPropagation()
         },
         dateSplit(value){
+            const date = new Date(value).format('DD MM YYYY')
+            var formatDate = date.split(' ')
+            return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
+        },
+        dateSplit2(value){
             const date = new Date(value).format('DD MM YYYY')
             var formatDate = date.split(' ')
             return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
@@ -3901,9 +3906,23 @@ import mixinES from '../mixins/mixinES'
 			}
 			}
         },
-        sendConfirmation(id, name, mail, start, end, services, lender, data){
+        sendConfirmation(id, name, mail, start, end, services, lender, data, valid, date, startG, endG){
+            var startGood = new Date(startG).getHours() + ':' + new Date(startG).getMinutes()
+            var endGood = new Date(endG).getHours() + ':' + new Date(endG).getMinutes()
             const nameFormat = name
-            const dateFormat = this.finalDate == "" ? start : this.finalDate
+            var dateFormat = ''
+            var servicesFinal = ''
+            if (valid) {
+                dateFormat = this.finalDate == "" ? start : this.finalDate
+                dateFormat = this.dateSplit2(dateFormat)
+                servicesFinal = data.serviceSelectds
+            }else{
+                dateFormat = date
+                servicesFinal = data.services
+                servicesFinal[0].start = startGood
+                servicesFinal[0].end = endGood
+                servicesFinal[0].employe = data.employe.name
+            }
             axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                 name: nameFormat,
                 branch: this.branchName,
@@ -3911,13 +3930,24 @@ import mixinES from '../mixins/mixinES'
                 data: data,
                 id: id,
                 date: dateFormat,
-                email: mail
+                email: mail,
+                servicesFinal: servicesFinal,
+                valid: valid
             }, this.configHeader)
             .then(res => {
                 console.log(res)
                 if (res.data.status == 'ok') {
                     console.log(res.data.status)
                 }
+                if (valid == false) {
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Correo enviado con éxito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                
             })
             .catch(err => {
                 console.log(err)
