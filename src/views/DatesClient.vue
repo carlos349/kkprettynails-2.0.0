@@ -449,9 +449,11 @@
                     </base-input>
                     <label for="branche">Seleccione la sucursal</label>
                     <a-select allowClear placeholder="Busque la sucursal" class="input-group-alternative clearClass" style="width: 100%" size="large">
-                        <a-select-option v-for="branch in branches" :key="branch._id" @click="selectBranch(branch)"  :value="branch.name">
-                            {{branch.name}}
-                        </a-select-option>
+                        <template v-for="branch in branches">
+                            <a-select-option :key="branch._id" @click="selectBranch(branch)"  :value="branch.name" v-if="branch.active">
+                                {{branch.name}}
+                            </a-select-option>
+                        </template>
                     </a-select>
 
                     <base-button v-if="validVerify" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData">
