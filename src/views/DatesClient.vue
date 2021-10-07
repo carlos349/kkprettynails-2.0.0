@@ -329,12 +329,12 @@
         </div>
         <nav class="navbar navbar-expand-lg navbar-light bg-Secondary row m-0 p-0">
             <div  id="navbarTogglerDemo01" class="mx-auto col-6 m-0">
-               <a href="https://syswa.net">
+               <a href="http://syswa.net">
                     <img src="img/brand/syswa-gestion.png" class="logoSyswaFooter" alt="" style="">
                 </a>
             </div>
             <span class="navbar-text col-6 m-0" style="float: right !important;">
-                © {{year}} | <a href="https://www.syswa.com" class="font-weight-bold ml-1" target="_blank">SYSWA</a> Todos los derechos reservados
+                © {{year}} | <a href="http://www.syswa.com" class="font-weight-bold ml-1" target="_blank">SYSWA</a> Todos los derechos reservados
             </span>
         </nav>
         <modal :show.sync="modals.modal2"
@@ -881,7 +881,7 @@
                     timer: 3000
                 })
                 setTimeout(() => {
-                    window.location = 'https://kkspa.cl/'
+                    window.location = 'http://kkspa.cl/'
                 }, 3000);
                 
             },
