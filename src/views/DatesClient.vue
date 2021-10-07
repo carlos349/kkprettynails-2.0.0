@@ -707,12 +707,12 @@
         created(){
             this.getBranches()
             this.device()
-            this.$swal({
-                icon: 'success',
-                title: 'Agendamiento en mantenimiento.',
-                html: '<p>Para agendamiento contacta al <br> +56 9 7262 8949</p>',
-                showConfirmButton: true
-            })
+            // this.$swal({
+            //     icon: 'success',
+            //     title: 'Agendamiento en mantenimiento.',
+            //     html: '<p>Para agendamiento contacta al <br> +56 9 7262 8949</p>',
+            //     showConfirmButton: true
+            // })
         },
         methods: {
             handleFileUpload(){
@@ -1146,8 +1146,7 @@
                 try {
                     const categories = await axios.get(endPoint.endpointTarget+'/services/getCategoriesForClients/'+this.branch, this.configHeader)
                     if (categories.data.status == 'ok') {
-                        // this.categories = categories.data.data
-                        this.categories = []
+                        this.categories = categories.data.data
                     }else{
                         this.categories = []
                     }
