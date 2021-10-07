@@ -329,12 +329,12 @@
         </div>
         <nav class="navbar navbar-expand-lg navbar-light bg-Secondary row m-0 p-0">
             <div  id="navbarTogglerDemo01" class="mx-auto col-6 m-0">
-               <a href="https://syswa.net">
+               <a href="http://syswa.net">
                     <img src="img/brand/syswa-gestion.png" class="logoSyswaFooter" alt="" style="">
                 </a>
             </div>
             <span class="navbar-text col-6 m-0" style="float: right !important;">
-                © {{year}} | <a href="https://www.syswa.com" class="font-weight-bold ml-1" target="_blank">SYSWA</a> Todos los derechos reservados
+                © {{year}} | <a href="http://www.syswa.com" class="font-weight-bold ml-1" target="_blank">SYSWA</a> Todos los derechos reservados
             </span>
         </nav>
         <modal :show.sync="modals.modal2"
@@ -449,9 +449,11 @@
                     </base-input>
                     <label for="branche">Seleccione la sucursal</label>
                     <a-select allowClear placeholder="Busque la sucursal" class="input-group-alternative clearClass" style="width: 100%" size="large">
-                        <a-select-option v-for="branch in branches" :key="branch._id" @click="selectBranch(branch)"  :value="branch.name">
-                            {{branch.name}}
-                        </a-select-option>
+                        <template v-for="branch in branches">
+                            <a-select-option :key="branch._id" @click="selectBranch(branch)"  :value="branch.name" v-if="branch.active">
+                                {{branch.name}}
+                            </a-select-option>
+                        </template>
                     </a-select>
 
                     <base-button v-if="validVerify" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData">
@@ -707,12 +709,12 @@
         created(){
             this.getBranches()
             this.device()
-            this.$swal({
-                icon: 'success',
-                title: 'Agendamiento en mantenimiento.',
-                html: '<p>Para agendamiento contacta al <br> +56 9 7262 8949</p>',
-                showConfirmButton: true
-            })
+            // this.$swal({
+            //     icon: 'success',
+            //     title: 'Agendamiento en mantenimiento.',
+            //     html: '<p>Para agendamiento contacta al <br> +56 9 7262 8949</p>',
+            //     showConfirmButton: true
+            // })
         },
         methods: {
             handleFileUpload(){
@@ -879,7 +881,7 @@
                     timer: 3000
                 })
                 setTimeout(() => {
-                    window.location = 'https://kkspa.cl/'
+                    window.location = 'http://kkspa.cl/'
                 }, 3000);
                 
             },
@@ -1154,8 +1156,7 @@
                 try {
                     const categories = await axios.get(endPoint.endpointTarget+'/services/getCategoriesForClients/'+this.branch, this.configHeader)
                     if (categories.data.status == 'ok') {
-                        // this.categories = categories.data.data
-                        this.categories = []
+                        this.categories = categories.data.data
                     }else{
                         this.categories = []
                     }
