@@ -993,7 +993,7 @@
                         {{employe.name}}
                     </a-select-option>
                 </a-select>
-                <label for="date">Fechas</label>
+                <label for="date">Fecha</label>
                 <flat-picker 
                     style="padding-top: 15px;padding-bottom: 15px;height:0"
                     :config="configDatePickerBlocked"
