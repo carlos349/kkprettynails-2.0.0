@@ -299,7 +299,7 @@
                             <hr class="w-50 mb-0 mt-0">
                           </div>
                           <div class="col-md-4">
-                              <a-select v-if="selectedConfig == 'blackList'" class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione un cliente" size="large">
+                              <a-select v-if="selectedConfig == 'blackList'" show-search option-filter-prop="children" :filter-option="filterClients" class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione un cliente" size="large">
                                   <a-select-option v-for="client of clients" :key="client._id" @click="selectClient(client)" :value="client.firstName + ' ' + client.lastName + ' - ' + client.email">
                                       {{client.firstName + ' ' + client.lastName + ' - ' + client.email}}
                                   </a-select-option>
@@ -883,6 +883,11 @@
         },
         handleChange(value){
           this.configData.businessType = value
+        },
+        filterClients(input, option) {
+          return (
+            option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          );
         },
         calculatedHour(){
           for (const day of this.configData.blockHour) {

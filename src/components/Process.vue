@@ -1060,27 +1060,32 @@ export default {
         },
         async getFinallyDates(){
             try {
-                const datesFinally = await axios.get(endPoint.endpointTarget+'/dates/getEndingDates/'+this.branch, this.configHeader)
-                if (datesFinally.data.status == 'ok') {
-                    for (const dates of datesFinally.data.data) {
-                        dates.total = 0
-                        for (const service of dates.services) {
-                            var total = 0
-                            for (const micro of service.microServiceSelect) {
-                                total = total + micro.price
+                const getDeletes = await axios.get(`${endPoint.endpointTarget}/dates/deleteEndingDates/${this.branch}`, this.configHeader)
+                try {
+                    const datesFinally = await axios.get(endPoint.endpointTarget+'/dates/getEndingDates/'+this.branch, this.configHeader)
+                    if (datesFinally.data.status == 'ok') {
+                        for (const dates of datesFinally.data.data) {
+                            dates.total = 0
+                            for (const service of dates.services) {
+                                var total = 0
+                                for (const micro of service.microServiceSelect) {
+                                    total = total + micro.price
+                                }
+                                dates.total = dates.total + total + service.price
+                                
                             }
-                            dates.total = dates.total + total + service.price
-                            
                         }
+                        this.datesFinally = datesFinally.data.data
+                        console.log(this.datesFinally)
+                    }else{
+                        this.datesFinally = []
                     }
-                    this.datesFinally = datesFinally.data.data
-                    console.log(this.datesFinally)
-                }else{
-                    this.datesFinally = []
+                    console.log(datesFinally)
+                }catch(err){
+                    console.log(err)
                 }
-                console.log(datesFinally)
             }catch(err){
-                console.log(err)
+                res.send()
             }
         },
         unSelected(value){

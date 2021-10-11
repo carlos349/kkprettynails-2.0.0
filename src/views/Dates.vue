@@ -104,18 +104,19 @@
                                                         <template v-for="(service, index) of services">
                                                             <div :key="service.name" class="col-md-6 px-4" v-if="service.category == category.name && service.active == true">
                                                                 <div class="card-service row mt-2" :id="'cardS'+index">
-                                                                    <h3 class="name-service w-100"> {{service.name}}</h3>
-                                                                    <p class="ml-1 mb-0" style="margin-top:-8px;">
-                                                                        <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
-                                                                    </p>
+                                                                    <h3 class="name-service w-100 mb-0"> {{service.name}}</h3>
                                                                     <div class="col-12 pl-0">
                                                                         <img src="img/brand/calendar.png" alt="">
                                                                     </div>
+                                                                    <p class="ml-1 mb-0 w-100" style="margin-top:-2px;">
+                                                                        <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
+                                                                    </p>
+                                                                    <p class="ml-1 w-100">{{service.additionalName}}</p> 
                                                                     
-                                                                    <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;padding-top: 5px !important;">
+                                                                    <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
                                                                         <div class="price-service ">{{formatPrice(service.price)}} $</div> 
                                                                     </div>
-                                                                    <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;margin-top:-5px;">
+                                                                    <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;margin-top:-5px;">
                                                                         <div class="button-service-group">
                                                                             <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price)"></i></button>
                                                                             <span class="span-button-service">{{countServices[index].count}}</span>
@@ -139,7 +140,7 @@
                                                 <div class="row pl-3">
                                                     <template v-if="registerDae.serviceSelectds[0]">
                                                         <div v-for="(service, index) in registerDae.serviceSelectds" :key="service._id+'asda'+index" class="w-100 px-4" >
-                                                            <div class="card-service row mt-2" style="border-bottom: solid 8px #174c8e">
+                                                            <div class="card-service row mt-2 mb-2" style="border-bottom: solid 8px #174c8e">
                                                                 <h3 class="name-service"> {{service.name}}</h3>
                                                                 <div class="col-12 pl-0">
                                                                     <template v-if="ifMicro">
@@ -196,9 +197,11 @@
                                                 <h2 class="name-service"> {{service.name}}</h2>
                                                 <p class="ml-1 mb-0 w-100" style="margin-top:-8px;">
                                                     <a-icon type="clock-circle" style="vertical-align:1.5px;" /> 
-                                                    {{fixedHours(service.duration)}}
+                                                    {{fixedHours(service.duration)}}<br>
+                                                    {{service.additionalName}}
                                                 </p>
                                                 <div class="col-12 mt-2 p-0">
+                                                    <img style="z-index:0" src="img/brand/calendar.png" alt="">
                                                     <template v-if="ifMicro">
                                                         <a-tooltip placement="top">
                                                             <template slot="title">
@@ -213,7 +216,6 @@
                                                             </div>
                                                         </a-tooltip>
                                                     </template>
-                                                    <img style="z-index:0" src="img/brand/calendar.png" alt="">
                                                 </div>
                                                 <div class="row p-1">
                                                     <div class="col-8 mt-4 p-1" >
@@ -1619,8 +1621,9 @@ import mixinES from '../mixins/mixinES'
                 const service = await axios.get(endPoint.endpointTarget+'/services/getServiceInfo/'+id, this.configHeader)
                 if (service.data.status == 'ok') {
                     service.data.data.set = false
+                    console.log(service.data.data)
                     this.serviceSelected.unshift(service.data.data)
-                    this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products)
+                    this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products, service.data.data.additionalName)
                 }else{
                     this.$swal({
                         icon: 'error',
@@ -1633,7 +1636,7 @@ import mixinES from '../mixins/mixinES'
                 console.log(err)
             }
         },
-        plusServicePhone(index, service, duration, commission, price, employes, discount){
+        plusServicePhone(index, service, duration, commission, price, employes, discount, products, additionalName){
             this.ifServices = true
             for (const employe of employes) {
                 employe.valid = true
@@ -1645,11 +1648,11 @@ import mixinES from '../mixins/mixinES'
                 for (const micro of this.microServices) {
                     microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                 }
-                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: []})
+                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, additionalName: additionalName, microServices: microsService, microServiceSelect: [], products: products})
             }else{
-                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,
-                microServices: [], microServiceSelect: []})
+                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, additionalName: additionalName, microServices: [], microServiceSelect: [], products: products})
             }
+            console.log(this.registerDae.serviceSelectds)
             this.totalPrice = this.totalPrice + price
             this.validHour = false
         },
@@ -2839,7 +2842,9 @@ import mixinES from '../mixins/mixinES'
         onEventClick(event, e){
             this.selectedEvent = event
             this.dateModals.modal1 = true
-            if (new Date(this.selectedEvent.createdAt).valueOf() < new Date().valueOf()) {
+            console.log(this.selectedEvent)
+            console.log(new Date(this.selectedEvent.start) +' - '+ new Date().valueOf())
+            if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
                 this.editDisabled = true
                 console.log("ya basta")
             }else{
@@ -3284,7 +3289,7 @@ import mixinES from '../mixins/mixinES'
                                 branch: this.branch,
                                 userName:this.firstNameUser + " " + this.lastNameUser,
                                 userImage:this.imgUser,
-                                detail:`Eliminó la cita de ${res.data.data.client.name}) ~
+                                detail:`Eliminó la cita de ${res.data.data.client.name} ~
                                 el ${this.formatDate(new Date())}`,
                                 link: 'agendamiento'
                             }, this.configHeader)
@@ -4737,6 +4742,7 @@ import mixinES from '../mixins/mixinES'
         })
         this.socket.on('notify', (data) => {
             this.getClosed()
+            this.getDates()
         });
         EventBus.$on('changeBranch', status => {
             this.getBranch()
@@ -5113,7 +5119,9 @@ import mixinES from '../mixins/mixinES'
         vertical-align: sub;
         margin-right: 5px;
     } 
-
+    .wizard-tab-content{
+        padding-bottom: 10px;
+    }
     .showPhone{
         display: none;
     }
@@ -5133,7 +5141,7 @@ import mixinES from '../mixins/mixinES'
             margin-bottom:20px;
         }
         .card-service img{
-            top:-40px;
+            top:-210px;
         }
         .responsiveItem{
             width: 100%;

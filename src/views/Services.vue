@@ -48,14 +48,22 @@
                 <template>
                     <form role="form">
                         <div class="row m-0">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-0">
                                 <base-input alternative
                                     class="w-100"
-                                    placeholder="Nombre"
+                                    placeholder="Nombre del servicio"
+                                    maxlength="25"
                                     addon-left-icon="fa fa-font"
                                     v-model="serviceRegister"
                                     addon-right-icon="fa fa-asterisk text-danger" >
                                 </base-input>
+                            </div>
+                            <div class="col-md-12 mt-0 mb-2">
+                                <textarea class="form-control w-100 mt-0"  alternative
+                                    placeholder="Descripción del servicio"
+                                    
+                                    v-model="serviceAditionalRegister">
+                                </textarea>
                             </div>
                             <div class="col-md-4">
                                 <base-input alternative
@@ -220,6 +228,13 @@
                                     v-model="serviceEdit"
                                 >
                                 </base-input>
+                            </div>
+                            <div class="col-md-12 mt-0 mb-2">
+                                <textarea class="form-control w-100 mt-0"  alternative
+                                    placeholder="Descripción del servicio"
+                                    
+                                    v-model="servicesAdditionalEdit">
+                                </textarea>
                             </div>
                             <div class="col-md-4">
                                 <base-input alternative
@@ -430,7 +445,7 @@
                         <template slot="title">
                         <span>Editar</span>
                         </template>
-                        <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch, column.prepayment)"></base-button>
+                        <base-button v-if="validRoute('servicios', 'editar')" icon="fa fa-edit" size="sm" type="default" class="text-center" v-on:click="dataEdit(column._id, column.employes, column.name, column.duration, column.discount, column.commission, column.price, column.products, column.category, column.branch, column.prepayment, column.additionalName)"></base-button>
                         <base-button v-else icon="fa fa-edit" size="sm" type="default" disabled class="text-center" ></base-button>
                     </a-tooltip>
     
@@ -631,6 +646,7 @@ import mixinES from '../mixins/mixinES'
             nameCategory: '',
             categories: [],
             serviceRegister: '',
+            serviceAditionalRegister: '',
             priceRegister: 0,
             comissionRegister: '',
             timeHoursRegister: 'Horas',
@@ -686,7 +702,7 @@ import mixinES from '../mixins/mixinES'
                     scopedSlots: {
                         filterDropdown: 'filterDropdown',
                         filterIcon: 'filterIcon',
-                        customRender: 'customRender',
+                        customRender: 'forName',
                     },
                     onFilter: (value, record) =>
                         record.name
@@ -817,6 +833,7 @@ import mixinES from '../mixins/mixinES'
             idServiceEdit: '',
             EditlenderSelecteds: [],
             serviceEdit: '',
+            servicesAdditionalEdit: '',
             priceEdit: 0,
             comissionEdit: 0,
             timeEdit: '',
@@ -1101,6 +1118,7 @@ import mixinES from '../mixins/mixinES'
                     axios.post(endPoint.endpointTarget+'/services', {
                         branch: this.branch,
                         name: this.serviceRegister,
+                        additionalName: this.serviceAditionalRegister,
                         price: this.priceRegister,
                         commission: this.comissionRegister,
                         duration: timeService,
@@ -1109,7 +1127,7 @@ import mixinES from '../mixins/mixinES'
                         category: this.categoryRegister,
                         discount: this.addDiscount,
                         prepayment: this.payment,
-                        prepaymentAmount: this.paymentAmount
+                        prepaymentAmount: this.paymentAmount,
                     }, this.configHeader).then(res => {
                         if (res.data.status == 'ok') {
                             this.$swal({
@@ -1137,6 +1155,7 @@ import mixinES from '../mixins/mixinES'
             this.serviceRegister = ''
             this.priceRegister = 0
             this.comissionRegister = ''
+            this.serviceAditionalRegister = ''
             this.timeRegister = 'Seleccione el tiempo'
             this.lenderSelecteds = []
             this.payment = false
@@ -1167,7 +1186,7 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        dataEdit(id, lenders, name, time, discount, comission, price, items, category, branch, prepayment){
+        dataEdit(id, lenders, name, time, discount, comission, price, items, category, branch, prepayment,additionalName){
             console.log(items)
             this.itemsBox.forEach(element => {
                 element.check = false
@@ -1198,6 +1217,7 @@ import mixinES from '../mixins/mixinES'
             this.EditlenderSelecteds = lenders
             this.EdititemSelected = items
             this.serviceEdit = name
+            this.servicesAdditionalEdit = additionalName
             this.branchEdit = branch
             this.priceEdit = price
             this.editCategoryServicer = category
@@ -1273,6 +1293,7 @@ import mixinES from '../mixins/mixinES'
 					axios.put(endPoint.endpointTarget+'/services/'+id, {
                         branch: this.branch,
                         name: this.serviceEdit,
+                        additionalName: this.servicesAdditionalEdit,
                         price: this.priceEdit,
                         commission: this.comissionEdit,
                         duration: timeService,

@@ -35,17 +35,18 @@
                                                     <div :key="service.name" class="col-md-4 px-4" v-if="service.category == category.name && service.active == true">
                                                         <div class="card-service row mt-2" :id="'cardS'+index">
                                                             <h3 class="name-service w-100"> {{service.name}}</h3>
-                                                            <p class="ml-1 mb-0" style="margin-top:-8px;">
-                                                                <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
-                                                            </p>
                                                             <div class="col-12 pl-0">
                                                                 <img src="img/brand/calendar.png" alt="">
                                                             </div>
+                                                            <p class="ml-1 mb-0 w-100" style="margin-top:-2px;">
+                                                                <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
+                                                            </p>
+                                                            <p class="ml-1 w-100">{{service.additionalName}}</p> 
                                                             
-                                                            <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;padding-top: 5px !important;">
+                                                            <div class="col-md-6 col-sm-12 mt-1" style="padding: 0px !important;padding-top: 5px !important;">
                                                                 <div class="price-service ">{{formatPrice(service.price)}} $</div> 
                                                             </div>
-                                                            <div class="col-md-6 col-sm-12 mt-4" style="padding: 0px !important;margin-top:-5px;">
+                                                            <div class="col-md-6 col-sm-12 mt-1" style="padding: 0px !important;margin-top:-5px;">
                                                                 <div class="button-service-group">
                                                                     <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price)"></i></button>
                                                                     <span class="span-button-service">{{serviceCount[index].count}}</span>
@@ -116,9 +117,11 @@
                                     <hr>
                                     <div v-for="(service, index) in registerDate.serviceSelectds" :key="service._id+'asda'+index" class="w-100" >
                                         <div class="card-service mt-4" style="border-bottom: solid 8px #174c8e">
-                                            <h2 class="name-service w-100"> {{service.name}}</h2>
-                                            <p class="ml-1 mb-0" style="margin-top:-8px;">
-                                                <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
+                                            <h2 class="name-service"> {{service.name}}</h2>
+                                            <p class="ml-1 mb-0 w-100" style="margin-top:-8px;">
+                                                <a-icon type="clock-circle" style="vertical-align:1.5px;" /> 
+                                                {{fixedHours(service.duration)}}<br>
+                                                {{service.additionalName}}
                                             </p>
                                             <div class="col-12 mt-2 p-0">
                                                 <template v-if="ifMicro">
@@ -430,6 +433,8 @@
                             example: 'Ejemplo :'
                         }"/>
                     </div>
+                    <label for="date" class="w-100 mt-2">Fecha de nacimiento </label>
+                    <a-date-picker class="w-100" :locale="locale" :format="dateFormat" @change="selectBirthday" />
                     <span style="color:red;position:absolute;right:35px;top:270px;z-index:1;">*</span>
                     <base-button v-if="validRegister" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="registerClients">
                         Registrar y continuar
@@ -565,6 +570,8 @@
     //frontend
     import flatPicker from "vue-flatpickr-component";
     import {Spanish} from 'flatpickr/dist/l10n/es.js';
+    import locale from 'ant-design-vue/es/date-picker/locale/es_ES';
+    
     import vueCustomScrollbar from 'vue-custom-scrollbar'
     import VuePhoneNumberInput from 'vue-phone-number-input';
     import 'vue-phone-number-input/dist/vue-phone-number-input.css';
@@ -582,7 +589,9 @@
                 ifUserRegister: false,
                 branch: '',
                 branches: [],
+                locale,
                 branchName: '',
+                dateFormat: 'DD/MM/YYYY',
                 day: 0,
                 configDate: {
                     inline:false,
@@ -626,7 +635,8 @@
                         "e164": ""
                     },
                     pay: 'Presencial efectivo',
-                    pdf: 'danger'
+                    pdf: 'danger',
+                    birthday: ''
                 },
                 radioDomingos:{
                     radio1:'rad1',
@@ -754,6 +764,10 @@
                         }
                     }).catch(err => console.log(err))
                 }
+            },
+            
+            selectBirthday(date, dateString){
+                this.registerUser.birthday = date._d
             },
             SelectMicro(index, indexM, microServices) {
                 console.log(microServices)
@@ -1516,7 +1530,7 @@
                     .catch(err => { console.log(err) })
                 }
             },
-            plusServicePhone(index, service, duration, commission, price, employes, discount){
+            plusServicePhone(index, service, duration, commission, price, employes, discount, products, additionalName){
                 this.ifServices = true
                 for (const employe of employes) {
                     employe.valid = true
@@ -1528,10 +1542,10 @@
                     for (const micro of this.microServices) {
                         microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                     }
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: []})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: [], additionalName: additionalName})
                 }else{
                     this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,
-                    microServices: [], microServiceSelect: []})
+                    microServices: [], microServiceSelect: [], additionalName: additionalName})
                 }
 
                 this.validHour = false  
@@ -1994,7 +2008,7 @@
                         
                         this.serviceSelected.unshift(service.data.data)
                         this.servicePhoneCount.unshift({count: 0})
-                        this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount)
+                        this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products, service.data.data.additionalName)
                     }else{
                         this.$swal({
                             icon: 'error',
@@ -2018,7 +2032,7 @@
                     recommender: null,
                     idRecomender: null,
                     phone: this.phoneData,
-                    birthday: '',
+                    birthday: this.registerUser.birthday,
                     instagram: null
                 }, this.configHeader)
                 .then(res => {
