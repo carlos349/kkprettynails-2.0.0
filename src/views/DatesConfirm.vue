@@ -47,6 +47,18 @@ export default {
                             micro = micro + element.name
                         }
                     });
+                    if (res.data.status == 'ok') {
+                        axios.post(endPoint.endpointTarget+'/notifications', {
+                            userName: 'Cliente: '+res.data.data.client.name,
+                            userImage: '',
+                            detail: 'Confirmo su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
+                            branch: res.data.data.branch,
+                            link: 'agendamiento'
+                        }, this.configHeader)
+                        .then(res => {
+                            this.socket.emit('sendNotification', res.data.data)
+                        })
+                    }
                     axios.post(endPoint.endpointTarget+'/mails/responseDate', {
                         client: res.data.data.content,
                         email: res.data.branchEmail,
@@ -62,18 +74,7 @@ export default {
                     }, this.configHeader)
                     .then(res => {
                         console.log("si entre ps")
-                        if (res.data.status == 'ok') {
-                            axios.post(endPoint.endpointTarget+'/notifications', {
-                                userName: 'Cliente: '+res.data.data.client.name,
-                                userImage: '',
-                                detail: 'Confirmo su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
-                                branch: res.data.data.branch,
-                                link: 'agendamiento'
-                            }, this.configHeader)
-                            .then(res => {
-                                this.socket.emit('sendNotification', res.data.data)
-                            })
-                        }
+                        
                     })
                     .catch(err => {
                         console.log(err)

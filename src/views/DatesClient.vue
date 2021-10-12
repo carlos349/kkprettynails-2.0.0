@@ -32,13 +32,13 @@
                                         <div v-for="category of categories" :key="category.name" class="tab-pane fade " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row mt-2">
                                                 <template v-for="(service, index) of services">
-                                                    <div :key="service.name" class="col-md-4 px-4" v-if="service.category == category.name && service.active == true">
+                                                    <div :key="service.name" class="col-md-6 px-4" v-if="service.category == category.name && service.active == true">
                                                         <div class="card-service row mt-2" :id="'cardS'+index">
                                                             <h3 class="name-service w-100"> {{service.name}}</h3>
                                                             <div class="col-12 pl-0">
                                                                 <img src="img/brand/calendar.png" alt="">
                                                             </div>
-                                                            <p class="ml-1 mb-0 w-100" style="margin-top:-2px;">
+                                                            <p class="ml-1 mb-0 w-100" style="margin-top:-15px;">
                                                                 <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
                                                             </p>
                                                             <p class="ml-1 w-100">{{service.additionalName}}</p> 
@@ -470,10 +470,7 @@
                 </div>
             </template>
         </a-modal>
-        <a-modal v-model="modals.modal4" class="modalFinal" :footer="null" @cancel="location" :closable="false" >
-            <template slot="footer">
-                <br><br><br>
-            </template>
+        <a-modal v-model="modals.modal4" class="modalFinal" @cancel="location" :closable="false" >
             <template>
                 <div class="text-muted text-center">
                     <h3>Formulario de compra</h3>
@@ -489,14 +486,17 @@
                             <br><br>
                             Para confirmar su cita tendrás un plazo máximo de 24 horas, de lo contrario su hora quedará cancelada, habilitando ese espacio para otro cliente. <br><br>
                             Recuerde revisar la casilla de spam o correo no deseado. Si este correo electrónico no llega por favor ponte en contacto con nosotros mediante WhatsApp y verificaremos de inmediato
+                            
                         </p>
-                        <hr>
+                        <hr class="mt-2 mb-2">
                         <p class="text-center">+56 9 7262 8949</p>
-                        <base-button class="mb-5" style="width:200px;float:right;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="location">
-                            Finalizar
-                        </base-button>
                     </div>
                 </div>     
+            </template>
+            <template slot="footer">
+                <base-button style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="location">
+                    Finalizar
+                </base-button>
             </template>
         </a-modal>
         <modal :show.sync="modals.modal5"
@@ -2468,10 +2468,6 @@ color: #174c8e;
   background-color: rgba(0,0,0,0.5);
   z-index: 2;
   cursor: pointer;
-}
-
-.modalFinal .ant-modal-body{
-    height: 430px;
 }
 .codigoNum .form-control{
     padding: 5px;

@@ -52,7 +52,7 @@
                                 <base-input alternative
                                     class="w-100"
                                     placeholder="Nombre del servicio"
-                                    maxlength="25"
+                                    maxlenght="25"
                                     addon-left-icon="fa fa-font"
                                     v-model="serviceRegister"
                                     addon-right-icon="fa fa-asterisk text-danger" >
