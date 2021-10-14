@@ -4191,11 +4191,18 @@ import mixinES from '../mixins/mixinES'
                         break
                     }
                 }
+                var employeForBlock = {
+                    name: this.registerDae.serviceSelectds[indexService].employe,
+                    id: this.registerDae.serviceSelectds[indexService].employeId,
+                    class: this.registerDae.serviceSelectds[indexService].class,
+                    valid: false,
+                    img: this.registerDae.serviceSelectds[indexService].employeImg
+                }
                 axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
                     date: this.finalDate,
                     timedate: this.registerDae.serviceSelectds[indexService].duration,
                     hour: this.registerDae.serviceSelectds[indexService].start,
-                    employe: this.registerDae.serviceSelectds[indexService].employeId,
+                    employe: employeForBlock,
                     block: this.registerDae.serviceSelectds[indexService].blocks,
                     branch: this.branch,
                     ifFirstClick: this.registerDae.serviceSelectds[indexService].itFirst,
@@ -4230,11 +4237,18 @@ import mixinES from '../mixins/mixinES'
                 var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].hour.split(":") 
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].hour
                 this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
+                var employeForBlock = {
+                    name: this.registerDae.serviceSelectds[indexService].employe,
+                    id: this.registerDae.serviceSelectds[indexService].employeId,
+                    class: this.registerDae.serviceSelectds[indexService].class,
+                    valid: false,
+                    img: this.registerDae.serviceSelectds[indexService].employeImg
+                }
                 axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
                     date: this.finalDate,
                     timedate: this.registerDae.serviceSelectds[indexService].duration,
                     hour: this.registerDae.serviceSelectds[indexService].start,
-                    employe: this.registerDae.serviceSelectds[indexService].employeId,
+                    employe: employeForBlock,
                     block: this.registerDae.serviceSelectds[indexService].blocks,
                     blockFirst: this.registerDae.serviceSelectds[indexService].blocksFirst,
                     branch: this.branch,
