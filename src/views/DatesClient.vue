@@ -44,7 +44,7 @@
                                                             <p class="ml-1 w-100">{{service.additionalName}}</p> 
                                                             
                                                             <div class="col-md-6 col-sm-12 mt-1" style="padding: 0px !important;padding-top: 5px !important;">
-                                                                <div class="price-service ">$ {{formatPrice(service.price)}} </div> 
+                                                                <div class="price-service ">{{formatPrice(service.price)}} $</div> 
                                                             </div>
                                                             <div class="col-md-6 col-sm-12 mt-1" style="padding: 0px !important;margin-top:-5px;">
                                                                 <div class="button-service-group">
@@ -86,7 +86,7 @@
                                                 </div>
                                                 
                                                 <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
-                                                    <div class="price-service ">$ {{formatPrice(service.price)}} </div> 
+                                                    <div class="price-service ">{{formatPrice(service.price)}} $</div> 
                                                 </div>
                                             </div>
                                         </div>
@@ -142,7 +142,7 @@
                                             </div>
                                             <div class="row p-1">
                                                 <div class="col-8 mt-4 p-1" >
-                                                    <div class="price-service w-100">$ {{formatPrice(service.price)}}</div> 
+                                                    <div class="price-service w-100">{{formatPrice(service.price)}} $</div> 
                                                 </div>
                                                 <div class="col-4 mt-4 p-1" >
                                                     <div style="border: solid 1px #174c8e;float:right;margin-right:5px;" class="price-service w-50"><a-icon style="vertical-align:1px;" type="close" v-on:click="lessServicePhone(index, service.price)" /></div> 
