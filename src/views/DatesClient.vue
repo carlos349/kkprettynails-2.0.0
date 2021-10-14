@@ -32,7 +32,7 @@
                                         <div v-for="category of categories" :key="category.name" class="tab-pane fade " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                             <div class="row mt-2">
                                                 <template v-for="(service, index) of services">
-                                                    <div :key="service.name" class="col-md-6 px-4" v-if="service.category == category.name && service.active == true">
+                                                    <div :key="service.name" class="col-md-4 px-4" v-if="service.category == category.name && service.active == true">
                                                         <div class="card-service row mt-2" :id="'cardS'+index">
                                                             <h3 class="name-service w-100"> {{service.name}}</h3>
                                                             <div class="col-12 pl-0">
