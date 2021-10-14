@@ -2486,4 +2486,7 @@ color: #174c8e;
     box-shadow: 0px 0px 26px -21px rgba(0,0,0,0.75);
     transition: all 0.4s ease-out;
 }
+.wizard-btn{
+        margin-top: 20px;
+    }
 </style>
