@@ -114,7 +114,7 @@
                                                                     <p class="ml-1 w-100">{{service.additionalName}}</p> 
                                                                     
                                                                     <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
-                                                                        <div class="price-service ">{{formatPrice(service.price)}} $</div> 
+                                                                        <div class="price-service ">$ {{formatPrice(service.price)}} </div> 
                                                                     </div>
                                                                     <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;margin-top:-5px;">
                                                                         <div class="button-service-group">
@@ -160,7 +160,7 @@
                                                                 </div>
                                                                 
                                                                 <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
-                                                                    <div class="price-service ">{{formatPrice(service.price)}} $</div> 
+                                                                    <div class="price-service ">$ {{formatPrice(service.price)}}</div> 
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -219,7 +219,7 @@
                                                 </div>
                                                 <div class="row p-1">
                                                     <div class="col-8 mt-4 p-1" >
-                                                        <div class="price-service w-100">{{formatPrice(service.price)}} $</div> 
+                                                        <div class="price-service w-100">$ {{formatPrice(service.price)}}</div> 
                                                     </div>
                                                     <div class="col-4 mt-4 p-1" >
                                                         <div style="border: solid 1px #174c8e;float:right;margin-right:5px;" class="price-service w-50"><a-icon style="vertical-align:1px;" type="close" v-on:click="lessServicePhone(index, service.price)" /></div> 
@@ -909,17 +909,17 @@
                                 <template>
                                     <div v-for="(service, index) in selectedEvent.services" :key="service"  class="col-md-4 px-4" >
                                         <div class="card-service row mt-2" style="border-bottom: solid 8px #174c8e">
-                                            <h3 class="name-service"> {{service.name}}</h3>
+                                            <h3 class="name-serviceF"> {{service.name}}</h3>
                                             <div class="col-12 pl-0">
                                                 <template v-if="ifMicro">
                                                     <a-tooltip placement="top">
                                                         <template slot="title">
                                                             <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
                                                         </template>
-                                                        <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
+                                                        <span class="ml-1 mb-0 font-weight-bold MicroF" style="font-size: 1.2em;">Adicionales: </span>
                                                         <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
                                                             <badge v-if="MALDITOVUE" :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
-                                                                <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
+                                                                <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0 MF">{{micro.microService}}</p>
                                                             </badge>
                                                         </div>
                                                     </a-tooltip>
@@ -928,7 +928,7 @@
                                             </div>
                                             
                                             <div class="col-md-12 col-sm-12 mt-2 row" style="padding: 0px !important;padding-top: 5px !important;">
-                                                <div class="price-service col-6 ml-3">{{formatPrice(service.price)}} $</div>
+                                                <div class="price-service FPrice col-6 ml-3">$ {{formatPrice(service.price)}}</div>
                                                 <div class="col-2 float-right"> <a-icon style="font-size:1.7em;vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;"  @click="deleteServiceFinally(service.index)" type="delete" /> </div>
                                                 
                                             </div>
@@ -980,7 +980,7 @@
                 </a-config-provider> 
             </template>
             <template slot="footer">
-                <base-button @click="modals.modal3 = false, modals.modal4 = true" size="sm" type="default">Bloquear horario</base-button>
+                <base-button @click="modals.modal3 = false, modals.modal4 = true ,Madeyour()" size="sm" type="default">Bloquear horario</base-button>
             </template>
         </a-modal>
         <a-modal v-model="modals.modal4" title="Registrar bloqueo" :width="widthModals" :closable="true" >
@@ -1933,6 +1933,7 @@ import mixinES from '../mixins/mixinES'
                 try {
                     const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
                     this.events = dates.data.data
+                   
                 }catch(err){
                     console.log(err)
                 }
@@ -2108,6 +2109,9 @@ import mixinES from '../mixins/mixinES'
             }
             this.totalPrice = this.totalPrice + price
             this.validHour = false  
+        },
+        Madeyour(){
+            $('.ant-select-selection__clear').click()
         },
         plusMicroFinally(){
             $('.thisSelect .ant-select-selection__clear').click()
@@ -4817,7 +4821,7 @@ import mixinES from '../mixins/mixinES'
         background-color:white;
     }
     .vuecal__time-column .vuecal__time-cell{color:white;height:1vh;}
-    .vuecal__event{color:#fff;cursor:pointer;}
+    .vuecal__event{color:#fff;cursor:pointer;z-index: 0 !important;}
     .vuecal__event:hover{
         opacity: .8;
     }
@@ -4844,6 +4848,15 @@ import mixinES from '../mixins/mixinES'
     .vuecal__time-column .vuecal__time-cell{
         color: #0F2027
     }
+    .vuecal__event.lunch {
+        background: repeating-linear-gradient(45deg, #172b4d3b, #172b4d36 10px, #f2f2f2 10px, #f9fafb 15px);/* IE 10+ */
+        color: #172b4d;
+        font-size: 2.5em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .vuecal__event.lunch .vuecal__event-time {display: none;align-items: center;}
     .vuecal__cell-split.class1Split {background-color: rgba(234, 197, 190, 0.1);}
     .vuecal__cell-split.class2Split {background-color: rgb(188, 209, 255, 0.1);}
     .vuecal__cell-split.class3Split {background-color: rgb(221, 239, 189, 0.1);}
@@ -5217,6 +5230,19 @@ import mixinES from '../mixins/mixinES'
             font-size: 0.875rem;
             margin-top: -3px;
             margin-left: 3px;
+        }
+        .name-serviceF {
+            font-size: 1.4em;
+            margin-bottom: 5px !important;
+        }
+        .MicroF{
+            font-size: 1em !important;
+        }
+        .MF{
+            font-size: 0.9em !important;
+        }
+        .FPrice{
+            font-size: 0.9em;
         }
     }
     .vue-form-wizard .wizard-tab-content{

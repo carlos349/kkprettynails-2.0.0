@@ -41,7 +41,7 @@
                         <template slot="title">
                             <span>Anular venta</span>
                         </template>
-                        <base-button :disabled="validRoute('ventas', 'anular') ? false : true" v-if="dataSale.status" @click="cancelSale(dataSale._id)" size="sm" class="mr-2 float-right" type="warning">
+                        <base-button :disabled="validRoute('ventas', 'anular') ? false : true" v-if="dataSale.status && validCloseSale" @click="cancelSale(dataSale._id)" size="sm" class="mr-2 float-right" type="warning">
                             <a-icon type="close-circle" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -450,6 +450,7 @@ import mixinES from '../mixins/mixinES'
                 range:   dateNew.getDate()+ "-" +  (dateNew.getMonth()+ 1) +"-"+dateNew.getFullYear(),
                 rangeExcel: dateNew.getDate()+ "-" +  (dateNew.getMonth()+ 1) +"-"+dateNew.getFullYear()
             },
+            validCloseSale: false,
             configDatePicker: {
                 allowInput: true, 
                 mode: 'range',
@@ -715,10 +716,17 @@ import mixinES from '../mixins/mixinES'
         },
         async dataReport(data){
             this.dataSale = data
+            axios.get(endPoint.endpointTarget+'/sales/verifySale/'+data._id, this.configHeader)
+            .then(res => {
+                if (res.data.status == 'ok') {
+                    this.validCloseSale = true
+                }else{
+                    this.validCloseSale = false
+                }
+            })
             // this.arreglo.cliente = this.arreglo.cliente.split(' - ')
             // this.arreglo.manicurista = this.arreglo.manicurista.split(' / ')
             // this.arreglo.descuento = this.arreglo.descuento.split(' - ')
-            console.log(this.dataSale)
             this.modals.modal1 = true
         },
         cancelSale(id){
