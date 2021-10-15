@@ -7,327 +7,329 @@
         </nav>
         <div class="container-fluid" style="margin-top:8rem;">
             <card shadow>
-                <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!" ref="wizard"> 
-                    <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
-                    <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
-                    <tab-content class="mt-4" title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
-                        <div v-if="desactive">
-                            <center>
-                                <h1 class="text-center w-50 mt-4">
-                                    Por motivos de fuerza mayor, no estamos atendiendo en nuestro loca. Una vez se levante la cuarentena retomaremos  los agendamientos.
-                                </h1>
-                            </center>
-                        </div>  
-                        <div v-else class="row">
-                            <div class="showDevice col-md-12 row">
-                                <div style="width:auto;" class="col-12 ml-3" >
-                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                        <li v-for="(category, index) of categories" :key="category.name"  class="nav-item responsiveItem" role="presentation">
-                                            <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
-                                        </li>
-                                    </ul>   
-                                </div>
-                                <div class="separateService col-md-8">
-                                    <div class="tab-content" id="pills-tabContent">
-                                        <div v-for="category of categories" :key="category.name" class="tab-pane fade " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                            <div class="row mt-2">
-                                                <template v-for="(service, index) of services">
-                                                    <div :key="service.name" class="col-md-6 px-4" v-if="service.category == category.name && service.active == true">
-                                                        <div class="card-service row mt-2" :id="'cardS'+index">
-                                                            <h3 class="name-service w-100"> {{service.name}}</h3>
-                                                            <div class="col-12 pl-0">
-                                                                <img src="img/brand/calendar.png" alt="">
+                <a-spin :spinning="spinningDate">
+                    <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!" ref="wizard"> 
+                        <h2 v-if="validWizard" slot="title">Datos de agendamiento </h2>
+                        <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
+                        <tab-content class="mt-4" title="Servicios" icon="fa fa-layer-group" :before-change="validateFirstStep" >
+                            <div v-if="desactive">
+                                <center>
+                                    <h1 class="text-center w-50 mt-4">
+                                        Por motivos de fuerza mayor, no estamos atendiendo en nuestro loca. Una vez se levante la cuarentena retomaremos  los agendamientos.
+                                    </h1>
+                                </center>
+                            </div>  
+                            <div v-else class="row">
+                                <div class="showDevice col-md-12 row">
+                                    <div style="width:auto;" class="col-12 ml-3" >
+                                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                            <li v-for="(category, index) of categories" :key="category.name"  class="nav-item responsiveItem" role="presentation">
+                                                <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
+                                            </li>
+                                        </ul>   
+                                    </div>
+                                    <div class="separateService col-md-8">
+                                        <div class="tab-content" id="pills-tabContent">
+                                            <div v-for="category of categories" :key="category.name" class="tab-pane fade " :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                                <div class="row mt-2">
+                                                    <template v-for="(service, index) of services">
+                                                        <div :key="service.name" class="col-md-4 px-2" v-if="service.category == category.name && service.active == true">
+                                                            <div class="card-service row mt-2" :id="'cardS'+index">
+                                                                <h3 class="name-service w-100"> {{service.name}}</h3>
+                                                                <div class="col-12 pl-0">
+                                                                    <img src="img/brand/calendar.png" alt="">
+                                                                </div>
+                                                                <p class="ml-1 mb-0 w-100" style="margin-top:-15px;">
+                                                                    <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
+                                                                </p>
+                                                                <p class="ml-1 w-100">{{service.additionalName}}</p> 
+                                                                
+                                                                <div class="col-md-6 col-sm-12 mt-1" style="padding: 0px !important;padding-top: 5px !important;">
+                                                                    <div class="price-service ">$ {{formatPrice(service.price)}}</div> 
+                                                                </div>
+                                                                <div class="col-md-6 col-sm-12 mt-1" style="padding: 0px !important;margin-top:-5px;">
+                                                                    <div class="button-service-group">
+                                                                        <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price)"></i></button>
+                                                                        <span class="span-button-service">{{serviceCount[index].count}}</span>
+                                                                        <button class="button-service-right" 
+                                                                        v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, 'cardS'+index, service.discount)"
+                                                                        ><i class="fa fa-plus"></i></button>
+                                                                    </div> 
+                                                                </div>  
                                                             </div>
-                                                            <p class="ml-1 mb-0 w-100" style="margin-top:-15px;">
-                                                                <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
-                                                            </p>
-                                                            <p class="ml-1 w-100">{{service.additionalName}}</p> 
-                                                            
-                                                            <div class="col-md-6 col-sm-12 mt-1" style="padding: 0px !important;padding-top: 5px !important;">
-                                                                <div class="price-service ">{{formatPrice(service.price)}} $</div> 
-                                                            </div>
-                                                            <div class="col-md-6 col-sm-12 mt-1" style="padding: 0px !important;margin-top:-5px;">
-                                                                <div class="button-service-group">
-                                                                    <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price)"></i></button>
-                                                                    <span class="span-button-service">{{serviceCount[index].count}}</span>
-                                                                    <button class="button-service-right" 
-                                                                    v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, 'cardS'+index, service.discount)"
-                                                                    ><i class="fa fa-plus"></i></button>
-                                                                </div> 
-                                                            </div>  
                                                         </div>
-                                                    </div>
-                                                </template>
+                                                    </template>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-4">
+                                        <h2 style="margin-top:-50px;">Servicios seleccionados</h2>
+                                        <template v-if="registerDate.serviceSelectds[0]">
+                                            <div v-for="(service, index) in registerDate.serviceSelectds" :key="service._id+'asda'+index" class="w-100 px-4" >
+                                                <div class="card-service row mt-4" style="border-bottom: solid 8px #174c8e">
+                                                    <h3 class="name-service"> {{service.name}}</h3>
+                                                    <div class="col-12 pl-0">
+                                                        <template v-if="ifMicro">
+                                                            <a-tooltip placement="top">
+                                                                <template slot="title">
+                                                                    <span>Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                                </template>
+                                                                <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
+                                                                <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
+                                                                    <badge :type="micro.checked ? 'primary' : 'secondary'" class="text-default">
+                                                                        <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
+                                                                    </badge>
+                                                                </div>
+                                                            </a-tooltip>
+                                                        </template>
+                                                        <img src="img/brand/calendar.png" alt="">
+                                                    </div>
+                                                    
+                                                    <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
+                                                        <div class="price-service ">$ {{formatPrice(service.price)}}</div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <div v-else>
+                                            <h2 class="text-center">No ha seleccionado ningún servicio.</h2>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <h2 style="margin-top:-50px;">Servicios seleccionados</h2>
+                                <div class="showPhone col-md-12 p-0 pb-2">
+                                    <base-dropdown class="w-100 mx-auto mb-3 styleDropdown">
+                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
+                                            {{CatSelected}}
+                                        </base-button>
+                                        <b v-for="category of categories" :key="category.name" v-on:click="selectCategoryPhone(category.name)" class="dropdown-item w-100" style="color:#fff;"> {{category.name}} </b>
+                                    </base-dropdown>
+                                    <base-dropdown class="w-100 mx-auto styleDropdown" v-if="servicesPhoneShow">
+                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
+                                            Servicios 
+                                        </base-button>
+                                        <template v-for="service of servicesCat">
+                                            <b :key="service.name" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.name}} </b>
+                                        </template>
+                                    </base-dropdown>
+                                    
                                     <template v-if="registerDate.serviceSelectds[0]">
-                                        <div v-for="(service, index) in registerDate.serviceSelectds" :key="service._id+'asda'+index" class="w-100 px-4" >
-                                            <div class="card-service row mt-4" style="border-bottom: solid 8px #174c8e">
-                                                <h3 class="name-service"> {{service.name}}</h3>
-                                                <div class="col-12 pl-0">
+                                        <h2 class="mt-3 text-center">Servicios seleccionados</h2>
+                                        <hr>
+                                        <div v-for="(service, index) in registerDate.serviceSelectds" :key="service._id+'asda'+index" class="w-100" >
+                                            <div class="card-service mt-4" style="border-bottom: solid 8px #174c8e">
+                                                <h2 class="name-service"> {{service.name}}</h2>
+                                                <p class="ml-1 mb-0 w-100" style="margin-top:-8px;">
+                                                    <a-icon type="clock-circle" style="vertical-align:1.5px;" /> 
+                                                    {{fixedHours(service.duration)}}<br>
+                                                    {{service.additionalName}}
+                                                </p>
+                                                <div class="col-12 mt-2 p-0">
                                                     <template v-if="ifMicro">
                                                         <a-tooltip placement="top">
                                                             <template slot="title">
-                                                                <span>Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                                <span>Haga click en los adicionales que desea para este servicio. Se le sumara el costo al total del servicio.</span>
                                                             </template>
-                                                            <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
-                                                            <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
-                                                                <badge :type="micro.checked ? 'primary' : 'secondary'" class="text-default">
+                                                            <span class="ml-1 mt-2 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
+                                                            <br>
+                                                            <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;">
+                                                                <badge style="z-index:100" :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
                                                                     <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
                                                                 </badge>
                                                             </div>
                                                         </a-tooltip>
                                                     </template>
-                                                    <img src="img/brand/calendar.png" alt="">
+                                                    <img style="z-index:0" src="img/brand/calendar.png" alt="">
                                                 </div>
-                                                
-                                                <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
-                                                    <div class="price-service ">{{formatPrice(service.price)}} $</div> 
+                                                <div class="row p-1">
+                                                    <div class="col-8 mt-4 p-1" >
+                                                        <div class="price-service w-100">$ {{formatPrice(service.price)}}</div> 
+                                                    </div>
+                                                    <div class="col-4 mt-4 p-1" >
+                                                        <div style="border: solid 1px #174c8e;float:right;margin-right:5px;" class="price-service w-50"><a-icon style="vertical-align:1px;" type="close" v-on:click="lessServicePhone(index, service.price)" /></div> 
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </template>
-                                    <div v-else>
-                                        <h2 class="text-center">No ha seleccionado ningún servicio.</h2>
-                                    </div>
                                 </div>
                             </div>
-                            <div class="showPhone col-md-12 p-0 pb-2">
-                                <base-dropdown class="w-100 mx-auto mb-3 styleDropdown">
-                                    <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
-                                        {{CatSelected}}
-                                    </base-button>
-                                    <b v-for="category of categories" :key="category.name" v-on:click="selectCategoryPhone(category.name)" class="dropdown-item w-100" style="color:#fff;"> {{category.name}} </b>
-                                </base-dropdown>
-                                <base-dropdown class="w-100 mx-auto styleDropdown" v-if="servicesPhoneShow">
-                                    <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
-                                        Servicios 
-                                    </base-button>
-                                    <template v-for="service of servicesCat">
-                                        <b :key="service.name" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.name}} </b>
-                                    </template>
-                                </base-dropdown>
-                                
-                                <template v-if="registerDate.serviceSelectds[0]">
-                                    <h2 class="mt-3 text-center">Servicios seleccionados</h2>
-                                    <hr>
-                                    <div v-for="(service, index) in registerDate.serviceSelectds" :key="service._id+'asda'+index" class="w-100" >
-                                        <div class="card-service mt-4" style="border-bottom: solid 8px #174c8e">
-                                            <h2 class="name-service"> {{service.name}}</h2>
-                                            <p class="ml-1 mb-0 w-100" style="margin-top:-8px;">
-                                                <a-icon type="clock-circle" style="vertical-align:1.5px;" /> 
-                                                {{fixedHours(service.duration)}}<br>
-                                                {{service.additionalName}}
-                                            </p>
-                                            <div class="col-12 mt-2 p-0">
-                                                <template v-if="ifMicro">
-                                                    <a-tooltip placement="top">
-                                                        <template slot="title">
-                                                            <span>Haga click en los adicionales que desea para este servicio. Se le sumara el costo al total del servicio.</span>
-                                                        </template>
-                                                        <span class="ml-1 mt-2 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
-                                                        <br>
-                                                        <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;">
-                                                            <badge style="z-index:100" :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
-                                                                <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
-                                                            </badge>
-                                                        </div>
-                                                    </a-tooltip>
-                                                </template>
-                                                <img style="z-index:0" src="img/brand/calendar.png" alt="">
-                                            </div>
-                                            <div class="row p-1">
-                                                <div class="col-8 mt-4 p-1" >
-                                                    <div class="price-service w-100">{{formatPrice(service.price)}} $</div> 
-                                                </div>
-                                                <div class="col-4 mt-4 p-1" >
-                                                    <div style="border: solid 1px #174c8e;float:right;margin-right:5px;" class="price-service w-50"><a-icon style="vertical-align:1px;" type="close" v-on:click="lessServicePhone(index, service.price)" /></div> 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </tab-content>
-                    <tab-content title="Profesionales" icon="fa fa-users" :before-change="validateLastStep">
-                        <div class="row">
-                            <div class="col-md-4" style="margin-top:16px;">
-                                <div class="w-75 mx-auto" >
-                                    <h4 class="text-center text-uppercase">Fechas disponibles</h4>
-                                    <base-input addon-left-icon="ni ni-calendar-grid-58 clickCalendar" v-model="dates.simple" v-on:change="openCalendar" style="cursor:pointer;" >
-                                        <flat-picker 
-                                                @on-change="openCalendar"
-                                                slot-scope="{focus, blur}"
-                                                @on-open="focus"
-                                                @on-close="blur"
-                                                :config="configDate"
-                                                placeholder="Seleccione una fecha" 
-                                                class="form-control date-client datepicker pl-3"
-                                                aria-placeholder="Seleccione una fecha"
-                                                v-model="dates.simple">
-                                        </flat-picker>
-                                    </base-input>
+                        </tab-content>
+                        <tab-content title="Profesionales" icon="fa fa-users" :before-change="validateLastStep">
+                            <div class="row">
+                                <div class="col-md-4" style="margin-top:16px;">
+                                    <div class="w-75 mx-auto" >
+                                        <h4 class="text-center text-uppercase">Fechas disponibles</h4>
+                                        <base-input addon-left-icon="ni ni-calendar-grid-58 clickCalendar" v-model="dates.simple" v-on:change="openCalendar" style="cursor:pointer;" >
+                                            <flat-picker 
+                                                    @on-change="openCalendar"
+                                                    slot-scope="{focus, blur}"
+                                                    @on-open="focus"
+                                                    @on-close="blur"
+                                                    :config="configDate"
+                                                    placeholder="Seleccione una fecha" 
+                                                    class="form-control date-client datepicker pl-3"
+                                                    aria-placeholder="Seleccione una fecha"
+                                                    v-model="dates.simple">
+                                            </flat-picker>
+                                        </base-input>
 
-                                    
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="row mb-3">
-                                    <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDate.serviceSelectds" :key="servicesSelect.servicio" >
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="py-1" style="background-color:#f8fcfd;">
-                                                    <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1 mx-4">
-                                                        <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
-                                                        <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.name}} </span>
-                                                    </badge> 
-                                                    <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
-                                                    <base-dropdown class="responsiveButtonsPercent styleDropdown">
-                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == true" slot="title" type="default" class="dropdown-toggle w-100">
-                                                            {{servicesSelect.employe}} 
-                                                        </base-button>
-                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == false" disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                            {{servicesSelect.employe}} 
-                                                        </base-button>
-                                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == 'none'" disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                            <span style="color:red">Horarios ocupados</span>
-                                                        </base-button>
-                                                        <template v-for="employe of servicesSelect.employes" >
-                                                            <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
-                                                        </template>
-                                                    </base-dropdown>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 pb-2">
-                                                <div class="py-1" style="background-color:#f8fcfd;">
-                                                    <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2">
-                                                    <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> 
-                                                    </badge>
-                                                    <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
-                                                        <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i>
-                                                        </span>
-                                                        <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
-                                                    </base-button>
-                                                    <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == false" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
-                                                    Seleccione una hora
-                                                    </base-button>
-                                                    <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == 'none'" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
-                                                    <span style="color:red">Horarios ocupados</span>
-                                                    
-                                                    </base-button>
-                                                    <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
-                                                        <div class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="block.hour">
-                                                            <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes, block.hour, index, indexService,'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
-                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                <span>Disponible</span>
-                                                            </base-button>
-                                                            <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                <span>Ocupado</span>
-                                                            </base-button>
-                                                            <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                <span>Seleccionado</span>
-                                                            </base-button>
-                                                            <base-button style="cursor:not-allowed" v-else size="sm" disabled class="col-12" type="secondary">
-                                                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                <span>No seleccionable</span>
-                                                            </base-button>
-                                                        </div>
-                                                    </vue-custom-scrollbar>
-                                                </div>
-                                            </div>   
-                                        </div>
+                                        
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </tab-content>
-                    <!-- employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, microServices: microsService  microServiceSelect -->
-                    <tab-content title="Información" icon="fa fa-question-circle">
-                        <div class="row">
-                            <div class="col-md-8 col-sm-12" >
-                                <div class="row">
-                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDate.serviceSelectds" :key="data.servicio" >
-                                        <div class="p-3">
-                                            <center>
-                                            <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
-                                            </center>
-                                            
-                                                <base-button type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
-                                                    <badge class="mx-auto ml-2" type="default" style="background-color:#174c8e;">
+                                <div class="col-md-8">
+                                    <div class="row mb-3">
+                                        <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDate.serviceSelectds" :key="servicesSelect.servicio" >
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="py-1" style="background-color:#f8fcfd;">
+                                                        <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1 mx-4">
+                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
+                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.name}} </span>
+                                                        </badge> 
+                                                        <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
+                                                        <base-dropdown class="responsiveButtonsPercent styleDropdown">
+                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == true" slot="title" type="default" class="dropdown-toggle w-100">
+                                                                {{servicesSelect.employe}} 
+                                                            </base-button>
+                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == false" disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                                {{servicesSelect.employe}} 
+                                                            </base-button>
+                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == 'none'" disabled slot="title" type="default" class="dropdown-toggle w-100">
+                                                                <span style="color:red">Horarios ocupados</span>
+                                                            </base-button>
+                                                            <template v-for="employe of servicesSelect.employes" >
+                                                                <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
+                                                            </template>
+                                                        </base-dropdown>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 pb-2">
+                                                    <div class="py-1" style="background-color:#f8fcfd;">
+                                                        <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2">
+                                                        <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> 
+                                                        </badge>
+                                                        <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
+                                                            <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i>
+                                                            </span>
+                                                            <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
+                                                        </base-button>
+                                                        <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == false" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
+                                                        Seleccione una hora
+                                                        </base-button>
+                                                        <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == 'none'" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
+                                                        <span style="color:red">Horarios ocupados</span>
                                                         
-                                                        <span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.name}}
-                                                            
-                                                        </span> 
-                                                    </badge><a-tooltip placement="top">
-                                                                <template slot="title">
-                                                                    <span>Adicionales: 
-                                                                        <template v-if="data.microServiceSelect.length > 0">
-                                                                            <span v-for="micros of data.microServiceSelect" :key="micros.name">
-                                                                                {{micros.name}}
-                                                                            </span>  
-                                                                        </template>
-                                                                        <template v-else>
-                                                                            <span>
-                                                                                No se seleccionó adicional
-                                                                            </span>  
-                                                                        </template>
-                                                                    </span>
-                                                                </template>
-                                                                <a-icon class="mr-1" style="cursor: pointer;vertical-align: 0.1em;font-size:1.3em;" type="question-circle" />
-                                                            </a-tooltip><br>
-                                                    <span class="mx-auto" style="font-size:1.2em;">{{data.realEmploye}}</span>
-                                                </base-button>
-                                            
-                                            <div style="background-color:#f8fcfd;">
-                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:.96em;text-transform:none;">Desde las</span> 
-                                                </badge>
-                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.start}}</span> 
-                                                </badge>
-                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:.96em;text-transform:none;">Hasta las</span> 
-                                                </badge>
-                                                <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
-                                                    <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.end}}</span> 
-                                                </badge>
+                                                        </base-button>
+                                                        <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
+                                                            <div class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="block.hour">
+                                                                <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes, block.hour, index, indexService,'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
+                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                    <span>Disponible</span>
+                                                                </base-button>
+                                                                <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                    <span>Ocupado</span>
+                                                                </base-button>
+                                                                <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                    <span>Seleccionado</span>
+                                                                </base-button>
+                                                                <base-button style="cursor:not-allowed" v-else size="sm" disabled class="col-12" type="secondary">
+                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                    <span>No seleccionable</span>
+                                                                </base-button>
+                                                            </div>
+                                                        </vue-custom-scrollbar>
+                                                    </div>
+                                                </div>   
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-12 pt-5">
-                                <center>
-                                    <base-dropdown class="mt-1 responsiveButtonsPercent mx-auto styleDropdown">
-                                        <base-button slot="title" type="primary" class="dropdown-toggle w-100 dropdownPay" style="border-radius:14px">
-                                            Selecciona un tipo de pago
+                        </tab-content>
+                        <!-- employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, microServices: microsService  microServiceSelect -->
+                        <tab-content title="Información" icon="fa fa-question-circle">
+                            <div class="row">
+                                <div class="col-md-8 col-sm-12" >
+                                    <div class="row">
+                                        <div class="card-services-information col-lg-6" v-for="(data, index) in registerDate.serviceSelectds" :key="data.servicio" >
+                                            <div class="p-3">
+                                                <center>
+                                                <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
+                                                </center>
+                                                
+                                                    <base-button type="secondary" class="w-100 text-center mb-1" style="background-color:#d5dadd;color:#1c2021;border:none">
+                                                        <badge class="mx-auto ml-2" type="default" style="background-color:#174c8e;">
+                                                            
+                                                            <span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.name}}
+                                                                
+                                                            </span> 
+                                                        </badge><a-tooltip placement="top">
+                                                                    <template slot="title">
+                                                                        <span>Adicionales: 
+                                                                            <template v-if="data.microServiceSelect.length > 0">
+                                                                                <span v-for="micros of data.microServiceSelect" :key="micros.name">
+                                                                                    {{micros.name}}
+                                                                                </span>  
+                                                                            </template>
+                                                                            <template v-else>
+                                                                                <span>
+                                                                                    No se seleccionó adicional
+                                                                                </span>  
+                                                                            </template>
+                                                                        </span>
+                                                                    </template>
+                                                                    <a-icon class="mr-1" style="cursor: pointer;vertical-align: 0.1em;font-size:1.3em;" type="question-circle" />
+                                                                </a-tooltip><br>
+                                                        <span class="mx-auto" style="font-size:1.2em;">{{data.realEmploye}}</span>
+                                                    </base-button>
+                                                
+                                                <div style="background-color:#f8fcfd;">
+                                                    <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                        <span style="color:#000;font-weight:600;font-size:.96em;text-transform:none;">Desde las</span> 
+                                                    </badge>
+                                                    <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                        <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.start}}</span> 
+                                                    </badge>
+                                                    <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                        <span style="color:#000;font-weight:600;font-size:.96em;text-transform:none;">Hasta las</span> 
+                                                    </badge>
+                                                    <badge type="secondary" class="w-100" style="margin-top:-5px;font-weigth:600;font-family: Open Sans, sans-serif;line-height: .2;">
+                                                        <span style="color:#000;font-weight:600;font-size:2.8em;">{{data.end}}</span> 
+                                                    </badge>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12 pt-5">
+                                    <center>
+                                        <base-dropdown class="mt-1 responsiveButtonsPercent mx-auto styleDropdown">
+                                            <base-button slot="title" type="primary" class="dropdown-toggle w-100 dropdownPay" style="border-radius:14px">
+                                                Selecciona un tipo de pago
+                                            </base-button>
+                                            <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
+                                            <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
+                                            <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
+                                            <!-- <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('WebPay')">WebPay</b>  -->
+                                        </base-dropdown><br>
+                                        <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                        Fecha: <strong>{{dates.simple}}</strong>
+                                        </base-button><br>
+                                        <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                            Hora de inicio: <strong v-if="registerDate.serviceSelectds[0]">{{registerDate.serviceSelectds[0].start}}</strong>
+                                        </base-button><br>
+                                        <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                            Total: <strong class="text-uppercase">$ {{formatPrice(totalPrice)}}</strong>
                                         </base-button>
-                                        <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
-                                        <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
-                                        <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
-                                        <!-- <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('WebPay')">WebPay</b>  -->
-                                    </base-dropdown><br>
-                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                    Fecha: <strong>{{dates.simple}}</strong>
-                                    </base-button><br>
-                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                        Hora de inicio: <strong v-if="registerDate.serviceSelectds[0]">{{registerDate.serviceSelectds[0].start}}</strong>
-                                    </base-button><br>
-                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                        Total: <strong class="text-uppercase">$ {{formatPrice(totalPrice)}}</strong>
-                                    </base-button>
-                                </center><br>
+                                    </center><br>
+                                </div>
                             </div>
-                        </div>
-                    </tab-content>
-                </form-wizard>
+                        </tab-content>
+                    </form-wizard>
+                </a-spin>
             </card>
         </div>
         <nav class="navbar navbar-expand-lg navbar-light bg-Secondary row m-0 p-0">
@@ -608,6 +610,7 @@
                 },
                 validPay:false,
                 progress:false,
+                spinningDate: false,
                 dates:{
                     simple: ''
                 },
@@ -1016,6 +1019,7 @@
             },
             finallyAgend(){
                 this.ifDisabled = true
+                this.spinningDate = true
                 var employeFinal = ''
                 var hourFinal = ''
                 for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
@@ -1035,6 +1039,7 @@
                 }, this.configHeader)
                 .then(res => {
                     if(res.data.status == true){
+                        this.spinningDate = false
                         this.$swal({
                             icon: 'error',
                             title: '¡Disculpe! el horario fue tomado recientemente, vuelva a agendar su cita.',
@@ -1111,6 +1116,7 @@
                                 }, this.configHeader)
                                 .then(res => {
                                     if (res.data.status == "cita creada") {
+                                        this.spinningDate = false
                                         this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDate)
                                         this.modals.modal2 = false
                                         this.modals.modal4 = true
@@ -1134,6 +1140,7 @@
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == "ok") {
+                                    this.spinningDate = false
                                     this.ifDisabled = false
                                     this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDate)
                                     this.modals.modal2 = false
@@ -1144,6 +1151,7 @@
                         }
                     }
                 }).catch(err => {
+                    this.spinningDate = false
                     console.log(err)
                 })
             },
@@ -2486,4 +2494,7 @@ color: #174c8e;
     box-shadow: 0px 0px 26px -21px rgba(0,0,0,0.75);
     transition: all 0.4s ease-out;
 }
+.wizard-btn{
+        margin-top: 20px;
+    }
 </style>
