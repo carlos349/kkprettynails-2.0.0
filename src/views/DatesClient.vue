@@ -748,7 +748,7 @@
                                 $('.clearClass .ant-select-selection__clear').click()
                                 this.$swal.fire({
                                     icon: 'info',
-                                    tittle: `La sucursal ${this.branchName} no se encuentra habilitada en este momento`,
+                                    title: `La sucursal ${this.branchName} no se encuentra habilitada en este momento`,
                                     text: `En caso de dudas, consulte al ${this.configurationsBranch.businessPhone.formatInternational}`
                                 })
                             }
