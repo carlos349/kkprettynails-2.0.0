@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "41a0bc584e19620c4a71",
+    "revision": "d51ac1a7d90910d6cee9",
     "url": "/css/app.f8c650d4.css"
   },
   {
-    "revision": "41a0bc584e19620c4a71",
-    "url": "/js/app.56bc3664.js"
+    "revision": "d51ac1a7d90910d6cee9",
+    "url": "/js/app.5f5fabcf.js"
   },
   {
     "revision": "01868a0739695dab07f1",
@@ -20,12 +20,12 @@ self.__precacheManifest = [
     "url": "/js/chunk-68cc9a36.9048fca2.js"
   },
   {
-    "revision": "a69b40369a277837ac0f",
+    "revision": "aec988dc782143e4668b",
     "url": "/css/chunk-73c2056c.7ad2a13c.css"
   },
   {
-    "revision": "a69b40369a277837ac0f",
-    "url": "/js/chunk-73c2056c.32e67224.js"
+    "revision": "aec988dc782143e4668b",
+    "url": "/js/chunk-73c2056c.713f73bb.js"
   },
   {
     "revision": "4ff80309779325cfe768",
@@ -48,14 +48,6 @@ self.__precacheManifest = [
     "url": "/img/flags.9c96e0ed.9c96e0ed.png"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
-  },
-  {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
-  },
-  {
     "revision": "c1733565b32b585676302d4233c39da8",
     "url": "/fonts/nucleo-icons.c1733565.eot"
   },
@@ -64,20 +56,28 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.f82ec6ba.ttf"
   },
   {
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
+  },
+  {
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
+  },
+  {
     "revision": "46abbc4a676739dbd61f8a305cb63fd8",
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "35144925f52ccac1202d1db7f2aa931e",
+    "revision": "0c58b53f45b99b2810a5c44f2fa8574c",
     "url": "/index.html"
-  },
-  {
-    "revision": "16d4b55f8b1c1f2cc3782a3e3386c329",
-    "url": "/bootstrap.min.js"
   },
   {
     "revision": "185539981482cea1299c1fdcebb598b4",
     "url": "/all.css"
+  },
+  {
+    "revision": "16d4b55f8b1c1f2cc3782a3e3386c329",
+    "url": "/bootstrap.min.js"
   },
   {
     "revision": "afb0175f4417917d8cb162e0884b5fa9",
@@ -92,20 +92,16 @@ self.__precacheManifest = [
     "url": "/img/brand/syswa-gestion.png"
   },
   {
+    "revision": "1f533d2fdc40493ee834dd8e4288220c",
+    "url": "/img/theme/angular.jpg"
+  },
+  {
     "revision": "3e6dc8c5f72f27c0e3f93c3f7f43669a",
     "url": "/img/theme/access.png"
   },
   {
-    "revision": "a75ef9f6193ffa787c60baeea2e92d0c",
-    "url": "/img/theme/Banner.png"
-  },
-  {
     "revision": "d136a071cf09ba5ab8dc2ada1ab04015",
     "url": "/img/theme/bootstrap.jpg"
-  },
-  {
-    "revision": "1f533d2fdc40493ee834dd8e4288220c",
-    "url": "/img/theme/angular.jpg"
   },
   {
     "revision": "2ed0763d9ab3049120da4ac7f64652ef",
@@ -116,16 +112,20 @@ self.__precacheManifest = [
     "url": "/img/theme/box.png"
   },
   {
+    "revision": "a75ef9f6193ffa787c60baeea2e92d0c",
+    "url": "/img/theme/Banner.png"
+  },
+  {
     "revision": "c2da9acf4a2818e249a2ec94862a938d",
     "url": "/img/theme/branch.png"
   },
   {
-    "revision": "84335294072f0ad513fc8614b54a428a",
-    "url": "/img/theme/calendar.png"
-  },
-  {
     "revision": "4567c9af4dfa454a6e3a9bf30a34fe80",
     "url": "/img/theme/clients.jpg"
+  },
+  {
+    "revision": "84335294072f0ad513fc8614b54a428a",
+    "url": "/img/theme/calendar.png"
   },
   {
     "revision": "1881d2a2c3f7bb5e1b4ac0b2622291b0",
@@ -140,8 +140,8 @@ self.__precacheManifest = [
     "url": "/img/theme/employeReport.png"
   },
   {
-    "revision": "ced0f2c9d36acd10447db1f3b3339104",
-    "url": "/img/theme/employes.png"
+    "revision": "db1039af1a43f2ad9d499468459fcd9c",
+    "url": "/img/theme/inventario.jpg"
   },
   {
     "revision": "ef90ef6ebf8cfa521445aea45be0f3d0",
@@ -152,24 +152,28 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-default.png"
   },
   {
-    "revision": "db1039af1a43f2ad9d499468459fcd9c",
-    "url": "/img/theme/inventario.jpg"
-  },
-  {
     "revision": "e7be3ecd921efc88bbca5e090862eac7",
     "url": "/img/theme/profile.png"
+  },
+  {
+    "revision": "ced0f2c9d36acd10447db1f3b3339104",
+    "url": "/img/theme/employes.png"
   },
   {
     "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
     "url": "/img/theme/profile-defaultt.png"
   },
   {
+    "revision": "50e42caa32cb0364bb83b0c3b79016cb",
+    "url": "/img/theme/sales.png"
+  },
+  {
     "revision": "50dd5fdc839dfc16739b15370650485c",
     "url": "/img/theme/react.jpg"
   },
   {
-    "revision": "50e42caa32cb0364bb83b0c3b79016cb",
-    "url": "/img/theme/sales.png"
+    "revision": "f703eaaed9a404e2b342a4d5d98f261a",
+    "url": "/img/theme/reportes.jpg"
   },
   {
     "revision": "2b3e6ee5f8af9607fd4162e6eb7275a8",
@@ -188,16 +192,8 @@ self.__precacheManifest = [
     "url": "/img/theme/store.png"
   },
   {
-    "revision": "edc7106b21ec12e57022b2ebd534cd2d",
-    "url": "/img/theme/team-1-800x800.jpg"
-  },
-  {
     "revision": "93929da7ae1722429c7e9d894761dc41",
     "url": "/img/theme/syswa-gestion.png"
-  },
-  {
-    "revision": "f703eaaed9a404e2b342a4d5d98f261a",
-    "url": "/img/theme/reportes.jpg"
   },
   {
     "revision": "54e3f3c414bd8e7234bae3ee3be950e5",
@@ -208,12 +204,8 @@ self.__precacheManifest = [
     "url": "/img/theme/team-2-800x800.jpg"
   },
   {
-    "revision": "66618a418175ddf2ac8c47a241d327a8",
-    "url": "/img/theme/team-4-800x800.jpg"
-  },
-  {
-    "revision": "4524351b9c58adb85b5e1b32374347ab",
-    "url": "/img/theme/users.png"
+    "revision": "edc7106b21ec12e57022b2ebd534cd2d",
+    "url": "/img/theme/team-1-800x800.jpg"
   },
   {
     "revision": "c532f6f0176968caa6265864ee1abb35",
@@ -224,24 +216,32 @@ self.__precacheManifest = [
     "url": "/jquery-3.3.1.slim.min.js"
   },
   {
-    "revision": "b37d2558404192e18ca66e0533e57cf1",
-    "url": "/popper.min.js"
+    "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
+    "url": "/img/theme/users.jpg"
+  },
+  {
+    "revision": "66618a418175ddf2ac8c47a241d327a8",
+    "url": "/img/theme/team-4-800x800.jpg"
   },
   {
     "revision": "735ab4f94fbcd57074377afca324c813",
     "url": "/robots.txt"
   },
   {
-    "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
-    "url": "/img/theme/users.jpg"
+    "revision": "4524351b9c58adb85b5e1b32374347ab",
+    "url": "/img/theme/users.png"
+  },
+  {
+    "revision": "6fb59a1b94cc43776f270e1de6622cf8",
+    "url": "/img/brand/logokk.png"
   },
   {
     "revision": "b19bbdd813f73aa193678e5a04d297d8",
     "url": "/img/brand/kkspa.png"
   },
   {
-    "revision": "6fb59a1b94cc43776f270e1de6622cf8",
-    "url": "/img/brand/logokk.png"
+    "revision": "b37d2558404192e18ca66e0533e57cf1",
+    "url": "/popper.min.js"
   },
   {
     "revision": "cee60cfd101f9b3d2aae0e819ec8b267",
