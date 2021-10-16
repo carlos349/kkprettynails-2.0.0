@@ -1365,12 +1365,12 @@
                             timedate: this.registerDate.serviceSelectds[index].duration,
                             employeSelect: lendeId,
                             employeObject: {
-                                name: this.registerDae.serviceSelectds[index].realEmploye,
-                                id: this.registerDae.serviceSelectds[index].employeId,
+                                name: this.registerDate.serviceSelectds[index].realEmploye,
+                                id: this.registerDate.serviceSelectds[index].employeId,
                                 position: 1,
-                                class: this.registerDae.serviceSelectds[index].class,
+                                class: this.registerDate.serviceSelectds[index].class,
                                 valid: true,
-                                img: this.registerDae.serviceSelectds[index].employeImg
+                                img: this.registerDate.serviceSelectds[index].employeImg
                             },
                             firstBlock: false
                         }, this.configHeader)
@@ -1420,12 +1420,12 @@
                             timedate: this.registerDate.serviceSelectds[index].duration,
                             employeSelect: lendeId,
                             employeObject: {
-                                name: this.registerDae.serviceSelectds[index].realEmploye,
-                                id: this.registerDae.serviceSelectds[index].employeId,
+                                name: this.registerDate.serviceSelectds[index].realEmploye,
+                                id: this.registerDate.serviceSelectds[index].employeId,
                                 position: 1,
-                                class: this.registerDae.serviceSelectds[index].class,
+                                class: this.registerDate.serviceSelectds[index].class,
                                 valid: true,
-                                img: this.registerDae.serviceSelectds[index].employeImg
+                                img: this.registerDate.serviceSelectds[index].employeImg
                             },
                             firstBlock: false
                         }, this.configHeader)
@@ -1691,6 +1691,13 @@
                             break
                         }
                     }
+                    var employeForBlock = {
+                        name: this.registerDate.serviceSelectds[indexService].employe,
+                        id: this.registerDate.serviceSelectds[indexService].employeId,
+                        class: this.registerDate.serviceSelectds[indexService].class,
+                        valid: false,
+                        img: this.registerDate.serviceSelectds[indexService].employeImg
+                    }
                     axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
                         date: this.finalDate,
                         timedate: this.registerDate.serviceSelectds[indexService].duration,
@@ -1731,11 +1738,18 @@
                     var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].hour.split(":") 
                     this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].hour
                     this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
+                    var employeForBlock = {
+                        name: this.registerDate.serviceSelectds[indexService].employe,
+                        id: this.registerDate.serviceSelectds[indexService].employeId,
+                        class: this.registerDate.serviceSelectds[indexService].class,
+                        valid: false,
+                        img: this.registerDate.serviceSelectds[indexService].employeImg
+                    }
                     axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
                         date: this.finalDate,
                         timedate: this.registerDate.serviceSelectds[indexService].duration,
                         hour: this.registerDate.serviceSelectds[indexService].start,
-                        employe: this.registerDate.serviceSelectds[indexService].employeId,
+                        employe: employeForBlock,
                         block: this.registerDate.serviceSelectds[indexService].blocks,
                         blockFirst: this.registerDate.serviceSelectds[indexService].blocksFirst,
                         branch: this.branch,
