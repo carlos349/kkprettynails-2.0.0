@@ -1702,7 +1702,7 @@
                         date: this.finalDate,
                         timedate: this.registerDate.serviceSelectds[indexService].duration,
                         hour: this.registerDate.serviceSelectds[indexService].start,
-                        employe: this.registerDate.serviceSelectds[indexService].employeId,
+                        employe: employeForBlock,
                         block: this.registerDate.serviceSelectds[indexService].blocks,
                         branch: this.branch,
                         ifFirstClick: this.registerDate.serviceSelectds[indexService].itFirst,
