@@ -1305,19 +1305,33 @@
                         }
                     }
                 }else{
-                    for (const block of this.registerDate.serviceSelectds[index].blocks) {
+                    for (let keyTwo = 0; keyTwo < this.registerDate.serviceSelectds[index].blocks.length; keyTwo++) {
+                        const block = this.registerDate.serviceSelectds[index].blocks[keyTwo];
+                        console.log(block.validator)
                         if (block.validator == 'select' && block.employes){
                             block.validator = true
-                            block.employes.unshift({
-                                id: this.registerDate.serviceSelectds[index].employeId,
-                                name: this.registerDate.serviceSelectds[index].realEmploye,
-                                position: 1,
-                                class: this.registerDate.serviceSelectds[index].class,
-                                valid: true,
-                                img: this.registerDate.serviceSelectds[index].employeImg
-                            })
+                            if (this.registerDate.serviceSelectds[index].blocks[keyTwo + 1]) {
+                                console.log(this.registerDate.serviceSelectds[index].blocks[keyTwo + 1].validator)
+                                if (this.registerDate.serviceSelectds[index].blocks[keyTwo + 1].validator == 'select') {
+                                    block.employes.unshift({
+                                        id: this.registerDate.serviceSelectds[index].employeId,
+                                        name: this.registerDate.serviceSelectds[index].realEmploye,
+                                        position: 1,
+                                        class: this.registerDate.serviceSelectds[index].class,
+                                        valid: true,
+                                        img: this.registerDate.serviceSelectds[index].employeImg
+                                    })
+                                }
+                            }
+                            for (const key in block.employeBlocked) {
+                                const employeBlocked = block.employeBlocked[key]
+                                if (employeBlocked.employe == this.registerDate.serviceSelectds[index].employeId) {
+                                    block.employeBlocked.splice(key, 1)
+                                }
+                            }
                         }
                     }
+
                     if (this.registerDate.serviceSelectds[index].blocksFirst.length > 0) {
                         console.log(this.registerDate.serviceSelectds[index].blocksFirst)
                         for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
@@ -1350,6 +1364,14 @@
                             block: this.registerDate.serviceSelectds[index].blocksFirst,
                             timedate: this.registerDate.serviceSelectds[index].duration,
                             employeSelect: lendeId,
+                            employeObject: {
+                                name: this.registerDae.serviceSelectds[index].realEmploye,
+                                id: this.registerDae.serviceSelectds[index].employeId,
+                                position: 1,
+                                class: this.registerDae.serviceSelectds[index].class,
+                                valid: true,
+                                img: this.registerDae.serviceSelectds[index].employeImg
+                            },
                             firstBlock: false
                         }, this.configHeader)
                         .then(res => {
@@ -1397,6 +1419,14 @@
                             block: this.registerDate.serviceSelectds[index].blocks,
                             timedate: this.registerDate.serviceSelectds[index].duration,
                             employeSelect: lendeId,
+                            employeObject: {
+                                name: this.registerDae.serviceSelectds[index].realEmploye,
+                                id: this.registerDae.serviceSelectds[index].employeId,
+                                position: 1,
+                                class: this.registerDae.serviceSelectds[index].class,
+                                valid: true,
+                                img: this.registerDae.serviceSelectds[index].employeImg
+                            },
                             firstBlock: false
                         }, this.configHeader)
                         .then(res => {

@@ -4505,6 +4505,14 @@ import mixinES from '../mixins/mixinES'
                         block: this.registerDae.serviceSelectds[index].blocks,
                         timedate: this.registerDae.serviceSelectds[index].duration,
                         employeSelect: lendeId,
+                        employeObject: {
+                            name: this.registerDae.serviceSelectds[index].realEmploye,
+                            id: this.registerDae.serviceSelectds[index].employeId,
+                            position: 1,
+                            class: this.registerDae.serviceSelectds[index].class,
+                            valid: true,
+                            img: this.registerDae.serviceSelectds[index].employeImg
+                        },
                         firstBlock: false
                     }, this.configHeader)
                     .then(res => {
