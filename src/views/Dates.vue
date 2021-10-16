@@ -4393,17 +4393,31 @@ import mixinES from '../mixins/mixinES'
                     }
                 }
             }else{
-                for (const block of this.registerDae.serviceSelectds[index].blocks) {
+                
+                for (let keyTwo = 0; keyTwo < this.registerDae.serviceSelectds[index].blocks.length; keyTwo++) {
+                    const block = this.registerDae.serviceSelectds[index].blocks[keyTwo];
+                    console.log(block.validator)
                     if (block.validator == 'select' && block.employes){
                         block.validator = true
-                        block.employes.unshift({
-                            id: this.registerDae.serviceSelectds[index].employeId,
-                            name: this.registerDae.serviceSelectds[index].realEmploye,
-                            position: 1,
-                            class: this.registerDae.serviceSelectds[index].class,
-                            valid: true,
-                            img: this.registerDae.serviceSelectds[index].employeImg
-                        })
+                        if (this.registerDae.serviceSelectds[index].blocks[keyTwo + 1]) {
+                            console.log(this.registerDae.serviceSelectds[index].blocks[keyTwo + 1].validator)
+                            if (this.registerDae.serviceSelectds[index].blocks[keyTwo + 1].validator == 'select') {
+                                block.employes.unshift({
+                                    id: this.registerDae.serviceSelectds[index].employeId,
+                                    name: this.registerDae.serviceSelectds[index].realEmploye,
+                                    position: 1,
+                                    class: this.registerDae.serviceSelectds[index].class,
+                                    valid: true,
+                                    img: this.registerDae.serviceSelectds[index].employeImg
+                                })
+                            }
+                        }
+                        for (const key in block.employeBlocked) {
+                            const employeBlocked = block.employeBlocked[key]
+                            if (employeBlocked.employe == this.registerDae.serviceSelectds[index].employeId) {
+                                block.employeBlocked.splice(key, 1)
+                            }
+                        }
                     }
                 }
                 if (this.registerDae.serviceSelectds[index].blocksFirst.length > 0) {
@@ -4437,6 +4451,14 @@ import mixinES from '../mixins/mixinES'
                         block: this.registerDae.serviceSelectds[index].blocksFirst,
                         timedate: this.registerDae.serviceSelectds[index].duration,
                         employeSelect: lendeId,
+                        employeObject: {
+                            name: this.registerDae.serviceSelectds[index].realEmploye,
+                            id: this.registerDae.serviceSelectds[index].employeId,
+                            position: 1,
+                            class: this.registerDae.serviceSelectds[index].class,
+                            valid: true,
+                            img: this.registerDae.serviceSelectds[index].employeImg
+                        },
                         firstBlock: false
                     }, this.configHeader)
                     .then(res => {
