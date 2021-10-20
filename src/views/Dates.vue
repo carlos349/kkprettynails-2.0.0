@@ -570,8 +570,8 @@
                                 <template slot="title">
                                     <span v-if="selectedEvent.client">
                                         {{selectedEvent.client.email}} 
-                                        <span v-if="selectedEvent.client.phone">
-                                            - {{selectedEvent.client.phone.formatInternational}}
+                                        <span v-if="phoneDateSelect != ''">
+                                            - {{phoneDateSelect}}
 
                                         </span>
                                     </span>
@@ -1081,6 +1081,7 @@ import mixinES from '../mixins/mixinES'
         minAddEdit:0,
         minLessEdit:0,
         moment,
+        phoneDateSelect: '',
         prueba: 'primary',
         imgEndpoint: endPoint.endpointTarget,
         auth:[],
@@ -2846,8 +2847,8 @@ import mixinES from '../mixins/mixinES'
         onEventClick(event, e){
             this.selectedEvent = event
             this.dateModals.modal1 = true
-            console.log(this.selectedEvent)
-            console.log(new Date(this.selectedEvent.start) +' - '+ new Date().valueOf())
+            // console.log(this.selectedEvent)
+            // console.log(new Date(this.selectedEvent.start) +' - '+ new Date().valueOf())
             if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
                 this.editDisabled = true
                 console.log("ya basta")
@@ -2868,6 +2869,7 @@ import mixinES from '../mixins/mixinES'
                     this.dateData.discount.discount = false
                     this.dateData.discount.type = 'none'
                 }
+                this.phoneDateSelect = res.data.data.phone.formatInternational
                 this.dateData.history = []
                 this.dateData.history = res.data.data.historical
             })
@@ -4391,17 +4393,31 @@ import mixinES from '../mixins/mixinES'
                     }
                 }
             }else{
-                for (const block of this.registerDae.serviceSelectds[index].blocks) {
+                
+                for (let keyTwo = 0; keyTwo < this.registerDae.serviceSelectds[index].blocks.length; keyTwo++) {
+                    const block = this.registerDae.serviceSelectds[index].blocks[keyTwo];
+                    console.log(block.validator)
                     if (block.validator == 'select' && block.employes){
                         block.validator = true
-                        block.employes.unshift({
-                            id: this.registerDae.serviceSelectds[index].employeId,
-                            name: this.registerDae.serviceSelectds[index].realEmploye,
-                            position: 1,
-                            class: this.registerDae.serviceSelectds[index].class,
-                            valid: true,
-                            img: this.registerDae.serviceSelectds[index].employeImg
-                        })
+                        if (this.registerDae.serviceSelectds[index].blocks[keyTwo + 1]) {
+                            console.log(this.registerDae.serviceSelectds[index].blocks[keyTwo + 1].validator)
+                            if (this.registerDae.serviceSelectds[index].blocks[keyTwo + 1].validator == 'select') {
+                                block.employes.unshift({
+                                    id: this.registerDae.serviceSelectds[index].employeId,
+                                    name: this.registerDae.serviceSelectds[index].realEmploye,
+                                    position: 1,
+                                    class: this.registerDae.serviceSelectds[index].class,
+                                    valid: true,
+                                    img: this.registerDae.serviceSelectds[index].employeImg
+                                })
+                            }
+                        }
+                        for (const key in block.employeBlocked) {
+                            const employeBlocked = block.employeBlocked[key]
+                            if (employeBlocked.employe == this.registerDae.serviceSelectds[index].employeId) {
+                                block.employeBlocked.splice(key, 1)
+                            }
+                        }
                     }
                 }
                 if (this.registerDae.serviceSelectds[index].blocksFirst.length > 0) {
@@ -4435,6 +4451,14 @@ import mixinES from '../mixins/mixinES'
                         block: this.registerDae.serviceSelectds[index].blocksFirst,
                         timedate: this.registerDae.serviceSelectds[index].duration,
                         employeSelect: lendeId,
+                        employeObject: {
+                            name: this.registerDae.serviceSelectds[index].realEmploye,
+                            id: this.registerDae.serviceSelectds[index].employeId,
+                            position: 1,
+                            class: this.registerDae.serviceSelectds[index].class,
+                            valid: true,
+                            img: this.registerDae.serviceSelectds[index].employeImg
+                        },
                         firstBlock: false
                     }, this.configHeader)
                     .then(res => {
@@ -4481,6 +4505,14 @@ import mixinES from '../mixins/mixinES'
                         block: this.registerDae.serviceSelectds[index].blocks,
                         timedate: this.registerDae.serviceSelectds[index].duration,
                         employeSelect: lendeId,
+                        employeObject: {
+                            name: this.registerDae.serviceSelectds[index].realEmploye,
+                            id: this.registerDae.serviceSelectds[index].employeId,
+                            position: 1,
+                            class: this.registerDae.serviceSelectds[index].class,
+                            valid: true,
+                            img: this.registerDae.serviceSelectds[index].employeImg
+                        },
                         firstBlock: false
                     }, this.configHeader)
                     .then(res => {

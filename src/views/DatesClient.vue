@@ -1304,19 +1304,33 @@
                         }
                     }
                 }else{
-                    for (const block of this.registerDate.serviceSelectds[index].blocks) {
+                    for (let keyTwo = 0; keyTwo < this.registerDate.serviceSelectds[index].blocks.length; keyTwo++) {
+                        const block = this.registerDate.serviceSelectds[index].blocks[keyTwo];
+                        console.log(block.validator)
                         if (block.validator == 'select' && block.employes){
                             block.validator = true
-                            block.employes.unshift({
-                                id: this.registerDate.serviceSelectds[index].employeId,
-                                name: this.registerDate.serviceSelectds[index].realEmploye,
-                                position: 1,
-                                class: this.registerDate.serviceSelectds[index].class,
-                                valid: true,
-                                img: this.registerDate.serviceSelectds[index].employeImg
-                            })
+                            if (this.registerDate.serviceSelectds[index].blocks[keyTwo + 1]) {
+                                console.log(this.registerDate.serviceSelectds[index].blocks[keyTwo + 1].validator)
+                                if (this.registerDate.serviceSelectds[index].blocks[keyTwo + 1].validator == 'select') {
+                                    block.employes.unshift({
+                                        id: this.registerDate.serviceSelectds[index].employeId,
+                                        name: this.registerDate.serviceSelectds[index].realEmploye,
+                                        position: 1,
+                                        class: this.registerDate.serviceSelectds[index].class,
+                                        valid: true,
+                                        img: this.registerDate.serviceSelectds[index].employeImg
+                                    })
+                                }
+                            }
+                            for (const key in block.employeBlocked) {
+                                const employeBlocked = block.employeBlocked[key]
+                                if (employeBlocked.employe == this.registerDate.serviceSelectds[index].employeId) {
+                                    block.employeBlocked.splice(key, 1)
+                                }
+                            }
                         }
                     }
+
                     if (this.registerDate.serviceSelectds[index].blocksFirst.length > 0) {
                         console.log(this.registerDate.serviceSelectds[index].blocksFirst)
                         for (let j = index + 1; j < this.registerDate.serviceSelectds.length; j++) {
@@ -1349,6 +1363,14 @@
                             block: this.registerDate.serviceSelectds[index].blocksFirst,
                             timedate: this.registerDate.serviceSelectds[index].duration,
                             employeSelect: lendeId,
+                            employeObject: {
+                                name: this.registerDate.serviceSelectds[index].realEmploye,
+                                id: this.registerDate.serviceSelectds[index].employeId,
+                                position: 1,
+                                class: this.registerDate.serviceSelectds[index].class,
+                                valid: true,
+                                img: this.registerDate.serviceSelectds[index].employeImg
+                            },
                             firstBlock: false
                         }, this.configHeader)
                         .then(res => {
@@ -1396,6 +1418,14 @@
                             block: this.registerDate.serviceSelectds[index].blocks,
                             timedate: this.registerDate.serviceSelectds[index].duration,
                             employeSelect: lendeId,
+                            employeObject: {
+                                name: this.registerDate.serviceSelectds[index].realEmploye,
+                                id: this.registerDate.serviceSelectds[index].employeId,
+                                position: 1,
+                                class: this.registerDate.serviceSelectds[index].class,
+                                valid: true,
+                                img: this.registerDate.serviceSelectds[index].employeImg
+                            },
                             firstBlock: false
                         }, this.configHeader)
                         .then(res => {
@@ -1660,11 +1690,18 @@
                             break
                         }
                     }
+                    var employeForBlock = {
+                        name: this.registerDate.serviceSelectds[indexService].employe,
+                        id: this.registerDate.serviceSelectds[indexService].employeId,
+                        class: this.registerDate.serviceSelectds[indexService].class,
+                        valid: false,
+                        img: this.registerDate.serviceSelectds[indexService].employeImg
+                    }
                     axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
                         date: this.finalDate,
                         timedate: this.registerDate.serviceSelectds[indexService].duration,
                         hour: this.registerDate.serviceSelectds[indexService].start,
-                        employe: this.registerDate.serviceSelectds[indexService].employeId,
+                        employe: employeForBlock,
                         block: this.registerDate.serviceSelectds[indexService].blocks,
                         branch: this.branch,
                         ifFirstClick: this.registerDate.serviceSelectds[indexService].itFirst,
@@ -1700,11 +1737,18 @@
                     var sortSp = this.registerDate.serviceSelectds[indexService].blocks[i].hour.split(":") 
                     this.registerDate.serviceSelectds[indexService].start = this.registerDate.serviceSelectds[indexService].blocks[i].hour
                     this.registerDate.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
+                    var employeForBlock = {
+                        name: this.registerDate.serviceSelectds[indexService].employe,
+                        id: this.registerDate.serviceSelectds[indexService].employeId,
+                        class: this.registerDate.serviceSelectds[indexService].class,
+                        valid: false,
+                        img: this.registerDate.serviceSelectds[indexService].employeImg
+                    }
                     axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
                         date: this.finalDate,
                         timedate: this.registerDate.serviceSelectds[indexService].duration,
                         hour: this.registerDate.serviceSelectds[indexService].start,
-                        employe: this.registerDate.serviceSelectds[indexService].employeId,
+                        employe: employeForBlock,
                         block: this.registerDate.serviceSelectds[indexService].blocks,
                         blockFirst: this.registerDate.serviceSelectds[indexService].blocksFirst,
                         branch: this.branch,
