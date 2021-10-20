@@ -748,7 +748,7 @@
                                 $('.clearClass .ant-select-selection__clear').click()
                                 this.$swal.fire({
                                     icon: 'error',
-                                    html: `<p>La sucursal <strong>${this.branchName}</strong> no esta agendando, agende en otra sucursal o pongase en contacto a través del número <br> <strong>${this.configurationsBranch.businessPhone}</strong></p>`
+                                    html: `<h2>La sucursal <strong>${this.branchName}</strong> no se encuentra habilitada en este momento</h2> <br> <p>En caso de dudas, consulte al <strong>${res.data.data.businessPhone.formatInternational}</strong> </p>`
                                 })
                             }
                             const blockHours = this.configurationsBranch.blockHour
