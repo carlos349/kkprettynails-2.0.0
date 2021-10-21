@@ -839,7 +839,7 @@
                     <span class="minAdd text-default"> Duración: {{selectedEvent.duration}} Min</span>
                 </center>
                 <hr>
-                <a-select class="col-9 col-md-9 mx-1" :default-value="selectedEvent.employe.name" >
+                <a-select v-if="editSelectValid" class="col-9 col-md-9 mx-1" :default-value="selectedEvent.employe.name" >
                     <a-select-option v-for="employe in selectedEvent.services[0].employes" :key="employe" @click="editEmployeDate(employe)" :value="employe.name">
                         {{employe.name}}
                     </a-select-option>
@@ -2915,6 +2915,11 @@ import mixinES from '../mixins/mixinES'
             return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
         },
         dataEdit(){
+            this.editSelectValid = false
+            setTimeout(() => {
+                this.editSelectValid = true
+                
+            }, 100);
             this.selectedEvent.isFirst = true
             this.employeForSearchEdit = this.selectedEvent.employe.id
             this.minLessEdit = 0
@@ -2922,6 +2927,7 @@ import mixinES from '../mixins/mixinES'
             this.finalBlockEdit = []
             this.validEditBlock = false
             this.dateModals.modal2 = true
+            
             this.selectedEvent.services[0].employes.forEach((element, i) => {
                 if (element.name == 'Primera disponible') {
                     this.selectedEvent.services[0].employes.splice(i, 1)
@@ -2952,9 +2958,11 @@ import mixinES from '../mixins/mixinES'
                         }, this.configHeader)
                         .then(res => {
                             this.blockFirstEdit = res.data.data
+                            this.searchBlockEdit()
                         })
                     })
                 })
+                
             }, 200);
         },
         changeDateEdit(){
@@ -2963,8 +2971,7 @@ import mixinES from '../mixins/mixinES'
             }, 5);
 
             setTimeout(() => {
-                const split = this.selectedEvent.createdAt.split('-')
-                var finalDate = split[1]+'-'+split[0]+'-'+split[2]
+                const finalDate = this.selectedEvent.createdAt
                 axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                     date: finalDate,
                     branch: this.branch
