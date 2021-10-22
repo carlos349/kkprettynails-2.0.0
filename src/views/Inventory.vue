@@ -84,13 +84,20 @@
                                     
                                 </template>
                                 <template slot="storeDev" slot-scope="record,column">
-                                  <a-tooltip placement="top">
+                                    <a-tooltip placement="top">
                                         <template slot="title">
                                             <span>Devolver cantidad a bodega</span>
                                         </template>
                                         <base-button v-if="column.productType == 'Materia prima'" 
                                         :disabled="(parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume) == 0 ? true : false" 
                                         size="sm" class="ml-2 mr-0" type="danger" @click="lessInventory = '', modals.modal6 = true, selectedProduct = column, totalValidLess = (parseFloat(column.quantity) + parseFloat(column.entry)) - parseFloat(column.consume)"><a-icon type="export" style="vertical-align: .13em;font-size: 1.1em;"/></base-button>
+                                    </a-tooltip>
+                                    <a-tooltip placement="top">
+                                        <template slot="title">
+                                            <span>Editar precio</span>
+                                        </template>
+                                        <base-button 
+                                        size="sm" class="ml-2 mr-0" type="default" @click="modals.modal7 = true, priceNew = column.price, idPriceNew = column._id"><a-icon type="dollar" style="vertical-align: .13em;font-size: 1.28em;"/></base-button>
                                     </a-tooltip>
                                 </template>
                                 <template slot="typeProduct" slot-scope="record, column">
@@ -110,8 +117,8 @@
                                         <a-button class="w-100" style="margin-left: 5px"> {{column.productType}} <a-icon style="vertical-align: 1.5px;" type="down" /> </a-button>
                                     </a-dropdown>
                                 </template>
-                                <template slot="price" slot-scope="record">
-                                    {{formatPrice(record)}}
+                                <template slot="priceInv" slot-scope="record">
+                                    $ {{formatPrice(record)}}
                                 </template>
                             </a-table>
                         </a-config-provider>    
@@ -175,8 +182,8 @@
                                           <template slot="date" slot-scope="record">
                                               {{formatDate(record)}}
                                           </template>
-                                          <template slot="price" slot-scope="record">
-                                              {{formatPrice(record)}}
+                                          <template slot="priceInv" slot-scope="record">
+                                              $ {{formatPrice(record)}}
                                           </template>
                                       </a-table>
                                   </a-config-provider>    
@@ -348,6 +355,32 @@
             </div>
         </card>
     </modal>
+    <modal :show.sync="modals.modal7"
+           body-classes="p-0"
+           modal-classes="modal-dialog-centered modal-sm">
+           <h6 slot="header" class="modal-title" id="modal-title-default">Editar precio</h6>
+        <card type="secondary" shadow
+            header-classes="bg-white pb-5"
+            body-classes="px-lg-5 py-lg-5"
+            class="border-0">
+            <template>
+                <div style="margin-top: -15%" class="text-muted mb-3 text-center">
+                    Precio
+                </div>
+            </template>
+            <currency-input
+                locale="de"
+                :placeholder="'Precio'"
+                addon-left-icon="ni ni-money-coins"
+                v-model="priceNew"
+                class="form-control mb-3"
+                style="margin-top:-10px;"
+            />
+            <div class="text-center">
+                <base-button type="warning" :disabled="priceNew > 0 ? false : true" v-on:click="editPrice()" class="my-2">Editar</base-button>
+            </div>
+        </card>
+    </modal>
   </div>
 </template>
 <script>
@@ -374,8 +407,11 @@ import mixinES from '../mixins/mixinES'
         modals: {
           modal4: false,
           modal5: false,
-          modal6: false
+          modal6: false,
+          modal7:false
         },
+        priceNew:0,
+        idPriceNew:'',
         lessInventory:'',
         totalValidLess: '',
         selectedProduct: '',
@@ -423,7 +459,7 @@ import mixinES from '../mixins/mixinES'
                 dataIndex: 'price',
                 key: 'price',
                 ellipsis: true,
-                scopedSlots: { customRender: 'price' },
+                scopedSlots: { customRender: 'priceInv' },
                 sorter: (a, b) => a.price - b.price,
             },
             {
@@ -477,7 +513,7 @@ import mixinES from '../mixins/mixinES'
                 sorter: (a, b) => (a.quantity + a.entry - a.consume) - (b.quantity + b.entry - b.consume),
             },
             {
-                title: 'Devolver a bodega',
+                title: 'Acciones',
                 key: '_id',
                 width: 170,
                 scopedSlots: { customRender: 'storeDev' }
@@ -715,6 +751,33 @@ import mixinES from '../mixins/mixinES'
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+        },
+        editPrice(){
+            axios.put(endPoint.endpointTarget+'/stores/chagepriceinventory/'+ this.idPriceNew,{
+                id:this.idPriceNew,
+                price: this.priceNew
+            }, this.configHeader)
+            .then(res => {
+                if (res.data.status == 'changed') {
+                    this.$swal({
+                        icon: 'success',
+                        title: 'El precio fue editado',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getProducts();
+                    this.modals.modal7 = false
+                }
+            }).catch(err => {
+                this.$swal({
+                    
+                    icon: 'error',
+                    title: 'Problemas con el servidor',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                console.log(err)
+            })
         },
         returnToStore(){
             axios.get(endPoint.endpointTarget+'/stores/getstorebyid/' + this.selectedProduct.storeId, this.configHeader)
