@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "99fbd248ecda4de4a23f",
+    "revision": "68345b40ec523ae01e3c",
     "url": "/css/app.f8c650d4.css"
   },
   {
-    "revision": "99fbd248ecda4de4a23f",
-    "url": "/js/app.e70de2cd.js"
+    "revision": "68345b40ec523ae01e3c",
+    "url": "/js/app.77e41fa5.js"
   },
   {
     "revision": "bad59788ccc2ce4546a5",
@@ -20,12 +20,12 @@ self.__precacheManifest = [
     "url": "/js/chunk-68cc9a36.9048fca2.js"
   },
   {
-    "revision": "a4f31c5a4b5d9ad20232",
+    "revision": "0a6319dfbe6054e8eb58",
     "url": "/css/chunk-73c2056c.7ad2a13c.css"
   },
   {
-    "revision": "a4f31c5a4b5d9ad20232",
-    "url": "/js/chunk-73c2056c.8ef8582c.js"
+    "revision": "0a6319dfbe6054e8eb58",
+    "url": "/js/chunk-73c2056c.efe2c306.js"
   },
   {
     "revision": "4ff80309779325cfe768",
@@ -36,12 +36,12 @@ self.__precacheManifest = [
     "url": "/js/chunk-vendors.aa839a19.js"
   },
   {
-    "revision": "e80ab009937ee71c6385",
+    "revision": "f99a0dfe753f349bf90a",
     "url": "/css/demo.e97bb344.css"
   },
   {
-    "revision": "e80ab009937ee71c6385",
-    "url": "/js/demo.a8960f9d.js"
+    "revision": "f99a0dfe753f349bf90a",
+    "url": "/js/demo.724af80e.js"
   },
   {
     "revision": "9c96e0ed7093c095fd33870329282962",
@@ -68,7 +68,7 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "2429c8d73cd853f9bcf229ed6aabd0c3",
+    "revision": "007e4317ac9feb6b403ae917953d103e",
     "url": "/index.html"
   },
   {
@@ -76,12 +76,12 @@ self.__precacheManifest = [
     "url": "/all.css"
   },
   {
-    "revision": "afb0175f4417917d8cb162e0884b5fa9",
-    "url": "/img/brand/calendar.png"
-  },
-  {
     "revision": "16d4b55f8b1c1f2cc3782a3e3386c329",
     "url": "/bootstrap.min.js"
+  },
+  {
+    "revision": "afb0175f4417917d8cb162e0884b5fa9",
+    "url": "/img/brand/calendar.png"
   },
   {
     "revision": "93929da7ae1722429c7e9d894761dc41",
@@ -108,36 +108,36 @@ self.__precacheManifest = [
     "url": "/img/theme/bootstrap.jpg"
   },
   {
-    "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
-    "url": "/img/theme/box.png"
-  },
-  {
     "revision": "a75ef9f6193ffa787c60baeea2e92d0c",
     "url": "/img/theme/Banner.png"
   },
   {
-    "revision": "c2da9acf4a2818e249a2ec94862a938d",
-    "url": "/img/theme/branch.png"
+    "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
+    "url": "/img/theme/box.png"
   },
   {
     "revision": "84335294072f0ad513fc8614b54a428a",
     "url": "/img/theme/calendar.png"
   },
   {
+    "revision": "c2da9acf4a2818e249a2ec94862a938d",
+    "url": "/img/theme/branch.png"
+  },
+  {
     "revision": "1881d2a2c3f7bb5e1b4ac0b2622291b0",
     "url": "/img/theme/clients.png"
   },
   {
-    "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
-    "url": "/img/theme/configuration.png"
+    "revision": "4567c9af4dfa454a6e3a9bf30a34fe80",
+    "url": "/img/theme/clients.jpg"
   },
   {
     "revision": "c1cacccae0d09aa2a50d3240f8457f2c",
     "url": "/img/theme/employeReport.png"
   },
   {
-    "revision": "4567c9af4dfa454a6e3a9bf30a34fe80",
-    "url": "/img/theme/clients.jpg"
+    "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
+    "url": "/img/theme/configuration.png"
   },
   {
     "revision": "ced0f2c9d36acd10447db1f3b3339104",
@@ -164,16 +164,12 @@ self.__precacheManifest = [
     "url": "/img/theme/react.jpg"
   },
   {
-    "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
-    "url": "/img/theme/profile-defaultt.png"
-  },
-  {
     "revision": "50e42caa32cb0364bb83b0c3b79016cb",
     "url": "/img/theme/sales.png"
   },
   {
-    "revision": "2b3e6ee5f8af9607fd4162e6eb7275a8",
-    "url": "/img/theme/services.png"
+    "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
+    "url": "/img/theme/profile-defaultt.png"
   },
   {
     "revision": "b0c11510c7d2a8e2f2402be014387b85",
@@ -184,12 +180,12 @@ self.__precacheManifest = [
     "url": "/img/theme/sketch.jpg"
   },
   {
-    "revision": "29e3026dd1091caff211c1761cb9d226",
-    "url": "/img/theme/store.png"
+    "revision": "2b3e6ee5f8af9607fd4162e6eb7275a8",
+    "url": "/img/theme/services.png"
   },
   {
-    "revision": "f703eaaed9a404e2b342a4d5d98f261a",
-    "url": "/img/theme/reportes.jpg"
+    "revision": "29e3026dd1091caff211c1761cb9d226",
+    "url": "/img/theme/store.png"
   },
   {
     "revision": "93929da7ae1722429c7e9d894761dc41",
@@ -200,12 +196,16 @@ self.__precacheManifest = [
     "url": "/img/theme/team-1-800x800.jpg"
   },
   {
+    "revision": "be997d5226b992ffad34816870c6b7aa",
+    "url": "/img/theme/team-2-800x800.jpg"
+  },
+  {
     "revision": "54e3f3c414bd8e7234bae3ee3be950e5",
     "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "be997d5226b992ffad34816870c6b7aa",
-    "url": "/img/theme/team-2-800x800.jpg"
+    "revision": "f703eaaed9a404e2b342a4d5d98f261a",
+    "url": "/img/theme/reportes.jpg"
   },
   {
     "revision": "66618a418175ddf2ac8c47a241d327a8",
@@ -224,12 +224,12 @@ self.__precacheManifest = [
     "url": "/jquery-3.3.1.slim.min.js"
   },
   {
-    "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
-    "url": "/img/theme/users.jpg"
-  },
-  {
     "revision": "b37d2558404192e18ca66e0533e57cf1",
     "url": "/popper.min.js"
+  },
+  {
+    "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
+    "url": "/img/theme/users.jpg"
   },
   {
     "revision": "735ab4f94fbcd57074377afca324c813",
