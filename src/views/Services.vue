@@ -1209,7 +1209,6 @@ import mixinES from '../mixins/mixinES'
                 this.editPayment = false
                 this.editPaymentAmount = 0
             }
-            console.log(this.itemsBox)
             this.EditlenderSelecteds = []
             this.EdititemSelected = []
             const discountFinal = discount ? false : true
@@ -1328,12 +1327,21 @@ import mixinES from '../mixins/mixinES'
                 // this.emitMethod()
             })
             .catch(err => {
-                this.$swal({
-                    icon: 'error',
-                    title: 'Debe rellenar los datos',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
             })
         },
         validRoute(route, type){
@@ -1434,6 +1442,22 @@ import mixinES from '../mixins/mixinES'
                         timer: 1500
                     })
                 }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
             })
         },
         deleteCategory(id){
@@ -1441,6 +1465,22 @@ import mixinES from '../mixins/mixinES'
             .then(res => {
                 if (res.data.status == 'ok') {
                     this.getCategories()
+                }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 }
             })
         }

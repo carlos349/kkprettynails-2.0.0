@@ -1113,7 +1113,7 @@ export default {
             }else if (valid == 2) {
                 if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '') {
                     if (this.registerClient.email.split('@').length == 2) {
-                        if (this.registerClient.email.split('@')[1].split('.').length == 2) {
+                        if (this.registerClient.email.split('@')[1].split('.').length >= 2) {
                             this.registerClient.valid = true
                         }else{
                             this.registerClient.valid = false
@@ -1211,6 +1211,7 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    this.editClientId = res.data.data._id
                     this.registerClient.select = this.registerClient.firstName
                     this.readyClient = false
                     this.ifEdit = true

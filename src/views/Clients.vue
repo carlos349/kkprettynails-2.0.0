@@ -633,7 +633,7 @@ export default {
             if (this.registerClient.phone.nationalNumber == "") {
                 if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '') {  
                     if (this.registerClient.email.split('@').length == 2) {
-                        if (this.registerClient.email.split('@')[1].split('.').length == 2) {
+                        if (this.registerClient.email.split('@')[1].split('.').length >= 2) {
                             this.registerClient.valid = true
                         }else{
                             this.registerClient.valid = false
