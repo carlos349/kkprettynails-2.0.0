@@ -511,7 +511,24 @@
             days: this.projection
           }, this.configHeader)
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getPorjection(){
@@ -522,9 +539,25 @@
           if (projection.data.status == 'ok') {
             this.calculatedProjection()
           }
-          console.log(projection)
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getExpenseTotal(){
@@ -533,7 +566,24 @@
           const expenses = await axios.get(endPoint.endpointTarget+'/metrics/getExpensesTotal/'+this.branch, this.configHeader)
           this.expenseTotal = expenses.data.total
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getServices(){
@@ -548,7 +598,24 @@
               this.serviceSelect = ''
           }
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getEmployes(){
@@ -562,7 +629,24 @@
             this.employeSelect = ''
           }
         }catch(err){
-            res.send(err)
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else if (err.response.status == 401) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Session caducada',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    router.push("login")
+                }, 1550);
+            }
         }
       },
       selectType(value){
@@ -595,9 +679,25 @@
             dates: this.dateFilter
           }, this.configHeader)
           this.graphDataDaily = getSales.data.series
-          console.log(getSales)
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getChartAnual(){
@@ -608,7 +708,24 @@
           this.graphDataAnual = getSales.data.series
           this.loadingChartAnual = false
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async filterAnualGraph(){
@@ -668,7 +785,24 @@
           this.$refs.chartApisAnual.updateOptions(this.chartOptionsAnual, false, true, true)
           this.loadingChartAnual = false
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async filterGraph(){
@@ -718,7 +852,24 @@
             
             this.loadingChart = false
           }catch(err){
-            console.log(err)
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else if (err.response.status == 401) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Session caducada',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    router.push("login")
+                }, 1550);
+            }
           }
         }else if (this.graphType == "diaryPromedies" || this.graphType == "diaryTotals" || this.graphType == "totalExpenses" || this.graphType == "commissionsByEmploye" || this.graphType == "servicesByEmploye" || this.graphType == "totalByEmploye" || this.graphType == "totalsTypesPays") {
           this.loadingChart = true
@@ -731,7 +882,6 @@
               branch: this.branch,
               dates: this.dateFilter
             }, this.configHeader)
-            console.log(getSales)
             this.graphDataDaily = getSales.data.series
             this.chartDaily = {
               chart: {
@@ -782,7 +932,24 @@
             this.$refs.chartApisDaily.updateOptions(this.chartDaily, false, true, true)
             this.loadingChart = false
           }catch(err){
-            console.log(err)
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else if (err.response.status == 401) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Session caducada',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    router.push("login")
+                }, 1550);
+            }
           }
         }else{
           this.loadingChart = true
@@ -800,7 +967,24 @@
             this.loadingChart = false
             // this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
           }catch(err){
-            console.log(err)
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else if (err.response.status == 401) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Session caducada',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    router.push("login")
+                }, 1550);
+            }
           }
         }
       },
@@ -815,7 +999,24 @@
           this.loadingChart = false
           // this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getDataDays(){
@@ -826,7 +1027,24 @@
           this.workDays = getDays.data.quantity > 0 ? getDays.data.quantity : 1
           // this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getDataService(){
@@ -837,7 +1055,24 @@
           }, this.configHeader)
           this.totalServices = getServices.data.total
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getSales(){
@@ -846,9 +1081,25 @@
           this.thisMonth.totalSale = getSalesTotals.data.data.thisMonth
           this.prevMonth.totalSale = getSalesTotals.data.data.prevMonth
           this.percentTotalSale = this.thisMonth.totalSale > 0 ? ((this.thisMonth.totalSale - this.prevMonth.totalSale) / this.thisMonth.totalSale) * 100 : 0
-          console.log(getSalesTotals)
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getItems(){
@@ -858,16 +1109,49 @@
           this.prevMonth.totalItems = getSalesTotals.data.data.prevMonth
           this.percentTotalItems = this.thisMonth.totalItems > 0 ? ((this.thisMonth.totalItems - this.prevMonth.totalItems) / this.thisMonth.totalItems) * 100 : 0
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       async getPayData(){
         try{
           const getPayData = await axios.get(`${endPoint.endpointTarget}/metrics/totalsTypesPays/${this.branch}`, this.configHeader)
           this.paysData = getPayData.data.data
-          console.log(this.paysData)
         }catch(err){
-          console.log(err)
+          if (!err.response) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Error de conexión',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+          }else if (err.response.status == 401) {
+              this.$swal({
+                  icon: 'error',
+                  title: 'Session caducada',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
+              setTimeout(() => {
+                  router.push("login")
+              }, 1550);
+          }
         }
       },
       validRoute(route, type){

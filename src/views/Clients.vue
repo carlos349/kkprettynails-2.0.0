@@ -531,19 +531,34 @@ export default {
                 const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
                 if (getAllClients.data.data.length > 0) {
                     this.clients = getAllClients.data.data
-
                     for (let index = 0; index < getAllClients.data.data.length; index++) {
                         this.clientsNames.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email)
                         this.clientIds.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email + "-" + getAllClients.data.data[index]._id)
                     }
-
                     this.progress = true
                     this.clientState = false
                 }else{
                     this.clientState = false
                 }
             }catch (err) {
-                res.send(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         handleSearch(selectedKeys, confirm, dataIndex) {
@@ -626,6 +641,25 @@ export default {
                             timer: 1500
                         })
                     }
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }
                 })
             }  
         },
@@ -646,7 +680,6 @@ export default {
                     this.registerClient.valid = false
                 }
             }else{
-                console.log('entre')
                 this.registerClient.valid = false
                 if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '' && this.registerClient.phone.isValid) {
                     if (this.registerClient.email.split('@').length == 2) {
@@ -737,7 +770,6 @@ export default {
                 attends: attends,
                 _id: _id
             }
-            console.log(this.registerClient)
         },
         deleteClient(id){
 			this.$swal({
@@ -763,7 +795,26 @@ export default {
                             })
                             EventBus.$emit('reloadClients', 'reload')
 						}
-					})
+					}).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
+                    })
 				}
 				else{
                     this.$swal({
@@ -801,6 +852,25 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
                 }
             })
         },

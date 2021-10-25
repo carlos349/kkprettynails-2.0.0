@@ -337,9 +337,25 @@ export default {
                     this.accessProfiles = getProfiles.data.data[0].profiles
                     this.idProfile = getProfiles.data.data[0]._id
                 }
-                console.log(this.accessProfiles)
-            } catch (error) {
-                console.log(error)
+            } catch (err) {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         selectProfile(profile, routes, index){
@@ -391,7 +407,6 @@ export default {
             })
         },
         openFunctionalities(index, route){
-            console.log(index, route)
             if (this.routesProfiles[index].valid) {
                 this.routeSelected = index
                 this.selectedRouteName = route
@@ -506,11 +521,45 @@ export default {
                             })
                         }
                     }catch(err){
-                        console.log(err)
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     }
                 }
-            } catch (error) {
-                console.log(error)
+            } catch (err) {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         activeCommission(checked){

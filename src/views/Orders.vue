@@ -526,13 +526,30 @@ export default {
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
-            
         },
         getServices(){
-            
             axios.get(endPoint.endpointTarget+'/servicios')
             .then(res => {
 				this.services = res.data
+            }).catch(err =>{
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         getOrders(){
@@ -547,14 +564,71 @@ export default {
                     
                     this.totalPending = parseFloat(this.totalPending)+parseFloat(remp2)
                 }
+            }).catch(err =>{
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
             axios.get(endPoint.endpointTarget+'/pedidos/findConfirmed')
             .then(res => {
                 this.rowsConfirmed = res.data
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
             axios.get(endPoint.endpointTarget+'/pedidos/findUsed')
             .then(res => {
                 this.rowsUsed = res.data
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         registerClients(){
@@ -607,6 +681,25 @@ export default {
                             type: ''
                         }
                     }, 1500);
+                }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
                 }
             })
         },
@@ -666,13 +759,10 @@ export default {
         formatDate(date) {
             let dateFormat = new Date(date)
             dateFormat.setDate(dateFormat.getDate() +1)
-
             return moment(dateFormat).format("DD-MM-YYYY")
         },
         formatDates(date){
             let dateFormat = new Date(date)
-            
-
             return moment(dateFormat).format("DD-MM-YYYY")
         },
         deleteClient(id){
@@ -712,7 +802,26 @@ export default {
 							// this.ServicesQuantityChartFunc();
 							// this.emitMethodTwo()
 						}
-					})
+					}).catch(err =>{
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
+                    })
 				}
 				else{
 					this.modals = {
@@ -742,7 +851,6 @@ export default {
                 instagramClienteEditar: this.registerClient.contactTwo,
             })
             .then(res => {
-                
                 if (res.data.status == 'Servicio actualizado') {
                     this.modals = {
                         modal2: true,
@@ -781,6 +889,25 @@ export default {
                         }
                     }, 1500);
                 }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         showFilter(){
@@ -814,7 +941,6 @@ export default {
 			
         },
         confirmar(){
-            
             axios.put(endPoint.endpointTarget+'/pedidos/'+this.idPedido, {
                 nombreClienteEditar: this.registerClient.name,
                 identidadClienteEditar: this.registerClient.id,
@@ -822,7 +948,6 @@ export default {
                 instagramClienteEditar: this.registerClient.contactTwo,
             })
             .then(res => {
-                console.log(res)
                 if (res.data.status == 'Servicio actualizado') {
                     axios.post(endPoint.endpointTarget+'/pedidos/sendEmailPedido',{
                         to : this.identidadPedido,
@@ -866,6 +991,25 @@ export default {
                             type: ''
                         }
                     }, 1500);
+                }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
                 }
             })
         },

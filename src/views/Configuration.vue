@@ -839,7 +839,24 @@
                 this.clients = getAllClients.data.data
               }
             }catch (err) {
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         async getConfiguration() {
@@ -850,14 +867,24 @@
               console.log(this.configData)
             }
           }catch(err){
-            this.$swal({
-              type: 'error',
-              icon: 'error',
-              title: 'Problemas con el servidor',
-              showConfirmButton: false,
-              timer: 1500
-            })
-            console.log(err)
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else if (err.response.status == 401) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Session caducada',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    router.push("login")
+                }, 1550);
+            }
           }
         },
         changeDatePolitic(valid){
@@ -899,7 +926,6 @@
                 day.time = TotalMinutes
               }
           }
-          console.log(this.configData.blockHour)
         },
         updateconfig(){
           this.calculatedHour()
@@ -932,17 +958,27 @@
               EventBus.$emit('reloadMicroservices', 'reload')
             }
           }).catch(err => {
-            this.$swal({
-                type: 'error',
-                title: 'Problemas tecnicos intente nuevamente',
-                showConfirmButton: false,
-                timer: 1500
-              })
-              console.log(err)
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else if (err.response.status == 401) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Session caducada',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    router.push("login")
+                }, 1550);
+            }
           })
         },
         updateconfigForTime(i){
-          console.log("fino")
           this.calculatedHour()
           this.updateconfig()
           axios.post(endPoint.endpointTarget+'/configurations/editblockhour', {
@@ -952,13 +988,24 @@
           .then(res => {
             console.log(res)
           }).catch(err => {
-            this.$swal({
-                type: 'error',
-                title: 'Problemas tecnicos intente nuevamente',
-                showConfirmButton: false,
-                timer: 1500
-              })
-              console.log(err)
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else if (err.response.status == 401) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Session caducada',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    router.push("login")
+                }, 1550);
+            }
           })
         },
         removeTypePay(index){
@@ -1144,7 +1191,24 @@
                 })
               }
             }catch(err){
-              alert(err)
+              if (!err.response) {
+                  this.$swal({
+                      icon: 'error',
+                      title: 'Error de conexión',
+                      showConfirmButton: false,
+                      timer: 1500
+                  })
+              }else if (err.response.status == 401) {
+                  this.$swal({
+                      icon: 'error',
+                      title: 'Session caducada',
+                      showConfirmButton: false,
+                      timer: 1500
+                  })
+                  setTimeout(() => {
+                      router.push("login")
+                  }, 1550);
+              }
             }
           }
         },

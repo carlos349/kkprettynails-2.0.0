@@ -367,13 +367,24 @@ export default {
                     }
                 }
             }catch(err){
-                this.$swal({
-                    icon: 'error',
-                    title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-                    showConfirmButton: false,
-                    timer: 2500
-                })
-                router.push({name: 'login'})
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         formatPrice(value) {
@@ -386,7 +397,6 @@ export default {
             }else{
                 this.validEgress = this.closeIdentification != '' ? true : false
             }
-            
         },
         totalFind(array){
             const total = array.find(element => element.type == 'Total')
@@ -423,7 +433,26 @@ export default {
                         this.socket.emit('sendNotification', res.data.data)
                     }) 
 				}
-			})
+			}).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
+            })
         },
         dataReport(id){
             localStorage.setItem('reportID', id)
@@ -448,13 +477,24 @@ export default {
                     this.checker = 'No hay cajero registrado'
                 }
             }catch(err){
-                this.$swal({
-                    icon: 'error',
-                    title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-                    showConfirmButton: false,
-                    timer: 2500
-                })
-                router.push({name: 'login'})
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         daySalesClose(){
@@ -471,6 +511,25 @@ export default {
                     this.typesPaySystem = res.data.data.totals
                     this.typesPayManual = res.data.data.types
                     this.modals.modal3 = true
+                }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
                 }
             })
         },
@@ -524,6 +583,25 @@ export default {
                             showConfirmButton: false,
                             timer: 1500
                         })
+                    }
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
                     }
                 })
             }else{

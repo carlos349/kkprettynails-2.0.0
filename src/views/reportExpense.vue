@@ -145,9 +145,25 @@ import mixinES from '../mixins/mixinES'
                 this.monthly = expenses.data.data.expenseTotals.Mensual
                 this.bonus = expenses.data.data.expenseTotals.Bono
                 this.inventoryTotal = expenses.data.data.expenseTotals.Inventario
-                console.log(expenses)
             }catch(err){
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         async getReinvestment(){
@@ -157,7 +173,24 @@ import mixinES from '../mixins/mixinES'
                     this.reinvestmentTotal = reinvestment.data.data.amount
                 }
             }catch(err){
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         async getTotalSales(){
@@ -167,7 +200,24 @@ import mixinES from '../mixins/mixinES'
                     this.totalSales = getTotal.data.data
                 }
             }catch(err){
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         getTotal(){

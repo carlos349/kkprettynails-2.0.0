@@ -1548,14 +1548,24 @@ import mixinES from '../mixins/mixinES'
                     this.products = []
                 }
             }catch(err){
-                this.$swal({
-                    
-                    icon: 'error',
-                    title: 'Problemas con el servidor',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         async getProviders() {
@@ -1572,14 +1582,24 @@ import mixinES from '../mixins/mixinES'
                 this.providerTable = []
             }
           }catch(err){
-            this.$swal({
-                
-                icon: 'error',
-                title: 'Problemas con el servidor',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            console.log(err)
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else if (err.response.status == 401) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Session caducada',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    router.push("login")
+                }, 1550);
+            }
           }
         },
         async getHistory() {
@@ -1596,14 +1616,24 @@ import mixinES from '../mixins/mixinES'
                 this.messageHistory = 'No tiene permisos para visualizar historial'
             }
           }catch(err){
-            this.$swal({
-                
-                icon: 'error',
-                title: 'Problemas con el servidor',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            console.log(err)
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else if (err.response.status == 401) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Session caducada',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    router.push("login")
+                }, 1550);
+            }
           }
         },
         async getBranches() {
@@ -1613,14 +1643,24 @@ import mixinES from '../mixins/mixinES'
                     this.branches = getBranches.data.data
                 }
             }catch(err){
-                this.$swal({
-                    
-                    icon: 'error',
-                    title: 'Problemas con el servidor',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         async getInventoryByBranch(branch, branchName) {
@@ -1643,14 +1683,24 @@ import mixinES from '../mixins/mixinES'
                 this.productForBranch = ''
                 
             }catch(err){
-                this.$swal({
-                    
-                    icon: 'error',
-                    title: 'Problemas con el servidor',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         selectLoad(){
@@ -1700,7 +1750,6 @@ import mixinES from '../mixins/mixinES'
                     .then(res => {
                         if (res.data.status == 'product registered') {
                             this.$swal({
-                                
                                 icon: 'success',
                                 title: 'El producto fue agregado a la sucursal',
                                 showConfirmButton: false,
@@ -1716,19 +1765,28 @@ import mixinES from '../mixins/mixinES'
                             }, 200);   
                         }
                     }).catch(err => {
-                        this.$swal({
-                            
-                            icon: 'error',
-                            title: 'Problemas con el servidor',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        console.log(err)
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     })
                 }
                 else{
                     this.$swal({
-                        
                         icon: 'error',
                         title: 'Acción cancelada',
                         showConfirmButton: false,
@@ -1795,29 +1853,49 @@ import mixinES from '../mixins/mixinES'
                                             this.getHistory()
                                         }
                                     }).catch(err => {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Problemas con el servidor',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        console.log(err)
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }else if (err.response.status == 401) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Session caducada',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            setTimeout(() => {
+                                                router.push("login")
+                                            }, 1550);
+                                        }
                                     })
                                 }
                             }).catch(err => {
-                                this.$swal({
-                                    
-                                    icon: 'error',
-                                    title: 'Problemas con el servidor',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                console.log(err)
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }else if (err.response.status == 401) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Session caducada',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    setTimeout(() => {
+                                        router.push("login")
+                                    }, 1550);
+                                }
                             })
                         }
                         else{
                             this.$swal({
-                                
                                 icon: 'error',
                                 title: 'Acción cancelada',
                                 showConfirmButton: false,
@@ -1834,8 +1912,26 @@ import mixinES from '../mixins/mixinES'
                         timer: 2000
                     })
                 }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
-            
         },
         addToProductBranch(id, storeId, measure, index) {
             axios.get(endPoint.endpointTarget+'/stores/getstorebyid/' + storeId, this.configHeader)
@@ -1894,24 +1990,45 @@ import mixinES from '../mixins/mixinES'
                                             this.getHistory()
                                         }
                                     }).catch(err => {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Problemas con el servidor',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        console.log(err)
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }else if (err.response.status == 401) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Session caducada',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            setTimeout(() => {
+                                                router.push("login")
+                                            }, 1550);
+                                        }
                                     })
                                 }
                             }).catch(err => {
-                                this.$swal({
-                                    
-                                    icon: 'error',
-                                    title: 'Problemas con el servidor',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                console.log(err)
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }else if (err.response.status == 401) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Session caducada',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    setTimeout(() => {
+                                        router.push("login")
+                                    }, 1550);
+                                }
                             })
                         }
                         else{
@@ -1933,8 +2050,26 @@ import mixinES from '../mixins/mixinES'
                         timer: 2000
                     })
                 }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
-            
         },
         deleteProductByBranch(data){
             this.$swal({
@@ -1963,7 +2098,6 @@ import mixinES from '../mixins/mixinES'
                         measure: data.measure
                     }, this.configHeader)
                     .then(res => {
-                        console.log(res)
                         if (res.data.status == 'product deleted') {
                             axios.post(endPoint.endpointTarget+'/expenses/', {
                                 branch: this.selectedBranch,
@@ -1989,24 +2123,45 @@ import mixinES from '../mixins/mixinES'
                                     this.getHistory()
                                 }
                             }).catch(err => {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Problemas con el servidor',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                console.log(err)
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }else if (err.response.status == 401) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Session caducada',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    setTimeout(() => {
+                                        router.push("login")
+                                    }, 1550);
+                                }
                             })
                         }
                     }).catch(err => {
-                        this.$swal({
-                            
-                            icon: 'error',
-                            title: 'Problemas con el servidor',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        console.log(err)
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     })
                 }
                 else{
@@ -2034,14 +2189,24 @@ import mixinES from '../mixins/mixinES'
                     this.messageHistory = 'No tiene permisos para visualizar historial'
                 }
             }catch(err){
-                this.$swal({
-                    
-                    icon: 'error',
-                    title: 'Problemas con el servidor',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         validDataProduct(){
@@ -2068,14 +2233,24 @@ import mixinES from '../mixins/mixinES'
                     this.modalAdminProduct.modal4 = false
                 }
             }).catch(err => {
-                this.$swal({
-                    
-                    icon: 'error',
-                    title: 'Problemas con el servidor',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         addProduct(){
@@ -2107,14 +2282,24 @@ import mixinES from '../mixins/mixinES'
                     })
                 }
             }).catch(err => {
-                this.$swal({
-                    
-                    icon: 'error',
-                    title: 'Problemas con el servidor',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         handleSearch(selectedKeys, confirm, dataIndex) {
@@ -2190,13 +2375,24 @@ import mixinES from '../mixins/mixinES'
                   })
               }
             }).catch(err => {
-                this.$swal({
-                    
-                    title: 'Problemas con el servidor',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         initialState(type,id){
@@ -2280,13 +2476,24 @@ import mixinES from '../mixins/mixinES'
                 })
               }    
             }).catch(err => {
-              this.$swal({
-                
-                title: 'El provedor no fue actualizado intente de nuevo',
-                showConfirmButton: false,
-                timer: 1500
-              })
-              console.log(err)
+              if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         addMore(){
@@ -2318,14 +2525,24 @@ import mixinES from '../mixins/mixinES'
                 this.getProducts();
                 this.getHistory()
             }).catch(err => {
-                this.$swal({
-                    
-                    icon: 'error',
-                    title: 'El producto no fue actualizado',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         selectProviderForProduct(value){
@@ -2356,13 +2573,24 @@ import mixinES from '../mixins/mixinES'
                             this.getProviders()
                         }
                     }).catch(err => {
-                        this.$swal({
-                            
-                            title: 'Problemas con el servidor',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        console.log(err)
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     })
                 }
                 else{
@@ -2398,7 +2626,6 @@ import mixinES from '../mixins/mixinES'
                     .then(res => {
                         if (res.data.status == 'product deleted') {
                             this.$swal({
-                                
                                 icon: 'success',
                                 title: 'Producto borrado con éxito',
                                 showConfirmButton: false,
@@ -2406,6 +2633,25 @@ import mixinES from '../mixins/mixinES'
                             })
                             this.getProducts()
                             this.getHistory()
+                        }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
                         }
                     })
                 }
@@ -2455,12 +2701,24 @@ import mixinES from '../mixins/mixinES'
                         })
                     }
                 }).catch(err => {
-                    this.$swal({
-                        icon:'error',
-                        title: 'Problemas tecnicos intente de nuevo',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }
                 })
             }else{
                 this.$swal({
@@ -2584,6 +2842,25 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                        }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
                         }
                     })
                 }

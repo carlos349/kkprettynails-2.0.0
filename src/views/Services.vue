@@ -927,7 +927,26 @@ import mixinES from '../mixins/mixinES'
                             this.getServices()
                         }
                     })
-                    .catch(err => console.log(err))
+                    .catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
+                    })
                 }else{
                     this.$swal({
                         icon: 'info',
@@ -951,14 +970,24 @@ import mixinES from '../mixins/mixinES'
                     this.alertTable = 'Sucursal sin servicios creados'
                 }
             }catch(err){
-                console.log(err)
-                // this.$swal({
-				// 	icon: 'error',
-				// 	title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-				// 	showConfirmButton: false,
-				// 	timer: 2500
-				// })
-				// router.push({name: 'login'})
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         async getProducts() {
@@ -971,7 +1000,24 @@ import mixinES from '../mixins/mixinES'
                     }
                 }
             }catch(err){
-                
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         formatPrice(value) {
@@ -990,7 +1036,24 @@ import mixinES from '../mixins/mixinES'
                     this.lenders = []
                 }
             }catch(err){
-                
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         selectedAll(value){
@@ -1147,6 +1210,25 @@ import mixinES from '../mixins/mixinES'
                                 timer: 1500
                             })
                         }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     })
                 }
             }
@@ -1187,7 +1269,6 @@ import mixinES from '../mixins/mixinES'
             }
         },
         dataEdit(id, lenders, name, time, discount, comission, price, items, category, branch, prepayment,additionalName){
-            console.log(items)
             this.itemsBox.forEach(element => {
                 element.check = false
                 element.count = ''
@@ -1201,7 +1282,6 @@ import mixinES from '../mixins/mixinES'
                     }
                 }
             }
-            console.log(prepayment)
             if (prepayment) {
                 this.editPayment = prepayment.ifPrepayment
                 this.editPaymentAmount = prepayment.amount
@@ -1255,7 +1335,6 @@ import mixinES from '../mixins/mixinES'
             }
         },
         editService(){
-            console.log(this.EdititemSelected)
             var timeService = 0 
             if (this.editTimeHoursRegister.includes('hr')) {
                 this.editTimeHoursRegister = this.editTimeHoursRegister.split(' ')[0]
@@ -1314,6 +1393,25 @@ import mixinES from '../mixins/mixinES'
                             this.getServices();
                             EventBus.$emit('reloadServices', 'reload')
                         }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     })
                 }
             }
@@ -1324,6 +1422,7 @@ import mixinES from '../mixins/mixinES'
             }, this.configHeader)
             .then(res => {
                 this.getServices();
+                
                 // this.emitMethod()
             })
             .catch(err => {
@@ -1341,6 +1440,9 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
                 }
             })
         },
@@ -1419,7 +1521,24 @@ import mixinES from '../mixins/mixinES'
                     this.categories = []
                 }
             }catch(err){
-                
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         newCategory(){
@@ -1457,6 +1576,9 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
                 }
             })
         },
@@ -1481,6 +1603,9 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
                 }
             })
         }

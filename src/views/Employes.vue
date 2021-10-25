@@ -417,7 +417,45 @@ export default {
                                 timer: 1500
                             })
                         }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     })
+                }
+            }).catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
                 }
             })
         },
@@ -435,7 +473,24 @@ export default {
                     // this.toArray = false
                 }
             }catch(err){
-                res.send(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         async getEmployes(){
@@ -451,18 +506,33 @@ export default {
                     }, 200);
                 }
             }catch(err){
-                res.send(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         selectHourInit(value){
             this.hourInit = value
             this.dayValid = true
-            console.log(this.originalDays)
         },
         selectHourFinally(value){
             this.hourFinally = value
             this.dayValid = true
-            console.log(this.originalDays)
         },
         addHour(day, index){
             setTimeout(() => {
@@ -473,7 +543,6 @@ export default {
                         this.days[index - 1].start = this.hourInit  
                     }
                 }
-                console.log(this.validHoursDays()) 
             }, 200);
         },
         removeHour(day, index){
@@ -485,11 +554,9 @@ export default {
                         this.days[index - 1].end = this.hourFinally                  
                     }
                 }
-                console.log(this.validHoursDays()) 
             }, 200);
         },
         addDay(id, value, valid){
-            console.log(valid)
             if (valid) {
                 this.days[id - 1].validator = false
                 for (let index = 0; index < this.days.length; index++) {
@@ -501,11 +568,9 @@ export default {
                         }
                     }
                 }
-                console.log(this.selectedDays)
                 this.validRegister()
             }else{
                 this.days[id - 1].validator = true
-                console.log(this.days)
                 this.selectedDays.push({day: value, hours: []})
             }
         },
@@ -540,7 +605,6 @@ export default {
             }
         },
         validHoursDays(){
-            console.log(this.days)
             if (this.selectedDays.length > 0) {
                 for (const days of this.days) {
                     if (days.validator) {
@@ -602,6 +666,25 @@ export default {
                                 timer: 1500
                             })
                         }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     })
                 }else{
                     this.$swal.fire({
@@ -616,7 +699,6 @@ export default {
             
         },
         updateEmploye(){
-            console.log(this.selectedDays)
             if (this.validHoursDays() == 'hora atras') {
                 this.$swal.fire({
                     icon: 'error',
@@ -626,7 +708,6 @@ export default {
                 })
             }else{
                 if (this.registerEmploye.firstName.length > 3 && this.registerEmploye.lastName.length > 3 && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
-                    console.log(this.originalDays)
                     axios.put(endPoint.endpointTarget+'/employes', {
                         id:this.registerEmploye._id,
                         firstName: this.registerEmploye.firstName,
@@ -666,6 +747,25 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                        }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
                         }
                     })
                 }else{
@@ -708,13 +808,44 @@ export default {
                         }
                     })
                     .catch(err => {
-                        this.$swal({
-                            type: 'error',
-                            title: 'Hubo un problema',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     })
+                }
+            }).catch(err =>{
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
                 }
             })	
 		},
@@ -742,7 +873,6 @@ export default {
             }
         },
         validFields(field){
-            console.log("y entonces?")
             if (field == 'c') {
                 if (this.registerUser.correo == this.registerUser.correoConfirm) {
                 this.registerUser.c = true

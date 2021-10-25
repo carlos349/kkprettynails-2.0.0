@@ -112,12 +112,24 @@ export default {
                     this.mails = "carlos.gomes349@gmail.com"
                 }
             }catch(err){
-                this.$swal({
-                    icon: 'error',
-                    title: 'Problemas de conexión',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         async getEmailSend(){
@@ -125,16 +137,27 @@ export default {
                 const getEmail = await axios.get(`${endPoint.endpointTarget}/configurations/${this.branch}`, this.configHeader)
                 if (getEmail.data.status == 'ok') {
                     this.email = getEmail.data.data.businessEmail
-                    this.email = "carlos.gomes349@gmail.com"
-                    console.log(this.email)
+                    // this.email = "carlos.gomes349@gmail.com"
                 }
             }catch(err){
-                this.$swal({
-                    icon: 'error',
-                    title: 'Problemas de conexión',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         SendMail() {
@@ -156,12 +179,24 @@ export default {
                         })
                     }
                 }).catch(err => {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Problemas de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }
                 })
             });
         },

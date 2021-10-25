@@ -308,7 +308,6 @@ import mixinES from '../mixins/mixinES'
                 this.advancement = resData.data.data.advancement
                 axios.get(endPoint.endpointTarget+'/employes/salesbyemploye/'+this.id, this.configHeader)
                 .then(res => {
-                    console.log(res)
                     this.sales = res.data.data
                     this.initDate = res.data.data[0].createdAt
                     for (const sale in this.sales) {
@@ -324,10 +323,46 @@ import mixinES from '../mixins/mixinES'
                             window.close()
                         }, 200);
                     }, 200);
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }
                 })
             })
             .catch(err => {
-                console.log(err )
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
     }

@@ -454,7 +454,6 @@
             async getData() {
 				try{
 					const user = await axios.get(endPoint.endpointTarget+'/users/'+this.id, this.configHeader)
-                    console.log(user)
 					this.model.first_name = user.data.data.first_name
 					this.model.last_name = user.data.data.last_name
 					this.model.email = user.data.data.email
@@ -465,13 +464,24 @@
                     this.model.linkLender = user.data.data.linkLender
                     this.haveImage = user.data.data.userImage
 				}catch(err) {
-					this.$swal({
-						type: 'error',
-						title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-						showConfirmButton: false,
-						timer: 2500
-					})
-					router.push({name: 'login'})	
+					if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }	
 				}
 				
             },
@@ -507,15 +517,24 @@
                             
 						}
 					}catch(err)  {
-                        console.log(err)
-						// $('#ModalEditPass').modal('hide')
-						// this.$swal({
-						// 	type: 'error',
-						// 	title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-						// 	showConfirmButton: false,
-						// 	timer: 2500
-						// })
-						// router.push({name: 'login'})
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
 					}
 				}else{
                     this.$swal({
@@ -542,7 +561,24 @@
                             this.gainLender = this.gainLender + sales.data.data[index].commission
                         }
                     }catch(err){
-                        console.log(err)
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     }
                     
 				}
@@ -562,7 +598,24 @@
                         const plus = this.advancement + this.lenderBonus
                         this.totalForLender = this.comision - plus
                     }catch(err) {
-                        console.log(err)
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     }
                 }
             },
@@ -615,14 +668,24 @@
 					EventBus.$emit('dataChange', dataChange)
 					this.getData()
 				} catch(err)  {
-                    console.log(err)
-					// this.$swal({
-					// 	type: 'error',
-					// 	title: 'Acceso invalido, ingrese de nuevo, si el problema persiste comuniquese con el proveedor del servicio',
-					// 	showConfirmButton: false,
-					// 	timer: 2500
-					// })
-					// router.push({name: 'login'})
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }
 				}
 			}, 
         },

@@ -589,71 +589,108 @@ import mixinES from '../mixins/mixinES'
         async getHistoryCloses(){
             try {
                 const getHistory = await axios.get(`${endPoint.endpointTarget}/employes/historyCloses/${this.id}`, this.configHeader)
-                console.log(getHistory)
                 if (getHistory.data.status == 'ok') {
                     this.historyCloses = getHistory.data.data
                 }else{
                     this.historyCloses = []
                 }
             }catch(err){
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
         },
         async cancelSale(id,servicios, comission){
-            console.log(comission)
-            const cancelSale = await axios.put(endPoint.endpointTarget+'/ventas/'+id, {
-                employeComision: comission
-            })
-            if (cancelSale.data.status == 'ok') {
-                axios.post(endPoint.endpointTarget+'/inventario/nullSale', {
-                    array:servicios
+            try{
+                const cancelSale = await axios.put(endPoint.endpointTarget+'/ventas/'+id, {
+                    employeComision: comission
                 })
-                this.modals = {
-                    modal1: true,
-                    message: "¡Venta anulada!",
-                    icon: 'ni ni-check-bold ni-5x',
-                    type: 'success'
-                }
-                setTimeout(() => {
+                if (cancelSale.data.status == 'ok') {
+                    axios.post(endPoint.endpointTarget+'/inventario/nullSale', {
+                        array:servicios
+                    })
                     this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: false,
-                        message: "",
-                        icon: '',
-                        type:''
+                        modal1: true,
+                        message: "¡Venta anulada!",
+                        icon: 'ni ni-check-bold ni-5x',
+                        type: 'success'
                     }
-                }, 1500);
-                this.getData()
-                const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
-                    branch: this.branch,
-                    userName:this.firstNameUser + " " + this.lastNameUser,
-                    userImage:this.imgUser,
-                    detail:'Anuló una venta del día '+this.formatDate(this.arreglo.fecha),
-                    link: 'Ventas'
-                }, this.configHeader)
-                if (notify) {
-                    this.socket.emit('sendNotification', notify.data)
-                }   
-            }
-            else{
-                this.modals = {
-                    modal1: true,
-                    message: "¡Error al anular!",
-                    icon: 'ni ni-fat-remove ni-5x',
-                    type: 'danger'
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            message: "",
+                            icon: '',
+                            type:''
+                        }
+                    }, 1500);
+                    this.getData()
+                    const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
+                        branch: this.branch,
+                        userName:this.firstNameUser + " " + this.lastNameUser,
+                        userImage:this.imgUser,
+                        detail:'Anuló una venta del día '+this.formatDate(this.arreglo.fecha),
+                        link: 'Ventas'
+                    }, this.configHeader)
+                    if (notify) {
+                        this.socket.emit('sendNotification', notify.data)
+                    }   
                 }
-                setTimeout(() => {
+                else{
                     this.modals = {
-                        modal1: false,
-                        modal2: false,
-                        modal3: false,
-                        message: "",
-                        icon: '',
-                        type:''
+                        modal1: true,
+                        message: "¡Error al anular!",
+                        icon: 'ni ni-fat-remove ni-5x',
+                        type: 'danger'
                     }
-                }, 1500);
+                    setTimeout(() => {
+                        this.modals = {
+                            modal1: false,
+                            modal2: false,
+                            modal3: false,
+                            message: "",
+                            icon: '',
+                            type:''
+                        }
+                    }, 1500);
+                }
+            }catch(err){
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             }
+            
         },
         validRegister(){
             this.dataExpense.valid = this.dataExpense.reason != '' && this.dataExpense.amount > 0 ? true : false
@@ -714,7 +751,24 @@ import mixinES from '../mixins/mixinES'
                 }
             })
             .catch(err => {
-                console.log(err)
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         formatDate(date) {
@@ -726,7 +780,6 @@ import mixinES from '../mixins/mixinES'
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         async nullSale(id, idItem, date, data){
-            console.log(data.typesPay.length)
             if (data.typesPay.length > 1) {
                 this.$swal({
                     icon: 'error',
@@ -780,6 +833,25 @@ import mixinES from '../mixins/mixinES'
                                     timer: 1500
                                 })
                             }
+                        }).catch(err => {
+                            if (!err.response) {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Error de conexión',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }else if (err.response.status == 401) {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Session caducada',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                setTimeout(() => {
+                                    router.push("login")
+                                }, 1550);
+                            }
                         })                    
                     }else{
                         this.$swal('No se hizo el cierre', 'Aborto la acción', 'info')
@@ -804,10 +876,46 @@ import mixinES from '../mixins/mixinES'
                     this.sales = res.data.data
                     this.dateInit = res.data.data[0] ? res.data.data[0].createdAt : ''
                     this.progress = false
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }
                 })
             })
             .catch(err => {
-                console.log(err )
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
             })
         },
         formatPrice(value) {
@@ -863,14 +971,48 @@ width=0,height=0,left=-1000,top=-1000`;
                                     })
                                 }
                             }).catch(err => {
-                                console.log(err)
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }else if (err.response.status == 401) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Session caducada',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    setTimeout(() => {
+                                        router.push("login")
+                                    }, 1550);
+                                }
                             })
                         }else{
                             this.$swal('Error en el cierre', 'Hubo un error', 'error')
                         }
                     }) 
                     .catch(err => {
-                        console.log(err)
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
                     })                 
                 }else{
                     this.$swal('No se hizo el cierre', 'Acción cancelada', 'info')
