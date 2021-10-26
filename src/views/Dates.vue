@@ -2045,7 +2045,7 @@ import mixinES from '../mixins/mixinES'
                 var start = parseFloat(splitStart[0]+splitStart[1]) * 0.60
                 var end = parseFloat(splitEnd[0]+splitEnd[1]) * 0.60
                 this.startCalendar = parseInt(splitStart[1]) == 30 ? start + 12 : start
-                this.endCalendar = en
+                this.endCalendar = end
                 for (let index = 0; index < this.employeShow.length; index++) {
                     const name = this.employeShow[index];
                     for (let j = 0; j < event.events.length; j++) {
