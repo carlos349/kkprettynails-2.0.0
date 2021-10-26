@@ -182,6 +182,11 @@ export default new Router({
           component: () => import('./views/Sales.vue')
         },
         {
+          path: '/Logs',
+          name: '',
+          component: () => import('./views/logs.vue')
+        },
+        {
           path: '/Servicios',
           name: '',
           component: () => import('./views/Services.vue')
