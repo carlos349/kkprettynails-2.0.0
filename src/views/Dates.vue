@@ -5324,6 +5324,8 @@ import mixinES from '../mixins/mixinES'
             })
         },
         insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg){
+            console.log("hola")
+            this.load2 = true
             if (lender == 'Primera disponible') {
                 if (index == 0) {
                     for (let i = 0; i < this.registerDae.serviceSelectds.length; i++) {
@@ -5358,6 +5360,7 @@ import mixinES from '../mixins/mixinES'
                             }, this.configHeader)
                             .then(res => {
                                 this.readyChange = true
+                                this.load2 = false
                                 this.registerDae.serviceSelectds[0].valid = true
                                 this.registerDae.serviceSelectds[0].blocks = res.data.data
                                 this.registerDae.block = res.data.data
@@ -5408,6 +5411,7 @@ import mixinES from '../mixins/mixinES'
                             firstBlock: true
                         })
                         .then(res => {
+                            this.load2 = false
                             this.registerDae.serviceSelectds[index].valid = true
                             this.registerDae.serviceSelectds[index].blocks = res.data.data
                             this.registerDae.serviceSelectds[index].blocksFirst = []
@@ -5439,6 +5443,7 @@ import mixinES from '../mixins/mixinES'
                             firstBlock: true
                         })
                         .then(res => {
+                            this.load2 = false
                             this.registerDae.serviceSelectds[index].valid = true
                             this.registerDae.serviceSelectds[index].blocks = res.data.data
                             this.registerDae.serviceSelectds[index].blocksFirst = []
@@ -5533,6 +5538,7 @@ import mixinES from '../mixins/mixinES'
                     }, this.configHeader)
                     .then(res => {
                         if (res.data.status == 'ok') {
+                            this.load2 = false
                             this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
                             this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
                             this.registerDae.serviceSelectds[index].itFirst = false
@@ -5606,6 +5612,7 @@ import mixinES from '../mixins/mixinES'
                     }, this.configHeader)
                     .then(res => {
                         if (res.data.status == 'ok') {
+                            this.load2 = false
                             this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
                             this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
                             this.registerDae.serviceSelectds[index].itFirst = false
