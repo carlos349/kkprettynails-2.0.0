@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "56511d0f92be04d22006",
+    "revision": "ac455dbd63cfa181c362",
     "url": "/css/app.f8c650d4.css"
   },
   {
-    "revision": "56511d0f92be04d22006",
-    "url": "/js/app.00e04702.js"
+    "revision": "ac455dbd63cfa181c362",
+    "url": "/js/app.7fde44b1.js"
   },
   {
     "revision": "502835ffc66a387f6ec5",
@@ -20,12 +20,12 @@ self.__precacheManifest = [
     "url": "/js/chunk-68cc9a36.9048fca2.js"
   },
   {
-    "revision": "0fa2e6db59622fb4111a",
+    "revision": "f17fa4be0865093d8c69",
     "url": "/css/chunk-73c2056c.7ad2a13c.css"
   },
   {
-    "revision": "0fa2e6db59622fb4111a",
-    "url": "/js/chunk-73c2056c.8d9da1b7.js"
+    "revision": "f17fa4be0865093d8c69",
+    "url": "/js/chunk-73c2056c.ea845508.js"
   },
   {
     "revision": "4ff80309779325cfe768",
@@ -68,8 +68,12 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "4c1cbd6cbe9010254e5742c029c81d63",
+    "revision": "4a50d64fbaa920a787bc30ee7dc649e7",
     "url": "/index.html"
+  },
+  {
+    "revision": "185539981482cea1299c1fdcebb598b4",
+    "url": "/all.css"
   },
   {
     "revision": "afb0175f4417917d8cb162e0884b5fa9",
@@ -78,10 +82,6 @@ self.__precacheManifest = [
   {
     "revision": "16d4b55f8b1c1f2cc3782a3e3386c329",
     "url": "/bootstrap.min.js"
-  },
-  {
-    "revision": "185539981482cea1299c1fdcebb598b4",
-    "url": "/all.css"
   },
   {
     "revision": "93929da7ae1722429c7e9d894761dc41",
@@ -96,6 +96,10 @@ self.__precacheManifest = [
     "url": "/img/theme/access.png"
   },
   {
+    "revision": "2ed0763d9ab3049120da4ac7f64652ef",
+    "url": "/img/theme/agenda.jpg"
+  },
+  {
     "revision": "1f533d2fdc40493ee834dd8e4288220c",
     "url": "/img/theme/angular.jpg"
   },
@@ -106,10 +110,6 @@ self.__precacheManifest = [
   {
     "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
     "url": "/img/theme/box.png"
-  },
-  {
-    "revision": "2ed0763d9ab3049120da4ac7f64652ef",
-    "url": "/img/theme/agenda.jpg"
   },
   {
     "revision": "a75ef9f6193ffa787c60baeea2e92d0c",
@@ -140,16 +140,24 @@ self.__precacheManifest = [
     "url": "/img/theme/employes.png"
   },
   {
-    "revision": "4567c9af4dfa454a6e3a9bf30a34fe80",
-    "url": "/img/theme/clients.jpg"
-  },
-  {
     "revision": "ef90ef6ebf8cfa521445aea45be0f3d0",
     "url": "/img/theme/metrics.png"
   },
   {
+    "revision": "4567c9af4dfa454a6e3a9bf30a34fe80",
+    "url": "/img/theme/clients.jpg"
+  },
+  {
+    "revision": "db1039af1a43f2ad9d499468459fcd9c",
+    "url": "/img/theme/inventario.jpg"
+  },
+  {
     "revision": "2300fe007d5a1d67cb00c281b16319c5",
     "url": "/img/theme/profile-default.png"
+  },
+  {
+    "revision": "50dd5fdc839dfc16739b15370650485c",
+    "url": "/img/theme/react.jpg"
   },
   {
     "revision": "e7be3ecd921efc88bbca5e090862eac7",
@@ -158,14 +166,6 @@ self.__precacheManifest = [
   {
     "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
     "url": "/img/theme/profile-defaultt.png"
-  },
-  {
-    "revision": "50dd5fdc839dfc16739b15370650485c",
-    "url": "/img/theme/react.jpg"
-  },
-  {
-    "revision": "db1039af1a43f2ad9d499468459fcd9c",
-    "url": "/img/theme/inventario.jpg"
   },
   {
     "revision": "50e42caa32cb0364bb83b0c3b79016cb",
@@ -208,12 +208,12 @@ self.__precacheManifest = [
     "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "4524351b9c58adb85b5e1b32374347ab",
-    "url": "/img/theme/users.png"
-  },
-  {
     "revision": "66618a418175ddf2ac8c47a241d327a8",
     "url": "/img/theme/team-4-800x800.jpg"
+  },
+  {
+    "revision": "4524351b9c58adb85b5e1b32374347ab",
+    "url": "/img/theme/users.png"
   },
   {
     "revision": "c532f6f0176968caa6265864ee1abb35",
@@ -228,12 +228,12 @@ self.__precacheManifest = [
     "url": "/popper.min.js"
   },
   {
-    "revision": "735ab4f94fbcd57074377afca324c813",
-    "url": "/robots.txt"
-  },
-  {
     "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
     "url": "/img/theme/users.jpg"
+  },
+  {
+    "revision": "735ab4f94fbcd57074377afca324c813",
+    "url": "/robots.txt"
   },
   {
     "revision": "b19bbdd813f73aa193678e5a04d297d8",
