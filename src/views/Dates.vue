@@ -2162,43 +2162,6 @@ import mixinES from '../mixins/mixinES'
             clearFilters();
             this.searchText = '';
         },
-        getClosed() {
-            axios.get(endPoint.endpointTarget+'/dates/endingdates/'+this.branch, this.configHeader)
-            .then(res => {
-                this.closedDates = []
-                this.lengthClosedDates = 0
-                let date = new Date()
-                let dates = date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear()
-                for (let i = 0; i < res.data.length; i++) {
-                    let dateF = new Date(res.data[i].date)
-                    let datesF = (dateF.getDate())+"-"+(dateF.getMonth()+1)+"-"+dateF.getFullYear()
-                    if (dates == datesF) {
-                        this.closedDates.push(res.data[i])
-                    }
-                }
-                this.lengthClosedDates = this.closedDates.length
-                this.loadingEnds = false
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
-                }
-            })
-        },
         getEmployes(){
   			axios.get(endPoint.endpointTarget+'/employes/UsersEmployes/'+this.branch, this.configHeader)
   			.then(res => {
