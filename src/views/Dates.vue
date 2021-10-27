@@ -1912,7 +1912,7 @@ import mixinES from '../mixins/mixinES'
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
-                            title: 'Error de conexión',
+                            title: 'Error de conexión8',
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -2045,7 +2045,7 @@ import mixinES from '../mixins/mixinES'
                 var start = parseFloat(splitStart[0]+splitStart[1]) * 0.60
                 var end = parseFloat(splitEnd[0]+splitEnd[1]) * 0.60
                 this.startCalendar = parseInt(splitStart[1]) == 30 ? start + 12 : start
-                this.endCalendar = en
+                this.endCalendar = end
                 for (let index = 0; index < this.employeShow.length; index++) {
                     const name = this.employeShow[index];
                     for (let j = 0; j < event.events.length; j++) {
@@ -3469,7 +3469,7 @@ import mixinES from '../mixins/mixinES'
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
-                            title: 'Error de conexión',
+                            title: 'Error de conexión6',
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -3569,7 +3569,7 @@ import mixinES from '../mixins/mixinES'
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
-                            title: 'Error de conexión',
+                            title: 'Error de conexión5',
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -4783,179 +4783,182 @@ import mixinES from '../mixins/mixinES'
         },
         openCalendar(){
             setTimeout(() => {
-                const split = this.registerDae.date.split('-')
-                this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
-                const restDay = new Date(this.finalDate+' 10:00')
-                this.getDay = restDay.getDay()
-                var onlySunday = split[0]+'-'+split[1]
-                if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
-                    this.modals = {
-                        modal3: true,
-                        message: "Disculpa, No laboramos Sábados y Domingos.",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1:false,
-                            modal2:false,
-                            modal3: false,
-                            modal4: false,
-                            modal5: false,
-                            message: "",
-                            icon: '',
-                            type: ''
-                        }
-                        this.registerDae.date = ''
-                    }, 3000);
-                }else{
-                    if (this.readyChange) {
-                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                            const element = this.registerDae.serviceSelectds[index];
-                            element.start = ''
-                            element.end = ''
-                            element.sort = ''
-                            element.class = ''
-                            element.blocks = []
-                            element.blocksFirst = []
-                            element.valid = false
-                            element.employe = 'Primera disponible'
-                            element.employeImg = ''
-                            element.employeId = ''
-                            element.realEmploye = 'Primera disponible'
-                        }
-                        this.validHour = false
-                        setTimeout(() => {
-                            axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                                date: this.finalDate,
-                                branch: this.branch
-                            }, this.configHeader)
-                            .then(res => {
-                                this.getDay = res.data.day
-                                this.availableslenders = res.data.array
-                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                    date: this.finalDate,
-                                    employes: res.data.array,
-                                    timedate: this.registerDae.serviceSelectds[0].duration,
-                                    employesServices: this.registerDae.serviceSelectds[0].employes,
-                                    branch: this.branch
-                                }, this.configHeader)
-                                .then(res => {
-                                    this.idDatesBlocks = res.data.id
-                                    this.readyChange = true
-                                    this.registerDae.serviceSelectds[0].valid = true
-                                    this.registerDae.serviceSelectds[0].blocks = res.data.data
-                                    this.registerDae.block = res.data.data
-                                    $('#block0').toggle('slow')
-                                    this.load1 = false
-                                }).catch(err => {
-                                    if (!err.response) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Error de conexión',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                    }else if (err.response.status == 401) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Session caducada',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        setTimeout(() => {
-                                            router.push("login")
-                                        }, 1550);
-                                    }
-                                })
-                            }).catch(err => {
-                                if (!err.response) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Error de conexión',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
+                      if (this.registerDae.date != "") {
+                        const split = this.registerDae.date.split('-')
+                        this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
+                        const restDay = new Date(this.finalDate+' 10:00')
+                        this.getDay = restDay.getDay()
+                        var onlySunday = split[0]+'-'+split[1]
+                        if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
+                            this.modals = {
+                                modal3: true,
+                                message: "Disculpa, No laboramos Sábados y Domingos.",
+                                icon: 'ni ni-fat-remove ni-5x',
+                                type: 'danger'
+                            }
+                            setTimeout(() => {
+                                this.modals = {
+                                    modal1:false,
+                                    modal2:false,
+                                    modal3: false,
+                                    modal4: false,
+                                    modal5: false,
+                                    message: "",
+                                    icon: '',
+                                    type: ''
                                 }
-                            })
-                        }, 200); 
-                    }else{
-                        setTimeout(() => {
-                            axios.post(endPoint.endpointTarget+'/dates/availableslenders', {
-                                date: this.finalDate,
-                                branch: this.branch
-                            }, this.configHeader)
-                            .then(res => {
-                                this.getDay = res.data.day
-                                this.availableslenders = res.data.array
-                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                    date: this.finalDate,
-                                    employes: res.data.array,
-                                    timedate: this.registerDae.serviceSelectds[0].duration,
-                                    employesServices: this.registerDae.serviceSelectds[0].employes,
-                                    branch: this.branch
-                                }, this.configHeader)
-                                .then(res => {
-                                    this.idDatesBlocks = res.data.id
-                                    this.readyChange = true
-                                    this.registerDae.serviceSelectds[0].valid = true
-                                    this.registerDae.serviceSelectds[0].blocks = res.data.data
-                                    this.registerDae.block = res.data.data
-                                    this.load1 = false
-                                }).catch(err => {
-                                    if (!err.response) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Error de conexión',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                    }else if (err.response.status == 401) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Session caducada',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        setTimeout(() => {
-                                            router.push("login")
-                                        }, 1550);
-                                    }
-                                })
-                            }).catch(err => {
-                                if (!err.response) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Error de conexión',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
+                                this.registerDae.date = ''
+                            }, 3000);
+                        }else{
+                            if (this.readyChange) {
+                                for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                                    const element = this.registerDae.serviceSelectds[index];
+                                    element.start = ''
+                                    element.end = ''
+                                    element.sort = ''
+                                    element.class = ''
+                                    element.blocks = []
+                                    element.blocksFirst = []
+                                    element.valid = false
+                                    element.employe = 'Primera disponible'
+                                    element.employeImg = ''
+                                    element.employeId = ''
+                                    element.realEmploye = 'Primera disponible'
                                 }
-                            })
-                        }, 200); 
-                    }
-                }
-            }, 200);
+                                this.validHour = false
+                                setTimeout(() => {
+                                    axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                                        date: this.finalDate,
+                                        branch: this.branch
+                                    }, this.configHeader)
+                                    .then(res => {
+                                        this.getDay = res.data.day
+                                        this.availableslenders = res.data.array
+                                        axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                                            date: this.finalDate,
+                                            employes: res.data.array,
+                                            timedate: this.registerDae.serviceSelectds[0].duration,
+                                            employesServices: this.registerDae.serviceSelectds[0].employes,
+                                            branch: this.branch
+                                        }, this.configHeader)
+                                        .then(res => {
+                                            this.idDatesBlocks = res.data.id
+                                            this.readyChange = true
+                                            this.registerDae.serviceSelectds[0].valid = true
+                                            this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                            this.registerDae.block = res.data.data
+                                            $('#block0').toggle('slow')
+                                            this.load1 = false
+                                        }).catch(err => {
+                                            if (!err.response) {
+                                                this.$swal({
+                                                    icon: 'error',
+                                                    title: 'Error de conexión4',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                })
+                                            }else if (err.response.status == 401) {
+                                                this.$swal({
+                                                    icon: 'error',
+                                                    title: 'Session caducada',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                })
+                                                setTimeout(() => {
+                                                    router.push("login")
+                                                }, 1550);
+                                            }
+                                        })
+                                    }).catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }else if (err.response.status == 401) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Session caducada',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            setTimeout(() => {
+                                                router.push("login")
+                                            }, 1550);
+                                        }
+                                    })
+                                }, 200); 
+                            }else{
+                                setTimeout(() => {
+                                    axios.post(endPoint.endpointTarget+'/dates/availableslenders', {
+                                        date: this.finalDate,
+                                        branch: this.branch
+                                    }, this.configHeader)
+                                    .then(res => {
+                                        this.getDay = res.data.day
+                                        this.availableslenders = res.data.array
+                                        axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                                            date: this.finalDate,
+                                            employes: res.data.array,
+                                            timedate: this.registerDae.serviceSelectds[0].duration,
+                                            employesServices: this.registerDae.serviceSelectds[0].employes,
+                                            branch: this.branch
+                                        }, this.configHeader)
+                                        .then(res => {
+                                            this.idDatesBlocks = res.data.id
+                                            this.readyChange = true
+                                            this.registerDae.serviceSelectds[0].valid = true
+                                            this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                            this.registerDae.block = res.data.data
+                                            this.load1 = false
+                                        }).catch(err => {
+                                            if (!err.response) {
+                                                this.$swal({
+                                                    icon: 'error',
+                                                    title: 'Error de conexión2',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                })
+                                            }else if (err.response.status == 401) {
+                                                this.$swal({
+                                                    icon: 'error',
+                                                    title: 'Session caducada',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                })
+                                                setTimeout(() => {
+                                                    router.push("login")
+                                                }, 1550);
+                                            }
+                                        })
+                                    }).catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión3',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }else if (err.response.status == 401) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Session caducada',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            setTimeout(() => {
+                                                router.push("login")
+                                            }, 1550);
+                                        }
+                                    })
+                                }, 200); 
+                            }
+                        }
+                        }
+                    }, 200);       
+            
         },
         validMultiLender(index, lender, time, resTime, check){
             $('#'+check).removeClass('fa-check')
@@ -5364,7 +5367,7 @@ import mixinES from '../mixins/mixinES'
                             if (!err.response) {
                                 this.$swal({
                                     icon: 'error',
-                                    title: 'Error de conexión',
+                                    title: 'Error de conexión 1',
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
@@ -5681,7 +5684,7 @@ import mixinES from '../mixins/mixinES'
                         }
                     }
                 }
-                if (this.registerDae.date != '') {
+                if (this.registerDae.date != '' && this.registerDae.date != "undefined--undefined") {
                     setTimeout(() => {
                         this.openCalendar()
                     }, 1000);
