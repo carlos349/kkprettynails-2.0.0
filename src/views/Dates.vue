@@ -5881,7 +5881,6 @@ import mixinES from '../mixins/mixinES'
             this.getDates()
         })
         this.socket.on('notify', (data) => {
-            this.getClosed()
             this.getDates()
         });
         EventBus.$on('changeBranch', status => {
