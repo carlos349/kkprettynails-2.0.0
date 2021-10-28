@@ -651,7 +651,6 @@
       },
       selectType(value){
         this.graphType = value
-        console.log(this.graphType)
       },
       selectService(value){
         this.serviceSelect = value 
@@ -852,14 +851,7 @@
             
             this.loadingChart = false
           }catch(err){
-            if (!err.response) {
-                this.$swal({
-                    icon: 'error',
-                    title: 'Error de conexión',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            }else if (err.response.status == 401) {
+            if (err.response.status == 401) {
                 this.$swal({
                     icon: 'error',
                     title: 'Session caducada',

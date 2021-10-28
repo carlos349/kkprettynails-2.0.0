@@ -843,31 +843,12 @@ import mixinES from '../mixins/mixinES'
                                 branch: this.branch,
                                 userName:this.firstNameUser + " " + this.lastNameUser,
                                 userImage:this.imgUser,
-                                detail: 'Anuló una venta del día '+this.formatDate(this.dataSale.createdAt),
+                                detail: 'Anuló una venta del día '+ this.$options.filters.formatDate(this.dataSale.createdAt) ,
                                 link: 'Ventas'
                             }, this.configHeader).then(res => {
                                 if (res.data.status == 'ok') {
                                     this.socket.emit('sendNotification', res.data.data)
                                 } 
-                            }).catch(err => {
-                                if (!err.response) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Error de conexión',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
-                                }
                             })
                         }else{
                             this.$swal({
@@ -878,6 +859,8 @@ import mixinES from '../mixins/mixinES'
                             })
                         }
                     }).catch(err => {
+                        console.log(err)
+                        console.log(err.response)
                         if (!err.response) {
                             this.$swal({
                                 icon: 'error',

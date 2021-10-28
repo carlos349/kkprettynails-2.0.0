@@ -2295,7 +2295,6 @@ export default {
         })
         EventBus.$on('openModal', status => {
             this.initialState()
-            this.getFinallyDates()
         })
         EventBus.$on('changeBranch', status => {
             this.getBranch()
