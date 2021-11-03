@@ -483,11 +483,11 @@
                     <hr>
                     <div>
                         <p>
-                            ¡Listo! Hemos enviado la confirmación de la cita al correo electrónico. 
-                            <b style="font-weight:600;">Para que la cita quede confirmada deberás darle clic al botón de confirmar.</b>
+                            ¡Listo! Hemos enviado la cita a tu correo electrónico con todos los detalles del agendamiento.
+                            <b style="font-weight:600;">Por favor verificar que todo esté correcto</b>y en caso de haber algún error o no poder asistir debes presionar el botón de Cancelar para dejar sin efecto el agendamiento.
                             <br><br>
-                            Para confirmar su cita tendrás un plazo máximo de 24 horas, de lo contrario su hora quedará cancelada, habilitando ese espacio para otro cliente. <br><br>
-                            Recuerde revisar la casilla de spam o correo no deseado. Si este correo electrónico no llega por favor ponte en contacto con nosotros mediante WhatsApp y verificaremos de inmediato
+                            Una vez tomada la hora, el día previo a la cita te llegará un correo de confirmación y es importante que le des al botón de <b style="font-weight:600;">Confirmar</b> la hora tomada, de lo contrario entenderemos que no asistirás. <br><br>
+                            Si dicho correo electrónico de agendamiento no llega, recuerda revisar la caja de spam o correo no deseado. En caso de no encontrar la información por favor ponte en contacto con nosotros a través de nuestras redes de atención o al WhatsApp y verificaremos de inmediato.
                             
                         </p>
                         <hr class="mt-2 mb-2">
