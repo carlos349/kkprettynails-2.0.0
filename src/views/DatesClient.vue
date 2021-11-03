@@ -2336,106 +2336,63 @@
                     }, 500);
                 }else{
                     setTimeout(() => {
-                        const split = this.dates.simple.split('-')
-                        this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
-                        const restDay = new Date(this.finalDate+' 10:00')
-                        this.getDay = restDay.getDay()
-                        var onlySunday = split[0]+'-'+split[1]
-                        if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Disculpa, No laboramos Sábados y Domingos.',
-                                showConfirmButton: false,
-                                timer: 3000
-                            })
-                            this.dates.simple = ''
-                        }else{
-                            if (this.readyChange) {
-                                for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
-                                    const element = this.registerDate.serviceSelectds[index];
-                                    element.start = ''
-                                    element.end = ''
-                                    element.sort = ''
-                                    element.class = ''
-                                    element.blocks = []
-                                    element.blocksFirst = []
-                                    element.valid = false
-                                    element.employe = 'Primera disponible'
-                                    element.employeImg = ''
-                                    element.employeId = ''
-                                    element.realEmploye = 'Primera disponible'
-                                }
-                                this.validHour = false
-                                setTimeout(() => {
-                                    axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                                        date: this.finalDate,
-                                        branch: this.branch
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.getDay = res.data.day
-                                        this.availableslenders = res.data.array
-                                        axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                            date: this.finalDate,
-                                            employes: res.data.array,
-                                            timedate: this.registerDate.serviceSelectds[0].duration,
-                                            employesServices: this.registerDate.serviceSelectds[0].employes,
-                                            branch: this.branch
-                                        }, this.configHeader)
-                                        .then(res => {
-                                            this.idDatesBlocks = res.data.id
-                                            console.log(this.idDatesBlocks)
-                                            this.readyChange = true
-                                            this.registerDate.serviceSelectds[0].valid = true
-                                            this.registerDate.serviceSelectds[0].blocks = res.data.data
-                                            this.registerDate.block = res.data.data
-                                            console.log(this.registerDate.serviceSelectds[0].blocks)
-                                            $('#block0').toggle('slow')
-                                        })
-                                    }).catch(err => {
-                                        if (!err.response) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Error de conexión',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                        }else if (err.response.status == 401) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Session caducada',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                            setTimeout(() => {
-                                                router.push("login")
-                                            }, 1550);
-                                        }
-                                    })
-                                }, 200); 
+                        if (this.dates.simple != '') {
+                            console.log("y aqui?")
+                            const split = this.dates.simple.split('-')
+                            this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
+                            const restDay = new Date(this.finalDate+' 10:00')
+                            this.getDay = restDay.getDay()
+                            var onlySunday = split[0]+'-'+split[1]
+                            if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Disculpa, No laboramos Sábados y Domingos.',
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                })
+                                this.dates.simple = ''
                             }else{
-                                setTimeout(() => {
-                                    axios.post(endPoint.endpointTarget+'/dates/availableslenders', {
-                                        date: this.finalDate,
-                                        branch: this.branch
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.getDay = res.data.day
-                                        this.availableslenders = res.data.array
-                                        axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                                if (this.readyChange) {
+                                    for (let index = 0; index < this.registerDate.serviceSelectds.length; index++) {
+                                        const element = this.registerDate.serviceSelectds[index];
+                                        element.start = ''
+                                        element.end = ''
+                                        element.sort = ''
+                                        element.class = ''
+                                        element.blocks = []
+                                        element.blocksFirst = []
+                                        element.valid = false
+                                        element.employe = 'Primera disponible'
+                                        element.employeImg = ''
+                                        element.employeId = ''
+                                        element.realEmploye = 'Primera disponible'
+                                    }
+                                    this.validHour = false
+                                    setTimeout(() => {
+                                        axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                                             date: this.finalDate,
-                                            employes: res.data.array,
-                                            timedate: this.registerDate.serviceSelectds[0].duration,
-                                            employesServices: this.registerDate.serviceSelectds[0].employes,
                                             branch: this.branch
                                         }, this.configHeader)
                                         .then(res => {
-                                            this.idDatesBlocks = res.data.id
-                                            console.log(this.idDatesBlocks)
-                                            this.readyChange = true
-                                            this.registerDate.serviceSelectds[0].valid = true
-                                            this.registerDate.serviceSelectds[0].blocks = res.data.data
-                                            this.registerDate.block = res.data.data
-                                            console.log(this.registerDate.serviceSelectds[0].blocks)
+                                            this.getDay = res.data.day
+                                            this.availableslenders = res.data.array
+                                            axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                                                date: this.finalDate,
+                                                employes: res.data.array,
+                                                timedate: this.registerDate.serviceSelectds[0].duration,
+                                                employesServices: this.registerDate.serviceSelectds[0].employes,
+                                                branch: this.branch
+                                            }, this.configHeader)
+                                            .then(res => {
+                                                this.idDatesBlocks = res.data.id
+                                                console.log(this.idDatesBlocks)
+                                                this.readyChange = true
+                                                this.registerDate.serviceSelectds[0].valid = true
+                                                this.registerDate.serviceSelectds[0].blocks = res.data.data
+                                                this.registerDate.block = res.data.data
+                                                console.log(this.registerDate.serviceSelectds[0].blocks)
+                                                $('#block0').toggle('slow')
+                                            })
                                         }).catch(err => {
                                             if (!err.response) {
                                                 this.$swal({
@@ -2456,28 +2413,75 @@
                                                 }, 1550);
                                             }
                                         })
-                                    }).catch(err => {
-                                        if (!err.response) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Error de conexión',
-                                                showConfirmButton: false,
-                                                timer: 1500
+                                    }, 200); 
+                                }else{
+                                    setTimeout(() => {
+                                        axios.post(endPoint.endpointTarget+'/dates/availableslenders', {
+                                            date: this.finalDate,
+                                            branch: this.branch
+                                        }, this.configHeader)
+                                        .then(res => {
+                                            this.getDay = res.data.day
+                                            this.availableslenders = res.data.array
+                                            axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                                                date: this.finalDate,
+                                                employes: res.data.array,
+                                                timedate: this.registerDate.serviceSelectds[0].duration,
+                                                employesServices: this.registerDate.serviceSelectds[0].employes,
+                                                branch: this.branch
+                                            }, this.configHeader)
+                                            .then(res => {
+                                                this.idDatesBlocks = res.data.id
+                                                console.log(this.idDatesBlocks)
+                                                this.readyChange = true
+                                                this.registerDate.serviceSelectds[0].valid = true
+                                                this.registerDate.serviceSelectds[0].blocks = res.data.data
+                                                this.registerDate.block = res.data.data
+                                                console.log(this.registerDate.serviceSelectds[0].blocks)
+                                            }).catch(err => {
+                                                if (!err.response) {
+                                                    this.$swal({
+                                                        icon: 'error',
+                                                        title: 'Error de conexión',
+                                                        showConfirmButton: false,
+                                                        timer: 1500
+                                                    })
+                                                }else if (err.response.status == 401) {
+                                                    this.$swal({
+                                                        icon: 'error',
+                                                        title: 'Session caducada',
+                                                        showConfirmButton: false,
+                                                        timer: 1500
+                                                    })
+                                                    setTimeout(() => {
+                                                        router.push("login")
+                                                    }, 1550);
+                                                }
                                             })
-                                        }else if (err.response.status == 401) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Session caducada',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                            setTimeout(() => {
-                                                router.push("login")
-                                            }, 1550);
-                                        }
-                                    })
-                                }, 200); 
+                                        }).catch(err => {
+                                            if (!err.response) {
+                                                this.$swal({
+                                                    icon: 'error',
+                                                    title: 'Error de conexión',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                })
+                                            }else if (err.response.status == 401) {
+                                                this.$swal({
+                                                    icon: 'error',
+                                                    title: 'Session caducada',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                })
+                                                setTimeout(() => {
+                                                    router.push("login")
+                                                }, 1550);
+                                            }
+                                        })
+                                    }, 200); 
+                                }
                             }
+                            
                         }
                     }, 200);
                 }
