@@ -1358,6 +1358,7 @@ import mixinES from '../mixins/mixinES'
                 
             ] 
         },
+        socketValidator: true,
         availableEmployesEdit:[],
         blockFirstEdit:[],
         validEditBlock:false,
@@ -2569,6 +2570,7 @@ import mixinES from '../mixins/mixinES'
                } 
         },
         initialState(){
+             
             $(".ant-select-selection__clear").click()
             this.modals.modal3 = false
             this.$refs.wizard.reset()
@@ -3454,45 +3456,66 @@ import mixinES from '../mixins/mixinES'
             setTimeout(() => {
                 this.spinningEdit = true
             }, 5);
-
-            setTimeout(() => {
-                const finalDate = this.selectedEvent.createdAt
-                axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                    date: finalDate,
-                    branch: this.branch
-                }, this.configHeader)
-                .then(res => {
-                    this.availableEmployesEdit = res.data.array
-                    axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+            const finalDate = this.selectedEvent.createdAt
+            if (finalDate != '') {
+                setTimeout(() => {
+                    
+                    axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                         date: finalDate,
-                        employes: res.data.array,
-                        timedate: this.selectedEvent.duration,
-                        employesServices: this.selectedEvent.services[0].employes,
                         branch: this.branch
                     }, this.configHeader)
                     .then(res => {
-                        this.selectedEvent.idblock = res.data.id
-                        this.blockFirstEdit = res.data.data
-                        this.blockFirstEdit.forEach(element => {
-                            if (element.validator == 'select') {
-                                element.validator = true
-                            }
-                        })
-                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
-                            block: this.blockFirstEdit,
+                        this.availableEmployesEdit = res.data.array
+                        axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                            date: finalDate,
+                            employes: res.data.array,
                             timedate: this.selectedEvent.duration,
-                            employeSelect: this.employeForSearchEdit,
-                            firstBlock: false
-                        })
+                            employesServices: this.selectedEvent.services[0].employes,
+                            branch: this.branch
+                        }, this.configHeader)
                         .then(res => {
-                            this.finalBlockEdit = res.data.blockEmploye
-                            this.validEditBlock = true
-                            this.searchBlockEdit()
+                            this.selectedEvent.idblock = res.data.id
+                            this.blockFirstEdit = res.data.data
+                            this.blockFirstEdit.forEach(element => {
+                                if (element.validator == 'select') {
+                                    element.validator = true
+                                }
+                            })
+                            axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                                block: this.blockFirstEdit,
+                                timedate: this.selectedEvent.duration,
+                                employeSelect: this.employeForSearchEdit,
+                                firstBlock: false
+                            })
+                            .then(res => {
+                                this.finalBlockEdit = res.data.blockEmploye
+                                this.validEditBlock = true
+                                this.searchBlockEdit()
+                            }).catch(err => {
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }else if (err.response.status == 401) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Session caducada',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    setTimeout(() => {
+                                        router.push("login")
+                                    }, 1550);
+                                }
+                            })
                         }).catch(err => {
                             if (!err.response) {
                                 this.$swal({
                                     icon: 'error',
-                                    title: 'Error de conexión',
+                                    title: 'Error de conexión1',
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
@@ -3512,7 +3535,7 @@ import mixinES from '../mixins/mixinES'
                         if (!err.response) {
                             this.$swal({
                                 icon: 'error',
-                                title: 'Error de conexión',
+                                title: 'Error de conexión5',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
@@ -3528,27 +3551,8 @@ import mixinES from '../mixins/mixinES'
                             }, 1550);
                         }
                     })
-                }).catch(err => {
-                    if (!err.response) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión5',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
-                    }
-                })
-            }, 500);
+                }, 500);
+            }
         },
         selectEmployeEdit(name, date){
             const getDay = new Date(date+' 10:00').getDay()
@@ -3786,7 +3790,6 @@ import mixinES from '../mixins/mixinES'
                             }, this.configHeader)
                             .then(res => {
                                 if (res.data.status == 'ok') {
-                                    this.getDates();
                                     this.$swal({
                                         type: 'success',
                                         icon: 'success',
@@ -3852,8 +3855,6 @@ import mixinES from '../mixins/mixinES'
                 }, this.configHeader)
                 .then(res => {
                     if (res.data.status == 'ok') {
-                        
-                        this.getDates();
                         this.$swal({
                             type: 'success',
                             icon: 'success',
@@ -3872,7 +3873,9 @@ import mixinES from '../mixins/mixinES'
                             link: 'agendamiento'
                         },this.configHeader)
                         .then(res => {
+                            this.socketValidator = false
                             this.socket.emit('sendNotification', res.data.data)
+                            this.socketValidator = true
                         })   
                     }
                 }).catch(err => {
@@ -5888,7 +5891,10 @@ import mixinES from '../mixins/mixinES'
             this.getDates()
         })
         this.socket.on('notify', (data) => {
-            this.getDates()
+            setTimeout(() => {
+                this.getDates()
+            }, 1500);
+            
         });
         EventBus.$on('changeBranch', status => {
             this.getBranch()

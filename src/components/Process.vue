@@ -2290,6 +2290,11 @@ export default {
             console.log(status)
             this.getFinallyDates()
         })
+        this.socket.on('notify', (data) => {
+            setTimeout(() => {
+                this.getFinallyDates()
+            }, 1500);
+        });
         EventBus.$on('reloadClients', status => {
             this.getClient()
         })
