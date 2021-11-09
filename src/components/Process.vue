@@ -2039,6 +2039,7 @@ export default {
                     this.readyClient = false
                     this.validRegister(2)
                     if(getClient.data.data.birthday){
+                        this.registerClient.birthday = getClient.data.data.birthday
                         var birthday = new Date(getClient.data.data.birthday).getMonth()
                         var monthNow = new Date().getMonth()
                         if (birthday == monthNow) {
