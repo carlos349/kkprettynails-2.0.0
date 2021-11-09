@@ -31,8 +31,8 @@
                         <input readonly class="ant-input w-100" placeholder="Correo" v-model="registerClient.email"/>
                     </div>
                     <div class="col-md-3">
-                        <label class="mb-2" for="Client">Teléfono cliente</label>
-                        <input readonly class="ant-input w-100" placeholder="Teléfono" v-model="registerClient.phone.formatInternational"/>
+                        <label class="mb-2" for="Client">Cumpleaños cliente</label>
+                        <input readonly class="ant-input w-100" placeholder="Cumpleaños" v-model="registerClient.birthday"/>
                     </div>
                 </div>
                 <div class="card-container mt-1">
