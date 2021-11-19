@@ -60,6 +60,10 @@
                             addon-left-icon="ni ni-key-25"
                             addon-right-icon="fa fa-asterisk text-danger">
                         </base-input>
+                        <center>
+                            <p class="mx-auto"> <strong class="mr-2">Agendamiento online </strong> <a-switch class="mr-3" :checked="registerEmploye.online" @click="chageOnlineValid()"/></p>
+                        </center>
+                        
                         <template>
                             <div class="text-muted text-center mb-1">Días laborales</div>
                         </template>
@@ -182,7 +186,7 @@
                         <template slot="title">
                             <span>Editar</span>
                         </template>
-                        <base-button v-if="validRoute('empleados', 'editar')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch)" icon="fa fa-edit"></base-button>
+                        <base-button v-if="validRoute('empleados', 'editar')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch, column.validOnline)" icon="fa fa-edit"></base-button>
                         <base-button v-else disabled size="sm" type="default" icon="fa fa-edit"></base-button>
                     </a-tooltip>
                     
@@ -238,6 +242,7 @@ export default {
             show: false,
             valid: false,
             valid2: false,
+            online: true,
         },
         originalDays:[],
         dayValid:false,
@@ -545,6 +550,17 @@ export default {
                 }
             }, 200);
         },
+        chageOnlineValid(){
+            console.log("aja?"+ this.registerEmploye.online)
+            console.log(this.registerEmploye)
+            console.log("aje"+this.registerEmploye.online)
+            if (this.registerEmploye.online) {
+                this.registerEmploye.online = false
+            }else{
+                this.registerEmploye.online = true
+            }
+            console.log(this.registerEmploye.online)
+        },
         removeHour(day, index){
             setTimeout(() => {
                 for (const key in this.selectedDays) {
@@ -645,6 +661,7 @@ export default {
                         firstName: this.registerEmploye.firstName,
                         lastName: this.registerEmploye.lastName,
                         document: this.registerEmploye.document,
+                        validOnline: this.registerEmploye.online
                     }, this.configHeader)
                     .then(res => {
                         if(res.data.status == 'employe created'){
@@ -714,6 +731,7 @@ export default {
                         document: this.registerEmploye.document,
                         days: this.selectedDays,
                         lastName: this.registerEmploye.lastName,
+                        validOnline: this.registerEmploye.online,
                         branch: this.branch,
                         validBlocked:false,
                         dayValid: this.dayValid
@@ -849,13 +867,14 @@ export default {
                 }
             })	
 		},
-        pushData(firstName,days,_id,document,lastName,branch){
+        pushData(firstName,days,_id,document,lastName,branch,online){
             this.originalDays = []
             this.registerEmploye.firstName = firstName
             this.registerEmploye.lastName = lastName
             this.registerEmploye.document = document
             this.registerEmploye.branch = branch
             this.registerEmploye.days = days
+            this.registerEmploye.online = online
             this.registerEmploye.show = true
             this.registerEmploye._id = _id
             this.selectedDays = days
@@ -905,6 +924,7 @@ export default {
                 _id:'',
                 valid:false,
                 valid2:false,
+                online: true
             }
             this.dayValid = false
             this.selectedDays = []

@@ -1250,8 +1250,8 @@ import mixinES from '../mixins/mixinES'
         selected(value, id){
             this.lenders[id - 1].valid = true
             console.log(value)
-            this.lenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no'})
-            this.EditlenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no'})
+            this.lenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no', validOnline: value.validOnline})
+            this.EditlenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no', validOnline: value.validOnline})
         },
         unSelected(value, id){
             this.lenders[id - 1].valid = false

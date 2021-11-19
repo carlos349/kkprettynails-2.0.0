@@ -199,7 +199,7 @@
                                                                 <span style="color:red">Horarios ocupados</span>
                                                             </base-button>
                                                             <template v-for="employe of servicesSelect.employes" >
-                                                                <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
+                                                                <b :key="employe.name" v-if="employe.valid && employe.validOnline && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
                                                             </template>
                                                         </base-dropdown>
                                                     </div>
@@ -1171,7 +1171,8 @@
                         setTimeout(() => {
                             axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                                 date: this.finalDate,
-                                branch: this.branch
+                                branch: this.branch,
+                                online:true
                             }, this.configHeader)
                             .then(res => {
                                 this.getDay = res.data.day
@@ -1181,7 +1182,8 @@
                                     employes: res.data.array,
                                     timedate: this.registerDate.serviceSelectds[0].duration,
                                     employesServices: this.registerDate.serviceSelectds[0].employes,
-                                    branch: this.branch
+                                    branch: this.branch,
+                                    online:true
                                 }, this.configHeader)
                                 .then(res => {
                                     this.readyChange = true
@@ -1477,7 +1479,8 @@
                         setTimeout(() => {
                             axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                                 date: this.finalDate,
-                                branch: this.branch
+                                branch: this.branch,
+                                online: true
                             }, this.configHeader)
                             .then(res => {
                                 this.getDay = res.data.day
@@ -1487,7 +1490,8 @@
                                     employes: res.data.array,
                                     timedate: this.registerDate.serviceSelectds[0].duration,
                                     employesServices: this.registerDate.serviceSelectds[0].employes,
-                                    branch: this.branch
+                                    branch: this.branch,
+                                    online:true
                                 }, this.configHeader)
                                 .then(res => {
                                     this.readyChange = true
@@ -1972,7 +1976,7 @@
                 for (const employe of employes) {
                     employe.valid = true
                 }
-                var lendersName = [{name: 'Primera disponible', days: '', class: '', valid:true}, ...employes]
+                var lendersName = [{name: 'Primera disponible', days: '', class: '', valid:true, validOnline:true}, ...employes]
 
                 if (this.ifMicro) {
                     var microsService = [{checked: false, duration: 0, microService: "Ninguno", price: 0, position: index}]
@@ -2006,7 +2010,7 @@
                 for (const employe of employes) {
                     employe.valid = true
                 }
-                var lendersName = [{name: 'Primera disponible', days: '', class: '', valid:true}, ...employes]
+                var lendersName = [{name: 'Primera disponible', days: '', class: '', valid:true, validOnline: true}, ...employes]
                 if (this.ifMicro) {
                     var microsService = [{checked: false, duration: 0, microService: "Ninguno", price: 0, position: index}]
                     for (const micro of this.microServices) {
@@ -2371,7 +2375,8 @@
                                     setTimeout(() => {
                                         axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                                             date: this.finalDate,
-                                            branch: this.branch
+                                            branch: this.branch,
+                                            online: true
                                         }, this.configHeader)
                                         .then(res => {
                                             this.getDay = res.data.day
@@ -2381,7 +2386,8 @@
                                                 employes: res.data.array,
                                                 timedate: this.registerDate.serviceSelectds[0].duration,
                                                 employesServices: this.registerDate.serviceSelectds[0].employes,
-                                                branch: this.branch
+                                                branch: this.branch,
+                                                online: true
                                             }, this.configHeader)
                                             .then(res => {
                                                 this.idDatesBlocks = res.data.id
@@ -2418,7 +2424,8 @@
                                     setTimeout(() => {
                                         axios.post(endPoint.endpointTarget+'/dates/availableslenders', {
                                             date: this.finalDate,
-                                            branch: this.branch
+                                            branch: this.branch,
+                                            online: true
                                         }, this.configHeader)
                                         .then(res => {
                                             this.getDay = res.data.day
@@ -2428,7 +2435,8 @@
                                                 employes: res.data.array,
                                                 timedate: this.registerDate.serviceSelectds[0].duration,
                                                 employesServices: this.registerDate.serviceSelectds[0].employes,
-                                                branch: this.branch
+                                                branch: this.branch,
+                                                online: true
                                             }, this.configHeader)
                                             .then(res => {
                                                 this.idDatesBlocks = res.data.id
@@ -2485,6 +2493,7 @@
                         }
                     }, 200);
                 }
+                console.log(this.registerDate.serviceSelectds)
             },
             fixedHours(duration){
                 const hours = parseInt(duration / 60) + ' hr'

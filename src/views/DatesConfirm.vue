@@ -61,6 +61,7 @@ export default {
                     }
                     axios.post(endPoint.endpointTarget+'/mails/responseDate', {
                         client: res.data.data.content,
+                        clientMail: res.data.data.client.email,
                         email: res.data.branchEmail,
                         branchName: res.data.branchName,
                         start: res.data.data.start.split(" ")[1],
