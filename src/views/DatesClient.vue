@@ -199,7 +199,7 @@
                                                                 <span style="color:red">Horarios ocupados</span>
                                                             </base-button>
                                                             <template v-for="employe of servicesSelect.employes" >
-                                                                <b :key="employe.name" v-if="employe.valid && employe.validOnline && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
+                                                                <b :key="employe.name" v-if="employe.valid && verifyValidOnline(employe.id) && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
                                                             </template>
                                                         </base-dropdown>
                                                     </div>
@@ -1457,6 +1457,26 @@
                     }
                 }
                 this.selectHourService(index, lender, time, rest)
+            },
+            verifyValidOnline(id){
+                if (id) {
+                    var valid = false
+                    this.availableslenders.forEach(element => {
+                        if (element.id == id) {
+                            if (element.validOnline) {
+                                valid = true
+                            }
+                        }
+                    });
+                    if (valid) {
+                        return true
+                    }else{
+                        return false
+                    }
+                }else{
+                    return true
+                }
+                
             },
             insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg){
                 if (lender == 'Primera disponible') {
