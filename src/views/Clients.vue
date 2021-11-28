@@ -793,6 +793,8 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                            this.getClients();
+                            this.initialState(1)
                             EventBus.$emit('reloadClients', 'reload')
 						}
 					}).catch(err => {
