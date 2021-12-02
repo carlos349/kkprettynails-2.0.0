@@ -3366,13 +3366,13 @@ import mixinES from '../mixins/mixinES'
             });
             setTimeout(() => {
                 axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                    date: this.moment(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
+                    date: new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
                     branch: this.branch
                 }, this.configHeader)
                 .then(res => {
                     this.availableEmployesEdit = res.data.array
                     axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                        date: this.moment(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
+                        date: new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
                         employes: res.data.array,
                         timedate: this.selectedEvent.duration,
                         employesServices: this.selectedEvent.services[0].employes,
