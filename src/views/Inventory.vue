@@ -1179,7 +1179,6 @@ import mixinES from '../mixins/mixinES'
   .inventory .card-header{
     display:none;
   }
-  
   .inventoryTabs .nav-item:last-child{
     padding-right: 1rem !important;
   }
