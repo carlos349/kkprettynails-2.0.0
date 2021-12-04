@@ -1845,7 +1845,8 @@ import mixinES from '../mixins/mixinES'
         async blockingHour(){
             if (this.hourBlocking.dateBlocking != '' && this.hourBlocking.employe.name && this.hourBlocking.start != '' &&  this.hourBlocking.end != '') {
                 var splitDate = this.hourBlocking.dateBlocking.split('-')
-                try {
+                try {console.log("PARA CUANDO DE ERROR bloquear")
+                    console.log(this.hourBlocking.dateBlocking)
                     const generateLenders = await axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                         date: splitDate[1]+'-'+splitDate[0]+'-'+splitDate[2],
                         branch: this.branch
@@ -3365,6 +3366,8 @@ import mixinES from '../mixins/mixinES'
                 }
             });
             setTimeout(() => {
+                console.log("PARA CUANDO DE ERROR")
+                console.log(this.selectedEvent.createdAt)
                 axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                     date: new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
                     branch: this.branch

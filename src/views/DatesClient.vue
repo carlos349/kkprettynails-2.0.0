@@ -1581,6 +1581,8 @@
                                 block: this.registerDate.serviceSelectds[index - 1].blocksFirst,
                                 timedate: this.registerDate.serviceSelectds[index].duration,
                                 employesServices: this.registerDate.serviceSelectds[index].employes,
+                                online: true,
+                                employes: this.availableslenders,
                                 firstBlock: true
                             })
                             .then(res => {
@@ -1612,6 +1614,8 @@
                                 block: this.registerDate.serviceSelectds[index - 1].blocks,
                                 timedate: this.registerDate.serviceSelectds[index].duration,
                                 employesServices: this.registerDate.serviceSelectds[index].employes,
+                                online: true,
+                                employes: this.availableslenders,
                                 firstBlock: true
                             })
                             .then(res => {
@@ -1697,6 +1701,7 @@
                             block: this.registerDate.serviceSelectds[index].blocksFirst,
                             timedate: this.registerDate.serviceSelectds[index].duration,
                             employeSelect: lendeId,
+                            employes: this.availableslenders,
                             employeObject: {
                                 name: this.registerDate.serviceSelectds[index].realEmploye,
                                 id: this.registerDate.serviceSelectds[index].employeId,
@@ -1705,7 +1710,8 @@
                                 valid: true,
                                 img: this.registerDate.serviceSelectds[index].employeImg
                             },
-                            firstBlock: false
+                            firstBlock: false,
+                            online: true
                         }, this.configHeader)
                         .then(res => {
                             if (res.data.status == 'ok') {
@@ -1770,6 +1776,7 @@
                             block: this.registerDate.serviceSelectds[index].blocks,
                             timedate: this.registerDate.serviceSelectds[index].duration,
                             employeSelect: lendeId,
+                            employes: this.availableslenders,
                             employeObject: {
                                 name: this.registerDate.serviceSelectds[index].realEmploye,
                                 id: this.registerDate.serviceSelectds[index].employeId,
@@ -1778,6 +1785,7 @@
                                 valid: true,
                                 img: this.registerDate.serviceSelectds[index].employeImg
                             },
+                            online:true,
                             firstBlock: false
                         }, this.configHeader)
                         .then(res => {
@@ -2140,7 +2148,9 @@
                                 block: this.registerDate.serviceSelectds[indexService].blocks,
                                 timedate: this.registerDate.serviceSelectds[finalIndex].duration,
                                 employesServices: this.registerDate.serviceSelectds[finalIndex].employes,
-                                firstBlock: true
+                                employes: this.availableslenders,
+                                firstBlock: true,
+                                online: true
                             })
                             .then(res => {
                                 this.registerDate.serviceSelectds[finalIndex].valid = true
@@ -2224,9 +2234,11 @@
                         if (this.registerDate.serviceSelectds[finalIndex]) {
                             axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
                                 block: res.data.blockFirst,
+                                employes: this.availableslenders,
                                 timedate: this.registerDate.serviceSelectds[finalIndex].duration,
                                 employesServices: this.registerDate.serviceSelectds[finalIndex].employes,
-                                firstBlock: true
+                                firstBlock: true,
+                                online: true
                             })
                             .then(res => {
                                 this.registerDate.serviceSelectds[finalIndex].valid = true
