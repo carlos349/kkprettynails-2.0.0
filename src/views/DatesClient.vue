@@ -2692,7 +2692,7 @@
                         this.getEmployes()
                         this.getMicroServices()
                         this.modals.modal6 = false
-                        EventBus.$emit('reloadClients', 'reload')
+                        // EventBus.$emit('reloadClients', 'reload')
                     }else{
                         this.$swal({
                             icon: 'error',

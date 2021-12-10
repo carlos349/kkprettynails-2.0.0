@@ -661,7 +661,7 @@ export default {
                         }
                         this.initialState(1)
                         this.getClients()
-                        EventBus.$emit('reloadClients', 'reload')
+                        // EventBus.$emit('reloadClients', 'reload')
                     }, 1500);
                     
                 }else{
@@ -796,7 +796,7 @@ export default {
                                     type:''
                                 }
                                 this.getClients()
-                                EventBus.$emit('reloadClients', 'reload')
+                                // EventBus.$emit('reloadClients', 'reload')
                             }, 1500);
 							// this.getClientsThree()
 							// this.ServicesQuantityChartFunc();
@@ -869,7 +869,7 @@ export default {
                         }
                         this.getClients();
                         this.initialState(1)
-                        EventBus.$emit('reloadClients', 'reload')
+                        // EventBus.$emit('reloadClients', 'reload')
                     }, 1500);
                 }else{
                     this.modals = {
@@ -972,7 +972,7 @@ export default {
                         }
                         this.getOrders();
                         this.initialState(1)
-                        EventBus.$emit('reloadClients', 'reload')
+                        // EventBus.$emit('reloadClients', 'reload')
                     }, 1500);
                 }else{
                     this.modals = {

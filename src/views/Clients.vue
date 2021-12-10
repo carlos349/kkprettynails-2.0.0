@@ -632,7 +632,7 @@ export default {
                         
                         this.initialState(1)
                         this.getClients()
-                        EventBus.$emit('reloadClients', 'reload')
+                        // EventBus.$emit('reloadClients', 'reload')
                     }else{
                         this.$swal({
                             icon: 'error',
@@ -795,7 +795,7 @@ export default {
                             })
                             this.getClients();
                             this.initialState(1)
-                            EventBus.$emit('reloadClients', 'reload')
+                            // EventBus.$emit('reloadClients', 'reload')
 						}
 					}).catch(err => {
                         if (!err.response) {
@@ -846,7 +846,7 @@ export default {
                     })
                     this.getClients();
                     this.initialState(1)
-                    EventBus.$emit('reloadClients', 'reload')
+                    // EventBus.$emit('reloadClients', 'reload')
                 }else{
                     this.$swal({
                         icon: 'error',

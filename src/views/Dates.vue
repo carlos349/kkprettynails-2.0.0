@@ -397,6 +397,7 @@
                                 :class="hideText != 'display:none' ? 'w-50' : 'w-100'"
                                 :allowClear="true"
                                 option-filter-prop="children"
+                                @search="searchClientRegex"
                                 :filter-option="filterOption">
                                 <a-select-option v-on:click="selectClient('register')" class="text-success" value="register">
                                     Registrar cliente
@@ -1944,7 +1945,7 @@ import mixinES from '../mixins/mixinES'
             this.branch = localStorage.branch
             // this.getUsers()
             this.getConfiguration()
-            this.getClients()
+            // this.getClients()
             this.getMicroServices()
             this.getServices()
             this.getCategories()
@@ -1990,6 +1991,39 @@ import mixinES from '../mixins/mixinES'
                     }, 1550);
                 }
             }
+        },
+        async searchClientRegex(value) {
+            if (value != '') {
+                this.clients = []
+                try {
+                    const getClient = await axios.get(endPoint.endpointTarget+'/clients/regex/'+ value, this.configHeader)
+                    if (getClient.data.status == 'ok') {
+                        this.clients = getClient.data.data
+                    }
+                }catch(err){
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }
+                }
+            }else{
+                this.clients = []
+            }
+            
         },
         async getConfiguration(){
             try {
@@ -2248,37 +2282,37 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        async getClients(){
-            try {
-                const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
-                if (getAllClients.data.data.length > 0) {
-                    this.clients = getAllClients.data.data
+        // async getClients(){
+        //     try {
+        //         const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
+        //         if (getAllClients.data.data.length > 0) {
+        //             this.clients = getAllClients.data.data
 
-                    for (let index = 0; index < getAllClients.data.data.length; index++) {
-                        this.clientsNames.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email)
-                    }
-                }
-            }catch (err) {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
-                }
-            }
-        },
+        //             for (let index = 0; index < getAllClients.data.data.length; index++) {
+        //                 this.clientsNames.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email)
+        //             }
+        //         }
+        //     }catch (err) {
+        //         if (!err.response) {
+        //             this.$swal({
+        //                 icon: 'error',
+        //                 title: 'Error de conexión',
+        //                 showConfirmButton: false,
+        //                 timer: 1500
+        //             })
+        //         }else if (err.response.status == 401) {
+        //             this.$swal({
+        //                 icon: 'error',
+        //                 title: 'Session caducada',
+        //                 showConfirmButton: false,
+        //                 timer: 1500
+        //             })
+        //             setTimeout(() => {
+        //                 router.push("login")
+        //             }, 1550);
+        //         }
+        //     }
+        // },
         formatPhone(){
             var number = this.dateClient.infoOne.replace(/[^\d]/g, '')
             if (number.length == 9) {
@@ -2309,10 +2343,10 @@ import mixinES from '../mixins/mixinES'
 							showConfirmButton: false,
 							timer: 1500
 						})
-                    setTimeout(() => {
-                        this.getClients();
-                        EventBus.$emit('reloadClients', 'reload')
-                    }, 1500);
+                    // setTimeout(() => {
+                    //     this.getClients();
+                    //     // EventBus.$emit('reloadClients', 'reload')
+                    // }, 1500);
                 }else{
                     this.modals = {
                         modal2: true,
@@ -3173,10 +3207,10 @@ import mixinES from '../mixins/mixinES'
                         email: res.data.data.email,
                         phone: res.data.data.phone
                     }
-                    setTimeout(() => {
-                        this.getClients()
-                        EventBus.$emit('reloadClients', 'reload')
-                    }, 1500);
+                    // setTimeout(() => {
+                    //     // this.getClients()
+                    //     // EventBus.$emit('reloadClients', 'reload')
+                    // }, 1500);
                     
                 }else{
                     this.$swal({

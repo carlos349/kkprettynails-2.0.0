@@ -5,7 +5,7 @@
                 <div class="row p-0 rounded-lg bg-white mt-1 mr-1 pt-1" style="margin-left:0.20rem">
                     <div class="col-md-6">
                         <label for="Client">Cliente</label><br>
-                        <a-select
+                        <!-- <a-select
                             show-search
                             placeholder="Seleccione el cliente"
                             option-filter-prop="children"
@@ -17,6 +17,21 @@
                             @change="chooseClient">
                             <a-select-option v-for="client of clients" :key="client._id" :value="client._id">
                                 {{client.firstName}} {{client.lastName}} 
+                            </a-select-option>
+                        </a-select> -->
+                        <a-select
+                            show-search
+                            placeholder="Prueba cliente"
+                            option-filter-prop="children"
+                            :filter-option="filterOption"
+                            :allowClear="true"
+                            class="mb-2 w-75 clientSelect"
+                            :class="screenWidthInput"
+                            v-model="registerClient.select"
+                            @search="handleSearch"
+                            @change="chooseClient">
+                            <a-select-option v-for="d in clientsRegex" :key="d._id" :value="d._id">
+                                {{d.firstName}} {{d.lastName}}
                             </a-select-option>
                         </a-select>
                         <a-button :disabled="validRoute('procesar', 'editar_cliente') ? false : true" v-if="ifEdit" @click="modals.modal2 = true" class="ml-1" type="primary" shape="round">
@@ -738,6 +753,7 @@ export default {
                 icon: '',
                 type:''
             },
+            clientsRegex:[],
             priceService: 0,
             priceServiceReal: 0,
             discountService: '',
@@ -1024,6 +1040,39 @@ export default {
             this.registerService.lenderSelecteds.push(value.selected_item._id)
             this.validRegister(1)
         },
+        async handleSearch(value) {
+            if (value != '') {
+                this.clientsRegex = []
+                try {
+                    const getClient = await axios.get(endPoint.endpointTarget+'/clients/regex/'+ value, this.configHeader)
+                    if (getClient.data.status == 'ok') {
+                        this.clientsRegex = getClient.data.data
+                    }
+                }catch(err){
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }
+                }
+            }else{
+                this.clientsRegex = []
+            }
+            
+        },
         async getTypesPay(){
             try {
                 const pays = await axios.get(endPoint.endpointTarget+'/configurations/'+this.branch, this.configHeader)
@@ -1061,7 +1110,7 @@ export default {
         getBranch(){
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
-            this.getClient()
+            // this.getClient()
             this.getLenders()
             this.getServices()
             this.getTypesPay()
@@ -1227,7 +1276,7 @@ export default {
                         timer: 1500
                     })
                     this.modals.modal2 = false
-                    this.getClient()
+                    // this.getClient()
                 }else{
                     this.$swal({
                         icon: 'error',
@@ -1297,7 +1346,7 @@ export default {
                     this.readyClient = false
                     this.ifEdit = true
                     this.modals.modal2 = false
-                    this.getClient()
+                    // this.getClient()
                 }else{
                     this.$swal({
                         icon: 'error',
@@ -1397,38 +1446,38 @@ export default {
                 }
             })
 		},
-        async getClient(){
-            try {
-                const getClient = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
-                if (getClient.data.status == 'ok') {
-                    this.clients = getClient.data.data
-                    this.clientNames = []
-                    for (let index = 0; index < getClient.data.data.length; index++) {
-                        this.clientNames.push(getClient.data.data[index].firstName+ ' / ' +getClient.data.data[index].email)
-                        this.clientIds.push(getClient.data.data[index].firstName + " / " + getClient.data.data[index].email + "-" + getClient.data.data[index]._id)
-                    }
-                }
-            }catch(err){
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
-                }
-            }
-        },
+        // async getClient(){
+        //     try {
+        //         const getClient = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
+        //         if (getClient.data.status == 'ok') {
+        //             this.clients = getClient.data.data
+        //             this.clientNames = []
+        //             for (let index = 0; index < getClient.data.data.length; index++) {
+        //                 this.clientNames.push(getClient.data.data[index].firstName+ ' / ' +getClient.data.data[index].email)
+        //                 this.clientIds.push(getClient.data.data[index].firstName + " / " + getClient.data.data[index].email + "-" + getClient.data.data[index]._id)
+        //             }
+        //         }
+        //     }catch(err){
+        //         if (!err.response) {
+        //             this.$swal({
+        //                 icon: 'error',
+        //                 title: 'Error de conexión',
+        //                 showConfirmButton: false,
+        //                 timer: 1500
+        //             })
+        //         }else if (err.response.status == 401) {
+        //             this.$swal({
+        //                 icon: 'error',
+        //                 title: 'Session caducada',
+        //                 showConfirmButton: false,
+        //                 timer: 1500
+        //             })
+        //             setTimeout(() => {
+        //                 router.push("login")
+        //             }, 1550);
+        //         }
+        //     }
+        // },
         async getLenders(){
             try {
                 const employes = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+this.branch, this.configHeader)
@@ -2296,9 +2345,9 @@ export default {
                 this.getFinallyDates()
             }, 1500);
         });
-        EventBus.$on('reloadClients', status => {
-            this.getClient()
-        })
+        // EventBus.$on('reloadClients', status => {
+        //     this.getClient()
+        // })
         EventBus.$on('openModal', status => {
             this.initialState()
         })
