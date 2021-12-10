@@ -2765,7 +2765,6 @@ import mixinES from '../mixins/mixinES'
                     recommendations: value.recommendations,
                     birthday: value.birthday,
                     lastAttend: value.lastAttend,
-                    historical: value.historical,
                     createdAt: value.createdAt,
                     valid: true,
                     valid2: true 
