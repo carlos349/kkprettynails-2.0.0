@@ -5874,8 +5874,6 @@ import mixinES from '../mixins/mixinES'
                     if (element.checked && element.microService != 'Ninguno') {
                         element.checked = false
                         this.registerDae.serviceSelectds[index].duration = parseFloat(this.registerDae.serviceSelectds[index].duration) - parseFloat(element.duration)
-                        this.registerDae.serviceSelectds[index].price = this.registerDae.serviceSelectds[index].price - element.price
-                        this.totalPrice = this.totalPrice - microServices.price
                     }
                 });
                 this.registerDae.serviceSelectds[index].microServices[0].checked = true
