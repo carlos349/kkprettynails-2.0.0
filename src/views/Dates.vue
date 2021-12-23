@@ -3015,6 +3015,7 @@ import mixinES from '../mixins/mixinES'
                                         this.$refs.wizard.reset()
                                         this.modals.modal1 = false
                                         $(".ant-select-selection__clear").click()
+                                        this.socket.emit('sendNotification', res.data.data)
                                         this.getDates()
                                         this.initialState()
                                         this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal,this.registerDae,true)
@@ -3086,6 +3087,7 @@ import mixinES from '../mixins/mixinES'
                                     })
                                     this.ifDisabled = false
                                     this.$refs.wizard.reset()
+                                    this.socket.emit('sendNotification', res.data.data)
                                     this.modals.modal1 = false
                                     this.getDates()
                                     this.initialState()
