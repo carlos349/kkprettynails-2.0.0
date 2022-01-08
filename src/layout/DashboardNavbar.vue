@@ -229,10 +229,8 @@
             }
           }
         }
-        console.log(this.branchName )
       },
       validRoute(route, type){
-        console.log(this.auth)
         for (let index = 0; index < this.auth.length; index++) {
           const element = this.auth[index];
           if (element.ruta == route) {
@@ -271,8 +269,6 @@
           localStorage.setItem('branchName', value.key.split('/')[1])
           this.branch = value.key.split('/')[0]
           this.branchName = value.key.split('/')[1]
-          console.log(this.branch)
-          console.log(this.branchName)
           EventBus.$emit('changeBranch', true)
         }
       },
@@ -314,8 +310,6 @@
             this.pxSep = "pxSixPlusTwo"
           }
           this.all = true
-          console.log("si me corri!"+ this.activeNotifications)
-          console.log(res.data.data)
         })
       },
       validateNotifications(){

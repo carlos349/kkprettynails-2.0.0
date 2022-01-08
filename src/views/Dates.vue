@@ -2107,7 +2107,7 @@ import mixinES from '../mixins/mixinES'
         async getDates() {
             if (!this.validRoute('agendamiento', 'todas')) {
                 this.events = []
-                const token = localStorage.userToken
+                const token = this.configHeader.headers["x-access-token"]
                 const decoded = jwtDecode(token)
                 if (decoded.linkLender == '') {
                     this.$swal.fire({
@@ -2130,13 +2130,13 @@ import mixinES from '../mixins/mixinES'
                         }else if (err.response.status == 401) {
                             this.$swal({
                                 icon: 'error',
-                                title: 'Session caducada',
+                                title: 'Sesión caducada',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
+                            // setTimeout(() => {
+                            //     router.push("login")
+                            // }, 1550);
                         }
                     }
                 }
@@ -2160,9 +2160,9 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
+                        // setTimeout(() => {
+                        //     router.push("login")
+                        // }, 1550);
                     }
                 }
             }
@@ -3015,8 +3015,16 @@ import mixinES from '../mixins/mixinES'
                                         this.$refs.wizard.reset()
                                         this.modals.modal1 = false
                                         $(".ant-select-selection__clear").click()
-                                        this.socket.emit('sendNotification', res.data.data)
-                                        this.getDates()
+                                        axios.post(endPoint.endpointTarget+'/notifications', {
+                                            userName:'Cliente: '+this.dateClient.name,
+                                            userImage: '',
+                                            detail: 'Creo cita desde agendamiento (Sistema) '+this.finalDate,
+                                            branch: this.branch,
+                                            link: 'agendamiento'
+                                        }, this.configHeader)
+                                        .then(res => {
+                                            this.socket.emit('sendNotification', res.data.data)
+                                        })
                                         this.initialState()
                                         this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal,this.registerDae,true)
                                         this.modals.modal2 = false
@@ -3087,9 +3095,17 @@ import mixinES from '../mixins/mixinES'
                                     })
                                     this.ifDisabled = false
                                     this.$refs.wizard.reset()
-                                    this.socket.emit('sendNotification', res.data.data)
+                                    axios.post(endPoint.endpointTarget+'/notifications', {
+                                        userName:'Cliente: '+this.dateClient.name,
+                                        userImage: '',
+                                        detail: 'Creo cita desde agendamiento (Sistema) '+this.finalDate,
+                                        branch: this.branch,
+                                        link: 'agendamiento'
+                                    }, this.configHeader)
+                                    .then(res => {
+                                        this.socket.emit('sendNotification', res.data.data)
+                                    })
                                     this.modals.modal1 = false
-                                    this.getDates()
                                     this.initialState()
                                     this.modals.modal2 = false
                                 }    
@@ -5906,14 +5922,8 @@ import mixinES from '../mixins/mixinES'
         }
     },
     mounted (){
-        EventBus.$on('reloadDates', status => {
-            this.getDates()
-        })
         this.socket.on('notify', (data) => {
-            setTimeout(() => {
-                this.getDates()
-            }, 1500);
-            
+            this.getDates()
         });
         EventBus.$on('changeBranch', status => {
             this.getBranch()

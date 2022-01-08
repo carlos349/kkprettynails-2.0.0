@@ -1266,7 +1266,16 @@
                                         this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDate)
                                         this.modals.modal2 = false
                                         this.modals.modal4 = true
-                                        
+                                        axios.post(endPoint.endpointTarget+'/notifications', {
+                                            userName:'Cliente: '+this.registerUser.name,
+                                            userImage: '',
+                                            detail: 'Creo cita desde agendamiento (web) '+this.finalDate,
+                                            branch: this.branch,
+                                            link: 'agendamiento'
+                                        }, this.configHeader)
+                                        .then(res => {
+                                            this.socket.emit('sendNotification', res.data.data)
+                                        })
                                         $("#overlay").toggle()
                                         this.ifDisabled = false
                                     }    
@@ -1310,6 +1319,16 @@
                                     this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDate)
                                     this.modals.modal2 = false
                                     this.modals.modal4 = true
+                                    axios.post(endPoint.endpointTarget+'/notifications', {
+                                        userName:'Cliente: '+this.registerUser.name,
+                                        userImage: '',
+                                        detail: 'Creo cita desde agendamiento (web) '+this.finalDate,
+                                        branch: this.branch,
+                                        link: 'agendamiento'
+                                    }, this.configHeader)
+                                    .then(res => {
+                                        this.socket.emit('sendNotification', res.data.data)
+                                    })
                                     $("#overlay").toggle()
                                 }    
                             }).catch(err =>{
