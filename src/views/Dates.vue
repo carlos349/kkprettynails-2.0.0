@@ -2120,24 +2120,7 @@ import mixinES from '../mixins/mixinES'
                         const employe = await axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+decoded.linkLender, this.configHeader)
                         this.getDatesByEmploye(employe.data.data._id, decoded.userImage == '' ? 'no' : decoded.userImage, employe.data.data.firstName+' '+employe.data.data.lastName)
                     }catch(err){
-                        if (!err.response) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Error de conexión',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Sesión caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            // setTimeout(() => {
-                            //     router.push("login")
-                            // }, 1550);
-                        }
+                        
                     }
                 }
             }else{
@@ -2146,24 +2129,7 @@ import mixinES from '../mixins/mixinES'
                     const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
                     this.events = dates.data.data
                 }catch(err){
-                    if (!err.response) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        // setTimeout(() => {
-                        //     router.push("login")
-                        // }, 1550);
-                    }
+                    
                 }
             }
         },
@@ -3690,7 +3656,7 @@ import mixinES from '../mixins/mixinES'
                     this.$swal({
                         type: 'error',
                         icon: 'error',
-                        title: '¡Debes elegir un horario!',
+                        title: 'Disculpe, debe elegir un horario',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -3710,6 +3676,16 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
+                        axios.post(endPoint.endpointTarget+'/notifications', {
+                            branch: this.branch,
+                            userName: this.firstNameUser + " " + this.lastNameUser,
+                            userImage: this.imgUser,
+                            detail:'Edit una cita para el día '+new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
+                            link: 'agendamiento'
+                        }, this.configHeader)
+                        .then(res => {
+                            this.socket.emit('sendNotification', res.data.data)
+                        }) 
                         this.dateModals.modal2 = false
                         this.dateModals.modal1 = false
                         this.getDates()
