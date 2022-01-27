@@ -49,7 +49,7 @@
                                                                 </div>
                                                                 <div class="col-md-6 col-sm-12 mt-1" style="padding: 0px !important;margin-top:-5px;">
                                                                     <div class="button-service-group">
-                                                                        <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price)"></i></button>
+                                                                        <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price, serviceCount[index].count)"></i></button>
                                                                         <span class="span-button-service">{{serviceCount[index].count}}</span>
                                                                         <button class="button-service-right" 
                                                                         v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, 'cardS'+index, service.discount)"
@@ -307,12 +307,12 @@
                                 <div class="col-md-4 col-sm-12 pt-5">
                                     <center>
                                         <base-dropdown class="mt-1 responsiveButtonsPercent mx-auto styleDropdown">
-                                            <base-button slot="title" type="primary" class="dropdown-toggle w-100 dropdownPay" style="border-radius:14px">
+                                            <base-button slot="title" type="succes" class="dropdown-toggle w-100 dropdownPay" style="border-radius:14px; border: 1px solid #174c8e">
                                                 Selecciona un tipo de pago
                                             </base-button>
-                                            <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
-                                            <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
-                                            <b class="dropdown-item w-100" style="color:#fff;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
+                                            <b class="dropdown-item w-100" style="color:white;" v-on:click="selectPay('Presencial efectivo')">Presencial efectivo</b>
+                                            <b class="dropdown-item w-100" style="color:white;" v-on:click="selectPay('Presencial Débito')">Presencial Débito</b>
+                                            <b class="dropdown-item w-100" style="color:white;" v-on:click="selectPay('Presencial Crédito')">Presencial Crédito</b>
                                             <!-- <b class="dropdown-item w-100" style="color:#32325d;" v-on:click="selectPay('WebPay')">WebPay</b>  -->
                                         </base-dropdown><br>
                                         <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
@@ -438,12 +438,26 @@
                     <label for="date" class="w-100 mt-2">Fecha de nacimiento </label>
                     <a-date-picker class="w-100" :locale="locale" :format="dateFormat" @change="selectBirthday" />
                     <span style="color:red;position:absolute;right:35px;top:270px;z-index:1;">*</span>
-                    <base-button v-if="validRegister" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="registerClients">
-                        Registrar y continuar
-                    </base-button>
-                    <base-button v-else class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" disabled v-on:click="registerClients">
-                        Registrar y continuar
-                    </base-button>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-6">
+                                <base-button class="mt-4" style="width:200px;border-radius:14px;color:white;border:none;" type="primary" v-on:click="ifUserRegister = false">
+                                    Atrás
+                                </base-button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-6">
+                                <base-button v-if="validRegister" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="registerClients">
+                                    Registrar y continuar
+                                </base-button>
+                                <base-button v-else class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" disabled v-on:click="registerClients">
+                                    Registrar y continuar
+                                </base-button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
                 </div>
                 <div class="card p-3" v-else>
                     <label for="branche">Correo</label>
@@ -790,6 +804,7 @@
             
             selectBirthday(date, dateString){
                 this.registerUser.birthday = date._d
+                this.validFields()
             },
             SelectMicro(index, indexM, microServices) {
                 console.log(microServices)
@@ -944,9 +959,9 @@
                 this.$swal({
                     type: 'error',
                     icon: 'info',
-                    title: 'Debes identificarte y seleccionar una sucursal.',
-                    showConfirmButton: false,
-                    timer: 1500
+                    title: 'Debe identificarse',
+                    text: 'Debe colocar un correo electrónico valido (en caso de no estar registrado, debe registrarse) y seleccionar una sucursal de preferencia',
+                    showConfirmButton: true
                 })
                 setTimeout(() => {
                     this.modals.modal6 = true
@@ -1052,7 +1067,6 @@
                 }
             },
             validFields(){
-                console.log('aja')
                 const split = this.registerUser.email.split('@')
                 var splitTwo = ''
 
@@ -1062,9 +1076,9 @@
                     splitTwo = split[1].split('.')
                 }
                 
-                if (this.registerUser.email != '' && this.registerUser.firstName != '' && this.registerUser.lastName != '' && this.phoneData.isValid) {
+                if (this.registerUser.email != '' && this.registerUser.firstName != '' && this.registerUser.lastName != '' && this.phoneData.isValid && this.registerUser.birthday != '') {
                     if (split.length == 2) {
-                        if (splitTwo.length == 2) {
+                        if (splitTwo.length >= 2) {
                             this.validRegister = true
                         }else{
                             this.validRegister = false
@@ -2071,27 +2085,29 @@
                 this.validHour = false  
                 this.totalPrice = this.totalPrice + price
             },
-            lessService(index, service, time, card, precio){
-                if (this.serviceCount[index].count > 0) {
-                    this.serviceCount[index].count--
-                    if (this.serviceCount[index].count == 0) {
-                        $('#'+card).css({'border-bottom': 'solid 8px #e2e3de'})
+            lessService(index, service, time, card, precio, count){
+                if (count > 0) {
+                    if (this.serviceCount[index].count > 0) {
+                        this.serviceCount[index].count--
+                        if (this.serviceCount[index].count == 0) {
+                            $('#'+card).css({'border-bottom': 'solid 8px #e2e3de'})
+                        }
                     }
-                }
-                for (var i = 0; i < this.registerDate.serviceSelectds.length; i++) {
-                    if (this.registerDate.serviceSelectds[i].name == service ) {
-                        this.registerDate.serviceSelectds.splice(i, 1)
-                        break
+                    for (var i = 0; i < this.registerDate.serviceSelectds.length; i++) {
+                        if (this.registerDate.serviceSelectds[i].name == service ) {
+                            this.registerDate.serviceSelectds.splice(i, 1)
+                            break
+                        }
                     }
-                }
-                if (this.registerDate.serviceSelectds.length == 0) {
-                    this.ifServices = false
-                    this.validLender()
-                    this.validSchedule = false
-                    this.posibleLenders = []
-                }
-                this.validHour = false
-                this.totalPrice = this.totalPrice - precio
+                    if (this.registerDate.serviceSelectds.length == 0) {
+                        this.ifServices = false
+                        this.validLender()
+                        this.validSchedule = false
+                        this.posibleLenders = []
+                    }
+                    this.validHour = false
+                    this.totalPrice = this.totalPrice - precio
+                } 
             },
             generateLender(){
                 this.finalyLenders = []
@@ -2348,6 +2364,9 @@
                 window.scrollTo(0, 0);
                 if (this.validHour) {
                     this.validWizard = true
+                    this.registerDate.serviceSelectds.forEach(element => {
+                        element.microServiceSelect = []
+                    });
                     for (const micro of this.registerDate.serviceSelectds) {
                         for (const selects of micro.microServices) {
                             if (selects.checked) {

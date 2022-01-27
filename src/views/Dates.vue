@@ -118,7 +118,7 @@
                                                                     </div>
                                                                     <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;margin-top:-5px;">
                                                                         <div class="button-service-group">
-                                                                            <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price)"></i></button>
+                                                                            <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price, countServices[index].count)"></i></button>
                                                                             <span class="span-button-service">{{countServices[index].count}}</span>
                                                                             <button class="button-service-right" 
                                                                             v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, service.discount, service.products)"
@@ -452,6 +452,7 @@
                                             slot-scope="{focus, blur}"
                                             @on-open="focus"
                                             @on-close="blur"
+                                            @on-change="validRegister()"
                                             :config="configDate"
                                             class="form-control datepicker"
                                             placeholder="Seleccione una fecha"
@@ -1725,26 +1726,29 @@ import mixinES from '../mixins/mixinES'
             }
             this.validHour = false
         },
-        lessService(index, service, time, card, precio){
-            if (this.countServices[index].count > 0) {
-                this.countServices[index].count--
-                if (this.countServices[index].count == 0) {
-                    $('#'+card).css({'border-bottom': 'solid 8px #e2e3de'})
+        lessService(index, service, time, card, price, count){
+            if (count > 0) {
+                if (this.countServices[index].count > 0) {
+                    this.countServices[index].count--
+                    if (this.countServices[index].count == 0) {
+                        $('#'+card).css({'border-bottom': 'solid 8px #e2e3de'})
+                    }
                 }
-            }
-            for (var i = 0; i < this.registerDae.serviceSelectds.length; i++) {
-                if (this.registerDae.serviceSelectds[i].name == service ) {
-                    this.registerDae.serviceSelectds.splice(i, 1)
-                    break
+                for (var i = 0; i < this.registerDae.serviceSelectds.length; i++) {
+                    if (this.registerDae.serviceSelectds[i].name == service ) {
+                        this.registerDae.serviceSelectds.splice(i, 1)
+                        break
+                    }
                 }
+                if (this.registerDae.serviceSelectds.length == 0) {
+                    this.ifServices = false
+                    this.validLender()
+                    this.validSchedule = false
+                    this.posibleLenders = []
+                }
+                this.validHour = false
+                this.totalPrice = this.totalPrice - price
             }
-            if (this.registerDae.serviceSelectds.length == 0) {
-                this.ifServices = false
-                this.validLender()
-                this.validSchedule = false
-                this.posibleLenders = []
-            }
-            this.validHour = false
         },
         async deleteHour(id, employe, dateBlocking, start, end){
             try {
@@ -1945,7 +1949,7 @@ import mixinES from '../mixins/mixinES'
             this.branch = localStorage.branch
             // this.getUsers()
             this.getConfiguration()
-            // this.getClients()
+            this.getClients()
             this.getMicroServices()
             this.getServices()
             this.getCategories()
@@ -2231,37 +2235,36 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        // async getClients(){
-        //     try {
-        //         const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
-        //         if (getAllClients.data.data.length > 0) {
-        //             this.clients = getAllClients.data.data
+        async getClients(){
+            try {
+                const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
+                if (getAllClients.data.data.length > 0) {
 
-        //             for (let index = 0; index < getAllClients.data.data.length; index++) {
-        //                 this.clientsNames.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email)
-        //             }
-        //         }
-        //     }catch (err) {
-        //         if (!err.response) {
-        //             this.$swal({
-        //                 icon: 'error',
-        //                 title: 'Error de conexión',
-        //                 showConfirmButton: false,
-        //                 timer: 1500
-        //             })
-        //         }else if (err.response.status == 401) {
-        //             this.$swal({
-        //                 icon: 'error',
-        //                 title: 'Session caducada',
-        //                 showConfirmButton: false,
-        //                 timer: 1500
-        //             })
-        //             setTimeout(() => {
-        //                 router.push("login")
-        //             }, 1550);
-        //         }
-        //     }
-        // },
+                    for (let index = 0; index < getAllClients.data.data.length; index++) {
+                        this.clientsNames.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email)
+                    }
+                }
+            }catch (err) {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
+            }
+        },
         formatPhone(){
             var number = this.dateClient.infoOne.replace(/[^\d]/g, '')
             if (number.length == 9) {
@@ -2282,6 +2285,7 @@ import mixinES from '../mixins/mixinES'
                 email: this.dataClient.email,
                 phone: this.dataClient.phone,
                 instagram: this.dataClient.instagram,
+                birthday: this.dataClient.birthday
             },this.configHeader)
             .then(res => {
                 if (res.data.status == 'update client') {
@@ -2292,6 +2296,7 @@ import mixinES from '../mixins/mixinES'
 							showConfirmButton: false,
 							timer: 1500
 						})
+                        this.clients = []
                     // setTimeout(() => {
                     //     this.getClients();
                     //     // EventBus.$emit('reloadClients', 'reload')
@@ -2721,6 +2726,7 @@ import mixinES from '../mixins/mixinES'
                     phone: value.phone
                 }
                 this.dataClient = {
+                    _id: value._id,
                     firstName: value.firstName,
                     lastName: value.lastName,
                     email: value.email,
@@ -2738,20 +2744,22 @@ import mixinES from '../mixins/mixinES'
             } 
         },
         validRegister(){
-            if (this.dataClient.firstName.length > 2 && this.dataClient.lastName.length > 2 && this.dataClient.email != '') {
-                if (this.dataClient.email.split('@').length == 2) {
-                    if (this.dataClient.email.split('@')[1].split('.').length == 2) {
-                        this.dataClient.valid2 = true
+            setTimeout(() => {
+                if (this.dataClient.firstName.length > 2 && this.dataClient.lastName.length > 2 && this.dataClient.email != '' && this.dataClient.phone.isValid && this.dataClient.birthday != '') {
+                    if (this.dataClient.email.split('@').length == 2) {
+                        if (this.dataClient.email.split('@')[1].split('.').length >= 2) {
+                            this.dataClient.valid2 = true
+                        }else{
+                            this.dataClient.valid2 = false
+                        }
                     }else{
                         this.dataClient.valid2 = false
                     }
-                }else{
-                    this.dataClient.valid2 = false
                 }
-            }
-            else{
-                this.dataClient.valid2 = false
-            }  
+                else{
+                    this.dataClient.valid2 = false
+                }  
+            }, 200);
         },
         formatDate(date) {
             let dateFormat = new Date(date)
@@ -3462,6 +3470,7 @@ import mixinES from '../mixins/mixinES'
             }, 5);
             setTimeout(() => {
                 const finalDate = this.selectedEvent.createdAt
+                console.log(new Date(this.selectedEvent.start))
                 if (finalDate != '') {
                     setTimeout(() => {
                         axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
@@ -3478,43 +3487,79 @@ import mixinES from '../mixins/mixinES'
                                 branch: this.branch
                             }, this.configHeader)
                             .then(res => {
-                                this.selectedEvent.idBlock = res.data.id
-                                this.blockFirstEdit = res.data.data
-                                this.blockFirstEdit.forEach(element => {
-                                    if (element.validator == 'select') {
-                                        element.validator = true
-                                    }
-                                })
-                                axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
-                                    block: this.blockFirstEdit,
-                                    timedate: this.selectedEvent.duration,
-                                    employeSelect: this.employeForSearchEdit,
-                                    firstBlock: false
-                                })
-                                .then(res => {
-                                    this.finalBlockEdit = res.data.blockEmploye
-                                    this.validEditBlock = true
-                                    this.searchBlockEdit()
-                                }).catch(err => {
-                                    if (!err.response) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Error de conexión',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                    }else if (err.response.status == 401) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Session caducada',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        setTimeout(() => {
-                                            router.push("login")
-                                        }, 1550);
-                                    }
-                                })
+                                if (new Date(finalDate).getMonth() == new Date(this.selectedEvent.start).getMonth() && new Date(finalDate).getDate() == new Date(this.selectedEvent.start).getDate()) {
+                                    this.blockFirstEdit = res.data.data
+                                    this.selectedEvent.idBlock = res.data.id
+                                    axios.post(endPoint.endpointTarget+'/dates/editdateblockbefore',{
+                                        block: this.blockFirstEdit,
+                                        employe: this.selectedEvent.employe,
+                                        start: this.moment(this.selectedEvent.start).format('LT').split(' ')[0],
+                                        end: this.moment(this.selectedEvent.end).format('LT').split(' ')[0]
+                                    }, this.configHeader)
+                                    .then(res => {
+                                        this.blockFirstEdit = res.data.data
+                                        this.searchBlockEdit()
+                                    }).catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }else if (err.response.status == 401) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Session caducada',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            setTimeout(() => {
+                                                router.push("login")
+                                            }, 1550);
+                                        }
+                                    })
+                                }else{
+                                   this.selectedEvent.idBlock = res.data.id
+                                    this.blockFirstEdit = res.data.data
+                                    this.blockFirstEdit.forEach(element => {
+                                        if (element.validator == 'select') {
+                                            element.validator = true
+                                        }
+                                    })
+                                    axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                                        block: this.blockFirstEdit,
+                                        timedate: this.selectedEvent.duration,
+                                        employeSelect: this.employeForSearchEdit,
+                                        firstBlock: false
+                                    })
+                                    .then(res => {
+                                        
+                                        this.finalBlockEdit = res.data.blockEmploye
+                                        this.validEditBlock = true
+                                        this.searchBlockEdit()
+                                    }).catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }else if (err.response.status == 401) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Session caducada',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            setTimeout(() => {
+                                                router.push("login")
+                                            }, 1550);
+                                        }
+                                    }) 
+                                }
+                                
                             }).catch(err => {
                                 if (!err.response) {
                                     this.$swal({

@@ -436,23 +436,25 @@
                                     example: 'Ejemplo :'
                                 }"/>
                             </div>
-                            <base-input alternative
-                                type="text"
-                                placeholder="Instagram"
-                                v-model="registerClient.instagram"
-                                addon-left-icon="fa fa-address-card">
-                            </base-input>
-                            <base-input v-if="!ifEdit" addon-left-icon="ni ni-calendar-grid-58">
+                            <base-input addon-left-icon="ni ni-calendar-grid-58">
                                 <flat-picker 
                                         slot-scope="{focus, blur}"
                                         @on-open="focus"
                                         @on-close="blur"
+                                        @on-change="validRegister(2)"
                                         :config="configDate"
                                         class="form-control datepicker"
                                         placeholder="Seleccione una fecha"
                                         v-model="registerClient.birthday">
                                 </flat-picker>
                             </base-input>
+                            <base-input alternative
+                                type="text"
+                                placeholder="Instagram"
+                                v-model="registerClient.instagram"
+                                addon-left-icon="fa fa-address-card">
+                            </base-input>
+                            
                             <base-checkbox v-if="!ifEdit" v-model="registerClient.discount" class="mb-3">
                                 Descuento de nuevo cliente
                             </base-checkbox>
@@ -464,7 +466,7 @@
                             ></vue-single-select>
                             <div class="text-center">
                                 <base-button type="default" :disabled="registerClient.valid ? false : true" v-on:click="registerClients()" v-if="!ifEdit" class="my-4">Registrar</base-button>
-                                <base-button type="default" v-on:click="editClient()" v-if="ifEdit" class="my-4">Editar</base-button>
+                                <base-button type="default" v-on:click="editClient()" :disabled="registerClient.valid ? false : true" v-if="ifEdit" class="my-4">Editar</base-button>
                             </div> 
                         </form>
                 </template>
@@ -1186,19 +1188,21 @@ export default {
             if (valid == 1) {
                 this.registerService.valid = this.registerService.lenderSelecteds.length > 0 && this.registerService.serviceRegister != '' && this.registerService.priceRegister > 0 && this.registerService.timeRegister != 'Seleccione el tiempo' && this.registerService.comissionRegister != '' ? true : false
             }else if (valid == 2) {
-                if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '') {
-                    if (this.registerClient.email.split('@').length == 2) {
-                        if (this.registerClient.email.split('@')[1].split('.').length >= 2) {
-                            this.registerClient.valid = true
+                setTimeout(() => {
+                    if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '' && this.registerClient.phone.isValid && this.registerClient.birthday != '') {
+                        if (this.registerClient.email.split('@').length == 2) {
+                            if (this.registerClient.email.split('@')[1].split('.').length >= 2) {
+                                this.registerClient.valid = true
+                            }else{
+                                this.registerClient.valid = false
+                            }
                         }else{
                             this.registerClient.valid = false
                         }
                     }else{
                         this.registerClient.valid = false
                     }
-                }else{
-                    this.registerClient.valid = false
-                }
+                }, 200);
             }else{
                 this.cashFunds.valid = this.cashFunds.cashName != '' ? true : false
             }
@@ -1248,7 +1252,8 @@ export default {
                 lastName: this.registerClient.lastName,
                 email: this.registerClient.email,
                 phone: this.registerClient.phone,
-                instagram: this.registerClient.instagram
+                instagram: this.registerClient.instagram,
+                birthday: this.registerClient.birthday
             }, this.configHeader)
             .then(res => {
                 if (res.data.status == 'update client') {
@@ -1325,7 +1330,7 @@ export default {
                         timer: 1500
                     })
                     this.editClientId = res.data.data._id
-                    this.registerClient.select = this.registerClient.firstName
+                    this.registerClient.select = this.registerClient.firstName + " " + this.registerClient.lastName
                     this.readyClient = false
                     this.ifEdit = true
                     this.modals.modal2 = false
@@ -1916,6 +1921,14 @@ export default {
                     this.itemData.discountServiceIf = false
                     this.itemData.commission = 0
                     this.itemData.tag = 'product'
+                    if (product.data.data.entry - product.data.data.consume  <= 0) {
+                        this.$swal({
+                        icon: 'info',
+                        title: 'Producto sin stock',
+                        text: 'El producto se encuentra sin stock disponible en inventario. En caso de continuar con venta, revise su stock actual',
+                        showConfirmButton: true
+                    })
+                    }
                 }catch(err){
                     if (!err.response) {
                     this.$swal({
@@ -2070,6 +2083,7 @@ export default {
                     this.registerClient.instagram = getClient.data.data.instagram
                     this.readyClient = false
                     this.validRegister(2)
+                    this.registerClient.birthday = ''
                     if(getClient.data.data.birthday){
                         this.registerClient.birthday = this.$options.filters.formatDate(getClient.data.data.birthday)
                         var birthday = new Date(getClient.data.data.birthday).getMonth()
@@ -2124,6 +2138,7 @@ export default {
                 this.registerClient.select = "Seleccione"
                 this.registerClient.lastName = ""
                 this.registerClient.email = ""
+                this.registerClient.birthday = ""
                 this.registerClient.phone = {
                     "countryCode": "CL", 
                     "isValid": false, 

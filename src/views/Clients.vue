@@ -90,6 +90,19 @@
                                             example: 'Ejemplo :'
                                         }"/>
                                     </div>
+                                    <base-input class="mb-2" addon-left-icon="ni ni-calendar-grid-58">
+                                        <flat-picker 
+                                            slot-scope="{focus, blur}"
+                                            @on-open="focus"
+                                            @on-close="blur"
+                                            @on-change="validRegister()"
+                                            @on-input="validRegister()"
+                                            :config="configDate"
+                                            class="form-control datepicker"
+                                            placeholder="Seleccione una fecha de nacimiento"
+                                            v-model="registerClient.birthday">
+                                        </flat-picker>
+                                    </base-input>
                                     <base-input alternative
                                                 type="text"
                                                 placeholder="Instagram"
@@ -192,6 +205,8 @@
                                     slot-scope="{focus, blur}"
                                     @on-open="focus"
                                     @on-close="blur"
+                                    @on-change="validRegister()"
+                                    @on-input="validRegister()"
                                     :config="configDate"
                                     class="form-control datepicker"
                                     placeholder="Seleccione una fecha de nacimiento"
@@ -664,8 +679,9 @@ export default {
             }  
         },
         validRegister(){
-            if (this.registerClient.phone.nationalNumber == "") {
-                if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '') {  
+            setTimeout(() => {
+                this.registerClient.valid = false
+                if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '' && this.registerClient.phone.isValid && this.registerClient.birthday != '') {
                     if (this.registerClient.email.split('@').length == 2) {
                         if (this.registerClient.email.split('@')[1].split('.').length >= 2) {
                             this.registerClient.valid = true
@@ -679,23 +695,7 @@ export default {
                 else {
                     this.registerClient.valid = false
                 }
-            }else{
-                this.registerClient.valid = false
-                if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '' && this.registerClient.phone.isValid) {
-                    if (this.registerClient.email.split('@').length == 2) {
-                        if (this.registerClient.email.split('@')[1].split('.').length == 2) {
-                            this.registerClient.valid = true
-                        }else{
-                            this.registerClient.valid = false
-                        }
-                    }else{
-                        this.registerClient.valid = false
-                    }
-                }
-                else {
-                    this.registerClient.valid = false
-                }
-            }
+            }, 200);
         },
         formatPhone(){
             var number = this.registerClient.contactOne.replace(/[^\d]/g, '')
@@ -835,6 +835,7 @@ export default {
                 email: this.registerClient.email,
                 phone: this.registerClient.phone,
                 instagram: this.registerClient.instagram,
+                birthday: this.registerClient.birthday
             },this.configHeader)
             .then(res => {
                 if (res.data.status == 'update client') {

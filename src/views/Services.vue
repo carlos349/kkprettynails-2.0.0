@@ -441,7 +441,7 @@
                 </template>
                 
                 <template slot="actionButtons" class="mx-auto" slot-scope="record, column">
-                    <a-tooltip placement="top">
+                    <a-tooltip placement="left">
                         <template slot="title">
                         <span>Editar</span>
                         </template>
@@ -449,7 +449,7 @@
                         <base-button v-else icon="fa fa-edit" size="sm" type="default" disabled class="text-center" ></base-button>
                     </a-tooltip>
     
-                    <a-tooltip placement="top">
+                    <a-tooltip placement="leftBottom">
                         <template slot="title">
                         <span>Activar / Desactivar</span>
                         </template>
@@ -466,7 +466,7 @@
                         </template>
                     </a-tooltip>
 
-                    <a-tooltip placement="top">
+                    <a-tooltip placement="leftBottom">
                         <template slot="title">
                             <span>Eliminar</span>
                         </template>
