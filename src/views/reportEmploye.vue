@@ -874,6 +874,7 @@ import mixinES from '../mixins/mixinES'
                 axios.get(endPoint.endpointTarget+'/employes/salesbyemploye/'+this.id, this.configHeader)
                 .then(res => {
                     this.sales = res.data.data
+                    console.log(this.sales)
                     this.dateInit = res.data.data[0] ? res.data.data[0].createdAt : ''
                     this.progress = false
                 }).catch(err => {
@@ -969,6 +970,7 @@ width=0,height=0,left=-1000,top=-1000`;
                                         text: 'Para visualizar reporte verifique el historial',
                                         showConfirmButton: true
                                     })
+                                    this.getData()
                                 }
                             }).catch(err => {
                                 if (!err.response) {

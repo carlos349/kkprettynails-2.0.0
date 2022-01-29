@@ -1858,6 +1858,7 @@ export default {
                     this.itemData.employe.id = getEmploye.data.data._id
                     this.itemData.employe.name = getEmploye.data.data.firstName+' '+getEmploye.data.data.lastName
                     this.itemData.employe.document = getEmploye.data.data.document
+                    this.itemData.employe.closed = false
                 }catch(err) {
                     if (!err.response) {
                         this.$swal({

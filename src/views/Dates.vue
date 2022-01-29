@@ -944,7 +944,7 @@
                 </div>
             </div>
             <div class="text-center">
-                <base-button v-on:click="endDate(selectedEvent)" class="mt-3" type="default">Finalizar</base-button>
+                <base-button v-on:click="endDate(selectedEvent)" :disabled="finallyDisabled" class="mt-3" type="default">Finalizar</base-button>
             </div>
         </modal>
         <a-modal v-model="modals.modal5" style="z-index:10000" :width="widthModals" title="Precio del microservicio" @cancel="changeMicroPrice" :closable="true">
@@ -1439,6 +1439,7 @@ import mixinES from '../mixins/mixinES'
             modal6:false,
             modal7:false
         },
+        finallyDisabled: false,
         categories: [],
         radio: {
         radio1: "radio1",
@@ -3824,9 +3825,10 @@ import mixinES from '../mixins/mixinES'
             
         },
         endDate(data){
+            this.finallyDisabled = true
             var valid = true
             const dataFinal = data
-            data.services.forEach(element => {
+            for (const element of data.services) {
                 if (element.microServiceSelect && element.microServiceSelect.length == 0) {
                     valid = false
                     this.$swal({
@@ -3857,9 +3859,11 @@ import mixinES from '../mixins/mixinES'
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
+                                    
                                     EventBus.$emit('reloadFinallyDates', 'reload') 
                                     this.dateModals.modal1 = false
                                     this.dateModals.modal3 = false
+                                    this.finallyDisabled = false
                                     axios.post(endPoint.endpointTarget+'/notifications', {
                                         branch: this.branch,
                                         userName:this.firstNameUser + " " + this.lastNameUser,
@@ -3869,6 +3873,7 @@ import mixinES from '../mixins/mixinES'
                                     }, this.configHeader)
                                     .then(res => {
                                         this.socket.emit('sendNotification', res.data.data)
+                                        break
                                     })   
                                 }
                             }).catch(err => {
@@ -3900,10 +3905,11 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                            this.finallyDisabled = false
                         }
                     }) 
                 }
-            });
+            }
             if (valid){
                 
                 axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
@@ -3925,6 +3931,7 @@ import mixinES from '../mixins/mixinES'
                         EventBus.$emit('reloadFinallyDates', 'reload')
                         this.dateModals.modal1 = false
                         this.dateModals.modal3 = false
+                        this.finallyDisabled = false
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             branch: this.branch,
                             userName:this.firstNameUser + " " + this.lastNameUser,
@@ -3936,6 +3943,7 @@ import mixinES from '../mixins/mixinES'
                             this.socketValidator = false
                             this.socket.emit('sendNotification', res.data.data)
                             this.socketValidator = true
+                            
                         })   
                     }
                 }).catch(err => {
@@ -5110,6 +5118,16 @@ import mixinES from '../mixins/mixinES'
             })
         },
         selectBloqMulti(lenders, hora, i, indexService, open, check){
+            var oldEmploye = ''
+            oldEmploye = {
+                name: this.registerDae.serviceSelectds[indexService].employe,
+                id: this.registerDae.serviceSelectds[indexService].employeId,
+                class: this.registerDae.serviceSelectds[indexService].class,
+                valid: true,
+                img: this.registerDae.serviceSelectds[indexService].employeImg
+            }
+            console.log("este")
+            console.log(oldEmploye)
             for (let j = indexService + 1; j < this.registerDae.serviceSelectds.length; j++) {
                 const element = this.registerDae.serviceSelectds[j];
                 element.start = ''
@@ -5157,6 +5175,7 @@ import mixinES from '../mixins/mixinES'
                     timedate: this.registerDae.serviceSelectds[indexService].duration,
                     hour: this.registerDae.serviceSelectds[indexService].start,
                     employe: employeForBlock,
+                    oldEmploye: oldEmploye,
                     block: this.registerDae.serviceSelectds[indexService].blocks,
                     branch: this.branch,
                     ifFirstClick: this.registerDae.serviceSelectds[indexService].itFirst,
