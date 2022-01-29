@@ -2715,6 +2715,7 @@ import mixinES from '../mixins/mixinES'
             })
         },
         selectClient(value){
+            console.log(value)
             if (value == 'register') {
                 this.dataClient.valid = false
                 this.dateClient.valid2 = false
@@ -2742,11 +2743,12 @@ import mixinES from '../mixins/mixinES'
                     valid: true,
                     valid2: true 
                 }
+                console.log(this.dataClient)
             } 
         },
         validRegister(){
             setTimeout(() => {
-                if (this.dataClient.firstName.length > 2 && this.dataClient.lastName.length > 2 && this.dataClient.email != '' && this.dataClient.phone.isValid && this.dataClient.birthday != '') {
+                if (this.dataClient.firstName.length > 2 && this.dataClient.lastName.length > 2 && this.dataClient.email != '') {
                     if (this.dataClient.email.split('@').length == 2) {
                         if (this.dataClient.email.split('@')[1].split('.').length >= 2) {
                             this.dataClient.valid2 = true
@@ -2882,7 +2884,7 @@ import mixinES from '../mixins/mixinES'
         register(){
             this.spinningDate = true
             if (this.dataClient.valid && this.dataClient.valid2) {
-                    this.ifDisabled = true
+                this.ifDisabled = true
                 var employeFinal = ''
                 var hourFinal = ''
                 for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
@@ -4212,8 +4214,6 @@ import mixinES from '../mixins/mixinES'
 			$("."+tipo).toggle()
         },
         findDay(days, lender){
-            console.log(lender)
-            console.log(days)
             if (lender != 'Primera disponible') {
                 if (days.length > 0) {
                     var entry = 0
