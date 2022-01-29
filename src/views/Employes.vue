@@ -67,12 +67,12 @@
                         <template>
                             <div class="text-muted text-center mb-1">Días laborales</div>
                         </template>
-                        <vue-bootstrap4-table class="text-left styleDays" :rows="days" :columns="columnsDays" :config="configDays">
+                        <vue-bootstrap4-table @refresh-data="onRefreshData" ref="employeTable" class="text-left styleDays" v-if="employeEditTableValid" :rows="days" :columns="columnsDays" :config="configDays">
                             <template slot="name" slot-scope="props">
-                                <base-button :disabled="props.row.valid ? false : true" v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.validator)" class="w-75 mt-1 ml-1" size="sm" type="success" v-if="props.row.validator">
+                                <base-button :disabled="props.row.valid ? false : true" v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.validator, props.row.value)" class="w-75 mt-1 ml-1" size="sm" type="success" v-if="props.row.validator">
                                     {{props.row.day}}
                                 </base-button>
-                                <base-button :disabled="props.row.valid ? false : true" v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.validator)" class="w-75 mt-1 ml-1" size="sm" type="danger" v-else>
+                                <base-button :disabled="props.row.valid ? false : true" v-on:click="addDay(props.row.vbt_id, props.row.value, props.row.validator,props.row.value)" class="w-75 mt-1 ml-1" size="sm" type="danger" v-else>
                                     {{props.row.day}}
                                 </base-button>
                             </template>
@@ -90,7 +90,7 @@
                             </template>
                         </vue-bootstrap4-table>
                         <div class="text-center">
-                            <base-button type="primary" v-on:click="proccess()" class="my-4">{{tipeForm}}</base-button>
+                            <base-button type="primary" v-on:click="proccess()" :disabled="disabledform" class="my-4">{{tipeForm}}</base-button>
                         </div>
                         
                     </form>
@@ -169,7 +169,7 @@
                 <template slot="commission" slot-scope="record">
                     {{record | formatPrice}}
                 </template>
-                <template slot="name" slot-scope="record, column">
+                <template slot="name" slot-scope="record, column, index">
                     <a-tooltip placement="top">
                         <template slot="title">
                             <span>Avance</span>
@@ -186,7 +186,7 @@
                         <template slot="title">
                             <span>Editar</span>
                         </template>
-                        <base-button v-if="validRoute('empleados', 'editar')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch, column.validOnline)" icon="fa fa-edit"></base-button>
+                        <base-button v-if="validRoute('empleados', 'editar')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch, column.validOnline,index)" icon="fa fa-edit"></base-button>
                         <base-button v-else disabled size="sm" type="default" icon="fa fa-edit"></base-button>
                     </a-tooltip>
                     
@@ -244,10 +244,13 @@ export default {
             valid2: false,
             online: true,
         },
+        disabledform:false,
+        indexEdit:null,
         originalDays:[],
         dayValid:false,
         filter:'',
         branch:'',
+        employeEditTableValid:true,
         branchName:'',
         configHeader: {
             headers:{
@@ -572,8 +575,9 @@ export default {
                 }
             }, 200);
         },
-        addDay(id, value, valid){
+        addDay(id, value, valid, indes){
             if (valid) {
+                console.log(this.employes[this.indexEdit])
                 this.days[id - 1].validator = false
                 for (let index = 0; index < this.days.length; index++) {
                     const element = this.days[index];
@@ -585,6 +589,11 @@ export default {
                     }
                 }
                 this.validRegister()
+                if (indes == 0) {
+                    indes = 7
+                }
+                this.$refs.employeTable.rows[indes-1].start = "Desde"
+                this.$refs.employeTable.rows[indes-1].end = "Hasta"
             }else{
                 this.days[id - 1].validator = true
                 this.selectedDays.push({day: value, hours: []})
@@ -645,6 +654,7 @@ export default {
             }
         },
         registerEmployes(){
+            this.disabledform = true
             if (this.validHoursDays() == 'hora atras') {
                 this.$swal.fire({
                     icon: 'error',
@@ -675,6 +685,7 @@ export default {
                             this.getEmployes()
                             this.initialState(1)
                             EventBus.$emit('reloadLenders', 'reload')
+                            this.disabledform = false
                         }else{
                             this.$swal({
                                 icon: 'error',
@@ -716,6 +727,7 @@ export default {
             
         },
         updateEmploye(){
+            this.disabledform = true
             if (this.validHoursDays() == 'hora atras') {
                 this.$swal.fire({
                     icon: 'error',
@@ -756,7 +768,7 @@ export default {
                             this.getEmployes()
                             this.initialState(1)
                             EventBus.$emit('reloadLenders', 'reload')
-                            
+                            this.disabledform = false
                         }else{
                             this.$swal({
                                 type: 'error',
@@ -867,7 +879,10 @@ export default {
                 }
             })	
 		},
-        pushData(firstName,days,_id,document,lastName,branch,online){
+        onRefreshData(){
+            
+        },
+        pushData(firstName,days,_id,document,lastName,branch,online, index){
             this.originalDays = []
             this.registerEmploye.firstName = firstName
             this.registerEmploye.lastName = lastName
@@ -878,7 +893,7 @@ export default {
             this.registerEmploye.show = true
             this.registerEmploye._id = _id
             this.selectedDays = days
-
+            this.indexEdit = index
             for (let index = 0; index < this.days.length; index++) {
                 const element = this.days[index];
                 for (let j = 0; j < days.length; j++) {

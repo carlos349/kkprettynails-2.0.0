@@ -1054,7 +1054,7 @@
                 }
                 if (this.registerUser.email != '' && this.branch != '') {
                     if (split.length == 2) {
-                        if (splitTwo.length == 2) {
+                        if (splitTwo.length >= 2) {
                             this.validVerify = true
                         }else{
                             this.validVerify = false

@@ -350,7 +350,7 @@
                     locale="de"
                     class="ant-input w-100 mb-3"
                 />
-                <a-button @click="addPayment()" :disabled="serviceSelecteds.length > 0 ? false : true" type="primary" class="float-right w-50">
+                <a-button @click="addPayment()" :disabled="serviceSelecteds.length > 0 && payment.type != '' && payment.total > 0 ? false : true" type="primary" class="float-right w-50">
                     Agregar pago
                 </a-button>
                 <hr class="mt-5 mb-2">
@@ -1818,6 +1818,10 @@ export default {
             }else{
                 this.serviceSelecteds[key].total = this.serviceSelecteds[key].price + this.serviceSelecteds[key].additionalTotal
             }
+            this.totalPay = 0
+            for (const keys in this.paysSelecteds) {
+                this.paysSelecteds.splice(keys,1)
+            }
             this.calculatedTotal()
         },
         addDiscountTableProduct(record, key){
@@ -1826,6 +1830,10 @@ export default {
                 this.serviceSelecteds[key].total = (this.serviceSelecteds[key].price * this.serviceSelecteds[key].quantityProduct) - ((this.serviceSelecteds[key].price * this.serviceSelecteds[key].quantityProduct) * parseFloat('0.'+discount))
             }else{
                 this.serviceSelecteds[key].total = this.serviceSelecteds[key].price * this.serviceSelecteds[key].quantityProduct
+            }
+            this.totalPay = 0
+            for (const keys in this.paysSelecteds) {
+                this.paysSelecteds.splice(keys,1)
             }
             this.calculatedTotal()
         },

@@ -971,7 +971,7 @@
                     </template>
                     <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen" >
                         <template slot="date-slot" slot-scope="record, column">
-                            {{column.dateBlocking | formatDate}}
+                            {{formatDate(column.dateBlocking)}}
                         </template>
                         <template slot="delete-slot" slot-scope="record, column">
                             <base-button @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end)" size="sm" type="danger">
@@ -3273,8 +3273,13 @@ import mixinES from '../mixins/mixinES'
             }
         },
         onEventClick(event, e){
+            this.configDatePickerEdit.minDate = ''
             this.selectedEvent = event
-            console.log(this.selectedEvent._id)
+            setTimeout(() => {
+                this.configDatePickerEdit.minDate = new Date()
+            }, 200);
+            console.log("AQUI")
+            console.log(this.selectedEvent)
             this.dateModals.modal1 = true
             if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
                 this.editDisabled = true
@@ -3359,6 +3364,8 @@ import mixinES from '../mixins/mixinES'
             return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
         },
         dataEdit(){
+            console.log("PARA CUANDO DE ERROR 0")
+            console.log(this.selectedEvent.createdAt)
             this.editSelectValid = false
             setTimeout(() => {
                 this.editSelectValid = true
@@ -3728,7 +3735,7 @@ import mixinES from '../mixins/mixinES'
                             branch: this.branch,
                             userName: this.firstNameUser + " " + this.lastNameUser,
                             userImage: this.imgUser,
-                            detail:'Edit una cita para el día '+new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
+                            detail:'Editó una cita para el día '+new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
                             link: 'agendamiento'
                         }, this.configHeader)
                         .then(res => {
