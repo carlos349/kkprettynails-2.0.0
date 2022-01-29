@@ -3875,7 +3875,6 @@ import mixinES from '../mixins/mixinES'
                                     }, this.configHeader)
                                     .then(res => {
                                         this.socket.emit('sendNotification', res.data.data)
-                                        break
                                     })   
                                 }
                             }).catch(err => {
@@ -3910,6 +3909,7 @@ import mixinES from '../mixins/mixinES'
                             this.finallyDisabled = false
                         }
                     }) 
+                    break
                 }
             }
             if (valid){
