@@ -6,6 +6,7 @@ const endpointTarget = `http://${serverL}`
 const url = `http://kkspa.syswa.net/#`
 const imgEndpoint = `${endpointTarget}/static/users/`
 const database = 'kkprettynails-syswa'
+const database2 = 'house58-syswa'
 const endPoint = { 
     imgEndpoint: imgEndpoint, 
     portClient:portClient, 
