@@ -5939,7 +5939,7 @@ import mixinES from '../mixins/mixinES'
                 this.fixSearch = true
             }, 100);
         },
-        SelectMicro(index, indexM, microServices) {   
+        SelectMicro(index, indexM, microServices) { 
             if (this.registerDae.serviceSelectds[index].microServices[indexM].microService == 'Ninguno') {
                 this.registerDae.serviceSelectds[index].microServices.forEach(element => {
                     if (element.checked && element.microService != 'Ninguno') {

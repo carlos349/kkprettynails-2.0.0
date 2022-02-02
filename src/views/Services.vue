@@ -1317,7 +1317,6 @@ import mixinES from '../mixins/mixinES'
                     }
                 }
             }
-
         },
         clean(){
             this.categoryRegister = 'Categoría'

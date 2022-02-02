@@ -664,7 +664,7 @@ export default {
                     // timer: 1500
                 })
             }else{
-                if (this.registerEmploye.firstName.length > 3 && this.registerEmploye.lastName.length > 3 && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
+                if (this.registerEmploye.firstName.length != '' && this.registerEmploye.lastName.length != '' && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
                     axios.post(endPoint.endpointTarget+'/employes', {
                         branch: this.branch,
                         days: this.selectedDays,
@@ -724,7 +724,7 @@ export default {
                     })
                 }
             }
-            
+            this.disabledform = false
         },
         updateEmploye(){
             this.disabledform = true

@@ -2,7 +2,7 @@
     <div class="font">
         <nav class="headerStyles" id="upView">  
             <div class="borderImageBrand">
-                <img src="img/brand/kkspa.png" class="imageBrand" alt="" >
+                <img :src="logoBranch" class="imageBrand" alt="" >
             </div>
         </nav>
         <div class="container-fluid" style="margin-top:8rem;">
@@ -378,7 +378,7 @@
                                 <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#174c8e;color:#fff;border:none;" v-if="validRegister" type="success" v-on:click="finallyAgend()">
                                     Finalizar agenda
                                 </base-button>  
-                                <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" v-on:click="finallyAgend()" disabled>
+                                <base-button style="float:right;margin-top:-10px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-else type="default" disabled>
                                     Finalizar agenda
                                 </base-button>
                             </div>
@@ -476,13 +476,24 @@
                             </a-select-option>
                         </template>
                     </a-select>
-
-                    <base-button v-if="validVerify" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData">
-                        Confirmar
-                    </base-button>
-                    <base-button v-else class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData" disabled>
-                        Confirmar
-                    </base-button>
+                    <div class="row">
+                            <div class="col-md-6">
+                                 <base-button v-if="validVerify" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData">
+                                    Confirmar
+                                </base-button>
+                                <base-button v-else class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" disabled>
+                                    Confirmar
+                                </base-button>
+                            </div>
+                           
+                            <div class="col-md-5 pl-4">
+                                 <base-button class="mt-4" style="width:200px;border-radius:14px;border:none;" type="success" v-on:click="ifUserRegister = true">
+                                    Registrarse
+                                </base-button>
+                            </div>
+                        
+                    </div>
+                    
                 </div>
             </template>
         </a-modal>
@@ -693,6 +704,7 @@
                     end: ''
                 },
                 getDay: 0,
+                logoBranch:'https://syswa-gestion.s3.sa-east-1.amazonaws.com/predeterminado.png',
                 lenders: [],
                 services: [],
                 serviceCount: [],
@@ -756,6 +768,10 @@
                     .then(res => {
                         if (res.data.status == 'ok') {
                             this.configurationsBranch = res.data.data
+                            if (this.configurationsBranch.bussinessLogo != '') {
+                                this.logoBranch = this.configurationsBranch.bussinessLogo
+                            }
+                            
                             if (this.configurationsBranch.datesPolitics.onlineDates) {
                                 this.validVerifyFunc()
                             }else{
@@ -913,8 +929,16 @@
                             icon: 'success',
                             title: `¡Bienvenido ${findClient.data.data.firstName}!`,
                             text: 'Ya puedes agendar tu cita',
-                            showConfirmButton: false,
-                            timer: 2000
+                            // html: ` <h4>Ya puedes agendar tu cita</h4><br>
+                            // <h3>Link de referido</h3>
+                            //         <div class="row">
+                            //             <div class="col-12">
+                            //                 <span style="padding: 5px;border: 1px solid #172b4d;border-radius: 5px;background-color: #e9ecef;">http://link.com/ref=123j3j123123j123j12331g3hg</span>
+                            //             </div>
+                                        
+                            //         </div>
+                            // `,
+                            showConfirmButton: true
                         })
                         this.modals.modal6 = false
                     }else{
@@ -1001,8 +1025,13 @@
                     showConfirmButton: false,
                     timer: 3000
                 })
+
                 setTimeout(() => {
-                    window.location = 'http://kkspa.cl/'
+                    if (endPoint.siteRedirect == "") {
+                        location.reload()
+                    }else{
+                        window.location = endPoint.siteRedirect
+                    }
                 }, 3000);
                 
             },
@@ -1420,6 +1449,9 @@
                         }, 1550);
                     }
                 }
+            },
+            Copy(){
+                console.log("hola")
             },
             async getCategories(){
                 try {
@@ -2735,9 +2767,10 @@
                         this.$swal({
                             icon: 'error',
                             title: 'El cliente ya existe',
-                            showConfirmButton: false,
-                            timer: 2500
+                            text: 'Por favor seleccione una sucursal para avanzar.',
+                            showConfirmButton: true,
                         })
+                        this.ifUserRegister = false
                     }
                 }).catch(err => {
                     if (!err.response) {

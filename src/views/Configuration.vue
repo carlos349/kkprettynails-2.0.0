@@ -23,13 +23,25 @@
               placeholder="Precio del adicional"
               class="form-control w-100"
             />
-            <select class="form-control mt-4" v-model="configData.microServices[selectedMicroService].duration">
+            <select class="form-control mt-4 mb-4" v-model="configData.microServices[selectedMicroService].duration">
               <option style="color:black;" value="0">0 Minutos</option>
               <option style="color:black;" value="15">15 Minutos</option>
               <option style="color:black;" value="30">30 Minutos</option>
               <option style="color:black;" value="45">45 Minutos</option>
               <option style="color:black;" value="60">60 Minutos (1 Hr)</option>
             </select>
+            <!-- <vue-custom-scrollbar ref="tableC" class="maxHeight">
+                <vue-bootstrap4-table :rows="lenders" :columns="columnsLender" :classes="classes" :config="configLender" :footer="false" >
+                    <template slot="validationnnn" slot-scope="props">
+                        <center>
+                            <base-button v-on:click="unSelected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid == true">
+                            </base-button>
+                            <base-button v-on:click="selected(props.row, props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else>
+                            </base-button>
+                        </center>
+                      </template>
+                </vue-bootstrap4-table>
+            </vue-custom-scrollbar > -->
           </template>
           <template slot="footer">
             <base-button class="mt-4" size="sm" type="default" v-on:click="updateconfig()">
@@ -471,7 +483,7 @@
                                               <base-button outline type="default" v-if="item != 'Efectivo'" size="sm" class="float-right" v-on:click="removeMicroService(index)">
                                                   <i class="fa fa-times"></i>
                                               </base-button>
-                                              <base-button outline type="default" size="sm" class="float-right mr-2" v-on:click="modals.modal1 = true, selectedMicroService = index">
+                                              <base-button outline type="default" size="sm" class="float-right mr-2" v-on:click="modals.modal1 = true, selectedMicroService = index, pushEmployesMicro()">
                                                   <i class="fa fa-edit"></i>
                                               </base-button>
                                           </a-list-item>
@@ -533,11 +545,50 @@
           typePay: '',
           microService: '',
           validTime: false,
+          lenders:[],
           configHeader: {
             headers:{
               "x-database-connect": endPoint.database, 
               "x-access-token": localStorage.userToken
             }
+          },
+          columnsLender: [
+              {
+                  label: "Nombre",
+                  name: "firstName",
+                  // filter: {
+                  //     type: "simple",
+                  //     placeholder: "id"
+                  // },
+                  sort: true,
+              },
+              {
+                  label: "Acciones",
+                  name: "valid",
+                  slot_name:"validationnnn",
+                  sort: false,
+              }
+          ],
+          configLender: {
+              checkbox_rows: false,
+              rows_selectable : false,
+              highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+              rows_selectable: true,
+              per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+              show_refresh_button: false,
+              show_reset_button: false,  
+              selected_rows_info: false,
+              preservePageOnDataChange : false,
+              pagination_info : false,
+              pagination: false,
+              global_search: {
+                  placeholder: "Busque el prestador",
+                  visibility: true,
+                  case_sensitive: false,
+                  showClearButton: true,
+                  searchOnPressEnter: false,
+                  searchDebounceRate: 200,                      
+              },
           },
           modals: {
             modal1: false,
@@ -825,12 +876,45 @@
       created(){
         this.getBranch()
         this.getClients()
+        this.getEmployes()
       },
       methods: {
         getBranch(){
           this.branchName = localStorage.branchName  
           this.branch = this.$route.query.id;
           this.getConfiguration()
+        },
+        async getEmployes(){
+            try {
+                const employes = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+this.branch, this.configHeader)
+                if(employes.data.status == 'ok'){
+                    for (let index = 0; index < employes.data.data.length; index++) {
+                        employes.data.data[index].valid = false
+                    }
+                    this.lenders = employes.data.data
+                }else{
+                    this.lenders = []
+                }
+            }catch(err){
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
+            }
         },
         async getClients(){
             try {
@@ -926,6 +1010,34 @@
                 day.time = TotalMinutes
               }
           }
+        },
+        pushEmployesMicro(){
+          var lenders = this.configData.microServices[this.selectedMicroService].employes
+          for (let index = 0; index < this.lenders.length; index++) {
+              const element = this.lenders[index];
+              this.lenders[index].valid = false
+              for (let j = 0; j < lenders.length; j++) {
+                  const elementTwo = lenders[j];
+                  if (elementTwo.id == element._id) {
+                      this.lenders[index].valid = true
+                  }
+              }
+          }
+        },
+        selected(value, id){
+            this.lenders[id - 1].valid = true
+            console.log(value)
+            this.configData.microServices[this.selectedMicroService].employes.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no', validOnline: value.validOnline})
+            console.log(this.configData.microServices[this.selectedMicroService].employes)
+        },
+        unSelected(value, id){
+            this.lenders[id - 1].valid = false
+            for (let i = 0; i < this.configData.microServices[this.selectedMicroService].employes.length; i++) {
+                if (this.configData.microServices[this.selectedMicroService].employes[i].id == value) {
+                    this.configData.microServices[this.selectedMicroService].employes.splice(i, 1)
+                    break
+                }
+            }
         },
         updateconfig(){
           this.calculatedHour()
@@ -1058,14 +1170,14 @@
               }
             });
             if (valid) {
-              if (this.typePay.length > 4) {
+              if (this.typePay.length != '') {
                   this.configData.typesPay.push(this.typePay)
                   this.typePay = ''
                   this.updateconfig()
               }else if (this.typePay.length <= 4) {
                   this.$swal({
                       icon: 'error',
-                      title: 'El método de pago debe estar compuesto por mas de 4 caracteres',
+                      title: 'El método de pago no debe estar vacío',
                       showConfirmButton: false,
                       timer: 1500
                   })
@@ -1094,7 +1206,7 @@
             });
             if (valid) {
               if (this.microService.length > 2) {
-                  this.configData.microServices.push({microService:this.microService, price:0, duration:0})
+                  this.configData.microServices.push({microService:this.microService, price:0, duration:0,employes: []})
                   this.microService = ''
                   this.updateconfig()
                   setTimeout(() => {
@@ -1309,5 +1421,16 @@
   .highlight {
       background-color: rgb(255, 192, 105);
       padding: 0px;
+  }
+  .maxHeight{
+    max-height: 300px;
+      overflow: scroll;
+  }
+  .maxHeight .card .card-header{
+        display:none ;
+    }
+  .maxHeight .table td {
+      padding: 5px;
+      padding-bottom: 5px;
   }
 </style>
