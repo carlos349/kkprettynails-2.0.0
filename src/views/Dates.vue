@@ -3835,92 +3835,93 @@ import mixinES from '../mixins/mixinES'
         },
         endDate(data){
             this.finallyDisabled = true
-            var valid = true
+            var valid = false
             const dataFinal = data
             for (const element of data.services) {
                 if (element.microServiceSelect && element.microServiceSelect.length == 0) {
-                    valid = false
-                    this.$swal({
-                        icon: 'warning',
-                        title: '¿Uno o mas de los servicios agregados se finalizaran sin servicios adicionales, deseas continuar?',
-                        text: 'No puedes revertir esta acción',
-                        type: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Si',
-                        cancelButtonText: 'No, evitar acción',
-                        showCloseButton: true,
-                        showLoaderOnConfirm: true
-                    })
-                    .then((result) => {
-                        if(result.value) {
-                            axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
-                                service:dataFinal.services,
-                                client:dataFinal.client,
-                                branch:this.branch,
-                                employe: dataFinal.employe
-                            }, this.configHeader)
-                            .then(res => {
-                                if (res.data.status == 'ok') {
-                                    this.$swal({
-                                        type: 'success',
-                                        icon: 'success',
-                                        title: 'Cita finalizada con éxito',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    
-                                    EventBus.$emit('reloadFinallyDates', 'reload') 
-                                    this.dateModals.modal1 = false
-                                    this.dateModals.modal3 = false
-                                    this.finallyDisabled = false
-                                    axios.post(endPoint.endpointTarget+'/notifications', {
-                                        branch: this.branch,
-                                        userName:this.firstNameUser + " " + this.lastNameUser,
-                                        userImage:this.imgUser,
-                                        detail:'Finalizó una cita',
-                                        link: 'agendamiento'
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.socket.emit('sendNotification', res.data.data)
-                                    })   
-                                }
-                            }).catch(err => {
-                                if (!err.response) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Error de conexión',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
-                                }
-                            })
-                        }
-                        else{
-                            this.$swal({
-                                type: 'info',
-                                icon: 'info',
-                                title: 'Acción cancelada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            this.finallyDisabled = false
-                        }
-                    }) 
+                    valid = true
                     break
                 }
             }
-            if (valid){
-                
+            if (valid) {
+                valid = false
+                this.$swal({
+                    icon: 'warning',
+                    title: '¿Uno o mas de los servicios agregados se finalizaran sin servicios adicionales, deseas continuar?',
+                    text: 'No puedes revertir esta acción',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Si',
+                    cancelButtonText: 'No, evitar acción',
+                    showCloseButton: true,
+                    showLoaderOnConfirm: true
+                })
+                .then((result) => {
+                    if(result.value) {
+                        axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
+                            service:dataFinal.services,
+                            client:dataFinal.client,
+                            branch:this.branch,
+                            employe: dataFinal.employe
+                        }, this.configHeader)
+                        .then(res => {
+                            if (res.data.status == 'ok') {
+                                this.$swal({
+                                    type: 'success',
+                                    icon: 'success',
+                                    title: 'Cita finalizada con éxito',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                
+                                EventBus.$emit('reloadFinallyDates', 'reload') 
+                                this.dateModals.modal1 = false
+                                this.dateModals.modal3 = false
+                                this.finallyDisabled = false
+                                axios.post(endPoint.endpointTarget+'/notifications', {
+                                    branch: this.branch,
+                                    userName:this.firstNameUser + " " + this.lastNameUser,
+                                    userImage:this.imgUser,
+                                    detail:'Finalizó una cita',
+                                    link: 'agendamiento'
+                                }, this.configHeader)
+                                .then(res => {
+                                    this.socket.emit('sendNotification', res.data.data)
+                                })   
+                            }
+                        }).catch(err => {
+                            if (!err.response) {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Error de conexión',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }else if (err.response.status == 401) {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Session caducada',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                setTimeout(() => {
+                                    router.push("login")
+                                }, 1550);
+                            }
+                        })
+                    }
+                    else{
+                        this.$swal({
+                            type: 'info',
+                            icon: 'info',
+                            title: 'Acción cancelada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.finallyDisabled = false
+                    }
+                })
+            }else {
                 axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
                     service:data.services,
                     client:data.client,

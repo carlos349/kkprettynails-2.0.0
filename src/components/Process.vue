@@ -254,8 +254,8 @@
                                     <template slot="total-slot" slot-scope="record, column">
                                         {{column.total | formatPrice}}
                                     </template>
-                                    <template slot="actionInsert" slot-scope="record, column, index">
-                                        <base-button :disabled="readyClient" @click="addItem('date', index)" size="sm" type="success">
+                                    <template slot="actionInsert" slot-scope="text, record">
+                                        <base-button :disabled="readyClient" @click="addItem('date', record)" size="sm" type="success">
                                             <a-icon type="plus-circle" style="vertical-align:1.5px;" />
                                         </base-button>
                                     </template>
@@ -1552,26 +1552,27 @@ export default {
                 }
             }
         },
-        addItem(type, index){
+        addItem(type, record){
+            console.log(record)
             if (this.itemData.quantityProduct == '') {
                 this.itemData.quantityProduct = 0
             }
             var dateItem = 'none'
             if (type == 'date') {
                 const idDelete = new Date().getTime()
-                for (const service of this.datesFinally[index].services) {
+                for (const service of record.services) {
                     for (const micro of service.microServiceSelect) {
                         this.microserviceSelecteds.push({id: new Date().getTime(), name: micro.name, price: micro.price})
                     }
                     this.itemData.item = service
                     this.itemData.tag = 'service'
-                    this.itemData.employe = this.datesFinally[index].employe
+                    this.itemData.employe = record.employe
                     this.itemData.realPrice = service.price
                     this.itemData.price = service.price
                     this.itemData.commission = service.commission
                     this.itemData.discountServiceIf = service.discount
                     this.itemData.discountService = 0
-                    dateItem = this.datesFinally[index]
+                    dateItem = record
                     var total = 0
                     var additionals = ''
                     for (const micro of this.microserviceSelecteds) {
@@ -1618,7 +1619,12 @@ export default {
                     this.calculatedTotal()
                     this.microserviceSelecteds = []
                 }
-                this.datesFinally.splice(index, 1)
+                for (const key in this.datesFinally) {
+                    const datesF = this.datesFinally[key]
+                    if (datesF._id == record._id) {
+                        this.datesFinally.splice(key, 1)
+                    }
+                }
             }else{
                 var total = 0
                 var additionals = ''
