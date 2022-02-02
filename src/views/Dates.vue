@@ -841,19 +841,11 @@
                     <span class="minAdd text-default"> Duración: {{selectedEvent.duration}} Min</span>
                 </center>
                 <hr>
-                <a-select v-if="editSelectValid" class="col-9 col-md-9 mx-1" :default-value="selectedEvent.employe.name" >
+                <a-select v-if="editSelectValid" class="col-12 mx-1" :default-value="selectedEvent.employe.name" >
                     <a-select-option v-for="employe in selectedEvent.services[0].employes" :key="employe" @click="editEmployeDate(employe)" :value="employe.name">
                         {{employe.name}}
                     </a-select-option>
                 </a-select>
-                <a-tooltip placement="right">
-                    <template slot="title">
-                    <span>Buscar horario</span>
-                    </template>
-                    <a-button class="text-white col-2 col-md-2 mx-1" @click="searchBlockEdit()" style="background-color:#2dce89" type="success">
-                        <a-icon style="vertical-align: unset;" type="search" />
-                    </a-button>
-                </a-tooltip>
                 <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent noScroll col-12 mt-3" v-if="finalBlockEdit"  style="height:25vh; padding-right: 25px;">
                     <a-spin :spinning="spinningEdit">
                         <div class="col-12" v-for="block in finalBlockEdit" :key="block">
