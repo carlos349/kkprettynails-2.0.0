@@ -477,23 +477,15 @@
                         </template>
                     </a-select>
                     <div class="row">
-                            <div class="col-md-6">
-                                 <base-button v-if="validVerify" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData">
-                                    Confirmar
-                                </base-button>
-                                <base-button v-else class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" disabled>
-                                    Confirmar
-                                </base-button>
-                            </div>
-                           
-                            <div class="col-md-5 pl-4">
-                                 <base-button class="mt-4" style="width:200px;border-radius:14px;border:none;" type="success" v-on:click="ifUserRegister = true">
-                                    Registrarse
-                                </base-button>
-                            </div>
-                        
+                        <div class="col-md-12">
+                            <base-button v-if="validVerify" class="mt-4 float-right" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="verifyData">
+                                Confirmar
+                            </base-button>
+                            <base-button v-else class="mt-4 float-right" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" disabled>
+                                Confirmar
+                            </base-button>
+                        </div>
                     </div>
-                    
                 </div>
             </template>
         </a-modal>
@@ -804,16 +796,6 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }
@@ -865,16 +847,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }
             },
@@ -910,16 +882,6 @@
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         }
                         this.getServices()
@@ -967,16 +929,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }
             },
@@ -1006,16 +958,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }
             },
@@ -1154,16 +1096,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
             },
@@ -1245,15 +1177,7 @@
                                             timer: 1500
                                         })
                                     }else if (err.response.status == 401) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Session caducada',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        setTimeout(() => {
-                                            router.push("login")
-                                        }, 1550);
+                                        
                                     }
                                 }) 
                             }).catch(err =>{
@@ -1264,16 +1188,6 @@
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             }) 
                         }, 200);
@@ -1331,16 +1245,6 @@
                                             showConfirmButton: false,
                                             timer: 1500
                                         })
-                                    }else if (err.response.status == 401) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Session caducada',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        setTimeout(() => {
-                                            router.push("login")
-                                        }, 1550);
                                     }
                                 })   
                             })
@@ -1406,16 +1310,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
             },
@@ -1438,16 +1332,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }
             },
@@ -1470,16 +1354,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }
             },
@@ -1497,16 +1371,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }
             },
@@ -1593,16 +1457,6 @@
                                             showConfirmButton: false,
                                             timer: 1500
                                         })
-                                    }else if (err.response.status == 401) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Session caducada',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        setTimeout(() => {
-                                            router.push("login")
-                                        }, 1550);
                                     }
                                 })
                             }).catch(err =>{
@@ -1613,16 +1467,6 @@
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }, 200);
@@ -1663,16 +1507,6 @@
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }else{
@@ -1696,16 +1530,6 @@
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }
@@ -1799,16 +1623,6 @@
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }else{
@@ -1874,16 +1688,6 @@
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }
@@ -1944,16 +1748,6 @@
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }else{
@@ -1970,16 +1764,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
             },
@@ -2051,16 +1835,6 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }
@@ -2231,16 +2005,6 @@
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }else{
@@ -2254,16 +2018,6 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                     
@@ -2324,16 +2078,6 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                     setTimeout(() => {
@@ -2510,16 +2254,6 @@
                                                     showConfirmButton: false,
                                                     timer: 1500
                                                 })
-                                            }else if (err.response.status == 401) {
-                                                this.$swal({
-                                                    icon: 'error',
-                                                    title: 'Session caducada',
-                                                    showConfirmButton: false,
-                                                    timer: 1500
-                                                })
-                                                setTimeout(() => {
-                                                    router.push("login")
-                                                }, 1550);
                                             }
                                         })
                                     }, 200); 
@@ -2557,16 +2291,6 @@
                                                         showConfirmButton: false,
                                                         timer: 1500
                                                     })
-                                                }else if (err.response.status == 401) {
-                                                    this.$swal({
-                                                        icon: 'error',
-                                                        title: 'Session caducada',
-                                                        showConfirmButton: false,
-                                                        timer: 1500
-                                                    })
-                                                    setTimeout(() => {
-                                                        router.push("login")
-                                                    }, 1550);
                                                 }
                                             })
                                         }).catch(err => {
@@ -2577,16 +2301,6 @@
                                                     showConfirmButton: false,
                                                     timer: 1500
                                                 })
-                                            }else if (err.response.status == 401) {
-                                                this.$swal({
-                                                    icon: 'error',
-                                                    title: 'Session caducada',
-                                                    showConfirmButton: false,
-                                                    timer: 1500
-                                                })
-                                                setTimeout(() => {
-                                                    router.push("login")
-                                                }, 1550);
                                             }
                                         })
                                     }, 200); 
@@ -2663,16 +2377,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }
             },
@@ -2720,23 +2424,10 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }
             },
             registerClients(){
-                // if (this.phoneData.isValid) {
-                    
-                // }
                 axios.post(endPoint.endpointTarget+'/clients', {
                     firstName: this.registerUser.firstName,
                     lastName: this.registerUser.lastName,
@@ -2781,16 +2472,6 @@
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
             },
