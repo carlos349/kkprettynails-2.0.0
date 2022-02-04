@@ -774,6 +774,7 @@
                             
                             if (this.configurationsBranch.datesPolitics.onlineDates) {
                                 this.validVerifyFunc()
+                                this.configDate.maxDate = new Date().setMonth(new Date().getMonth() + this.configurationsBranch.datesPolitics.limitTimeDate)
                             }else{
                                 $('.clearClass .ant-select-selection__clear').click()
                                 this.$swal.fire({

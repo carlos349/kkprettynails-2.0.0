@@ -1463,6 +1463,7 @@ import mixinES from '../mixins/mixinES'
         lenders: [],
         EndDateServices: [],
         loadingEnds:true,
+        editSelectValid:true,
         availableslenders: [],
         columnsEndSelectedDates: [
             
@@ -2669,7 +2670,7 @@ import mixinES from '../mixins/mixinES'
         editEmployeDate(value){
             this.employeForSearchEdit = value.id
             this.selectedEvent.employe = value
-            this.searchBlockEdit()
+            this.changeDateEdit()
         },
         searchBlockEdit(){
             setTimeout(() => {
@@ -3273,13 +3274,14 @@ import mixinES from '../mixins/mixinES'
             }
         },
         onEventClick(event, e){
+            console.log("Evento")
+            console.log(event)
             this.configDatePickerEdit.minDate = ''
             this.selectedEvent = event
-            setTimeout(() => {
-                this.configDatePickerEdit.minDate = new Date()
-            }, 200);
-            console.log("AQUI")
-            console.log(this.selectedEvent)
+            this.originalEmploye = this.selectedEvent.employe
+            var start = this.selectedEvent.start
+            
+            
             this.dateModals.modal1 = true
             if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
                 this.editDisabled = true
@@ -3323,6 +3325,14 @@ import mixinES from '../mixins/mixinES'
                 }
             })
             e.stopPropagation()
+            setTimeout(() => {
+                
+                this.selectedEvent.createdAt = event.createdAt
+                this.configDatePickerEdit.minDate = new Date()
+                console.log(this.selectedEvent)
+                console.log("AQUI")
+            
+            }, 2000);
         },
         dateSplit(value){
             const date = new Date(value).format('DD MM YYYY')
@@ -3364,13 +3374,24 @@ import mixinES from '../mixins/mixinES'
             return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
         },
         dataEdit(){
+            console.log(this.originalEmploye)
+            console.log(this.selectedEvent.employe.id)
+            if (this.originalEmploye.id != this.selectedEvent.employe.id) {
+                this.selectedEvent.employe = this.originalEmploye
+            }
             console.log("PARA CUANDO DE ERROR 0")
+            console.log(this.selectedEvent.createdAt)
+            if (this.selectedEvent.createdAt.includes("T")) {
+                this.selectedEvent.createdAt = this.selectedEvent.createdAt.split("T")[0].split("-")[1] + "-" + this.selectedEvent.createdAt.split("T")[0].split("-")[2] + "-" + this.selectedEvent.createdAt.split("T")[0].split("-")[0]
+                console.log(this.selectedEvent.createdAt)
+            }
             console.log(this.selectedEvent.createdAt)
             this.editSelectValid = false
             setTimeout(() => {
                 this.editSelectValid = true
                 
             }, 100);
+            
             this.selectedEvent.isFirst = true
             this.employeForSearchEdit = this.selectedEvent.employe.id
             this.minLessEdit = 0
@@ -3405,6 +3426,7 @@ import mixinES from '../mixins/mixinES'
                         this.selectedEvent.idBlock = res.data.id
                         axios.post(endPoint.endpointTarget+'/dates/editdateblockbefore',{
                             block: this.blockFirstEdit,
+                            originalEmploye: this.originalEmploye.id,
                             employe: this.selectedEvent.employe,
                             start: this.moment(this.selectedEvent.start).format('LT').split(' ')[0],
                             end: this.moment(this.selectedEvent.end).format('LT').split(' ')[0]
@@ -3502,6 +3524,7 @@ import mixinES from '../mixins/mixinES'
                                     this.selectedEvent.idBlock = res.data.id
                                     axios.post(endPoint.endpointTarget+'/dates/editdateblockbefore',{
                                         block: this.blockFirstEdit,
+                                        originalEmploye: this.originalEmploye.id,
                                         employe: this.selectedEvent.employe,
                                         start: this.moment(this.selectedEvent.start).format('LT').split(' ')[0],
                                         end: this.moment(this.selectedEvent.end).format('LT').split(' ')[0]
