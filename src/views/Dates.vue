@@ -2662,7 +2662,12 @@ import mixinES from '../mixins/mixinES'
         editEmployeDate(value){
             this.employeForSearchEdit = value.id
             this.selectedEvent.employe = value
-            this.changeDateEdit()
+            if (this.selectedEvent.employe.id == this.originalEmploye.id) {
+                this.changeDateEdit()
+            }else{
+                this.searchBlockEdit()
+            }
+            
         },
         searchBlockEdit(){
             setTimeout(() => {

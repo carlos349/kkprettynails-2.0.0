@@ -1342,7 +1342,8 @@ import mixinES from '../mixins/mixinES'
                 this.editTimeMinutesRegister = this.editTimeMinutesRegister.split(' ')[0]
             }
             timeService = (this.editTimeHoursRegister * 60) + parseFloat(this.editTimeMinutesRegister)
-            if (this.serviceEdit == '' || this.priceEdit == '' || timeService <= 0 || this.comissionEdit == '') {
+            if (this.serviceEdit == '' || this.priceEdit == '' || timeService <= 0 || this.comissionEdit < 0) {
+                console.log(this.serviceEdit + ' - '+ this.priceEdit +' - '+ timeService +' - '+ this.comissionEdit)
                 this.$swal({
                     icon: 'error',
                     title: 'Debe rellenar los datos',
