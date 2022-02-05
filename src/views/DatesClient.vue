@@ -1928,6 +1928,13 @@
                 }
             },
             selectBloqMulti(lenders, hora, i, indexService, open, check){
+                var oldEmploye = {
+                    name: this.registerDate.serviceSelectds[indexService].employe,
+                    id: this.registerDate.serviceSelectds[indexService].employeId,
+                    class: this.registerDate.serviceSelectds[indexService].class,
+                    valid: true,
+                    img: this.registerDate.serviceSelectds[indexService].employeImg
+                }
                 for (let j = indexService + 1; j < this.registerDate.serviceSelectds.length; j++) {
                     const element = this.registerDate.serviceSelectds[j];
                     element.start = ''
@@ -1975,6 +1982,7 @@
                         timedate: this.registerDate.serviceSelectds[indexService].duration,
                         hour: this.registerDate.serviceSelectds[indexService].start,
                         employe: employeForBlock,
+                        oldEmploye: oldEmploye,
                         block: this.registerDate.serviceSelectds[indexService].blocks,
                         branch: this.branch,
                         ifFirstClick: this.registerDate.serviceSelectds[indexService].itFirst,

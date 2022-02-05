@@ -5154,8 +5154,6 @@ import mixinES from '../mixins/mixinES'
                 valid: true,
                 img: this.registerDae.serviceSelectds[indexService].employeImg
             }
-            console.log("este")
-            console.log(oldEmploye)
             for (let j = indexService + 1; j < this.registerDae.serviceSelectds.length; j++) {
                 const element = this.registerDae.serviceSelectds[j];
                 element.start = ''

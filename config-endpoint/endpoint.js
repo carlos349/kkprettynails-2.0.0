@@ -10,7 +10,18 @@ const urlHouse = `http://house58.syswa.net/#`
 const imgEndpoint = `${endpointTarget}/static/users/`
 const database = 'kkprettynails-syswa'
 const database2 = 'house58-syswa'
-const endPoint = { 
+
+const dataHouse = {
+    imgEndpoint: imgEndpoint, 
+    portClient:portClient, 
+    database: database2,
+    siteRedirect: siteRedirectHouse,
+    endpointTarget:endpointTarget,
+    url: urlHouse,
+    server:server 
+}
+
+const dataKK = {
     imgEndpoint: imgEndpoint, 
     portClient:portClient, 
     database: database,
@@ -19,5 +30,7 @@ const endPoint = {
     url: url,
     server:server 
 }
+
+const endPoint = dataKK
 
 module.exports = endPoint
