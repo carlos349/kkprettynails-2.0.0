@@ -795,24 +795,24 @@
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
                <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
-            <card v-if="selectedEvent.start" type="secondary" shadow
+            <card v-if="dataEditSend.start != ''" type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
                 <div style="margin-top:-5% !important" class="text-center">
-                    <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}} <br> <i  class="fa fa-clock"></i> {{moment(selectedEvent.start).format('LT')}} / {{moment(selectedEvent.end).format('LT')}}</base-button>
+                    <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}} <br> <i  class="fa fa-clock"></i> {{dataEditSend.start}} / {{dataEditSend.end}}</base-button>
                 </div>
                 <dd v-if="dateData.fechaEditPick == ''" class="text-danger text-center">Debe seleccionar una fecha</dd>
                 <div class="col-12 mx-auto">
                     <base-input addon-left-icon="ni ni-calendar-grid-58">
                         <flat-picker  slot-scope="{focus, blur}"
-                                    @on-open="focus"
-                                    @on-close="blur"
-                                    @on-change="changeDateEdit()"
-                                    :config="configDatePickerEdit"
-                                    class="form-control datepicker"
-                                    v-model="selectedEvent.createdAt"
-                                    placeholder="Seleccione una fecha">
+                            @on-open="focus"
+                            @on-close="blur"
+                            @on-change="changeDateEdit()"
+                            :config="configDatePickerEdit"
+                            class="form-control datepicker"
+                            v-model="dataEditSend.date"
+                            placeholder="Seleccione una fecha">
                         </flat-picker>
                     </base-input>
                 </div>
@@ -838,11 +838,11 @@
                         </div>
                         
                     </div>
-                    <span class="minAdd text-default"> Duración: {{selectedEvent.duration}} Min</span>
+                    <span class="minAdd text-default"> Duración: {{dataEditSend.duration}} Min</span>
                 </center>
                 <hr>
-                <a-select v-if="editSelectValid" class="col-9 col-md-9 mx-1" :default-value="selectedEvent.employe.name" >
-                    <a-select-option v-for="employe in selectedEvent.services[0].employes" :key="employe" @click="editEmployeDate(employe)" :value="employe.name">
+                <a-select v-if="editSelectValid" class="col-12 mx-1" :default-value="dataEditSend.originalEmploye.name" >
+                    <a-select-option v-for="employe in dataEditSend.service.employes" :key="employe" @click="editEmployeDate(employe)" :value="employe.name">
                         {{employe.name}}
                     </a-select-option>
                 </a-select>
@@ -1444,6 +1444,17 @@ import mixinES from '../mixins/mixinES'
         endClient: '',
         endEmploye: '',
         endId:'',
+        dataEditSend: {
+            date: "",
+            employe: {},
+            start: "",
+            end: "",
+            duration: "",
+            service: "",
+            idBlock: "",
+            isFirst: true,
+            _id: ""
+        },
         serviciosSelecionadosDates:[],
         endClient:[],
         endEmploye:[],
@@ -2631,13 +2642,13 @@ import mixinES from '../mixins/mixinES'
             if (valid) {
                 if (this.minLessEdit > 0) {
                     this.minLessEdit = this.minLessEdit - 15
-                    this.selectedEvent.duration = this.selectedEvent.duration + 15
+                    this.dataEditSend.duration = this.dataEditSend.duration + 15
                 }else{
                     this.minAddEdit = this.minAddEdit + 15
-                    this.selectedEvent.duration = this.selectedEvent.duration + 15
+                    this.dataEditSend.duration = this.dataEditSend.duration + 15
                 }
             }else{
-                if (this.selectedEvent.duration == 15) {
+                if (this.dataEditSend.duration == 15) {
                     this.$swal({
                         type: 'error',
                         icon: 'error',
@@ -2648,10 +2659,10 @@ import mixinES from '../mixins/mixinES'
                 }else{
                     if (this.minAddEdit > 0) {
                         this.minAddEdit = this.minAddEdit - 15
-                        this.selectedEvent.duration = this.selectedEvent.duration - 15
+                        this.dataEditSend.duration = this.dataEditSend.duration - 15
                     }else{
                         this.minLessEdit = this.minLessEdit + 15
-                        this.selectedEvent.duration = this.selectedEvent.duration - 15
+                        this.dataEditSend.duration = this.dataEditSend.duration - 15
                     }
                 } 
             }
@@ -2660,9 +2671,8 @@ import mixinES from '../mixins/mixinES'
             }, 500);
         },
         editEmployeDate(value){
-            this.employeForSearchEdit = value.id
-            this.selectedEvent.employe = value
-            if (this.selectedEvent.employe.id == this.originalEmploye.id) {
+            this.dataEditSend.employe = value
+            if (this.dataEditSend.employe.id == this.dataEditSend.originalEmploye.id) {
                 this.changeDateEdit()
             }else{
                 this.searchBlockEdit()
@@ -2681,8 +2691,8 @@ import mixinES from '../mixins/mixinES'
             });
             axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
                 block: this.blockFirstEdit,
-                timedate: this.selectedEvent.duration,
-                employeSelect: this.employeForSearchEdit,
+                timedate: this.dataEditSend.duration,
+                employeSelect: this.dataEditSend.employe.id,
                 firstBlock: false
             })
             .then(res => {
@@ -3273,7 +3283,7 @@ import mixinES from '../mixins/mixinES'
         onEventClick(event, e){
             console.log("Evento")
             console.log(event)
-            this.configDatePickerEdit.minDate = ''
+            // this.configDatePickerEdit.minDate = ''
             this.selectedEvent = event
             this.originalEmploye = this.selectedEvent.employe
             var start = this.selectedEvent.start
@@ -3322,14 +3332,14 @@ import mixinES from '../mixins/mixinES'
                 }
             })
             e.stopPropagation()
-            setTimeout(() => {
+            // setTimeout(() => {
                 
-                this.selectedEvent.createdAt = event.createdAt
-                this.configDatePickerEdit.minDate = new Date()
-                console.log(this.selectedEvent)
-                console.log("AQUI")
+            //     this.selectedEvent.createdAt = event.createdAt
+            //     this.configDatePickerEdit.minDate = new Date()
+            //     console.log(this.selectedEvent)
+            //     console.log("AQUI")
             
-            }, 2000);
+            // }, 2000);
         },
         dateSplit(value){
             const date = new Date(value).format('DD MM YYYY')
@@ -3371,66 +3381,78 @@ import mixinES from '../mixins/mixinES'
             return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
         },
         dataEdit(){
-            console.log(this.originalEmploye)
-            console.log(this.selectedEvent.employe.id)
-            if (this.originalEmploye.id != this.selectedEvent.employe.id) {
-                this.selectedEvent.employe = this.originalEmploye
-            }
-            console.log("PARA CUANDO DE ERROR 0")
-            console.log(this.selectedEvent.createdAt)
-            if (this.selectedEvent.createdAt.includes("T")) {
-                this.selectedEvent.createdAt = this.selectedEvent.createdAt.split("T")[0].split("-")[1] + "-" + this.selectedEvent.createdAt.split("T")[0].split("-")[2] + "-" + this.selectedEvent.createdAt.split("T")[0].split("-")[0]
-                console.log(this.selectedEvent.createdAt)
-            }
-            console.log(this.selectedEvent.createdAt)
-            this.editSelectValid = false
-            setTimeout(() => {
-                this.editSelectValid = true
-                
-            }, 100);
-            
-            this.selectedEvent.isFirst = true
-            this.employeForSearchEdit = this.selectedEvent.employe.id
-            this.minLessEdit = 0
-            this.minAddEdit = 0
-            this.finalBlockEdit = []
-            this.validEditBlock = false
-            this.dateModals.modal2 = true
-            
-            this.selectedEvent.services[0].employes.forEach((element, i) => {
-                if (element.name == 'Primera disponible') {
-                    this.selectedEvent.services[0].employes.splice(i, 1)
+            axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.selectedEvent._id, this.configHeader)
+            .then(res => {
+                this.dataEditSend = {
+                    date: new Date(res.data.data.createdAt).format('MM-DD-YYYY'),
+                    employe: res.data.data.employe,
+                    originalEmploye: res.data.data.employe,
+                    start: res.data.data.start.split(" ")[1],
+                    end: res.data.data.end.split(" ")[1],
+                    duration: res.data.data.duration,
+                    service: res.data.data.services[0],
+                    idBlock: "",
+                    isFirst: true,
+                    _id: this.selectedEvent._id
                 }
-            });
-            setTimeout(() => {
-                console.log("PARA CUANDO DE ERROR")
-                console.log(this.selectedEvent.createdAt)
-                axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                    date: new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
-                    branch: this.branch
-                }, this.configHeader)
-                .then(res => {
-                    this.availableEmployesEdit = res.data.array
-                    axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                        date: new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
-                        employes: res.data.array,
-                        timedate: this.selectedEvent.duration,
-                        employesServices: this.selectedEvent.services[0].employes,
+                this.editSelectValid = false
+                setTimeout(() => {
+                    this.editSelectValid = true
+                }, 100);
+                this.dataEditSend.service.employes.forEach((element, i) => {
+                    if (element.name == 'Primera disponible') {
+                        this.dataEditSend.service.employes.splice(i, 1)
+                    }
+                });
+                setTimeout(() => {
+                    axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                        date: new Date(this.dataEditSend.date).format('MM-DD-YYYY'),
                         branch: this.branch
                     }, this.configHeader)
                     .then(res => {
-                        this.blockFirstEdit = res.data.data
-                        this.selectedEvent.idBlock = res.data.id
-                        axios.post(endPoint.endpointTarget+'/dates/editdateblockbefore',{
-                            block: this.blockFirstEdit,
-                            originalEmploye: this.originalEmploye.id,
-                            employe: this.selectedEvent.employe,
-                            start: this.moment(this.selectedEvent.start).format('LT').split(' ')[0],
-                            end: this.moment(this.selectedEvent.end).format('LT').split(' ')[0]
+                        console.log(res)
+                        this.availableEmployesEdit = res.data.array
+                        axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                            date: new Date(this.dataEditSend.date).format('MM-DD-YYYY'),
+                            employes: res.data.array,
+                            timedate: this.dataEditSend.duration,
+                            employesServices: this.dataEditSend.service.employes,
+                            branch: this.branch
                         }, this.configHeader)
                         .then(res => {
                             this.blockFirstEdit = res.data.data
-                            this.searchBlockEdit()
+                            this.dataEditSend.idBlock = res.data.id
+                            axios.post(endPoint.endpointTarget+'/dates/editdateblockbefore',{
+                                block: this.blockFirstEdit,
+                                originalEmploye: this.dataEditSend.originalEmploye.id,
+                                employe: this.dataEditSend.employe,
+                                start: this.dataEditSend.start,
+                                end: this.dataEditSend.end
+                            }, this.configHeader)
+                            .then(res => {
+                                this.blockFirstEdit = res.data.data
+                                this.searchBlockEdit()
+                                this.dateModals.modal2 = true
+                            }).catch(err => {
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }else if (err.response.status == 401) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Session caducada',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    setTimeout(() => {
+                                        router.push("login")
+                                    }, 1550);
+                                }
+                            })
                         }).catch(err => {
                             if (!err.response) {
                                 this.$swal({
@@ -3455,7 +3477,7 @@ import mixinES from '../mixins/mixinES'
                         if (!err.response) {
                             this.$swal({
                                 icon: 'error',
-                                title: 'Error de conexión',
+                                title: 'Error de conexión6',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
@@ -3471,60 +3493,62 @@ import mixinES from '../mixins/mixinES'
                             }, 1550);
                         }
                     })
-                }).catch(err => {
-                    if (!err.response) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión6',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
-                    }
-                })
-            }, 200);
+                }, 200);
+            }).catch(err => {
+
+            }) 
+            // if (this.originalEmploye.id != this.selectedEvent.employe.id) {
+            //     this.selectedEvent.employe = this.originalEmploye
+            // }
+            
+            // if (this.selectedEvent.createdAt.includes("T")) {
+            //     this.selectedEvent.createdAt = this.selectedEvent.createdAt.split("T")[0].split("-")[1] + "-" + this.selectedEvent.createdAt.split("T")[0].split("-")[2] + "-" + this.selectedEvent.createdAt.split("T")[0].split("-")[0]
+            //     console.log(this.selectedEvent.createdAt)
+            // }
+            // console.log(this.selectedEvent.createdAt)
+
+            
+            // this.selectedEvent.isFirst = true
+            // this.employeForSearchEdit = this.selectedEvent.employe.id
+            // this.minLessEdit = 0
+            // this.minAddEdit = 0
+            // this.finalBlockEdit = []
+            // this.validEditBlock = false
+            
+            
         },
         changeDateEdit(){
             setTimeout(() => {
                 this.spinningEdit = true
             }, 5);
             setTimeout(() => {
-                const finalDate = this.selectedEvent.createdAt
-                console.log(new Date(this.selectedEvent.start))
+                const finalDate = this.dataEditSend.date
+                // console.log(new Date(this.selectedEvent.start))
                 if (finalDate != '') {
                     setTimeout(() => {
                         axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                            date: finalDate,
+                            date: this.dataEditSend.date,
                             branch: this.branch
                         }, this.configHeader)
                         .then(res => {
                             this.availableEmployesEdit = res.data.array
                             axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                date: finalDate,
+                                date: this.dataEditSend.date,
                                 employes: res.data.array,
-                                timedate: this.selectedEvent.duration,
-                                employesServices: this.selectedEvent.services[0].employes,
+                                timedate: this.dataEditSend.duration,
+                                employesServices: this.dataEditSend.service.employes,
                                 branch: this.branch
                             }, this.configHeader)
                             .then(res => {
-                                if (new Date(finalDate).getMonth() == new Date(this.selectedEvent.start).getMonth() && new Date(finalDate).getDate() == new Date(this.selectedEvent.start).getDate()) {
+                                if (new Date(finalDate).getMonth() == new Date(this.selectedEvent.createdAt).getMonth() && new Date(finalDate).getDate() == new Date(this.selectedEvent.createdAt).getDate()) {
                                     this.blockFirstEdit = res.data.data
-                                    this.selectedEvent.idBlock = res.data.id
+                                    this.dataEditSend.idBlock = res.data.id
                                     axios.post(endPoint.endpointTarget+'/dates/editdateblockbefore',{
                                         block: this.blockFirstEdit,
                                         originalEmploye: this.originalEmploye.id,
-                                        employe: this.selectedEvent.employe,
-                                        start: this.moment(this.selectedEvent.start).format('LT').split(' ')[0],
-                                        end: this.moment(this.selectedEvent.end).format('LT').split(' ')[0]
+                                        employe: this.dataEditSend.employe,
+                                        start: this.dataEditSend.start,
+                                        end: this.dataEditSend.end
                                     }, this.configHeader)
                                     .then(res => {
                                         this.blockFirstEdit = res.data.data
@@ -3550,7 +3574,7 @@ import mixinES from '../mixins/mixinES'
                                         }
                                     })
                                 }else{
-                                   this.selectedEvent.idBlock = res.data.id
+                                   this.dataEditSend.idBlock = res.data.id
                                     this.blockFirstEdit = res.data.data
                                     this.blockFirstEdit.forEach(element => {
                                         if (element.validator == 'select') {
@@ -3559,12 +3583,11 @@ import mixinES from '../mixins/mixinES'
                                     })
                                     axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
                                         block: this.blockFirstEdit,
-                                        timedate: this.selectedEvent.duration,
-                                        employeSelect: this.employeForSearchEdit,
+                                        timedate: this.dataEditSend.duration,
+                                        employeSelect: this.dataEditSend.employe.id,
                                         firstBlock: false
                                     })
                                     .then(res => {
-                                        
                                         this.finalBlockEdit = res.data.blockEmploye
                                         this.validEditBlock = true
                                         this.searchBlockEdit()
@@ -3720,6 +3743,7 @@ import mixinES from '../mixins/mixinES'
             }, 200);
         },
         editDate(){
+            console.log(this.dataEditSend)
             var valid = false
             if (this.validEditBlock) {
                 this.finalBlockEdit.forEach(element => {
@@ -3736,10 +3760,12 @@ import mixinES from '../mixins/mixinES'
                         timer: 1500
                     })
                 }
-            }else{valid = true}
+            }else{
+                valid = true
+            }
             if(valid){
                 axios.post(endPoint.endpointTarget+'/dates/editdate', {
-                    data: this.selectedEvent,
+                    data: this.dataEditSend,
                     blocks : this.blockFirstEdit
                 }, this.configHeader)
                 .then(res => {
@@ -3794,8 +3820,6 @@ import mixinES from '../mixins/mixinES'
                     }
                 })
             }
-            
-            
         },
         initialDate(val){
             this.$refs.table.$children[0].unSelectAllItems()
@@ -5359,8 +5383,8 @@ import mixinES from '../mixins/mixinES'
         },
         selectBlockEdit(hour){
             axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
-                date: this.selectedEvent.createdAt,
-                timedate: this.selectedEvent.duration,
+                date: this.dataEditSend.date,
+                timedate: this.dataEditSend.duration,
                 hour: hour,
                 employe: {
                     id: this.employeForSearchEdit,
@@ -5368,15 +5392,15 @@ import mixinES from '../mixins/mixinES'
                 block: this.finalBlockEdit,
                 blockFirst: this.blockFirstEdit,
                 branch: this.branch,
-                ifFirstClick: this.selectedEvent.isFirst,
+                ifFirstClick: this.dataEditSend.isFirst,
                 firstBlock: false
             }, this.configHeader)
             .then(res => {
-                this.selectedEvent.isFirst = false
+                this.dataEditSend.isFirst = false
                 this.finalBlockEdit = res.data.data
                 this.blockFirstEdit = res.data.blockFirst
-                this.selectedEvent.startEdit = hour
-                this.selectedEvent.endEdit = res.data.end
+                this.dataEditSend.start = hour
+                this.dataEditSend.end = res.data.end
             }).catch(err => {
                 if (!err.response) {
                     this.$swal({

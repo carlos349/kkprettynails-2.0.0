@@ -134,7 +134,7 @@
                                         :class="screenWidthInput"
                                         class="mt-1 mr-1 thisSelect"
                                         @change="chooseAditional">
-                                        <a-select-option v-for="micro of microservices" :key="micro.microService" :value="micro.microService+'/'+micro.price">
+                                        <a-select-option v-for="micro of microservices" :key="micro" :value="micro.microService+'/'+micro.price">
                                             {{micro.microService}}
                                         </a-select-option>
                                     </a-select>
