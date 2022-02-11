@@ -1,33 +1,36 @@
 const serverL = 'localhost:3200'
 const server = '18.228.199.97:4200'
-const serverQa = '18.231.122.2:3200'
 const portClient = '3389'
 const endpointTarget = `http://${serverL}`
-const siteRedirect = 'http://kkspa.cl'
-const siteRedirectHouse = ''
-const url = `http://kkspa.syswa.net/#`
-const urlHouse = `http://house58.syswa.net/#`
 const imgEndpoint = `${endpointTarget}/static/users/`
-const database = 'kkprettynails-syswa'
-const database2 = 'house58-syswa'
 
 const dataHouse = {
     imgEndpoint: imgEndpoint, 
     portClient:portClient, 
-    database: database2,
-    siteRedirect: siteRedirectHouse,
+    database: 'house58-syswa',
+    siteRedirect: "",
     endpointTarget:endpointTarget,
-    url: urlHouse,
+    url: `http://house58.syswa.net/#`,
     server:server 
 }
 
 const dataKK = {
     imgEndpoint: imgEndpoint, 
     portClient:portClient, 
-    database: database,
-    siteRedirect: siteRedirect,
+    database: 'kkprettynails-syswa',
+    siteRedirect: 'http://kkspa.cl',
     endpointTarget:endpointTarget,
-    url: url,
+    url: `http://kkspa.syswa.net/#`,
+    server:server 
+}
+
+const dataQa = {
+    imgEndpoint: imgEndpoint, 
+    portClient:portClient, 
+    database: "syswa-gestion-qa",
+    siteRedirect: "",
+    endpointTarget:endpointTarget,
+    url: `http://syswagestionqa.syswa.net/#`,
     server:server 
 }
 

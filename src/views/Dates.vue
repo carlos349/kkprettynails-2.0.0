@@ -390,6 +390,7 @@
                         </template>
                         <center>
                             <a-select
+                                v-if="inputClientDate"
                                 ref="clientSelect"
                                 :show-search="fixSearch"
                                 placeholder="Selecciona un cliente"
@@ -492,9 +493,9 @@
                                 </base-button>
                             </div>
                             <div class="col-auto mx-auto mt-4">
-                                <base-button  type="default" v-on:click="clientEdit" v-if="dataClient.valid && dataClient.valid2" class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
+                                <base-button  type="default" v-on:click="clientEdit()" v-if="dataClient.valid && dataClient.valid2" class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
                                 
-                                <base-button  type="default"  v-if="dataClient.valid && dataClient.valid2 != true" disabled class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
+                                <base-button  type="default"  v-if="dataClient.valid && dataClient.valid2 == false" disabled class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
                                 
                                 <base-button type="success" disabled v-if="dataClient.valid != true && dataClient.valid2 != true" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
                                 <base-button type="success" v-on:click="newClient()" v-if="dataClient.valid != true && dataClient.valid2" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
@@ -1107,6 +1108,7 @@ import mixinES from '../mixins/mixinES'
             end: '',
             valid: true
         },
+        inputClientDate: true,
         editDisabled: true,
         blockCountValid:0,
         blockCountArray:[],
@@ -1311,7 +1313,9 @@ import mixinES from '../mixins/mixinES'
         dateClient: {},
         configDate: {
             allowInput: true, 
-            dateFormat: 'd-m-Y',
+            altInput: true,
+            altFormat: 'd-m-Y',
+            dateFormat: 'm-d-Y'
         },
         dateMax:'',
         configDatePicker: {
@@ -2302,6 +2306,17 @@ import mixinES from '../mixins/mixinES'
 							timer: 1500
 						})
                         this.clients = []
+                        this.inputClientDate = false
+                        this.dataClient.firstName = ''
+                        this.dataClient.lastName = ''
+                        this.dataClient.email = ''
+                        this.dataClient.phone = ''
+                        this.dataClient.instagram = ''
+                        this.dataClient.birthday = ''
+                        this.dataClient.valid2 = false
+                        setTimeout(() => {
+                            this.inputClientDate = true
+                        }, 200);
                     // setTimeout(() => {
                     //     this.getClients();
                     //     // EventBus.$emit('reloadClients', 'reload')
@@ -2728,7 +2743,8 @@ import mixinES from '../mixins/mixinES'
                 this.dataClient.valid = false
                 this.dateClient.valid2 = false
             }else{
-                
+                this.dataClient.valid = true
+                this.dateClient.valid2 = false
                 this.dateClient = {
                     name: value.firstName + ' ' + value.lastName,
                     id: value._id,
@@ -2756,7 +2772,7 @@ import mixinES from '../mixins/mixinES'
         },
         validRegister(){
             setTimeout(() => {
-                if (this.dataClient.firstName.length > 2 && this.dataClient.lastName.length > 2 && this.dataClient.email != '') {
+                if (this.dataClient.firstName.length > 2 && this.dataClient.lastName.length > 2 && this.dataClient.email != '' && this.dataClient.phone.isValid && this.dataClient.birthday != '') {
                     if (this.dataClient.email.split('@').length == 2) {
                         if (this.dataClient.email.split('@')[1].split('.').length >= 2) {
                             this.dataClient.valid2 = true
@@ -2769,8 +2785,11 @@ import mixinES from '../mixins/mixinES'
                 }
                 else{
                     this.dataClient.valid2 = false
-                }  
+                }
+                  console.log(this.dataClient.valid)
+                console.log(this.dataClient.valid2)
             }, 200);
+            
         },
         formatDate(date) {
             let dateFormat = new Date(date)
