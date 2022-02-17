@@ -2099,28 +2099,49 @@ export default {
                     this.readyClient = false
                     this.validRegister(2)
                     this.registerClient.birthday = ''
-                    if(getClient.data.data.birthday){
-                        this.registerClient.birthday = this.$options.filters.formatDate(getClient.data.data.birthday)
-                        var birthday = new Date(getClient.data.data.birthday).getMonth()
-                        var monthNow = new Date().getMonth()
-                        if (birthday == monthNow) {
-                            this.discount = 10
-                            this.discountSelect = 'Descuento por cumpleaños'
+                    const getConfig = await axios.get(`${endPoint.endpointTarget}/configurations/${this.branch}`, this.configHeader)
+                    if (getConfig.data.data.notificationDiscount) {
+                        if(getClient.data.data.birthday){
+                            this.registerClient.birthday = this.$options.filters.formatDate(getClient.data.data.birthday)
+                            var birthday = new Date(getClient.data.data.birthday).getMonth()
+                            var monthNow = new Date().getMonth()
+                            if (getClient.data.data.recommendations > 0) {
+                                this.$swal({
+                                    icon: 'info',
+                                    title: 'Descuento reconocido',
+                                    text: 'El cliente tiene descuento por recomendación.',
+                                    showConfirmButton: true,
+                                })
+                            }else if (birthday == monthNow) {
+                                this.$swal({
+                                    icon: 'info',
+                                    title: 'Descuento reconocido',
+                                    text: 'El cliente tiene descuento por mes de nacimiento.',
+                                    showConfirmButton: true,
+                                })
+                            }else if (getClient.data.data.attends == 0) {
+                                this.$swal({
+                                    icon: 'info',
+                                    title: 'Descuento reconocido',
+                                    text: 'El cliente tiene descuento de primera atención',
+                                    showConfirmButton: true,
+                                })
+                            }
                         }else if (getClient.data.data.recommendations > 0) {
-                            this.discount = 15
-                            this.ifrecomend = true
-                            this.discountSelect = 'Descuento por recomendacion'
+                            this.$swal({
+                                icon: 'info',
+                                title: 'Descuento reconocido',
+                                text: 'El cliente tiene descuento por mes de nacimiento.',
+                                showConfirmButton: true
+                            })
                         }else if (getClient.data.data.attends == 0) {
-                            this.discount = 10
-                            this.discountSelect = 'Descuento por primera atención'
+                            this.$swal({
+                                icon: 'info',
+                                title: 'Descuento reconocido',
+                                text: 'El cliente tiene descuento de primera atención',
+                                showConfirmButton: true
+                            })
                         }
-                    }else if (getClient.data.data.recommendations > 0) {
-                        this.discount = 15
-                        this.ifrecomend = true
-                        this.discountSelect = 'Descuento por recomendacion'
-                    }else if (getClient.data.data.attends == 0) {
-                        this.discount = 10
-                        this.discountSelect = 'Descuento por primera atención'
                     }
                     this.clientSelect = {
                         name: getClient.data.data.firstName,

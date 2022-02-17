@@ -70,6 +70,9 @@
                             </h1>
                             <hr class="w-50 mb-0 mt-0">
                           </div>
+                          <div class="w-100 pl-4">
+                            <p class="mx-auto"> <strong class="mr-2">Notificacion de descuento </strong> <a-switch class="mr-3" :checked="configData.notificationDiscount" @click="changeNotifyDiscount()"/></p>
+                          </div>
                           <div class="col-md-4">
                               <base-input class="input-group-alternative"
                                   placeholder="Efectivo"
@@ -983,6 +986,11 @@
           }
           this.updateconfig()
         },
+        changeNotifyDiscount(valid){
+          this.configData.notificationDiscount = this.configData.notificationDiscount == true ? false : true
+
+          this.updateconfig()
+        },
         changeCommission(){
           this.configData.accessProfiles[this.selectedProfile].commission = this.configData.accessProfiles[this.selectedProfile].commission == true ? false : true
           if (this.configData.accessProfiles[this.selectedProfile].commission) {
@@ -1053,7 +1061,8 @@
             currency:  this.configData.currency,
             typesPay: this.configData.typesPay,
             datesPolitics: this.configData.datesPolitics,
-            microServices: this.configData.microServices
+            microServices: this.configData.microServices,
+            notificationDiscount: this.configData.notificationDiscount
           }, this.configHeader)
           .then(res => {
             if (res.data.status == 'ok') {

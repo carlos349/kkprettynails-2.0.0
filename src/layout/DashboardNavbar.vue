@@ -263,7 +263,7 @@
         }
       },
       selectBranch(value){
-        console.log(value.key.split('/')[0], this.branch)
+        console.log(value)
         if (value.key.split('/')[0] != this.branch) {
           localStorage.setItem('branch', value.key.split('/')[0])
           localStorage.setItem('branchName', value.key.split('/')[1])
