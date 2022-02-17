@@ -449,7 +449,7 @@
                                 <base-button v-if="validRegister" class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" v-on:click="registerClients">
                                     Registrar y continuar
                                 </base-button>
-                                <base-button v-else class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" disabled v-on:click="registerClients">
+                                <base-button v-else class="mt-4" style="width:200px;border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="success" disabled>
                                     Registrar y continuar
                                 </base-button>
                             </div>
@@ -726,6 +726,7 @@
                         "x-database-connect": endPoint.database
                     }
                 },
+                ref: '',
                 microServices: [],
                 selectedMicro: [],
                 safe: [],
@@ -892,15 +893,15 @@
                             icon: 'success',
                             title: `¡Bienvenido ${findClient.data.data.firstName}!`,
                             text: 'Ya puedes agendar tu cita',
-                            // html: ` <h4>Ya puedes agendar tu cita</h4><br>
-                            // <h3>Link de referido</h3>
-                            //         <div class="row">
-                            //             <div class="col-12">
-                            //                 <span style="padding: 5px;border: 1px solid #172b4d;border-radius: 5px;background-color: #e9ecef;">http://link.com/ref=123j3j123123j123j12331g3hg</span>
-                            //             </div>
+                            html: ` <h4>Ya puedes agendar tu cita</h4><br>
+                            <h3>Link de referido</h3>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <span style="padding: 5px;border: 1px solid #172b4d;border-radius: 5px;background-color: #e9ecef;font-size:10px">http://${this.configurationsBranch.bussinessRoute}/agendamientocliente?ref=${findClient.data.data._id}</span>
+                                        </div>
                                         
-                            //         </div>
-                            // `,
+                                    </div>
+                            `,
                             showConfirmButton: true
                         })
                         this.modals.modal6 = false
@@ -945,6 +946,9 @@
                 }, 1550);
             },
             async getBranches(){
+                if (this.$route.query.ref) {
+                    this.ref = this.$route.query.ref
+                }
                 try{
                     const branches = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
                     if (branches.data.status == 'ok') {
@@ -2440,8 +2444,8 @@
                     firstName: this.registerUser.firstName,
                     lastName: this.registerUser.lastName,
                     email: this.registerUser.email,
-                    recommender: null,
-                    idRecomender: null,
+                    recommender: this.ref,
+                    idRecomender: this.ref,
                     phone: this.phoneData,
                     birthday: this.registerUser.birthday,
                     instagram: null
