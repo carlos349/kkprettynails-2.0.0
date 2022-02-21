@@ -893,7 +893,7 @@
                             icon: 'success',
                             title: `¡Bienvenido ${findClient.data.data.firstName}!`,
                             text: 'Ya puedes agendar tu cita',
-                            html: ` <h4>Ya puedes agendar tu cita</h4><br>
+                            html: this.configurationsBranch.notificationDiscount ? ` <h4>Ya puedes agendar tu cita</h4><br>
                             <h3>Link de referido</h3>
                                     <div class="row">
                                         <div class="col-12">
@@ -901,7 +901,7 @@
                                         </div>
                                         
                                     </div>
-                            `,
+                            ` : null,
                             showConfirmButton: true
                         })
                         this.modals.modal6 = false
