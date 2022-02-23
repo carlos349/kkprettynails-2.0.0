@@ -6199,8 +6199,8 @@ import mixinES from '../mixins/mixinES'
     color: black;
     }
     .class11 {
-    background:#efebd085;
-    border: 3px solid #EFEBD0;
+    background:#b89ccc8a;
+    border: 3px solid #b89ccc;
     color: black;
     }
     .class12 {
