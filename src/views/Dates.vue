@@ -2910,7 +2910,7 @@ import mixinES from '../mixins/mixinES'
         },
         register(){
             this.spinningDate = true
-            if (this.dataClient.valid && this.dataClient.valid2) {
+            if (this.dataClient.valid && this.dataClient.email != "") {
                 this.ifDisabled = true
                 var employeFinal = ''
                 var hourFinal = ''

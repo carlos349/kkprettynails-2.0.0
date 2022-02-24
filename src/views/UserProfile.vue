@@ -382,12 +382,6 @@
                         ellipsis: true,
                     },
                     {
-                        title: 'UUID de venta',
-                        dataIndex: 'saleData.uuid',
-                        key: 'saleData.uuid',
-                        scopedSlots: { customRender: 'uuid-format' },
-                    },
-                    {
                         title: 'Cliente',
                         dataIndex: 'client',
                         key: 'client',
