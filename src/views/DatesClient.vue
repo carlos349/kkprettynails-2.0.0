@@ -893,7 +893,7 @@
                             icon: 'success',
                             title: `¡Bienvenido ${findClient.data.data.firstName}!`,
                             text: 'Ya puedes agendar tu cita',
-                            html: this.configurationsBranch.notificationDiscount ? ` <h4>Ya puedes agendar tu cita</h4><br>
+                            html: ` <h4>Ya puedes agendar tu cita</h4><br>
                             <h3>Link de referido</h3>
                                     <div class="row">
                                         <div class="col-12">
@@ -901,7 +901,7 @@
                                         </div>
                                         
                                     </div>
-                            ` : null,
+                            `,
                             showConfirmButton: true
                         })
                         this.modals.modal6 = false
@@ -952,7 +952,24 @@
                 try{
                     const branches = await axios.get(endPoint.endpointTarget+'/branches', this.configHeader)
                     if (branches.data.status == 'ok') {
-                        this.branches = branches.data.data
+                        var branchess = branches.data.data
+                        try{
+                            const config = await axios.get(endPoint.endpointTarget+'/configurations', this.configHeader)
+                            console.log(config)
+                            for (const key in config.data.data) {
+                                const element = config.data.data[key];
+                                for (const keyTwo in branchess) {
+                                    const elementTwo = branchess[keyTwo];
+                                    console.log(element.businessName +"=="+ elementTwo.name)
+                                    if (element.businessName == elementTwo.name && element.datesPolitics.onlineDates == false) {
+                                        branchess.splice(keyTwo, 1)
+                                    }
+                                }
+                            }
+                        }catch(err){
+                            console.log(err)
+                        }
+                        this.branches = branchess
                     }
                 }catch(err){
                     if (!err.response) {

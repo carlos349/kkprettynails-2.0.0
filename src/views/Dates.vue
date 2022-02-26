@@ -2910,7 +2910,7 @@ import mixinES from '../mixins/mixinES'
         },
         register(){
             this.spinningDate = true
-            if (this.dataClient.valid && this.dataClient.email != "") {
+            if (this.dataClient.valid && this.dataClient.valid2) {
                 this.ifDisabled = true
                 var employeFinal = ''
                 var hourFinal = ''
@@ -3019,8 +3019,9 @@ import mixinES from '../mixins/mixinES'
                                         this.$refs.wizard.reset()
                                         this.modals.modal1 = false
                                         $(".ant-select-selection__clear").click()
+                                        console.log(localStorage)
                                         axios.post(endPoint.endpointTarget+'/notifications', {
-                                            userName:'Cliente: '+this.dateClient.name,
+                                            userName:'Usuario: '+localStorage.firstname + " " + localStorage.lastname,
                                             userImage: '',
                                             detail: 'Creo cita desde agendamiento (Sistema) '+this.finalDate,
                                             branch: this.branch,
@@ -3099,8 +3100,9 @@ import mixinES from '../mixins/mixinES'
                                     })
                                     this.ifDisabled = false
                                     this.$refs.wizard.reset()
+                                    console.log(localStorage)
                                     axios.post(endPoint.endpointTarget+'/notifications', {
-                                        userName:'Cliente: '+this.dateClient.name,
+                                        userName:'Empleado: '+localStorage.firstname + " " + localStorage.lastname,
                                         userImage: '',
                                         detail: 'Creo cita desde agendamiento (Sistema) '+this.finalDate,
                                         branch: this.branch,
@@ -3409,7 +3411,7 @@ import mixinES from '../mixins/mixinES'
                     start: res.data.data.start.split(" ")[1],
                     end: res.data.data.end.split(" ")[1],
                     duration: res.data.data.duration,
-                    service: res.data.service,
+                    service: res.data.data.services[0],
                     idBlock: "",
                     isFirst: true,
                     _id: this.selectedEvent._id
@@ -6199,8 +6201,8 @@ import mixinES from '../mixins/mixinES'
     color: black;
     }
     .class11 {
-    background:#b89ccc8a;
-    border: 3px solid #b89ccc;
+    background:#efebd085;
+    border: 3px solid #EFEBD0;
     color: black;
     }
     .class12 {
