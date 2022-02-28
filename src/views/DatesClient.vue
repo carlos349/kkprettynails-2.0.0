@@ -960,8 +960,7 @@
                                 const element = config.data.data[key];
                                 for (const keyTwo in branchess) {
                                     const elementTwo = branchess[keyTwo];
-                                    console.log(element.businessName +"=="+ elementTwo.name)
-                                    if (element.businessName == elementTwo.name && element.datesPolitics.onlineDates == false) {
+                                    if (element.branch == elementTwo.id && element.datesPolitics.onlineDates == false) {
                                         branchess.splice(keyTwo, 1)
                                     }
                                 }
