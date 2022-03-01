@@ -883,28 +883,58 @@ export default {
             
         },
         pushData(firstName,days,_id,document,lastName,branch,online, index){
-            this.originalDays = []
-            this.registerEmploye.firstName = firstName
-            this.registerEmploye.lastName = lastName
-            this.registerEmploye.document = document
-            this.registerEmploye.branch = branch
-            this.registerEmploye.days = days
-            this.registerEmploye.online = online
-            this.registerEmploye.show = true
-            this.registerEmploye._id = _id
-            this.selectedDays = days
-            this.indexEdit = index
-            for (let index = 0; index < this.days.length; index++) {
-                const element = this.days[index];
-                for (let j = 0; j < days.length; j++) {
-                    const elementTwo = days[j];
-                    if (element.value == elementTwo.day) {
-                        element.validator = true
-                        element.start = elementTwo.hours[0]
-                        element.end = elementTwo.hours[1]
+            axios.get(endPoint.endpointTarget+'/employes/justOneById/'+_id, this.configHeader)
+            .then(resData => {
+                this.originalDays = []
+                this.registerEmploye.firstName = resData.data.data.firstName
+                this.registerEmploye.lastName = resData.data.data.lastName
+                this.registerEmploye.document = resData.data.data.document
+                this.registerEmploye.branch = resData.data.data.branch
+                this.registerEmploye.days = resData.data.data.days
+                this.registerEmploye.online = resData.data.data.validOnline
+                this.registerEmploye.show = true
+                this.registerEmploye._id = _id
+                this.selectedDays = days
+                this.indexEdit = index
+                console.log("day1")
+                console.log(this.days)
+                console.log(days)
+                for (let index = 0; index < this.days.length; index++) {
+                    const element = this.days[index];
+                    for (let j = 0; j < this.registerEmploye.days.length; j++) {
+                        const elementTwo = this.registerEmploye.days[j];
+                        if (element.value == elementTwo.day) {
+                            element.validator = true
+                            element.start = elementTwo.hours[0]
+                            element.end = elementTwo.hours[1]
+                        }
                     }
                 }
-            }
+            })
+            .catch(err => {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    console.log(err)
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
+            })
+            
+            console.log("day2")
+            console.log(this.days)
         },
         validFields(field){
             if (field == 'c') {

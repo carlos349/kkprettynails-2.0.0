@@ -964,7 +964,7 @@
                     </template>
                     <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen" >
                         <template slot="date-slot" slot-scope="record, column">
-                            {{formatDate(column.dateBlocking)}}
+                            {{column.dateBlocking | formatDate}}
                         </template>
                         <template slot="delete-slot" slot-scope="record, column">
                             <base-button @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end)" size="sm" type="danger">
@@ -1039,7 +1039,9 @@ import router from '../router'
 import mixinUserToken from '../mixins/mixinUserToken'
 import mixinHideText from '../mixins/mixinHideText'
 import BaseButton from '../components/BaseButton.vue'
-
+import es_ES from 'ant-design-vue/lib/locale-provider/es_ES';
+import 'moment/locale/es';
+moment.locale('es');
 import mixinES from '../mixins/mixinES'
   export default {
     mixins: [mixinUserToken, mixinES, mixinHideText],
@@ -1068,6 +1070,7 @@ import mixinES from '../mixins/mixinES'
             start: '',
             end: ''
         },
+        es_ES,
         spinningDate: false,
         locale,
         blokedBlock: true,
@@ -3023,7 +3026,7 @@ import mixinES from '../mixins/mixinES'
                                         axios.post(endPoint.endpointTarget+'/notifications', {
                                             userName:'Usuario: '+localStorage.firstname + " " + localStorage.lastname,
                                             userImage: '',
-                                            detail: 'Creo cita desde agendamiento (Sistema) '+this.finalDate,
+                                            detail: 'Creo cita a '+this.dateClient.name+' desde agendamiento (Sistema) '+this.finalDate,
                                             branch: this.branch,
                                             link: 'agendamiento'
                                         }, this.configHeader)
@@ -3104,7 +3107,7 @@ import mixinES from '../mixins/mixinES'
                                     axios.post(endPoint.endpointTarget+'/notifications', {
                                         userName:'Empleado: '+localStorage.firstname + " " + localStorage.lastname,
                                         userImage: '',
-                                        detail: 'Creo cita desde agendamiento (Sistema) '+this.finalDate,
+                                        detail: 'Creo cita a '+this.dateClient.name+' desde agendamiento (Sistema) '+this.finalDate,
                                         branch: this.branch,
                                         link: 'agendamiento'
                                     }, this.configHeader)
