@@ -964,7 +964,7 @@
                     </template>
                     <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen" >
                         <template slot="date-slot" slot-scope="record, column">
-                            {{column.dateBlocking | formatDate}}
+                            {{column.dateBlockings | formatDate}}
                         </template>
                         <template slot="delete-slot" slot-scope="record, column">
                             <base-button @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end)" size="sm" type="danger">
