@@ -3027,6 +3027,8 @@ import mixinES from '../mixins/mixinES'
                                         this.modals.modal1 = false
                                         $(".ant-select-selection__clear").click()
                                         console.log(localStorage)
+                                        var splitFinally = this.finalDate.split("-")
+                                        this.finalDate = splitFinally[1]+"-"+splitFinally[0]+"-"+splitFinally[2]
                                         axios.post(endPoint.endpointTarget+'/notifications', {
                                             userName:'Usuario: '+localStorage.firstname + " " + localStorage.lastname,
                                             userImage: '',
@@ -3038,6 +3040,7 @@ import mixinES from '../mixins/mixinES'
                                             this.socket.emit('sendNotification', res.data.data)
                                         })
                                         this.initialState()
+                                        
                                         this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal,this.registerDae,true)
                                         this.modals.modal2 = false
                                         this.ifDisabled = false
@@ -3097,6 +3100,11 @@ import mixinES from '../mixins/mixinES'
                             .then(res => {
                                 if (res.data.status == "ok") {
                                     this.spinningDate = false
+                                    console.log(this.finalDate)
+                                    var splitFinally = this.finalDate.split("-")
+                                    console.log(splitFinally)
+                                    this.finalDate = splitFinally[1]+"-"+splitFinally[0]+"-"+splitFinally[2]
+                                    console.log(this.finalDate)
                                     this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae, true)
                                     this.$swal({
                                         type: 'success',
@@ -4845,7 +4853,6 @@ import mixinES from '../mixins/mixinES'
             var servicesFinal = ''
             if (valid) {
                 dateFormat = this.finalDate == "" ? start : this.finalDate
-                dateFormat = this.formatDatesGood(dateFormat)
                 servicesFinal = data.serviceSelectds
             }else{
                 dateFormat = date
@@ -4860,7 +4867,7 @@ import mixinES from '../mixins/mixinES'
                 branchId: this.branch,
                 data: data,
                 id: id,
-                date: dateFormat,
+                date: this.finalDate,
                 email: mail,
                 servicesFinal: servicesFinal,
                 valid: valid
