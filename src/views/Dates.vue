@@ -1121,6 +1121,7 @@ import mixinES from '../mixins/mixinES'
         },
         ifServices: false,
         validWizard: false,
+        validSelectClient: false,
         registerDate: {
             services:[],
             servicesShow:[],
@@ -2748,6 +2749,7 @@ import mixinES from '../mixins/mixinES'
             }else{
                 this.dataClient.valid = true
                 this.dateClient.valid2 = false
+                this.validSelectClient = true
                 this.dateClient = {
                     name: value.firstName + ' ' + value.lastName,
                     id: value._id,
@@ -2917,7 +2919,7 @@ import mixinES from '../mixins/mixinES'
         },
         register(){
             this.spinningDate = true
-            if (this.dataClient.valid && this.dataClient.valid2) {
+            if (this.dataClient.valid && this.validSelectClient) {
                 this.ifDisabled = true
                 var employeFinal = ''
                 var hourFinal = ''
@@ -3431,6 +3433,7 @@ import mixinES from '../mixins/mixinES'
                     isFirst: true,
                     _id: this.selectedEvent._id
                 }
+                console.log(this.dataEditSend)
                 this.editSelectValid = false
                 setTimeout(() => {
                     this.editSelectValid = true
