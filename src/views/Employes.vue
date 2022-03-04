@@ -883,6 +883,7 @@ export default {
             
         },
         pushData(firstName,days,_id,document,lastName,branch,online, index){
+            console.log("Que pasa?")
             axios.get(endPoint.endpointTarget+'/employes/justOneById/'+_id, this.configHeader)
             .then(resData => {
                 this.originalDays = []
