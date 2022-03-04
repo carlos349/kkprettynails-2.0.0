@@ -2798,6 +2798,10 @@ import mixinES from '../mixins/mixinES'
             let dateFormat = new Date(date)
 			return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+' ('+dateFormat.getHours()+":"+('0'+dateFormat.getMinutes()).slice(-2)+")"
         },
+        formatDatesGood(date) {
+            let dateFormat = new Date(date)
+			return dateFormat.getDate()+"-"+dateFormat.getMonth()+"-"+dateFormat.getFullYear()
+        },
         MaysPrimera(string){
 			return string.charAt(0).toUpperCase() + string.slice(1);
         },
@@ -4832,6 +4836,7 @@ import mixinES from '../mixins/mixinES'
 			}
 			}
         },
+        // res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae, true
         sendConfirmation(id, name, mail, start, end, services, lender, data, valid, date, startG, endG){
             var startGood = new Date(startG).getHours() + ':' + new Date(startG).getMinutes()
             var endGood = new Date(endG).getHours() + ':' + new Date(endG).getMinutes()
@@ -4840,7 +4845,7 @@ import mixinES from '../mixins/mixinES'
             var servicesFinal = ''
             if (valid) {
                 dateFormat = this.finalDate == "" ? start : this.finalDate
-                dateFormat = this.dateSplit2(dateFormat)
+                dateFormat = this.formatDatesGood(dateFormat)
                 servicesFinal = data.serviceSelectds
             }else{
                 dateFormat = date

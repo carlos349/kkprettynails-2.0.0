@@ -12,8 +12,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-cover.jpg"
   },
   {
-    "revision": "c4d08650a0a5c57b0645",
-    "url": "/js/chunk-45d87843.d7a673d4.js"
+    "revision": "fbdf327e8db2cd324048",
+    "url": "/js/chunk-45d87843.3ff56570.js"
   },
   {
     "revision": "c71d861ee44713309927",
@@ -68,7 +68,7 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "8bcb2724a74791dc3a40759438e2f193",
+    "revision": "0559cb665ef1fd5999d4864c8e45dfb6",
     "url": "/index.html"
   },
   {
@@ -108,10 +108,6 @@ self.__precacheManifest = [
     "url": "/img/theme/branch.png"
   },
   {
-    "revision": "c1cacccae0d09aa2a50d3240f8457f2c",
-    "url": "/img/theme/employeReport.png"
-  },
-  {
     "revision": "ced0f2c9d36acd10447db1f3b3339104",
     "url": "/img/theme/employes.png"
   },
@@ -120,28 +116,28 @@ self.__precacheManifest = [
     "url": "/img/theme/metrics.png"
   },
   {
+    "revision": "c1cacccae0d09aa2a50d3240f8457f2c",
+    "url": "/img/theme/employeReport.png"
+  },
+  {
     "revision": "4524351b9c58adb85b5e1b32374347ab",
     "url": "/img/theme/users.png"
   },
   {
-    "revision": "f1fbc465b1dcf19fe040",
-    "url": "/js/app.f9b297f4.js"
+    "revision": "7bed50db1a156f636ba3",
+    "url": "/js/app.5baabea0.js"
   },
   {
     "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
     "url": "/img/theme/box.png"
   },
   {
-    "revision": "84335294072f0ad513fc8614b54a428a",
-    "url": "/img/theme/calendar.png"
-  },
-  {
     "revision": "1881d2a2c3f7bb5e1b4ac0b2622291b0",
     "url": "/img/theme/clients.png"
   },
   {
-    "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
-    "url": "/img/theme/configuration.png"
+    "revision": "84335294072f0ad513fc8614b54a428a",
+    "url": "/img/theme/calendar.png"
   },
   {
     "revision": "b0c11510c7d2a8e2f2402be014387b85",
@@ -152,12 +148,16 @@ self.__precacheManifest = [
     "url": "/img/theme/store.png"
   },
   {
-    "revision": "e7be3ecd921efc88bbca5e090862eac7",
-    "url": "/img/theme/profile.png"
+    "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
+    "url": "/img/theme/configuration.png"
   },
   {
     "revision": "50e42caa32cb0364bb83b0c3b79016cb",
     "url": "/img/theme/sales.png"
+  },
+  {
+    "revision": "e7be3ecd921efc88bbca5e090862eac7",
+    "url": "/img/theme/profile.png"
   },
   {
     "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
@@ -200,7 +200,7 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "f1fbc465b1dcf19fe040",
+    "revision": "7bed50db1a156f636ba3",
     "url": "/css/app.f8c650d4.css"
   },
   {
@@ -236,7 +236,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-73c2056c.7ad2a13c.css"
   },
   {
-    "revision": "c4d08650a0a5c57b0645",
+    "revision": "fbdf327e8db2cd324048",
     "url": "/css/chunk-45d87843.87c06a36.css"
   },
   {
