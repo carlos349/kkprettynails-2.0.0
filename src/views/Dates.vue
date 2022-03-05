@@ -3424,7 +3424,7 @@ import mixinES from '../mixins/mixinES'
                     start: res.data.data.start.split(" ")[1],
                     end: res.data.data.end.split(" ")[1],
                     duration: res.data.data.duration,
-                    service: res.data.data.services[0],
+                    service: res.data.service,
                     idBlock: "",
                     isFirst: true,
                     _id: this.selectedEvent._id
