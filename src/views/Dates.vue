@@ -3028,7 +3028,6 @@ import mixinES from '../mixins/mixinES'
                                         this.$refs.wizard.reset()
                                         this.modals.modal1 = false
                                         $(".ant-select-selection__clear").click()
-                                        console.log(localStorage)
                                         var splitFinally = this.finalDate.split("-")
                                         this.finalDate = splitFinally[1]+"-"+splitFinally[0]+"-"+splitFinally[2]
                                         axios.post(endPoint.endpointTarget+'/notifications', {
@@ -3102,11 +3101,8 @@ import mixinES from '../mixins/mixinES'
                             .then(res => {
                                 if (res.data.status == "ok") {
                                     this.spinningDate = false
-                                    console.log(this.finalDate)
                                     var splitFinally = this.finalDate.split("-")
-                                    console.log(splitFinally)
                                     this.finalDate = splitFinally[1]+"-"+splitFinally[0]+"-"+splitFinally[2]
-                                    console.log(this.finalDate)
                                     this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae, true)
                                     this.$swal({
                                         type: 'success',
