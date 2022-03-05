@@ -889,21 +889,30 @@
                         this.getCategories()
                         this.getEmployes()
                         this.getMicroServices()
-                        this.$swal({
-                            icon: 'success',
-                            title: `¡Bienvenido ${findClient.data.data.firstName}!`,
-                            text: 'Ya puedes agendar tu cita',
-                            html: ` <h4>Ya puedes agendar tu cita</h4><br>
-                            <h3>Link de referido</h3>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <span style="padding: 5px;border: 1px solid #172b4d;border-radius: 5px;background-color: #e9ecef;font-size:10px">http://${this.configurationsBranch.bussinessRoute}/agendamientocliente?ref=${findClient.data.data._id}</span>
+                        if (this.configurationsBranch.notificationDiscount) {
+                            this.$swal({
+                                icon: 'success',
+                                title: `¡Bienvenido ${findClient.data.data.firstName}!`,
+                                text: 'Ya puedes agendar tu cita',
+                                html: ` <h4>Ya puedes agendar tu cita</h4><br>
+                                <h3>Link de referido</h3>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <span style="padding: 5px;border: 1px solid #172b4d;border-radius: 5px;background-color: #e9ecef;font-size:10px">${this.configurationsBranch.bussinessRoute}/agendamientocliente?ref=${findClient.data.data._id}</span>
+                                            </div>
+                                            
                                         </div>
-                                        
-                                    </div>
-                            `,
-                            showConfirmButton: true
-                        })
+                                `,
+                                showConfirmButton: true
+                            })
+                        }else{
+                            this.$swal({
+                                icon: 'success',
+                                title: `¡Bienvenido ${findClient.data.data.firstName}!`,
+                                text: 'Ya puedes agendar tu cita',
+                                showConfirmButton: true
+                            })
+                        }
                         this.modals.modal6 = false
                     }else{
                         this.$swal({

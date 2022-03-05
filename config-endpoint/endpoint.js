@@ -1,4 +1,4 @@
-const serverL = 'localhost:3200'
+const serverL = '192.168.0.7:3200'
 const server = '18.228.199.97:4200'
 const portClient = '3389'
 const endpointTarget = `http://${server}`

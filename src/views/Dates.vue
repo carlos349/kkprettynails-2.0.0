@@ -3417,6 +3417,7 @@ import mixinES from '../mixins/mixinES'
         dataEdit(){
             axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.selectedEvent._id, this.configHeader)
             .then(res => {
+                this.configDatePickerEdit.minDate = ""
                 this.dataEditSend = {
                     date: new Date(res.data.data.createdAt).format('MM-DD-YYYY'),
                     employe: res.data.data.employe,
@@ -3468,6 +3469,7 @@ import mixinES from '../mixins/mixinES'
                                 this.blockFirstEdit = res.data.data
                                 this.searchBlockEdit()
                                 this.dateModals.modal2 = true
+                                this.configDatePickerEdit.minDate = new Date()
                             }).catch(err => {
                                 if (!err.response) {
                                     this.$swal({
