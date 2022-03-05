@@ -6486,6 +6486,10 @@ import mixinES from '../mixins/mixinES'
         .flatpickr-calendar {
             left: 0 !important;
         }
+        .vue-form-wizard .wizard-btn {
+            min-width: 70px !important;
+            font-size: .65em;
+        }
     }
     @media only screen and (max-width: 768px)
     {
