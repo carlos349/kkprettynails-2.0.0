@@ -1014,8 +1014,8 @@
       async getDataDays(){
         try {
           const getDays = await axios.get(`${endPoint.endpointTarget}/metrics/getDays/${this.branch}`, this.configHeader)
-          this.promedySales = this.totalSale / getDays.data.quantity
-          this.promedyServices = this.totalServices / getDays.data.quantity
+          this.promedySales = this.totalSale == 0 || getDays.data.quantity == 0 ? 0 : this.totalSale / getDays.data.quantity
+          this.promedyServices = this.totalServices == 0 || getDays.data.quantity == 0 ? 0 : this.totalServices / getDays.data.quantity
           this.workDays = getDays.data.quantity > 0 ? getDays.data.quantity : 1
           // this.$refs.chartApis.updateOptions(this.chartOptions, false, true)
         }catch(err){

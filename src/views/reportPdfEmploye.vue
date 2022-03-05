@@ -6,7 +6,7 @@
             </center>
             <div class="row mb-3">
                 <div class="col-6 pl-9">
-                    <strong>  Nombre de la empleada:</strong> {{nameLender}}
+                    <strong>Nombre de la empleada:</strong> {{nameLender}}
                 </div>
                 <div class="col-6 pl-9">
                     <strong>Comisión total:</strong> {{totalComission | formatPrice}}
@@ -310,13 +310,7 @@ import mixinES from '../mixins/mixinES'
                 .then(res => {
                     this.sales = res.data.data
                     this.initDate = res.data.data[0].createdAt
-                    for (const sale in this.sales) {
-                        if(sale == 0){
-                            this.totalSales = this.totalSales + sale.total
-                        }else if(this.sales[sale].saleData.uuid != this.sales[sale - 1].saleData.uuid) {
-                            this.totalSales = this.totalSales + sale.total
-                        }
-                    }
+                    this.totalSales = ((this.lenderBonus + this.totalComission) - this.advancement)
                     setTimeout(() => {
                         print()
                         setTimeout(() => {
