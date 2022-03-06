@@ -182,7 +182,7 @@
                                         <template slot="title">
                                             <span>Anular venta</span>
                                         </template>
-                                        <base-button size="sm" type="danger" v-on:click="nullSale(column.saleData._id, column.id, column.createdAt, column.saleData)">
+                                        <base-button v-if="fuckyou" size="sm" :disabled="column.validNull" type="danger" v-on:click="nullSale(column.saleData._id, column.id, column.createdAt, column.saleData)">
                                             <a-icon type="stop" style="vertical-align:1.5px;font-size:1.3em;" />
                                         </base-button>
                                     </a-tooltip>
@@ -294,6 +294,7 @@ import mixinES from '../mixins/mixinES'
             advancement: '',
             totalSale: 0,
             progress: true,
+            fuckyou:true,
             modals: {
                 modal1: false,
                 modal2: false,
@@ -775,6 +776,7 @@ import mixinES from '../mixins/mixinES'
             let dateFormat = new Date(date)
             return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()
         },
+       
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
             return '$ '+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
