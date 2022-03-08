@@ -350,11 +350,26 @@
                 <i class="ni ni-check-bold ni-5x text-success"></i>
                 <h2>¡Bienvenido(a) {{nameClient}}!</h2><br> 
                 <h4>Ya puedes agendar tu cita</h4><br>
-                <h3>¡Comparte tu link de referido y recibe descuentos, por cada cliente que se registre con el!</h3>
+                <h5>¡Comparte tu link de referido y recibe descuento por cada recomendación!</h5>
+                
             </div>
-            <template v-slot:footer>
-                <base-button type="secondary" v-on:click="aCopiar()">Copiar link de referido</base-button>
-                <base-button type="primary" @click="modals.modal0 = false">Continuar</base-button>
+            <template class="p-3">
+                <div class="row p-3">
+                    
+                        <div class="col-md-6 col-12 mb-3">
+                            <center>
+                                <base-button class="mx-auto" type="secondary" v-on:click="aCopiar()">Copiar link de referido</base-button>
+                            </center>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <center>
+                               <base-button class="mx-auto" type="primary" @click="modals.modal0 = false">Continuar</base-button> 
+                            </center>
+                            
+                        </div>
+                    
+                    
+                </div>
             </template>
         </modal>
         <modal :show.sync="modals.modal2"
