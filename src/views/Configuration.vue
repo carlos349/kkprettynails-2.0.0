@@ -986,7 +986,7 @@
           }
           this.updateconfig()
         },
-        changeNotifyDiscount(valid){
+        changeNotifyDiscount(){
           this.configData.notificationDiscount = this.configData.notificationDiscount == true ? false : true
 
           this.updateconfig()

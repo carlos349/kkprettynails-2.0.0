@@ -54,8 +54,8 @@ export default {
                             branch: res.data.data.branch,
                             link: 'agendamiento'
                         }, this.configHeader)
-                        .then(res => {
-                            this.socket.emit('sendNotification', res.data.data)
+                        .then(respo => {
+                            this.socket.emit('sendNotification', respo.data.data)
                         })
                         
                         axios.post(endPoint.endpointTarget+'/mails/responseDate', {
