@@ -347,7 +347,8 @@
                 <h5 class="modal-title" id="exampleModalLabel"></h5>
             </template>
             <div class="text-center">
-                <i class="ni ni-check-bold ni-5x text-success"></i> 
+                <i class="ni ni-check-bold ni-5x text-success"></i>
+                <h2>¡Bienvenido(a) {{nameClient}}!</h2><br> 
                 <h4>Ya puedes agendar tu cita</h4><br>
                 <h3>Link de referido</h3>
                 <div class="row">
@@ -760,7 +761,8 @@
                 configurationsBranch: new Object(),
                 inBlackList: false,
                 blockToBlackList: [],
-                idForRefer:''
+                idForRefer:'',
+                nameClient:''
             }
         },
         created(){
@@ -927,7 +929,7 @@
                         if (this.configurationsBranch.notificationDiscount) {
                             this.linkForCopy= this.configurationsBranch.bussinessRoute+"/agendamientocliente?ref="+this.idForRefer
                             this.modals.modal0 = true
-
+                            this.nameClient = findClient.data.data.firstName
                         }else{
                             this.$swal({
                                 icon: 'success',
