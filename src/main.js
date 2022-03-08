@@ -28,6 +28,7 @@ import VueApexCharts from 'vue-apexcharts'
 import Popper from 'vue-popperjs';
 import VueSingleSelect from "vue-single-select";
 import VueCurrencyInput from 'vue-currency-input'
+import Clipboard from 'v-clipboard'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit, faPager, faEdit, faTrash, faClipboard, faShoppingCart} from '@fortawesome/free-solid-svg-icons'
@@ -97,6 +98,7 @@ Vue.use(VueSweetalert2);
 Vue.use(VueApexCharts)
 Vue.use(Popper)
 Vue.use(Vuesax)
+Vue.use(Clipboard)
 Vue.use(formatDate)
 Vue.use(VueHtmlToPaper, options)
 Vue.use(formatPrice)

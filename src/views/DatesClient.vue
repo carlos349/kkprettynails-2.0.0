@@ -342,6 +342,26 @@
                 © {{year}} | <a href="http://www.syswa.com" class="font-weight-bold ml-1" target="_blank">SYSWA</a> Todos los derechos reservados
             </span>
         </nav>
+        <modal :show.sync="modals.modal0">
+            <template v-slot:header>
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+            </template>
+            <div class="text-center">
+                <i class="ni ni-check-bold ni-5x text-success"></i> 
+                <h4>Ya puedes agendar tu cita</h4><br>
+                <h3>Link de referido</h3>
+                <div class="row">
+                    <div class="col-12">
+                        <span class="spanRefer">masgrande.com.syswa{{configurationsBranch.bussinessRoute}}/agendamientocliente?ref={{idForRefer}}</span>
+                    </div>
+                    
+                </div>
+            </div>
+            <template v-slot:footer>
+                <base-button type="secondary" v-on:click="aCopiar()">Copiar link de referido</base-button>
+                <base-button type="primary" @click="modals.modal0 = false">Continuar</base-button>
+            </template>
+        </modal>
         <modal :show.sync="modals.modal2"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-sm">
@@ -585,6 +605,7 @@
     import endPoint from '../../config-endpoint/endpoint.js'
     import jwtDecode from 'jwt-decode'
     import io from 'socket.io-client';
+    import VueClipboard from 'vue-clipboard2';
 
     //frontend
     import flatPicker from "vue-flatpickr-component";
@@ -599,7 +620,8 @@
         components: {
             flatPicker,
             vueCustomScrollbar,
-            VuePhoneNumberInput
+            VuePhoneNumberInput,
+            VueClipboard
         },
         data(){
             return {
@@ -666,6 +688,7 @@
                 validWizard: true,
                 year: new Date().getFullYear(),
                 modals: {
+                    modal0:false,
                     modal1: false,
                     modal2: false,
                     modal3: false,
@@ -713,6 +736,7 @@
                 active: {
                     'background-color': '#0b1526'
                 },
+                linkForCopy:'',
                 showLenderSection: false,
                 noOneLender: false,
                 selectServiceForHour: {},
@@ -735,7 +759,8 @@
                 validVerify: false,
                 configurationsBranch: new Object(),
                 inBlackList: false,
-                blockToBlackList: []
+                blockToBlackList: [],
+                idForRefer:''
             }
         },
         created(){
@@ -827,6 +852,15 @@
                     }
                 }
             },
+            aCopiar(){
+                this.$clipboard(this.linkForCopy)
+                this.$swal({
+                    icon: 'success',
+                    title: '¡Copiado!',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+            },
             async getMicroServices(){
                 try {
                     const getMicro = await axios.get(endPoint.endpointTarget+'/configurations/getMicroservice/'+this.branch, this.configHeader)
@@ -865,6 +899,7 @@
                             pay: 'Presencial efectivo',
                             pdf: 'danger'
                         }
+                        this.idForRefer = findClient.data.data._id
                         try {
                             const verifyBlackList = await axios.post(endPoint.endpointTarget+'/clients/verifyBlackList', {
                                 clientId: findClient.data.data._id,
@@ -890,21 +925,9 @@
                         this.getEmployes()
                         this.getMicroServices()
                         if (this.configurationsBranch.notificationDiscount) {
-                            this.$swal({
-                                icon: 'success',
-                                title: `¡Bienvenido ${findClient.data.data.firstName}!`,
-                                text: 'Ya puedes agendar tu cita',
-                                html: ` <h4>Ya puedes agendar tu cita</h4><br>
-                                <h3>Link de referido</h3>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <span style="padding: 5px;border: 1px solid #172b4d;border-radius: 5px;background-color: #e9ecef;font-size:10px">${this.configurationsBranch.bussinessRoute}/agendamientocliente?ref=${findClient.data.data._id}</span>
-                                            </div>
-                                            
-                                        </div>
-                                `,
-                                showConfirmButton: true
-                            })
+                            this.linkForCopy= this.configurationsBranch.bussinessRoute+"/agendamientocliente?ref="+this.idForRefer
+                            this.modals.modal0 = true
+
                         }else{
                             this.$swal({
                                 icon: 'success',
@@ -2890,6 +2913,7 @@ color: #174c8e;
         height:110px;
         width:180px
     }
+    .
 }
 @media only screen and (max-width: 768px)
 {
@@ -2905,6 +2929,13 @@ color: #174c8e;
     .borderRight{
         border:none;
     }
+    .spanRefer{
+        padding: 5px;
+        border: 1px solid #172b4d;
+        border-radius: 5px;
+        background-color: #e9ecef;
+        font-size:.4em
+    }  
 }
 #overlay {
   position: fixed;
@@ -2937,6 +2968,13 @@ color: #174c8e;
     transition: all 0.4s ease-out;
 }
 .wizard-btn{
-        margin-top: 20px;
-    }
+    margin-top: 20px;
+}
+.spanRefer{
+    padding: 5px;
+    border: 1px solid #172b4d;
+    border-radius: 5px;
+    background-color: #e9ecef;
+    font-size:14px
+}  
 </style>
