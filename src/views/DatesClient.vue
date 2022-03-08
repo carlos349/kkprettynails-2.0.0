@@ -350,13 +350,7 @@
                 <i class="ni ni-check-bold ni-5x text-success"></i>
                 <h2>¡Bienvenido(a) {{nameClient}}!</h2><br> 
                 <h4>Ya puedes agendar tu cita</h4><br>
-                <h3>Link de referido</h3>
-                <div class="row">
-                    <div class="col-12">
-                        <span class="spanRefer">{{configurationsBranch.bussinessRoute}}/agendamientocliente?ref={{idForRefer}}</span>
-                    </div>
-                    
-                </div>
+                <h3>¡Comparte tu link de referido y recibe descuentos, por cada cliente que se registre con el!</h3>
             </div>
             <template v-slot:footer>
                 <base-button type="secondary" v-on:click="aCopiar()">Copiar link de referido</base-button>
