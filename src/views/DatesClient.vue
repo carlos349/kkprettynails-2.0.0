@@ -352,7 +352,7 @@
                 <h3>Link de referido</h3>
                 <div class="row">
                     <div class="col-12">
-                        <span class="spanRefer">masgrande.com.syswa{{configurationsBranch.bussinessRoute}}/agendamientocliente?ref={{idForRefer}}</span>
+                        <span class="spanRefer">{{configurationsBranch.bussinessRoute}}/agendamientocliente?ref={{idForRefer}}</span>
                     </div>
                     
                 </div>
@@ -2876,6 +2876,13 @@ color: #174c8e;
     height:140px;
     width:220px
 }
+.spanRefer{
+    padding: 5px;
+    border: 1px solid #172b4d;
+    border-radius: 5px;
+    background-color: #e9ecef;
+    font-size:14px;
+} 
 @media only screen and (max-width: 468px)
 {
     .styleDropdown .dropdown-menu{
@@ -2913,7 +2920,11 @@ color: #174c8e;
         height:110px;
         width:180px
     }
-    .
+    .spanRefer{
+        
+        font-size:.3em;
+    }
+     
 }
 @media only screen and (max-width: 768px)
 {
@@ -2929,13 +2940,7 @@ color: #174c8e;
     .borderRight{
         border:none;
     }
-    .spanRefer{
-        padding: 5px;
-        border: 1px solid #172b4d;
-        border-radius: 5px;
-        background-color: #e9ecef;
-        font-size:.4em
-    }  
+     
 }
 #overlay {
   position: fixed;
@@ -2970,11 +2975,5 @@ color: #174c8e;
 .wizard-btn{
     margin-top: 20px;
 }
-.spanRefer{
-    padding: 5px;
-    border: 1px solid #172b4d;
-    border-radius: 5px;
-    background-color: #e9ecef;
-    font-size:14px
-}  
+ 
 </style>
