@@ -1,7 +1,7 @@
 const serverL = 'localhost:3200'
 const server = '18.228.199.97:4200'
 const portClient = '3389'
-const endpointTarget = `http://${server}`
+const endpointTarget = `http://${serverL}`
 const imgEndpoint = `${endpointTarget}/static/users/`
 
 const dataHouse = {
@@ -20,7 +20,7 @@ const dataKK = {
     database: 'kkprettynails-syswa',
     siteRedirect: 'http://kkspa.cl',
     endpointTarget:endpointTarget,
-    url: `http://kkspa.syswa.net/#`,
+    url: `http://localhost:8080/#`,
     server:server 
 }
 
@@ -34,6 +34,6 @@ const dataQa = {
     server:server 
 }
 
-const endPoint = dataQa
+const endPoint = dataKK
 
 module.exports = endPoint

@@ -6,7 +6,7 @@
             </center>
             <div class="row mb-3">
                 <div class="col-6 pl-9">
-                    <strong> Nombre de la empleada:</strong> {{nameLender}}
+                    <strong>Nombre de la empleada:</strong> {{nameLender}}
                 </div>
                 <div class="col-6 pl-9">
                     <strong>Comisión total:</strong> {{totalComission | formatPrice}}
@@ -21,7 +21,7 @@
                     <strong>Total servicios:</strong> {{sales.length}}
                 </div>
                 <div class="col-6 pl-9">
-                    <strong>Total:</strong> {{totalSales | formatPrice}}
+                    <strong>Total a recibir:</strong> {{totalSales | formatPrice}}
                 </div>
             </div>
             <hr class="mt-2 mb-2">
