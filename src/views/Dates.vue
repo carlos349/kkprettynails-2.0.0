@@ -4887,11 +4887,13 @@ import mixinES from '../mixins/mixinES'
         },
         // res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae, true
         sendConfirmation(id, name, mail, start, end, services, lender, data, valid, date, startG, endG){
-            var startGood = new Date(startG).getHours() + ':' + new Date(startG).getMinutes()
-            var endGood = new Date(endG).getHours() + ':' + new Date(endG).getMinutes()
+            var startGood = new Date(startG).getHours() + ':' + (new Date(startG).getMinutes() == 0 ? '00' : new Date(startG).getMinutes())
+            var endGood = new Date(endG).getHours() + ':' + (new Date(endG).getMinutes() == 0 ? '00' : new Date(endG).getMinutes())
             const nameFormat = name
             var dateFormat = ''
-            var servicesFinal = ''
+            var servicesFinal = []
+            console.log(date)
+            console.log(valid)
             if (valid) {
                 dateFormat = this.finalDate == "" ? start : this.finalDate
                 servicesFinal = data.serviceSelectds
@@ -4908,7 +4910,7 @@ import mixinES from '../mixins/mixinES'
                 branchId: this.branch,
                 data: data,
                 id: id,
-                date: this.finalDate,
+                date: this.finalDate == "" ? date : this.finalDate,
                 email: mail,
                 servicesFinal: servicesFinal,
                 valid: valid
