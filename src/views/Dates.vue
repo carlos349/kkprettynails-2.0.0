@@ -686,7 +686,7 @@
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente, false)" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente, false)" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Borrar</span>  
@@ -695,7 +695,7 @@
                                     </center>
                                 </div>
 
-                                <div v-if="validRoute('agendamiento', 'eliminar')" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente, true)" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente, true)" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Cancelar</span>  
