@@ -5547,7 +5547,7 @@ import mixinES from '../mixins/mixinES'
                                 this.registerDae.serviceSelectds[0].valid = true
                                 this.registerDae.serviceSelectds[0].blocks = res.data.data
                                 this.registerDae.block = res.data.data
-                                $('#block0').toggle('slow')
+                                $('#block0').show('slow')
                             })
                         }).catch(err => {
                             if (!err.response) {
@@ -5726,7 +5726,7 @@ import mixinES from '../mixins/mixinES'
                             this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
                             this.registerDae.serviceSelectds[index].itFirst = false
                             setTimeout(() => {
-                                $('#block'+index).toggle('slow')
+                                $('#block'+index).show('slow')
                             }, 500);
                             setTimeout(() => {
                                 $('#check'+index).addClass('fa-check')
@@ -5800,7 +5800,7 @@ import mixinES from '../mixins/mixinES'
                             this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
                             this.registerDae.serviceSelectds[index].itFirst = false
                             setTimeout(() => {
-                                $('#block'+index).toggle('slow')
+                                $('#block'+index).show('slow')
                             }, 500);
                             setTimeout(() => {
                                 $('#check'+index).addClass('fa-check')
