@@ -291,7 +291,7 @@
                                                             <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
                                                         </base-button>
                                                         <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == 'none'" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
-                                                        <span style="color:red">Horarios ocupados</span>
+                                                            <span style="color:red">Horarios ocupados</span>
                                                         </base-button>
                                                         <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == false" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
                                                         Seleccione una hora
@@ -2592,7 +2592,9 @@ import mixinES from '../mixins/mixinES'
                } 
         },
         initialState(){
-             
+             for (let index = 0; index < 20; index++) {
+                $('#block'+index).show('slow')
+             }
             $(".ant-select-selection__clear").click()
             this.modals.modal3 = false
             this.$refs.wizard.reset()
@@ -5014,7 +5016,7 @@ import mixinES from '../mixins/mixinES'
                                             this.registerDae.serviceSelectds[0].valid = true
                                             this.registerDae.serviceSelectds[0].blocks = res.data.data
                                             this.registerDae.block = res.data.data
-                                            $('#block0').toggle('slow')
+                                            $('#block0').show('slow')
                                             this.load1 = false
                                         }).catch(err => {
                                             if (!err.response) {
@@ -5124,6 +5126,9 @@ import mixinES from '../mixins/mixinES'
                             }
                         }
                         }
+                        setTimeout(() => {
+                            $('#block0').show('slow')
+                        }, 200);
                     }, 200);       
             
         },
