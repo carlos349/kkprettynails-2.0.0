@@ -159,8 +159,10 @@
                             <div class="row">
                                 <div class="col-md-4" style="margin-top:16px;">
                                     <div class="w-75 mx-auto" >
-                                        <h4 class="text-center text-uppercase">Fechas disponibles</h4>
-                                        <base-input addon-left-icon="ni ni-calendar-grid-58 clickCalendar" v-model="dates.simple" v-on:change="openCalendar" style="cursor:pointer;" >
+                                        <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2 w-100">
+                                            <span style="font-family:Arial !important;color:#32325d;font-weight:600;" class="w-100">Seleccione fecha</span> 
+                                        </badge>
+                                        <base-input class="hideThisShit"  style="cursor:pointer;" >
                                             <flat-picker 
                                                     @on-change="openCalendar"
                                                     slot-scope="{focus, blur}"
@@ -184,7 +186,7 @@
                                                 <div class="col-md-6">
                                                     <div class="py-1" style="background-color:#f8fcfd;">
                                                         <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1 mx-4">
-                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
+                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Seleccione profesionales</span> <br>
                                                             <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.name}} </span>
                                                         </badge> 
                                                         <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
@@ -206,8 +208,8 @@
                                                 </div>
                                                 <div class="col-md-6 pb-2">
                                                     <div class="py-1" style="background-color:#f8fcfd;">
-                                                        <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2">
-                                                        <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> 
+                                                        <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2 w-100">
+                                                        <span style="font-family:Arial !important;color:#32325d;font-weight:600;" class="w-100">Seleccione horas</span> 
                                                         </badge>
                                                         <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
                                                             <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i>
@@ -645,7 +647,7 @@
                 dateFormat: 'DD/MM/YYYY',
                 day: 0,
                 configDate: {
-                    inline:false,
+                    inline: true,
                     allowInput: false,
                     dateFormat: 'd-m-Y',
                     locale: Spanish, // locale for this instance only
@@ -2985,6 +2987,12 @@ color: #174c8e;
 }
 .wizard-btn{
     margin-top: 20px;
+}
+.hideThisShit input{
+    display: none;
+}
+.hideThisShit .flatpickr-calendar.inline{
+    margin-left:auto !important;   
 }
  
 </style>
