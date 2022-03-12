@@ -1241,7 +1241,7 @@
                                     this.registerDate.serviceSelectds[0].blocks = res.data.data
                                     this.registerDate.block = res.data.data
                                     console.log(this.registerDate.serviceSelectds[0].blocks)
-                                    $('#block0').toggle('slow')
+                                    $('#block0').show('slow')
                                 }).catch(err =>{
                                     if (!err.response) {
                                         this.$swal({
@@ -1522,7 +1522,7 @@
                                     this.registerDate.serviceSelectds[0].valid = true
                                     this.registerDate.serviceSelectds[0].blocks = res.data.data
                                     this.registerDate.block = res.data.data
-                                    $('#block0').toggle('slow')
+                                    $('#block0').show('slow')
                                 }).catch(err =>{
                                     if (!err.response) {
                                         this.$swal({
@@ -1683,7 +1683,7 @@
                                 this.registerDate.serviceSelectds[index].blocksFirst = res.data.data
                                 this.registerDate.serviceSelectds[index].itFirst = false
                                 setTimeout(() => {
-                                    $('#block'+index).toggle('slow')
+                                    $('#block'+index).show('slow')
                                 }, 500);
                                 setTimeout(() => {
                                     $('#check'+index).addClass('fa-check')
@@ -1748,7 +1748,7 @@
                                 this.registerDate.serviceSelectds[index].blocksFirst = res.data.data
                                 this.registerDate.serviceSelectds[index].itFirst = false
                                 setTimeout(() => {
-                                    $('#block'+index).toggle('slow')
+                                    $('#block'+index).show('slow')
                                 }, 500);
                                 setTimeout(() => {
                                     $('#check'+index).addClass('fa-check')
@@ -2326,7 +2326,7 @@
                                                 this.registerDate.serviceSelectds[0].blocks = res.data.data
                                                 this.registerDate.block = res.data.data
                                                 console.log(this.registerDate.serviceSelectds[0].blocks)
-                                                $('#block0').toggle('slow')
+                                                $('#block0').show('slow')
                                             })
                                         }).catch(err => {
                                             if (!err.response) {
@@ -2390,6 +2390,9 @@
                             }
                             
                         }
+                        setTimeout(() => {
+                            $('#block0').show('slow')
+                        }, 200);
                     }, 200);
                 }
                 console.log(this.registerDate.serviceSelectds)
