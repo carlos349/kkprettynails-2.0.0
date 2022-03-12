@@ -2625,9 +2625,6 @@ import mixinES from '../mixins/mixinES'
                } 
         },
         initialState(){
-             for (let index = 0; index < 20; index++) {
-                $('#block'+index).show('slow')
-             }
             $(".ant-select-selection__clear").click()
             this.modals.modal3 = false
             this.$refs.wizard.reset()
