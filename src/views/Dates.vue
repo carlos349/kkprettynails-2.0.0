@@ -16,15 +16,26 @@
                             <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
                         </div>
                         <div class="mt-7">
-                                <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
-                                <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
-                            </base-button>
+                            <template v-if="showCalendar">
+                                <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('schedule'), initialState()"  type="success">
+                                    <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
+                                </base-button>
 
-                            <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal1 = true , initialState()"  type="success">
-                                <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                                Agendar
-                            </base-button>
+                                <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('schedule'), initialState()"  type="success">
+                                    <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                                    Agendar
+                                </base-button>
+                            </template> 
+                            <template v-else>
+                                <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('calendar'), initialState()"  type="success">
+                                    <a-icon type="calendar" style="vertical-align:1px;font-size:1.6em;" />
+                                </base-button>
 
+                                <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('calendar'), initialState()"  type="success">
+                                    <a-icon type="calendar" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                                    Ver calendario
+                                </base-button>
+                            </template> 
                             <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
                                 <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                                 Bloqueos
@@ -60,7 +71,32 @@
                 <h1 class="heading mt-5">{{modalsDialog.message}}</h1>
             </div>
         </modal>
-        <a-modal v-model="modals.modal1" class="modalProcess p-0" width="100%" :closabled="true" :footer="false" >
+        <a-spin :spinning="spinningView">
+        <vue-custom-scrollbar v-if="showCalendar" class="calen" style="height:75vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
+            <vue-cal
+                class="calen"
+                :locale="localee"
+                :events="events"
+                :time-from="startCalendar"
+                :time-to="endCalendar"
+                :time-step="15"
+                active-view="month"
+                :disable-views="['years', 'year', 'week']" 
+                events-count-on-month-view
+                :split-days="splitDays"
+                @view-change="validatorLendersDaysSplit('view-change', $event)"
+                :hide-weekdays="hideDays"
+                :sticky-split-labels="stickySplitLabels"
+                :on-event-click="onEventClick"
+                :overlaps-per-time-step="true">
+                <template v-slot:split-label="{ split }">
+                    <img v-if="split.img != 'no'" class="avatar avatar-sm rounded-circle mr-2" :src="split.img" /> 
+                    <img v-else class="avatar avatar-sm rounded-circle mr-2" src="https://www.w3schools.com/howto/img_avatar.png" /> 
+                    <strong class="text-white" > {{ split.label }}</strong>
+                </template>
+            </vue-cal>
+        </vue-custom-scrollbar>
+        <div v-else>
             <card type="secondary" shadow header-classes="bg-white" class="border-0 m-0 px-0">
                 
                   <!-- WIZARD -->
@@ -236,8 +272,10 @@
                     <tab-content icon="ni ni-collection" title="Profesionales" :before-change="validateLastStep">
                         <div class="row">
                             <div class="col-md-4 col-sm-12 mx-auto mt-4">
-                                <h4 class="text-center text-uppercase">Fechas disponibles</h4>
-                                <base-input addon-left-icon="ni ni-calendar-grid-58">
+                                <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2 w-100">
+                                    <span style="font-family:Arial !important;color:#32325d;font-weight:600;" class="w-100">Seleccione fecha</span> 
+                                </badge>
+                                <base-input class="hideThisShit">
                                     <flat-picker slot-scope="{focus, blur}"
                                         @on-change="openCalendar(), load1 = true"
                                         @on-open="focus"
@@ -508,31 +546,8 @@
                 <!-- END WIZARD -->
 
             </card>
-        </a-modal>
-        <vue-custom-scrollbar class="calen" style="height:75vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
-            <vue-cal
-                class="calen"
-                :locale="localee"
-                :events="events"
-                :time-from="startCalendar"
-                :time-to="endCalendar"
-                :time-step="15"
-                active-view="month"
-                :disable-views="['years', 'year', 'week']" 
-                events-count-on-month-view
-                :split-days="splitDays"
-                @view-change="validatorLendersDaysSplit('view-change', $event)"
-                :hide-weekdays="hideDays"
-                :sticky-split-labels="stickySplitLabels"
-                :on-event-click="onEventClick"
-                :overlaps-per-time-step="true">
-                <template v-slot:split-label="{ split }">
-                    <img v-if="split.img != 'no'" class="avatar avatar-sm rounded-circle mr-2" :src="split.img" /> 
-                    <img v-else class="avatar avatar-sm rounded-circle mr-2" src="https://www.w3schools.com/howto/img_avatar.png" /> 
-                    <strong class="text-white" > {{ split.label }}</strong>
-                </template>
-            </vue-cal>
-        </vue-custom-scrollbar>
+        </div>
+        </a-spin>
         <modal :show.sync="dateModals.modal1" style="z-index:1"
                body-classes="p-0"
                :header-classes="selectedEvent.class"
@@ -1332,7 +1347,8 @@ import mixinES from '../mixins/mixinES'
         },
         dateMax:'',
         configDatePicker: {
-            allowInput: true,
+            inline: true,
+            allowInput: false,
             dateFormat: 'd-m-Y',
             locale: Spanish, // locale for this instance only
             minDate: new Date(),
@@ -1522,6 +1538,8 @@ import mixinES from '../mixins/mixinES'
         servicesCat: [],
         serviceSelected: [],
         servicesPhoneShow:false,
+        showCalendar: true,
+        spinningView: false
       };
     },
     created(){
@@ -1571,6 +1589,21 @@ import mixinES from '../mixins/mixinES'
                 )    
             }
             this.blokedBlock = false
+        },
+        setView(view){
+            if (view == 'calendar') {
+                this.spinningView = true
+                setTimeout(() => {
+                    this.showCalendar = true
+                    this.spinningView = false
+                }, 500);
+            }else{
+                this.spinningView = true
+                setTimeout(() => {
+                    this.showCalendar = false
+                    this.spinningView = false
+                }, 500);
+            }
         },
         async getBlockingHours(){
             try {
@@ -3037,7 +3070,9 @@ import mixinES from '../mixins/mixinES'
                                             timer: 1500
                                         })
                                         this.$refs.wizard.reset()
-                                        this.modals.modal1 = false
+                                        setTimeout(() => {
+                                            this.showCalendar = true
+                                        }, 1000);
                                         $(".ant-select-selection__clear").click()
                                         var splitFinally = this.finalDate.split("-")
                                         this.finalDate = splitFinally[1]+"-"+splitFinally[0]+"-"+splitFinally[2]
@@ -3124,7 +3159,6 @@ import mixinES from '../mixins/mixinES'
                                     })
                                     this.ifDisabled = false
                                     this.$refs.wizard.reset()
-                                    console.log(localStorage)
                                     axios.post(endPoint.endpointTarget+'/notifications', {
                                         userName:'Empleado: '+localStorage.firstname + " " + localStorage.lastname,
                                         userImage: '',
@@ -3135,7 +3169,10 @@ import mixinES from '../mixins/mixinES'
                                     .then(res => {
                                         this.socket.emit('sendNotification', res.data.data)
                                     })
-                                    this.modals.modal1 = false
+                                    setTimeout(() => {
+                                        this.showCalendar = true
+                                        
+                                    }, 1000);
                                     this.initialState()
                                     this.modals.modal2 = false
                                 }    
@@ -6595,5 +6632,11 @@ import mixinES from '../mixins/mixinES'
     }
     .wizard-btn{
         margin-top: 20px;
+    }
+    .hideThisShit input{
+        display: none;
+    }
+    .hideThisShit .flatpickr-calendar.inline{
+        margin-left: 18% !important;
     }
 </style>
