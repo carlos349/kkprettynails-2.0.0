@@ -3366,7 +3366,10 @@ import mixinES from '../mixins/mixinES'
             this.selectedEvent = event
             this.originalEmploye = this.selectedEvent.employe
             var start = this.selectedEvent.start
-            
+            axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.selectedEvent._id, this.configHeader)
+            .then(res => {
+                this.selectedEvent.createdAt = new Date(res.data.data.createdAt).format('MM-DD-YYYY')
+            })
             
             this.dateModals.modal1 = true
             if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
