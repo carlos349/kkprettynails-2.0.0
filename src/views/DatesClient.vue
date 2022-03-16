@@ -352,25 +352,22 @@
                 <i class="ni ni-check-bold ni-5x text-success"></i>
                 <h2>¡Bienvenido(a) {{nameClient}}!</h2><br> 
                 <h4>Ya puedes agendar tu cita</h4><br>
+                <h4>{{dataMessageClient}}</h4><br>
                 <h5>¡Comparte tu link de referido y recibe descuento por cada recomendación!</h5>
-                
             </div>
             <template class="p-3">
                 <div class="row p-3">
-                    
-                        <div class="col-md-6 col-12 mb-3">
-                            <center>
-                                <base-button class="mx-auto" type="secondary" v-on:click="aCopiar()">Copiar link de referido</base-button>
-                            </center>
-                        </div>
-                        <div class="col-md-6 col-12">
-                            <center>
-                               <base-button class="mx-auto" type="primary" @click="modals.modal0 = false">Continuar</base-button> 
-                            </center>
-                            
-                        </div>
-                    
-                    
+                    <div class="col-md-6 col-12 mb-3">
+                        <center>
+                            <base-button class="mx-auto" type="secondary" v-on:click="aCopiar()">Copiar link de referido</base-button>
+                        </center>
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <center>
+                            <base-button class="mx-auto" type="primary" @click="modals.modal0 = false">Continuar</base-button> 
+                        </center>
+                        
+                    </div>
                 </div>
             </template>
         </modal>
@@ -773,7 +770,8 @@
                 inBlackList: false,
                 blockToBlackList: [],
                 idForRefer:'',
-                nameClient:''
+                nameClient:'',
+                dataMessageClient: ''
             }
         },
         created(){
@@ -913,6 +911,17 @@
                             pdf: 'danger'
                         }
                         this.idForRefer = findClient.data.data._id
+                        if (findClient.data.data.historical.length > 0) {
+                            var dataServices = ""
+                            for (const key in findClient.data.data.historical[0].items) {
+                                console.log(item)
+                                const item = findClient.data.data.historical[0].items[key]
+                                dataServices = key == 0 ? item.item.name : dataServices+', '+item.item.name
+                            }
+                            this.dataMessageClient = `Este es la informacion de su ultima atencion ${dataServices}`
+                        }else{
+                            this.dataMessageClient = ""
+                        }
                         try {
                             const verifyBlackList = await axios.post(endPoint.endpointTarget+'/clients/verifyBlackList', {
                                 clientId: findClient.data.data._id,

@@ -275,7 +275,7 @@
                                 <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2 w-100">
                                     <span style="font-family:Arial !important;color:#32325d;font-weight:600;" class="w-100">Seleccione fecha</span> 
                                 </badge>
-                                <base-input class="hideThisShit">
+                                <base-input class="hideThisShit" :class="device() ? 'ifNoscreen' : 'ifscreen'">
                                     <flat-picker slot-scope="{focus, blur}"
                                         @on-change="openCalendar(), load1 = true"
                                         @on-open="focus"
@@ -1714,6 +1714,9 @@ import mixinES from '../mixins/mixinES'
         device(){
             if (screen.width < 768) {
                 this.configDatePicker.inline = true
+                return true
+            }else{
+                return false
             }
         },
         async selectServicePhone(id){
@@ -6636,7 +6639,10 @@ import mixinES from '../mixins/mixinES'
     .hideThisShit input{
         display: none;
     }
-    .hideThisShit .flatpickr-calendar.inline{
+    .ifscreen .flatpickr-calendar.inline{
         margin-left: 18% !important;
+    }
+    .ifNoscreen .flatpickr-calendar.inline{
+        margin-left: -2% !important;
     }
 </style>
