@@ -9,10 +9,17 @@ formatDate.install = (Vue) => {
 		return moment(dateFormat).format("DD-MM-YYYY")
     })
 
+    Vue.filter('formatDateEdit', (date) => {
+        let dateFormat = new Date(date)
+		return moment(dateFormat).format("MM-DD-YYYY")
+    })
+
     Vue.filter('fromNow', (date) => {
         let dateFormat = new Date(date)
 		return moment(dateFormat, "YYYYMMDD").fromNow();
     })
 }
+
+
 
 export default formatDate

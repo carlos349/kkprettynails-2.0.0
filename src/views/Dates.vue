@@ -3470,7 +3470,7 @@ import mixinES from '../mixins/mixinES'
             .then(res => {
                 this.configDatePickerEdit.minDate = ""
                 this.dataEditSend = {
-                    date: new Date(res.data.data.createdAt).format('MM-DD-YYYY'),
+                    date: this.$options.filters.formatDateEdit(res.data.data.createdAt),
                     employe: res.data.data.employe,
                     originalEmploye: res.data.data.employe,
                     start: res.data.data.start.split(" ")[1],
@@ -3481,7 +3481,7 @@ import mixinES from '../mixins/mixinES'
                     isFirst: true,
                     _id: this.selectedEvent._id
                 }
-                console.log(this.dataEditSend)
+                console.log(this.dataEditSend.date)
                 this.editSelectValid = false
                 setTimeout(() => {
                     this.editSelectValid = true
