@@ -166,7 +166,8 @@ export default {
                     email: this.email,
                     clients: this.mails,
                     subject: this.subject,
-                    html: data.html
+                    html: data.html,
+                    branch: this.branch
                 }, this.configHeader)
                 .then(res => {
                     console.log(res)
