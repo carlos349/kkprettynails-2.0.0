@@ -16,8 +16,8 @@ self.__precacheManifest = [
     "url": "/img/brand/logokk.png"
   },
   {
-    "revision": "4ea631d737565485e7a4",
-    "url": "/js/chunk-73c2056c.f73b7af6.js"
+    "revision": "30e81553078d688fa41f",
+    "url": "/js/chunk-73c2056c.3421fe91.js"
   },
   {
     "revision": "cee60cfd101f9b3d2aae0e819ec8b267",
@@ -56,19 +56,19 @@ self.__precacheManifest = [
     "url": "/img/brand/syswa-isotipo.png"
   },
   {
-    "revision": "93929da7ae1722429c7e9d894761dc41",
-    "url": "/img/theme/syswa-gestion.png"
-  },
-  {
     "revision": "be997d5226b992ffad34816870c6b7aa",
     "url": "/img/theme/team-2-800x800.jpg"
+  },
+  {
+    "revision": "93929da7ae1722429c7e9d894761dc41",
+    "url": "/img/theme/syswa-gestion.png"
   },
   {
     "revision": "46abbc4a676739dbd61f8a305cb63fd8",
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "ce453c0b451fd1ed44965d03b1c36d96",
+    "revision": "2102b3ef305bba482295a079b1094934",
     "url": "/index.html"
   },
   {
@@ -124,8 +124,8 @@ self.__precacheManifest = [
     "url": "/img/theme/users.png"
   },
   {
-    "revision": "318d0b1c500fc96812f4",
-    "url": "/js/app.98d0265b.js"
+    "revision": "096a5aa40ddf0d9ddb73",
+    "url": "/js/app.ca728c24.js"
   },
   {
     "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
@@ -180,12 +180,12 @@ self.__precacheManifest = [
     "url": "/img/theme/team-4-800x800.jpg"
   },
   {
-    "revision": "edc7106b21ec12e57022b2ebd534cd2d",
-    "url": "/img/theme/team-1-800x800.jpg"
-  },
-  {
     "revision": "2b3e6ee5f8af9607fd4162e6eb7275a8",
     "url": "/img/theme/services.png"
+  },
+  {
+    "revision": "edc7106b21ec12e57022b2ebd534cd2d",
+    "url": "/img/theme/team-1-800x800.jpg"
   },
   {
     "revision": "54e3f3c414bd8e7234bae3ee3be950e5",
@@ -204,7 +204,7 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "318d0b1c500fc96812f4",
+    "revision": "096a5aa40ddf0d9ddb73",
     "url": "/css/app.8f9d531d.css"
   },
   {
@@ -224,7 +224,7 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
-    "revision": "4ea631d737565485e7a4",
+    "revision": "30e81553078d688fa41f",
     "url": "/css/chunk-73c2056c.a353519d.css"
   },
   {
