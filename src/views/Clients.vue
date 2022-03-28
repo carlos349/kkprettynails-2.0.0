@@ -532,6 +532,13 @@ export default {
         });
     },
     methods: {
+        selectDate(date, dateString){
+            if (date) {
+                this.dateFind = dateString
+            }else{
+                this.dateFind = []
+            }
+        },
         getToken(){
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
