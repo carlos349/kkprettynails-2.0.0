@@ -14,6 +14,34 @@
                 </div>
             </div>
         </base-header>
+        <modal :show.sync="modals.modal1" modal-classes="modal-lg">
+            <template v-slot:header>
+                <h5 class="modal-title" id="exampleModalLabel">Lista de clientes <span v-if="hasSelected"> - {{ `${selectedRowKeys.length} Cliente(s) seleccionados` }}</span></h5>
+            </template>
+            <div style="margin-top:-20px">
+                <center>
+                    <h3>Filtrar por fecha de creación</h3>
+                    <a-range-picker ref="datePick" style="width:60%;" class="rangeInput mb-3"  :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" :placeholder="['Desde', 'Hasta']" />
+                    <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;"   v-on:click="filterClients" type="success">
+                        <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
+                    </base-button>
+                    <base-button @click="getClients(), selectedRowKeys = []" size="sm" class="mr-2" style="margin-top:-5px;" type="secondary">
+                        <a-icon type="undo" style="vertical-align:1px;font-size:1.8em;" />
+                    </base-button>
+                </center>
+                <a-table :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" :columns="columns" :data-source="clients">
+                    <template slot="name" slot-scope="record, column">
+                        {{column.firstName}} {{column.lastName}}
+                    </template>
+                    <template slot="date-format" slot-scope="record">
+                        {{record | formatDate}}
+                    </template>
+                </a-table>
+            </div>
+            <template v-slot:footer>
+                <base-button type="default" @click="modals.modal1 = false">Listo</base-button>
+            </template>
+        </modal>
         <!-- <div class="w-100"> -->
         <EmailEditor 
             class="w-100 h-100" 
@@ -35,9 +63,9 @@
                     <!-- <label for="text">*Estas enviando el E-Mail a {{mailsQuantity}} personas</label><br> -->
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text bg-default" id="basic-addon1">Para:</span>
+                            <base-button style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Lista de clientes</base-button>
                         </div>
-                        <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/>
+                        <!-- <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/> -->
                     </div>
                 </div>
                 <div class="col-2">
@@ -46,6 +74,9 @@
                     </button>
                 </div>
             </div>
+        </div>
+        <div class="container-fluid">
+            <br>
         </div>
     </div>
 </template>
@@ -56,6 +87,10 @@ import axios from 'axios'
 import router from '../router'
 import mixinUserToken from '../mixins/mixinUserToken'
 import { EmailEditor } from 'vue-email-editor';
+import moment from 'moment';
+import 'moment/locale/es';
+import es_ES from 'ant-design-vue/lib/locale-provider/es_ES';
+moment.locale('es');
 export default {
     mixins: [mixinUserToken],
     data() {
@@ -67,8 +102,33 @@ export default {
                 }
             },
             mails: '',
+            moment,
+            es_ES,
             subject: '',
             minHeight: '80vh',
+            modals:{
+                modal1:false
+            },
+            dateFind:'',
+            clients:[],
+            columns: [
+                {
+                    title: 'Nombre',
+                    dataIndex: 'firstName',
+                    scopedSlots: { customRender: 'name' },
+                },
+                {
+                    title: 'Correo',
+                    dataIndex: 'email',
+                },
+                {
+                    title: 'Fecha de creación',
+                    dataIndex: 'createdAt',
+                    scopedSlots: { customRender: 'date-format' },
+                },
+            ],
+            
+            selectedRowKeys: [],
             locale: 'es',
             projectId: 0,
             branch: localStorage.branch,
@@ -102,8 +162,109 @@ export default {
     created(){
         this.getMails()
         this.getEmailSend()
+        this.getClients()
+    },
+    computed: {
+        hasSelected() {
+            return this.selectedRowKeys.length > 0;
+        },
     },
     methods: {
+        async filterClients(){
+            this.inspectorFilter = true
+            try {
+                const clients = await axios.post(endPoint.endpointTarget+'/clients/findClientsByDate', {
+                    dates: this.dateFind
+                }, this.configHeader)
+                if (clients.data.status == 'clients does not exist') {
+                    this.clients = []
+                    this.$swal({
+                        icon: 'error',
+                        title: 'No se encontraron clientes',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else{
+                    this.clients = clients.data.data
+                }
+            }catch(error){
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
+            }
+        },
+        selectDate(date, dateString){
+            if (date) {
+                this.dateFind = dateString
+            }else{
+                this.dateFind = []
+            }
+        },
+        onSelectChange(selectedRowKeys,selected) {
+            this.mails = ''
+            selected.forEach((element, index) => {
+                if (index == 0) {
+                    this.mails = element.email
+                }else{
+                    this.mails = this.mails + "," + element.email
+                }
+            });
+            
+            console.log(this.mails)
+            console.log('selectedRowKeys changed: ', selectedRowKeys);
+            this.selectedRowKeys = selectedRowKeys;
+        },
+        async getClients(){
+            // this.progress = false
+            try {
+                const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
+                if (getAllClients.data.data.length > 0) {
+                    this.clients = getAllClients.data.data
+                    // for (let index = 0; index < getAllClients.data.data.length; index++) {
+                    //     this.clientsNames.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email)
+                    //     this.clientIds.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email + "-" + getAllClients.data.data[index]._id)
+                    // }
+                    // this.progress = true
+                    // this.clientState = false
+                }else{
+                    // this.clientState = false
+                }
+            }catch (err) {
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else if (err.response.status == 401) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Session caducada',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(() => {
+                        router.push("login")
+                    }, 1550);
+                }
+            }
+        },
         async getMails(){
             try {
                 const getEmail = await axios.get(`${endPoint.endpointTarget}/clients/getEmails`, this.configHeader)
