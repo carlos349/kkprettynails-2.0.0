@@ -90,9 +90,9 @@
                 :on-event-click="onEventClick"
                 :overlaps-per-time-step="true">
                 <template v-slot:split-label="{ split }">
-                    <img v-if="split.img != 'no'" class="avatar avatar-sm rounded-circle mr-2" :src="split.img" /> 
-                    <img v-else class="avatar avatar-sm rounded-circle mr-2" src="https://www.w3schools.com/howto/img_avatar.png" /> 
-                    <strong class="text-white" > {{ split.label }}</strong>
+                    <a-button type="primary" shape="circle">
+                        {{setInitialsName(split.label)}} 
+                    </a-button>
                 </template>
             </vue-cal>
         </vue-custom-scrollbar>
@@ -5931,6 +5931,14 @@ import mixinES from '../mixins/mixinES'
                 this.validWizard = false
                 return false
             }
+        },
+        setInitialsName(name){
+            if (name.split(" ").length >= 2) {
+                return name.split(" ")[0][0]+name.split(" ")[1][0]
+            }else{
+                return name[0]
+            }
+            
         },
         validateLastStep() {
 

@@ -15,22 +15,32 @@
                     
                 </div>
             </div>
-            <base-button @click="modals.modal1 = true" class="float-right mr-5" style="margin-top:-50px;" size="sm" type="success">
+            <base-button @click="modals.modal1 = true" :class="screenClases == 'phone' ? '' : 'float-right'" class="mr-5" :style="screenClases == 'phone' ? '' : 'margin-top:-50px;'" size="sm" type="success">
                 <a-icon type="idcard" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                 Registrar
             </base-button>
         </base-header>
 
-        <div class="container-fluid mt--7 pb-2">
+        <div class="container-fluid mt--6 pb-2">
             <div class="row">
-                <div class="col-xl-8 col-sm-12 order-xl-2 mb-5 mb-xl-0">
+                <div class="col-xl-2 col-sm-12">
+                    <card shadow type="secondary" >
+                        <!-- <div slot="body" class="bg-white border-0"> -->
+                            <div class="row align-items-center py-2">
+                                <h3 class="mb-2 w-100 text-center">Perfiles</h3>
+                                <base-button size="sm" v-for="(profile, index) in accessProfiles" :key="profile.profile" class="w-100 mt-2 mx-auto" :outline="profileSelect.name == profile.profile ? false : true" type="primary" v-on:click="selectProfile(profile.profile, profile.routes, index)">{{profile.profile}}</base-button>
+                            </div>
+                        <!-- </div> -->
+                    </card>
+                </div>
+                <div class="col-xl-8 col-sm-12 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
                         <!-- <button class="putoBoton">
                             aja qlq
                         </button> -->
                         <base-button v-if="IfSelect && profileSelect.name != 'Gerente'" v-on:click="removeProfile" class="putoBoton" size="sm" type="danger">
-                            <i class="fa fa-ban float-left mt-1"></i>
-                            Eliminar
+                            <i class="fa fa-ban mt-1" :class="screenClases == 'phone' ? '' : 'float-left'"></i>
+                            {{screenClases == 'phone' ? '' : 'Eliminar'}}
                         </base-button>
                         <a-config-provider :locale="es_ES">
                             <template #renderEmpty>
@@ -56,16 +66,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-2 col-sm-12 order-xl-1">
-                    <card shadow type="secondary" >
-                        <!-- <div slot="body" class="bg-white border-0"> -->
-                            <div class="row align-items-center py-2">
-                                <h3 class="mb-2 w-100 text-center">Perfiles</h3>
-                                <base-button size="sm" v-for="(profile, index) in accessProfiles" :key="profile.profile" class="w-100 mt-2 mx-auto" :outline="profileSelect.name == profile.profile ? false : true" type="primary" v-on:click="selectProfile(profile.profile, profile.routes, index)">{{profile.profile}}</base-button>
-                            </div>
-                        <!-- </div> -->
-                    </card>
-                </div>
+                
             </div>
         </div>
         <a-modal v-model="modals.modal1" :width="400">
@@ -595,6 +596,11 @@ export default {
                     timer: 1500
                 })
             }
+        }
+    },
+    computed: {
+        screenClases: () => {
+            return screen.width < 780 ? 'phone' : 'desktop'
         }
     }
 }

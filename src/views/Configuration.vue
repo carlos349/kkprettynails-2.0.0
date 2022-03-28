@@ -51,7 +51,21 @@
         </a-modal>
         <div class="container-fluid mt--6">
             <div class="row">
-                <div class="col-xl-8 col-sm-12 order-xl-2 mb-5 mb-xl-0">
+              <div class="col-xl-2 col-sm-12">
+                    <card shadow type="secondary">
+                        <div slot="header" class="bg-white border-0">
+                            <div class="row align-items-center">
+                                <h3 class="mb-2 w-100 text-center">Secciones</h3>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'typePay' ? false : true" type="primary" v-on:click="fixed('typePay'), getConfiguration()">Tipos de pago</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'agend' ? false : true" type="primary" v-on:click="selectedConfig = 'agend', getConfiguration()">Agendamiento</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'blackList' ? false : true" type="primary" v-on:click="fixed('blackList'), getConfiguration()">Lista negra</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'information' ? false : true" type="primary" v-on:click="selectedConfig = 'information', getConfiguration()">Información</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'microServices' ? false : true" type="primary" v-on:click="selectedConfig = 'microServices', getConfiguration()">Adicionales</base-button>
+                            </div>
+                        </div>
+                    </card>
+                </div>
+                <div class="col-xl-8 col-sm-12 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
                       <a-config-provider :locale="es_ES">
                         <template #renderEmpty>
@@ -136,7 +150,7 @@
                             Configura tu agenda
                         </h1>
                         <hr class="w-50 mb-0 mt-0">
-                        <div class="row p-4 pt-0 pl-5">
+                        <div class="row p-2 pt-0 pl-4">
                           <div class="col-12 row mb-3">
                             <p class="mx-auto"> <strong class="mr-2">Agendamiento online </strong> <a-switch class="mr-3" :checked="configData.datesPolitics.onlineDates" @click="changeDatePolitic('onlineDates')"/></p>
 
@@ -268,31 +282,31 @@
                               </a-select>
                           </div>
                           <div class="col-12 row mt-4">
-                            <div class="col-4">
+                            <div class="col-md-4 mt-1">
                               <h4 class="text-center">
                                 Recordatorio <br> <small class="text-muted text-center mx-auto">Dias antes para recordar una cita</small>
                               </h4>
                               <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.reminderDate" v-on:change="changeTime" />
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4 mt-1">
                               <h4 class="text-center">
                                 Límite de reserva <br> <small class="text-muted text-center mx-auto">Horas antes para poder reservar</small>
                               </h4>
                               <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minTypeDate" v-on:change="changeTime"/>
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4 mt-1">
                               <h4 class="text-center">
                                 Máximo tiempo de reserva <br> <small class="text-muted text-center mx-auto">Límite de meses futuros para reservar </small>
                               </h4>
                               <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.limitTimeDate" v-on:change="changeTime"/>
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4 mt-1">
                               <h4 class="text-center">
                                 Límite de edición <br> <small class="text-muted text-center mx-auto">Horas previas para editar una cita</small>
                               </h4>
                               <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minEditDate" v-on:change="changeTime"/>
                             </div>
-                            <div class="col-4">
+                            <div class="col-md-4 mt-1">
                               <h4 class="text-center">
                                 Cantidad de edición <br> <small class="text-muted text-center mx-auto">Veces que se puede editar una cita</small>
                               </h4>
@@ -496,21 +510,6 @@
                           </a-config-provider>
                       </div>
                     </div>
-                </div>
-
-                <div class="col-xl-2 col-sm-12 order-xl-1">
-                    <card shadow type="secondary">
-                        <div slot="header" class="bg-white border-0">
-                            <div class="row align-items-center">
-                                <h3 class="mb-2 w-100 text-center">Secciones</h3>
-                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'typePay' ? false : true" type="primary" v-on:click="fixed('typePay'), getConfiguration()">Tipos de pago</base-button>
-                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'agend' ? false : true" type="primary" v-on:click="selectedConfig = 'agend', getConfiguration()">Agendamiento</base-button>
-                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'blackList' ? false : true" type="primary" v-on:click="fixed('blackList'), getConfiguration()">Lista negra</base-button>
-                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'information' ? false : true" type="primary" v-on:click="selectedConfig = 'information', getConfiguration()">Información</base-button>
-                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'microServices' ? false : true" type="primary" v-on:click="selectedConfig = 'microServices', getConfiguration()">Adicionales</base-button>
-                            </div>
-                        </div>
-                    </card>
                 </div>
             </div>
         </div>

@@ -21,37 +21,39 @@
             shadow>
             <template slot="header">
               <div class="row">
-                <div class="col-md-4">
-                  <a-select default-value="Producción anual" class="w-100" @change="selectTypeAnual">
-                    <a-select-option value="anualProduction">
-                      Producción anual
-                    </a-select-option>
-                    <a-select-option value="anualServices">
-                      Servicios anuales
-                    </a-select-option>
-                    <a-select-option value="dataExpense">
-                      Gastos vs Ganancias anuales
-                    </a-select-option>
-                    <a-select-option value="dataEmploye">
-                      Detalle de empleado
-                    </a-select-option>
-                  </a-select>
+                <div class="col-10 mt-1 row">
+                  <div class="col-md-4 mt-1">
+                    <a-select default-value="Producción anual" class="w-100" @change="selectTypeAnual">
+                      <a-select-option value="anualProduction">
+                        Producción anual
+                      </a-select-option>
+                      <a-select-option value="anualServices">
+                        Servicios anuales
+                      </a-select-option>
+                      <a-select-option value="dataExpense">
+                        Gastos vs Ganancias anuales
+                      </a-select-option>
+                      <a-select-option value="dataEmploye">
+                        Detalle de empleado
+                      </a-select-option>
+                    </a-select>
+                  </div>
+                  <div v-show="serviceChart" class="col-md-4 mt-1">
+                    <a-select v-if="services[0]" :default-value="services[0].name" class="w-100" @change="selectService">
+                      <a-select-option v-for="service of services" :key="service._id" :value="service._id">
+                        {{service.name}}
+                      </a-select-option>
+                    </a-select>
+                  </div>
+                  <div v-show="employeChart" class="col-md-4 mt-1">
+                    <a-select v-if="employes[0]" :default-value="employes[0].firstName+' '+employes[0].lastName" class="w-100" @change="selectEmploye">
+                      <a-select-option v-for="employe of employes" :key="employe._id" :value="employe._id">
+                        {{employe.firstName}} {{employe.lastName}}
+                      </a-select-option>
+                    </a-select>
+                  </div>
                 </div>
-                <div v-show="serviceChart" class="col-md-4">
-                  <a-select v-if="services[0]" :default-value="services[0].name" class="w-100" @change="selectService">
-                    <a-select-option v-for="service of services" :key="service._id" :value="service._id">
-                      {{service.name}}
-                    </a-select-option>
-                  </a-select>
-                </div>
-                <div v-show="employeChart" class="col-md-4">
-                  <a-select v-if="employes[0]" :default-value="employes[0].firstName+' '+employes[0].lastName" class="w-100" @change="selectEmploye">
-                    <a-select-option v-for="employe of employes" :key="employe._id" :value="employe._id">
-                      {{employe.firstName}} {{employe.lastName}}
-                    </a-select-option>
-                  </a-select>
-                </div>
-                <div class="col-md-4">
+                <div class="col-2 mt-2">
                   <base-button :disabled="validRoute('reportes', 'filtrar') ? false : true" @click="filterAnualGraph" size="sm" type="default">
                       <a-icon type="filter" style="vertical-align:1px;font-size:1.6em;" />
                   </base-button>
@@ -65,9 +67,6 @@
                     <apexchart class="borderClass" ref="chartApisAnual" :height="350" :options="chartOptionsAnual" :series="graphDataAnual"></apexchart>
                   </a-spin>
                 </div>
-                <!-- <div class="col-md-4">
-                  
-                </div> -->
               </div>
             </template>
           </card>
@@ -76,53 +75,55 @@
             shadow>
             <template slot="header">
               <div class="row">
-                <div class="col-md-4">
-                  <a-range-picker
-                    :ranges="{ Today: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }"
-                    :default-value="[moment(dateFormat), moment().endOf('month')]"
-                    format="MM-DD-YYYY"
-                    @change="selectDate"
-                    class="w-100"
-                  />
+                <div class="col-10 mt-1 row">
+                  <div class="col-md-6 mt-1">
+                    <a-range-picker
+                      :ranges="{ Today: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }"
+                      :default-value="[moment(dateFormat), moment().endOf('month')]"
+                      format="MM-DD-YYYY"
+                      @change="selectDate"
+                      class="w-100"
+                    />
+                  </div>
+                  <div class="col-md-6 mt-1">
+                    <a-select default-value="Producción total" class="w-100" @change="selectType">
+                      <a-select-option value="totalSales">
+                        Producción total
+                      </a-select-option>
+                      <a-select-option value="totalServices">
+                        Servicios totales
+                      </a-select-option>
+                      <a-select-option value="totalByEmploye">
+                        Producción por empleado
+                      </a-select-option>
+                      <a-select-option value="commissionsByEmploye">
+                        Comisión por empleado
+                      </a-select-option>
+                      <a-select-option value="servicesByEmploye">
+                        Servicios por empleado
+                      </a-select-option>
+                      <a-select-option value="diaryTotals">
+                        Totales diarios
+                      </a-select-option>
+                      <a-select-option value="diaryPromedies">
+                        Promedios diarios
+                      </a-select-option>
+                      <a-select-option value="totalExpenses">
+                        Gastos totales
+                      </a-select-option>
+                      <a-select-option value="totalsTypesPays">
+                        Tipos de pago
+                      </a-select-option>
+                      <a-select-option value="totalPerService">
+                        Total por servicios
+                      </a-select-option>
+                      <a-select-option value="totalPerProducts">
+                        Total por productos
+                      </a-select-option>
+                    </a-select>
+                  </div>
                 </div>
-                <div class="col-md-4">
-                  <a-select default-value="Producción total" class="w-100" @change="selectType">
-                    <a-select-option value="totalSales">
-                      Producción total
-                    </a-select-option>
-                    <a-select-option value="totalServices">
-                      Servicios totales
-                    </a-select-option>
-                    <a-select-option value="totalByEmploye">
-                      Producción por empleado
-                    </a-select-option>
-                    <a-select-option value="commissionsByEmploye">
-                      Comisión por empleado
-                    </a-select-option>
-                    <a-select-option value="servicesByEmploye">
-                      Servicios por empleado
-                    </a-select-option>
-                    <a-select-option value="diaryTotals">
-                      Totales diarios
-                    </a-select-option>
-                    <a-select-option value="diaryPromedies">
-                      Promedios diarios
-                    </a-select-option>
-                    <a-select-option value="totalExpenses">
-                      Gastos totales
-                    </a-select-option>
-                    <a-select-option value="totalsTypesPays">
-                      Tipos de pago
-                    </a-select-option>
-                    <a-select-option value="totalPerService">
-                      Total por servicios
-                    </a-select-option>
-                    <a-select-option value="totalPerProducts">
-                      Total por productos
-                    </a-select-option>
-                  </a-select>
-                </div>
-                <div class="col-md-4">
+                <div class="col-2 mt-2">
                   <base-button class="forBug" :disabled="validRoute('reportes', 'filtrar') ? false : true" @click="filterGraph" size="sm" type="default">
                       <a-icon type="filter" style="vertical-align:1px;font-size:1.6em;" />
                   </base-button>
