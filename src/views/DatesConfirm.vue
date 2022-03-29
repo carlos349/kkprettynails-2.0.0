@@ -71,7 +71,8 @@ export default {
                         service: res.data.data.title,
                         micro: micro,
                         logo: res.data.logo,
-                        confirmed: true
+                        confirmed: true,
+                        system: false
                     }, this.configHeader)
                     .then(res => {
                         console.log("si entre ps")

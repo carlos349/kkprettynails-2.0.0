@@ -70,7 +70,8 @@ export default {
                             service: res.data.data.title,
                             micro: micro,
                             logo: res.data.logo,
-                            confirmed: false
+                            confirmed: false,
+                            system: false
                         }, this.configHeader)
                         .then(res => {
                         })

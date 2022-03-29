@@ -1563,6 +1563,7 @@ import mixinES from '../mixins/mixinES'
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+            console.log(localStorage.firstname)
         },
         selectDateBlock(date, dateString){
             this.hourBlocking.dateBlocking = dateString
@@ -3865,6 +3866,24 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
+                        
+                        var idArray = [{_id: this.dataEditSend._id}]
+                        console.log(this.dataEditSend)
+                        console.log(this.selectedEvent)
+                        this.dataEditSend.service.microServiceSelect = [this.selectedEvent.microServices]
+                        this.dataEditSend.service.start = this.dataEditSend.start
+                        this.dataEditSend.service.end = this.dataEditSend.end
+                        this.dataEditSend.serviceSelectds = [this.dataEditSend.service]
+                        var split = this.dataEditSend.date.split("-")
+                        console.log(split)
+                        const dateNew = split[1]+"-"+split[0]+'-'+split[2]
+                        console.log(this.dataEditSend.date)  
+                        setTimeout(() => {
+                            this.sendConfirmation(idArray, this.selectedEvent.client.name, this.selectedEvent.client.email, this.dataEditSend.start, this.dataEditSend.end, this.registerDate.serviceSelectds, this.dataEditSend.employe, this.dataEditSend, true, dateNew)
+                        }, 2000);
+                        
+
+                        
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             branch: this.branch,
                             userName: this.firstNameUser + " " + this.lastNameUser,
@@ -3891,7 +3910,8 @@ import mixinES from '../mixins/mixinES'
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
-                            title: 'Error de conexión',
+                            title: 'Error de conexión editar',
+                            text: err,
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -4148,7 +4168,9 @@ import mixinES from '../mixins/mixinES'
                                     service: res.data.data.title,
                                     micro: micro,
                                     logo: res.data.logo,
-                                    confirmed: false
+                                    confirmed: false,
+                                    system: true,
+                                    user: localStorage.firstname + ' ' + localStorage.lastname + ' (' + localStorage.email + ')'
                                 }, this.configHeader)
                                 .then(res => {
                                 })
@@ -4946,6 +4968,16 @@ import mixinES from '../mixins/mixinES'
                 servicesFinal[0].end = endGood
                 servicesFinal[0].employe = data.employe.name
             }
+            console.log(nameFormat)
+            console.log(this.branchName)
+            console.log(this.branch)
+            console.log(data)
+            console.log(id)
+            console.log(this.finalDate == "" ? date : this.finalDate)
+            console.log(mail)
+            console.log(servicesFinal)
+            console.log(valid)
+
             axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                 name: nameFormat,
                 branch: this.branchName,
@@ -4973,7 +5005,7 @@ import mixinES from '../mixins/mixinES'
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión confirm',
                         showConfirmButton: false,
                         timer: 1500
                     })
