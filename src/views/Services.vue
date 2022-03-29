@@ -255,13 +255,13 @@
                                     addon-right-icon="fa fa-asterisk text-danger" 
                                 />
                             </div>
-                            <div class="col-md-4">
-                                <select class="form-control mx-auto" v-model="editCategoryServicer">
+                            <div class="col-md-4 marginIf">
+                                <select class="form-control mx-auto mb-3" v-model="editCategoryServicer">
                                     <option style="color:black;" v-for="category of categories" :key="category.name">{{category.name}}</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 row ml-1" style="margin-top:-10px;"> 
-                                <label class="ml-5">
+                            <div class="col-md-6 row ml-1 mb-3" style="margin-top:-10px;"> 
+                                <label class="ml-5 mb-3">
                                     Tiempo del servicio
                                 </label>
                                 <div class="col-6 px-1" style="margin-top:-10px;">

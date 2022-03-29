@@ -11,13 +11,13 @@
                         <p class="mb-0 display-2 text-white">Reporte de {{nameLender}}</p>
                         <p class="text-white hideText">Sección dedicada al reporte de ventas y comisiones de empleados.</p>
                     </div>
-                    <base-button v-on:click="back" class="float-right mt-7 mr-2" size="sm" type="warning">
+                    <base-button v-on:click="back" :class="screenClases == 'phone' ? 'mt-9' : 'float-right mt-7'" class="mr-2" size="sm" type="warning">
                         <a-icon type="rollback" style="vertical-align:1px;font-size:1.4em;" />
                     </base-button>  
-                    <base-button class="float-right mt-7" size="sm" v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
-                    <base-button class="float-right mt-7" size="sm" v-else disabled type="danger">Cerrar ventas</base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('empleados', 'reportes')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-else disabled type="success">Datos avanzados</base-button>
+                    <base-button :class="screenClases == 'phone' ? 'mt-9' : 'float-right mt-7'" size="sm" v-if="validRoute('empleados', 'cerrar ventas')" type="danger" v-on:click="printReport">Cerrar ventas</base-button>
+                    <base-button :class="screenClases == 'phone' ? 'mt-9' : 'float-right mt-7'" size="sm" v-else disabled type="danger">Cerrar ventas</base-button>
+                    <base-button :class="screenClases == 'phone' ? 'mt-9' : 'float-right mt-7'" class="mr-2" size="sm" v-if="validRoute('empleados', 'reportes')" type="success" v-on:click="modals.modal2 = true">Datos avanzados</base-button>
+                    <base-button :class="screenClases == 'phone' ? 'mt-9' : 'float-right mt-7'" class="mr-2" size="sm" v-else disabled type="success">Datos avanzados</base-button>
                 </div>
             </div>
         </base-header>
@@ -1039,6 +1039,9 @@ width=0,height=0,left=-1000,top=-1000`;
     computed: {
         getScreen: () => {
             return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 'auto' }
+        },
+        screenClases: () => {
+            return screen.width < 780 ? 'phone' : 'desktop'
         }
     }
 }

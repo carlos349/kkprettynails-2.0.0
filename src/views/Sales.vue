@@ -15,7 +15,7 @@
                     <div class="float-right mt-6">
                         <div class="float-right widthDiv">
                             <label for="date" class="text-white">Busque por fecha</label><br>
-                            <a-range-picker ref="datePick" style="width:60%;" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" :placeholder="['Desde', 'Hasta']" />
+                            <a-range-picker ref="datePick" class="rangeInput" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" :placeholder="['Desde', 'Hasta']" />
                             <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;" v-if="validRoute('ventas', 'filtrar')"  v-on:click="filterSale" type="success">
                                 <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
                             </base-button>
@@ -36,12 +36,12 @@
         <a-modal v-model="modals.modal1" class="modalReport" width="70%" :footer="null" :closable="true" >
             <div class="mx-2" id="htmlPrint">
                 <template v-if="dataSale != null">
-                    <h2>Detalle de la venta (ID: {{dataSale.uuid}}) <b v-if="!dataSale.status"># Anulada</b></h2>
+                    <h2>Detalle de la venta <br :style="screenClases == 'phone' ? 'display:block;' : 'display:none;'"> (ID: {{dataSale.uuid}}) <b v-if="!dataSale.status"># Anulada</b></h2>
                     <a-tooltip placement="top">
                         <template slot="title">
                             <span>Anular venta</span>
                         </template>
-                        <base-button :disabled="validRoute('ventas', 'anular') ? false : true" v-if="dataSale.status && validCloseSale" @click="cancelSale(dataSale._id)" size="sm" class="mr-2 float-right" type="warning">
+                        <base-button :disabled="validRoute('ventas', 'anular') ? false : true" v-if="dataSale.status && validCloseSale" @click="cancelSale(dataSale._id)" size="sm" :class="screenClases == 'phone' ? '' : 'float-right'" class="mr-2" type="warning">
                             <a-icon type="close-circle" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -49,7 +49,7 @@
                         <template slot="title">
                             <span>Imprimir reporte</span>
                         </template>
-                        <base-button :disabled="validRoute('ventas', 'reporte') ? false : true" @click="printReport(dataSale._id)" size="sm" class="mr-2 float-right" type="secondary">
+                        <base-button :disabled="validRoute('ventas', 'reporte') ? false : true" @click="printReport(dataSale._id)" size="sm" :class="screenClases == 'phone' ? '' : 'float-right'" class="mr-2" type="secondary">
                             <a-icon type="printer" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
@@ -57,13 +57,13 @@
                         <template slot="title">
                             <span>Enviar correo</span>
                         </template>
-                        <base-button @click="sendSale(dataSale._id)" :disabled="validRoute('ventas', 'correo') ? false : true" size="sm" class="mr-2 float-right" type="secondary">
+                        <base-button @click="sendSale(dataSale._id)" :disabled="validRoute('ventas', 'correo') ? false : true" size="sm" :class="screenClases == 'phone' ? '' : 'float-right'" class="mr-2" type="secondary">
                             <a-icon type="mail" style="vertical-align:1px;font-size:1.5em;" />
                         </base-button>
                     </a-tooltip>
                 </template>
                 <template v-if="dataSale != null">
-                    <h3>Resumen de pago</h3>
+                    <h3 :class="screenClases == 'phone' ? 'mt-2' : ''">Resumen de pago</h3>
                     <hr class="mt-0 mb-0">
                     <div class="row">
                         <div class="col-md-4 mt-2">
@@ -139,116 +139,6 @@
                 </template>
             </div>
         </a-modal>
-        <!-- <modal :show.sync="modals.modal1"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
-               <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-            <card type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="py-lg-5"
-                  class="border-0">
-                <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                       <h3>Detalle de la venta</h3> 
-                    </div>
-                </template>
-                
-                <template v-if="dataSale != null">
-                    <tabs fill class="flex-column flex-md-row">
-                        <card shadow>
-                            <tab-pane>
-                                <span slot="title">
-                                    <i class="ni ni-cloud-upload-96"></i>
-                                    Básicos
-                                </span>
-                                <div class="text-muted text-left">
-                                    <h3><strong>Fecha: </strong>{{formatDate(dataSale.createdAt)}}</h3> 
-                                </div>
-                                <div class="text-muted text-left">
-                                    <h3><strong>N° de Venta: </strong>V-{{dataSale.count}}</h3> 
-                                </div>
-                                <div class="text-muted text-left">
-                                    <h3><strong>Empleada (o): <br/></strong><span>{{dataSale.employe.name}}  <br/></span></h3> 
-                                </div>
-                                <div class="text-muted text-left">
-                                    <h3><strong>Cliente: <br/></strong><span>{{dataSale.client.name}} <br/></span></h3> 
-                                </div>
-                                <hr>
-                                <div class="text-muted mt-2">
-                                    <h2 class="text-center">Metodos de pago </h2>
-                                    <div class="row">
-                                        <template v-for="pay in dataSale.typesPay" >
-                                            <h3 :key="pay.type" class="col-4 mx-auto"  v-if="pay.total > 0">
-                                                <strong class="text-left">
-                                                    <base-button class="col-12" type="secondary">{{pay.type}} 
-                                                        <badge type="success" class="text-default">{{formatPrice(pay.total)}}</badge>
-                                                    </base-button>
-                                                </strong>
-                                                <span class="float-right pr-5"> </span>
-                                            </h3>
-                                        </template>
-                                    </div>
-                                </div>
-                            </tab-pane>
-                            <tab-pane>
-                                <span slot="title">
-                                    <i class="ni ni-bell-55 mr-2"></i>
-                                    Avanzados
-                                </span>
-                                <div class="text-muted text-left">
-                                    <h3>
-                                        <strong>Servicio(s): </strong>
-                                        <span v-for="services of dataSale.services" :key="services"> 
-                                            <br> {{services.service}}  
-                                        </span>
-                                    </h3> 
-                                    <h3>
-                                        <strong class="text-left">Diseño: </strong>
-                                        <span>
-                                            {{formatPrice(dataSale.design)}} 
-                                        </span>
-                                    </h3>
-                                    <h3 v-if="dataSale.discount != null">
-                                        <strong class="text-left">Descuento: </strong>
-                                        <span>
-                                            {{dataSale.discount}} %<br> 
-                                        </span>
-                                    </h3> 
-                                </div>
-                                <div class="text-muted">
-                                    <h2 class="text-center">Montos</h2>
-                                    <base-button class="w-100 text-left" type="secondary">
-                                        <span class="text-left">Comisión total:</span>
-                                        <badge type="success" class="text-default float-right">
-                                            {{formatPrice(dataSale.commission)}}
-                                        </badge>
-                                    </base-button>
-                                    <base-button class="w-100 text-left" type="secondary">
-                                        <span class="text-left">Local:</span>
-                                        <badge type="success" class="text-default float-right">
-                                            {{formatPrice(dataSale.localGain)}}
-                                        </badge>
-                                    </base-button>
-                                    <base-button class="w-100 text-left" type="secondary">
-                                        <span class="text-left">Total:</span>
-                                        <badge type="success" class="text-default float-right">
-                                            {{formatPrice(dataSale.total)}}
-                                        </badge>
-                                    </base-button>
-                                </div>
-                            </tab-pane>
-                        </card>
-                    </tabs>
-                    <template v-if="validRoute('ventas', 'filtrar')">
-                        <base-button block class="mt-2" v-if="dataSale.status" type="default" v-on:click="cancelSale(dataSale._id, dataSale.services)">Anular venta</base-button>
-                    </template>
-                    <template v-else>
-                        <base-button disabled block class="mt-2" v-if="dataSale.status" type="default">Anular venta</base-button>
-                    </template>
-                    
-                </template>
-            </card>
-        </modal> -->
         <modal :show.sync="modals.modal3"
             body-classes="p-4"
             modal-classes="modal-dialog-centered modal-sm">
@@ -983,6 +873,9 @@ width=0,height=0,left=-1000,top=-1000`;
     computed: {
         getScreen: () => {
             return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 'auto' }
+        },
+        screenClases: () => {
+            return screen.width < 780 ? 'phone' : 'desktop'
         }
     }
 }
@@ -1011,6 +904,10 @@ width=0,height=0,left=-1000,top=-1000`;
     }
     .widthDiv{
         width: 76%;
+        margin-right: -30px;
+    }
+    .rangeInput{
+        width: 60%;
     }
     @media only screen and (max-width: 768px)
     {
@@ -1020,6 +917,10 @@ width=0,height=0,left=-1000,top=-1000`;
         .widthDiv{
             width: 100%;
             margin-top:20px;
+            margin-right: 5px;
+        }
+        .rangeInput{
+            width: 55%;
         }
     }
 </style>
