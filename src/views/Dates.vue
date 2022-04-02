@@ -3888,7 +3888,7 @@ import mixinES from '../mixins/mixinES'
                             branch: this.branch,
                             userName: this.firstNameUser + " " + this.lastNameUser,
                             userImage: this.imgUser,
-                            detail:'Editó una cita para el día '+new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY'),
+                            detail:'Editó una cita con servicio: ' + this.dataEditSend.service.name + ' para el día '+new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY') + ' con empleado: ' + this.dataEditSend.employe.name + ' y cliente: ' + this.selectedEvent.client.name,
                             link: 'agendamiento'
                         }, this.configHeader)
                         .then(res => {

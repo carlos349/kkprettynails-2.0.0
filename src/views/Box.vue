@@ -142,54 +142,57 @@
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-md">
                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
-            <card type="secondary" shadow
+            <a-spin :spinning="spinningClose">
+                <card type="secondary" shadow
                   header-classes="bg-white pb-5"
                   body-classes="px-lg-5 py-lg-5"
                   class="border-0">
-                <template>
-                    <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
-                        <h3>Ingrese los montos de las ventas del dia</h3>
-                    </div>
-                </template>
-                <template>
-                    <form role="form" class="row">
-                        <div class="col-6">
-                            <label class="form-group">Fondo de caja</label>
-                            <currency-input
-                                v-model="getFund"
-                                locale="de"
-                                addon-left-icon="ni ni-money-coins"
-                                class="form-control mb-3"
-                                style="margin-top:-10px;"
-                                readonly
-                            />	
+                    <template>
+                        <div style="margin-top:-15% !important" class="text-muted text-center mb-3">
+                            <h3>Ingrese los montos de las ventas del dia</h3>
                         </div>
-                        <div class="col-6">
-                            <label class="form-group">Efectivo</label>
-                            <currency-input
-                                v-model="cash"
-                                locale="de"
-                                addon-left-icon="ni ni-money-coins"
-                                class="form-control mb-3"
-                                style="margin-top:-10px;"
-                            />	
-                        </div>
-                        <template v-for="type in typesPayManual">
-                            <div class="col-6" :key="type.type" v-if="type.type != 'Efectivo'">
-                                <label class="form-group">{{type.type}}</label>
+                    </template>
+                    <template>
+                        <form role="form" class="row">
+                            <div class="col-6">
+                                <label class="form-group">Fondo de caja</label>
                                 <currency-input
-                                    v-model="type.total"
+                                    v-model="getFund"
                                     locale="de"
                                     addon-left-icon="ni ni-money-coins"
                                     class="form-control mb-3"
                                     style="margin-top:-10px;"
-                                />
+                                    readonly
+                                />	
                             </div>
-                        </template>
-                    </form>
-                    <base-button type="default" class="float-right" v-on:click="closeFinally">Finalizar cierre</base-button>
-            </template>
-            </card>
+                            <div class="col-6">
+                                <label class="form-group">Efectivo</label>
+                                <currency-input
+                                    v-model="cash"
+                                    locale="de"
+                                    addon-left-icon="ni ni-money-coins"
+                                    class="form-control mb-3"
+                                    style="margin-top:-10px;"
+                                />	
+                            </div>
+                            <template v-for="type in typesPayManual">
+                                <div class="col-6" :key="type.type" v-if="type.type != 'Efectivo'">
+                                    <label class="form-group">{{type.type}}</label>
+                                    <currency-input
+                                        v-model="type.total"
+                                        locale="de"
+                                        addon-left-icon="ni ni-money-coins"
+                                        class="form-control mb-3"
+                                        style="margin-top:-10px;"
+                                    />
+                                </div>
+                            </template>
+                        </form>
+                        <base-button type="default" class="float-right" v-on:click="closeFinally">Finalizar cierre</base-button>
+                </template>
+                </card>
+            </a-spin>   
+            
         </modal>
     </div>
 </template>
@@ -230,6 +233,7 @@ export default {
                 icon: '',
                 type:''
             },
+            spinningClose: false,
             columns: [
                 {
                     title: 'Fecha',
@@ -534,6 +538,7 @@ export default {
             })
         },
         closeFinally(){
+            this.spinningClose = true
             const findEmptyTotal = this.typesPayManual.find(element => element.total == null)
             if (findEmptyTotal == undefined) {
                 var total = 0
@@ -565,6 +570,7 @@ export default {
                         this.getClosing()
                         this.modals.modal3 = false
                         this.modals.modal4 = false
+                        this.spinningClose = false
                         this.cashFunds.inspector = true
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             branch: this.branch,
@@ -583,6 +589,7 @@ export default {
                             showConfirmButton: false,
                             timer: 1500
                         })
+                        this.spinningClose = false
                     }
                 }).catch(err => {
                     if (!err.response) {
@@ -639,5 +646,9 @@ export default {
 }
 </script>
 <style>
-    
+    .spin-content {
+        border: 1px solid #91d5ff;
+        background-color: #e6f7ff;
+        padding: 30px;
+    }
 </style>
