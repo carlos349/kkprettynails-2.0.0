@@ -18,10 +18,10 @@
             </div>
         </div>
     </base-header>
-    <tabs fill class="flex-column flex-md-row inventory inventoryTabs">
+    <tabs fill class="flex-column flex-md-row inventory inventoryTabs p-2">
         <card shadow>
             <tab-pane>
-                <span class="p-2" slot="title">
+                <span class="w-100" slot="title">
                     <i class="fa fa-box-open"></i>
                     Tabla de productos
                 </span>
@@ -133,7 +133,7 @@
                 <tabs fill class="flex-column flex-md-row">
                     <card shadow>
                         <tab-pane>
-                            <span class="w-50" slot="title">
+                            <span class="w-100" slot="title">
                                 <i class="fa fa-money-check-alt"></i>
                                 Historial de abastecimientos
                             </span>
@@ -1178,8 +1178,5 @@ import mixinES from '../mixins/mixinES'
   }
   .inventory .card-header{
     display:none;
-  }
-  .inventoryTabs .nav-item:last-child{
-    padding-right: 1rem !important;
   }
 </style>

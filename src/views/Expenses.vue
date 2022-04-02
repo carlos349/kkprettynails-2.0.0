@@ -167,7 +167,7 @@
                 </div>
             </div>
         </base-header>
-        <tabs fill class="flex-column flex-md-row inventory inventoryTabs">
+        <tabs fill class="flex-column flex-md-row inventory inventoryTabs p-2">
             <card class="tablesExpense" shadow>
                 <tab-pane>
                     <span class="p-2" slot="title">

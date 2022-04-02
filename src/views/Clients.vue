@@ -53,7 +53,7 @@
                                 <form role="form">
                                     <div class="row mt-4">
                                         <base-input alternative
-                                            class="mb-2 col-6"
+                                            class="mb-2 col-md-6"
                                             placeholder="Nombre"
                                             v-model="registerClient.firstName"
                                             v-on:keyup="validRegister()"
@@ -61,7 +61,7 @@
                                             addon-right-icon="fa fa-asterisk text-danger">
                                         </base-input>
                                         <base-input alternative
-                                            class="mb-2 col-6"
+                                            class="mb-2 col-md-6"
                                             placeholder="Nombre"
                                             v-model="registerClient.lastName"
                                             v-on:keyup="validRegister()"
@@ -155,7 +155,7 @@
                     <form v-else role="form">
                         <div class="row">
                             <base-input alternative
-                                class="mb-3 col-6"
+                                class="mb-3 col-md-6"
                                 placeholder="Nombre"
                                 v-model="registerClient.firstName"
                                 v-on:keyup="validRegister()"
@@ -163,7 +163,7 @@
                                 addon-right-icon="fa fa-asterisk text-danger">
                             </base-input>
                             <base-input alternative
-                                class="mb-3 col-6"
+                                class="mb-3 col-md-6"
                                 placeholder="Apellido"
                                 v-model="registerClient.lastName"
                                 v-on:keyup="validRegister()"

@@ -168,7 +168,7 @@
                             </a-tooltip>
                             Proyección de servicios
                             <a-input style="width: 15%" @keyup="calculatedProjection" type="number" placeholder="Días" v-model="projection"/>
-                            <strong> {{serviceProjection}}</strong><br>
+                            <strong> {{serviceProjection.toFixed(2)}}</strong><br>
                             <a-tooltip placement="topLeft">
                                 <template slot="title">
                                     <span>Gastos totales del mes</span>

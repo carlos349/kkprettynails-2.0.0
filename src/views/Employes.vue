@@ -174,10 +174,10 @@
                         <template slot="title">
                             <span>Avance</span>
                         </template>
-                        <base-button v-if="validRoute('empleados', 'reportes')" size="sm" type="warning" @click="modals.modal2 = true, advancementId = column._id, advancementName = column.firstName + ' '+column.lastName">
+                        <base-button class="mt-1" v-if="validRoute('empleados', 'reportes')" size="sm" type="warning" @click="modals.modal2 = true, advancementId = column._id, advancementName = column.firstName + ' '+column.lastName">
                             <a-icon type="wallet" style="vertical-align:1.5px;" />
                         </base-button>
-                        <base-button v-else disabled size="sm" type="warning">
+                        <base-button class="mt-1" v-else disabled size="sm" type="warning">
                             <a-icon type="wallet" style="vertical-align:1.5px;" />
                         </base-button>
                     </a-tooltip>
@@ -186,24 +186,24 @@
                         <template slot="title">
                             <span>Editar</span>
                         </template>
-                        <base-button v-if="validRoute('empleados', 'editar')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch, column.validOnline,index)" icon="fa fa-edit"></base-button>
-                        <base-button v-else disabled size="sm" type="default" icon="fa fa-edit"></base-button>
+                        <base-button class="mt-1" v-if="validRoute('empleados', 'editar')" size="sm" type="default" @click="modals.modal1 = true , initialState(3), pushData(column.firstName, column.days, column._id, column.document,column.lastName, column.branch, column.validOnline,index)" icon="fa fa-edit"></base-button>
+                        <base-button class="mt-1" v-else disabled size="sm" type="default" icon="fa fa-edit"></base-button>
                     </a-tooltip>
                     
                     <a-tooltip placement="top">
                         <template slot="title">
                             <span>Reporte</span>
                         </template>
-                        <base-button v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
-                        <base-button v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
+                        <base-button class="mt-1" v-if="validRoute('empleados', 'reportes')" size="sm" v-on:click="reportEmploye(column._id)" type="primary" icon="ni ni-align-center"></base-button>
+                        <base-button class="mt-1" v-else size="sm" disabled type="primary" icon="ni ni-align-center"></base-button>
                     </a-tooltip>
                     
                     <a-tooltip placement="top">
                         <template slot="title">
                             <span>Eliminar</span>
                         </template>
-                        <base-button v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="danger" icon="fas fa-trash"></base-button>
-                        <base-button v-else size="sm" disabled type="danger" icon="fas fa-trash"></base-button>
+                        <base-button class="mt-1" v-if="validRoute('empleados', 'eliminar')" size="sm" v-on:click="deleteEmploye(column._id)" type="danger" icon="fas fa-trash"></base-button>
+                        <base-button class="mt-1" v-else size="sm" disabled type="danger" icon="fas fa-trash"></base-button>
                     </a-tooltip>
                 </template>
             </a-table>

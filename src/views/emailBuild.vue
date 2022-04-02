@@ -42,41 +42,32 @@
                 <base-button type="default" @click="modals.modal1 = false">Listo</base-button>
             </template>
         </modal>
-        <!-- <div class="w-100"> -->
         <EmailEditor 
+            v-if="screenClases == 'desktop'"
             class="w-100 h-100" 
             ref="emailEditor"
             :tools="tools"
             :locale="locale"/>
-        <!-- </div> -->
-        <div class="container-fluid p-0">
-            <div class="row p-2" >
-                <div class="col-4">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-default" id="basic-addon1">Asunto:</span>
-                        </div>
-                        <input v-model="subject" type="text" class="form-control pl-2" placeholder="Asunto.." aria-label="Username" aria-describedby="basic-addon1">
+        <div v-else class="container w-100">
+            <h1>Constructor deshabilitado en vista movil</h1>
+        </div>
+        <div class="container-fluid row">
+            <div class="col-md-6 mt-1">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-default" id="basic-addon1">Asunto:</span>
                     </div>
-                </div>
-                <div class="col-6">
-                    <!-- <label for="text">*Estas enviando el E-Mail a {{mailsQuantity}} personas</label><br> -->
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <base-button style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Lista de clientes</base-button>
-                        </div>
-                        <!-- <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/> -->
-                    </div>
-                </div>
-                <div class="col-2">
-                    <button class="btn btn-default" v-on:click="SendMail">
-                        <i class="fa fa-paper-plane"></i>
-                    </button>
+                    <input v-model="subject" type="text" class="form-control pl-2" placeholder="Asunto.." aria-label="Username" aria-describedby="basic-addon1">
                 </div>
             </div>
-        </div>
-        <div class="container-fluid">
-            <br>
+            <div class="col-md-4 col-8 mt-1">
+                <base-button :class="screenClases == 'phone' ? 'w-100' : ''" style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Lista de clientes</base-button>
+            </div>
+            <div class="col-md-2 col-4 mt-1">
+                <button :class="screenClases == 'phone' ? 'w-100' : ''" class="btn btn-default" v-on:click="SendMail">
+                    <i class="fa fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -362,6 +353,11 @@ export default {
                 })
             });
         },
+    },
+    computed: {
+        screenClases: () => {
+            return screen.width < 780 ? 'phone' : 'desktop'
+        }
     }
 }
 </script>
