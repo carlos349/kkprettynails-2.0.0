@@ -20,7 +20,7 @@
             </template>
             <div style="margin-top:-20px">
                 <center>
-                    <h3>Filtrar por fecha de creación</h3>
+                    <h3>Filtrar por fecha de atención</h3>
                     <a-range-picker ref="datePick" style="width:60%;" class="rangeInput mb-3"  :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" :placeholder="['Desde', 'Hasta']" />
                     <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;"   v-on:click="filterClients" type="success">
                         <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
@@ -63,15 +63,17 @@
                     <!-- <label for="text">*Estas enviando el E-Mail a {{mailsQuantity}} personas</label><br> -->
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <base-button style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Lista de clientes</base-button>
+                            
                         </div>
                         <!-- <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/> -->
                     </div>
                 </div>
                 <div class="col-2">
+                    <base-button style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Lista de clientes</base-button>
                     <button class="btn btn-default" v-on:click="SendMail">
                         <i class="fa fa-paper-plane"></i>
                     </button>
+                    
                 </div>
             </div>
         </div>
@@ -122,8 +124,8 @@ export default {
                     dataIndex: 'email',
                 },
                 {
-                    title: 'Fecha de creación',
-                    dataIndex: 'createdAt',
+                    title: 'Fecha de atención',
+                    dataIndex: 'lastAttend',
                     scopedSlots: { customRender: 'date-format' },
                 },
             ],
