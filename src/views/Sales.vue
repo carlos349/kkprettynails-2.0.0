@@ -151,8 +151,8 @@
             <template>
                 <div class="row">
                     <div class="col-md-12 mt-2">
-                        <label for="date">Filtra por fecha</label>
-                        <a-range-picker class="rangeInput" :locale="es_ES" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDateExcel" />
+                        <label for="date">Filtra por fecha</label><br>
+                        <a-range-picker class="rangeInput w-100" :locale="es_ES" :disabled="validRoute('ventas', 'filtrar') == true ? false : true" :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDateExcel" :placeholder="['Desde', 'Hasta']" />
                     </div>
                     <div class="col-md-12 mt-2">
                         <label for="lender">¿Filtrar por cliente?</label>

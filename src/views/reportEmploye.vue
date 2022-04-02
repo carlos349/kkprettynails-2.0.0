@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="text-absolute">
-                        <p class="mb-0 display-2 text-white">Reporte de {{nameLender}}</p>
+                        <p class="mb-0 display-2 text-white">Reporte <br v-if="screenClases == 'phone'"> {{nameLender}}</p>
                         <p class="text-white hideText">Sección dedicada al reporte de ventas y comisiones de empleados.</p>
                     </div>
                     <base-button v-on:click="back" :class="screenClases == 'phone' ? 'mt-9' : 'float-right mt-7'" class="mr-2" size="sm" type="warning">
@@ -99,7 +99,7 @@
                 </template>
             </card>
         </modal>
-        <tabs fill class="flex-column flex-md-row inventory inventoryTabs">
+        <tabs fill class="flex-column flex-md-row inventory inventoryTabs p-2">
             <card class="tablesExpense" shadow>
                  <tab-pane>
                     <span class="p-2" slot="title">
@@ -229,7 +229,7 @@
                  </tab-pane>
             </card>
         </tabs>
-        <a-modal v-model="modals.modal4" width="60%" :closable="true" >
+        <a-modal v-model="modals.modal4" :width="screenClases == 'phone' ? '100%' : '60%'" :closable="true" >
             <template>
                 <h3 class="text-center w-100">Informe de cierre</h3>
                 <template v-if="dataHistoryClosedReport.employe">

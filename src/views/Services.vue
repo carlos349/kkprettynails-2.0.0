@@ -139,10 +139,10 @@
                                 <base-radio name="true" value="false" checked inline class="mb-3 mx-auto" v-model="addDiscount"> <b>No</b> </base-radio> 
                             </div>
                             <div class="col-12 row">
-                                <div class="col-6 pt-4 pl-3">
+                                <div class="col-md-6 pt-4 pl-3">
                                     <p class="mx-auto font-weight-normal mt-2"> <strong class="mr-2">Aplica abono </strong> <a-switch class="mr-2" :checked="payment" @click="checkPayment()"/></p>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-6">
                                     <label for="">Monto mínimo de abono</label>
                                     <currency-input
                                         v-model="paymentAmount"
@@ -761,6 +761,7 @@ import mixinES from '../mixins/mixinES'
                 {
                     title: 'Acciones',
                     dataIndex: '_id',
+                    width: '15%',
                     key: '_id',
                     scopedSlots: { customRender: 'actionButtons' },
                     ellipsis: true,

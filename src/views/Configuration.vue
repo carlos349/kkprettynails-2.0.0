@@ -333,7 +333,7 @@
                                       {{client.firstName + ' ' + client.lastName + ' - ' + client.email}}
                                   </a-select-option>
                               </a-select>
-                              <base-button outline type="default" size="sm" class="w-50" v-on:click="insertClient">
+                              <base-button outline type="default" size="sm" class="w-50 mb-2" v-on:click="insertClient">
                                   Ingresar
                               </base-button>
                           </div>
@@ -478,7 +478,7 @@
                                   v-model="microService"
                                   v-on:keyup.enter="insertMicroService">
                               </base-input>
-                              <base-button outline type="default" size="sm" class="w-50" v-on:click="insertMicroService">
+                              <base-button outline type="default" size="sm" class="w-50 mb-2" v-on:click="insertMicroService">
                                   Ingresar
                               </base-button>
                           </div>
