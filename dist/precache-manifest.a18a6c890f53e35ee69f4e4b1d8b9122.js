@@ -68,7 +68,7 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "d23fc62b3b21059367dcd470c87253db",
+    "revision": "5ad12bef64f797bcb9b2ef6084368980",
     "url": "/index.html"
   },
   {
@@ -108,6 +108,10 @@ self.__precacheManifest = [
     "url": "/img/theme/branch.png"
   },
   {
+    "revision": "c1cacccae0d09aa2a50d3240f8457f2c",
+    "url": "/img/theme/employeReport.png"
+  },
+  {
     "revision": "ced0f2c9d36acd10447db1f3b3339104",
     "url": "/img/theme/employes.png"
   },
@@ -116,28 +120,24 @@ self.__precacheManifest = [
     "url": "/img/theme/metrics.png"
   },
   {
-    "revision": "c1cacccae0d09aa2a50d3240f8457f2c",
-    "url": "/img/theme/employeReport.png"
-  },
-  {
     "revision": "4524351b9c58adb85b5e1b32374347ab",
     "url": "/img/theme/users.png"
   },
   {
-    "revision": "eb796cc675740c5967f7",
-    "url": "/js/app.70ab7deb.js"
+    "revision": "ea1461b474487f204d73",
+    "url": "/js/app.19f82969.js"
   },
   {
     "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
     "url": "/img/theme/box.png"
   },
   {
-    "revision": "1881d2a2c3f7bb5e1b4ac0b2622291b0",
-    "url": "/img/theme/clients.png"
-  },
-  {
     "revision": "84335294072f0ad513fc8614b54a428a",
     "url": "/img/theme/calendar.png"
+  },
+  {
+    "revision": "1881d2a2c3f7bb5e1b4ac0b2622291b0",
+    "url": "/img/theme/clients.png"
   },
   {
     "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
@@ -196,11 +196,11 @@ self.__precacheManifest = [
     "url": "/img/theme/Banner.png"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
-    "revision": "eb796cc675740c5967f7",
+    "revision": "ea1461b474487f204d73",
     "url": "/css/app.8f9d531d.css"
   },
   {
@@ -216,8 +216,8 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.c1733565.eot"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
     "revision": "b19bbdd813f73aa193678e5a04d297d8",
