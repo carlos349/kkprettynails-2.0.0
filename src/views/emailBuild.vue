@@ -77,7 +77,7 @@
                         <div class="input-group-prepend">
                             
                         </div>
-                        <!-- <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/> -->
+                        <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/>
                     </div>
                 </div>
                 <div class="col-2">
