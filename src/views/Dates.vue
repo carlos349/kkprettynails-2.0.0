@@ -1823,13 +1823,14 @@ import mixinES from '../mixins/mixinES'
                     axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+employe.id, this.configHeader)
                     .then(res => {
                         if(res.data.status == "ok"){
+                            console.log(res.data.validOnline)
                             axios.put(endPoint.endpointTarget+'/employes', {
                                 id:employe.id,
                                 firstName: res.data.data.firstName,
                                 document: res.data.data.document,
                                 lastName: res.data.data.lastName,
                                 days: res.data.data.days,
-                                validOnline: res.data.validOnline,
+                                validOnline: res.data.data.validOnline,
                                 branch: this.branch,
                                 validBlocked:true,
                                 dayValid: true
