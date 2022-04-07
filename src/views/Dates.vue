@@ -1032,7 +1032,7 @@
                 </div>
             </template>
             <template slot="footer">
-                <base-button @click="blockingHour" size="sm" type="default">Bloquear</base-button>
+                <base-button @click="blockingHour" size="sm" type="default" :disabled="disableButton">Bloquear</base-button>
             </template>
         </a-modal>
     </div>
@@ -1103,6 +1103,7 @@ import mixinES from '../mixins/mixinES'
         minAddEdit:0,
         minLessEdit:0,
         moment,
+        disableButton: false,
         phoneDateSelect: '',
         prueba: 'primary',
         imgEndpoint: endPoint.endpointTarget,
@@ -1823,12 +1824,14 @@ import mixinES from '../mixins/mixinES'
                     axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+employe.id, this.configHeader)
                     .then(res => {
                         if(res.data.status == "ok"){
+                            console.log(res.data.validOnline)
                             axios.put(endPoint.endpointTarget+'/employes', {
                                 id:employe.id,
                                 firstName: res.data.data.firstName,
                                 document: res.data.data.document,
                                 lastName: res.data.data.lastName,
                                 days: res.data.data.days,
+                                validOnline: res.data.data.validOnline,
                                 branch: this.branch,
                                 validBlocked:true,
                                 dayValid: true
@@ -1907,6 +1910,7 @@ import mixinES from '../mixins/mixinES'
             }
         },
         async blockingHour(){
+            this.disableButton = true
             if (this.hourBlocking.dateBlocking != '' && this.hourBlocking.employe.name && this.hourBlocking.start != '' &&  this.hourBlocking.end != '') {
                 var splitDate = this.hourBlocking.dateBlocking.split('-')
                 try {console.log("PARA CUANDO DE ERROR bloquear")
@@ -1940,7 +1944,7 @@ import mixinES from '../mixins/mixinES'
                             }
                             this.modals.modal4 = false
                             this.modals.modal3 = true
-                            
+                            this.disableButton = false
 
                             $('.clearBlockingTime .ant-time-picker-clear').click()
                             $('.clearBlockingDate .ant-calendar-picker-clear').click()
@@ -1953,6 +1957,7 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                            this.disableButton = false
                         }
                     }catch(err){
                         if (!err.response) {
@@ -1973,6 +1978,7 @@ import mixinES from '../mixins/mixinES'
                                 router.push("login")
                             }, 1550);
                         }
+                        this.disableButton = false
                     }
                 }catch(err){
                     if (!err.response) {
@@ -1993,6 +1999,7 @@ import mixinES from '../mixins/mixinES'
                             router.push("login")
                         }, 1550);
                     }
+                    this.disableButton = false
                 }
             }else{
                 this.$swal({
@@ -2001,6 +2008,7 @@ import mixinES from '../mixins/mixinES'
                     showConfirmButton: false,
                     timer: 2000
                 })
+                this.disableButton = false
             }
         },
         getBranch(){
