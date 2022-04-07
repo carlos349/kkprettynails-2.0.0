@@ -34,6 +34,6 @@ const dataQa = {
     server:server 
 }
 
-const endPoint = dataQa
+const endPoint = dataKK
 
 module.exports = endPoint

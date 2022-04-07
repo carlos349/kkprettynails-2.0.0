@@ -3891,7 +3891,7 @@ import mixinES from '../mixins/mixinES'
                             branch: this.branch,
                             userName: this.firstNameUser + " " + this.lastNameUser,
                             userImage: this.imgUser,
-                            detail:'Editó una cita con servicio: ' + this.dataEditSend.service.name + ' para el día '+new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY') + ' con empleado: ' + this.dataEditSend.employe.name + ' y cliente: ' + this.selectedEvent.client.name,
+                            detail:'Editó una cita con servicio: ' + this.dataEditSend.service.name + ' para el día '+ dateNew + ' con empleado: ' + this.dataEditSend.employe.name + ' y cliente: ' + this.selectedEvent.client.name,
                             link: 'agendamiento'
                         }, this.configHeader)
                         .then(res => {
@@ -4196,8 +4196,7 @@ import mixinES from '../mixins/mixinES'
                                 branch: this.branch,
                                 userName:this.firstNameUser + " " + this.lastNameUser,
                                 userImage:this.imgUser,
-                                detail:`Eliminó la cita de ${res.data.data.client.name} ~
-                                el ${this.formatDate(new Date())}`,
+                                detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${new Date(res.data.data.start.split(" ")[0]).format('DD-MM-YYYY')} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
                                 link: 'agendamiento'
                             }, this.configHeader)
                             .then(respo => {
@@ -5963,6 +5962,7 @@ import mixinES from '../mixins/mixinES'
         },
         setInitialsName(name){
             if (name.split(" ").length >= 2) {
+                console.log(name.split(" "))
                 return name.split(" ")[0][0]+name.split(" ")[1][0]
             }else{
                 return name[0]
