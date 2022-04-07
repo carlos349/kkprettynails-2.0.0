@@ -1,7 +1,7 @@
 const serverL = 'localhost:3200'
 const server = '18.228.199.97:4200'
 const portClient = '3389'
-const endpointTarget = `http://${serverL}`
+const endpointTarget = `http://${server}`
 const imgEndpoint = `${endpointTarget}/static/users/`
 
 const dataHouse = {
@@ -34,6 +34,6 @@ const dataQa = {
     server:server 
 }
 
-const endPoint = dataKK
+const endPoint = dataQa
 
 module.exports = endPoint
