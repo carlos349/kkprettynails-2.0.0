@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 <div class="col-2">
-                    
+                    <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/>
                     <button class="btn btn-default" v-on:click="SendMail">
                         <i class="fa fa-paper-plane"></i>
                     </button>
@@ -102,7 +102,7 @@
                 </div>
             </div>
             <div class="col-md-4 col-8 mt-1">
-                
+                <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/>
             </div>
             <div class="col-md-2 col-4 mt-1">
                 <base-button style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Lista de clientes</base-button>
@@ -391,7 +391,7 @@ export default {
                 const getEmail = await axios.get(`${endPoint.endpointTarget}/clients/getEmails`, this.configHeader)
                 if (getEmail.data.status == 'ok') {
                     this.mails = getEmail.data.data
-                    this.mails = "carlos.gomes349@gmail.com"
+                    this.mails = ""
                 }
             }catch(err){
                 if (!err.response) {
