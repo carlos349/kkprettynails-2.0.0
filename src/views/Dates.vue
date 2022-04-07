@@ -1829,6 +1829,7 @@ import mixinES from '../mixins/mixinES'
                                 document: res.data.data.document,
                                 lastName: res.data.data.lastName,
                                 days: res.data.data.days,
+                                validOnline: res.data.validOnline,
                                 branch: this.branch,
                                 validBlocked:true,
                                 dayValid: true
