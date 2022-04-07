@@ -20,7 +20,7 @@
             </template>
             <div style="margin-top:-20px">
                 <center>
-                    <h3>Filtrar por fecha de creación</h3>
+                    <h3>Filtrar por fecha de atención</h3>
                     <a-range-picker ref="datePick" style="width:60%;" class="rangeInput mb-3"  :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" :placeholder="['Desde', 'Hasta']" />
                     <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;"   v-on:click="filterClients" type="success">
                         <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
@@ -29,14 +29,26 @@
                         <a-icon type="undo" style="vertical-align:1px;font-size:1.8em;" />
                     </base-button>
                 </center>
-                <a-table :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" :columns="columns" :data-source="clients">
+                <!-- <a-table :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" :columns="columns" :data-source="clients">
                     <template slot="name" slot-scope="record, column">
                         {{column.firstName}} {{column.lastName}}
                     </template>
                     <template slot="date-format" slot-scope="record">
                         {{record | formatDate}}
                     </template>
-                </a-table>
+                </a-table> -->
+
+                <vue-bootstrap4-table :rows="clients" :columns="columnsLender" :classes="classes" :config="configLender" @on-unselect-row="unselect" @on-all-select-rows="selectAll" @on-select-row="selectRow" @on-all-unselect-rows="unselectAll" :footer="false" >
+                    <template slot="date-format" slot-scope="props">
+                        {{props.row.lastAttend | formatDate}}
+                        <!-- <center>
+                            <base-button v-on:click="unSelected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid == true">
+                            </base-button>
+                            <base-button v-on:click="selected(props.row, props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else>
+                            </base-button>
+                        </center> -->
+                        </template>
+                </vue-bootstrap4-table>
             </div>
             <template v-slot:footer>
                 <base-button type="default" @click="modals.modal1 = false">Listo</base-button>
@@ -47,7 +59,36 @@
             class="w-100 h-100" 
             ref="emailEditor"
             :tools="tools"
-            :locale="locale"/>
+            :locale="locale">
+        <!-- </div> -->
+        <div class="container-fluid p-0">
+            <div class="row p-2" >
+                <div class="col-4">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-default" id="basic-addon1">Asunto:</span>
+                        </div>
+                        <input v-model="subject" type="text" class="form-control pl-2" placeholder="Asunto.." aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <!-- <label for="text">*Estas enviando el E-Mail a {{mailsQuantity}} personas</label><br> -->
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            
+                        </div>
+                        <!-- <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/> -->
+                    </div>
+                </div>
+                <div class="col-2">
+                    
+                    <button class="btn btn-default" v-on:click="SendMail">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+            </EmailEditor>        
         <div v-else class="container w-100">
             <h1>Constructor deshabilitado en vista movil</h1>
         </div>
@@ -61,9 +102,10 @@
                 </div>
             </div>
             <div class="col-md-4 col-8 mt-1">
-                <base-button :class="screenClases == 'phone' ? 'w-100' : ''" style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Lista de clientes</base-button>
+                
             </div>
             <div class="col-md-2 col-4 mt-1">
+                <base-button style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Lista de clientes</base-button>
                 <button :class="screenClases == 'phone' ? 'w-100' : ''" class="btn btn-default" v-on:click="SendMail">
                     <i class="fa fa-paper-plane"></i>
                 </button>
@@ -78,6 +120,7 @@ import axios from 'axios'
 import router from '../router'
 import mixinUserToken from '../mixins/mixinUserToken'
 import { EmailEditor } from 'vue-email-editor';
+import VueBootstrap4Table from 'vue-bootstrap4-table'
 import moment from 'moment';
 import 'moment/locale/es';
 import es_ES from 'ant-design-vue/lib/locale-provider/es_ES';
@@ -113,12 +156,60 @@ export default {
                     dataIndex: 'email',
                 },
                 {
-                    title: 'Fecha de creación',
-                    dataIndex: 'createdAt',
+                    title: 'Atención',
+                    dataIndex: 'lastAttend',
                     scopedSlots: { customRender: 'date-format' },
                 },
             ],
-            
+            classes: {
+                table: "table-bordered table-striped tableClientsEmail",
+                row: "myRow",
+                cell: "myCell"
+            },
+            columnsLender: [
+                {
+                    label: "Nombre",
+                    name: "firstName",
+                    // filter: {
+                    //     type: "simple",
+                    //     placeholder: "id"
+                    // },
+                    sort: true,
+                },
+                {
+                    label: "Correo",
+                    name: "email",
+                    slot_name:"validationnnn",
+                    sort: false,
+                },
+                {
+                    label: "Atención",
+                    name: "lastAttend",
+                    slot_name:"date-format",
+                    sort: false,
+                }
+            ],
+            configLender: {
+                checkbox_rows: true,
+                rows_selectable : false,
+                highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
+                rows_selectable: true,
+                per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+                show_refresh_button: false,
+                show_reset_button: false,  
+                selected_rows_info: false,
+                preservePageOnDataChange : false,
+                pagination_info : false,
+                pagination: true,
+                global_search: {
+                    placeholder: "Busque el prestador",
+                    visibility: true,
+                    case_sensitive: false,
+                    showClearButton: true,
+                    searchOnPressEnter: false,
+                    searchDebounceRate: 200,                      
+                },
+            },
             selectedRowKeys: [],
             locale: 'es',
             projectId: 0,
@@ -148,7 +239,8 @@ export default {
         
     },
     components: {
-        EmailEditor
+        EmailEditor,
+        VueBootstrap4Table
     },
     created(){
         this.getMails()
@@ -156,9 +248,9 @@ export default {
         this.getClients()
     },
     computed: {
-        hasSelected() {
-            return this.selectedRowKeys.length > 0;
-        },
+        // hasSelected() {
+        //     return this.selectedRowKeys.length > 0;
+        // },
     },
     methods: {
         async filterClients(){
@@ -207,6 +299,7 @@ export default {
             }
         },
         onSelectChange(selectedRowKeys,selected) {
+            console.log(selected)
             this.mails = ''
             selected.forEach((element, index) => {
                 if (index == 0) {
@@ -219,6 +312,43 @@ export default {
             console.log(this.mails)
             console.log('selectedRowKeys changed: ', selectedRowKeys);
             this.selectedRowKeys = selectedRowKeys;
+        },
+        selectRow(value){
+            this.mails = ''
+            value.selected_items.forEach((element, index) => {
+                if (index == 0) {
+                    this.mails = element.email
+                }else{
+                    this.mails = this.mails + "," + element.email
+                }
+            });
+            console.log(this.mails)
+        },
+        unselect(value){
+            this.mails = ''
+            value.selected_items.forEach((element, index) => {
+                if (index == 0) {
+                    this.mails = element.email
+                }else{
+                    this.mails = this.mails + "," + element.email
+                }
+            });
+            console.log(this.mails)
+        },
+        selectAll(value){
+            this.mails = ''
+            this.clients.forEach((element, index) => {
+                if (index == 0) {
+                    this.mails = element.email
+                }else{
+                    this.mails = this.mails + "," + element.email
+                }
+            });
+            console.log(this.mails)
+        },
+        unselectAll(value){
+            this.mails = ''
+            console.log(this.mails)
         },
         async getClients(){
             // this.progress = false
@@ -391,5 +521,16 @@ export default {
         height:auto;
         background-color:#fff;
         padding-bottom: 10px;
+    }
+    .myCell{
+        padding: 5px !important;
+    }
+    .myRow td {
+        padding: 0px;
+    }
+    .tableClientsEmail thead tr th {
+        padding-bottom: 5px;
+        padding-top: 5px;
+        padding-left: 1.5rem !important;
     }
 </style>

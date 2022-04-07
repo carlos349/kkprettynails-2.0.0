@@ -3071,6 +3071,7 @@ import mixinES from '../mixins/mixinES'
                                             showConfirmButton: false,
                                             timer: 1500
                                         })
+                                        
                                         this.$refs.wizard.reset()
                                         setTimeout(() => {
                                             this.showCalendar = true
@@ -3092,6 +3093,7 @@ import mixinES from '../mixins/mixinES'
                                         
                                         this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal,this.registerDae,true)
                                         this.modals.modal2 = false
+                                        this.finalDate = ''
                                         this.ifDisabled = false
                                     }    
                                 }).catch(err => {
@@ -3483,7 +3485,8 @@ import mixinES from '../mixins/mixinES'
                     isFirst: true,
                     _id: this.selectedEvent._id
                 }
-                console.log(this.dataEditSend.date)
+                console.log("este")
+                console.log(this.dataEditSend)
                 this.editSelectValid = false
                 setTimeout(() => {
                     this.editSelectValid = true
@@ -3869,16 +3872,16 @@ import mixinES from '../mixins/mixinES'
                         })
                         
                         var idArray = [{_id: this.dataEditSend._id}]
-                        console.log(this.dataEditSend)
-                        console.log(this.selectedEvent)
-                        this.dataEditSend.service.microServiceSelect = [this.selectedEvent.microServices]
+                        this.dataEditSend.service.microServiceSelect = this.selectedEvent.microServices
                         this.dataEditSend.service.start = this.dataEditSend.start
                         this.dataEditSend.service.end = this.dataEditSend.end
+                        this.dataEditSend.service.employe = this.dataEditSend.employe.name
                         this.dataEditSend.serviceSelectds = [this.dataEditSend.service]
                         var split = this.dataEditSend.date.split("-")
                         console.log(split)
                         const dateNew = split[1]+"-"+split[0]+'-'+split[2]
-                        console.log(this.dataEditSend.date)  
+                        console.log(this.dataEditSend.serviceSelectds)  
+                        this.finalDate = ""
                         setTimeout(() => {
                             this.sendConfirmation(idArray, this.selectedEvent.client.name, this.selectedEvent.client.email, this.dataEditSend.start, this.dataEditSend.end, this.registerDate.serviceSelectds, this.dataEditSend.employe, this.dataEditSend, true, dateNew)
                         }, 2000);
@@ -3889,7 +3892,7 @@ import mixinES from '../mixins/mixinES'
                             branch: this.branch,
                             userName: this.firstNameUser + " " + this.lastNameUser,
                             userImage: this.imgUser,
-                            detail:'Editó una cita con servicio: ' + this.dataEditSend.service.name + ' para el día '+new Date(this.selectedEvent.createdAt).format('MM-DD-YYYY') + ' con empleado: ' + this.dataEditSend.employe.name + ' y cliente: ' + this.selectedEvent.client.name,
+                            detail:'Editó una cita con servicio: ' + this.dataEditSend.service.name + ' para el día '+ dateNew + ' con empleado: ' + this.dataEditSend.employe.name + ' y cliente: ' + this.selectedEvent.client.name,
                             link: 'agendamiento'
                         }, this.configHeader)
                         .then(res => {
@@ -4194,8 +4197,7 @@ import mixinES from '../mixins/mixinES'
                                 branch: this.branch,
                                 userName:this.firstNameUser + " " + this.lastNameUser,
                                 userImage:this.imgUser,
-                                detail:`Eliminó la cita de ${res.data.data.client.name} ~
-                                el ${this.formatDate(new Date())}`,
+                                detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${new Date(res.data.data.start.split(" ")[0]).format('DD-MM-YYYY')} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
                                 link: 'agendamiento'
                             }, this.configHeader)
                             .then(respo => {
@@ -4969,15 +4971,9 @@ import mixinES from '../mixins/mixinES'
                 servicesFinal[0].end = endGood
                 servicesFinal[0].employe = data.employe.name
             }
-            console.log(nameFormat)
-            console.log(this.branchName)
-            console.log(this.branch)
-            console.log(data)
-            console.log(id)
+            console.log("final")
+            console.log(this.finalDate)
             console.log(this.finalDate == "" ? date : this.finalDate)
-            console.log(mail)
-            console.log(servicesFinal)
-            console.log(valid)
 
             axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                 name: nameFormat,
@@ -5967,6 +5963,7 @@ import mixinES from '../mixins/mixinES'
         },
         setInitialsName(name){
             if (name.split(" ").length >= 2) {
+                console.log(name.split(" "))
                 return name.split(" ")[0][0]+name.split(" ")[1][0]
             }else{
                 return name[0]
