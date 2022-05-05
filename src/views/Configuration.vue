@@ -281,7 +281,20 @@
                                   </a-select-option>
                               </a-select>
                           </div>
+                          <div class="col-12 p-2 mt-2">
+                            <a-tooltip>
+                              <template slot="title">
+                                Redacta las políticas de tu negocio que se verán reflejadas en los correos de notificación a tus clientes cuando efectúan un agendamiento.
+                              </template>
+                              <h3 class="text-center"> <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" /> Políticas</h3>
+                            </a-tooltip>
+                            <ckeditor :editor="editor" v-model="configData.datesPolicies" :config="editorConfig" language='es'></ckeditor>
+                            <base-button outline type="default" size="sm" class="mt-2 float-right" v-on:click="updateconfig">
+                              Guardar políticas
+                            </base-button>
+                          </div>
                           <div class="col-12 row mt-4">
+                            <hr>
                             <div class="col-md-4 mt-1">
                               <h4 class="text-center">
                                 Recordatorio <br> <small class="text-muted text-center mx-auto">Dias antes para recordar una cita</small>
@@ -318,7 +331,7 @@
                               <small class="text-muted">Los valores no pueden ser mayores a 20</small>
                             </p>
                           </div>
-                      </div>
+                        </div>
                       </div>
                       <div v-if="selectedConfig == 'blackList'" class="row p-3">
                           <div class="w-100 mb-3">
@@ -528,6 +541,8 @@
   import 'vue-phone-number-input/dist/vue-phone-number-input.css';
   import mixinUserToken from '../mixins/mixinUserToken'
   import mixinES from '../mixins/mixinES'
+  import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+  import '@ckeditor/ckeditor5-build-classic/build/translations/es';
   export default {
     mixins: [mixinUserToken, mixinES],
       components: {
@@ -553,6 +568,20 @@
               "x-database-connect": endPoint.database, 
               "x-access-token": localStorage.userToken
             }
+          },
+          editor: ClassicEditor,
+          editorConfig: {
+            toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'undo', 'redo'],
+            heading: {
+              options: [
+                { model: 'paragraph', title: 'Párrafo', class: 'ck-heading_paragraph' },
+                { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+              ]
+            },
+            language: 'es'
           },
           columnsLender: [
               {
@@ -1061,7 +1090,8 @@
             typesPay: this.configData.typesPay,
             datesPolitics: this.configData.datesPolitics,
             microServices: this.configData.microServices,
-            notificationDiscount: this.configData.notificationDiscount
+            notificationDiscount: this.configData.notificationDiscount,
+            datesPolicies: this.configData.datesPolicies
           }, this.configHeader)
           .then(res => {
             if (res.data.status == 'ok') {
@@ -1440,5 +1470,8 @@
   .maxHeight .table td {
       padding: 5px;
       padding-bottom: 5px;
+  }
+  .ck-editor{
+    width: 100% !important;
   }
 </style>
