@@ -52,7 +52,7 @@
                                                                         <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price, serviceCount[index].count)"></i></button>
                                                                         <span class="span-button-service">{{serviceCount[index].count}}</span>
                                                                         <button class="button-service-right" 
-                                                                        v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, 'cardS'+index, service.discount)"
+                                                                        v-on:click="plusService(index, service.name, service._id, service.duration, service.commission, service.price, service.employes, 'cardS'+index, service.discount)"
                                                                         ><i class="fa fa-plus"></i></button>
                                                                     </div> 
                                                                 </div>  
@@ -1913,7 +1913,7 @@
                     })
                 }
             },
-            plusServicePhone(index, service, duration, commission, price, employes, discount, products, additionalName){
+            plusServicePhone(index, service, id, duration, commission, price, employes, discount, products, additionalName){
                 this.ifServices = true
                 for (const employe of employes) {
                     employe.valid = true
@@ -1925,9 +1925,9 @@
                     for (const micro of this.microServices) {
                         microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                     }
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: [], additionalName: additionalName})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, microServices: microsService, microServiceSelect: [], additionalName: additionalName})
                 }else{
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id,
                     microServices: [], microServiceSelect: [], additionalName: additionalName})
                 }
 
@@ -1945,7 +1945,7 @@
                 this.validHour = false
                 this.totalPrice = this.totalPrice - price
             },
-            plusService(index, service, duration, commission, price, employes, card, discount){
+            plusService(index, service, id, duration, commission, price, employes, card, discount){
                 $('#'+card).css({'border-bottom': 'solid 8px #174c8e'})
                 this.ifServices = true
                 this.serviceCount[index].count++
@@ -1958,9 +1958,9 @@
                     for (const micro of this.microServices) {
                         microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                     }
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, microServices: microsService, microServiceSelect: []})
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, service_id: id, microServices: microsService, microServiceSelect: []})
                 }else{
-                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service,
+                    this.registerDate.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, service_id: id,
                     microServices: [], microServiceSelect: []})
                 }
                 this.validHour = false  
@@ -2492,7 +2492,7 @@
                         
                         this.serviceSelected.unshift(service.data.data)
                         this.servicePhoneCount.unshift({count: 0})
-                        this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products, service.data.data.additionalName)
+                        this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data._id, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products, service.data.data.additionalName)
                     }else{
                         this.$swal({
                             icon: 'error',

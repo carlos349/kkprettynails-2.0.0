@@ -157,7 +157,7 @@
                                                                             <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price, countServices[index].count)"></i></button>
                                                                             <span class="span-button-service">{{countServices[index].count}}</span>
                                                                             <button class="button-service-right" 
-                                                                            v-on:click="plusService(index, service.name, service.duration, service.commission, service.price, service.employes, service.discount, service.products)"
+                                                                            v-on:click="plusService(index, service.name, service._id, service.duration, service.commission, service.price, service.employes, service.discount, service.products)"
                                                                             ><i class="fa fa-plus"></i></button>
                                                                         </div> 
                                                                     </div>  
@@ -1727,7 +1727,7 @@ import mixinES from '../mixins/mixinES'
                 if (service.data.status == 'ok') {
                     service.data.data.set = false
                     this.serviceSelected.unshift(service.data.data)
-                    this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products, service.data.data.additionalName)
+                    this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data._id, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products, service.data.data.additionalName)
                 }else{
                     this.$swal({
                         icon: 'error',
@@ -1757,7 +1757,7 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        plusServicePhone(index, service, duration, commission, price, employes, discount, products, additionalName){
+        plusServicePhone(index, service, id, duration, commission, price, employes, discount, products, additionalName){
             this.ifServices = true
             for (const employe of employes) {
                 employe.valid = true
@@ -1769,9 +1769,9 @@ import mixinES from '../mixins/mixinES'
                 for (const micro of this.microServices) {
                     microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                 }
-                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, additionalName: additionalName, microServices: microsService, microServiceSelect: [], products: products})
+                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, additionalName: additionalName, microServices: microsService, microServiceSelect: [], products: products})
             }else{
-                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, additionalName: additionalName, microServices: [], microServiceSelect: [], products: products})
+                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, additionalName: additionalName, microServices: [], microServiceSelect: [], products: products})
             }
             this.totalPrice = this.totalPrice + price
             this.validHour = false
@@ -2247,7 +2247,8 @@ import mixinES from '../mixins/mixinES'
             try {
                 const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
                 if (services.data.status == 'ok') {
-                    this.services = services.data.data
+                    this.services = services.data.data 
+                    console.log(this.services)
                     services.data.data.forEach(element => {this.countServices.push({count: 0})});
                 }else{
                     this.services = []
@@ -2426,7 +2427,7 @@ import mixinES from '../mixins/mixinES'
             $('.categoryButtonFinally').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
             $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
         }, 
-        plusService(index, service, duration, commission, price, employes, discount, products){
+        plusService(index, service, id, duration, commission, price, employes, discount, products){
             this.ifServices = true
             this.countServices[index].count++
             this.registerDae.duration = this.registerDae.duration + parseFloat(duration)
@@ -2439,9 +2440,9 @@ import mixinES from '../mixins/mixinES'
                 for (const micro of this.microServices) {
                     microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
                 }
-                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, microServices: microsService, microServiceSelect: [], products: products})
+                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, microServices: microsService, microServiceSelect: [], products: products})
             }else{
-                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service,microServices: [], microServiceSelect: [], products: products})
+                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, microServices: [], microServiceSelect: [], products: products})
             }
             this.totalPrice = this.totalPrice + price
             this.validHour = false  
