@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.af5085645f44c9656c7a6db14ead391a.js"
+  "/precache-manifest.3cbc121091b7545291e87518b9936aea.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "vue-argon-dashboard"});
