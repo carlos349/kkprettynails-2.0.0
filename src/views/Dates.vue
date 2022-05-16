@@ -336,24 +336,24 @@
                                                         </base-button>
                                                         <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
                                                             <a-spin :spinning="load2">
-                                                                <div class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="index">
-                                                                    <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes , block.hour, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
-                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                        <span>Disponible</span>
-                                                                    </base-button>
-                                                                    <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                        <span>Ocupado</span>
-                                                                    </base-button>
-                                                                    <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                        <span>Seleccionado</span>
-                                                                    </base-button>
-                                                                    <base-button v-else size="sm" disabled class="col-12" type="secondary">
-                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                        <span>No seleccionable</span>
-                                                                    </base-button>
-                                                                </div>
+                                                                    <div  class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="index">
+                                                                        <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes , block.hour, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
+                                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                            <span>Disponible</span>
+                                                                        </base-button>
+                                                                        <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                            <span>Ocupado</span>
+                                                                        </base-button>
+                                                                        <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                            <span>Seleccionado</span>
+                                                                        </base-button>
+                                                                        <base-button v-else size="sm" disabled class="col-12" type="secondary">
+                                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                            <span>No seleccionable</span>
+                                                                        </base-button>
+                                                                    </div>
                                                             </a-spin>
                                                         </vuescroll>
                                                     </div>
@@ -1393,6 +1393,7 @@ import mixinES from '../mixins/mixinES'
         finalBlockEdit:[],
         dateData: {
         history:[],
+        fixHours: true,
         discount:{discount:false,type:'none'},
         clientEdit: null,
         fechaEdit: null,
@@ -5028,34 +5029,15 @@ import mixinES from '../mixins/mixinES'
             })
         },
         openCalendar(){
+            this.registerDae.serviceSelectds[0].blocks = []
+            this.registerDae.block = []
             setTimeout(() => {
                       if (this.registerDae.date != "") {
                         const split = this.registerDae.date.split('-')
                         this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
                         const restDay = new Date(this.finalDate+' 10:00')
                         this.getDay = restDay.getDay()
-                        var onlySunday = split[0]+'-'+split[1]
-                        if (this.getDay == 0 && onlySunday != "13-12" && onlySunday != "20-12") {
-                            this.modals = {
-                                modal3: true,
-                                message: "Disculpa, No laboramos Sábados y Domingos.",
-                                icon: 'ni ni-fat-remove ni-5x',
-                                type: 'danger'
-                            }
-                            setTimeout(() => {
-                                this.modals = {
-                                    modal1:false,
-                                    modal2:false,
-                                    modal3: false,
-                                    modal4: false,
-                                    modal5: false,
-                                    message: "",
-                                    icon: '',
-                                    type: ''
-                                }
-                                this.registerDae.date = ''
-                            }, 3000);
-                        }else{
+                        
                             if (this.readyChange) {
                                 for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                                     const element = this.registerDae.serviceSelectds[index];
@@ -5093,6 +5075,7 @@ import mixinES from '../mixins/mixinES'
                                             this.registerDae.serviceSelectds[0].valid = true
                                             this.registerDae.serviceSelectds[0].blocks = res.data.data
                                             this.registerDae.block = res.data.data
+                                            this.fixHours = true
                                             $('#block0').show('slow')
                                             this.load1 = false
                                         }).catch(err => {
@@ -5201,7 +5184,6 @@ import mixinES from '../mixins/mixinES'
                                     })
                                 }, 200); 
                             }
-                        }
                         }
                         setTimeout(() => {
                             $('#block0').show('slow')
