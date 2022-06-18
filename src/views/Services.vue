@@ -639,6 +639,7 @@ import mixinES from '../mixins/mixinES'
                 modal4: false,
                 modal5: false,
                 modal6: false,
+                modal7: false,
                 message: "",
                 icon: '',
                 type:''
@@ -879,7 +880,7 @@ import mixinES from '../mixins/mixinES'
             this.searchText = selectedKeys[0];
             this.searchedColumn = dataIndex;
         },
-
+        
         handleReset(clearFilters) {
             clearFilters();
             this.searchText = '';
