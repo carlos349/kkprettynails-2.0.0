@@ -242,7 +242,41 @@
         <base-alert class="positionAlert" type="success" v-if="successRegister">
             <strong>Registrado!</strong> Has registrado al cliente con exito!
         </base-alert>
-
+        <a-modal v-model="modals.modal7" :width="widthTable" :footer="false">
+            <template>
+                <div class="text-muted text-center">
+                    <h3>Información de citas por asistir</h3>
+                </div>
+            </template>
+            <template>
+                <div>
+                    <vue-custom-scrollbar class="maxHeightDatesClient">
+                        <a-config-provider :locale="es_ES">
+                            <template #renderEmpty>
+                                <div style="text-align: center">
+                                    <a-icon type="warning" style="font-size: 20px" />
+                                    <h2>No posee citas por asistir</h2>
+                                </div>
+                            </template>
+                            <a-table :scroll="getScreen" :columns="datesClientColumn" :data-source="datesClient">
+                                <template slot="date-format" slot-scope="record, column">
+                                    {{column.createdAt | formatDate}}
+                                </template>
+                                <template slot="serviceName" slot-scope="record, column">
+                                    <span>{{column.services[0].name}}</span>
+                                </template>
+                                <template slot="date-format-init" slot-scope="record, column">
+                                    {{column.start.split(" ")[1]}}
+                                </template>
+                                <template slot="date-format-end" slot-scope="record, column">
+                                    {{column.end.split(" ")[1]}}
+                                </template>
+                            </a-table>
+                        </a-config-provider>
+                    </vue-custom-scrollbar>
+                </div>     
+            </template>
+        </a-modal>
         <!-- TABLA DE CLIENTES -->
         <template>
             <a-config-provider :locale="es_ES">
@@ -291,6 +325,14 @@
                     </template>
                     <template slot="actions" slot-scope="record, column">
                         <b>
+                            <a-tooltip placement="left">
+                                <template slot="title">
+                                    <span>Citas por asistir</span>
+                                </template>
+                                <base-button v-if="validRoute('clientes', 'detalle')" icon="fa fa-address-card" size="sm" type="default" class="text-center" v-on:click="getDatesClient(column._id)"></base-button>
+                                <base-button v-else icon="fa fa-address-card" size="sm" type="default" disabled class="text-center" ></base-button>
+                            </a-tooltip>
+
                             <a-tooltip placement="top">
                                 <template slot="title">
                                 <span>Detalles / Editar</span>
@@ -333,7 +375,7 @@ import {Spanish} from 'flatpickr/dist/l10n/es.js';
 // COMPONENTS
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
-
+import es_ES from 'ant-design-vue/lib/locale-provider/es_ES';
 import mixinUserToken from '../mixins/mixinUserToken'
 import mixinES from '../mixins/mixinES'
 export default {
@@ -356,6 +398,7 @@ export default {
             dateFormat: 'd-m-Y',
             locale: Spanish
         },
+        es_ES,
         socket : io(endPoint.endpointTarget),
         clientState: true,
         phoneData: {isValid: false},
@@ -387,10 +430,47 @@ export default {
             attends: 0,
             _id: ''
         },
+        datesClient: [],
+        datesClientColumn: [
+            {
+                title: 'Fecha',
+                dataIndex: 'createdAt',
+                key: 'createdAt',
+                scopedSlots: { customRender: 'date-format' },
+                defaultSortOrder: 'descend',
+                sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                ellipsis: true,
+            },
+            { 
+                title: 'Inicio',
+                dataIndex: 'start',
+                key: 'start',
+                scopedSlots: { customRender: 'date-format-init' },
+            },
+            { 
+                title: 'Fin',
+                dataIndex: 'end',
+                key: 'end',
+                scopedSlots: { customRender: 'date-format-end' },
+            },
+            { 
+                title: 'Profesional',
+                dataIndex: 'employe.name',
+                key: 'employe.name'
+            },
+            {
+                title: 'Servicio',
+                dataIndex: 'services',
+                key: 'services',
+                scopedSlots: { customRender: 'serviceName' },
+                width: "40%"
+            }
+        ],
         modals: {
             modal1: false,
             modal2: false,
             modal3: false,
+            modal7: false,
             message: "",
             icon: '',
             type:''
@@ -537,6 +617,27 @@ export default {
                 this.dateFind = dateString
             }else{
                 this.dateFind = []
+            }
+        },
+        async getDatesClient(id){
+            this.datesClient = []
+            try {
+                const getDatesClient = await axios.get(endPoint.endpointTarget+'/clients/getDatesClient/'+id, this.configHeader)
+                if (getDatesClient.data.status == "ok") {
+                    this.datesClient = getDatesClient.data.data
+                    this.modals.modal7 = true
+                }else{
+                    this.modals.modal7 = true
+                }
+            } catch(err){
+                if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
             }
         },
         getToken(){
@@ -911,6 +1012,9 @@ export default {
     computed: {
         getScreen: () => {
             return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 'auto' }
+        },
+        widthTable: () => {
+            return screen.width < 780 ? "95%" : "60%"
         }
     }
   };

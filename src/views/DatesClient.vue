@@ -6,6 +6,14 @@
             </div>
         </nav>
         <div class="container-fluid" style="margin-top:8rem;">
+            <a-tooltip>
+                <template slot="title">
+                    Citas por asistir
+                </template>
+                <base-button @click="getDatesClient" class="float-right mt-1" style="z-index: 100;border-radius: 50%;height: 50px;width: 50px;right: 3%;top: 88%;position: fixed;" type="default">
+                        <i class="fa fa-address-card" style="vertical-align:1px;font-size:1.6em;left: 12px;top: 13px;position: absolute;"></i>
+                </base-button>
+            </a-tooltip>
             <card shadow>
                 <a-spin :spinning="spinningDate">
                     <form-wizard @on-complete="finalFunction" color="#174c8e" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!" ref="wizard"> 
@@ -15,7 +23,7 @@
                             <div v-if="desactive">
                                 <center>
                                     <h1 class="text-center w-50 mt-4">
-                                        Por motivos de fuerza mayor, no estamos atendiendo en nuestro loca. Una vez se levante la cuarentena retomaremos  los agendamientos.
+                                        Por motivos de fuerza mayor, no estamos atendiendo en nuestro loca. Una vez se levante la cuarentena retomaremos los agendamientos.
                                     </h1>
                                 </center>
                             </div>  
@@ -547,6 +555,41 @@
                 </base-button>
             </template>
         </a-modal>
+        <a-modal v-model="modals.modal7" :width="widthTable" :footer="false">
+            <template>
+                <div class="text-muted text-center">
+                    <h3>Información de citas por asistir</h3>
+                </div>
+            </template>
+            <template>
+                <div>
+                    <vue-custom-scrollbar class="maxHeightDatesClient">
+                        <a-config-provider :locale="es_ES">
+                            <template #renderEmpty>
+                                <div style="text-align: center">
+                                    <a-icon type="warning" style="font-size: 20px" />
+                                    <h2>No posee citas por asistir</h2>
+                                </div>
+                            </template>
+                            <a-table :scroll="getScreen" :columns="datesClientColumn" :data-source="datesClient">
+                                <template slot="date-format" slot-scope="record, column">
+                                    {{column.createdAt | formatDate}}
+                                </template>
+                                <template slot="serviceName" slot-scope="record, column">
+                                    <span>{{column.services[0].name}}</span>
+                                </template>
+                                <template slot="date-format-init" slot-scope="record, column">
+                                    {{column.start.split(" ")[1]}}
+                                </template>
+                                <template slot="date-format-end" slot-scope="record, column">
+                                    {{column.end.split(" ")[1]}}
+                                </template>
+                            </a-table>
+                        </a-config-provider>
+                    </vue-custom-scrollbar>
+                </div>     
+            </template>
+        </a-modal>
         <modal :show.sync="modals.modal5"
                body-classes="p-0"
                modal-classes="modal-dialog-centered modal-lg">
@@ -624,6 +667,7 @@
     import vueCustomScrollbar from 'vue-custom-scrollbar'
     import VuePhoneNumberInput from 'vue-phone-number-input';
     import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+    import es_ES from 'ant-design-vue/lib/locale-provider/es_ES';
     const dateNow = new Date()
     export default {
         components: {
@@ -640,6 +684,7 @@
                 branch: '',
                 branches: [],
                 locale,
+                es_ES,
                 branchName: '',
                 dateFormat: 'DD/MM/YYYY',
                 day: 0,
@@ -667,6 +712,41 @@
                 servicesPhoneShow:false,
                 CatSelected: 'Categorias',
                 finalDate: '',
+                datesClientColumn: [
+                    {
+                        title: 'Fecha',
+                        dataIndex: 'createdAt',
+                        key: 'createdAt',
+                        scopedSlots: { customRender: 'date-format' },
+                        defaultSortOrder: 'descend',
+                        sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                        ellipsis: true,
+                    },
+                    { 
+                        title: 'Inicio',
+                        dataIndex: 'start',
+                        key: 'start',
+                        scopedSlots: { customRender: 'date-format-init' },
+                    },
+                    { 
+                        title: 'Fin',
+                        dataIndex: 'end',
+                        key: 'end',
+                        scopedSlots: { customRender: 'date-format-end' },
+                    },
+                    { 
+                        title: 'Profesional',
+                        dataIndex: 'employe.name',
+                        key: 'employe.name'
+                    },
+                    {
+                        title: 'Servicio',
+                        dataIndex: 'services',
+                        key: 'services',
+                        scopedSlots: { customRender: 'serviceName' },
+                        width: "40%"
+                    }
+                ],
                 phoneData: null,                
                 registerUser: {
                     name: '',
@@ -704,6 +784,7 @@
                     modal4: false,
                     modal5: false,
                     modal6: true,
+                    modal7: false,
                     message: "Disculpa, las citas todavia no están habilitadas",
                     icon: 'ni ni-fat-remove ni-5x',
                     type:''
@@ -771,7 +852,8 @@
                 blockToBlackList: [],
                 idForRefer:'',
                 nameClient:'',
-                dataMessageClient: ''
+                dataMessageClient: '',
+                datesClient: []
             }
         },
         created(){
@@ -837,7 +919,27 @@
                     })
                 }
             },
-            
+            async getDatesClient(){
+                try {
+                    const getDatesClient = await axios.get(endPoint.endpointTarget+'/clients/getDatesClient/'+this.registerUser.id, this.configHeader)
+                    console.log(getDatesClient.data)
+                    if (getDatesClient.data.status == "ok") {
+                        this.datesClient = getDatesClient.data.data
+                        this.modals.modal7 = true
+                    }else{
+                        this.modals.modal7 = true
+                    }
+                }  catch(err){
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }
+            },
             selectBirthday(date, dateString){
                 this.registerUser.birthday = date._d
                 this.validFields()
@@ -2541,7 +2643,15 @@
                     }
                 })
             },
-        }
+        },
+        computed: {
+            getScreen: () => {
+                return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : {y: 'auto'}
+            },
+            widthTable: () => {
+                return screen.width < 780 ? "95%" : "60%"
+            }
+        },
     }
 </script>
 <style>
