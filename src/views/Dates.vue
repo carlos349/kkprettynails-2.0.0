@@ -4618,10 +4618,16 @@ import mixinES from '../mixins/mixinES'
             }
         },
         async editDateData(){
+            var details = ''
+            if (this.selectedEvent.extraData) {
+                details = this.selectedEvent.extraData.details
+            }else{
+                details = this.selectedEvent.details
+            }
             try{
                 const editDate = await axios.post(endPoint.endpointTarget+'/dates/editDataDate',{
                     id: this.selectedEvent._id,
-                    details: this.selectedEvent.details
+                    details: details,
                 }, this.configHeader)
 
                 if (editDate) {
