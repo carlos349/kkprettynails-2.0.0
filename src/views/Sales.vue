@@ -476,7 +476,6 @@ import mixinES from '../mixins/mixinES'
             }
         },
         selectDateExcel(date, dateString){
-            console.log(date, dateString)
             if (date) {
                 this.dateFindExcel = dateString
             }else{
@@ -749,8 +748,6 @@ import mixinES from '../mixins/mixinES'
                             })
                         }
                     }).catch(err => {
-                        console.log(err)
-                        console.log(err.response)
                         if (!err.response) {
                             this.$swal({
                                 icon: 'error',

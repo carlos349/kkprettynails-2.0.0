@@ -146,7 +146,6 @@ export default {
         async getData(){
             try {
                 const sale = await axios.get(endPoint.endpointTarget+'/sales/getSale/'+this.id, this.configHeader)
-                console.log(sale)
                 this.dataSale = sale.data.data
                 setTimeout(() => {
                     print()

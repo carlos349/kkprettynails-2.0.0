@@ -220,7 +220,6 @@
           this.auth = decoded.access
           this.branch = decoded.branch
           for (const branch of this.branches) {
-            console.log(branch._id, this.branch, branch._id == this.branch)
             if (branch._id == this.branch) {
               this.branchName = branch.name
               localStorage.setItem('branch', this.branch)
@@ -263,7 +262,6 @@
         }
       },
       selectBranch(value){
-        console.log(value)
         if (value.key.split('/')[0] != this.branch) {
           localStorage.setItem('branch', value.key.split('/')[0])
           localStorage.setItem('branchName', value.key.split('/')[1])
@@ -289,7 +287,6 @@
       },
       toggleMenu() {
         this.showMenu = !this.showMenu;
-        console.log('cerro')
       },
       getNotifications(){
         const configHeader = {
@@ -349,12 +346,10 @@
         this.getBranches()
       })
       EventBus.$on('dataChange', status => {
-        console.log(status)
         this.nombre = status.name + ' ' + status.lastname
         if (status.image != "") {
           this.imgUser = status.image
         }
-        console.log(this.imgUser)
       })
       EventBus.$on('newBranch', status => {
         this.getBranches()

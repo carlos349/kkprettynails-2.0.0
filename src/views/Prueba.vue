@@ -222,7 +222,6 @@ import jwtDecode from 'jwt-decode'
                     localStorage.setItem('_id', decoded._id)
                     localStorage.setItem('status', decoded.status)
                     router.push({path: '/Agendamiento'})
-                    console.log(decoded.access)
                     this.emitMethod(decoded.status)
                 }
             })
@@ -237,7 +236,6 @@ import jwtDecode from 'jwt-decode'
             })
         },
         emitMethod(status) {
-            console.log(status)
             EventBus.$emit('loggedin', status)
             localStorage.setItem('logged-in', status)
         },

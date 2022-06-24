@@ -965,7 +965,6 @@ export default {
         validEmail(){
             const valid = this.modelStart.email.split('@')
             if(valid.length > 1){
-                console.log(valid[1].includes('.'))
                 return valid[1].includes('.')
             }else{
                 return false

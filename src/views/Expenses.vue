@@ -158,7 +158,13 @@
                         Inversión
                     </base-button>
                     <base-button @click="openReport" class="float-right mr-1" style="margin-top:3.3em;" size="sm" type="danger">
-                        <a-icon type="file-pdf" class="mr-1" style="vertical-align:1px;font-size:1.5em;"/>
+                        <a-tooltip>
+                            <template slot="title">
+                                Exportar PDF
+                            </template>
+                            <a-icon type="file-pdf" class="mr-1" style="vertical-align:1px;font-size:1.5em;"/>
+                        </a-tooltip>
+                        
                     </base-button>
                     <base-button @click="closeReinvestment" class="float-right mr-1" style="margin-top:3.3em;" size="sm"  :disabled="validRoute('gastos', 'cierre') ? false : true" type="danger">
                         <i class="fa fa-archive mr-1" style="vertical-align:1px;font-size:1.2em;"></i>

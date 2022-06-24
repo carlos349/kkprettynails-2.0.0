@@ -145,7 +145,6 @@
         this.$sidebar.displaySidebar(true)
       },
       validRoutee(route){
-        console.log(this.auth, route)
         for (let index = 0; index < this.auth.length; index++) {
           const element = this.auth[index];
           if (element.ruta == route) {
@@ -166,7 +165,6 @@
         }
       },
       selectBranch(value){
-        console.log(value.split('/')[0] != this.branch)
         if (value.split('/')[0] != this.branch) {
           localStorage.setItem('branch', value.split('/')[0])
           localStorage.setItem('branchName', value.split('/')[1])
@@ -182,7 +180,6 @@
           this.auth = decoded.access
           this.branch = decoded.branch
           for (const branch of this.branches) {
-            console.log(branch._id, this.branch, branch._id == this.branch)
             if (branch._id == this.branch) {
               this.branchName = branch.name
               localStorage.setItem('branch', this.branch)

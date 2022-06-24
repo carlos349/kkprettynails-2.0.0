@@ -843,7 +843,6 @@
                 this.validFields()
             },
             SelectMicro(index, indexM, microServices) {
-                console.log(microServices)
                 if (this.registerDate.serviceSelectds[index].microServices[indexM].microService == 'Ninguno') {
                     this.registerDate.serviceSelectds[index].microServices.forEach(element => {
                         if (element.checked && element.microService != 'Ninguno') {
@@ -881,7 +880,6 @@
                             micro.checked = false
                         }
                         this.ifMicro = true
-                        console.log(this.microServices)
                     }else{
                         this.ifMicro = false
                     }
@@ -914,7 +912,6 @@
                         if (findClient.data.data.historical.length > 0) {
                             var dataServices = ""
                             for (const key in findClient.data.data.historical[0].items) {
-                                console.log(item)
                                 const item = findClient.data.data.historical[0].items[key]
                                 dataServices = key == 0 ? item.item.name : dataServices+', '+item.item.name
                             }
@@ -931,7 +928,6 @@
                                 this.inBlackList = true
                                 this.blockToBlackList = verifyBlackList.data.data
                             }
-                            console.log(verifyBlackList)
                         }catch(err){
                             if (!err.response) {
                                 this.$swal({
@@ -1009,7 +1005,6 @@
                         var branchess = branches.data.data
                         try{
                             const config = await axios.get(endPoint.endpointTarget+'/configurations', this.configHeader)
-                            console.log(config)
                             for (const key in config.data.data) {
                                 const element = config.data.data[key];
                                 for (const keyTwo in branchess) {
@@ -1143,9 +1138,7 @@
             sendConfirmation(id, name, mail, start, end, services, lender, data){
                 const nameFormat = name
                 var dateFormat = this.finalDate
-                console.log(dateFormat)
                 dateFormat = this.dateSplit2(dateFormat)
-                console.log(dateFormat)
                 axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                     name: nameFormat,
                     branch: this.branchName,
@@ -1158,9 +1151,7 @@
                     valid: true
                 }, this.configHeader)
                 .then(res => {
-                    if (res.data.status == 'ok') {
-                        console.log(res.data.status)
-                    }
+                    
                 })
                 .catch(err => {
                     if (!err.response) {
@@ -1240,7 +1231,6 @@
                                     this.registerDate.serviceSelectds[0].valid = true
                                     this.registerDate.serviceSelectds[0].blocks = res.data.data
                                     this.registerDate.block = res.data.data
-                                    console.log(this.registerDate.serviceSelectds[0].blocks)
                                     $('#block0').show('slow')
                                 }).catch(err =>{
                                     if (!err.response) {
@@ -1409,9 +1399,7 @@
                     }
                 }
             },
-            Copy(){
-                console.log("hola")
-            },
+            
             async getCategories(){
                 try {
                     const categories = await axios.get(endPoint.endpointTarget+'/services/getCategoriesForClients/'+this.branch, this.configHeader)
@@ -2147,7 +2135,6 @@
                             .then(res => {
                                 this.registerDate.serviceSelectds[finalIndex].valid = true
                                 this.registerDate.serviceSelectds[finalIndex].blocks = res.data.data
-                                console.log(res)
                             })
                         }else{
                             this.validHour = true
@@ -2270,7 +2257,6 @@
                 }else{
                     setTimeout(() => {
                         if (this.dates.simple != '') {
-                            console.log("y aqui?")
                             const split = this.dates.simple.split('-')
                             this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
                             const restDay = new Date(this.finalDate+' 10:00')
@@ -2320,12 +2306,10 @@
                                             }, this.configHeader)
                                             .then(res => {
                                                 this.idDatesBlocks = res.data.id
-                                                console.log(this.idDatesBlocks)
                                                 this.readyChange = true
                                                 this.registerDate.serviceSelectds[0].valid = true
                                                 this.registerDate.serviceSelectds[0].blocks = res.data.data
                                                 this.registerDate.block = res.data.data
-                                                console.log(this.registerDate.serviceSelectds[0].blocks)
                                                 $('#block0').show('slow')
                                             })
                                         }).catch(err => {
@@ -2359,12 +2343,10 @@
                                             }, this.configHeader)
                                             .then(res => {
                                                 this.idDatesBlocks = res.data.id
-                                                console.log(this.idDatesBlocks)
                                                 this.readyChange = true
                                                 this.registerDate.serviceSelectds[0].valid = true
                                                 this.registerDate.serviceSelectds[0].blocks = res.data.data
                                                 this.registerDate.block = res.data.data
-                                                console.log(this.registerDate.serviceSelectds[0].blocks)
                                             }).catch(err => {
                                                 if (!err.response) {
                                                     this.$swal({
@@ -2395,7 +2377,6 @@
                         }, 200);
                     }, 200);
                 }
-                console.log(this.registerDate.serviceSelectds)
             },
             fixedHours(duration){
                 const hours = parseInt(duration / 60) + ' hr'

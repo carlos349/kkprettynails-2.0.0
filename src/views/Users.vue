@@ -428,9 +428,7 @@ export default {
             this.validRegister()
         },
         selectEmploye(key){
-            console.log(key)
             this.linkLender = key
-            console.log(this.linkLender)
         },
         redirect(){
             router.push({path: '/perfilesAcceso'})
@@ -538,12 +536,9 @@ export default {
         },
         handleFileUpload(){
             this.file = this.$refs.file.files[0]
-            console.log(this.file)
         },
         resetFileInput(){
-            console.log(this.$refs.file.files)
             this.$refs.file.value = ''
-            console.log(this.$refs.file.files)
         },
         validRoute(route, type){
             for (let index = 0; index < this.auth.length; index++) {
@@ -664,6 +659,13 @@ export default {
             }
         },
         validRegister(){
+            if (this.registerUser.name.length == 1) {
+                this.registerUser.name = this.registerUser.name.toUpperCase()
+            }
+            if (this.registerUser.lastname.length == 1) {
+                this.registerUser.lastname = this.registerUser.lastname.toUpperCase()
+            }
+
             if (this.registerUser.email.split('@')[1]) {
                 if (this.registerUser.email.split('@')[1].split('.')[1]) {
                     this.registerUser.valid = this.registerUser.name != '' && this.registerUser.password.length > 8 && this.registerUser.lastname != '' && this.registerUser.c == true && this.registerUser.p == true && this.registerUser.branch != '' ? true : false
@@ -697,7 +699,6 @@ export default {
                 c:'',
                 p:''
             }
-            console.log(this.$refs.file)
             this.file = ''
             this.$refs.file.value = ''
             if (val == 2) {

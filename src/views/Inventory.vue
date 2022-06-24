@@ -803,7 +803,6 @@ import mixinES from '../mixins/mixinES'
                     showLoaderOnConfirm: true
                 }).then((result) => {
                     if(result.value) {
-                        console.log("majomeno?")
                         axios.post(endPoint.endpointTarget+'/stores/addtobranch',{
                             branch: this.branch,
                             branchName: this.branchName,

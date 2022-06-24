@@ -85,7 +85,7 @@
                             <hr class="w-50 mb-0 mt-0">
                           </div>
                           <div class="w-100 pl-4">
-                            <p class="mx-auto"> <strong class="mr-2">Notificacion de descuento </strong> <a-switch class="mr-3" :checked="configData.notificationDiscount" @click="changeNotifyDiscount()"/></p>
+                            <p class="mx-auto"> <strong class="mr-2">Notificación de descuento </strong> <a-switch class="mr-3" :checked="configData.notificationDiscount" @click="changeNotifyDiscount()"/></p>
                           </div>
                           <div class="col-md-4">
                               <base-input class="input-group-alternative"
@@ -979,7 +979,6 @@
             const getConfig = await axios.get(endPoint.endpointTarget+'/configurations/'+this.branch, this.configHeader)
             if (getConfig.data.status == 'ok') {
               this.configData = getConfig.data.data
-              console.log(this.configData)
             }
           }catch(err){
             if (!err.response) {
@@ -1062,9 +1061,7 @@
         },
         selected(value, id){
             this.lenders[id - 1].valid = true
-            console.log(value)
             this.configData.microServices[this.selectedMicroService].employes.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no', validOnline: value.validOnline})
-            console.log(this.configData.microServices[this.selectedMicroService].employes)
         },
         unSelected(value, id){
             this.lenders[id - 1].valid = false

@@ -497,7 +497,6 @@ export default {
                             access: routes,
                             id: this.id
                         }, this.configHeader)
-                        console.log(updateUsers)
                         if (updateUsers.data.status == "reload") {
                             EventBus.$emit('loggedin-user', routes)
                             localStorage.setItem('userToken', updateUsers.data.token)

@@ -304,7 +304,6 @@ import mixinES from '../mixins/mixinES'
             }
         },
         selectDateExcel(date, dateString){
-            console.log(date, dateString)
             if (date) {
                 this.dateFindExcel = dateString
             }else{
@@ -464,7 +463,6 @@ import mixinES from '../mixins/mixinES'
                 const logs = await axios.get(endPoint.endpointTarget+'/configurations/clientlog', this.configHeader)
                 if (logs.data.status == 'ok') {
                     this.logs = logs.data.data
-                    console.log(this.logs)
                     this.progress = false
                 }else{
                     this.logs = []

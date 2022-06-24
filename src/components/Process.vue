@@ -1188,6 +1188,13 @@ export default {
             if (valid == 1) {
                 this.registerService.valid = this.registerService.lenderSelecteds.length > 0 && this.registerService.serviceRegister != '' && this.registerService.priceRegister > 0 && this.registerService.timeRegister != 'Seleccione el tiempo' && this.registerService.comissionRegister != '' ? true : false
             }else if (valid == 2) {
+                if (this.registerClient.firstName.length == 1) {
+                    this.registerClient.firstName = this.registerClient.firstName.toUpperCase()
+                }
+
+                if (this.registerClient.lastName.length == 1) {
+                    this.registerClient.lastName = this.registerClient.lastName.toUpperCase()
+                }
                 setTimeout(() => {
                     if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '' && this.registerClient.phone.isValid && this.registerClient.birthday != '') {
                         if (this.registerClient.email.split('@').length == 2) {
@@ -1527,7 +1534,6 @@ export default {
                 const product = await axios.get(endPoint.endpointTarget+'/stores/getproductsales/'+this.branch, this.configHeader)
                 if (product.data.status == 'ok') {
                     this.products = product.data.data
-                    console.log(this.products)
                 }else{
                     this.products = []
                 }
@@ -1553,7 +1559,6 @@ export default {
             }
         },
         addItem(type, record){
-            console.log(record)
             if (this.itemData.quantityProduct == '') {
                 this.itemData.quantityProduct = 0
             }
@@ -1903,7 +1908,6 @@ export default {
             try {
                 const getMicro = await axios.get(`${endPoint.endpointTarget}/configurations/getMicroservice/${this.branch}`, this.configHeader) 
                 this.microservices = getMicro.data.data
-                console.log(getMicro)
             }catch(err) {
                 if (!err.response) {
                     this.$swal({
@@ -1979,7 +1983,6 @@ export default {
             if (value) {
                 try {
                     const getService = await axios.get(`${endPoint.endpointTarget}/services/getServiceInfo/${value}`, this.configHeader)
-                    console.log(getService)
                     this.itemData.item = getService.data.data
                     this.itemData.price = getService.data.data.price
                     this.itemData.realPrice = getService.data.data.price
@@ -2371,7 +2374,6 @@ export default {
             this.getLenders()
         })
         EventBus.$on('reloadFinallyDates', status => {
-            console.log(status)
             this.getFinallyDates()
         })
         this.socket.on('notify', (data) => {

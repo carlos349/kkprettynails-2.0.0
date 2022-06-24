@@ -75,7 +75,6 @@ export default {
                         system: false
                     }, this.configHeader)
                     .then(res => {
-                        console.log("si entre ps")
                         
                     })
                     .catch(err => {

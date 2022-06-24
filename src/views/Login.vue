@@ -469,6 +469,7 @@
                             <div class="col-12 p-1">
                                 <base-input class="input-group-alternative w-100 mt-4 mb-3"
                                     placeholder="Correo"
+                                    v-on:keyup.enter="login()"
                                     addon-left-icon="ni ni-email-83"
                                     v-model="model.email">
                                 </base-input>
@@ -477,6 +478,7 @@
                                 <base-input class="input-group-alternative"
                                     placeholder="Contraseña"
                                     :type="typePass"
+                                    v-on:keyup.enter="login()"
                                     addon-left-icon="ni ni-lock-circle-open"
                                     v-model="model.password">
                                 </base-input>
@@ -748,7 +750,6 @@ import mixinES from '../mixins/mixinES'
             }else{
                 this.verifyEmailVar = false
             }
-            console.log(this.verifyEmailVar)
         },
         calculatedHour(){
           for (const day of this.modelStart.blockHour) {
@@ -772,7 +773,6 @@ import mixinES from '../mixins/mixinES'
                         branch: this.modelStart.businessName,
                         secretKey: this.modelStart.credential
                     }, this.configHeader)
-                    console.log(registerBranch.data.status)
                     if (registerBranch.data.status == 'ok') {
                         try {
                             var formData = new FormData()
@@ -847,7 +847,6 @@ import mixinES from '../mixins/mixinES'
         validEmail(){
             const valid = this.modelStart.email.split('@')
             if(valid.length > 1){
-                console.log(valid[1].includes('.'))
                 return valid[1].includes('.')
             }else{
                 return false
@@ -860,7 +859,6 @@ import mixinES from '../mixins/mixinES'
             if (this.modelStart.typesPay.length < 8) {
                 if (this.typePay.length > 4) {
                     var findType = this.modelStart.typesPay.find(type => type == this.typePay)
-                    console.log(findType)
                     if (findType == undefined) {
                         this.modelStart.typesPay.push(this.typePay)
                         this.typePay = ''
@@ -966,10 +964,8 @@ import mixinES from '../mixins/mixinES'
                         timer: 1500
                     })
                 }
-                console.log(this.modelStart.businessType)
             }else if(step == 'date'){
                 const findDate = this.modelStart.blockHour.find(status => status.status == true)
-                console.log(findDate)
                 if (findDate != undefined) {
                     this.status.date = 'finish'
                     this.status.sale = 'process'

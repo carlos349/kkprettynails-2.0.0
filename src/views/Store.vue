@@ -130,7 +130,7 @@
             <tab-pane title="Profile">
                 <span id="provedorBtn" slot="title">
                     <i class="fa fa-user-tie"></i>
-                    Tabla de provedores
+                    Tabla de proveedores
                 </span>
                 <template>
                     <div class="p-2">
@@ -138,7 +138,7 @@
                             <template #renderEmpty>
                                 <div style="text-align: center">
                                     <a-icon type="warning" style="font-size: 20px" />
-                                    <h2>No hay ningún provedor registrado</h2>
+                                    <h2>No hay ningún proveedor registrado</h2>
                                 </div>
                             </template>
                             <a-table :columns="columnsProviders" :loading="productState" :data-source="providerTable" :scroll="getScreen">
@@ -418,8 +418,8 @@
                         />
                     </a-tooltip>
                     	
-                    <base-button icon="fa fa-plus" @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" v-if="validForm == 3" class="mb-2" size="sm" type="success">Registrar provedor</base-button>
-                    <a-select class="input-group-alternative w-100 mb-4 mt-2" v-if="validForm == 3" default-value="Seleccione un provedor"   size="large">
+                    <base-button icon="fa fa-plus" @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" v-if="validForm == 3" class="mb-2" size="sm" type="success">Registrar proveedor</base-button>
+                    <a-select class="input-group-alternative w-100 mb-4 mt-2" v-if="validForm == 3" default-value="Seleccione un proveedor"   size="large">
                         <a-select-option v-for="provider of providers" :key="provider" @click="selectProviderForProduct(provider)" :value="provider">
                             {{provider}}
                         </a-select-option>
@@ -486,7 +486,7 @@
               class="border-0">
             <template>
                 <div style="margin-top:-30%" class="text-center text-muted mb-4">
-                    <small>Datos del provedor</small>
+                    <small>Datos del proveedor</small>
                 </div>
                 <form role="form">
                     <base-input  alternative
@@ -1312,7 +1312,7 @@ import mixinES from '../mixins/mixinES'
                 sorter: (a, b) => a.price - b.price,
             },
             {
-                title: 'Provedor',
+                title: 'Proveedor',
                 dataIndex: 'provider',
                 key: 'provider',
                 ellipsis: true,
@@ -1704,7 +1704,6 @@ import mixinES from '../mixins/mixinES'
             }
         },
         selectLoad(){
-            console.log("aja")
             this.productsForBranch = []
             for (let i = 0; i < this.products.length; i++) {
                 var valid = false
@@ -1800,7 +1799,6 @@ import mixinES from '../mixins/mixinES'
             .then(res => {
                 if (this.branchEntry[index].count <= total ) {
                     this.productForBranch = res.data.data
-                    console.log(this.productForBranch)
                     this.$swal({
                         title: '¿Está seguro que desea eliminar ' + this.branchEntry[index].count + ' ' + measure + ' de este producto?',
                         html: '¡Recuerda! se descontará de la sucursal: <b>'+ this.selectedBranchName + '</b>',
@@ -2313,14 +2311,12 @@ import mixinES from '../mixins/mixinES'
         },
         verifyDecimal(){
             if (this.dataProduct.alertTotal != '') {
-                console.log("aqui no")
                 this.dataProduct.alertTotal = this.dataProduct.alertTotal.toString().replace(/\,/g,'.')
             }
         },
         verifyDecimalBranch(){
             setTimeout(() => {
                 if (this.branchAlert != '') {
-                    console.log("aqui no")
                     this.branchAlert = parseFloat(this.branchAlert.toString().replace(/\,/g,'.'))
                 }
             }, 200);
@@ -2338,7 +2334,7 @@ import mixinES from '../mixins/mixinES'
                   this.$swal({
                     
                     icon: 'success',
-                    title: 'Provedor registrado',
+                    title: 'Proveedor registrado',
                     showConfirmButton: false,
                     timer: 1500
                   })
@@ -2369,7 +2365,7 @@ import mixinES from '../mixins/mixinES'
               }else{
                   this.$swal({
                   
-                  title: 'Provedor existe',
+                  title: 'Proveedor existe',
                   showConfirmButton: false,
                   timer: 1500
                   })
@@ -2460,7 +2456,7 @@ import mixinES from '../mixins/mixinES'
                 this.$swal({
                     
                     icon: 'success',
-                    title: 'Provedor Actualizado',
+                    title: 'Proveedor Actualizado',
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -2470,7 +2466,7 @@ import mixinES from '../mixins/mixinES'
                 this.$swal({
                   
                   icon: 'error',
-                  title: 'El nuevo documento del provedor ya se encuentra registrado',
+                  title: 'El nuevo documento del proveedor ya se encuentra registrado',
                   showConfirmButton: false,
                   timer: 1500
                 })
@@ -2566,7 +2562,7 @@ import mixinES from '../mixins/mixinES'
                             this.$swal({
                                 
                                 icon: 'success',
-                                title: 'Provedor borrado con éxito',
+                                title: 'Proveedor borrado con éxito',
                                 showConfirmButton: false,
                                 timer: 1500
                             })

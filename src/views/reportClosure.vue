@@ -144,7 +144,6 @@ export default {
             try {
                 const closing = await axios.get(endPoint.endpointTarget+'/sales/getClosing/'+this.id, this.configHeader)
                 this.closes = closing.data.data
-                console.log(this.closes)
             }catch(err){
                 if (!err.response) {
                     this.$swal({
@@ -241,7 +240,6 @@ export default {
                 if (element.ruta == route) {
                     for (let i = 0; i < element.validaciones.length; i++) {
                         if (type == element.validaciones[i]) { 
-                            console.log(true)
                             return true
                         } 
                     }

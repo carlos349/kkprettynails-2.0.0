@@ -362,7 +362,6 @@ export default {
         async getClosing(){
             try {
                 const closing = await axios.get(endPoint.endpointTarget+'/sales/Closing/'+this.branch, this.configHeader)
-                console.log(closing)
                 if (closing.data.status == 'ok') {
                     if (this.validRoute('caja', 'visualizar')) {
                         this.closing = closing.data.data
@@ -647,8 +646,6 @@ export default {
 </script>
 <style>
     .spin-content {
-        border: 1px solid #91d5ff;
-        background-color: #e6f7ff;
         padding: 30px;
     }
 </style>

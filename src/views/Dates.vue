@@ -569,7 +569,7 @@
                         </div>
                         <div class="col-md-6">
                             <center>
-                                <base-button type="primary" :class="selectedEvent.class">{{selectedEvent.title}}</base-button> 
+                                <base-button type="secondary"  >{{selectedEvent.title}}</base-button> 
                             </center>
                         
                         </div>
@@ -581,9 +581,9 @@
                         <tab-pane>
                             <span slot="title">
                                 <i class="ni ni-collection"></i>
-                                Basicos
+                                Básicos
                             </span>
-                            <dt class="text-center">Detalles de la cita</dt>
+                            <dt class="text-center mt-3">Detalles de la cita</dt>
                             <a-tooltip placement="top">
                                 <template slot="title">
                                     <span v-if="selectedEvent.client">
@@ -605,7 +605,7 @@
                                 <span >Salida:</span>
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.end)}}</badge>
                             </base-button>
-                            <base-button class="mt-1 col-12" size="sm" type="secondary">
+                            <base-button v-if="selectedEvent.typePay" class="mt-1 col-12" size="sm" type="secondary">
                                 <span >Tipo de pago:</span>
                                 <badge style="font-size:0.8em !important" class="text-default" type="success">{{selectedEvent.typePay}}</badge>
                             </base-button>
@@ -623,6 +623,21 @@
                                     <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
                                 </span>
                             </base-button>
+                            <base-button class="mt-1 col-12" size="sm" type="secondary">
+                                <span >Detalles:</span>
+                            </base-button> 
+                            <base-input v-if="selectedEvent.extraData" alternative="">
+                                <textarea v-model="selectedEvent.extraData.details"  rows="4" class="form-control form-control-alternative" placeholder="Detalles..."></textarea>
+                            </base-input>
+                            <base-input v-else alternative="">
+                                <textarea v-model="selectedEvent.details"  rows="4" class="form-control form-control-alternative" placeholder="Detalles..."></textarea>
+                            </base-input>
+                            <center>
+                                <base-button v-on:click="editDateData()" outline size="sm" class="mx-auto col-4" type="default">
+                                    <span class="float-left">Editar</span>  
+                                    <span style="margin-top:3px" class="fa fa-edit float-right"></span>
+                                </base-button> 
+                            </center>
                             <div v-if="selectedEvent.microServices && selectedEvent.microServices.length > 0">
                                 <dt class="mt-3 text-center">Servicios adicionales</dt>
                                 <a-tooltip v-for="micro of selectedEvent.microServices" :key="micro" placement="top">
@@ -1565,7 +1580,6 @@ import mixinES from '../mixins/mixinES'
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
-            console.log(localStorage.firstname)
         },
         selectDateBlock(date, dateString){
             this.hourBlocking.dateBlocking = dateString
@@ -1825,7 +1839,6 @@ import mixinES from '../mixins/mixinES'
                     axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+employe.id, this.configHeader)
                     .then(res => {
                         if(res.data.status == "ok"){
-                            console.log(res.data.validOnline)
                             axios.put(endPoint.endpointTarget+'/employes', {
                                 id:employe.id,
                                 firstName: res.data.data.firstName,
@@ -1914,8 +1927,8 @@ import mixinES from '../mixins/mixinES'
             this.disableButton = true
             if (this.hourBlocking.dateBlocking != '' && this.hourBlocking.employe.name && this.hourBlocking.start != '' &&  this.hourBlocking.end != '') {
                 var splitDate = this.hourBlocking.dateBlocking.split('-')
-                try {console.log("PARA CUANDO DE ERROR bloquear")
-                    console.log(this.hourBlocking.dateBlocking)
+                try {
+                    
                     const generateLenders = await axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
                         date: splitDate[1]+'-'+splitDate[0]+'-'+splitDate[2],
                         branch: this.branch
@@ -2249,7 +2262,6 @@ import mixinES from '../mixins/mixinES'
                 const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
                 if (services.data.status == 'ok') {
                     this.services = services.data.data 
-                    console.log(this.services)
                     services.data.data.forEach(element => {this.countServices.push({count: 0})});
                 }else{
                     this.services = []
@@ -2797,7 +2809,6 @@ import mixinES from '../mixins/mixinES'
             })
         },
         selectClient(value){
-            console.log(value)
             if (value == 'register') {
                 this.dataClient.valid = false
                 this.dateClient.valid2 = false
@@ -2827,10 +2838,15 @@ import mixinES from '../mixins/mixinES'
                     valid: true,
                     valid2: true 
                 }
-                console.log(this.dataClient)
             } 
         },
         validRegister(){
+            if (this.dataClient.firstName.length == 1) {
+                this.dataClient.firstName = this.dataClient.firstName.toUpperCase()
+            }
+            if (this.dataClient.lastName.length == 1) {
+                this.dataClient.lastName = this.dataClient.lastName.toUpperCase()
+            }
             setTimeout(() => {
                 if (this.dataClient.firstName.length > 2 && this.dataClient.lastName.length > 2 && this.dataClient.email != '' && this.dataClient.phone.isValid && this.dataClient.birthday != '') {
                     if (this.dataClient.email.split('@').length == 2) {
@@ -2846,8 +2862,6 @@ import mixinES from '../mixins/mixinES'
                 else{
                     this.dataClient.valid2 = false
                 }
-                  console.log(this.dataClient.valid)
-                console.log(this.dataClient.valid2)
             }, 200);
             
         },
@@ -3376,8 +3390,6 @@ import mixinES from '../mixins/mixinES'
             }
         },
         onEventClick(event, e){
-            console.log("Evento")
-            console.log(event)
             // this.configDatePickerEdit.minDate = ''
             this.selectedEvent = event
             this.originalEmploye = this.selectedEvent.employe
@@ -3494,8 +3506,6 @@ import mixinES from '../mixins/mixinES'
                     isFirst: true,
                     _id: this.selectedEvent._id
                 }
-                console.log("este")
-                console.log(this.dataEditSend)
                 this.editSelectValid = false
                 setTimeout(() => {
                     this.editSelectValid = true
@@ -3511,7 +3521,6 @@ import mixinES from '../mixins/mixinES'
                         branch: this.branch
                     }, this.configHeader)
                     .then(res => {
-                        console.log(res)
                         this.availableEmployesEdit = res.data.array
                         axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
                             date: this.dataEditSend.date,
@@ -3845,7 +3854,6 @@ import mixinES from '../mixins/mixinES'
             }, 200);
         },
         editDate(){
-            console.log(this.dataEditSend)
             var valid = false
             if (this.validEditBlock) {
                 this.finalBlockEdit.forEach(element => {
@@ -3887,9 +3895,7 @@ import mixinES from '../mixins/mixinES'
                         this.dataEditSend.service.employe = this.dataEditSend.employe.name
                         this.dataEditSend.serviceSelectds = [this.dataEditSend.service]
                         var split = this.dataEditSend.date.split("-")
-                        console.log(split)
                         const dateNew = split[1]+"-"+split[0]+'-'+split[2]
-                        console.log(this.dataEditSend.serviceSelectds)  
                         this.finalDate = ""
                         setTimeout(() => {
                             this.sendConfirmation(idArray, this.selectedEvent.client.name, this.selectedEvent.client.email, this.dataEditSend.start, this.dataEditSend.end, this.registerDate.serviceSelectds, this.dataEditSend.employe, this.dataEditSend, true, dateNew)
@@ -4611,6 +4617,29 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
+        async editDateData(){
+            try{
+                const editDate = await axios.post(endPoint.endpointTarget+'/dates/editDataDate',{
+                    id: this.selectedEvent._id,
+                    details: this.selectedEvent.details
+                }, this.configHeader)
+
+                if (editDate) {
+                    this.$swal({
+                        type: 'success',
+                        icon: 'success',
+                        toast: true,
+                        position: 'top-end',
+                        title: 'Cambio exitoso',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getDates()
+                }
+            }catch(err){
+                console.log(err)
+            }
+        },
         microPrice(service, index){
             
             this.selectedEvent.services[index].microPrice = 0
@@ -4968,8 +4997,6 @@ import mixinES from '../mixins/mixinES'
             const nameFormat = name
             var dateFormat = ''
             var servicesFinal = []
-            console.log(date)
-            console.log(valid)
             if (valid) {
                 dateFormat = this.finalDate == "" ? start : this.finalDate
                 servicesFinal = data.serviceSelectds
@@ -4980,9 +5007,6 @@ import mixinES from '../mixins/mixinES'
                 servicesFinal[0].end = endGood
                 servicesFinal[0].employe = data.employe.name
             }
-            console.log("final")
-            console.log(this.finalDate)
-            console.log(this.finalDate == "" ? date : this.finalDate)
 
             axios.post(endPoint.endpointTarget+'/mails/dateMail', {
                 name: nameFormat,
@@ -4996,9 +5020,7 @@ import mixinES from '../mixins/mixinES'
                 valid: valid
             }, this.configHeader)
             .then(res => {
-                if (res.data.status == 'ok') {
-                    console.log(res.data.status)
-                }
+                
                 if (valid == false) {
                     this.$swal({
                         icon: 'success',
@@ -5566,7 +5588,6 @@ import mixinES from '../mixins/mixinES'
             })
         },
         insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg){
-            console.log("hola")
             this.load2 = true
             if (lender == 'Primera disponible') {
                 if (index == 0) {
@@ -5953,7 +5974,6 @@ import mixinES from '../mixins/mixinES'
         },
         setInitialsName(name){
             if (name.split(" ").length >= 2) {
-                console.log(name.split(" "))
                 return name.split(" ")[0][0]+name.split(" ")[1][0]
             }else{
                 return name[0]
@@ -6277,158 +6297,129 @@ import mixinES from '../mixins/mixinES'
     .vuecal__cell-split.class9Split {background-color: rgb(255, 209, 186, 0.1);}
     .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.1);}
     .class0 {
-        background:#eb765e7a;
-        border: 3px solid #eb755e;
+        background:#C4CBCA;
+
         color: black;
     }
     .class1 {
-        background:#eac5be8a;
-        border: 3px solid #EAC5BE;
+        background:#91D96D;
+
         color: black;
     }
     .class2 {
-    background:#bcd1ff80;
-    border: 3px solid #BCD1FF;
+    background:#13CDCD;
     color: black;
     }
     .class3 {
-    background:#ddefbd85;
-    border: 3px solid #DDEFBD;
+    background:#FDE59B;
     color: black;
     }
     .class4 {
-    background:#cdf2e28f;
-    border: 3px solid #CDF2E2;
+    background:#EBF5EE;
     color: black;
     }
     .class5 {
-    background:#b7e8cd8c;
-    border: 3px solid #B7E8CD;
+    background:#8E9DB8;
     color: black;
     }
     .class6 {
-    background:#c0e5dd86;
-    border: 3px solid #C0E5DD;
+    background:#ECDFD5;
     color: black;
     }
     .class7 {
-    background:#f2e6e683;
-    border: 3px solid #F2E6E6;
+    background:#F3FFD7;
     color: black;
     }
     .class8 {
-    background:#ffd6d681;
-    border: 3px solid #FFD6D6;
+    background:#BCB3B3;
     color: black;
     }
     .class9 {
-    background:#ffd1ba83;
-    border: 3px solid #FFD1BA;
+    background:#C8E4D2;
     color: black;
     }
     .class10 {
-    background:#fff3b58c;
-    border: 3px solid #FFF3B5;
+    background:#E4EAC2;
     color: black;
     }
     .class11 {
-    background:#efebd085;
-    border: 3px solid #EFEBD0;
+    background:#E6EAEF;
     color: black;
     }
     .class12 {
-    background:#ffe5e58a;
-    border: 3px solid #FFE5E5;
+    background:#A2A89F;
     color: black;
     }
     .class13 {
-    background:#a2cea18c;
-    border: 3px solid #A2CEA1;
+    background:#FDE59B;
     color: black;
     }
     .class14 {
-    background:#9fc1898a;
-    border: 3px solid #9EC189;
+    background:#FEDCAE;
     color: black;
     }
     .class15 {
-    background:#adc9d888;
-    border: 3px solid #ADC9D8;
+    background:#95EEEB;
     color: black;
     }
     .class16 {
-    background:#b0e09888;
-    border: 3px solid #B0E098;
+    background:#DED6CE;
     color: black;
     }
     .class17 {
-    background:#e8fccf83;
-    border: 3px solid #E8FCCF;
+    background:#B8AEA3;
     color: black;
     }
     .class18 {
-    background:#bbccea8f;
-    border: 3px solid #BBCCEA;
+    background:#E2DA78;
     color: black;
     }
     .class19 {
-    background:#a2bff28a;
-    border: 3px solid #A2BFF2;
+    background:#92C8A4;
     color: black;
     }
     .class20 {
-    background:#d6ffdf8a;
-    border: 3px solid #D6FFDF;
+    background:#FCEDD9;
     color: black;
     }
     .class21 {
-    background:#c2c8e88e;
-    border: 3px solid #C2C8E8;
+    background:#13CDCD;
     color: black;
     }
     .class22 {
-    background:#ebd4cb85;
-    border: 3px solid #EBD4CB;
+    background:#91D96D;
     color: black;
     }
     .class23 {
-    background:#eac5be8a;
-    border: 3px solid #EAC5BE;
+    background:#D0BEB3;
     color: black;
     }
     .class24 {
-    background:#a4d6ca8c;
-    border: 3px solid #A4D6CA;
+    background:#FFF870;
     color: black;
     }
     .class25 {
-    background:#caf7e283;
-    border: 3px solid #CAF7E2;
+    background:#78BC61;
     color: black;
     }
     .class26 {
     background:#caf7e273;
-    border: 3px solid #CAF7E2;
     color: black;
     }
     .class27 {
     background:#6ea08b81;
-    border: 3px solid #6EA08B;
     color: black;
     }
     .class28 {
     background:#ebd8d07e;
-    border: 3px solid #EBD8D0;
     color: black;
     }
     .class29 {
     background:#d3ab9e7e;
-    border: 3px solid #D3AB9E;
     color: black;
     }
     .class30 {
     background:#caf7e280;
-    border: 3px solid #CAF7E2;
     color: black;
     }
     .cursor-pointer{
@@ -6672,5 +6663,8 @@ import mixinES from '../mixins/mixinES'
     }
     .ifNoscreen .flatpickr-calendar.inline{
         margin-left: -2% !important;
+    }
+    .nav-pills .nav-link.active{
+        background-color: #172b4d !important;
     }
 </style>

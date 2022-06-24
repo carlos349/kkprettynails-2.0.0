@@ -299,7 +299,6 @@ export default {
             }
         },
         onSelectChange(selectedRowKeys,selected) {
-            console.log(selected)
             this.mails = ''
             selected.forEach((element, index) => {
                 if (index == 0) {
@@ -309,8 +308,6 @@ export default {
                 }
             });
             
-            console.log(this.mails)
-            console.log('selectedRowKeys changed: ', selectedRowKeys);
             this.selectedRowKeys = selectedRowKeys;
         },
         selectRow(value){
@@ -322,7 +319,6 @@ export default {
                     this.mails = this.mails + "," + element.email
                 }
             });
-            console.log(this.mails)
         },
         unselect(value){
             this.mails = ''
@@ -333,7 +329,6 @@ export default {
                     this.mails = this.mails + "," + element.email
                 }
             });
-            console.log(this.mails)
         },
         selectAll(value){
             this.mails = ''
@@ -344,11 +339,9 @@ export default {
                     this.mails = this.mails + "," + element.email
                 }
             });
-            console.log(this.mails)
         },
         unselectAll(value){
             this.mails = ''
-            console.log(this.mails)
         },
         async getClients(){
             // this.progress = false
@@ -452,7 +445,6 @@ export default {
                     branch: this.branch
                 }, this.configHeader)
                 .then(res => {
-                    console.log(res)
                     if (res.data.status == 'ok') {
                         this.$swal({
                             icon: 'success',

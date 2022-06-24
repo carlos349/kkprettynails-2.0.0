@@ -9,7 +9,7 @@
                 <div class="row">
                     <div class="col-lg-7 col-md-10">
                         <h1 class="display-2 text-white">Hola {{model.first_name}}</h1>
-                        <p class="text-white mt-0 mb-2 hideText">Este es tu perfil, puedes ver tu progreso trabajando para KKPrettyNails, en las diferentes secciones. Tambien puedes editar tus datos.</p>
+                        <p class="text-white mt-0 mb-2 hideText">Este es tu perfil, puedes ver tu progreso, en las diferentes secciones. Tambien puedes editar tus datos.</p>
                         <base-button size="sm" class="mb-2" type="info" v-on:click="inspector = true">Editar perfil</base-button>
                         <base-button size="sm" class="mb-2" type="info" v-on:click="modals.modal2 = true">Cambiar contraseña</base-button>
                     </div>
@@ -548,7 +548,6 @@
 				if (link != '') {
                     try {
                         const sales = await axios.get(endPoint.endpointTarget+'/employes/salesbyemploye/'+link, this.configHeader)
-                        console.log(sales)
                         this.sales = sales.data.data
                         this.monthLender = sales.data.data.length
                         for (let index = 0; index < sales.data.data.length; index++) {
@@ -585,7 +584,6 @@
                 if (link != '') {
                     try {
                         const employe = await axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+link, this.configHeader)
-                        console.log(employe)
                         this.advancement = employe.data.data.advancement
                         this.lenderBonus = employe.data.data.bonus
                         this.comision = employe.data.data.commission
@@ -623,7 +621,6 @@
             },
             handleFileUpload(){
                 this.file = this.$refs.file.files[0]
-                console.log(this.file)
             },
             async editProfile(){
 				let formData = new FormData();

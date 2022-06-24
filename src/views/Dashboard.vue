@@ -494,11 +494,9 @@
       },
       selectDate(dates, dateString){
         this.dateFilter = dateString
-        console.log(this.dateFilter)
       },
       calculatedProjection(){
         if (this.projection > 0) {
-          console.log(this.totalSale, this.workDays, this.projection)
           this.salesProjection = (this.totalSale / this.workDays) * (parseInt(this.projection))
           this.serviceProjection = (this.totalServices / this.workDays ) * (parseInt(this.projection))
           setTimeout(() => {
@@ -955,7 +953,6 @@
               branch: this.branch,
               dates: this.dateFilter
             }, this.configHeader)
-            console.log(getSales)
             this.graphData = getSales.data.series
             this.loadingChart = false
             // this.$refs.chartApis.updateOptions(this.chartOptions, false, true)

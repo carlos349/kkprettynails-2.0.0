@@ -48,7 +48,7 @@
                             <tab-pane>
                                 <span v-if="registerClient.valid2 == true" slot="title">
                                     <i class="ni ni-collection"></i>
-                                    Basicos
+                                    Básicos
                                 </span>
                                 <form role="form">
                                     <div class="row mt-4">
@@ -686,6 +686,12 @@ export default {
             }  
         },
         validRegister(){
+            if (this.registerClient.firstName.length == 1) {
+                this.registerClient.firstName = this.registerClient.firstName.toUpperCase()
+            }
+            if (this.registerClient.lastName.length == 1) {
+                this.registerClient.lastName = this.registerClient.lastName.toUpperCase()
+            }
             setTimeout(() => {
                 this.registerClient.valid = false
                 if (this.registerClient.firstName != '' && this.registerClient.lastName != '' && this.registerClient.email != '' && this.registerClient.phone.isValid && this.registerClient.birthday != '') {
@@ -760,7 +766,6 @@ export default {
             }
         },
         pushData(firstName,lastName,email,phone,instagram,attends,recommender,recommendations,lastAttend,createdAt,_id, birthday){
-            console.log('entro')
             this.registerClient =  {
                 firstName: firstName,
                 lastName: lastName,

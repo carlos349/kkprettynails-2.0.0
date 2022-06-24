@@ -53,6 +53,7 @@
                                     class="w-100"
                                     placeholder="Nombre del servicio"
                                     maxlenght="25"
+                                    v-on:keyup="validMayus()"
                                     addon-left-icon="fa fa-font"
                                     v-model="serviceRegister"
                                     addon-right-icon="fa fa-asterisk text-danger" >
@@ -61,7 +62,7 @@
                             <div class="col-md-12 mt-0 mb-2">
                                 <textarea class="form-control w-100 mt-0"  alternative
                                     placeholder="Descripción del servicio"
-                                    
+                                    v-on:keyup="validMayus()"
                                     v-model="serviceAditionalRegister">
                                 </textarea>
                             </div>
@@ -225,6 +226,7 @@
                                     class="w-100 mb-2"
                                     placeholder="Nombre"
                                     addon-left-icon="fa fa-font"
+                                    v-on:keyup="validMayusEdit()"
                                     v-model="serviceEdit"
                                 >
                                 </base-input>
@@ -232,7 +234,7 @@
                             <div class="col-md-12 mt-0 mb-2">
                                 <textarea class="form-control w-100 mt-0"  alternative
                                     placeholder="Descripción del servicio"
-                                    
+                                    v-on:keyup="validMayusEdit()"
                                     v-model="servicesAdditionalEdit">
                                 </textarea>
                             </div>
@@ -575,6 +577,7 @@
                                 class="pl-1"
                                 placeholder="Nombre de la categoría"
                                 id="catFocus"
+                                v-on:keyup="validMayusEdit()"
                                 v-model="nameCategory"
                                 addon-left-icon="fa fa-list-ol">
                             </base-input>
@@ -909,6 +912,27 @@ import mixinES from '../mixins/mixinES'
             }else{
                 this.modals.modal1 = true
             }
+        },
+        validMayus(){
+            if (this.serviceRegister.length == 1) {
+                this.serviceRegister = this.serviceRegister.toUpperCase()
+            }
+            if (this.serviceAditionalRegister.length == 1) {
+                this.serviceAditionalRegister = this.serviceAditionalRegister.toUpperCase()
+            }
+            
+        },
+        validMayusEdit(){
+            if (this.serviceEdit.length == 1) {
+                this.serviceEdit = this.serviceEdit.toUpperCase()
+            }
+            if (this.servicesAdditionalEdit.length == 1) {
+                this.servicesAdditionalEdit = this.servicesAdditionalEdit.toUpperCase()
+            }
+            if (this.nameCategory.length == 1) {
+                this.nameCategory = this.nameCategory.toUpperCase()
+            }
+            
         },
         deleteService(id){
             this.$swal({
@@ -1250,7 +1274,6 @@ import mixinES from '../mixins/mixinES'
         },
         selected(value, id){
             this.lenders[id - 1].valid = true
-            console.log(value)
             this.lenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no', validOnline: value.validOnline})
             this.EditlenderSelecteds.push({id: value._id, name: value.firstName+' '+value.lastName, class: value.class, days: value.days, img: value.users ? value.users.userImage : 'no', validOnline: value.validOnline})
         },
@@ -1344,7 +1367,6 @@ import mixinES from '../mixins/mixinES'
             }
             timeService = (this.editTimeHoursRegister * 60) + parseFloat(this.editTimeMinutesRegister)
             if (this.serviceEdit == '' || this.priceEdit == '' || timeService <= 0 || this.comissionEdit < 0) {
-                console.log(this.serviceEdit + ' - '+ this.priceEdit +' - '+ timeService +' - '+ this.comissionEdit)
                 this.$swal({
                     icon: 'error',
                     title: 'Debe rellenar los datos',

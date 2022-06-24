@@ -471,12 +471,10 @@ export default {
             try{
                 const getHours = await axios.get(endPoint.endpointTarget+'/configurations/getHours/'+this.branch, this.configHeader)
                 if (getHours.data.status == 'ok') {
-                    console.log(getHours)
                     for (const day of getHours.data.data) {
                         day.validator = false
                     }
                     this.days = getHours.data.data
-                    console.log(this.days)
                     // this.fromArray = getHours.data.data
                     // this.toArray = false
                 }
@@ -554,15 +552,11 @@ export default {
             }, 200);
         },
         chageOnlineValid(){
-            console.log("aja?"+ this.registerEmploye.online)
-            console.log(this.registerEmploye)
-            console.log("aje"+this.registerEmploye.online)
             if (this.registerEmploye.online) {
                 this.registerEmploye.online = false
             }else{
                 this.registerEmploye.online = true
             }
-            console.log(this.registerEmploye.online)
         },
         removeHour(day, index){
             setTimeout(() => {
@@ -577,7 +571,6 @@ export default {
         },
         addDay(id, value, valid, indes){
             if (valid) {
-                console.log(this.employes[this.indexEdit])
                 this.days[id - 1].validator = false
                 for (let index = 0; index < this.days.length; index++) {
                     const element = this.days[index];
@@ -664,7 +657,7 @@ export default {
                     // timer: 1500
                 })
             }else{
-                if (this.registerEmploye.firstName.length != '' && this.registerEmploye.lastName.length != '' && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
+                if (this.registerEmploye.firstName != '' && this.registerEmploye.lastName != '' && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
                     axios.post(endPoint.endpointTarget+'/employes', {
                         branch: this.branch,
                         days: this.selectedDays,
@@ -736,7 +729,7 @@ export default {
                     // timer: 1500
                 })
             }else{
-                if (this.registerEmploye.firstName.length > 3 && this.registerEmploye.lastName.length > 3 && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
+                if (this.registerEmploye.firstName != '' && this.registerEmploye.lastName != '' && this.registerEmploye.document.length > 1 && this.validHoursDays() == true) {
                     axios.put(endPoint.endpointTarget+'/employes', {
                         id:this.registerEmploye._id,
                         firstName: this.registerEmploye.firstName,
@@ -883,7 +876,6 @@ export default {
             
         },
         pushData(firstName,days,_id,document,lastName,branch,online, index){
-            console.log("Que pasa?")
             axios.get(endPoint.endpointTarget+'/employes/justOneById/'+_id, this.configHeader)
             .then(resData => {
                 this.originalDays = []
@@ -897,9 +889,6 @@ export default {
                 this.registerEmploye._id = _id
                 this.selectedDays = days
                 this.indexEdit = index
-                console.log("day1")
-                console.log(this.days)
-                console.log(days)
                 for (let index = 0; index < this.days.length; index++) {
                     const element = this.days[index];
                     for (let j = 0; j < this.registerEmploye.days.length; j++) {
@@ -934,14 +923,11 @@ export default {
                 }
             })
             
-            console.log("day2")
-            console.log(this.days)
         },
         validFields(field){
             if (field == 'c') {
                 if (this.registerUser.correo == this.registerUser.correoConfirm) {
                 this.registerUser.c = true
-                console.log("y entonces?")
                 }
                 else{
                     this.registerUser.c = false
@@ -998,6 +984,13 @@ export default {
             }
         },
         validRegister(){
+            if (this.registerEmploye.firstName.length == 1) {
+                this.registerEmploye.firstName = this.registerEmploye.firstName.toUpperCase()
+            }
+            if (this.registerEmploye.lastName.length == 1) {
+                this.registerEmploye.lastName = this.registerEmploye.lastName.toUpperCase()
+            }
+            
             if (this.registerEmploye.firstName != '' && this.registerEmploye.lastName != '' && this.registerEmploye.branch != '' && this.registerEmploye.document != '' && this.selectedDays.length > 0) {
                 this.registerEmploye.valid = this.selectedDays[0].hours.length > 0 ? true : false
             }
