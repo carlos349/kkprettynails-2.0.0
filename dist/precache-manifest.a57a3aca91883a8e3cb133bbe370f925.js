@@ -68,7 +68,7 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "49ba9ac7ac5209222311c184eac6b7bc",
+    "revision": "0d112a6f14e96ffda7dd09151fb05b6c",
     "url": "/index.html"
   },
   {
@@ -112,44 +112,44 @@ self.__precacheManifest = [
     "url": "/img/theme/employeReport.png"
   },
   {
-    "revision": "ced0f2c9d36acd10447db1f3b3339104",
-    "url": "/img/theme/employes.png"
-  },
-  {
     "revision": "ef90ef6ebf8cfa521445aea45be0f3d0",
     "url": "/img/theme/metrics.png"
+  },
+  {
+    "revision": "ced0f2c9d36acd10447db1f3b3339104",
+    "url": "/img/theme/employes.png"
   },
   {
     "revision": "4524351b9c58adb85b5e1b32374347ab",
     "url": "/img/theme/users.png"
   },
   {
-    "revision": "5080c7e40c107872ebe2",
-    "url": "/js/app.22678a5b.js"
+    "revision": "cd86d652b86e6236847e",
+    "url": "/js/app.bd4eedde.js"
   },
   {
     "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
     "url": "/img/theme/box.png"
   },
   {
-    "revision": "84335294072f0ad513fc8614b54a428a",
-    "url": "/img/theme/calendar.png"
-  },
-  {
     "revision": "1881d2a2c3f7bb5e1b4ac0b2622291b0",
     "url": "/img/theme/clients.png"
+  },
+  {
+    "revision": "84335294072f0ad513fc8614b54a428a",
+    "url": "/img/theme/calendar.png"
   },
   {
     "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
     "url": "/img/theme/configuration.png"
   },
   {
-    "revision": "b0c11510c7d2a8e2f2402be014387b85",
-    "url": "/img/theme/shop.png"
-  },
-  {
     "revision": "29e3026dd1091caff211c1761cb9d226",
     "url": "/img/theme/store.png"
+  },
+  {
+    "revision": "b0c11510c7d2a8e2f2402be014387b85",
+    "url": "/img/theme/shop.png"
   },
   {
     "revision": "e7be3ecd921efc88bbca5e090862eac7",
@@ -196,11 +196,11 @@ self.__precacheManifest = [
     "url": "/img/theme/Banner.png"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
-    "revision": "5080c7e40c107872ebe2",
+    "revision": "cd86d652b86e6236847e",
     "url": "/css/app.8f9d531d.css"
   },
   {
@@ -208,16 +208,16 @@ self.__precacheManifest = [
     "url": "/img/brand/calendar.png"
   },
   {
-    "revision": "c1733565b32b585676302d4233c39da8",
-    "url": "/fonts/nucleo-icons.c1733565.eot"
-  },
-  {
     "revision": "f82ec6ba2dc4181db2af35c499462840",
     "url": "/fonts/nucleo-icons.f82ec6ba.ttf"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "c1733565b32b585676302d4233c39da8",
+    "url": "/fonts/nucleo-icons.c1733565.eot"
+  },
+  {
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
     "revision": "b19bbdd813f73aa193678e5a04d297d8",
