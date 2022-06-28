@@ -550,7 +550,7 @@
         </a-spin>
         <modal :show.sync="dateModals.modal1" style="z-index:1"
                body-classes="p-0"
-               :header-classes="selectedEvent.class"
+               :header-classes="selectedEvent.class +  ' noBorder'"
                modal-classes="modal-dialog-centered modal-md">
             <h5 slot="header" class="modal-title" id="modal-title-notification">
                 {{dateSplit(selectedEvent.start)}} 
@@ -558,7 +558,8 @@
                 <span v-else>(Sistema)</span></h5>   
             <card type="secondary" shadow
                   
-                  :body-classes="selectedEvent.class"
+                  :body-classes="selectedEvent.class + ' noBorder'"
+                  style="border: none; border-radius:0"
                   class="border-0 pt-0">
                   <card shadow>
                     <div class="row mt-4">
@@ -993,27 +994,63 @@
             </template>
         </a-modal>
         <a-modal v-model="modals.modal3" title="Horarios bloqueados" :width="widthModals" :closable="true" >
-            <template>
-                <a-config-provider :locale="es_ES">
-                    <template #renderEmpty>
-                        <div style="text-align: center">
-                            <a-icon type="warning" style="font-size: 20px" />
-                            <h2>Sin bloqueos registrados</h2>
-                        </div>
-                    </template>
-                    <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen" >
-                        <template slot="date-slot" slot-scope="record, column">
-                            {{column.dateBlockings | formatDate}}
-                        </template>
-                        <template slot="delete-slot" slot-scope="record, column">
-                            <base-button @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end)" size="sm" type="danger">
-                                <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
-                            </base-button>
-                        </template>
-                    </a-table>
-                </a-config-provider> 
-            </template>
+            <tabs  fill class="flex-column flex-md-row">
+                        <card shadow>
+                            <tab-pane>
+                                <span  slot="title">
+                                    Bloqueos individuales
+                                </span>
+                                <template>
+                                    <a-config-provider :locale="es_ES">
+                                        <template #renderEmpty>
+                                            <div style="text-align: center">
+                                                <a-icon type="warning" style="font-size: 20px" />
+                                                <h2>Sin bloqueos registrados</h2>
+                                            </div>
+                                        </template>
+                                        <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen" >
+                                            <template slot="date-slot" slot-scope="record, column">
+                                                {{column.dateBlockings | formatDate}}
+                                            </template>
+                                            <template slot="delete-slot" slot-scope="record, column">
+                                                <base-button @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end)" size="sm" type="danger">
+                                                    <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
+                                                </base-button>
+                                            </template>
+                                        </a-table>
+                                    </a-config-provider> 
+                                </template>                             
+                            </tab-pane>
+
+                            <tab-pane>
+                                <span slot="title">
+                                    Bloqueos por día
+                                </span>
+                                <template>
+                                    <a-config-provider :locale="es_ES">
+                                        <template #renderEmpty>
+                                            <div style="text-align: center">
+                                                <a-icon type="warning" style="font-size: 20px" />
+                                                <h2>Sin bloqueos registrados</h2>
+                                            </div>
+                                        </template>
+                                        <a-table :columns="columnsForDay" :data-source="blockForDays" :scroll="getScreen" >
+                                            
+                                            <template slot="delete-slot" slot-scope="record, column">
+                                                
+                                                <base-button @click="deleteHourForDay(column.key)" size="sm" type="danger">
+                                                    <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
+                                                </base-button>
+                                            </template>
+                                        </a-table>
+                                    </a-config-provider> 
+                                </template>
+                            </tab-pane>
+                        </card>
+                    </tabs>
+            
             <template slot="footer">
+                <base-button @click="modals.modal3 = false, modals.modal6 = true ,Madeyour()" size="sm" type="warning">Bloquear día</base-button>
                 <base-button @click="modals.modal3 = false, modals.modal4 = true ,Madeyour()" size="sm" type="default">Bloquear horario</base-button>
             </template>
         </a-modal>
@@ -1048,6 +1085,24 @@
             </template>
             <template slot="footer">
                 <base-button @click="blockingHour" size="sm" type="default" :disabled="disableButton">Bloquear</base-button>
+            </template>
+        </a-modal>
+        <a-modal v-model="modals.modal6" title="Registrar bloqueo de día" :width="widthModals" :closable="true" >
+            <template>
+                
+                <!-- <a-date-picker placeholder="Seleccione fecha" class="w-100 clearBlockingDate" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" /> -->
+                
+                <label for="date">Seleccione un día especifico para bloquear</label>
+                <flat-picker 
+                    style="padding-top: 15px;padding-bottom: 15px;height:0"
+                    :config="configDatePickerBlockedForDays"
+                    class="form-control clearBlockingDate"
+                    v-model="dateBlockingForDay"
+                    placeholder="Seleccione un día">
+                </flat-picker>
+            </template>
+            <template slot="footer">
+                <base-button @click="pushBlockedDay" size="sm" type="default" >Bloquear día</base-button>
             </template>
         </a-modal>
     </div>
@@ -1109,6 +1164,8 @@ import mixinES from '../mixins/mixinES'
             start: '',
             end: ''
         },
+        blockForDays: [],
+        dateBlockingForDay: '',
         es_ES,
         spinningDate: false,
         locale,
@@ -1261,6 +1318,20 @@ import mixinES from '../mixins/mixinES'
                 scopedSlots: { customRender: 'delete-slot' } 
             }
         ],
+        columnsForDay: [
+            { 
+                title: 'Fecha',
+                dataIndex: 'date',
+                key: 'date',
+                scopedSlots: { customRender: 'date-slot' } 
+            },
+            { 
+                title: 'Eliminar',
+                dataIndex: 'key',
+                key: 'key',
+                scopedSlots: { customRender: 'delete-slot' } 
+            }
+        ],
         microPriceClick: 0,
         microPriceIndex:'',
         columnsDatesClosed: [{
@@ -1368,20 +1439,22 @@ import mixinES from '../mixins/mixinES'
             dateFormat: 'd-m-Y',
             locale: Spanish, // locale for this instance only
             minDate: new Date(),
-            "disable": [
-                    function(date) {
-                        // return true to disable
-                        return false;
-
-                    }
-                ]          
+            "disable": []          
         },
         configDatePickerBlocked: {
             allowInput: true,
             dateFormat: 'd-m-Y',
             locale: Spanish, // locale for this instance only
             minDate: new Date(),
-            enable: []        
+            enable: [],
+            "disable": []         
+        },
+        configDatePickerBlockedForDays: {
+            allowInput: true,
+            dateFormat: 'd-m-Y',
+            locale: Spanish, // locale for this instance only
+            minDate: new Date(),
+            "disable": []         
         },
         loadImage: false,
         configDatePickerEdit: {
@@ -1392,14 +1465,7 @@ import mixinES from '../mixins/mixinES'
             locale: Spanish, // locale for this instance only
             minDate: new Date(),
             maxDate: '', 
-            "disable": [
-                function(date) {
-                    // return true to disable
-                    return false;
-
-                },
-                
-            ] 
+            "disable": [] 
         },
         socketValidator: true,
         availableEmployesEdit:[],
@@ -1468,6 +1534,7 @@ import mixinES from '../mixins/mixinES'
             modal3: false,
             modal4: false,
             modal5: false,
+            modal6: false,
             message: "",
             icon: '',
             type:''
@@ -1825,6 +1892,24 @@ import mixinES from '../mixins/mixinES'
                 this.totalPrice = this.totalPrice - price
             }
         },
+        async deleteHourForDay(key){
+            try {
+                const blockHourForDay = await axios.post(endPoint.endpointTarget+'/configurations/deletehourforday', {
+                    key: key
+                }, this.configHeader)
+                if (blockHourForDay) {
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Bloqueo eliminado con éxito',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.getConfiguration()
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        },
         async deleteHour(id, employe, dateBlocking, start, end){
             try {
                 const blockHour = await axios.post(`${endPoint.endpointTarget}/dates/deleteBlockingHour`, {
@@ -2044,6 +2129,7 @@ import mixinES from '../mixins/mixinES'
             this.imgUser = localStorage.imgUser
             this.idUser = localStorage._id
         },
+        
         async getMicroServices(){
             try {
                 const getMicro = await axios.get(endPoint.endpointTarget+'/configurations/getMicroservice/'+this.branch, this.configHeader)
@@ -2104,6 +2190,11 @@ import mixinES from '../mixins/mixinES'
                             daysBlock.push(days.day == 0 ? 7 : days.day)
                         }
                     }
+                    if (this.configurations.blockedDays) {
+                        
+                        this.blockForDays = this.configurations.blockedDays
+                    }
+                    
                     this.hideDays = daysBlock
                 }else{
                     this.configurations = {}
@@ -2130,16 +2221,86 @@ import mixinES from '../mixins/mixinES'
             }
             this.configDatePicker.maxDate = new Date().setMonth(new Date().getMonth() + this.configurations.datesPolitics.limitTimeDate)
             const blockHours = this.configurations.blockHour
-            this.configDatePicker.disable = [
+            
+            this.configDatePicker.disable = []
+            this.configDatePickerEdit.disable = []
+            this.configDatePickerBlocked.disable = []
+            this.configDatePickerBlockedForDays.disable = []
+
+            this.configDatePicker.disable.push(
                 function(date) {
                     return blockHours[date.getDay()].status == true ? false : true;
                 }
-            ]
-            this.configDatePickerEdit.disable = [
+            )
+            this.configDatePickerEdit.disable.push(
                 function(date) {
                     return blockHours[date.getDay()].status == true ? false : true;
                 }
-            ]
+            )
+            this.configDatePickerBlocked.disable.push(
+                function(date) {
+                    return blockHours[date.getDay()].status == true ? false : true;
+                }
+            )
+            this.configDatePickerBlockedForDays.disable.push(
+                function(date) {
+                    return blockHours[date.getDay()].status == true ? false : true;
+                }
+            ) 
+                
+            
+            this.blockForDays.forEach(element => {
+                this.configDatePicker.disable.push(element.date)
+                
+                this.configDatePickerEdit.disable.push(element.date.split("-")[1]+"-"+element.date.split("-")[0]+"-"+element.date.split("-")[2])
+                
+                this.configDatePickerBlocked.disable.push(element.date)
+                this.configDatePickerBlockedForDays.disable.push(element.date)
+            }); 
+        },
+        async pushBlockedDay(){
+            if (this.dateBlockingForDay != '') {
+                try {
+                    var dates = []
+                    if (this.configurations.blockedDays) {
+                        dates = this.configurations.blockedDays
+                    }  
+                    const pushDay = await axios.post(endPoint.endpointTarget+'/configurations/addBlockedday', {
+                        id: this.configurations._id,
+                        dates: dates,
+                        date: this.dateBlockingForDay
+                    }, this.configHeader)
+                    if (pushDay.data.status == 'ok') {
+                        this.$swal({
+                            type: 'success',
+                            icon: 'success',
+                            title: 'Bloqueo creado con éxito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.modals.modal6 = false
+                        this.modals.modal3 = true
+                        this.getConfiguration()
+                    }else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Ya existe un bloqueo con este día',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }else{
+                this.$swal({
+                    icon: 'error',
+                    title: 'Debe elegir una fecha',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+            
         },
         validatorLendersDaysSplit(change, event){
             this.splitDays = []
@@ -6304,128 +6465,188 @@ import mixinES from '../mixins/mixinES'
     .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.1);}
     .class0 {
         background:#C4CBCA;
-
+        border: 1px solid #fff;
+        border-radius: 7px;
         color: black;
     }
     .class1 {
         background:#91D96D;
-
+        border: 1px solid #fff;
+        border-radius: 7px;
         color: black;
     }
     .class2 {
     background:#13CDCD;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class3 {
     background:#FDE59B;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class4 {
     background:#EBF5EE;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class5 {
     background:#8E9DB8;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class6 {
     background:#ECDFD5;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class7 {
     background:#F3FFD7;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class8 {
     background:#BCB3B3;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class9 {
     background:#C8E4D2;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class10 {
     background:#E4EAC2;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class11 {
     background:#E6EAEF;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class12 {
     background:#A2A89F;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class13 {
     background:#FDE59B;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class14 {
     background:#FEDCAE;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class15 {
     background:#95EEEB;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class16 {
     background:#DED6CE;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class17 {
     background:#B8AEA3;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class18 {
     background:#E2DA78;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class19 {
     background:#92C8A4;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class20 {
     background:#FCEDD9;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class21 {
     background:#13CDCD;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class22 {
     background:#91D96D;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class23 {
     background:#D0BEB3;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class24 {
     background:#FFF870;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class25 {
     background:#78BC61;
-    color: black;
-    }
+
+ color: black;
+border: 1px solid #fff;
+        border-radius: 7px;    }
     .class26 {
     background:#caf7e273;
+border: 1px solid #fff;
+        border-radius: 7px;
     color: black;
     }
     .class27 {
     background:#6ea08b81;
+border: 1px solid #fff;
+        border-radius: 7px;
     color: black;
     }
     .class28 {
     background:#ebd8d07e;
+border: 1px solid #fff;
+        border-radius: 7px;
     color: black;
     }
     .class29 {
     background:#d3ab9e7e;
+border: 1px solid #fff;
+        border-radius: 7px;
     color: black;
     }
     .class30 {
     background:#caf7e280;
+border: 1px solid #fff;
+        border-radius: 7px;
     color: black;
     }
     .cursor-pointer{
@@ -6672,5 +6893,9 @@ import mixinES from '../mixins/mixinES'
     }
     .nav-pills .nav-link.active{
         background-color: #172b4d !important;
+    }
+    .noBorder{
+        border: none  !important;
+        border-radius: 0;
     }
 </style>

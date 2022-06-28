@@ -694,11 +694,7 @@
                     dateFormat: 'd-m-Y',
                     locale: Spanish, // locale for this instance only
                     minDate: new Date(),
-                    "disable": [
-                        function(date) {
-                            return false;
-                        }
-                    ] 
+                    "disable": [] 
                            
                 },
                 validPay:false,
@@ -841,6 +837,7 @@
                     }
                 },
                 ref: '',
+                blockForDays:[],
                 microServices: [],
                 selectedMicro: [],
                 safe: [],
@@ -882,6 +879,10 @@
                             if (this.configurationsBranch.bussinessLogo != '') {
                                 this.logoBranch = this.configurationsBranch.bussinessLogo
                             }
+
+                            if (this.configurationsBranch.blockedDays) {
+                                this.blockForDays = this.configurationsBranch.blockedDays
+                            }
                             
                             if (this.configurationsBranch.datesPolitics.onlineDates) {
                                 this.validVerifyFunc()
@@ -894,18 +895,18 @@
                                 })
                             }
                             const blockHours = this.configurationsBranch.blockHour
-                            this.configDate.disable = [
+                            this.configDate.disable.push(
                                 function(date) {
-                                    // var days = 10
-                                    // for (const element of blockHours) {
-                                    //     if (element.day === date.getDay()) {
-                                    //         days = element.status ? element.day : 10
-                                    //     }
-                                    // }
-                                    // console.log(days)
                                     return blockHours[date.getDay()].status == true ? false : true;
                                 }
-                            ]
+                            )
+                                
+                            
+                
+                            
+                            this.blockForDays.forEach(element => {
+                                this.configDate.disable.push(element.date)
+                            }); 
                         }
                     }).catch(err => {
                         if (!err.response) {
