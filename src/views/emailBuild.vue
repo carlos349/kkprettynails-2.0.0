@@ -16,39 +16,14 @@
         </base-header>
         <modal :show.sync="modals.modal1" modal-classes="modal-lg">
             <template v-slot:header>
-                <h5 class="modal-title" id="exampleModalLabel">Lista de clientes <span v-if="hasSelected"> - {{ `${selectedRowKeys.length} Cliente(s) seleccionados` }}</span></h5>
+                <h5 class="modal-title" id="exampleModalLabel">Importar clientes desde un Excel <span v-if="hasSelected"> <b>- {{ `${dataExcel.length} Cliente(s) importados` }}</b> </span></h5>
             </template>
             <div style="margin-top:-20px">
-                <center>
-                    <h3>Filtrar por fecha de atención</h3>
-                    <a-range-picker ref="datePick" style="width:60%;" class="rangeInput mb-3"  :ranges="{ Hoy: [moment(), moment()], 'Este mes': [moment(), moment().endOf('month')] }" @change="selectDate" :locale="es_ES" :placeholder="['Desde', 'Hasta']" />
-                    <base-button :disabled="dateFind.length > 0 ? false : true" size="sm" class="mr-2 ml-2" style="margin-top:-5px;"   v-on:click="filterClients" type="success">
-                        <a-icon type="search" style="vertical-align:1px;font-size:1.8em;" />
-                    </base-button>
-                    <base-button @click="getClients(), selectedRowKeys = []" size="sm" class="mr-2" style="margin-top:-5px;" type="secondary">
-                        <a-icon type="undo" style="vertical-align:1px;font-size:1.8em;" />
-                    </base-button>
-                </center>
-                <!-- <a-table :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" :columns="columns" :data-source="clients">
-                    <template slot="name" slot-scope="record, column">
-                        {{column.firstName}} {{column.lastName}}
-                    </template>
-                    <template slot="date-format" slot-scope="record">
-                        {{record | formatDate}}
-                    </template>
-                </a-table> -->
-
-                <vue-bootstrap4-table :rows="clients" :columns="columnsLender" :classes="classes" :config="configLender" @on-unselect-row="unselect" @on-all-select-rows="selectAll" @on-select-row="selectRow" @on-all-unselect-rows="unselectAll" :footer="false" >
-                    <template slot="date-format" slot-scope="props">
-                        {{props.row.lastAttend | formatDate}}
-                        <!-- <center>
-                            <base-button v-on:click="unSelected(props.row._id, props.row.vbt_id)" class="w-25" size="sm" type="success" icon="ni ni-check-bold" v-if="props.row.valid == true">
-                            </base-button>
-                            <base-button v-on:click="selected(props.row, props.row.vbt_id)" class="w-25" size="sm" type="danger" icon="fa fa-ban" v-else>
-                            </base-button>
-                        </center> -->
-                        </template>
-                </vue-bootstrap4-table>
+                <upload-excel-component :on-success="handleSuccess"  />
+                <hr>
+                <a-table v-if="hasSelected" :columns="columns" :data-source="dataExcel">
+                    
+                </a-table>
             </div>
             <template v-slot:footer>
                 <base-button type="default" @click="modals.modal1 = false">Listo</base-button>
@@ -93,7 +68,7 @@
             <h1>Constructor deshabilitado en vista movil</h1>
         </div>
         <div class="container-fluid row">
-            <div class="col-md-6 mt-1">
+            <div class="col-md-5 mt-1">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text bg-default" id="basic-addon1">Asunto:</span>
@@ -104,11 +79,14 @@
             <div class="col-md-4 col-8 mt-1">
                 <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/>
             </div>
-            <div class="col-md-2 col-4 mt-1">
-                <base-button style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Lista de clientes</base-button>
+            <div class="col-md-3 col-4 mt-1">
+                <div class="row">
+                    <base-button style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Importar clientes</base-button>
                 <button :class="screenClases == 'phone' ? 'w-100' : ''" class="btn btn-default" v-on:click="SendMail">
                     <i class="fa fa-paper-plane"></i>
                 </button>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -120,6 +98,7 @@ import axios from 'axios'
 import router from '../router'
 import mixinUserToken from '../mixins/mixinUserToken'
 import { EmailEditor } from 'vue-email-editor';
+import UploadExcelComponent from '../components/importExcel'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import moment from 'moment';
 import 'moment/locale/es';
@@ -135,6 +114,31 @@ export default {
                     "x-access-token": localStorage.userToken
                 }
             },
+            hasSelected: false,
+            columns : [
+                
+                {
+                    title: 'Nombre',
+                    dataIndex: 'Nombres',
+                    key: 'Nombres',
+                },
+                {
+                    title: 'Correo',
+                    dataIndex: 'Email',
+                    key: 'Email',
+                },
+                {
+                    title: 'Ultima atención',
+                    key: 'Ultima atencion',
+                    dataIndex: 'Ultima atencion'
+                },
+                {
+                    title: 'Cliente desde',
+                    key: 'Cliente desde',
+                    dataIndex: 'Cliente desde'
+                }
+            ],
+            dataExcel: '',
             mails: '',
             moment,
             es_ES,
@@ -145,22 +149,7 @@ export default {
             },
             dateFind:'',
             clients:[],
-            columns: [
-                {
-                    title: 'Nombre',
-                    dataIndex: 'firstName',
-                    scopedSlots: { customRender: 'name' },
-                },
-                {
-                    title: 'Correo',
-                    dataIndex: 'email',
-                },
-                {
-                    title: 'Atención',
-                    dataIndex: 'lastAttend',
-                    scopedSlots: { customRender: 'date-format' },
-                },
-            ],
+            
             classes: {
                 table: "table-bordered table-striped tableClientsEmail",
                 row: "myRow",
@@ -224,7 +213,8 @@ export default {
                 social: { enabled: true },
                 text: { enabled: true },
                 timer: { enabled: true },
-                html: { enabled: true }
+                html: { enabled: true },
+                userUploads: {enabled: true}
             },
             appearance: {
                 theme: 'dark',
@@ -240,7 +230,8 @@ export default {
     },
     components: {
         EmailEditor,
-        VueBootstrap4Table
+        VueBootstrap4Table,
+        UploadExcelComponent
     },
     created(){
         this.getMails()
@@ -253,6 +244,20 @@ export default {
         // },
     },
     methods: {
+        handleSuccess({ results }) {
+            this.dataExcel = []
+            this.dataExcel = results
+            this.hasSelected = true
+            this.mails = ''
+
+            results.forEach((element, index) => {
+                if (index == 0) {
+                    this.mails = element.Email
+                }else{
+                    this.mails = this.mails + "," + element.Email
+                }
+            });
+        },
         async filterClients(){
             this.inspectorFilter = true
             try {

@@ -38,8 +38,8 @@
               <div class="list-group list-group-flush" style="z-index:10000">
                 
                 <a v-for="notification in notifications" :key="notification._id" href="#!" class="list-group-item list-group-item-action">
-                  <router-link :to="notification.link">
-                    <div class="row align-items-center">
+                  
+                    <div v-on:click="pushLink(notification.link)" class="row align-items-center">
                       <div class="col-auto">
                         <!-- Avatar -->
                         <img alt="Image placeholder" v-if="notification.userImage == '' || notification.userImage == null" src="img/theme/profile-default.png" class="avatar rounded-circle">
@@ -57,7 +57,6 @@
                         <p class="text-sm mb-0">{{formatDetail(notification.detail)}} <br> {{notification.detail.split('~')[1]}}</p>
                       </div>
                     </div>
-                  </router-link>
                 </a>
                 
                 <a-empty v-if="notifications.length == 0" :image="simpleImage">
@@ -171,6 +170,7 @@
   import endPoint from '../../config-endpoint/endpoint.js'
   import EventBus from '../components/EventBus'
   import io from 'socket.io-client';
+  import router from '../router'
   import jwtDecode from 'jwt-decode'
   import { Empty } from 'ant-design-vue';
   import vueCustomScrollbar from 'vue-custom-scrollbar'
@@ -210,6 +210,12 @@
       this.getToken()
     },
     methods: {
+      pushLink(link){
+          router.push(link)
+          setTimeout(() => {
+            EventBus.$emit('notifyLink', 'reload') 
+          }, 1000);
+      },
       toggleSidebar() {
         this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
       },

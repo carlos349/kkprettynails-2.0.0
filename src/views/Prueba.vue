@@ -72,6 +72,7 @@
                                         Cargo: Prestador
                                         </div>
                                     </base-button>
+                                    <upload-excel-component :on-success="handleSuccess"  />
                                     
                                 </div>
                                 <div class="row mt-4">
@@ -156,10 +157,14 @@
 import axios from 'axios'
 import router from '../router'
 import endPoint from '../../config-endpoint/endpoint.js'
+import UploadExcelComponent from '../components/importExcel'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
   export default {
     name: 'login',
+    components: {
+        UploadExcelComponent
+    },
     data() {
       return {
         model: {
@@ -234,6 +239,9 @@ import jwtDecode from 'jwt-decode'
                 })
                 this.loading = false
             })
+        },
+        handleSuccess({ results, header }) {
+            this.dataExcel = results
         },
         emitMethod(status) {
             EventBus.$emit('loggedin', status)

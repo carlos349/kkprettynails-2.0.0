@@ -1009,6 +1009,38 @@
                                             </div>
                                         </template>
                                         <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen" >
+                                            <div
+                                                slot="filterDropdown"
+                                                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                                                style="padding: 8px"
+                                                >
+                                                <a-input
+                                                    v-ant-ref="c => (searchInput = c)"
+                                                    :placeholder="`Buscar por ${column.title.toLowerCase()}`"
+                                                    :value="selectedKeys[0]"
+                                                    style="width: 188px; margin-bottom: 8px; display: block;"
+                                                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                                                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                                                />
+                                                <a-button
+                                                    type="primary"
+                                                    icon="search"
+                                                    size="small"
+                                                    style="width: 90px; margin-right: 8px"
+                                                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                                                >
+                                                    Buscar
+                                                </a-button>
+                                                <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                                                    Restablecer
+                                                </a-button>
+                                            </div>
+                                            <a-icon
+                                                slot="filterIcon"
+                                                slot-scope="filtered"
+                                                type="search"
+                                                :style="{ color: filtered ? '#108ee9' : undefined }"
+                                            />
                                             <template slot="date-slot" slot-scope="record, column">
                                                 {{column.dateBlockings | formatDate}}
                                             </template>
@@ -1294,11 +1326,36 @@ import mixinES from '../mixins/mixinES'
                 title: 'Fecha',
                 dataIndex: 'dateBlocking',
                 key: 'dateBlocking',
+                defaultSortOrder: 'descend',
+                sorter: (a, b) => new Date(a.dateBlocking).getTime() - new Date(b.dateBlocking).getTime(),
                 scopedSlots: { customRender: 'date-slot' } 
             },
             { 
                 title: 'Empleado',
                 dataIndex: 'employe.name',
+                sorter: (a, b) => {
+                     if (a.employe.name > b.employe.name) {
+                        return -1;
+                    }
+                    if (b.employe.name > a.employe.name) {
+                        return 1;
+                    }
+                    return 0;
+                },
+                sortDirections: ['descend', 'ascend'],
+                scopedSlots: {
+                    filterDropdown: 'filterDropdown',
+                    filterIcon: 'filterIcon',
+                    customRender: 'names-slot',
+                },
+                onFilter: (value, record) => record.employe.name.toString().toLowerCase().includes(value.toLowerCase()),
+                onFilterDropdownVisibleChange: visible => {
+                    if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    }, 0);
+                    }
+                },
                 key: 'employe.name'
             },
             { 
@@ -1323,6 +1380,7 @@ import mixinES from '../mixins/mixinES'
                 title: 'Fecha',
                 dataIndex: 'date',
                 key: 'date',
+                sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
                 scopedSlots: { customRender: 'date-slot' } 
             },
             { 
@@ -1603,6 +1661,8 @@ import mixinES from '../mixins/mixinES'
         load3:false,
         load4:false,
         load5:false,
+        searchText: '',
+        searchedColumn: '',
         delay:1500,
         configHeader: {
             headers: {
@@ -1647,6 +1707,8 @@ import mixinES from '../mixins/mixinES'
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
+            
+            
         },
         selectDateBlock(date, dateString){
             this.hourBlocking.dateBlocking = dateString
@@ -1909,6 +1971,15 @@ import mixinES from '../mixins/mixinES'
             } catch (error) {
                 console.log(error)
             }
+        },
+        handleSearch(selectedKeys, confirm, dataIndex) {
+            confirm();
+            this.searchText = selectedKeys[0];
+            this.searchedColumn = dataIndex;
+        },
+        handleReset(clearFilters) {
+            clearFilters();
+            this.searchText = '';
         },
         async deleteHour(id, employe, dateBlocking, start, end){
             try {
@@ -2374,9 +2445,21 @@ import mixinES from '../mixins/mixinES'
                 try {
                     const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
                     this.events = dates.data.data
+                    if (this.$route.query.id) {
+                        const found = this.events.find(element => element._id == this.$route.query.id);
+                        
+                        this.onEventClick(found)
+                    }
                 }catch(err){
                     
                 }
+            }
+        },
+        viewLink(){
+            if (this.$route.query.id) {
+                const found = this.events.find(element => element._id == this.$route.query.id);
+                
+                this.onEventClick(found)
             }
         },
         filterOption(input, option) {
@@ -3347,16 +3430,18 @@ import mixinES from '../mixins/mixinES'
                                     })
                                     this.ifDisabled = false
                                     this.$refs.wizard.reset()
-                                    axios.post(endPoint.endpointTarget+'/notifications', {
-                                        userName:'Empleado: '+localStorage.firstname + " " + localStorage.lastname,
-                                        userImage: '',
-                                        detail: 'Creo cita a '+this.dateClient.name+' desde agendamiento (Sistema) '+this.finalDate,
-                                        branch: this.branch,
-                                        link: 'agendamiento'
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.socket.emit('sendNotification', res.data.data)
-                                    })
+                                    res.data.id.forEach(element => {
+                                        axios.post(endPoint.endpointTarget+'/notifications', {
+                                            userName:'Empleado: '+localStorage.firstname + " " + localStorage.lastname,
+                                            userImage: '',
+                                            detail: 'Creo cita a '+this.dateClient.name+' desde agendamiento (Sistema) '+this.finalDate,
+                                            branch: this.branch,
+                                            link: 'agendamiento?id=' + element._id
+                                        }, this.configHeader)
+                                        .then(res => {this.socket.emit('sendNotification', res.data.data)})
+                                    });
+
+                                    
                                     setTimeout(() => {
                                         this.showCalendar = true
                                         
@@ -3561,6 +3646,7 @@ import mixinES from '../mixins/mixinES'
             })
             
             this.dateModals.modal1 = true
+            router.push("agendamiento")
             if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
                 this.editDisabled = true
             }else{
@@ -3611,6 +3697,7 @@ import mixinES from '../mixins/mixinES'
             //     console.log("AQUI")
             
             // }, 2000);
+            
         },
         dateSplit(value){
             const date = new Date(value).format('DD MM YYYY')
@@ -6363,6 +6450,9 @@ import mixinES from '../mixins/mixinES'
         EventBus.$on('changeBranch', status => {
             this.getBranch()
         })
+        EventBus.$on('notifyLink', status => {
+            this.viewLink()
+        })
     }
   };
 </script>
@@ -6464,19 +6554,19 @@ import mixinES from '../mixins/mixinES'
     .vuecal__cell-split.class9Split {background-color: rgb(255, 209, 186, 0.1);}
     .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.1);}
     .class0 {
-        background:#C4CBCA;
+        background:rgb(196, 203, 202);
         border: 1px solid #fff;
         border-radius: 7px;
         color: black;
     }
     .class1 {
-        background:#91D96D;
+        background:rgb(145, 217, 109);
         border: 1px solid #fff;
         border-radius: 7px;
         color: black;
     }
     .class2 {
-    background:#13CDCD;
+    background:rgb(19, 205, 205);
 
  color: black;
 border: 1px solid #fff;
