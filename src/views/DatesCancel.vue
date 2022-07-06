@@ -50,6 +50,7 @@ export default {
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             userName:'Cliente: '+res.data.data.client.name,
                             userImage: '',
+                            employeId: res.data.data.employe.id,
                             detail: 'Canceló su cita para el día '+this.formatDateTwo(res.data.data.createdAt),
                             branch: res.data.data.branch,
                             link: 'agendamiento'

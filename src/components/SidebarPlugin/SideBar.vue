@@ -103,7 +103,7 @@
     data() {
       return {
         haveImage: localStorage.imageUser,
-        imgUser: endPoint.imgEndpoint + localStorage.imageUser,
+        imgUser:  localStorage.imageUser,
         screen: screen.width,
         auth: [],
         branches: [],

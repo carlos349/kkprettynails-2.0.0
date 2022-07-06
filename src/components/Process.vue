@@ -2247,7 +2247,7 @@ export default {
                     axios.post(endPoint.endpointTarget+'/notifications', {
                         branch: this.branch,
                         userName:this.firstNameUser + " " + this.lastNameUser,
-                        userImage:this.imgUser,
+                        userImage:localStorage.imageUser,
                         detail: Detail,
                         link: 'Inventario'
                     }, this.configHeader)

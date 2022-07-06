@@ -634,6 +634,11 @@ import mixinES from '../mixins/mixinES'
                 if (sales.data.status == 'ok') {
                     this.sales = sales.data.data
                     this.progress = false
+                    if (this.$route.query.id) {
+                        const found = this.sales.find(element => element._id == this.$route.query.id);
+                        
+                        this.dataReport(found)
+                    }
                 }else{
                     this.sales = []
                     this.progress = false
@@ -702,6 +707,9 @@ import mixinES from '../mixins/mixinES'
             // this.arreglo.manicurista = this.arreglo.manicurista.split(' / ')
             // this.arreglo.descuento = this.arreglo.descuento.split(' - ')
             this.modals.modal1 = true
+            setTimeout(() => {
+                router.push("Ventas")
+            }, 3000);
         },
         cancelSale(id){
             this.$swal({
@@ -731,9 +739,9 @@ import mixinES from '../mixins/mixinES'
                             axios.post(endPoint.endpointTarget+'/notifications', {
                                 branch: this.branch,
                                 userName:this.firstNameUser + " " + this.lastNameUser,
-                                userImage:this.imgUser,
+                                userImage:localStorage.imageUser,
                                 detail: 'Anuló una venta del día '+ this.$options.filters.formatDate(this.dataSale.createdAt) ,
-                                link: 'Ventas'
+                                link: 'Ventas?id=' + id
                             }, this.configHeader).then(res => {
                                 if (res.data.status == 'ok') {
                                     this.socket.emit('sendNotification', res.data.data)
@@ -852,6 +860,13 @@ import mixinES from '../mixins/mixinES'
                 this.validClient = false
             }
         },
+        viewLink(){
+            if (this.$route.query.id) {
+                const found = this.sales.find(element => element._id == this.$route.query.id);
+                
+                this.dataReport(found)
+            }
+        },
         printReport(id){
             let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
 width=0,height=0,left=-1000,top=-1000`;
@@ -865,6 +880,9 @@ width=0,height=0,left=-1000,top=-1000`;
         })
         EventBus.$on('changeBranch', status => {
             this.getBranch()
+        })
+        EventBus.$on('notifyLinkSales', status => {
+            this.viewLink()
         })
     },
     computed: {

@@ -341,9 +341,18 @@
                             <hr class="w-50 mb-0 mt-0">
                           </div>
                           <div class="col-md-4">
-                              <a-select v-if="selectedConfig == 'blackList'" show-search option-filter-prop="children" :filter-option="filterClients" class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione un cliente" size="large">
-                                  <a-select-option v-for="client of clients" :key="client._id" @click="selectClient(client)" :value="client.firstName + ' ' + client.lastName + ' - ' + client.email">
-                                      {{client.firstName + ' ' + client.lastName + ' - ' + client.email}}
+                                <a-select
+                                  v-if="selectedConfig == 'blackList'" 
+                                  show-search 
+                                  option-filter-prop="children" 
+                                  :filter-option="filterClients" 
+                                  class="input-group-alternative w-100 mb-4 mt-2" 
+                                  default-value="Seleccione un cliente" size="large"
+                                  :allowClear="true"
+                                  @search="searchClientRegex">
+                                  
+                                  <a-select-option v-for="client in clients" :key="client._id" @click="selectClient(client)" :value="client.firstName + ' ' + client.lastName + ' - ' + client.email">
+                                      {{client.firstName}} {{client.lastName}} ({{client.email}})
                                   </a-select-option>
                               </a-select>
                               <base-button outline type="default" size="sm" class="w-50 mb-2" v-on:click="insertClient">
@@ -906,7 +915,6 @@
       },
       created(){
         this.getBranch()
-        this.getClients()
         this.getEmployes()
       },
       methods: {
@@ -947,32 +955,21 @@
                 }
             }
         },
-        async getClients(){
-            try {
-              const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
-              if (getAllClients.data.data.length > 0) {
-                this.clients = getAllClients.data.data
-              }
-            }catch (err) {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
+        async searchClientRegex(value) {
+            if (value != '') {
+                this.clients = []
+                try {
+                    const getClient = await axios.get(endPoint.endpointTarget+'/clients/regex/'+ value, this.configHeader)
+                    if (getClient.data.status == 'ok') {
+                        this.clients = getClient.data.data
+                    }
+                }catch(err){
+                    
                 }
+            }else{
+                this.clients = []
             }
+            
         },
         async getConfiguration() {
           try{

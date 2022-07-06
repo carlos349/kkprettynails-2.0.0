@@ -53,7 +53,11 @@
                             </a-list>
                         </a-config-provider>
                         <div v-if="profileSelect.name != ''" class="p-2">
-                            <p> <strong class="mr-2">Activar comisiones </strong> <a-switch  :checked="commissionsProfile" @change="activeCommission" /></p> 
+                            <div class="row">
+                                <p class="ml-4"> <strong class="mr-2">Activar comisiones </strong> <a-switch  :checked="commissionsProfile" @change="activeCommission" /></p> 
+                                <p class="ml-4"> <strong class="mr-2">Notificaciones limitadas</strong> <a-switch  :checked="notificationLimited" @change="activeNotifications" /></p> 
+                            </div>
+                            
                             <h2>Accesos</h2>
                             <div class="row">
                                 <div v-for="(route, index) in routesProfiles" :key="route.ruta" class="col-md-4">
@@ -324,6 +328,7 @@ export default {
             },
             routeSelected: 0,
             commissionsProfile: false,
+            notificationLimited: false,
             IfSelect: false
         }
     },
@@ -364,6 +369,7 @@ export default {
             this.profileSelect.name = profile
             this.profileSelect.index = index
             this.commissionsProfile = this.accessProfiles[index].commission
+            this.notificationLimited = this.accessProfiles[index].notificationLimited
             for (const allRoute of this.routesProfiles) {
                 var valid = true
                 for (const route of routes) {
@@ -495,6 +501,7 @@ export default {
                         }
                         const updateUsers = await axios.put(endPoint.endpointTarget+'/configurations/editAccessUsers/'+this.profileSelect.name, {
                             access: routes,
+                            notificationLimited: this.accessProfiles[this.profileSelect.index].notificationLimited,
                             id: this.id
                         }, this.configHeader)
                         if (updateUsers.data.status == "reload") {
@@ -565,6 +572,11 @@ export default {
         activeCommission(checked){
             this.commissionsProfile = checked
             this.accessProfiles[this.profileSelect.index].commission = checked
+            this.updateconfig()
+        },
+        activeNotifications(checked){
+            this.notificationLimited = checked
+            this.accessProfiles[this.profileSelect.index].notificationLimited = checked
             this.updateconfig()
         },
         activeProfileCommission(checked){

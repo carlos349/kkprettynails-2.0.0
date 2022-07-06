@@ -428,7 +428,7 @@ export default {
                     axios.post(endPoint.endpointTarget+'/notifications', {
                         branch: this.branch,
                         userName:this.firstNameUser + " " + this.lastNameUser,
-                        userImage:this.imgUser,
+                        userImage:localStorage.imageUser,
                         detail:'Registro un fondo de caja',
                         link: 'Caja'
                     }, this.configHeader)
@@ -574,7 +574,7 @@ export default {
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             branch: this.branch,
                             userName:this.firstNameUser + " " + this.lastNameUser,
-                            userImage:this.imgUser,
+                            userImage:localStorage.imageUser,
                             detail:'Hizo un cierre de caja',
                             link: 'Caja'
                         })
