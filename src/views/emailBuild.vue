@@ -29,6 +29,28 @@
                 <base-button type="default" @click="modals.modal1 = false">Listo</base-button>
             </template>
         </modal>
+        <modal :show.sync="modals.modal2" modal-classes="modal-lg">
+            <template v-slot:header>
+                <h5 class="modal-title">Carga imagen</h5>
+            </template>
+            <div style="margin-top:-20px" class="row">
+                <label class="col-md-10" for="file">Seleccione imagen</label>
+                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" >
+                <button class="col-md-2 buttonUpload" v-on:click="uploadImage()">
+                    <i class="ni ni-send" style="font-size: 1.4em;'"></i>
+                </button>
+                <br>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-default" id="basic-addon2">Asunto:</span>
+                    </div>
+                    <input v-model="image_url" type="text" class="form-control pl-2" placeholder="Url de la imagen" aria-label="imagen url" aria-describedby="basic-addon2">
+                </div>
+            </div>
+            <template v-slot:footer>
+                <base-button type="default" @click="modals.modal2 = false">Listo</base-button>
+            </template>
+        </modal>
         <EmailEditor 
             v-if="screenClases == 'desktop'"
             class="w-100 h-100" 
@@ -67,7 +89,7 @@
         <div v-else class="container w-100">
             <h1>Constructor deshabilitado en vista movil</h1>
         </div>
-        <div class="container-fluid row">
+        <div class="container-fluid row pb-3">
             <div class="col-md-5 mt-1">
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -76,15 +98,18 @@
                     <input v-model="subject" type="text" class="form-control pl-2" placeholder="Asunto.." aria-label="Username" aria-describedby="basic-addon1">
                 </div>
             </div>
-            <div class="col-md-4 col-8 mt-1">
+            <div class="col-md-3 col-7 mt-1">
                 <input v-model="mails" type="text" class="form-control pl-2" placeholder="ejemplo@ejemplo.com" aria-label="Username" aria-describedby="basic-addon1"/>
             </div>
-            <div class="col-md-3 col-4 mt-1">
+            <div class="col-4 mt-1">
                 <div class="row">
                     <base-button style="border-radius: 0.375rem;" type="success" v-on:click="modals.modal1 = true" icon="ni ni-collection">Importar clientes</base-button>
-                <button :class="screenClases == 'phone' ? 'w-100' : ''" class="btn btn-default" v-on:click="SendMail">
-                    <i class="fa fa-paper-plane"></i>
-                </button>
+                    <button :class="screenClases == 'phone' ? 'w-100' : ''" class="btn btn-default" v-on:click="SendMail">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                    <button :class="screenClases == 'phone' ? 'w-100' : ''" class="btn btn-danger" v-on:click="modals.modal2 = true">
+                        <i class="fa fa-upload"></i>
+                    </button>
                 </div>
                 
             </div>
@@ -114,6 +139,7 @@ export default {
                     "x-access-token": localStorage.userToken
                 }
             },
+            image_url: "",
             hasSelected: false,
             columns : [
                 
@@ -145,7 +171,8 @@ export default {
             subject: '',
             minHeight: '80vh',
             modals:{
-                modal1:false
+                modal1:false,
+                modal2: false
             },
             dateFind:'',
             clients:[],
@@ -224,7 +251,8 @@ export default {
                     },
                 },
             },
-            email: ''
+            email: '',
+            file: ""
         };
         
     },
@@ -412,6 +440,9 @@ export default {
                 }
             }
         },
+        handleFileUpload(){
+            this.file = this.$refs.file.files[0]   
+        },
         async getEmailSend(){
             try {
                 const getEmail = await axios.get(`${endPoint.endpointTarget}/configurations/${this.branch}`, this.configHeader)
@@ -437,6 +468,43 @@ export default {
                     setTimeout(() => {
                         router.push("login")
                     }, 1550);
+                }
+            }
+        },
+        async uploadImage(){
+            if (this.file == "") {
+                this.$swal({
+                    icon: 'info',
+                    title: 'Debe seleccionar una imagen',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else{
+                var formData = new FormData()
+                formData.append('image', this.file)
+                const config = {headers: {'Content-Type': 'multipart/form-data', 'x-access-token': localStorage.userToken, "x-database-connect": endPoint.database }}
+    
+                try{
+                    const uploadImage = await axios.post(endPoint.endpointTarget+'/configurations/uploadLogo', formData, config)
+                    if (uploadImage.data.status == 'ok') {
+                        this.image_url = uploadImage.data.file
+                    }else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Problemas al subir imagen',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }catch(err){
+                  if (!err.response) {
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                  }
                 }
             }
         },
@@ -529,5 +597,38 @@ export default {
         padding-bottom: 5px;
         padding-top: 5px;
         padding-left: 1.5rem !important;
+    }
+    .buttonUpload{
+        border:none;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        color:#fff;
+        background-color: #2dce89;
+        height: 37px !important;
+    }
+    #file {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+    label[for="file"] {
+        font-size: 12px;
+        font-weight: 600;
+        color: #0095ff;
+        border: solid 2px #e9ecef;
+        background-color: #fff;
+        display: inline-block;
+        transition: all .5s;
+        cursor: pointer;
+        padding: 8.1px !important;
+        text-decoration-line: underline;
+        text-transform: uppercase;
+        width: 100%;
+        text-align: center;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
     }
 </style>
