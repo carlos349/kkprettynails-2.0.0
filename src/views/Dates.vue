@@ -1389,7 +1389,7 @@ import mixinES from '../mixins/mixinES'
                 title: 'Fecha',
                 dataIndex: 'date',
                 key: 'date',
-                sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+                sorter: (a, b) => new Date(a.dat).getTime() - new Date(b.dat).getTime(),
                 scopedSlots: { customRender: 'date-slot' } 
             },
             { 
@@ -2271,8 +2271,13 @@ import mixinES from '../mixins/mixinES'
                         }
                     }
                     if (this.configurations.blockedDays) {
-                        
+                        this.configurations.blockedDays.forEach((element, index) => {
+                            var split = element.date.split("-")
+                            this.configurations.blockedDays[index].dat = split[1]+"-"+split[0]+"-"+split[2]
+                        });
+
                         this.blockForDays = this.configurations.blockedDays
+                        
                     }
                     
                     this.hideDays = daysBlock
@@ -2280,6 +2285,8 @@ import mixinES from '../mixins/mixinES'
                     this.configurations = {}
                 }
             }catch(err){
+            console.log("🚀 ~ file: Dates.vue ~ line 2289 ~ getConfiguration ~ err", err)
+                
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',

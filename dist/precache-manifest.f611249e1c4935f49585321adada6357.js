@@ -16,8 +16,8 @@ self.__precacheManifest = [
     "url": "/img/theme/profile-cover.jpg"
   },
   {
-    "revision": "a6cd6cb25e34f07bd2c8",
-    "url": "/js/chunk-73c2056c.8e22a97c.js"
+    "revision": "a1643b9da3bb74d806f6",
+    "url": "/js/chunk-73c2056c.f0213fd3.js"
   },
   {
     "revision": "f703eaaed9a404e2b342a4d5d98f261a",
@@ -68,7 +68,7 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "52b9f1a84f590ef79581f27bb90b8907",
+    "revision": "f80d37488c3005ce7b380d96e5c03bd6",
     "url": "/index.html"
   },
   {
@@ -124,12 +124,16 @@ self.__precacheManifest = [
     "url": "/img/theme/users.png"
   },
   {
-    "revision": "2d6375ecb57fd13f329c",
-    "url": "/js/app.6f4fdd18.js"
+    "revision": "6799b5c9a8a5b06402a9",
+    "url": "/js/app.4123cb4a.js"
   },
   {
     "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
     "url": "/img/theme/box.png"
+  },
+  {
+    "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
+    "url": "/img/theme/configuration.png"
   },
   {
     "revision": "84335294072f0ad513fc8614b54a428a",
@@ -138,10 +142,6 @@ self.__precacheManifest = [
   {
     "revision": "1881d2a2c3f7bb5e1b4ac0b2622291b0",
     "url": "/img/theme/clients.png"
-  },
-  {
-    "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
-    "url": "/img/theme/configuration.png"
   },
   {
     "revision": "b0c11510c7d2a8e2f2402be014387b85",
@@ -200,7 +200,7 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "2d6375ecb57fd13f329c",
+    "revision": "6799b5c9a8a5b06402a9",
     "url": "/css/app.8f9d531d.css"
   },
   {
@@ -236,7 +236,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-93f61d12.4d61c3fe.css"
   },
   {
-    "revision": "a6cd6cb25e34f07bd2c8",
+    "revision": "a1643b9da3bb74d806f6",
     "url": "/css/chunk-73c2056c.6f1db0ec.css"
   },
   {
