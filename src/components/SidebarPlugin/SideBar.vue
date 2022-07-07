@@ -15,6 +15,50 @@
             
             <slot name="mobile-right">
                 <ul class="nav align-items-center d-md-none">
+                    <li class="nav-item dropdown">
+              <a v-on:click="validateNotifications()" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="ni ni-bell-55" :class="pxSep" style="font-size:18px;z-index:1;"></i>
+                <badge v-if="activeNotifications > 0" class="notifyNumber text-white" type="primary" style="font-size:14px;z-index:0;">{{activeNotifications}}</badge>
+              </a>
+            <div style="z-index:10000; min-width: 350px; right: -100px;" class="dropdown-menu dDesteM  dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
+              
+              <!-- List group -->
+              <vue-custom-scrollbar class="w-100" style="height:50vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+              <div class="list-group list-group-flush" style="z-index:10000">
+                
+                <a v-for="notification in notifications" :key="notification._id" href="#!" class="list-group-item list-group-item-action">
+                  
+                    <div v-on:click="pushLink(notification.link)" class="row align-items-center">
+                      <div class="col-auto">
+                        <!-- Avatar -->
+                        <img alt="Image placeholder" v-if="notification.userImg == '' || notification.userImg == null" src="img/theme/profile-default.png" class="avatar rounded-circle">
+                        <img alt="Image placeholder" v-else :src="notification.userImg" class="avatar rounded-circle">
+                      </div>
+                      <div class="col ml--2">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div>
+                            <h4 class="mb-0 text-sm">{{notification.userName}}</h4>
+                          </div>
+                          <div class="text-right text-muted">
+                            <small>{{notification.createdAt | moment("from", "now")}}</small>
+                          </div>
+                        </div>
+                        <p class="text-sm mb-0">{{formatDetail(notification.detail)}} <br> {{notification.detail.split('~')[1]}}</p>
+                      </div>
+                    </div>
+                </a>
+                
+                <a-empty v-if="notifications.length == 0" :image="simpleImage">
+                  <span slot="description"> No posees notificaciones nuevas </span>
+                  
+                </a-empty>
+              </div>
+              </vue-custom-scrollbar>
+              <!-- View all -->
+              <span v-on:click="getAll" v-if="all" style="cursor:pointer" class="dropdown-item-text text-center text-primary font-weight-bold py-3">Ver todas</span>
+              
+            </div>
+          </li>
                     <li class="nav-item" :disabled="validRoute('sucursales', 'cambiar') ? false : true">
                       <base-dropdown position="right">
                         <a slot="title" class="nav-link" href="#" role="button">
@@ -93,19 +137,30 @@
   import NavbarToggleButton from '@/components/NavbarToggleButton'
   import endPoint from '.../../../config-endpoint/endpoint.js'
   import EventBus from '../EventBus'
+  import io from 'socket.io-client';
+  import router from '../../router'
+  import { Empty } from 'ant-design-vue'
   import axios from 'axios'
   import jwtDecode from 'jwt-decode'
+  import vueCustomScrollbar from 'vue-custom-scrollbar'
   export default {
     name: 'sidebar',
     components: {
-      NavbarToggleButton
+      NavbarToggleButton,
+      vueCustomScrollbar
     },
     data() {
       return {
+        socket : io(endPoint.endpointTarget),
         haveImage: localStorage.imageUser,
+        activeNotifications: 0,
         imgUser:  localStorage.imageUser,
+        idUser: localStorage._id,
         screen: screen.width,
         auth: [],
+        notifications: [],
+        all: true,
+        pxSep: '',
         branches: [],
         branchName: localStorage.branchName,
         branch: localStorage.branch
@@ -133,11 +188,91 @@
         autoClose: this.autoClose
       };
     },
+    beforeCreate() {
+      this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
+    },
     created(){
       this.getToken()
       this.getBranches()
+      this.getNotifications()
     },
     methods: {
+      getNotifications(){
+        const configHeader = {
+          headers: {
+              "x-database-connect": endPoint.database, 
+              "x-access-token": localStorage.userToken
+          }
+        }
+        axios.get(endPoint.endpointTarget+'/notifications/noviews/'+this.idUser, configHeader) 
+        .then(res => {
+          this.notifications = res.data.data
+          this.activeNotifications = res.data.data.length
+          if (this.activeNotifications < 10) {
+            this.pxSep = "pxSix"
+          }else if (this.activeNotifications < 100) {
+            this.pxSep = "pxSixPlus"
+          }else if (this.activeNotifications < 999) {
+            this.pxSep = "pxSixPlusTwo"
+          }
+          this.all = true
+        })
+      },
+      getAll() {
+        const configHeader = {
+          headers: {
+              "x-database-connect": endPoint.database, 
+              "x-access-token": localStorage.userToken
+          }
+        }
+        setTimeout(() => {
+          $(".dDesteM").dropdown('toggle')
+        }, 100);
+        axios.get(endPoint.endpointTarget+'/notifications/getall/'+ this.idUser, configHeader) 
+        .then(res => {
+          this.notifications = res.data.data
+          this.all = false
+        })
+      },
+      pushLink(link){
+        var valid = false
+        var valid2 = false
+        if(router.app._route.path == "/agendamiento"){
+          valid = true 
+        }if(router.app._route.path == "/Ventas"){
+          valid2 = true
+        }
+        router.push(link)
+        setTimeout(() => {
+          if(valid){
+            EventBus.$emit('notifyLink', 'reload') 
+          }if(valid2){
+            EventBus.$emit('notifyLinkSales', 'reload') 
+          }
+        }, 1000);
+      },
+      formatDetail(detail,notification){
+        if (detail.includes('~')) {
+          return detail.split('~')[0]
+        }
+        else{
+          return detail
+        }
+      },
+      validateNotifications(){
+        const configHeader = {
+          headers: {
+              "x-database-connect": endPoint.database, 
+              "x-access-token": localStorage.userToken
+          }
+        }
+        axios.get(endPoint.endpointTarget+'/notifications/validateviews/'+this.idUser, configHeader) 
+        .then(res => {
+          this.notifications = res.data.data
+          this.activeNotifications = 0
+          this.all = true
+        })
+      },
       closeSidebar() {
         this.$sidebar.displaySidebar(false)
       },
@@ -209,6 +344,10 @@
       EventBus.$on('loggedin', status => {
         this.getToken()
       })
+      this.socket.on('notify', (data) => {
+        this.notifications.push(data)
+        this.activeNotifications++
+      });
     },
     beforeDestroy() {
       if (this.$sidebar.showSidebar) {
