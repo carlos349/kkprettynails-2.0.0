@@ -42,8 +42,8 @@
                     <div v-on:click="pushLink(notification.link)" class="row align-items-center">
                       <div class="col-auto">
                         <!-- Avatar -->
-                        <img alt="Image placeholder" v-if="notification.userImage == '' || notification.userImage == null" src="img/theme/profile-default.png" class="avatar rounded-circle">
-                        <img alt="Image placeholder" v-else :src="imgEndpoint+notification.userImage" class="avatar rounded-circle">
+                        <img alt="Image placeholder" v-if="notification.userImg == '' || notification.userImg == null" src="img/theme/profile-default.png" class="avatar rounded-circle">
+                        <img alt="Image placeholder" v-else :src="notification.userImg" class="avatar rounded-circle">
                       </div>
                       <div class="col ml--2">
                         <div class="d-flex justify-content-between align-items-center">
@@ -211,10 +211,21 @@
     },
     methods: {
       pushLink(link){
-          router.push(link)
-          setTimeout(() => {
+        var valid = false
+        var valid2 = false
+        if(router.app._route.path == "/agendamiento"){
+          valid = true 
+        }if(router.app._route.path == "/Ventas"){
+          valid2 = true
+        }
+        router.push(link)
+        setTimeout(() => {
+          if(valid){
             EventBus.$emit('notifyLink', 'reload') 
-          }, 1000);
+          }if(valid2){
+            EventBus.$emit('notifyLinkSales', 'reload') 
+          }
+        }, 1000);
       },
       toggleSidebar() {
         this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
@@ -339,7 +350,7 @@
         setTimeout(() => {
           $(".dDeste").dropdown('toggle')
         }, 100);
-        axios.get(endPoint.endpointTarget+'/notifications/getall', configHeader) 
+        axios.get(endPoint.endpointTarget+'/notifications/getall/'+ this.idUser, configHeader) 
         .then(res => {
           this.notifications = res.data.data
           this.all = false

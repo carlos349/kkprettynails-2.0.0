@@ -564,9 +564,18 @@
                   <card shadow>
                     <div class="row mt-4">
                         <div v-if="selectedEvent.employe" style="border-right:1px solid lightgray" class="col-md-6 pr-0 pl-1">
-                            <a-avatar v-if="selectedEvent.employe.img != 'no'" shape="square" size="large" :src="selectedEvent.employe.img" />
-                            <a-avatar v-else shape="square" size="large" src="img/theme/team-4-800x800.jpg" />
-                            <span class="ml-2">{{selectedEvent.employe.name}}</span>
+                            <div class="row">
+                                <div class="col-3">
+                                    <a-avatar v-if="selectedEvent.employe.img == 'no' || selectedEvent.employe.img == ''" shape="square" size="large" src="img/theme/profile-default.png" />
+                                    <a-avatar v-else shape="square" size="large" :src="selectedEvent.employe.img" />
+                                </div>
+                                <div class="col-9">
+                                    <span class="ml-2">{{selectedEvent.employe.name}}</span>
+                                </div>
+                                
+                                
+                            </div>
+                            
                         </div>
                         <div class="col-md-6">
                             <center>
@@ -1448,7 +1457,7 @@ import mixinES from '../mixins/mixinES'
                 title: 'Fecha',
                 dataIndex: 'date',
                 key: 'date',
-                sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+                sorter: (a, b) => new Date(a.dat).getTime() - new Date(b.dat).getTime(),
                 scopedSlots: { customRender: 'date-slot' } 
             },
             { 
@@ -2330,8 +2339,13 @@ import mixinES from '../mixins/mixinES'
                         }
                     }
                     if (this.configurations.blockedDays) {
-                        
+                        this.configurations.blockedDays.forEach((element, index) => {
+                            var split = element.date.split("-")
+                            this.configurations.blockedDays[index].dat = split[1]+"-"+split[0]+"-"+split[2]
+                        });
+
                         this.blockForDays = this.configurations.blockedDays
+                        
                     }
                     
                     this.hideDays = daysBlock
@@ -2339,6 +2353,8 @@ import mixinES from '../mixins/mixinES'
                     this.configurations = {}
                 }
             }catch(err){
+            console.log("🚀 ~ file: Dates.vue ~ line 2289 ~ getConfiguration ~ err", err)
+                
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -3299,6 +3315,7 @@ import mixinES from '../mixins/mixinES'
             this.blokedBlock = value == undefined ? true : false
         },
         register(){
+            console.log("🚀 ~ file: Dates.vue ~ line 3244 ~ register ~ this.registerDae", this.registerDae)
             this.spinningDate = true
             if (this.dataClient.valid && this.validSelectClient) {
                 this.ifDisabled = true
@@ -3414,22 +3431,26 @@ import mixinES from '../mixins/mixinES'
                                         $(".ant-select-selection__clear").click()
                                         var splitFinally = this.finalDate.split("-")
                                         this.finalDate = splitFinally[1]+"-"+splitFinally[0]+"-"+splitFinally[2]
-                                        axios.post(endPoint.endpointTarget+'/notifications', {
-                                            userName:'Usuario: '+localStorage.firstname + " " + localStorage.lastname,
-                                            userImage: '',
-                                            detail: 'Creo cita a '+this.dateClient.name+' desde agendamiento (Sistema) '+this.finalDate,
-                                            branch: this.branch,
-                                            link: 'agendamiento'
-                                        }, this.configHeader)
-                                        .then(res => {
-                                            this.socket.emit('sendNotification', res.data.data)
-                                        })
+                                        res.data.id.forEach(element => {
+                                            axios.post(endPoint.endpointTarget+'/notifications', {
+                                                userName: localStorage.firstname + " " + localStorage.lastname,
+                                                userImage: localStorage.imageUser,
+                                                employeId: element.employeId,
+                                                detail: 'Creo cita a '+this.dateClient.name+' desde agendamiento (Sistema) '+this.finalDate,
+                                                branch: this.branch,
+                                                link: 'agendamiento?id=' + element._id
+                                            }, this.configHeader)
+                                            .then(res => {})
+                                        });
                                         this.initialState()
                                         
                                         this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal,this.registerDae,true)
                                         this.modals.modal2 = false
                                         this.finalDate = ''
                                         this.ifDisabled = false
+                                        setTimeout(() => {
+                                            this.socket.emit('sendNotification', "data")
+                                        }, 3000);
                                     }    
                                 }).catch(err => {
                                     if (!err.response) {
@@ -3500,8 +3521,9 @@ import mixinES from '../mixins/mixinES'
                                     this.$refs.wizard.reset()
                                     res.data.id.forEach(element => {
                                         axios.post(endPoint.endpointTarget+'/notifications', {
-                                            userName:'Empleado: '+localStorage.firstname + " " + localStorage.lastname,
-                                            userImage: '',
+                                            userName: localStorage.firstname + " " + localStorage.lastname,
+                                            userImage: localStorage.imageUser,
+                                            employeId: element.employeId,
                                             detail: 'Creo cita a '+this.dateClient.name+' desde agendamiento (Sistema) '+this.finalDate,
                                             branch: this.branch,
                                             link: 'agendamiento?id=' + element._id
@@ -3703,7 +3725,7 @@ import mixinES from '../mixins/mixinES'
                 })
             }
         },
-        onEventClick(event, e){
+        onEventClick(event){
             // this.configDatePickerEdit.minDate = ''
             this.selectedEvent = event
             this.originalEmploye = this.selectedEvent.employe
@@ -3712,9 +3734,18 @@ import mixinES from '../mixins/mixinES'
             .then(res => {
                 this.selectedEvent.createdAt = new Date(res.data.data.createdAt).format('MM-DD-YYYY')
             })
-            
+
+            axios.get(endPoint.endpointTarget+'/users/getbylinklender/'+this.selectedEvent.employe.id, this.configHeader)
+            .then(res => {
+                this.selectedEvent.employe.img = res.data.data
+                
+            })
+            console.log("🚀 ~ file: Dates.vue ~ line 3664 ~ onEventClick ~ this.selectedEvent", this.selectedEvent)
             this.dateModals.modal1 = true
-            router.push("agendamiento")
+            setTimeout(() => {
+                router.push("agendamiento")
+            }, 3000);
+            
             if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
                 this.editDisabled = true
             }else{
@@ -3760,7 +3791,7 @@ import mixinES from '../mixins/mixinES'
                     }, 1550);
                 }
             })
-            e.stopPropagation()
+            // e.stopPropagation()
             // setTimeout(() => {
                 
             //     this.selectedEvent.createdAt = event.createdAt
@@ -4226,9 +4257,10 @@ import mixinES from '../mixins/mixinES'
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             branch: this.branch,
                             userName: this.firstNameUser + " " + this.lastNameUser,
-                            userImage: this.imgUser,
+                            userImage: localStorage.imageUser,
+                            employeId: this.dataEditSend.employe.id,
                             detail:'Editó una cita con servicio: ' + this.dataEditSend.service.name + ' para el día '+ dateNew + ' con empleado: ' + this.dataEditSend.employe.name + ' y cliente: ' + this.selectedEvent.client.name,
-                            link: 'agendamiento'
+                            link: 'agendamiento?id=' + this.dataEditSend._id
                         }, this.configHeader)
                         .then(res => {
                             this.socket.emit('sendNotification', res.data.data)
@@ -4369,12 +4401,14 @@ import mixinES from '../mixins/mixinES'
                                 this.dateModals.modal1 = false
                                 this.dateModals.modal3 = false
                                 this.finallyDisabled = false
+                                var dateSplit = data.createdAt.split("T")[0].split("-")
+                                var dateFinal = dateSplit[1] + "-" + dateSplit[0] + "-" + dateSplit[2] 
                                 axios.post(endPoint.endpointTarget+'/notifications', {
                                     branch: this.branch,
                                     userName:this.firstNameUser + " " + this.lastNameUser,
-                                    userImage:this.imgUser,
-                                    detail:'Finalizó una cita',
-                                    link: 'agendamiento'
+                                    userImage:localStorage.imageUser,
+                                    detail:'Finalizó una cita con fecha: ' + dateFinal + ' y cliente: ' + data.client.name + " - ( " + data.client.email + " )",
+                                    link: 'agendamiento?id=' + data._id
                                 }, this.configHeader)
                                 .then(res => {
                                     this.socket.emit('sendNotification', res.data.data)
@@ -4433,18 +4467,22 @@ import mixinES from '../mixins/mixinES'
                         this.dateModals.modal1 = false
                         this.dateModals.modal3 = false
                         this.finallyDisabled = false
+                        var dateSplit = data.createdAt.split("T")[0].split("-")
+                        var dateFinal = dateSplit[1] + "-" + dateSplit[0] + "-" + dateSplit[2] 
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             branch: this.branch,
                             userName:this.firstNameUser + " " + this.lastNameUser,
-                            userImage:this.imgUser,
-                            detail:'Finalizó una cita',
-                            link: 'agendamiento'
+                            userImage:localStorage.imageUser,
+                            detail:'Finalizó una cita con fecha: ' + dateFinal + ' y cliente: ' + data.client.name + " - ( " + data.client.email + " )",
+                            link: 'agendamiento?id=' + data._id
                         },this.configHeader)
                         .then(res => {
                             this.socketValidator = false
                             this.socket.emit('sendNotification', res.data.data)
                             this.socketValidator = true
                             
+                        }).catch(err => {
+                            console.log(err)
                         })   
                     }
                 }).catch(err => {
@@ -4531,7 +4569,8 @@ import mixinES from '../mixins/mixinES'
                             axios.post(endPoint.endpointTarget+'/notifications', {
                                 branch: this.branch,
                                 userName:this.firstNameUser + " " + this.lastNameUser,
-                                userImage:this.imgUser,
+                                userImage:localStorage.imageUser,
+                                employeId: res.data.data.employe.id,
                                 detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${new Date(res.data.data.start.split(" ")[0]).format('DD-MM-YYYY')} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
                                 link: 'agendamiento'
                             }, this.configHeader)
@@ -4858,7 +4897,7 @@ import mixinES from '../mixins/mixinES'
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             branch: this.branch,
                             userName:this.firstNameUser + " " + this.lastNameUser,
-                            userImage:this.imgUser,
+                            userImage:localStorage.imageUser,
                             detail:'Procesó citas finalizadas',
                             link: 'agendamiento'
                         })
@@ -5177,8 +5216,8 @@ import mixinES from '../mixins/mixinES'
                     axios.post(endPoint.endpointTarget+'/notifications', {
                         branch: this.branch,
                         userName:this.firstNameUser + " " + this.lastNameUser,
-                        userImage:this.imgUser,
-                        detail:'Finalizó una cita',
+                        userImage:localStorage.imageUser,
+                        detail:'Finalizó una cita para el '+ data.start.split(" ")[0] + "con cliente: ( " + data.client.name + " ) - ( " + data.client.email + " )",
                         link: 'agendamiento'
                     }, this.configHeader)
                     .then(res => {
@@ -6637,6 +6676,9 @@ import mixinES from '../mixins/mixinES'
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+    .vuecal__cell--today{
+        z-index: 0 !important;
     }
     .vuecal__event.lunch .vuecal__event-time {display: none;align-items: center;}
     .vuecal__cell-split.class1Split {background-color: rgba(234, 197, 190, 0.1);}

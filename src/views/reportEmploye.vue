@@ -645,9 +645,9 @@ import mixinES from '../mixins/mixinES'
                     const notify = await axios.post(endPoint.endpointTarget+'/notifications', {
                         branch: this.branch,
                         userName:this.firstNameUser + " " + this.lastNameUser,
-                        userImage:this.imgUser,
+                        userImage:localStorage.imageUser,
                         detail:'Anuló una venta del día '+this.formatDate(this.arreglo.fecha),
-                        link: 'Ventas'
+                        link: 'Ventas?id=' + id
                     }, this.configHeader)
                     if (notify) {
                         this.socket.emit('sendNotification', notify.data)
@@ -819,9 +819,9 @@ import mixinES from '../mixins/mixinES'
                                     axios.post(endPoint.endpointTarget+'/notifications', {
                                     branch: this.branch,
                                     userName:this.firstNameUser + " " + this.lastNameUser,
-                                    userImage:this.imgUser,
+                                    userImage:localStorage.imageUser,
                                     detail:'Anuló una venta del día ' + this.formatDate(date),
-                                    link: 'Ventas'
+                                    link: 'Ventas?id=' + id
                                     }, this.configHeader)
                                     .then(not =>{
                                         this.socket.emit('sendNotification', notify.data)

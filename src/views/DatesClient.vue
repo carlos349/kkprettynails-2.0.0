@@ -1211,6 +1211,12 @@
                 }
             },
             validFields(){
+                if (this.registerUser.firstName.length == 1) {
+                    this.registerUser.firstName = this.registerUser.firstName.toUpperCase()
+                }
+                if (this.registerUser.lastName.length == 1) {
+                    this.registerUser.lastName = this.registerUser.lastName.toUpperCase()
+                }
                 const split = this.registerUser.email.split('@')
                 var splitTwo = ''
 
@@ -1220,7 +1226,7 @@
                     splitTwo = split[1].split('.')
                 }
                 
-                if (this.registerUser.email != '' && this.registerUser.firstName != '' && this.registerUser.lastName != '' && this.phoneData.isValid && this.registerUser.birthday != '') {
+                if (this.registerUser.email != '' && this.registerUser.firstName != '' && this.registerUser.lastName != '' && this.registerUser.phone.isValid && this.registerUser.birthday != '') {
                     if (split.length == 2) {
                         if (splitTwo.length >= 2) {
                             this.validRegister = true
@@ -1391,16 +1397,18 @@
                                         this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDate)
                                         this.modals.modal2 = false
                                         this.modals.modal4 = true
-                                        axios.post(endPoint.endpointTarget+'/notifications', {
-                                            userName:'Cliente: '+this.registerUser.name,
-                                            userImage: '',
-                                            detail: 'Creo cita desde agendamiento (web) '+this.finalDate,
-                                            branch: this.branch,
-                                            link: 'agendamiento'
-                                        }, this.configHeader)
-                                        .then(res => {
-                                            this.socket.emit('sendNotification', res.data.data)
-                                        })
+                                        var dateSplit = this.finalDate.split("-")
+                                        res.data.id.forEach(element => {
+                                            axios.post(endPoint.endpointTarget+'/notifications', {
+                                                userName:'Cliente: '+this.registerUser.name,
+                                                userImage: '',
+                                                employeId: element.employeId,
+                                                detail: 'Creo cita desde agendamiento (Web) '+ dateSplit[1] + "-" + dateSplit[0] + "-" + dateSplit[2],
+                                                branch: this.branch,
+                                                link: 'agendamiento?id=' + element._id
+                                            }, this.configHeader)
+                                            .then(res => {this.socket.emit('sendNotification', res.data.data)})
+                                        });
                                         $("#overlay").toggle()
                                         this.ifDisabled = false
                                     }    
@@ -1434,23 +1442,26 @@
                                     this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDate.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDate)
                                     this.modals.modal2 = false
                                     this.modals.modal4 = true
-                                    axios.post(endPoint.endpointTarget+'/notifications', {
-                                        userName:'Cliente: '+this.registerUser.name,
-                                        userImage: '',
-                                        detail: 'Creo cita desde agendamiento (web) '+this.finalDate,
-                                        branch: this.branch,
-                                        link: 'agendamiento'
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.socket.emit('sendNotification', res.data.data)
-                                    })
+                                    var dateSplit = this.finalDate.split("-")
+                                    res.data.id.forEach(element => {
+                                        axios.post(endPoint.endpointTarget+'/notifications', {
+                                            userName:'Cliente: '+this.registerUser.name,
+                                            userImage: '',
+                                            employeId: element.employeId,
+                                            detail: 'Creo cita desde agendamiento (Web) '+ dateSplit[1] + "-" + dateSplit[0] + "-" + dateSplit[2],
+                                            branch: this.branch,
+                                            link: 'agendamiento?id=' + element._id
+                                        }, this.configHeader)
+                                        .then(res => {this.socket.emit('sendNotification', res.data.data)})
+                                    });
                                     $("#overlay").toggle()
                                 }    
                             }).catch(err =>{
+                                console.log(err)
                                 if (!err.response) {
                                     this.$swal({
                                         icon: 'error',
-                                        title: 'Error de conexión',
+                                        title: 'Error de conexión2',
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
