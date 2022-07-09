@@ -402,7 +402,6 @@
 import axios from 'axios'
 import endPoint from '../../config-endpoint/endpoint.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
-import vueCustomScrollbar from 'vue-custom-scrollbar'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
 import router from '../router'
