@@ -551,7 +551,7 @@
         <modal :show.sync="dateModals.modal1" style="z-index:1"
                body-classes="p-0"
                :header-classes="selectedEvent.class +  ' noBorder'"
-               modal-classes="modal-dialog-centered modal-md">
+               modal-classes="modal-dialog-centered modal-lg">
             <h5 slot="header" class="modal-title" id="modal-title-notification">
                 {{dateSplit(selectedEvent.start)}} 
                 <span v-if="selectedEvent.typeCreation == 'Web'">(Web)</span>
@@ -836,6 +836,46 @@
                                     </a-table>
                                 </a-config-provider>
                             </vue-custom-scrollbar>
+                        </tab-pane>
+                        <tab-pane v-if="validRoute('clientes', 'notes')">
+                            <span slot="title">
+                                <a-icon type="file-done" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                                Notas
+                            </span>
+                            <div class="row">
+                                <div>
+                                    <vue-custom-scrollbar class="maxHeightHistorical">
+                                        <a-config-provider :locale="es_ES">
+                                            <template #renderEmpty>
+                                                <div style="text-align: center">
+                                                    <a-icon type="warning" style="font-size: 20px" />
+                                                    <h2>Este cliente no tiene notas registradas</h2>
+                                                </div>
+                                            </template>
+                                            <a-table :scroll="getScreen" :loading="clientNotesState" :columns="notesClientColumn" :data-source="notesClient">
+                                                <template slot="date-format" slot-scope="record, column">
+                                                    {{column.createdAt | formatDate}}
+                                                </template>
+                                            </a-table>
+                                        </a-config-provider>
+                                    </vue-custom-scrollbar>
+                                    <div>
+                                        <h4>Ingresa nueva nota</h4>
+                                        <base-input alternative
+                                            type="text"
+                                            class="mb-2 pl-1"
+                                            placeholder="Creador de nota"
+                                            v-model="newNote.name"
+                                            addon-left-icon="ni ni-single-02">
+                                        </base-input>
+                                        <a-textarea class="ml-1" v-model="newNote.note" placeholder="Ingrese texto de la nota"/>
+                                    </div>
+                                    <base-button class="float-right mt-3" size="sm" @click="newNoteInsert(selectedEvent.client.id)" type="primary">
+                                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                                        Ingresar nota
+                                    </base-button>
+                                </div>
+                            </div>
                         </tab-pane>
                     </card>
                 </tabs>
@@ -1310,6 +1350,34 @@ import mixinES from '../mixins/mixinES'
         searchText: '',
         searchInput: null,
         searchedColumn: '',
+        newNote: {
+            name: "",
+            note: ""
+        },
+        notesClient: [],
+        clientNotesState: false,
+        notesClientColumn: [
+            {
+                title: 'Fecha',
+                dataIndex: 'createdAt',
+                key: 'createdAt',
+                scopedSlots: { customRender: 'date-format' },
+                defaultSortOrder: 'descend',
+                sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                ellipsis: true,
+            },
+            { 
+                title: 'Creador',
+                dataIndex: 'name',
+                key: 'name'
+            },
+            {
+                title: 'Nota',
+                dataIndex: 'note',
+                key: 'note',
+                width: '60%'
+            }
+        ],
         historyClientColumn: [
             {
                 title: 'Fecha',
@@ -3685,6 +3753,7 @@ import mixinES from '../mixins/mixinES'
             }else{
                 this.editDisabled = false
             }
+            this.notesClient = []
             axios.get(endPoint.endpointTarget+'/clients/findOne/'+this.selectedEvent.client.id, this.configHeader)
             .then(res => {
                 if (res.data.data.attends == 0) {
@@ -3701,6 +3770,9 @@ import mixinES from '../mixins/mixinES'
                 this.phoneDateSelect = res.data.data.phone.formatInternational
                 this.dateData.history = []
                 this.dateData.history = res.data.data.historical
+                if (res.data.data.clientNotes) {
+                    this.notesClient = res.data.data.clientNotes
+                }
             }).catch(err => {
                 if (!err.response) {
                     this.$swal({
@@ -5879,6 +5951,30 @@ import mixinES from '../mixins/mixinES'
                     setTimeout(() => {
                         router.push("login")
                     }, 1550);
+                }
+            })
+        },
+        newNoteInsert(id){
+            this.clientNotesState = true
+            axios.post(endPoint.endpointTarget+'/clients/insertNotesToClient', {
+                id: id,
+                note: {
+                    name: this.newNote.name,
+                    note: this.newNote.note,
+                    createdAt: new Date()
+                }
+            }, this.configHeader)
+            .then(res => {
+                if (res.data.status == "ok") {
+                    axios.get(endPoint.endpointTarget+'/clients/getNotesClient/'+id, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == "ok") {
+                            this.notesClient = res.data.notes
+                            this.clientNotesState = false
+                            this.newNote.note = ""
+                            this.newNote.name = ""
+                        }
+                    })
                 }
             })
         },

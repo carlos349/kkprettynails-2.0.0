@@ -31,7 +31,7 @@
 
         <modal :show.sync="modals.modal1"
                body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-md">
+               modal-classes="modal-dialog-centered modal-lg">
                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
             <card type="secondary" shadow
                   header-classes="bg-white pb-5"
@@ -117,7 +117,6 @@
                                     
                                 </form>                                
                             </tab-pane>
-
                             <tab-pane v-if="registerClient.valid2 == true">
                                 <span slot="title">
                                     <i class="ni ni-chart-bar-32"></i>
@@ -148,6 +147,46 @@
                                         <span>Ultima atención</span>
                                         <badge class="text-default" type="success">{{registerClient.lastAttend | formatDate}}</badge>
                                     </base-button>
+                                </div>
+                            </tab-pane>
+                            <tab-pane v-if="registerClient.valid2 == true && validRoute('clientes', 'notes')">
+                                <span slot="title">
+                                    <a-icon type="file-done" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                                    Notas
+                                </span>
+                                <div class="row">
+                                    <div>
+                                        <vue-custom-scrollbar class="maxHeightDatesClient">
+                                            <a-config-provider :locale="es_ES">
+                                                <template #renderEmpty>
+                                                    <div style="text-align: center">
+                                                        <a-icon type="warning" style="font-size: 20px" />
+                                                        <h2>Este cliente no tiene notas registradas</h2>
+                                                    </div>
+                                                </template>
+                                                <a-table :scroll="getScreen" :loading="clientNotesState" :columns="notesClientColumn" :data-source="notesClient">
+                                                    <template slot="date-format" slot-scope="record, column">
+                                                        {{column.createdAt | formatDate}}
+                                                    </template>
+                                                </a-table>
+                                            </a-config-provider>
+                                        </vue-custom-scrollbar>
+                                        <div>
+                                            <h4>Ingresa nueva nota</h4>
+                                            <base-input alternative
+                                                type="text"
+                                                class="mb-2 pl-1"
+                                                placeholder="Creador de nota"
+                                                v-model="newNote.name"
+                                                addon-left-icon="ni ni-single-02">
+                                            </base-input>
+                                            <a-textarea class="ml-1" v-model="newNote.note" placeholder="Ingrese texto de la nota"/>
+                                        </div>
+                                        <base-button class="float-right mt-3" size="sm" @click="newNoteInsert(registerClient._id)" type="primary">
+                                            <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                                            Ingresar nota
+                                        </base-button>
+                                    </div>
                                 </div>
                             </tab-pane>
                         </card>
@@ -372,7 +411,7 @@ import io from 'socket.io-client';
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import {Spanish} from 'flatpickr/dist/l10n/es.js';
-
+import vueCustomScrollbar from 'vue-custom-scrollbar'
 // COMPONENTS
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
@@ -466,6 +505,30 @@ export default {
                 key: 'services',
                 scopedSlots: { customRender: 'serviceName' },
                 width: "40%"
+            }
+        ],
+        notesClient: [],
+        clientNotesState: false,
+        notesClientColumn: [
+            {
+                title: 'Fecha',
+                dataIndex: 'createdAt',
+                key: 'createdAt',
+                scopedSlots: { customRender: 'date-format' },
+                defaultSortOrder: 'descend',
+                sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                ellipsis: true,
+            },
+            { 
+                title: 'Creador',
+                dataIndex: 'name',
+                key: 'name'
+            },
+            {
+                title: 'Nota',
+                dataIndex: 'note',
+                key: 'note',
+                width: '60%'
             }
         ],
         modals: {
@@ -601,8 +664,12 @@ export default {
         ],
         firstNameUser: '',
         lastNameUser: '',
-        branch: '' 
-      };
+        branch: '' ,
+        newNote: {
+            name: "",
+            note: ""
+        }
+      }
     },
     created(){
 		this.getClients();
@@ -641,6 +708,30 @@ export default {
                     })
                 }
             }
+        },
+        newNoteInsert(id){
+            this.clientNotesState = true
+            axios.post(endPoint.endpointTarget+'/clients/insertNotesToClient', {
+                id: id,
+                note: {
+                    name: this.newNote.name,
+                    note: this.newNote.note,
+                    createdAt: new Date()
+                }
+            }, this.configHeader)
+            .then(res => {
+                if (res.data.status == "ok") {
+                    axios.get(endPoint.endpointTarget+'/clients/getNotesClient/'+id, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == "ok") {
+                            this.notesClient = res.data.notes
+                            this.clientNotesState = false
+                            this.newNote.note = ""
+                            this.newNote.name = ""
+                        }
+                    })
+                }
+            })
         },
         getToken(){
             const token = localStorage.userToken
@@ -869,6 +960,8 @@ export default {
             }
         },
         pushData(firstName,lastName,email,phone,instagram,attends,recommender,recommendations,lastAttend,createdAt,_id, birthday){
+            this.notesClient = []
+            this.clientNotesState = true
             this.registerClient =  {
                 firstName: firstName,
                 lastName: lastName,
@@ -885,6 +978,13 @@ export default {
                 attends: attends,
                 _id: _id
             }
+            axios.get(endPoint.endpointTarget+'/clients/getNotesClient/'+_id, this.configHeader)
+            .then(res => {
+                if (res.data.status == "ok") {
+                    this.notesClient = res.data.notes
+                    this.clientNotesState = false
+                }
+            })
         },
         deleteClient(id){
 			this.$swal({

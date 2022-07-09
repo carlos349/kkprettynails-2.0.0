@@ -237,7 +237,8 @@ export default {
                         {function: 'detalle', name:'Ver detalle', valid: false},
                         {function: 'eliminar', name:'Eliminar', valid: false},
                         {function: 'correos', name:'Envio de correos', valid: false},
-                        {function: 'excel', name:'Descargar excel', valid: false}
+                        {function: 'excel', name:'Descargar excel', valid: false},
+                        {function: 'notes', name:'Vista de notas', valid: false}
                     ]
                 },
                 {
