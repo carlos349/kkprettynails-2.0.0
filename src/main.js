@@ -45,7 +45,6 @@ import 'ant-design-vue/dist/antd.css';
 import formatDate from '@/plugins/formatDate';
 import vuescroll from 'vuescroll';
 import VuePhoneNumberInput from 'vue-phone-number-input';
-import { KinesisContainer, KinesisElement } from 'vue-kinesis'
 import VueHtmlToPaper from 'vue-html-to-paper';
 import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css'
@@ -89,8 +88,6 @@ const options = {
 Vue.use(Antd);
 Vue.component('vue-phone-number-input', VuePhoneNumberInput);
 Vue.component('vue-single-select', VueSingleSelect);
-Vue.component('kinesis-container', KinesisContainer)
-Vue.component('kinesis-element', KinesisElement)
 Vue.use(VueCurrencyInput, pluginOptions)
 Vue.use(ArgonDashboard)
 Vue.use(VueSweetalert2);
