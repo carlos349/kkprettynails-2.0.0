@@ -134,7 +134,7 @@
                                         :class="screenWidthInput"
                                         class="mt-1 mr-1 thisSelect"
                                         @change="chooseAditional">
-                                        <a-select-option v-for="micro of microservices" :key="micro" :value="micro.microService+'/'+micro.price">
+                                        <a-select-option v-for="micro of microservices" :key="micro.microService" :value="micro.microService+'/'+micro.price">
                                             {{micro.microService}}
                                         </a-select-option>
                                     </a-select>
@@ -155,7 +155,7 @@
                                     <label for="Micros" style="margin-top:-20px;">Adicionales seleccionados</label><br>
                                     <template v-if="microserviceSelecteds.length > 0">
                                         <template v-for="(micros, index) in microserviceSelecteds" @click="removeMicro(index)">
-                                            <badge :key="micros.id" class="ml-2 mt-2" type="primary" >{{micros.name}}</badge>
+                                            <badge :key="index" class="ml-2 mt-2" type="primary" >{{micros.name}}</badge>
                                         </template>
                                     </template>
                                     <template v-else>

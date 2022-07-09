@@ -58,7 +58,6 @@ Vue.use(vuescroll)
 Vue.use(require('vue-moment'), {
     moment
 })
-console.log(Vue.moment().locale())
 /* STYLES */
 import VueFormWizard from 'vue-form-wizard'
 

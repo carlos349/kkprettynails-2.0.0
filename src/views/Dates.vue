@@ -50,7 +50,7 @@
                                         <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
                                     </base-button>
                                 </li>
-                                <li v-for="data in employeShow" :key="data"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
+                                <li v-for="data in employeShow" :key="data._id"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
                                     <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
                                         <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
                                     </base-button>
@@ -125,7 +125,7 @@
                                 <div class="showDevice row col-md-12 pl-5">
                                     <div style="width:auto;" class="mx-auto col-12">
                                         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                            <li v-for="(category, index) of categories" class="nav-item responsiveItem" role="presentation">
+                                            <li v-for="(category, index) of categories" :key="index" class="nav-item responsiveItem" role="presentation">
                                                 <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
                                             </li>
                                         </ul>   
@@ -134,11 +134,11 @@
                                         <h2 class="text-center">Servicios</h2>
                                         <vuescroll :ops="ops"  v-on:scroll="scroll()" style="width:100%;height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                                             <div class="tab-content" id="pills-tabContent">
-                                                <div v-for="category of categories" :key="category" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                                <div v-for="category of categories" :key="category._id" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                                     <div class="row pl-2">
                                                         
-                                                        <template v-for="(service, index) of services">
-                                                            <div :key="service.name" class="col-md-6 px-4" v-if="service.category == category.name && service.active == true">
+                                                        <template v-for="(service, index) of services" >
+                                                            <div :key="index" class="col-md-6 px-4" v-if="service.category == category.name && service.active == true">
                                                                 <div class="card-service row mt-2" :id="'cardS'+index">
                                                                     <h3 class="name-service w-100 mb-0"> {{service.name}}</h3>
                                                                     <div class="col-12 pl-0">
@@ -154,7 +154,7 @@
                                                                     </div>
                                                                     <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;margin-top:-5px;">
                                                                         <div class="button-service-group">
-                                                                            <button class="button-service-left" ><i class="fa fa-minus" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price, countServices[index].count)"></i></button>
+                                                                            <button class="button-service-left" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price, countServices[index].count)"><i class="fa fa-minus" ></i></button>
                                                                             <span class="span-button-service">{{countServices[index].count}}</span>
                                                                             <button class="button-service-right" 
                                                                             v-on:click="plusService(index, service.name, service._id, service.duration, service.commission, service.price, service.employes, service.discount, service.products)"
@@ -220,8 +220,8 @@
                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
                                             Servicios 
                                         </base-button>
-                                        <template v-for="service of servicesCat">
-                                            <b :key="service.name" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.name}} </b>
+                                        <template v-for="(service, index) of servicesCat" >
+                                            <b :key="index" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.name}} </b>
                                         </template>
                                     </base-dropdown>
                                     
@@ -374,7 +374,7 @@
                         <div class="row">
                             <div class="col-md-8 col-sm-12" >
                                 <div class="row">
-                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDae.serviceSelectds" >
+                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDae.serviceSelectds" :key="index" >
                                         <div class="p-3">
                                             <center>
                                             <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
@@ -385,7 +385,7 @@
                                                 <template v-if="ifMicro">
                                                     <span>
                                                         Adicionales:
-                                                        <span v-for="micro in data.microServices" :key="micro">
+                                                        <span v-for="micro in data.microServices" :key="micro.microService">
                                                             <badge v-if="micro.checked" type="secondary" class="text-default mr-1">{{micro.microService}}</badge>
                                                         </span>
                                                     </span>
@@ -441,7 +441,7 @@
                                 <a-select-option v-on:click="selectClient('register')" class="text-success" value="register">
                                     Registrar cliente
                                 </a-select-option>
-                                <a-select-option v-for="client in clients" :key="client" :value="client.firstName + ' ' + client.lastName + ' (' + client.email + ')'" v-on:click="selectClient(client)">
+                                <a-select-option v-for="client in clients" :key="client.email" :value="client.firstName + ' ' + client.lastName + ' (' + client.email + ')'" v-on:click="selectClient(client)">
                                     {{client.firstName}} {{client.lastName}} ({{client.email}})
                                 </a-select-option>
                             </a-select>
@@ -650,7 +650,7 @@
                             </center>
                             <div v-if="selectedEvent.microServices && selectedEvent.microServices.length > 0">
                                 <dt class="mt-3 text-center">Servicios adicionales</dt>
-                                <a-tooltip v-for="micro of selectedEvent.microServices" :key="micro" placement="top">
+                                <a-tooltip v-for="micro of selectedEvent.microServices" :key="micro.name" placement="top">
                                     <template slot="title">
                                         <span>Duración: {{micro.duration}} minutos</span> <br>
                                         <span>Precio: $ {{formatPrice(micro.price)}}</span>
@@ -675,7 +675,7 @@
                                             <i class="ni ni-send" style="font-size: 1.4em;'"></i>
                                         </button>
                                         <template v-if="nameFile != 'Seleccione imagen'">
-                                            <div v-for="(image, index) in nameFile.split(',')" :key="image" class="col-12 border border-3 p-2">
+                                            <div v-for="(image, index) in nameFile.split(',')" :key="index" class="col-12 border border-3 p-2">
                                                 {{image}}
                                                 <i v-on:click="removeImage(index)" class="fa fa-times float-right mt-1 text-danger" style="font-size:1.4em;cursor:pointer;"></i>
                                             </div>
@@ -684,7 +684,7 @@
                                     <div v-if="selectedEvent.imgDesign.length > 0" class="row mt-1">
                                         <div class="col-md-12">
                                             <carousel :perPage="1" :autoplayHoverPause="true" :autoplay="true">
-                                                <slide v-for="(images, index) of selectedEvent.imgDesign" :key="images" class="imageHover">
+                                                <slide v-for="(images, index) of selectedEvent.imgDesign" :key="index" class="imageHover">
                                                     <img  class="w-100" style="height: 50vh !important;" :src="images" alt="">
                                                     <center>
                                                         <base-button type="danger" class="mt-2" size="sm" v-on:click="deleteImage(selectedEvent.imgDesign, index, selectedEvent._id)">Eliminar imagen</base-button>
@@ -828,7 +828,7 @@
                                             {{formatDate(column.createdAt)}}
                                         </template>
                                         <template slot="services" slot-scope="record">
-                                            <span v-for="service in record" :key="service">{{service.service}}</span>
+                                            <span v-for="(service, index) in record" :key="index">{{service.service}}</span>
                                         </template>
                                         <template slot="total" slot-scope="record, column">
                                             {{column.totals.total | formatPrice}}
@@ -892,13 +892,13 @@
                 </center>
                 <hr>
                 <a-select v-if="editSelectValid" class="col-12 mx-1" :default-value="dataEditSend.originalEmploye.name" >
-                    <a-select-option v-for="employe in dataEditSend.service.employes" :key="employe" @click="editEmployeDate(employe)" :value="employe.name">
+                    <a-select-option v-for="employe in dataEditSend.service.employes" :key="employe.name" @click="editEmployeDate(employe)" :value="employe.name">
                         {{employe.name}}
                     </a-select-option>
                 </a-select>
                 <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent noScroll col-12 mt-3" v-if="finalBlockEdit"  style="height:25vh; padding-right: 25px;">
                     <a-spin :spinning="spinningEdit">
-                        <div class="col-12" v-for="block in finalBlockEdit" :key="block">
+                        <div class="col-12" v-for="block in finalBlockEdit" :key="block.hour">
                             <base-button v-if="block.validator == true" v-on:click="selectBlockEdit(block.hour)" size="sm" class="col-12" type="success">
                                 <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                                 <span>Disponible</span>
@@ -951,7 +951,7 @@
                         <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
                             <div class="row pl-3">
                                 <template>
-                                    <div v-for="(service, index) in selectedEvent.services" :key="service"  class="col-md-4 px-4" >
+                                    <div v-for="(service, index) in selectedEvent.services" :key="index"  class="col-md-4 px-4" >
                                         <div class="card-service row mt-2" style="border-bottom: solid 8px #174c8e">
                                             <h3 class="name-serviceF"> {{service.name}}</h3>
                                             <div class="col-12 pl-0">
@@ -961,7 +961,7 @@
                                                             <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
                                                         </template>
                                                         <span class="ml-1 mb-0 font-weight-bold MicroF" style="font-size: 1.2em;">Adicionales: </span>
-                                                        <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicroFinally(index, micro, indexM)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
+                                                        <div v-for="(micro, indexM) in service.microServices" :key="indexM" v-on:click="SelectMicroFinally(index, micro, indexM)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
                                                             <badge v-if="MALDITOVUE" :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
                                                                 <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0 MF">{{micro.microService}}</p>
                                                             </badge>
@@ -1334,7 +1334,6 @@ import mixinES from '../mixins/mixinES'
             { 
                 title: 'Fecha',
                 dataIndex: 'dateBlocking',
-                key: 'dateBlocking',
                 defaultSortOrder: 'descend',
                 sorter: (a, b) => new Date(a.dateBlocking).getTime() - new Date(b.dateBlocking).getTime(),
                 scopedSlots: { customRender: 'date-slot' } 
@@ -1364,18 +1363,15 @@ import mixinES from '../mixins/mixinES'
                         this.searchInput.focus();
                     }, 0);
                     }
-                },
-                key: 'employe.name'
+                }
             },
             { 
                 title: 'Desde',
                 dataIndex: 'start',
-                key: 'start'
             },
             { 
                 title: 'Hasta',
                 dataIndex: 'end',
-                key: 'end' 
             },
             { 
                 title: 'Eliminar',
@@ -2460,12 +2456,15 @@ import mixinES from '../mixins/mixinES'
                 this.events = []
                 try {
                     const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
-                    this.events = dates.data.data
-                    if (this.$route.query.id) {
-                        const found = this.events.find(element => element._id == this.$route.query.id);
-                        
-                        this.onEventClick(found)
+                    if (dates) {
+                        this.events = dates.data.data
+                        if (this.$route.query.id) {
+                            const found = this.events.find(element => element._id == this.$route.query.id);
+                            
+                            this.onEventClick(found)
+                        }
                     }
+                    
                 }catch(err){
                     
                 }
@@ -2473,9 +2472,10 @@ import mixinES from '../mixins/mixinES'
         },
         viewLink(){
             if (this.$route.query.id) {
-                const found = this.events.find(element => element._id == this.$route.query.id);
-                
-                this.onEventClick(found)
+                axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.$route.query.id, this.configHeader)
+                .then(res => {
+                    this.onEventClick(res.data.data)
+                })
             }
         },
         filterOption(input, option) {
@@ -2913,7 +2913,10 @@ import mixinES from '../mixins/mixinES'
         initialState(){
             $(".ant-select-selection__clear").click()
             this.modals.modal3 = false
-            this.$refs.wizard.reset()
+            if (this.$refs.wizard) {
+                this.$refs.wizard.reset()
+            }
+            
             this.registerDate = {
                 services:[],
                 servicesShow:[],
@@ -3672,7 +3675,6 @@ import mixinES from '../mixins/mixinES'
                 this.selectedEvent.employe.img = res.data.data
                 
             })
-            console.log("🚀 ~ file: Dates.vue ~ line 3664 ~ onEventClick ~ this.selectedEvent", this.selectedEvent)
             this.dateModals.modal1 = true
             setTimeout(() => {
                 router.push("agendamiento")

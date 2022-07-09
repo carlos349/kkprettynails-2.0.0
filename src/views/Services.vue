@@ -184,7 +184,7 @@
                                 </span>
                                 <vue-custom-scrollbar class="maxHeight">
                                     <div class="p-4">
-                                        <base-button v-for="(data, index) in rowsItems" :key="data" v-on:click="itemsFunction(index, 1)" class="col-12 mb-1" type="secondary">
+                                        <base-button v-for="(data, index) in rowsItems" :key="index" v-on:click="itemsFunction(index, 1)" class="col-12 mb-1" type="secondary">
                                             <div class="row">
                                                 <div class="col-8">
                                                     <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.product}}</base-checkbox>
@@ -357,7 +357,7 @@
 
                                 <vue-custom-scrollbar class="maxHeight">
                                     <div class="p-4">
-                                        <base-button v-for="(data, index) in rowsItems" :key="data" v-on:click="itemsFunction(index,2)" class="col-12 mb-1" type="secondary">
+                                        <base-button v-for="(data, index) in rowsItems" :key="index" v-on:click="itemsFunction(index,2)" class="col-12 mb-1" type="secondary">
                                             <div class="row">
                                                 <div class="col-8">
                                                     <base-checkbox  class="float-left" v-model="itemsBox[index].check">{{data.product}}</base-checkbox>

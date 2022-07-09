@@ -420,7 +420,7 @@
                     	
                     <base-button icon="fa fa-plus" @click="modals.modal3 = true, providerSup.typeProvider = 'Registrar', initialState(2)" v-if="validForm == 3" class="mb-2" size="sm" type="success">Registrar proveedor</base-button>
                     <a-select class="input-group-alternative w-100 mb-4 mt-2" v-if="validForm == 3" default-value="Seleccione un proveedor"   size="large">
-                        <a-select-option v-for="provider of providers" :key="provider" @click="selectProviderForProduct(provider)" :value="provider">
+                        <a-select-option v-for="(provider, index) of providers" :key="index" @click="selectProviderForProduct(provider)" :value="provider">
                             {{provider}}
                         </a-select-option>
                     </a-select>
@@ -620,7 +620,7 @@
         <h6 slot="header" class="modal-title" id="modal-title-default">Gestión de sucursales</h6>
         <div class="row mb-5">
             <div class="col-md-4 mx-auto">
-                <a-select class="input-group-alternative w-100 mx-auto" show-search default-value="Seleccione una sucursal"  @change="selectEmploye" size="large">
+                <a-select class="input-group-alternative w-100 mx-auto" show-search default-value="Seleccione una sucursal"   size="large">
                     <a-select-option v-for="branch of branches" :key="branch._id" v-if="branch.active" :value="branch.name" v-on:click="getInventoryByBranch(branch._id, branch.name)">
                         {{branch.name}}
                     </a-select-option>
@@ -628,7 +628,7 @@
             </div>
             <div class="col-md-4 mx-auto">
                 <a-select v-if="productsForBranch.length > 0" class="input-group-alternative w-100" default-value="Seleccione un producto" size="large">
-                    <a-select-option v-for="product of productsForBranch" :key="product" :value="product.name" @click="selectProductForBranch(product.data)" :disabled="product.disabled">
+                    <a-select-option v-for="product of productsForBranch" :key="product.name" :value="product.name" @click="selectProductForBranch(product.data)" :disabled="product.disabled">
                         {{product.name}}
                     </a-select-option>
                 </a-select>
@@ -786,7 +786,7 @@
         <a-empty v-if="branchData == []">
             <span slot="description"> Esta sucursal no posee ningún producto registrado </span>
         </a-empty>
-        <base-button v-for="(branch, index) in branchData" :key="branch" class="col-12 mb-1" style="cursor:default" size="sm" type="secondary">
+        <base-button v-for="(branch, index) in branchData" :key="index" class="col-12 mb-1" style="cursor:default" size="sm" type="secondary">
             <div class="row p-0">
                 <div class="col-5 p-0">
                     <base-button size="sm" class="float-left ml-2 mr-0" type="danger" @click="deleteProductByBranch(branch)" icon="fa fa-trash"></base-button>
@@ -827,7 +827,7 @@
             <span slot="description"> No existen productos en la bodega </span>
         </a-empty>
         <a-select v-if="productsForBranch.length > 0" class="input-group-alternative w-100 mb-4 mt-2" default-value="Seleccione un producto" size="large">
-            <a-select-option v-for="product of productsForBranch" :key="product" :value="product.name" @click="selectProductForBranch(product.data)" :disabled="product.disabled">
+            <a-select-option v-for="product of productsForBranch" :key="product.name" :value="product.name" @click="selectProductForBranch(product.data)" :disabled="product.disabled">
                 {{product.name}}
             </a-select-option>
         </a-select>
@@ -888,6 +888,8 @@ import mixinES from '../mixins/mixinES'
         usuario: localStorage.nombre + ' ' + localStorage.apellido,
         myId:null,
         historyClosed:[],
+        dataHistoryClosed: '',
+        dataHistoryClosedReport: '',
         validForm:0,
         branches:[],
         branchDataValid:true,
@@ -999,21 +1001,18 @@ import mixinES from '../mixins/mixinES'
                 title: 'Medida',
                 dataIndex: 'measure',
                 width: 120,
-                key: 'price',
                 scopedSlots: { customRender: 'price' },
                 sorter: (a, b) => a.price - b.price,
             },
             {
                 title: 'Total bodega',
                 width: 120,
-                key: '_id',
                 scopedSlots: { customRender: 'totalStore' },
                 sorter: (a, b) => (a.quantity + a.entry - a.consume) - (b.quantity + b.entry - b.consume),
             },
             {
                 title: 'Agregar / Restar cantidades',
                 dataIndex: '_id',
-                key: '_id',
                 scopedSlots: {
                     customRender: 'add',
                 },
@@ -1021,7 +1020,6 @@ import mixinES from '../mixins/mixinES'
             {
                 title: 'Total sucursal',
                 width: 120,
-                key: '_id',
                 scopedSlots: { customRender: 'total' },
                 sorter: (a, b) => (a.quantity + a.entry - a.consume) - (b.quantity + b.entry - b.consume),
             },
@@ -1066,7 +1064,6 @@ import mixinES from '../mixins/mixinES'
             {
                 title: 'Precio promedio',
                 dataIndex: 'price',
-                key: 'price',
                 ellipsis: true,
                 scopedSlots: { customRender: 'price' },
                 sorter: (a, b) => a.price - b.price,
@@ -1116,7 +1113,6 @@ import mixinES from '../mixins/mixinES'
             },
             {
                 title: 'Total',
-                key: '_id',
                 ellipsis: true,
                 scopedSlots: { customRender: 'total' },
                 sorter: (a, b) => (a.quantity + a.entry - a.consume) - (b.quantity + b.entry - b.consume),
@@ -1298,7 +1294,6 @@ import mixinES from '../mixins/mixinES'
             {
                 title: 'Precio por medida',
                 dataIndex: 'price',
-                key: 'price',
                 ellipsis: true,
                 scopedSlots: { customRender: 'price' },
                 sorter: (a, b) => a.price - b.price,
@@ -1306,7 +1301,6 @@ import mixinES from '../mixins/mixinES'
             {
                 title: 'Gasto total',
                 dataIndex: 'price',
-                key: 'price',
                 ellipsis: true,
                 scopedSlots: { customRender: 'priceTotal' },
                 sorter: (a, b) => a.price - b.price,

@@ -469,7 +469,6 @@
                                         class="input-group-alternative"
                                         size="large"
                                         :defaultValue="configData.businessType"
-                                        :filter-option="filterOption"
                                         @change="handleChange"
                                     >
                                     <a-select-option value="Spa de uñas">

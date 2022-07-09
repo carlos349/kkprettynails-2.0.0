@@ -197,6 +197,7 @@
   import router from '../router'
   import jwtDecode from 'jwt-decode'
   import moment from 'moment';
+  import EventBus from '../components/EventBus'
   // Charts
   import * as chartConfigs from '@/components/Charts/config';
   import LineChart from '@/components/Charts/LineChart';
@@ -373,6 +374,7 @@
         change: true,
         noChange: false,
         noChangeTwo: false,
+        chartService:{},
         // chartService: {
         //   chart: {
         //     width: "100%",
@@ -1156,6 +1158,11 @@
           }
         }
       },
+    },
+    mounted (){
+        EventBus.$on('changeBranch', status => {
+            this.getBranch()
+        })
     }
   };
 </script>

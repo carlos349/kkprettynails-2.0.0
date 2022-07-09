@@ -26,21 +26,21 @@
             <div class="row mx-auto text-center">
                 <div class="col-4 mx-auto">
                     <dt class="" type="success">Ingresos manuales</dt>
-                    <base-button v-for="close in closes.manual" :key="close.type" class="col-12 mt-1" type="secondary">
+                    <base-button v-for="(close, index) in closes.manual" :key="index" class="col-12 mt-1" type="secondary">
                         <span class="float-left">{{close.type}}</span>
                         <badge style="font-size:1em !important" class="float-right text-default" type="success">{{formatPrice(close.total)}}</badge>
                     </base-button>
                 </div>
                 <div class="col-4 mx-auto">
                     <dt class="" type="default">Ingresos sistema</dt>
-                    <base-button v-for="closed in closes.system" :key="closed.type" class="col-12 mt-1" type="secondary">
+                    <base-button v-for="(closed, index) in closes.system" :key="index" class="col-12 mt-1" type="secondary">
                         <span class="float-left">{{closed.type}}</span>
                         <badge style="font-size:1em !important" class="float-right text-default" type="success">{{formatPrice(closed.total)}}</badge>
                     </base-button>
                 </div>
                 <div class="col-2 mx-auto">
                     <dt class="" type="warning">Diferencia</dt>
-                    <base-button v-for="(close, index) in closes.system" :key="close.type" class="col-12 mt-1" type="secondary">
+                    <base-button v-for="(close, index) in closes.system" :key="index" class="col-12 mt-1" type="secondary">
                         <badge style="font-size:1em !important" class="text-default" type="success">{{formatPrice(parseInt(close.total) - parseInt(closes.manual[index].total))}}</badge>
                     </base-button>
                 </div>
@@ -58,8 +58,8 @@
                     <div style="margin-top:-15% !important" class="text-center text-muted mb-2">
                         <small>Ingresos manuales</small>
                     </div>
-                    <template v-for="close of closes.manual">
-                        <div :key="close.type" v-if="close.type != 'Total'" class="text-left text-muted">
+                    <template v-for="(close, index) of closes.manual">
+                        <div :key="index" v-if="index != 'Total'" class="text-left text-muted">
                             <small>{{close.type}}</small>
                         </div>
                         <currency-input

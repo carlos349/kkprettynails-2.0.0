@@ -484,7 +484,7 @@
                                 </base-input>
                             </div>
                             <div class="col-2 p-1">
-                                <base-button outline type="default" style="float:right;" v-on:click="viewPass">
+                                <base-button outline type="default" style="float:right;padding: 10px; padding-left: 14px;padding-right: 14px;" v-on:click="viewPass">
                                     <a-icon style="vertical-align: 1px;font-size:1.4em;" type="eye" />
                                 </base-button>
                             </div>

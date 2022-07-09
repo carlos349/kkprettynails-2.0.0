@@ -371,7 +371,7 @@ export default {
             },
             {
                 title: 'Total',
-                key: '_id',
+                key: 'lastName',
                 scopedSlots: { customRender: 'total' },
                 sorter: (a, b) => (a.commission + a.bonus - a.advancement) - (b.commission + b.bonus - b.advancement),
             },
@@ -500,6 +500,7 @@ export default {
             }
         },
         async getEmployes(){
+            this.employes = []
             this.employeState = true
             try{
                 const getByBranch = await axios.get(endPoint.endpointTarget+'/employes/employesbybranch/'+this.branch, this.configHeader)

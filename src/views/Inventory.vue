@@ -507,20 +507,17 @@ import mixinES from '../mixins/mixinES'
             },
             {
                 title: 'Total',
-                key: '_id',
                 ellipsis: true,
                 scopedSlots: { customRender: 'total' },
                 sorter: (a, b) => (a.quantity + a.entry - a.consume) - (b.quantity + b.entry - b.consume),
             },
             {
                 title: 'Acciones',
-                key: '_id',
                 width: 170,
                 scopedSlots: { customRender: 'storeDev' }
             },
             {
                 title: 'Tipo de producto',
-                key: '_id',
                 width: 170,
                 scopedSlots: { customRender: 'typeProduct' }
             }

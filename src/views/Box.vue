@@ -34,7 +34,7 @@
                     <h2 v-else>Sucursal sin cierres registrados.</h2>
                 </div>
             </template>
-            <a-table :columns="columns" :loading="progress" :data-source="closing" :scroll="getScreen">
+            <a-table :columns="columns"  :data-source="closing" :scroll="getScreen">
                 <template slot="manual-total" slot-scope="record, column">
                     {{formatPrice(totalFind(column.manual))}}
                 </template>
@@ -360,6 +360,7 @@ export default {
             }
         },
         async getClosing(){
+            this.closing = []
             try {
                 const closing = await axios.get(endPoint.endpointTarget+'/sales/Closing/'+this.branch, this.configHeader)
                 if (closing.data.status == 'ok') {
@@ -373,7 +374,7 @@ export default {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión4',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -440,7 +441,7 @@ export default {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión6',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -483,7 +484,7 @@ export default {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión1',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -519,7 +520,7 @@ export default {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión2',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -594,7 +595,7 @@ export default {
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
-                            title: 'Error de conexión',
+                            title: 'Error de conexión3',
                             showConfirmButton: false,
                             timer: 1500
                         })
