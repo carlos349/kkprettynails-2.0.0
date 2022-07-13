@@ -97,11 +97,11 @@
             </vue-cal>
         </vue-custom-scrollbar>
         <div v-else>
-            <card type="secondary" shadow header-classes="bg-white" class="border-0 m-0 px-0">
+            <card  type="secondary" shadow header-classes="bg-white" class="border-0 m-0 px-0">
                 
                   <!-- WIZARD -->
                 <a-spin :spinning="spinningDate">
-                <form-wizard ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!">
+                <form-wizard v-if="filterOff" ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!">
 
                     <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
                     <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
@@ -1756,6 +1756,7 @@ import mixinES from '../mixins/mixinES'
         serviceSelected: [],
         servicesPhoneShow:false,
         showCalendar: true,
+        filterOff: true,
         spinningView: false
       };
     },
@@ -3678,10 +3679,19 @@ import mixinES from '../mixins/mixinES'
             $(".ant-select-selection__clear").click()
         },
         getDatesByEmploye(id, img, name){
+            this.filterOff = false
+            this.spinningView = true
             if (id == "Todos") {
                 this.getDates()
                 this.filter = false
                 this.employeByDate = "Filtrar por empleado"
+                this.showCalendar = false
+                setTimeout(() => {
+                    this.showCalendar = true
+                    this.spinningView = false
+                    this.filterOff = true
+                }, 500);
+                
             }
             else{
                 this.events = []
@@ -3695,6 +3705,12 @@ import mixinES from '../mixins/mixinES'
                 .then(res => {
                     if (res.data.status == 'ok') {
                         this.events = res.data.data
+                        this.showCalendar = false
+                        setTimeout(() => {
+                            this.showCalendar = true
+                            this.spinningView = false
+                            this.filterOff = true
+                        }, 500);
                     }else{
                         this.$swal({
                             type: 'error',

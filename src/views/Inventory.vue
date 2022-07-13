@@ -769,7 +769,7 @@ import mixinES from '../mixins/mixinES'
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión1',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -840,7 +840,7 @@ import mixinES from '../mixins/mixinES'
                                     if (!err.response) {
                                         this.$swal({
                                             icon: 'error',
-                                            title: 'Error de conexión',
+                                            title: 'Error de conexión2',
                                             showConfirmButton: false,
                                             timer: 1500
                                         })
@@ -861,7 +861,7 @@ import mixinES from '../mixins/mixinES'
                             if (!err.response) {
                                 this.$swal({
                                     icon: 'error',
-                                    title: 'Error de conexión',
+                                    title: 'Error de conexión3',
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
@@ -891,7 +891,7 @@ import mixinES from '../mixins/mixinES'
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
-                            title: 'Error de conexión',
+                            title: 'Error de conexión4',
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -911,7 +911,7 @@ import mixinES from '../mixins/mixinES'
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión5',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -942,10 +942,13 @@ import mixinES from '../mixins/mixinES'
             const getProducts = await axios.get(endPoint.endpointTarget+'/stores/getinventorybybranch/'+ this.branch, this.configHeader)
             if (getProducts) {
                 this.products = getProducts.data.data
-                for (let index = 0; index < this.products.length; index++) {
-                var ideal = (this.products[index].quantity + this.products[index].entry) - this.products[index].consume
-                this.countProduct.push({id:this.products[index]._id,count:'',ideal:ideal,measure:this.products[index].measure,product:this.products[index].product,difference:''})
-                } 
+                if (getProducts.data.status != 'inventories not found') {
+                    for (let index = 0; index < this.products.length; index++) {
+                        var ideal = (this.products[index].quantity + this.products[index].entry) - this.products[index].consume
+                        this.countProduct.push({id:this.products[index]._id,count:'',ideal:ideal,measure:this.products[index].measure,product:this.products[index].product,difference:''})
+                    } 
+                }
+                
                 this.productState = false
             }else{
                 this.products = []
@@ -953,9 +956,11 @@ import mixinES from '../mixins/mixinES'
             }
             }catch(err){
                 if (!err.response) {
+                console.log("🚀 ~ file: Inventory.vue ~ line 956 ~ getProducts ~ err", err)
+                    
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión6',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -986,7 +991,7 @@ import mixinES from '../mixins/mixinES'
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión7',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -1017,7 +1022,7 @@ import mixinES from '../mixins/mixinES'
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión8',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -1083,7 +1088,7 @@ import mixinES from '../mixins/mixinES'
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
-                            title: 'Error de conexión',
+                            title: 'Error de conexión9',
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -1128,7 +1133,7 @@ import mixinES from '../mixins/mixinES'
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
-                        title: 'Error de conexión',
+                        title: 'Error de conexión10',
                         showConfirmButton: false,
                         timer: 1500
                     })

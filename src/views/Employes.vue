@@ -800,6 +800,7 @@ export default {
                         showConfirmButton: true,
                         // timer: 1500
                     })
+                    this.disabledform = false
                 }
             }
 		},

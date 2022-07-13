@@ -42,7 +42,7 @@
                 <br>
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text bg-default" id="basic-addon2">Asunto:</span>
+                        <span class="input-group-text bg-default" id="basic-addon2">URL:</span>
                     </div>
                     <input v-model="image_url" type="text" class="form-control pl-2" placeholder="Url de la imagen" aria-label="imagen url" aria-describedby="basic-addon2">
                 </div>
