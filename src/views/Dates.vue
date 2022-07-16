@@ -2506,7 +2506,10 @@ import mixinES from '../mixins/mixinES'
             if (this.validRoute('agendamiento', 'todas')) {
                 try {
                     const date = await axios.get(endPoint.endpointTarget+'/dates/getNewDate/'+this.branch, this.configHeader)
-                    this.events.push(date.data.data)
+                    const find = this.events.find(element => element._id == date.data.data._id)
+                    if (!find) {
+                        this.events.push(date.data.data)
+                    }
                 }catch(err){
                     
                 }
