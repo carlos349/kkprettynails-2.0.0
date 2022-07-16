@@ -305,7 +305,7 @@
           localStorage.setItem('branchName', value.split('/')[1])
           this.branch = value.split('/')[0]
           this.branchName = value.split('/')[1]
-          EventBus.$emit('changeBranch', true)
+          EventBus.$emit('changeBranch'+router.app._route.path, router.app._route.path)
         }
       },
       getToken(){

@@ -394,6 +394,7 @@ export default {
     },
     methods: {
         getBranch(){
+            console.log("prueba")
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
             this.getEmployes()
@@ -1034,9 +1035,10 @@ export default {
         }
     },
     mounted() {
-        EventBus.$on('changeBranch', status => {
+        EventBus.$on('changeBranch/Empleados', status => {
             this.getBranch()
         })
+        
     }
   };
 </script>

@@ -2502,6 +2502,16 @@ import mixinES from '../mixins/mixinES'
                 }
             } 
         },
+        async getNewDate(){
+            if (this.validRoute('agendamiento', 'todas')) {
+                try {
+                    const date = await axios.get(endPoint.endpointTarget+'/dates/getNewDate/'+this.branch, this.configHeader)
+                    this.events.push(date.data.data)
+                }catch(err){
+                    
+                }
+            }
+        },
         async getDates() {
             if (!this.validRoute('agendamiento', 'todas')) {
                 this.events = []
@@ -6597,10 +6607,11 @@ import mixinES from '../mixins/mixinES'
         }
     },
     mounted (){
-        this.socket.on('notify', (data) => {
-            this.getDates()
+        this.socket.on('notify', data => {
+            // this.getDates()
+            this.getNewDate()
         });
-        EventBus.$on('changeBranch', status => {
+        EventBus.$on('changeBranch/Agendamiento', status => {
             this.getBranch()
         })
         EventBus.$on('notifyLink', status => {

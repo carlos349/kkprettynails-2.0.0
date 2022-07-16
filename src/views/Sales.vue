@@ -878,7 +878,7 @@ width=0,height=0,left=-1000,top=-1000`;
         EventBus.$on('reloadSales', status => {
             this.getSales()
         })
-        EventBus.$on('changeBranch', status => {
+        EventBus.$on('changeBranch/Ventas', status => {
             this.getBranch()
         })
         EventBus.$on('notifyLinkSales', status => {
