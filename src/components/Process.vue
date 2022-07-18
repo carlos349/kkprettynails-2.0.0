@@ -2387,7 +2387,7 @@ export default {
         EventBus.$on('openModal', status => {
             this.initialState()
         })
-        EventBus.$on('changeBranch', status => {
+        EventBus.$on('changeBranch'+router.app._route.path, status => {
             this.getBranch()
         })
         EventBus.$on('reloadProducts', status => {

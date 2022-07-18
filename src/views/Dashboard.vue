@@ -1160,9 +1160,9 @@
       },
     },
     mounted (){
-        EventBus.$on('changeBranch', status => {
-            this.getBranch()
-        })
+      EventBus.$on('changeBranch/dashboard', status => {
+        this.getBranch()
+      })
     }
   };
 </script>

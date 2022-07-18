@@ -2894,7 +2894,7 @@ import mixinES from '../mixins/mixinES'
         }
     },
     mounted() {
-        EventBus.$on('changeBranch', status => {
+        EventBus.$on('changeBranch/store', status => {
             this.getBranch()
         })
     },

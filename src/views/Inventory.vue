@@ -1152,7 +1152,7 @@ import mixinES from '../mixins/mixinES'
         }
     },
     mounted() {
-        EventBus.$on('changeBranch', status => {
+        EventBus.$on('changeBranch/Inventario', status => {
             this.getBranch()
         })
     },

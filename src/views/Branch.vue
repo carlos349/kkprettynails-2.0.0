@@ -1143,11 +1143,6 @@ export default {
             }
         },
     },
-    mounted (){
-        EventBus.$on('changeBranch', status => {
-            this.getBranch()
-        })
-    },
     computed: {
         getScreen: () => {
             return screen.width < 780 ? { x: 'calc(700px + 50%)', y: 240 } : { y: 'auto' }
