@@ -213,16 +213,13 @@
       pushLink(link){
         var valid = false
         var valid2 = false
-        if(router.app._route.path == "/agendamiento"){
-          valid = true 
-        }if(router.app._route.path == "/Ventas"){
+        if(router.app._route.path == "/Ventas"){
           valid2 = true
         }
         router.push(link)
         setTimeout(() => {
-          if(valid){
-            EventBus.$emit('notifyLink', 'reload') 
-          }if(valid2){
+          EventBus.$emit('notifyLink', 'reload')
+          if(valid2){
             EventBus.$emit('notifyLinkSales', 'reload') 
           }
         }, 1000);

@@ -553,7 +553,7 @@
                :header-classes="selectedEvent.class +  ' noBorder'"
                modal-classes="modal-dialog-centered modal-lg">
             <h5 slot="header" class="modal-title" id="modal-title-notification">
-                {{dateSplit(selectedEvent.start)}} 
+                {{dateSplit(selectedEvent.createdAt)}} 
                 <span v-if="selectedEvent.typeCreation == 'Web'">(Web)</span>
                 <span v-else>(Sistema)</span></h5>   
             <card type="secondary" shadow
@@ -1094,7 +1094,7 @@
                                                 {{column.dateBlockings | formatDate}}
                                             </template>
                                             <template slot="delete-slot" slot-scope="record, column">
-                                                <base-button @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end)" size="sm" type="danger">
+                                                <base-button @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end, column.dateId)" size="sm" type="danger">
                                                     <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
                                                 </base-button>
                                             </template>
@@ -1797,7 +1797,9 @@ import mixinES from '../mixins/mixinES'
             this.hourBlocking.employe = {
                 name: employe.name,
                 document: employe.document,
-                id: employe._id
+                id: employe._id,
+                class: employe.class,
+                img:"no"
             }
             this.configDatePickerBlocked.enable = []
             for (let i = 0; i < employe.days.length; i++) {
@@ -2055,7 +2057,7 @@ import mixinES from '../mixins/mixinES'
             clearFilters();
             this.searchText = '';
         },
-        async deleteHour(id, employe, dateBlocking, start, end){
+        async deleteHour(id, employe, dateBlocking, start, end, idDate){
             try {
                 const blockHour = await axios.post(`${endPoint.endpointTarget}/dates/deleteBlockingHour`, {
                     id: id,
@@ -2063,7 +2065,8 @@ import mixinES from '../mixins/mixinES'
                     dateBlocking: dateBlocking,
                     employe: employe,
                     start: start,
-                    end: end
+                    end: end,
+                    idDate: idDate
                 }, this.configHeader)
                 if (blockHour.data.status == 'ok') {
                     axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+employe.id, this.configHeader)
@@ -2527,11 +2530,7 @@ import mixinES from '../mixins/mixinES'
                     const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
                     if (dates) {
                         this.events = dates.data.data
-                        if (this.$route.query.id) {
-                            const found = this.events.find(element => element._id == this.$route.query.id);
-                            
-                            this.onEventClick(found)
-                        }
+                        
                     }
                     
                 }catch(err){
@@ -3747,77 +3746,88 @@ import mixinES from '../mixins/mixinES'
         onEventClick(event){
             // this.configDatePickerEdit.minDate = ''
             this.selectedEvent = event
-            this.originalEmploye = this.selectedEvent.employe
-            var start = this.selectedEvent.start
-            axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.selectedEvent._id, this.configHeader)
-            .then(res => {
-                this.selectedEvent.createdAt = new Date(res.data.data.createdAt).format('MM-DD-YYYY')
-            })
+            var validB = true
 
-            axios.get(endPoint.endpointTarget+'/users/getbylinklender/'+this.selectedEvent.employe.id, this.configHeader)
-            .then(res => {
-                this.selectedEvent.employe.img = res.data.data
-                
-            })
-            this.dateModals.modal1 = true
-            setTimeout(() => {
-                router.push("agendamiento")
-            }, 3000);
-            
-            if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
-                this.editDisabled = true
-            }else{
-                this.editDisabled = false
+            if (this.selectedEvent.isBlocked && this.selectedEvent.isBlocked == true) {
+                validB = false
             }
-            this.notesClient = []
-            axios.get(endPoint.endpointTarget+'/clients/findOne/'+this.selectedEvent.client.id, this.configHeader)
-            .then(res => {
-                if (res.data.data.attends == 0) {
-                    this.dateData.discount.discount = true
-                    this.dateData.discount.type = 'first'
-                }
-                else if(res.data.data.recommendations > 0) {
-                    this.dateData.discount.discount = true
-                    this.dateData.discount.type = 'recomnd'
-                }else{
-                    this.dateData.discount.discount = false
-                    this.dateData.discount.type = 'none'
-                }
-                this.phoneDateSelect = res.data.data.phone.formatInternational
-                this.dateData.history = []
-                this.dateData.history = res.data.data.historical
-                if (res.data.data.clientNotes) {
-                    this.notesClient = res.data.data.clientNotes
-                }
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
-                }
-            })
-            // e.stopPropagation()
-            // setTimeout(() => {
+
+            if(validB){
+                this.originalEmploye = this.selectedEvent.employe
+                var start = this.selectedEvent.start
+                axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.selectedEvent._id, this.configHeader)
+                .then(res => {
+                    this.selectedEvent.createdAt = new Date(res.data.data.createdAt).format('MM-DD-YYYY')
+                })
+
+                axios.get(endPoint.endpointTarget+'/users/getbylinklender/'+this.selectedEvent.employe.id, this.configHeader)
+                .then(res => {
+                    this.selectedEvent.employe.img = res.data.data
+                    
+                })
                 
-            //     this.selectedEvent.createdAt = event.createdAt
-            //     this.configDatePickerEdit.minDate = new Date()
-            //     console.log(this.selectedEvent)
-            //     console.log("AQUI")
+                
+                this.dateModals.modal1 = true
+                setTimeout(() => {
+                    router.push("agendamiento")
+                }, 3000);
+                
+                if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
+                    this.editDisabled = true
+                }else{
+                    this.editDisabled = false
+                }
+                this.notesClient = []
+                axios.get(endPoint.endpointTarget+'/clients/findOne/'+this.selectedEvent.client.id, this.configHeader)
+                .then(res => {
+                    if (res.data.data.attends == 0) {
+                        this.dateData.discount.discount = true
+                        this.dateData.discount.type = 'first'
+                    }
+                    else if(res.data.data.recommendations > 0) {
+                        this.dateData.discount.discount = true
+                        this.dateData.discount.type = 'recomnd'
+                    }else{
+                        this.dateData.discount.discount = false
+                        this.dateData.discount.type = 'none'
+                    }
+                    this.phoneDateSelect = res.data.data.phone.formatInternational
+                    this.dateData.history = []
+                    this.dateData.history = res.data.data.historical
+                    if (res.data.data.clientNotes) {
+                        this.notesClient = res.data.data.clientNotes
+                    }
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if (err.response.status == 401) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Session caducada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        setTimeout(() => {
+                            router.push("login")
+                        }, 1550);
+                    }
+                })
+                // e.stopPropagation()
+                // setTimeout(() => {
+                    
+                //     this.selectedEvent.createdAt = event.createdAt
+                //     this.configDatePickerEdit.minDate = new Date()
+                //     console.log(this.selectedEvent)
+                //     console.log("AQUI")
+                
+                // }, 2000);
+            }
             
-            // }, 2000);
             
         },
         dateSplit(value){
@@ -6604,9 +6614,13 @@ import mixinES from '../mixins/mixinES'
             this.getBranch()
         })
         EventBus.$on('notifyLink', status => {
-            this.viewLink()
+            console.log("corrio")
+                this.viewLink()
         })
-    }
+    },
+    destroyed() {
+        EventBus.$off('notifyLink');
+    },
   };
 </script>
 <style>
@@ -6709,6 +6723,12 @@ import mixinES from '../mixins/mixinES'
     .vuecal__cell-split.class8Split {background-color: rgb(255, 214, 214, 0.1);}
     .vuecal__cell-split.class9Split {background-color: rgb(255, 209, 186, 0.1);}
     .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.1);}
+    .classBlock {
+        background:#f5365c;
+        border: 1px solid #fff;
+        border-radius: 7px;
+        color: black;
+    }
     .class0 {
         background:rgb(196, 203, 202);
         border: 1px solid #fff;
