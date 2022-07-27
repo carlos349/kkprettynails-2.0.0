@@ -884,7 +884,7 @@
                                 this.blockForDays = this.configurationsBranch.blockedDays
                             }
                             
-                            if (this.configurationsBranch.datesPolitics.onlineDates) {
+                            if (this.configurationsBranch.datesPolitics.onlineDates.active) {
                                 this.validVerifyFunc()
                                 this.configDate.maxDate = new Date().setMonth(new Date().getMonth() + this.configurationsBranch.datesPolitics.limitTimeDate)
                             }else{
@@ -895,14 +895,21 @@
                                 })
                             }
                             const blockHours = this.configurationsBranch.blockHour
+                            const onlineDates = this.configurationsBranch.datesPolitics.onlineDates
+                            const dictDays = {
+                                0: "sunday",
+                                1: "monday",
+                                2: "tuesday",
+                                3: "wednesday",
+                                4: "thursday",
+                                5: "friday",
+                                6: "saturday"
+                            }
                             this.configDate.disable.push(
                                 function(date) {
-                                    return blockHours[date.getDay()].status == true ? false : true;
+                                    return blockHours[date.getDay()].status == true && onlineDates[dictDays[date.getDay()]] == true ? false : true;
                                 }
                             )
-                                
-                            
-                
                             
                             this.blockForDays.forEach(element => {
                                 this.configDate.disable.push(element.date)
@@ -1112,7 +1119,7 @@
                                 const element = config.data.data[key];
                                 for (const keyTwo in branchess) {
                                     const elementTwo = branchess[keyTwo];
-                                    if (element.branch == elementTwo._id && element.datesPolitics.onlineDates == false) {
+                                    if (element.branch == elementTwo._id && element.datesPolitics.onlineDates.active == false) {
                                         branchess.splice(keyTwo, 1)
                                     }
                                 }

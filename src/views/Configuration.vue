@@ -152,8 +152,7 @@
                         <hr class="w-50 mb-0 mt-0">
                         <div class="row p-2 pt-0 pl-4">
                           <div class="col-12 row mb-3">
-                            <p class="mx-auto"> <strong class="mr-2">Agendamiento online </strong> <a-switch class="mr-3" :checked="configData.datesPolitics.onlineDates" @click="changeDatePolitic('onlineDates')"/></p>
-
+                            <p class="mx-auto"> <strong class="mr-2">Agendamiento online</strong> <a-switch class="mr-3" :checked="configData.datesPolitics.onlineDates.active" @click="changeDatePolitic('onlineDates')"/></p>
                             <p class="mx-auto"> <strong class="mr-2">Permitir eliminar citas</strong> <a-switch  :checked="configData.datesPolitics.deleteDates" @click="changeDatePolitic('deleteDates')" /></p>
                             
                             <p class="mx-auto"> 
@@ -172,11 +171,14 @@
                           <div class="col-4">
                             <h5 class="text-center">Días</h5>
                           </div>
-                          <div class="col-4">
+                          <div class="col-3">
                             <h5 class="mr-3 text-center">Apertura</h5>
                           </div>
-                          <div class="col-4">
-                            <h5 class="mr-5 text-center">Cierre</h5>
+                          <div class="col-3">
+                            <h5 class=" text-center">Cierre</h5>
+                          </div>
+                          <div class="col-2">
+                            <h5 class="mr-4 text-right">Online</h5>
                           </div>
                           <div class="col-4">
                               <base-button :type="configData.blockHour[1].status == true ? 'success' : 'danger'" size="sm" class="mt-2 w-100" v-on:click="salectDay('monday')">
@@ -201,7 +203,7 @@
                                   Domingo
                               </base-button>
                           </div>
-                          <div class="col-8 row">
+                          <div class="col-7 row">
                               
                               <a-select :disabled="configData.blockHour[1].status == true ? false : true" @change="updateconfigForTime(1)" style="width:45%" class="mx-auto mt-1 input-group-alternative" placeholder="Desde" v-model="configData.blockHour[1].start">
                                   <a-select-option v-for="i in fromArray" :key="i">
@@ -281,7 +283,30 @@
                                   </a-select-option>
                               </a-select>
                           </div>
-                          <div class="col-12 p-2 mt-2">
+                          <div class="col-1 pr-0">
+                            <div>
+                              <a-switch class="mt-2" :checked="configData.datesPolitics.onlineDates.monday" @click="salectDayOnlineDates('monday')" :disabled="configData.datesPolitics.onlineDates.active ? false : true"/>
+                            </div>
+                            <div>
+                              <a-switch class="mt-3" :checked="configData.datesPolitics.onlineDates.tuesday" @click="salectDayOnlineDates('tuesday')" :disabled="configData.datesPolitics.onlineDates.active ? false : true"/>
+                            </div>
+                            <div>
+                              <a-switch class="mt-3" :checked="configData.datesPolitics.onlineDates.wednesday" @click="salectDayOnlineDates('wednesday')" :disabled="configData.datesPolitics.onlineDates.active ? false : true"/>
+                            </div>
+                            <div>
+                              <a-switch style="margin-top: 0.85rem !important;" :checked="configData.datesPolitics.onlineDates.thursday" @click="salectDayOnlineDates('thursday')" :disabled="configData.datesPolitics.onlineDates.active ? false : true"/>
+                            </div>
+                            <div>
+                              <a-switch style="margin-top: 0.85rem !important;" :checked="configData.datesPolitics.onlineDates.friday" @click="salectDayOnlineDates('friday')" :disabled="configData.datesPolitics.onlineDates.active ? false : true"/>
+                            </div>
+                            <div>
+                              <a-switch style="margin-top: 0.85rem !important;" :checked="configData.datesPolitics.onlineDates.saturday" @click="salectDayOnlineDates('saturday')" :disabled="configData.datesPolitics.onlineDates.active ? false : true"/>
+                            </div>
+                            <div>
+                              <a-switch style="margin-top: 0.85rem !important;" :checked="configData.datesPolitics.onlineDates.sunday" @click="salectDayOnlineDates('sunday')" :disabled="configData.datesPolitics.onlineDates.active ? false : true"/>
+                            </div>
+                          </div>
+                          <div class="col-12 p-2 mt-2 pr-4">
                             <a-tooltip>
                               <template slot="title">
                                 Redacta las políticas de tu negocio que se verán reflejadas en los correos de notificación a tus clientes cuando efectúan un agendamiento.
@@ -999,7 +1024,7 @@
         },
         changeDatePolitic(valid){
           if (valid == 'onlineDates') {
-            this.configData.datesPolitics.onlineDates = this.configData.datesPolitics.onlineDates == true ? false : true
+            this.configData.datesPolitics.onlineDates.active = this.configData.datesPolitics.onlineDates.active == true ? false : true
           }else if (valid == 'microServices') {
             this.configData.datesPolitics.microServices = this.configData.datesPolitics.microServices == true ? false : true
           }else if (valid == 'editDates') {
@@ -1285,6 +1310,14 @@
               this.configData.blockHour[6].status = this.configData.blockHour[6].status == true ? false : true
           }else if (day == 'sunday') {
               this.configData.blockHour[0].status = this.configData.blockHour[0].status == true ? false : true
+          }
+          this.updateconfig()
+        },
+        salectDayOnlineDates(day){
+          if (this.configData.datesPolitics.onlineDates[day]) {
+            this.configData.datesPolitics.onlineDates[day] = false
+          }else{
+            this.configData.datesPolitics.onlineDates[day] = true
           }
           this.updateconfig()
         },
