@@ -1,31 +1,31 @@
 self.__precacheManifest = [
   {
-    "revision": "9f9983982a9426bfdcf3",
+    "revision": "87597cbaa6fe44cb57c6",
     "url": "/css/app.8f9d531d.css"
   },
   {
-    "revision": "9f9983982a9426bfdcf3",
-    "url": "/js/app.97784e03.js"
+    "revision": "87597cbaa6fe44cb57c6",
+    "url": "/js/app.ea13ed8c.js"
   },
   {
-    "revision": "bb580e7aa0d6a77d1a54",
-    "url": "/css/chunk-3082b613.9b3c7eec.css"
+    "revision": "6744e40921e566064c7c",
+    "url": "/css/chunk-157ba924.983dcdcb.css"
   },
   {
-    "revision": "bb580e7aa0d6a77d1a54",
-    "url": "/js/chunk-3082b613.0c8c98fd.js"
+    "revision": "6744e40921e566064c7c",
+    "url": "/js/chunk-157ba924.5a742589.js"
   },
   {
-    "revision": "554ed950d08cc40de1c2",
-    "url": "/css/chunk-4e3024b3.86d83177.css"
+    "revision": "10b10450d3bc1ae3f933",
+    "url": "/css/chunk-1b38b14e.816950bc.css"
   },
   {
-    "revision": "554ed950d08cc40de1c2",
-    "url": "/js/chunk-4e3024b3.f06b13d0.js"
+    "revision": "10b10450d3bc1ae3f933",
+    "url": "/js/chunk-1b38b14e.aef488a1.js"
   },
   {
-    "revision": "c71d861ee44713309927",
-    "url": "/js/chunk-68cc9a36.9048fca2.js"
+    "revision": "983be01af446ab57036c",
+    "url": "/js/chunk-34264b1d.50fedff6.js"
   },
   {
     "revision": "401d15f415e3eefb0865",
@@ -56,24 +56,20 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
-  },
-  {
     "revision": "f82ec6ba2dc4181db2af35c499462840",
     "url": "/fonts/nucleo-icons.f82ec6ba.ttf"
+  },
+  {
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
     "revision": "46abbc4a676739dbd61f8a305cb63fd8",
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "03cc58527d68759ccb43e6968c400184",
+    "revision": "fdb9977d6b5c7a6c9c131f0c93805c47",
     "url": "/index.html"
-  },
-  {
-    "revision": "185539981482cea1299c1fdcebb598b4",
-    "url": "/all.css"
   },
   {
     "revision": "16d4b55f8b1c1f2cc3782a3e3386c329",
@@ -82,6 +78,10 @@ self.__precacheManifest = [
   {
     "revision": "afb0175f4417917d8cb162e0884b5fa9",
     "url": "/img/brand/calendar.png"
+  },
+  {
+    "revision": "185539981482cea1299c1fdcebb598b4",
+    "url": "/all.css"
   },
   {
     "revision": "93929da7ae1722429c7e9d894761dc41",
@@ -116,20 +116,16 @@ self.__precacheManifest = [
     "url": "/img/theme/box.png"
   },
   {
-    "revision": "c2da9acf4a2818e249a2ec94862a938d",
-    "url": "/img/theme/branch.png"
-  },
-  {
     "revision": "84335294072f0ad513fc8614b54a428a",
     "url": "/img/theme/calendar.png"
   },
   {
-    "revision": "1881d2a2c3f7bb5e1b4ac0b2622291b0",
-    "url": "/img/theme/clients.png"
+    "revision": "c2da9acf4a2818e249a2ec94862a938d",
+    "url": "/img/theme/branch.png"
   },
   {
-    "revision": "4567c9af4dfa454a6e3a9bf30a34fe80",
-    "url": "/img/theme/clients.jpg"
+    "revision": "1881d2a2c3f7bb5e1b4ac0b2622291b0",
+    "url": "/img/theme/clients.png"
   },
   {
     "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
@@ -140,20 +136,24 @@ self.__precacheManifest = [
     "url": "/img/theme/employeReport.png"
   },
   {
-    "revision": "ef90ef6ebf8cfa521445aea45be0f3d0",
-    "url": "/img/theme/metrics.png"
+    "revision": "4567c9af4dfa454a6e3a9bf30a34fe80",
+    "url": "/img/theme/clients.jpg"
   },
   {
     "revision": "ced0f2c9d36acd10447db1f3b3339104",
     "url": "/img/theme/employes.png"
   },
   {
-    "revision": "db1039af1a43f2ad9d499468459fcd9c",
-    "url": "/img/theme/inventario.jpg"
-  },
-  {
     "revision": "2300fe007d5a1d67cb00c281b16319c5",
     "url": "/img/theme/profile-default.png"
+  },
+  {
+    "revision": "ef90ef6ebf8cfa521445aea45be0f3d0",
+    "url": "/img/theme/metrics.png"
+  },
+  {
+    "revision": "db1039af1a43f2ad9d499468459fcd9c",
+    "url": "/img/theme/inventario.jpg"
   },
   {
     "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
@@ -196,28 +196,28 @@ self.__precacheManifest = [
     "url": "/img/theme/team-1-800x800.jpg"
   },
   {
-    "revision": "54e3f3c414bd8e7234bae3ee3be950e5",
-    "url": "/img/theme/team-3-800x800.jpg"
+    "revision": "93929da7ae1722429c7e9d894761dc41",
+    "url": "/img/theme/syswa-gestion.png"
   },
   {
     "revision": "66618a418175ddf2ac8c47a241d327a8",
     "url": "/img/theme/team-4-800x800.jpg"
   },
   {
-    "revision": "93929da7ae1722429c7e9d894761dc41",
-    "url": "/img/theme/syswa-gestion.png"
+    "revision": "54e3f3c414bd8e7234bae3ee3be950e5",
+    "url": "/img/theme/team-3-800x800.jpg"
   },
   {
-    "revision": "4524351b9c58adb85b5e1b32374347ab",
-    "url": "/img/theme/users.png"
+    "revision": "be997d5226b992ffad34816870c6b7aa",
+    "url": "/img/theme/team-2-800x800.jpg"
   },
   {
     "revision": "c532f6f0176968caa6265864ee1abb35",
     "url": "/img/theme/vue.jpg"
   },
   {
-    "revision": "be997d5226b992ffad34816870c6b7aa",
-    "url": "/img/theme/team-2-800x800.jpg"
+    "revision": "4524351b9c58adb85b5e1b32374347ab",
+    "url": "/img/theme/users.png"
   },
   {
     "revision": "b37d2558404192e18ca66e0533e57cf1",
