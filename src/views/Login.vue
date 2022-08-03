@@ -715,15 +715,7 @@ import mixinES from '../mixins/mixinES'
       }
     },
     beforeCreate(){
-        localStorage.removeItem('userToken')
-        localStorage.removeItem('firstname')
-        localStorage.removeItem('lastname')
-        localStorage.removeItem('image')
-        localStorage.removeItem('email')
-        localStorage.removeItem('imageUser')
-        localStorage.removeItem('status')
-        localStorage.removeItem('branch')
-        localStorage.removeItem('branchName')
+        localStorage.clear()
     },
     created(){
         this.getBranches()
