@@ -2169,6 +2169,16 @@ import mixinES from '../mixins/mixinES'
             }
         },
         getBranch(){
+            this.filterOff = false
+            this.filter = false
+            this.spinningView = true
+            this.employeByDate = "Filtrar por empleado"
+            this.showCalendar = false
+            setTimeout(() => {
+                this.showCalendar = true
+                this.spinningView = false
+                this.filterOff = true
+            }, 500);
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
             // this.getUsers()
@@ -5963,7 +5973,6 @@ import mixinES from '../mixins/mixinES'
             this.getBranch()
         })
         EventBus.$on('notifyLink', status => {
-            console.log("corrio")
                 this.viewLink()
         })
     },
