@@ -634,7 +634,7 @@ export default {
         }
     },
     mounted (){
-        EventBus.$on('changeBranch/Caja', status => {
+        EventBus.$on('changeBranch/caja', status => {
             this.getBranch()
         })
     },

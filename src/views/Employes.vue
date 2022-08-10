@@ -1035,7 +1035,7 @@ export default {
         }
     },
     mounted() {
-        EventBus.$on('changeBranch/Empleados', status => {
+        EventBus.$on('changeBranch/empleados', status => {
             this.getBranch()
         })
         
