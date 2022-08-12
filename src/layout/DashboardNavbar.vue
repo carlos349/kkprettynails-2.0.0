@@ -116,6 +116,14 @@
             </div>
           </li> -->
         </ul>
+        <div v-if="loader" class="preloader">
+          <div class="preloader-body">
+            <div class="cssload-container">
+              <div class="cssload-speeding-wheel"></div>
+              <h1>Cargando sucursal</h1>
+            </div>
+          </div>
+        </div>
         <ul class="navbar-nav align-items-center d-none d-md-flex">
             <li class="nav-item dropdown">
                 <base-dropdown class="nav-link pr-0">
@@ -158,11 +166,14 @@
                             <i class="ni ni-user-run"></i>
                             <span>Cerrar sesión</span>
                         </router-link>
+
+                        
                     </template>
                 </base-dropdown>
             </li>
         </ul>
     </base-nav>
+    
 </template>
 <script>
   //Back - End 
@@ -185,6 +196,7 @@
         activeNotifications: 0,
         showMenu: false,
         searchQuery: '',
+        loader: false,
         nombre: localStorage.firstname + ' ' + localStorage.lastname,
         imgUser: localStorage.imageUser,
         haveImage: localStorage.imageUser,
@@ -213,7 +225,7 @@
       pushLink(link){
         var valid = false
         var valid2 = false
-        if(router.app._route.path == "/Ventas"){
+        if(router.app._route.path.toLowerCase() == "/ventas"){
           valid2 = true
         }
         router.push(link)
@@ -276,7 +288,9 @@
         }
       },
       selectBranch(value){
+        
         if (value.key.split('/')[0] != this.branch) {
+          this.loader = true
           localStorage.setItem('branch', value.key.split('/')[0])
           localStorage.setItem('branchName', value.key.split('/')[1])
           this.branch = value.key.split('/')[0]
@@ -352,14 +366,14 @@
           this.notifications = res.data.data
           this.all = false
         })
-      }
+      },
 
     },
     mounted() {
       EventBus.$on('loggedin', status => {
         this.getBranches()
       })
-      EventBus.$on('dataChange', status => {
+      EventBus.$on('dataChange', (status) => {
         this.nombre = status.name + ' ' + status.lastname
         if (status.image != "") {
           this.imgUser = status.image
@@ -367,6 +381,11 @@
       })
       EventBus.$on('newBranch', status => {
         this.getBranches()
+      })
+      EventBus.$on('pageLoaded', (status) => {
+        if (status) {
+          this.loader = false
+        }
       })
       this.socket.on('notify', (data) => {
         this.notifications.push(data)
@@ -379,4 +398,6 @@
   .pxSix{margin-right: 6px}
   .pxSixPlus{margin-right: 10px}
   .pxSixPlusTwo{margin-right: 16px}
+
+  
 </style>

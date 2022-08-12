@@ -706,8 +706,10 @@ export default {
                             this.activeBranchs++
                         }
                     });
+                    EventBus.$emit('pageLoaded', true)
                 }
             }catch(err){
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',

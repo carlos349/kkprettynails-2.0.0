@@ -491,7 +491,7 @@
         this.getExpenseTotal()
         $('#second').css({'display': 'none'})
         this.getPorjection()
-        
+
         // document.getElementById("second").style.display = "none";
       },
       selectDate(dates, dateString){
@@ -707,7 +707,9 @@
           }, this.configHeader)
           this.graphDataAnual = getSales.data.series
           this.loadingChartAnual = false
+          EventBus.$emit('pageLoaded', true)
         }catch(err){
+          EventBus.$emit('pageLoaded', true)
           if (!err.response) {
               this.$swal({
                   icon: 'error',

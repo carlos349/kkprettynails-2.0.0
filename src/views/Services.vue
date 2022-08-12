@@ -990,12 +990,15 @@ import mixinES from '../mixins/mixinES'
                 if (services.data.status == 'ok') {
                     this.services = services.data.data   
                     this.serviceState = false
+                    EventBus.$emit('pageLoaded', true)
                 }else{
                     this.services = []
                     this.serviceState = false
                     this.alertTable = 'Sucursal sin servicios creados'
+                    EventBus.$emit('pageLoaded', true)
                 }
             }catch(err){
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',

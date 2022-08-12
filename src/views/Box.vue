@@ -366,11 +366,14 @@ export default {
                 if (closing.data.status == 'ok') {
                     if (this.validRoute('caja', 'visualizar')) {
                         this.closing = closing.data.data
+                        EventBus.$emit('pageLoaded', true)
                     }else{
                         this.closing = []
+                        EventBus.$emit('pageLoaded', true)
                     }
                 }
             }catch(err){
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',

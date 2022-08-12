@@ -610,7 +610,9 @@ export default {
                 const getUsers = await axios.get(endPoint.endpointTarget+'/users', this.configHeader)
                 this.users = getUsers.data.data
                 localStorage.setItem('userToken', getUsers.data.token)
+                EventBus.$emit('pageLoaded', true)
             }catch(err){
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -820,6 +822,13 @@ export default {
                 })
             }
 		},
+    },
+    mounted (){
+        EventBus.$on('changeBranch/usuarios', (status) => {
+            setTimeout(() => {
+                EventBus.$emit('pageLoaded', true)
+            }, 2000);
+        })
     },
     computed: {
         getScreen: () => {

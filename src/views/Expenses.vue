@@ -901,10 +901,13 @@ import mixinES from '../mixins/mixinES'
                     this.percentMonth = this.thisMonth.Mensual > 0 ? ((this.thisMonth.Mensual - this.beforeMonth.Mensual) / this.thisMonth.Mensual) * 100 : 0
                     this.percentCommission = this.thisMonth.Comision > 0 ? ((this.thisMonth.Comision - this.beforeMonth.Comision) / this.thisMonth.Comision) * 100 : 0
                     this.percentTotalExpenses = this.totalExpenses > 0 ? ((this.totalExpenses - this.totalExpensesBefore) / this.totalExpenses) * 100 : 0
+                    EventBus.$emit('pageLoaded', true)
                 }else{
                     this.expenses = []
+                    EventBus.$emit('pageLoaded', true)
                 }
             }catch(err){
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',

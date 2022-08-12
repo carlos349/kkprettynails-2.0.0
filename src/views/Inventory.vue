@@ -950,11 +950,14 @@ import mixinES from '../mixins/mixinES'
                 }
                 
                 this.productState = false
+                EventBus.$emit('pageLoaded', true)
             }else{
                 this.products = []
                 this.productState = false
+                EventBus.$emit('pageLoaded', true)
             }
             }catch(err){
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                 console.log("🚀 ~ file: Inventory.vue ~ line 956 ~ getProducts ~ err", err)
                     

@@ -1277,7 +1277,9 @@ export default {
                     
                     this.totalConfirmed = parseFloat(this.totalConfirmed)+parseFloat(element)
                 }
+                EventBus.$emit('pageLoaded', true)
             }).catch(err => {
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -1815,6 +1817,11 @@ export default {
           return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
       },
 
+    },
+    mounted (){
+        EventBus.$on('changeBranch/pedidos', (status) => {
+            this.getOrders()
+        })
     },
     computed: {
         getScreen: () => {

@@ -110,6 +110,14 @@
                 </ul>
             </slot>
             <slot></slot>
+            <div v-if="loader" class="preloader">
+              <div class="preloader-body">
+                <div class="cssload-container">
+                  <div class="cssload-speeding-wheel"></div>
+                  <h1>Cargando sucursal</h1>
+                </div>
+              </div>
+            </div>
             <div v-show="$sidebar.showSidebar" class="navbar-collapse collapse show pt-0" id="sidenav-collapse-main">
 
                 <div class="navbar-collapse-header d-md-none">
@@ -158,6 +166,7 @@
         idUser: localStorage._id,
         screen: screen.width,
         auth: [],
+        loader: false,
         notifications: [],
         all: true,
         pxSep: '',
@@ -197,6 +206,20 @@
       this.getNotifications()
     },
     methods: {
+      pushLink(link){
+        var valid = false
+        var valid2 = false
+        if(router.app._route.path.toLowerCase() == "/ventas"){
+          valid2 = true
+        }
+        router.push(link)
+        setTimeout(() => {
+          EventBus.$emit('notifyLink', 'reload')
+          if(valid2){
+            EventBus.$emit('notifyLinkSales', 'reload') 
+          }
+        }, 1000);
+      },
       getNotifications(){
         const configHeader = {
           headers: {
@@ -301,6 +324,7 @@
       },
       selectBranch(value){
         if (value.split('/')[0] != this.branch) {
+          this.loader = true
           localStorage.setItem('branch', value.split('/')[0])
           localStorage.setItem('branchName', value.split('/')[1])
           this.branch = value.split('/')[0]
@@ -341,6 +365,11 @@
       }
     },
     mounted() {
+      EventBus.$on('pageLoaded', (status) => {
+        if (status) {
+          this.loader = false
+        }
+      })
       EventBus.$on('loggedin', status => {
         this.getToken()
       })

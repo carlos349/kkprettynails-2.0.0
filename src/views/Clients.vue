@@ -752,10 +752,13 @@ export default {
                     }
                     this.progress = true
                     this.clientState = false
+                    EventBus.$emit('pageLoaded', true)
                 }else{
                     this.clientState = false
+                    EventBus.$emit('pageLoaded', true)
                 }
             }catch (err) {
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -1109,6 +1112,13 @@ export default {
         redirect(){
             router.push({path: 'Correo'}) 
 		}
+    },
+    mounted (){
+        EventBus.$on('changeBranch/clientes', (status) => {
+            setTimeout(() => {
+                EventBus.$emit('pageLoaded', true)
+            }, 2000);
+        })
     },
     computed: {
         getScreen: () => {

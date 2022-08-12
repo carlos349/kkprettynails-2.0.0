@@ -1537,11 +1537,13 @@ import mixinES from '../mixins/mixinES'
                         this.countProduct.push({id:this.products[index]._id,count:'',ideal:ideal,measure:this.products[index].measure,product:this.products[index].product,difference:''})
                         this.totalStock = this.totalStock + (((this.products[index].quantity + this.products[index].entry) - this.products[index].consume) * this.products[index].price) 
                     }
-                    
+                    EventBus.$emit('pageLoaded', true)
                 }else{
                     this.products = []
+                    EventBus.$emit('pageLoaded', true)
                 }
             }catch(err){
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',

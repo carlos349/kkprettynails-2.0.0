@@ -639,11 +639,14 @@ import mixinES from '../mixins/mixinES'
                         
                         this.dataReport(found)
                     }
+                    EventBus.$emit('pageLoaded', true)
                 }else{
                     this.sales = []
                     this.progress = false
+                    EventBus.$emit('pageLoaded', true)
                 }
             }catch(err){
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',

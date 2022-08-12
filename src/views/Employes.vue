@@ -508,12 +508,15 @@ export default {
                 if (getByBranch.data.data.length > 0) {
                     this.employes = getByBranch.data.data
                     this.employeState = false
+                    EventBus.$emit('pageLoaded', true)
                 }else{
                     setTimeout(() => {
                         this.employeState = false
+                        EventBus.$emit('pageLoaded', true)
                     }, 200);
                 }
             }catch(err){
+                EventBus.$emit('pageLoaded', true)
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',

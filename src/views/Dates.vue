@@ -499,7 +499,6 @@
                                     </flat-picker>
                                 </base-input>
                             </div>
-                            
                             <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Participación</span>
@@ -1774,8 +1773,6 @@ import mixinES from '../mixins/mixinES'
             const token = localStorage.userToken
             const decoded = jwtDecode(token)  
             this.auth = decoded.access
-            
-            
         },
         selectDateBlock(date, dateString){
             this.hourBlocking.dateBlocking = dateString
@@ -1832,42 +1829,24 @@ import mixinES from '../mixins/mixinES'
                     }
                 }catch(err){
                     if (!err.response) {
+                        console.log(err)
                         this.$swal({
                             icon: 'error',
                             title: 'Error de conexión',
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }
             }catch(err){
                 if (!err.response) {
+                    console.log(err)
                     this.$swal({
                         icon: 'error',
                         title: 'Error de conexión',
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             }
         },
@@ -1906,16 +1885,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             }
         },
@@ -1957,16 +1926,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             }
         },
@@ -2094,16 +2053,6 @@ import mixinES from '../mixins/mixinES'
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }
@@ -2115,16 +2064,6 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }
@@ -2136,16 +2075,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             }
         },
@@ -2207,16 +2136,6 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                         this.disableButton = false
                     }
@@ -2228,16 +2147,6 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                     this.disableButton = false
                 }
@@ -2252,6 +2161,16 @@ import mixinES from '../mixins/mixinES'
             }
         },
         getBranch(){
+            this.filterOff = false
+            this.filter = false
+            this.spinningView = true
+            this.employeByDate = "Filtrar por empleado"
+            this.showCalendar = false
+            setTimeout(() => {
+                this.showCalendar = true
+                this.spinningView = false
+                this.filterOff = true
+            }, 500);
             this.branchName = localStorage.branchName  
             this.branch = localStorage.branch
             // this.getUsers()
@@ -2290,16 +2209,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             }
         },
@@ -2345,8 +2254,6 @@ import mixinES from '../mixins/mixinES'
                     this.configurations = {}
                 }
             }catch(err){
-            console.log("🚀 ~ file: Dates.vue ~ line 2289 ~ getConfiguration ~ err", err)
-                
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -2354,16 +2261,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             }
             this.configDatePicker.maxDate = new Date().setMonth(new Date().getMonth() + this.configurations.datesPolitics.limitTimeDate)
@@ -2497,20 +2394,18 @@ import mixinES from '../mixins/mixinES'
                 }
             } 
         },
-        async getNewDate(){
+        async getNewDate(id){
             if (this.validRoute('agendamiento', 'todas')) {
                 try {
-                    const date = await axios.get(endPoint.endpointTarget+'/dates/getNewDate/'+this.branch, this.configHeader)
-                    const find = this.events.find(element => element._id == date.data.data._id)
-                    if (!find) {
-                        this.events.push(date.data.data)
-                    }
+                    const date = await axios.get(endPoint.endpointTarget+'/dates/getNewDate/'+id, this.configHeader)
+                    this.events.push(date.data.data)
                 }catch(err){
                     
                 }
             }
         },
         async getDates() {
+            this.spinningView = true
             if (!this.validRoute('agendamiento', 'todas')) {
                 this.events = []
                 const token = this.configHeader.headers["x-access-token"]
@@ -2535,11 +2430,20 @@ import mixinES from '../mixins/mixinES'
                     const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
                     if (dates) {
                         this.events = dates.data.data
-                        
+                        localStorage.userToken = dates.data.token
+                        this.spinningView = false
+                        EventBus.$emit('pageLoaded', true)
                     }
-                    
                 }catch(err){
-                    
+                    EventBus.$emit('pageLoaded', true)
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
                 }
             }
         },
@@ -2577,16 +2481,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -2607,16 +2501,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             }
         },
@@ -2625,7 +2509,6 @@ import mixinES from '../mixins/mixinES'
                 const categories = await axios.get(endPoint.endpointTarget+'/services/getCategories/'+this.branch, this.configHeader)
                 if (categories.data.status == 'ok') {
                     this.categories = categories.data.data
-                    
                 }else{
                     this.categories = []
                 }
@@ -2637,20 +2520,9 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             }
         },
-        
         formatPhone(){
             var number = this.dateClient.infoOne.replace(/[^\d]/g, '')
             if (number.length == 9) {
@@ -2724,16 +2596,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -3067,8 +2929,6 @@ import mixinES from '../mixins/mixinES'
         editEmployeDate(value){
             this.dataEditSend.employe = value
             if (this.dataEditSend.employe.id == this.dataEditSend.originalEmploye.id) {
-                this.dataEditSend.start = this.dataEditSend.originalStart
-                this.dataEditSend.end = this.dataEditSend.originalEnd
                 this.changeDateEdit()
             }else{
                 this.searchBlockEdit()
@@ -3105,16 +2965,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -3215,16 +3065,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
              })
         },
@@ -3276,16 +3116,6 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }else{
@@ -3442,16 +3272,6 @@ import mixinES from '../mixins/mixinES'
                                             showConfirmButton: false,
                                             timer: 1500
                                         })
-                                    }else if (err.response.status == 401) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Session caducada',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        setTimeout(() => {
-                                            router.push("login")
-                                        }, 1550);
                                     }
                                 })   
                             }).catch(err => {
@@ -3462,16 +3282,6 @@ import mixinES from '../mixins/mixinES'
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }else{
@@ -3529,16 +3339,6 @@ import mixinES from '../mixins/mixinES'
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }
@@ -3552,16 +3352,6 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 }) 
             }else{
@@ -3619,11 +3409,6 @@ import mixinES from '../mixins/mixinES'
                         email: res.data.data.email,
                         phone: res.data.data.phone
                     }
-                    // setTimeout(() => {
-                    //     // this.getClients()
-                    //     // EventBus.$emit('reloadClients', 'reload')
-                    // }, 1500);
-                    
                 }else{
                     this.$swal({
                         type: 'error',
@@ -3640,16 +3425,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -3683,11 +3458,14 @@ import mixinES from '../mixins/mixinES'
                 .then(res => {
                     if (res.data.status == 'ok') {
                         this.events = res.data.data
+                        localStorage.userToken = res.data.token
+                        this.spinningView = false
                         this.showCalendar = false
                         setTimeout(() => {
                             this.showCalendar = true
                             this.spinningView = false
                             this.filterOff = true
+                            EventBus.$emit('pageLoaded', true)
                         }, 500);
                     }else{
                         this.$swal({
@@ -3697,11 +3475,14 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
+                        this.spinningView = false
                     }
                     this.employeByDate = name
                     this.filter = true
                 }).catch(err => {
+                    EventBus.$emit('pageLoaded', true)
                     if (!err.response) {
+                        console.log(err)
                         this.$swal({
                             icon: 'error',
                             title: 'Error de conexión',
@@ -3784,30 +3565,9 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
-                // e.stopPropagation()
-                // setTimeout(() => {
-                    
-                //     this.selectedEvent.createdAt = event.createdAt
-                //     this.configDatePickerEdit.minDate = new Date()
-                //     console.log(this.selectedEvent)
-                //     console.log("AQUI")
-                
-                // }, 2000);
             }
-            
-            
         },
         dateSplit(value){
             const date = new Date(value).format('DD MM YYYY')
@@ -3856,8 +3616,6 @@ import mixinES from '../mixins/mixinES'
                     date: this.$options.filters.formatDateEdit(res.data.data.createdAt),
                     employe: res.data.data.employe,
                     originalEmploye: res.data.data.employe,
-                    originalStart: res.data.data.start.split(" ")[1],
-                    originalEnd: res.data.data.end.split(" ")[1],
                     start: res.data.data.start.split(" ")[1],
                     end: res.data.data.end.split(" ")[1],
                     duration: res.data.data.duration,
@@ -3912,16 +3670,6 @@ import mixinES from '../mixins/mixinES'
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }).catch(err => {
@@ -3932,16 +3680,6 @@ import mixinES from '../mixins/mixinES'
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }).catch(err => {
@@ -3952,41 +3690,12 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }, 200);
             }).catch(err => {
 
-            }) 
-            // if (this.originalEmploye.id != this.selectedEvent.employe.id) {
-            //     this.selectedEvent.employe = this.originalEmploye
-            // }
-            
-            // if (this.selectedEvent.createdAt.includes("T")) {
-            //     this.selectedEvent.createdAt = this.selectedEvent.createdAt.split("T")[0].split("-")[1] + "-" + this.selectedEvent.createdAt.split("T")[0].split("-")[2] + "-" + this.selectedEvent.createdAt.split("T")[0].split("-")[0]
-            //     console.log(this.selectedEvent.createdAt)
-            // }
-            // console.log(this.selectedEvent.createdAt)
-
-            
-            // this.selectedEvent.isFirst = true
-            // this.employeForSearchEdit = this.selectedEvent.employe.id
-            // this.minLessEdit = 0
-            // this.minAddEdit = 0
-            // this.finalBlockEdit = []
-            // this.validEditBlock = false
-            
-            
+            })
         },
         changeDateEdit(){
             setTimeout(() => {
@@ -3994,7 +3703,6 @@ import mixinES from '../mixins/mixinES'
             }, 5);
             setTimeout(() => {
                 const finalDate = this.dataEditSend.date
-                // console.log(new Date(this.selectedEvent.start))
                 if (finalDate != '') {
                     setTimeout(() => {
                         axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
@@ -4032,16 +3740,6 @@ import mixinES from '../mixins/mixinES'
                                                 showConfirmButton: false,
                                                 timer: 1500
                                             })
-                                        }else if (err.response.status == 401) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Session caducada',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                            setTimeout(() => {
-                                                router.push("login")
-                                            }, 1550);
                                         }
                                     })
                                 }else{
@@ -4070,16 +3768,6 @@ import mixinES from '../mixins/mixinES'
                                                 showConfirmButton: false,
                                                 timer: 1500
                                             })
-                                        }else if (err.response.status == 401) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Session caducada',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                            setTimeout(() => {
-                                                router.push("login")
-                                            }, 1550);
                                         }
                                     }) 
                                 }
@@ -4092,16 +3780,6 @@ import mixinES from '../mixins/mixinES'
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }).catch(err => {
@@ -4112,16 +3790,6 @@ import mixinES from '../mixins/mixinES'
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }, 500);
@@ -4167,16 +3835,6 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }
@@ -4198,16 +3856,6 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 } 
@@ -4260,9 +3908,6 @@ import mixinES from '../mixins/mixinES'
                         setTimeout(() => {
                             this.sendConfirmation(idArray, this.selectedEvent.client.name, this.selectedEvent.client.email, this.dataEditSend.start, this.dataEditSend.end, this.registerDate.serviceSelectds, this.dataEditSend.employe, this.dataEditSend, true, dateNew)
                         }, 2000);
-                        
-
-                        
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             branch: this.branch,
                             userName: this.firstNameUser + " " + this.lastNameUser,
@@ -4295,16 +3940,6 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
             }
@@ -4405,7 +4040,6 @@ import mixinES from '../mixins/mixinES'
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                                
                                 EventBus.$emit('reloadFinallyDates', 'reload') 
                                 this.dateModals.modal1 = false
                                 this.dateModals.modal3 = false
@@ -4431,16 +4065,6 @@ import mixinES from '../mixins/mixinES'
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }
@@ -4489,7 +4113,6 @@ import mixinES from '../mixins/mixinES'
                             this.socketValidator = false
                             this.socket.emit('sendNotification', res.data.data)
                             this.socketValidator = true
-                            
                         }).catch(err => {
                             console.log(err)
                         })   
@@ -4502,16 +4125,6 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
             }
@@ -4596,16 +4209,6 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }
@@ -4634,16 +4237,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -4880,16 +4473,6 @@ import mixinES from '../mixins/mixinES'
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
-                                }else if (err.response.status == 401) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Session caducada',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    setTimeout(() => {
-                                        router.push("login")
-                                    }, 1550);
                                 }
                             })
                         }
@@ -4948,16 +4531,6 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
             }
@@ -5147,16 +4720,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -5178,16 +4741,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -5241,16 +4794,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -5364,7 +4907,6 @@ import mixinES from '../mixins/mixinES'
 			}
 			}
         },
-        // res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae, true
         sendConfirmation(id, name, mail, start, end, services, lender, data, valid, date, startG, endG){
             var startGood = new Date(startG).getHours() + ':' + (new Date(startG).getMinutes() == 0 ? '00' : new Date(startG).getMinutes())
             var endGood = new Date(endG).getHours() + ':' + (new Date(endG).getMinutes() == 0 ? '00' : new Date(endG).getMinutes())
@@ -5411,16 +4953,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -5482,16 +5014,6 @@ import mixinES from '../mixins/mixinES'
                                                     showConfirmButton: false,
                                                     timer: 1500
                                                 })
-                                            }else if (err.response.status == 401) {
-                                                this.$swal({
-                                                    icon: 'error',
-                                                    title: 'Session caducada',
-                                                    showConfirmButton: false,
-                                                    timer: 1500
-                                                })
-                                                setTimeout(() => {
-                                                    router.push("login")
-                                                }, 1550);
                                             }
                                         })
                                     }).catch(err => {
@@ -5502,16 +5024,6 @@ import mixinES from '../mixins/mixinES'
                                                 showConfirmButton: false,
                                                 timer: 1500
                                             })
-                                        }else if (err.response.status == 401) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Session caducada',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                            setTimeout(() => {
-                                                router.push("login")
-                                            }, 1550);
                                         }
                                     })
                                 }, 200); 
@@ -5546,16 +5058,6 @@ import mixinES from '../mixins/mixinES'
                                                     showConfirmButton: false,
                                                     timer: 1500
                                                 })
-                                            }else if (err.response.status == 401) {
-                                                this.$swal({
-                                                    icon: 'error',
-                                                    title: 'Session caducada',
-                                                    showConfirmButton: false,
-                                                    timer: 1500
-                                                })
-                                                setTimeout(() => {
-                                                    router.push("login")
-                                                }, 1550);
                                             }
                                         })
                                     }).catch(err => {
@@ -5566,16 +5068,6 @@ import mixinES from '../mixins/mixinES'
                                                 showConfirmButton: false,
                                                 timer: 1500
                                             })
-                                        }else if (err.response.status == 401) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Session caducada',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                            setTimeout(() => {
-                                                router.push("login")
-                                            }, 1550);
                                         }
                                     })
                                 }, 200); 
@@ -5626,17 +5118,6 @@ import mixinES from '../mixins/mixinES'
                         this.arrayLendersSelect = []
                     } 
                 }
-                // var editBlock = false
-                // var indexEdit = 0
-                // if (index > 0) {
-                //     for (let i = 0; i < this.arrayLendersSelect.length; i++) {
-                //         const element = this.arrayLendersSelect[i];
-                //         if (element.lender == lender) {
-                            
-                            
-                //         }
-                //     }
-                // }
                 var editBlock = false
                 var indexEdit = 0
                 const q = index - 1 
@@ -5667,16 +5148,6 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }else{
@@ -5695,16 +5166,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -5805,16 +5266,6 @@ import mixinES from '../mixins/mixinES'
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }else{
@@ -5828,16 +5279,6 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
                 
@@ -5891,16 +5332,6 @@ import mixinES from '../mixins/mixinES'
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }else{
@@ -5914,16 +5345,6 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
                     }
                 })
                 setTimeout(() => {
@@ -5960,16 +5381,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -6047,16 +5458,6 @@ import mixinES from '../mixins/mixinES'
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }, 200);
@@ -6096,16 +5497,6 @@ import mixinES from '../mixins/mixinES'
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }else{
@@ -6128,16 +5519,6 @@ import mixinES from '../mixins/mixinES'
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
-                            }else if (err.response.status == 401) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Session caducada',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                setTimeout(() => {
-                                    router.push("login")
-                                }, 1550);
                             }
                         })
                     }
@@ -6230,16 +5611,6 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }else{
@@ -6304,16 +5675,6 @@ import mixinES from '../mixins/mixinES'
                                 showConfirmButton: false,
                                 timer: 1500
                             })
-                        }else if (err.response.status == 401) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Session caducada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            setTimeout(() => {
-                                router.push("login")
-                            }, 1550);
                         }
                     })
                 }
@@ -6522,16 +5883,6 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
                 }
             })
         },
@@ -6600,9 +5951,10 @@ import mixinES from '../mixins/mixinES'
         }
     },
     mounted (){
-        this.socket.on('notify', data => {
-            // this.getDates()
-            this.getNewDate()
+        this.socket.on('notify', (data) => {
+            if (data.link.search("agendamiento") >= 0) {
+                this.getDates()
+            }
         });
         EventBus.$on('changeBranch/agendamiento', (status) => {
             this.getBranch()
