@@ -281,8 +281,7 @@
           localStorage.setItem('branchName', value.key.split('/')[1])
           this.branch = value.key.split('/')[0]
           this.branchName = value.key.split('/')[1]
-          console.log("path"+router.app._route.path)
-          EventBus.$emit('changeBranch'+router.app._route.path, router.app._route.path)
+          EventBus.$emit('changeBranch'+router.app._route.path.toLowerCase(), router.app._route.path)
         }
       },
       async getBranches() {

@@ -1137,7 +1137,7 @@ width=0,height=0,left=-1000,top=-1000`;
         }
     },
     mounted (){
-        EventBus.$on('changeBranch/Gastos', status => {
+        EventBus.$on('changeBranch/gastos', status => {
             this.getBranch()
         })
     },

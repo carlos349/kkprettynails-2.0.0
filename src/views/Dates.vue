@@ -5732,15 +5732,12 @@ import mixinES from '../mixins/mixinES'
                 element.employeImg = ''
                 element.itFirst = true
             }
-            setTimeout(() => {
-                $('#'+open).toggle('slow')
-            }, 500);
-
+        
             if (lenders) {
                 var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].hour.split(":") 
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].hour
                 this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
-
+                var validateEmployeSelect = true
                 for (let j = 0; j < this.registerDae.serviceSelectds[indexService].blocks[i].employes.length; j++) {
                     const element = this.registerDae.serviceSelectds[indexService].blocks[i].employes[j];
                     if (element.valid == true) {
@@ -5749,9 +5746,24 @@ import mixinES from '../mixins/mixinES'
                         this.registerDae.serviceSelectds[indexService].employeId = element.id
                         this.registerDae.serviceSelectds[indexService].employe = element.name
                         this.registerDae.serviceSelectds[indexService].employeImg = element.img
+                        validateEmployeSelect = false
                         break
                     }
                 }
+                console.log(validateEmployeSelect)
+                if (validateEmployeSelect) {
+                    this.registerDae.serviceSelectds[indexService].blocks[i].validator = 'unavailable'
+                    this.$swal({
+                        icon: 'info',
+                        title: 'No se puedo seleccionar la hora',
+                        text: 'La hora fue tomada previamente, seleccione otro horario disponible',
+                        showConfirmButton: true
+                    })
+                    return
+                }
+                setTimeout(() => {
+                    $('#'+open).toggle('slow')
+                }, 500);
                 var employeForBlock = {
                     name: this.registerDae.serviceSelectds[indexService].employe,
                     id: this.registerDae.serviceSelectds[indexService].employeId,
@@ -6592,12 +6604,11 @@ import mixinES from '../mixins/mixinES'
             // this.getDates()
             this.getNewDate()
         });
-        EventBus.$on('changeBranch/Agendamiento', status => {
+        EventBus.$on('changeBranch/agendamiento', (status) => {
             this.getBranch()
         })
         EventBus.$on('notifyLink', status => {
-            console.log("corrio")
-                this.viewLink()
+            this.viewLink()
         })
     },
     destroyed() {
