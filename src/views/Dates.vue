@@ -499,13 +499,7 @@
                                     </flat-picker>
                                 </base-input>
                             </div>
-                            <div class="col-md-6 col-sm-12">
-                                <vue-single-select
-                                    v-model="dataClient.recommender"
-                                    :options="clientsNames"
-                                    placeholder="Recomendador"
-                                ></vue-single-select>
-                            </div>
+                            
                             <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
                                 <base-button size="sm" class="col-12 mt-2" type="secondary">
                                     <span>Participación</span>
@@ -1707,7 +1701,6 @@ import mixinES from '../mixins/mixinES'
         endClient:[],
         endEmploye:[],
         designEndDate:0,
-        clientsNames:[],
         lengthClosedDates:0,
         file: '',
         nameFile:'Seleccione imagen',
@@ -2263,7 +2256,6 @@ import mixinES from '../mixins/mixinES'
             this.branch = localStorage.branch
             // this.getUsers()
             this.getConfiguration()
-            this.getClients()
             this.getMicroServices()
             this.getServices()
             this.getCategories()
@@ -2633,6 +2625,7 @@ import mixinES from '../mixins/mixinES'
                 const categories = await axios.get(endPoint.endpointTarget+'/services/getCategories/'+this.branch, this.configHeader)
                 if (categories.data.status == 'ok') {
                     this.categories = categories.data.data
+                    
                 }else{
                     this.categories = []
                 }
@@ -2657,36 +2650,7 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        async getClients(){
-            try {
-                const getAllClients = await axios.get(endPoint.endpointTarget+'/clients', this.configHeader)
-                if (getAllClients.data.data.length > 0) {
-
-                    for (let index = 0; index < getAllClients.data.data.length; index++) {
-                        this.clientsNames.push(getAllClients.data.data[index].firstName + " / " + getAllClients.data.data[index].email)
-                    }
-                }
-            }catch (err) {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }else if (err.response.status == 401) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Session caducada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(() => {
-                        router.push("login")
-                    }, 1550);
-                }
-            }
-        },
+        
         formatPhone(){
             var number = this.dateClient.infoOne.replace(/[^\d]/g, '')
             if (number.length == 9) {

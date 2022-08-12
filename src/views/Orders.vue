@@ -254,7 +254,7 @@
                             <div class="col-12">
                                 <base-button style="margin-top: -130px;" outline type="primary">Pedidos por confirmar: {{rowsPending.length}}</base-button>
                                 
-                                <base-button style="margin-top: -130px;" outline class="ml-4" type="success">Monto total por confirmar: <span class="text-success">$ {{formatPrice(totalPending)}}</span> </base-button>
+                                <base-button style="margin-top: -130px;" outline class="ml-4" type="success">Monto total por confirmar: $ {{formatPrice(totalPending)}}</base-button>
                             </div>
                         </div>
                     </div>
@@ -350,7 +350,7 @@
                             <div class="col-12">
                                 <base-button style="margin-top: -130px;" outline type="primary">Pedidos confirmados: {{rowsConfirmed.length}}</base-button>
                                 
-                                <base-button style="margin-top: -130px;" outline class="ml-4" type="success">Monto total confirmado: <span class="text-success">$ {{formatPrice(totalConfirmed)}}</span> </base-button>
+                                <base-button style="margin-top: -130px;" outline class="ml-4" type="success">Monto total confirmado: $ {{formatPrice(totalConfirmed)}}</base-button>
                             </div>
                         </div>
                     </div>
@@ -414,7 +414,7 @@
                             <div class="col-12 mt-2">
                                 <base-button outline style="margin-top: -130px;" type="primary">Pedidos usados / vencidos: {{rowsUsed.length}}</base-button>
                                 
-                                <base-button outline style="margin-top: -130px;" class="ml-4" type="success">Monto total usado: <span class="text-success">$ {{formatPrice(totalUsed)}}</span> </base-button>
+                                <base-button outline style="margin-top: -130px;" class="ml-4" type="success">Monto total usado: $ {{formatPrice(totalUsed)}} </base-button>
                             </div>
                         </div>
                     </div>

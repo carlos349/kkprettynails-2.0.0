@@ -162,6 +162,16 @@
                 </base-dropdown>
             </li>
         </ul>
+
+        <div v-if="loaderActive" class="preloader">
+          <div class="preloader-body">
+            <div class="cssload-container">
+              <div class="cssload-speeding-wheel"></div>
+              <h1>Cargando sucursal</h1>
+            </div>
+            <!-- <img src="views/images/SyswaLetras.png" alt=""> -->
+          </div>
+        </div>
     </base-nav>
 </template>
 <script>
@@ -193,6 +203,7 @@
         secondDetail:'',
         notifications: [],
         count:0,
+        loaderActive: false,
         all: true,
         pxSep: '',
         branches: [],
@@ -279,13 +290,19 @@
         }
       },
       selectBranch(value){
+        this.loaderActive = true
         if (value.key.split('/')[0] != this.branch) {
           localStorage.setItem('branch', value.key.split('/')[0])
           localStorage.setItem('branchName', value.key.split('/')[1])
           this.branch = value.key.split('/')[0]
           this.branchName = value.key.split('/')[1]
           EventBus.$emit('changeBranch', true)
+
+          setTimeout(() => {
+            this.loaderActive = false
+          }, 2000);
         }
+        
       },
       async getBranches() {
         const configHeader = {
@@ -382,4 +399,59 @@
   .pxSix{margin-right: 6px}
   .pxSixPlus{margin-right: 10px}
   .pxSixPlusTwo{margin-right: 16px}
+
+  .preloader {
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 10000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	background: #ffffff;
+	transition: .3s all ease;
+}
+
+
+
+.preloader-body {
+	text-align: center;
+}
+
+.preloader-body p {
+	position: relative;
+	right: -8px;
+}
+
+.cssload-container {
+	width: 100%;
+	height: 36px;
+	text-align: center;
+}
+
+.cssload-speeding-wheel {
+	width: 36px;
+	height: 36px;
+	margin: 0 auto;
+	border: 3px solid #002d5b ;
+	border-radius: 50%;
+	border-left-color: transparent;
+	border-bottom-color: transparent;
+	animation: cssload-spin .88s infinite linear;
+}
+
+@-webkit-keyframes cssload-spin {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes cssload-spin {
+	100% {
+		transform: rotate(360deg);
+	}
+}
 </style>

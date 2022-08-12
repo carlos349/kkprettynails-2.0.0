@@ -58,6 +58,7 @@
                                 <h3 class="mb-2 w-100 text-center">Secciones</h3>
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'typePay' ? false : true" type="primary" v-on:click="fixed('typePay'), getConfiguration()">Tipos de pago</base-button>
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'agend' ? false : true" type="primary" v-on:click="selectedConfig = 'agend', getConfiguration()">Agendamiento</base-button>
+                                <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'gift' ? false : true" type="primary" v-on:click="selectedConfig = 'gift', getConfiguration()">Gift Card</base-button>
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'blackList' ? false : true" type="primary" v-on:click="fixed('blackList'), getConfiguration()">Lista negra</base-button>
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'information' ? false : true" type="primary" v-on:click="selectedConfig = 'information', getConfiguration()">Información</base-button>
                                 <base-button class="w-100 mt-2 mx-auto" :outline="selectedConfig == 'microServices' ? false : true" type="primary" v-on:click="selectedConfig = 'microServices', getConfiguration()">Adicionales</base-button>
@@ -325,6 +326,86 @@
                               </h4>
                               <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.editQuantity" v-on:change="changeTime"/>
                             </div>
+                          </div>
+                          <div class="col-12 mt-2 mb-0">
+                            <p class="text-center mx-auto mb-0">
+                              <small class="text-muted">Los valores no pueden ser mayores a 20</small>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div v-if="selectedConfig == 'gift'">
+                        <h1 class=" text-center my-2">
+                            Configuración de Gift Cards
+                        </h1>
+                        <hr class="w-50 mb-0 mt-0">
+                        <div class="row p-2 pt-0 pl-4">
+                          <div class="col-12 row mb-3">
+                            <p class="mx-auto"> <strong class="mr-2">Gift Cards online </strong> <a-switch class="mr-3" :checked="configData.giftCard.online" @click="changeDatePolitic('giftOnline')"/></p>
+
+                            <p class="mx-auto"> <strong class="mr-2">Sección de Gift Card</strong> <a-switch  :checked="configData.giftCard.section" @click="changeDatePolitic('giftSection')" /></p>
+                            
+                            <!-- <p class="mx-auto"> 
+                              <strong class="mr-2"> 
+                                <a-tooltip placement="topLeft">
+                                    <template slot="title">
+                                        <span>Esto permite visualizar y seleccionar los adicionales creado.</span>
+                                    </template>
+                                    <a-icon class="mr-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" />
+                                </a-tooltip>
+                                Adicionales 
+                              </strong> 
+                              <a-switch class="mr-3" :checked="configData.datesPolitics.microServices" @click="changeDatePolitic('microServices')" />
+                            </p> -->
+                          </div>
+                          
+                          <div class="col-12 p-2 mt-2">
+                            <a-tooltip>
+                              <template slot="title">
+                                Redacta las políticas de tu negocio que se verán reflejadas en los correos de notificación a tus clientes cuando efectúan una compra de Gift Card.
+                              </template>
+                              <h3 class="text-center"> <a-icon class="ml-2" style="cursor: pointer;vertical-align: 0.1em;" type="question-circle" /> Políticas</h3>
+                            </a-tooltip>
+                            <ckeditor class="mr-2" :editor="editor" v-model="configData.giftCard.politics" :config="editorConfig" language='es'></ckeditor>
+                            <base-button outline type="default" size="sm" class="mt-2 mr-2 float-right" v-on:click="updateconfig">
+                              Guardar políticas
+                            </base-button>
+                          </div>
+                          <div class="col-12 mt-4">
+                            <hr>
+                            <div class="row">
+                              <div class="col-md-4 float-left mt-1">
+                              <h4 class="text-center">
+                                Vencimiento <br> <small class="text-muted text-center mx-auto">Días limite para realizar el pago de la Gift Card </small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.giftCard.timeLimit" v-on:change="changeTime" />
+                            </div>
+                            </div>
+                            
+                            <!-- <div class="col-md-4 mt-1">
+                              <h4 class="text-center">
+                                Límite de reserva <br> <small class="text-muted text-center mx-auto">Horas antes para poder reservar</small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minTypeDate" v-on:change="changeTime"/>
+                            </div>
+                            <div class="col-md-4 mt-1">
+                              <h4 class="text-center">
+                                Máximo tiempo de reserva <br> <small class="text-muted text-center mx-auto">Límite de meses futuros para reservar </small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.limitTimeDate" v-on:change="changeTime"/>
+                            </div>
+                            <div class="col-md-4 mt-1">
+                              <h4 class="text-center">
+                                Límite de edición <br> <small class="text-muted text-center mx-auto">Horas previas para editar una cita</small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minEditDate" v-on:change="changeTime"/>
+                            </div>
+                            <div class="col-md-4 mt-1">
+                              <h4 class="text-center">
+                                Cantidad de edición <br> <small class="text-muted text-center mx-auto">Veces que se puede editar una cita</small>
+                              </h4>
+                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.editQuantity" v-on:change="changeTime"/>
+                            </div> -->
                           </div>
                           <div class="col-12 mt-2 mb-0">
                             <p class="text-center mx-auto mb-0">
@@ -974,7 +1055,18 @@
           try{
             const getConfig = await axios.get(endPoint.endpointTarget+'/configurations/'+this.branch, this.configHeader)
             if (getConfig.data.status == 'ok') {
-              this.configData = getConfig.data.data
+              
+              if (getConfig.data.data.giftCard) {
+                this.configData = getConfig.data.data
+              }else{
+                this.configData = getConfig.data.data
+                this.configData.giftCard = {
+                  online: true,
+                  section: true,
+                  politics: '',
+                  timeLimit: 3
+                }
+              }
             }
           }catch(err){
             if (!err.response) {
@@ -998,6 +1090,7 @@
           }
         },
         changeDatePolitic(valid){
+          
           if (valid == 'onlineDates') {
             this.configData.datesPolitics.onlineDates = this.configData.datesPolitics.onlineDates == true ? false : true
           }else if (valid == 'microServices') {
@@ -1006,6 +1099,10 @@
             this.configData.datesPolitics.editDates = this.configData.datesPolitics.editDates == true ? false : true
           }else if (valid == 'deleteDates') {
             this.configData.datesPolitics.deleteDates = this.configData.datesPolitics.deleteDates == true ? false : true
+          }else if (valid == 'giftOnline') {
+            this.configData.giftCard.online = this.configData.giftCard.online == true ? false : true
+          }else if (valid == 'giftSection') {
+            this.configData.giftCard.section = this.configData.giftCard.section == true ? false : true
           }
           this.updateconfig()
         },
@@ -1081,6 +1178,7 @@
             bussinessLogo: this.configData.bussinessLogo,
             currency:  this.configData.currency,
             typesPay: this.configData.typesPay,
+            giftCard: this.configData.giftCard,
             datesPolitics: this.configData.datesPolitics,
             microServices: this.configData.microServices,
             notificationDiscount: this.configData.notificationDiscount,

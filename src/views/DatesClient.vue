@@ -14,7 +14,7 @@
                         <i class="fa fa-address-card" style="vertical-align:1px;font-size:1.6em;left: 12px;top: 13px;position: absolute;"></i>
                 </base-button>
             </a-tooltip>
-            <a-tooltip>
+            <a-tooltip v-if="branch != '' && configurationsBranch.giftCard && configurationsBranch.giftCard.online">
                 <template slot="title">
                     Gift Cards
                 </template>
@@ -1934,6 +1934,7 @@
                         total: this.totalPriceG,
                         branch: {
                             branch: this.branch,
+                            politics: this.configurationsBranch.giftCard,
                             name: this.branchName,
                             logo: this.logoBranch,
                             location: this.configurationsBranch.businessLocation
