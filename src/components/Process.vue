@@ -337,6 +337,12 @@
                                 {{pay.type}}
                             </a-button>
                         </div>
+                        <div class="col-md-6 mt-2" >
+                            <a-button :disabled="serviceSelecteds.length > 0 ? false : true" @click="modals.modal5 = true, orderNumber = ''" class="w-100" type="primary" :ghost="true">
+                                <a-icon class="ml-2" type="plus-square" style="vertical-align: 1.5px;" />
+                                Gift Card
+                            </a-button>
+                        </div>
                     </template>
                 </div>
                 <label for="type" class="mt-2"><b>Tipo</b></label>
@@ -586,7 +592,7 @@
                     class="border-0">
                     <template>
                         <div style="margin-top:-10%" class="text-muted text-center mb-3">
-                            <h3>Validación de código</h3>
+                            <h3>Validación de Gift card</h3>
                         </div>
                     </template>
                     <template>
@@ -594,8 +600,8 @@
                             <base-input 
                                 alternative
                                 class="mb-3"
-                                placeholder="Código"
-                                v-model="codeArticulo"
+                                placeholder="Número de orden"
+                                v-model="orderNumber"
                                 addon-left-icon="ni ni-key-25">
                             </base-input>
                             
@@ -615,39 +621,75 @@
                     body-classes="px-lg-5 py-lg-5"
                     class="border-0">
                     <template>
+                        <div style="margin-top:-10%" class="text-muted text-center mb-3">
+                            <h3>Información Gift card</h3>
+                        </div>
+                    </template>
+                    <template>
                         <div class="col-sm-12">
                             <base-button class="col-12  p-2 mt-1" type="secondary">
                                 <span class="text-center"> Comprador <br> </span>
-                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{compradorArticulo}}</badge>
+                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{orderClient.name}}</badge>
                             </base-button>
                             <base-button class="col-12  p-2 mt-1" type="secondary">
                                 <span class="text-center"> Medio de pago <br> </span>
-                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{medioPagoArticulo}}</badge>
+                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{orderTypePay}}</badge>
                             </base-button>
                             <base-button class="col-12  p-2 mt-1" type="secondary">
-                                <span class="text-center"> Articulo <br> </span>
-                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{articulo}}</badge>
+                                <span class="text-center"> Servicios <br> </span>
+                                <badge v-for="product in orderProducts" :key="product" style="font-size:0.8em !important" type="success" class="text-default mt-2">{{product.name}}</badge>
                             </base-button>
                             <base-button class="col-12  p-2 mt-1" type="secondary">
                                 <span class="text-center"> Monto del pedido <br> </span>
-                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{totalArticulo}}</badge>
+                                <badge style="font-size:0.8em !important" type="success" class="text-default mt-2">{{totalOrder | formatPrice}}</badge>
                             </base-button>
                             <base-button class="col-12  p-2 mt-1" type="secondary">
                                 <span class="text-center"> Estado <br> </span>
-                                <badge v-if="estadoArticulo == 'Nconfirmado'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
-                                <badge v-else-if="estadoArticulo == 'confirmado'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
+                                <badge v-if="orderStatus == 'nConfirmed'" style="font-size:0.8em !important" type="danger" class="text-default mt-2">Sin confirmar</badge>
+                                <badge v-else-if="orderStatus == 'confirmed'" style="font-size:0.8em !important" type="success" class="text-default mt-2">confirmado</badge>
                                 <badge v-else style="font-size:0.8em !important" type="default" class="text-default mt-2">Usado</badge>
                             </base-button>
                         </div>
                         <center>
-                            <base-button v-if="estadoArticulo == 'confirmado'" type="success" class="mt-5" v-on:click="verifyCode()">
-                                Validar
+                            <base-button v-if="orderStatus == 'confirmed'" type="success" class="mt-5" v-on:click="modals.modal7 = true, orderCode = ''">
+                                Usar
                             </base-button>
                             <base-button v-else type="default" disabled class="mt-5">
-                                Validar
+                                Usar
                             </base-button> 
                         </center>
                     </template>
+                </card>
+            </modal>
+            <modal :show.sync="modals.modal7"
+                body-classes="p-0"
+                modal-classes="modal-dialog-centered modal-md">
+                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
+                <card type="secondary" shadow
+                    header-classes="bg-white pb-5"
+                    body-classes="px-lg-5 "
+                    class="border-0">
+                    <template>
+                        <div style="margin-top:-10%" class="text-muted text-center mb-3">
+                            <h3>Código de Gift card</h3>
+                        </div>
+                    </template>
+                    <template>
+                        <form role="form">
+                            <base-input 
+                                alternative
+                                class="mb-3"
+                                placeholder="Código"
+                                v-model="orderCode"
+                                addon-left-icon="ni ni-key-25">
+                            </base-input>
+                            
+                            
+                            <base-button type="success" v-on:click="verifyCode()">
+                                Usar
+                            </base-button> 
+                        </form>
+                </template>
                 </card>
             </modal>
             <!-- <div v-if="validRoute('procesar', 'nuevo_cliente')" v-bind:style="{  'height': '45px', 'z-index' : '1000' }" v-on:click="modals.modal2 = true" class="p-2 menuVerVentas navSVenta" v-on:mouseenter="mouseOverVenta(newClient)" v-on:mouseleave="mouseLeaveVenta(newClient)">
@@ -751,6 +793,7 @@ export default {
                 modal4: false,
                 modal5: false,
                 modal6: false,
+                modal7: false,
                 message: "",
                 icon: '',
                 type:''
@@ -798,13 +841,14 @@ export default {
                 select: 'Seleccione',
                 valid: false,
             },
-            articulo:'',
-            compradorArticulo:'',
-            medioPagoArticulo:'',
-            estadoArticulo:'',
-            idArticulo:'',
-            codeArticulo:'',
-            totalArticulo:'',
+            orderProducts:'',
+            orderNumber: '',
+            orderClient:'',
+            orderTypePay:'',
+            orderStatus:'',
+            orderId:'',
+            orderCode:'',
+            totalOrder:'',
             cashFunds: {
                 cashName: '',
                 cashAmount: 0,
@@ -1748,6 +1792,10 @@ export default {
             this.payment.type = this.typesPay[key].type
             this.payment.total = this.perPay
         },
+        usePayGift(){
+            this.payment.type = "Gift Card"
+            this.payment.total = this.totalOrder
+        },
         addPayment(){
             for (const pay of this.typesPay) {
                 pay.click = true
@@ -2289,21 +2337,22 @@ export default {
             }
         },
         validCode(){
-            axios.get(endPoint.endpointTarget+'/pedidos/validCode/'+this.codeArticulo)
+            axios.get(endPoint.endpointTarget+'/orders/validCode/'+this.orderNumber, this.configHeader)
             .then( res =>{
-                if (res.data) {
-                    this.articulo = res.data.articulo
-                    this.estadoArticulo = res.data.estado
-                    this.idArticulo = res.data._id
-                    this.compradorArticulo = res.data.cliente
-                    this.medioPagoArticulo = res.data.tipoPago
-                    this.totalArticulo = res.data.total
+                if (res.data.status == "ok") {
+
+                    this.orderProducts = res.data.data.products
+                    this.orderStatus = res.data.data.status
+                    this.orderId = res.data.data._id
+                    this.orderClient = res.data.data.client
+                    this.orderTypePay = res.data.data.payType
+                    this.totalOrder = res.data.data.total
                     this.modals.modal6 = true
                 }
-                else{
+                if (res.data.status == "nothing") {
                     this.$swal({
                         icon: 'error',
-                        title: 'Código no existe',
+                        title: 'Orden no existe',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -2332,7 +2381,8 @@ export default {
         verifyCode(){
             this.$swal({
 					icon: 'warning',
-					title: '¿Seguro que desea verificar el código?',
+					title: '¿Seguro que desea usar el código?',
+                    text: 'Al realizar esta acción esta Gift Card no podra ser usada de nuevo (aun asi si la venta no se procesa)',
 					showConfirmButton: true,
                     showCancelButton: true,
                     confirmButtonColor: '#2dce89',
@@ -2341,11 +2391,49 @@ export default {
                     cancelButtonText: 'No'
 				}).then((result) => {
                     if (result.value) {
-                        var remp = this.totalArticulo.replace('.', "")
-                        var remp1 = remp.replace(',00', "")
-                        var remp2 = remp1.replace('$ ', "")
-                        this.payOrder = remp2
-                        this.haveCode = true
+                        axios.put(endPoint.endpointTarget+'/orders/usecode/'+this.orderCode,{
+                            orderNumber: this.orderNumber
+                        }, this.configHeader)
+                        .then( res =>{
+                            if (res.data.status == "ok") {
+                                this.$swal({
+                                    icon: 'success',
+                                    title: 'Gift Card usada con exito',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                this.modals.modal6 = false
+                                this.modals.modal7 = false
+                                this.usePayGift()
+                            }
+                            if (res.data.status == "nothing") {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'La Gift Card no existe o no coincide con el número de orden',
+                                    showConfirmButton: false,
+                                    timer: 2500
+                                })
+                            }
+                        }).catch(err => {
+                            if (!err.response) {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Error de conexión',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }else if (err.response.status == 401) {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Session caducada',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                setTimeout(() => {
+                                    router.push("login")
+                                }, 1550);
+                            }
+                        })
                         this.modals.modal5 = false
                         this.modals.modal6 = false
                     }
