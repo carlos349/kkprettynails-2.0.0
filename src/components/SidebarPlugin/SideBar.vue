@@ -337,11 +337,10 @@
         if (token) {
           const decoded = jwtDecode(token)
           this.auth = decoded.access
-          this.branch = decoded.branch
+          this.branch = localStorage.branch
           for (const branch of this.branches) {
             if (branch._id == this.branch) {
               this.branchName = branch.name
-              localStorage.setItem('branch', this.branch)
               localStorage.setItem('branchName', this.branchName)
               break
             }
