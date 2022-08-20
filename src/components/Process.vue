@@ -351,7 +351,7 @@
                 </a-input>
                 <label for="type"><b>Total</b></label>
                 <currency-input
-                    :disabled="serviceSelecteds.length > 0 ? false : true"
+                    :disabled="serviceSelecteds.length > 0 || payment.type == 'Gift Card' ? false : true"
                     v-model="payment.total"
                     locale="de"
                     class="ant-input w-100 mb-3"
@@ -1818,13 +1818,23 @@ export default {
             }
             if (valid) {
                 if (this.payment.type == 'Gift Card') {
-                    this.paysSelecteds.push({
-                        type: this.payment.type,
-                        total: this.payment.total,
-                        code: this.orderCode,
-                        order: this.orderNumber,
-                        totalG: this.totalOrder
-                    })
+                    if (this.payment.total > this.totalOrder) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'El monto ingresado supera el monto total de la Gift Card',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        return false
+                    }else{
+                        this.paysSelecteds.push({
+                            type: this.payment.type,
+                            total: this.payment.total,
+                            code: this.orderCode,
+                            order: this.orderNumber,
+                            totalG: this.totalOrder
+                        })
+                    }
                 }else{
                     this.paysSelecteds.push({
                         type: this.payment.type,
