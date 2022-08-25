@@ -31,7 +31,7 @@
                             @search="handleSearch"
                             @change="chooseClient">
                             <a-select-option v-for="d in clientsRegex" :key="d._id" :value="d._id">
-                                {{d.firstName}} {{d.lastName}}
+                                {{d.name}}
                             </a-select-option>
                         </a-select>
                         <a-button :disabled="validRoute('procesar', 'editar_cliente') ? false : true" v-if="ifEdit" @click="modals.modal2 = true" class="ml-1" type="primary" shape="round">

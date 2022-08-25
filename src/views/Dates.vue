@@ -446,7 +446,7 @@
                                     Registrar cliente
                                 </a-select-option>
                                 <a-select-option v-for="client in clients" :key="client.email" :value="client.firstName + ' ' + client.lastName + ' (' + client.email + ')'" v-on:click="selectClient(client)">
-                                    {{client.firstName}} {{client.lastName}} ({{client.email}})
+                                    {{client.name}}
                                 </a-select-option>
                             </a-select>
                         </center>

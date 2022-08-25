@@ -331,7 +331,7 @@
                               <h4 class="text-center">
                                 Límite de reserva <br> <small class="text-muted text-center mx-auto">Horas antes para poder reservar</small>
                               </h4>
-                              <a-input-number size="large" class="w-100" :min="1" :max="20" v-model="configData.datesPolitics.minTypeDate" v-on:change="changeTime"/>
+                              <a-input-number size="large" class="w-100" :min="0" :max="20" v-model="configData.datesPolitics.minTypeDate" v-on:change="changeTime"/>
                             </div>
                             <div class="col-md-4 mt-1">
                               <h4 class="text-center">
@@ -458,7 +458,7 @@
                                   @search="searchClientRegex">
                                   
                                   <a-select-option v-for="client in clients" :key="client._id" @click="selectClient(client)" :value="client.firstName + ' ' + client.lastName + ' - ' + client.email">
-                                      {{client.firstName}} {{client.lastName}} ({{client.email}})
+                                      {{client.name}}
                                   </a-select-option>
                               </a-select>
                               <base-button outline type="default" size="sm" class="w-50 mb-2" v-on:click="insertClient">
