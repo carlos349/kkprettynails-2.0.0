@@ -437,11 +437,12 @@
                                 :allowClear="true"
                                 option-filter-prop="children"
                                 @search="searchClientRegex"
-                                :filter-option="filterOption">
+                                :filter-option="filterOption"
+                                @change="selectClient">
                                 <a-select-option v-on:click="selectClient('register')" class="text-success" value="register">
                                     Registrar cliente
                                 </a-select-option>
-                                <a-select-option v-for="client in clients" :key="client.email" :value="client.firstName + ' ' + client.lastName + ' (' + client.email + ')'" v-on:click="selectClient(client)">
+                                <a-select-option v-for="client in clients" :key="client._id" :value="client._id">
                                     {{client.name}}
                                 </a-select-option>
                             </a-select>
@@ -2968,33 +2969,35 @@ import mixinES from '../mixins/mixinES'
                 }
             })
         },
-        selectClient(value){
-            if (value == 'register') {
+        async selectClient(client){
+            console.log(client)
+            if (client == 'register') {
                 this.dataClient.valid = false
                 this.dateClient.valid2 = false
             }else{
+                const value = await axios.get(`${endPoint.endpointTarget}/clients/findOne/${client}`, this.configHeader)
                 this.dataClient.valid = true
                 this.dateClient.valid2 = false
                 this.validSelectClient = true
                 this.dateClient = {
-                    name: value.firstName + ' ' + value.lastName,
-                    id: value._id,
-                    email: value.email,
-                    phone: value.phone
+                    name: value.data.data.firstName + ' ' + value.data.data.lastName,
+                    id: value.data.data._id,
+                    email: value.data.data.email,
+                    phone: value.data.data.phone
                 }
                 this.dataClient = {
-                    _id: value._id,
-                    firstName: value.firstName,
-                    lastName: value.lastName,
-                    email: value.email,
-                    phone: value.phone,
-                    instagram: value.instagram,
-                    attends: value.attends,
-                    recommender: value.recommender,
-                    recommendations: value.recommendations,
-                    birthday: value.birthday,
-                    lastAttend: value.lastAttend,
-                    createdAt: value.createdAt,
+                    _id: value.data.data._id,
+                    firstName: value.data.data.firstName,
+                    lastName: value.data.data.lastName,
+                    email: value.data.data.email,
+                    phone: value.data.data.phone,
+                    instagram: value.data.data.instagram,
+                    attends: value.data.data.attends,
+                    recommender: value.data.data.recommender,
+                    recommendations: value.data.data.recommendations,
+                    birthday: value.data.data.birthday,
+                    lastAttend: value.data.data.lastAttend,
+                    createdAt: value.data.data.createdAt,
                     valid: true,
                     valid2: true 
                 }
