@@ -651,7 +651,7 @@
                                                                         <button v-on:click="lessServiceGift(index, service.name, service.duration, 'cardS'+index, service.price, serviceCountG[index].count)" class="button-service-left" ><i class="fa fa-minus" ></i></button>
                                                                         <span class="span-button-service">{{serviceCountG[index].count}}</span>
                                                                         <button class="button-service-right" 
-                                                                        v-on:click="plusServiceGift(index, service.name, service._id, service.duration, service.commission, service.price, service.employes, 'cardS'+index, service.discount)"
+                                                                        v-on:click="plusServiceGift(index, service.name, service._id, service.duration, service.commission, service.price, service.employes, true, 'cardS'+index, service.discount)"
                                                                         ><i class="fa fa-plus"></i></button>
                                                                     </div> 
                                                                 </div>  
@@ -688,21 +688,21 @@
                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
                                             {{CatSelected}}
                                         </base-button>
-                                        <b v-for="category of categories" :key="category.name" v-on:click="selectCategoryPhone(category.name)" class="dropdown-item w-100" style="color:#fff;"> {{category.name}} </b>
+                                        <b v-for="category of categories" :key="category.name" v-on:click="selectCategoryPhoneG(category.name)" class="dropdown-item w-100" style="color:#fff;"> {{category.name}} </b>
                                     </base-dropdown>
                                     <base-dropdown class="w-100 mx-auto styleDropdown" v-if="servicesPhoneShow">
                                         <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
                                             Servicios 
                                         </base-button>
                                         <template v-for="service of servicesCat">
-                                            <b :key="service.name" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.name}} </b>
+                                            <b :key="service.name" v-on:click="selectServicePhoneG(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.name}} </b>
                                         </template>
                                     </base-dropdown>
                                     
-                                    <template v-if="registerDate.serviceSelectds[0]">
+                                    <template v-if="registerDateGift.serviceSelectds[0]">
                                         <h2 class="mt-3 text-center">Servicios seleccionados</h2>
                                         <hr>
-                                        <div v-for="(service, index) in registerDate.serviceSelectds" :key="service._id+'asda'+index" class="w-100" >
+                                        <div v-for="(service, index) in registerDateGift.serviceSelectds" :key="service._id+'asda'+index" class="w-100" >
                                             <div class="card-service mt-4" style="border-bottom: solid 8px #174c8e">
                                                 <h2 class="name-service"> {{service.name}}</h2>
                                                 <p class="ml-1 mb-0 w-100" style="margin-top:-8px;">
@@ -710,7 +710,7 @@
                                                     {{fixedHours(service.duration)}}<br>
                                                     {{service.additionalName}}
                                                 </p>
-                                                <div class="col-12 mt-2 p-0">
+                                                <!-- <div class="col-12 mt-2 p-0">
                                                     <template v-if="ifMicro">
                                                         <a-tooltip placement="top">
                                                             <template slot="title">
@@ -726,13 +726,13 @@
                                                         </a-tooltip>
                                                     </template>
                                                     <img style="z-index:0" src="img/brand/calendar.png" alt="">
-                                                </div>
+                                                </div> -->
                                                 <div class="row p-1">
                                                     <div class="col-8 mt-4 p-1" >
                                                         <div class="price-service w-100">$ {{formatPrice(service.price)}}</div> 
                                                     </div>
                                                     <div class="col-4 mt-4 p-1" >
-                                                        <div style="border: solid 1px #174c8e;float:right;margin-right:5px;" class="price-service w-50"><a-icon style="vertical-align:1px;" type="close" v-on:click="lessServicePhone(index, service.price)" /></div> 
+                                                        <div style="border: solid 1px #174c8e;float:right;margin-right:5px;" class="price-service w-50"><a-icon style="vertical-align:1px;" type="close" v-on:click="lessServicePhoneG(index, service.price)" /></div> 
                                                     </div>
                                                 </div>
                                             </div>
@@ -741,103 +741,7 @@
                                 </div>
                             </div>
                         </tab-content>
-                        <!-- <tab-content title="Profesionales" icon="fa fa-users" :before-change="validateLastStep">
-                            <div class="row">
-                                <div class="col-md-4" style="margin-top:16px;">
-                                    <div class="w-75 mx-auto" >
-                                        <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2 w-100">
-                                            <span style="font-family:Arial !important;color:#32325d;font-weight:600;" class="w-100">Seleccione fecha</span> 
-                                        </badge>
-                                        <base-input class="hideThisShit"  style="cursor:pointer;" >
-                                            <flat-picker 
-                                                    @on-change="openCalendar"
-                                                    slot-scope="{focus, blur}"
-                                                    @on-open="focus"
-                                                    @on-close="blur"
-                                                    :config="configDate"
-                                                    placeholder="Seleccione una fecha" 
-                                                    class="form-control date-client datepicker pl-3"
-                                                    aria-placeholder="Seleccione una fecha"
-                                                    v-model="dates.simple">
-                                            </flat-picker>
-                                        </base-input>
-
-                                        
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="row mb-3">
-                                        <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDate.serviceSelectds" :key="servicesSelect.servicio" >
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="py-1" style="background-color:#f8fcfd;">
-                                                        <badge style="font-size:.7em !important" v-if="servicesSelect.lender != ''" type="secondary" class="mb-1 mx-4">
-                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Seleccione profesionales</span> <br>
-                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.name}} </span>
-                                                        </badge> 
-                                                        <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
-                                                        <base-dropdown class="responsiveButtonsPercent styleDropdown">
-                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == true" slot="title" type="default" class="dropdown-toggle w-100">
-                                                                {{servicesSelect.employe}} 
-                                                            </base-button>
-                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == false" disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                                {{servicesSelect.employe}} 
-                                                            </base-button>
-                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == 'none'" disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                                <span style="color:red">Horarios ocupados</span>
-                                                            </base-button>
-                                                            <template v-for="employe of servicesSelect.employes" >
-                                                                <b :key="employe.name" v-if="employe.valid && verifyValidOnline(employe.id) && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
-                                                            </template>
-                                                        </base-dropdown>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 pb-2">
-                                                    <div class="py-1" style="background-color:#f8fcfd;">
-                                                        <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2 w-100">
-                                                        <span style="font-family:Arial !important;color:#32325d;font-weight:600;" class="w-100">Seleccione horas</span> 
-                                                        </badge>
-                                                        <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
-                                                            <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i>
-                                                            </span>
-                                                            <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
-                                                        </base-button>
-                                                        <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == false" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
-                                                        Seleccione una hora
-                                                        </base-button>
-                                                        <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == 'none'" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
-                                                        <span style="color:red">Horarios ocupados</span>
-                                                        
-                                                        </base-button>
-                                                        <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
-                                                            <div class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="block.hour">
-                                                                <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes, block.hour, index, indexService,'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
-                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                    <span>Disponible</span>
-                                                                </base-button>
-                                                                <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                    <span>Ocupado</span>
-                                                                </base-button>
-                                                                <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                    <span>Seleccionado</span>
-                                                                </base-button>
-                                                                <base-button style="cursor:not-allowed" v-else size="sm" disabled class="col-12" type="secondary">
-                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                    <span>No seleccionable</span>
-                                                                </base-button>
-                                                            </div>
-                                                        </vue-custom-scrollbar>
-                                                    </div>
-                                                </div>   
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </tab-content> -->
-                        <!-- employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, id: '', blocksFirst: [], blocks: [], name: service, microServices: microsService  microServiceSelect -->
+                        
                         <tab-content title="Información" icon="fa fa-question-circle">
                             <div class="row">
                                 <div class="col-md-8 col-sm-12" >
@@ -1095,6 +999,7 @@
                 },
                 servicesCat: [],
                 serviceSelected: [],
+                serviceSelectedG: [],
                 servicesPhoneShow:false,
                 CatSelected: 'Categorias',
                 finalDate: '',
@@ -1219,6 +1124,7 @@
                 serviceCount: [],
                 serviceCountG: [],
                 servicePhoneCount: [],
+                servicePhoneCountG: [],
                 posibleLenders: [],
                 ifLender: false,
                 ifServices: false,
@@ -2526,6 +2432,14 @@
                 this.validHour = false
                 this.totalPrice = this.totalPrice - price
             },
+            lessServicePhoneG(index, price){
+                this.registerDateGift.serviceSelectds.splice(index, 1)
+                if (this.registerDateGift.serviceSelectds.length == 0) {
+                    this.ifServices = false
+                }
+                this.validHour = false
+                this.totalPriceG = this.totalPriceG - price
+            },
             plusService(index, service, id, duration, commission, price, employes, card, discount){
                 $('#'+card).css({'border-bottom': 'solid 8px #174c8e'})
                 this.ifServices = true
@@ -2547,10 +2461,13 @@
                 this.validHour = false  
                 this.totalPrice = this.totalPrice + price
             },
-            plusServiceGift(index, service, id, duration, commission, price, employes, card, discount){
+            plusServiceGift(index, service, id, duration, commission, price, employes, valid, card, discount){
                 $('#G'+card).css({'border-bottom': 'solid 8px #174c8e'})
                 this.ifServicesG = true
-                this.serviceCountG[index].count++
+                if (valid) {
+                    this.serviceCountG[index].count++
+                }
+                
                 
                 
                 this.registerDateGift.serviceSelectds.push({commission: commission, duration: duration, price: price, discount: discount, id: '', name: service, service_id: id})
@@ -2782,7 +2699,25 @@
             },
             validateFirstStep() {
                 window.scrollTo(0, 0);
-                var validService = true
+                var validService = false
+                if (this.ifMicro) {
+                    for (const service of this.registerDate.serviceSelectds) {
+                        var validMicro = false
+                        for (const micro of service.microServices) {
+                            if (micro.checked) {
+                                validMicro = true
+                            }
+                        }
+                        if (validMicro) {
+                            validService = true
+                        }else{
+                            validService = false
+                            break
+                        }
+                    }
+                }else{
+                    validService = true
+                }
                 if (this.ifServices && validService) {
                     this.validWizard = true
                     if ( this.dates.simple != '') {
@@ -3082,6 +3017,44 @@
                     }
                 }
             },
+            async selectCategoryPhoneG(name){
+                for (let j = 0; j < this.serviceSelectedG.length; j++) {
+                    const element = this.serviceSelectedG[j];
+                    if (element.set == false) {
+                        this.serviceSelectedG.splice(j, 1)
+                        this.servicePhoneCountG.splice(j, 1)
+                    }
+                }
+                this.servicesPhoneShow = false
+                this.servicesCat = []
+                try {
+                    const services = await  axios.post(endPoint.endpointTarget+'/services/servicesByCategory', {
+                        name: name,
+                        branch: this.branch
+                    }, this.configHeader)
+                    if (services.data.status == 'ok') {
+                        this.servicesPhoneShow = true
+                        this.servicesCat = services.data.data
+                        this.CatSelected = name
+                    }else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Categoria sin servicios.',
+                            showConfirmButton: false,
+                            timer: 2500
+                        })
+                    }
+                }catch (err){
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }
+            },
             validObject (){
                 if (this.serviceSelected.length === 0) {
                     return false
@@ -3110,6 +3083,41 @@
                         this.serviceSelected.unshift(service.data.data)
                         this.servicePhoneCount.unshift({count: 0})
                         this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data._id, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products, service.data.data.additionalName)
+                    }else{
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error técnico.',
+                            showConfirmButton: false,
+                            timer: 2500
+                        })
+                    }
+                }catch(err){
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }
+            },
+            async selectServicePhoneG(id){
+                for (let j = 0; j < this.serviceSelectedG.length; j++) {
+                    const element = this.serviceSelectedG[j];
+                    if (element.set == false) {
+                        this.serviceSelectedG.splice(j, 1)
+                        this.servicePhoneCountG.splice(j, 1)
+                    }
+                }
+                try {
+                    const service = await axios.get(endPoint.endpointTarget+'/services/getServiceInfo/'+id, this.configHeader)
+                    if (service.data.status == 'ok') {
+                        service.data.data.set = false
+                        
+                        this.serviceSelectedG.unshift(service.data.data)
+                        this.servicePhoneCountG.unshift({count: 0})
+                        this.plusServiceGift(new Date().getTime(), service.data.data.name, service.data.data._id, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, false, service.data.data.discount, service.data.data.products, service.data.data.additionalName)
                     }else{
                         this.$swal({
                             icon: 'error',

@@ -351,7 +351,7 @@
                 </a-input>
                 <label for="type"><b>Total</b></label>
                 <currency-input
-                    :disabled="serviceSelecteds.length > 0 ? false : true"
+                    :disabled="serviceSelecteds.length > 0 || payment.type == 'Gift Card' ? false : true"
                     v-model="payment.total"
                     locale="de"
                     class="ant-input w-100 mb-3"
@@ -593,6 +593,7 @@
                     <template>
                         <div style="margin-top:-10%" class="text-muted text-center mb-3">
                             <h3>Validación de Gift card</h3>
+                            <p>Consulta al cliente para obtener el estado</p>
                         </div>
                     </template>
                     <template>
@@ -616,6 +617,7 @@
             <modal :show.sync="modals.modal6"
                 body-classes="p-0"
                 modal-classes="modal-dialog-centered modal-md">
+                <h6 slot="header" class="modal-title p-0 m-0" id="modal-title-default"></h6>
                 <card type="secondary" shadow
                     header-classes="bg-white pb-5"
                     body-classes="px-lg-5 py-lg-5"
@@ -672,6 +674,7 @@
                     <template>
                         <div style="margin-top:-10%" class="text-muted text-center mb-3">
                             <h3>Código de Gift card</h3>
+                            <p>Solicitar al cliente para agregar como método de pago</p>
                         </div>
                     </template>
                     <template>
@@ -1794,7 +1797,12 @@ export default {
         },
         usePayGift(){
             this.payment.type = "Gift Card"
-            this.payment.total = this.totalOrder
+            if (this.totalOrder >= this.perPay) {
+                this.payment.total = this.perPay
+            }else{
+                this.payment.total = this.totalOrder
+            }
+            
         },
         addPayment(){
             for (const pay of this.typesPay) {
@@ -1809,11 +1817,33 @@ export default {
                 }
             }
             if (valid) {
-                this.paysSelecteds.push({
-                    type: this.payment.type,
-                    total: this.payment.total
-                })
+                if (this.payment.type == 'Gift Card') {
+                    if (this.payment.total > this.totalOrder) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'El monto ingresado supera el monto total de la Gift Card',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        return false
+                    }else{
+                        this.paysSelecteds.push({
+                            type: this.payment.type,
+                            total: this.payment.total,
+                            code: this.orderCode,
+                            order: this.orderNumber,
+                            totalG: this.totalOrder
+                        })
+                    }
+                }else{
+                    this.paysSelecteds.push({
+                        type: this.payment.type,
+                        total: this.payment.total
+                    })
+                }
+                
             }
+            console.log(this.paysSelecteds)
             var total = 0
             for (const pay of this.paysSelecteds) {
                 total = total + pay.total
@@ -2084,6 +2114,16 @@ export default {
                         restPay: this.restPay
                     }, this.configHeader)
                     if (proccesSale.data.status == 'ok') {
+                        
+                        this.paysSelecteds.forEach(element => {
+                            if (element.type == "Gift Card") {
+                                axios.put(endPoint.endpointTarget+'/orders/usecode/'+element.code,{
+                                    orderNumber: element.order,
+                                    total: element.total
+                                }, this.configHeader)
+                                .then( res =>{})
+                            }
+                        });
                         this.$swal({
                             icon: 'success',
                             title: 'Venta procesada',
@@ -2104,6 +2144,7 @@ export default {
                         this.ifProccess = false
                     }
                 }catch(err){
+                    console.log("🚀 ~ file: Process.vue ~ line 2136 ~ proccessSale ~ err", err)
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
@@ -2148,6 +2189,7 @@ export default {
                     this.registerClient.phone = getClient.data.data.phone
                     this.registerClient.instagram = getClient.data.data.instagram
                     this.readyClient = false
+                    this.registerClient.select = getClient.data.data.firstName + ' ' + getClient.data.data.lastName
                     this.validRegister(2)
                     this.registerClient.birthday = ''
                     const getConfig = await axios.get(`${endPoint.endpointTarget}/configurations/${this.branch}`, this.configHeader)
@@ -2259,6 +2301,8 @@ export default {
                 commission: 0,
                 tag: ''
             }
+            this.payment.type = ''
+            this.payment.total = 0
             this.serviceSelecteds = []
             this.totalSale = 0
             this.paysSelecteds = []
@@ -2382,7 +2426,7 @@ export default {
             this.$swal({
 					icon: 'warning',
 					title: '¿Seguro que desea usar el código?',
-                    text: 'Al realizar esta acción esta Gift Card no podra ser usada de nuevo (aun asi si la venta no se procesa)',
+                    text: 'Al realizar esta acción esta Gift Card se agregara como metodo de pago',
 					showConfirmButton: true,
                     showCancelButton: true,
                     confirmButtonColor: '#2dce89',
@@ -2391,14 +2435,14 @@ export default {
                     cancelButtonText: 'No'
 				}).then((result) => {
                     if (result.value) {
-                        axios.put(endPoint.endpointTarget+'/orders/usecode/'+this.orderCode,{
+                        axios.put(endPoint.endpointTarget+'/orders/usecodef/'+this.orderCode,{
                             orderNumber: this.orderNumber
                         }, this.configHeader)
                         .then( res =>{
                             if (res.data.status == "ok") {
                                 this.$swal({
                                     icon: 'success',
-                                    title: 'Gift Card usada con exito',
+                                    title: 'Gift Card agregada con exito',
                                     showConfirmButton: false,
                                     timer: 1500
                                 })

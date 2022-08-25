@@ -3660,6 +3660,8 @@ import mixinES from '../mixins/mixinES'
                             .then(res => {
                                 this.blockFirstEdit = res.data.data
                                 this.searchBlockEdit()
+                                this.minLessEdit = 0
+                                this.minAddEdit = 0
                                 this.dateModals.modal2 = true
                                 this.configDatePickerEdit.minDate = new Date()
                             }).catch(err => {
