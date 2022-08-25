@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="loader">
         <base-header class="header pb-5 pt-2 pt-lg-4 d-flex align-items-center"
             style="min-height: 100px; background-image: url(img/theme/metrics.png); background-size: cover; background-position: center 36%;">
             <!-- Mask -->
@@ -457,6 +457,7 @@
         employeSelect: '',
         thisClick: true,
         workDays: 0,
+        loader: true,
         salesProjection: 0,
         serviceProjection: 0,
         expenseTotal: 0,
@@ -708,8 +709,14 @@
           this.graphDataAnual = getSales.data.series
           this.loadingChartAnual = false
           EventBus.$emit('pageLoaded', true)
+          setTimeout(() => {
+            this.loader = true
+          }, 500);
         }catch(err){
           EventBus.$emit('pageLoaded', true)
+          setTimeout(() => {
+            this.loader = true
+          }, 500);
           if (!err.response) {
               this.$swal({
                   icon: 'error',
@@ -1164,6 +1171,7 @@
     mounted (){
       EventBus.$on('changeBranch/dashboard', status => {
         this.getBranch()
+        this.loader = false
       })
     }
   };

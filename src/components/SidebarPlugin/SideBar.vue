@@ -10,15 +10,15 @@
                 <span class="navbar-toggler-icon"></span>
             </navbar-toggle-button>
             
-            <img v-if="screen < 768" style="width:13%;margin-left: 40px;margin-bottom: 3%;" :src="logo" alt="...">
-            <img v-else style="width: 155%;margin-left: -52px;margin-top: -48px;margin-bottom: -20%;" :src="logoB" alt="...">
+            <img v-if="screen < 768" style="width:0%;margin-left: 40px;margin-bottom: 3%;" :src="logo" alt="...">
+            <img v-else style="width: 100%" :src="logoB" alt="...">
             
             <slot name="mobile-right">
                 <ul class="nav align-items-center d-md-none">
                     <li class="nav-item dropdown">
               <a v-on:click="validateNotifications()" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="ni ni-bell-55" :class="pxSep" style="font-size:18px;z-index:1;"></i>
-                <badge v-if="activeNotifications > 0" class="notifyNumber text-white" type="primary" style="font-size:14px;z-index:0;">{{activeNotifications}}</badge>
+                <i class="ni ni-bell-55" :class="pxSep" style="font-size:18px;z-index:1;    border: 1px solid #172b4d;border-radius: 50%;padding: 6px;vertical-align: 7px;"></i>
+                <badge v-if="activeNotifications > 0" class="notifyNumber text-white" type="primary" style="font-size:14px;z-index:2;background-color: rgba(61, 141, 242, 1);">{{activeNotifications}}</badge>
               </a>
             <div style="z-index:10000; min-width: 350px; right: -100px;" class="dropdown-menu dDesteM  dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
               
@@ -124,7 +124,7 @@
                     <div class="row">
                         <div class="col-6 collapse-brand">
                             <router-link to="/">
-                                <img :src="logo">
+                                <img style="width: 100%; height: auto;" :src="logo">
                             </router-link>
                         </div>
                         <div class="col-6 collapse-close">
@@ -178,12 +178,12 @@
     props: {
       logo: {
         type: String,
-        default: 'img/brand/syswa-isotipo.png',
+        default: 'img/brand/syswa-gestion2.png',
         description: 'Sidebar app logo'
       },
       logoB: {
         type: String,
-        default: 'img/brand/syswa-gestion.png',
+        default: 'img/brand/syswa-gestion2.png',
         description: 'Sidebar app logo'
       },
       autoClose: {

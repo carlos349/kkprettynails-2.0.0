@@ -433,7 +433,7 @@ export default {
                         branch: this.branch,
                         userName:this.firstNameUser + " " + this.lastNameUser,
                         userImage:localStorage.imageUser,
-                        detail:'Registro un fondo de caja',
+                        detail:'Registro un fondo de caja en la sucursal: '+ this.branchName,
                         link: 'Caja'
                     }, this.configHeader)
                     .then(res => {

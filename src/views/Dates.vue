@@ -35,8 +35,12 @@
                                     <a-icon type="calendar" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                                     Ver calendario
                                 </base-button>
-                            </template> 
-                            <base-button class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
+                            </template>
+                            <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
+                                <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                                
+                            </base-button> 
+                            <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
                                 <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                                 Bloqueos
                             </base-button>
@@ -2449,12 +2453,15 @@ import mixinES from '../mixins/mixinES'
             }
         },
         viewLink(){
-            if (this.$route.query.id) {
-                axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.$route.query.id, this.configHeader)
-                .then(res => {
-                    this.onEventClick(res.data.data)
-                })
-            }
+            setTimeout(() => {
+                if (this.$route.query.id) {
+                    axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.$route.query.id, this.configHeader)
+                    .then(res => {
+                        this.onEventClick(res.data.data)
+                    })
+                }
+            }, 500);
+            
         },
         filterOption(input, option) {
             return (
@@ -3130,7 +3137,6 @@ import mixinES from '../mixins/mixinES'
             this.blokedBlock = value == undefined ? true : false
         },
         register(){
-            console.log("🚀 ~ file: Dates.vue ~ line 3244 ~ register ~ this.registerDae", this.registerDae)
             this.spinningDate = true
             if (this.dataClient.valid && this.validSelectClient) {
                 this.ifDisabled = true
@@ -3520,7 +3526,7 @@ import mixinES from '../mixins/mixinES'
                 var start = this.selectedEvent.start
                 axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.selectedEvent._id, this.configHeader)
                 .then(res => {
-                    this.selectedEvent.createdAt = new Date(res.data.data.createdAt).format('MM-DD-YYYY')
+                    this.selectedEvent.createdAt = res.data.data.createdAt
                 })
 
                 axios.get(endPoint.endpointTarget+'/users/getbylinklender/'+this.selectedEvent.employe.id, this.configHeader)
@@ -3573,9 +3579,13 @@ import mixinES from '../mixins/mixinES'
             }
         },
         dateSplit(value){
-            const date = new Date(value).format('DD MM YYYY')
-            var formatDate = date.split(' ')
-            return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
+            if (value) {
+                const date = new Date(value).format('DD MM YYYY')
+                
+                var formatDate = date.split(' ')
+                return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
+            }
+            
         },
         dateSplit2(value){
             const date = new Date(value).format('DD MM YYYY')
@@ -4006,6 +4016,7 @@ import mixinES from '../mixins/mixinES'
             
         },
         endDate(data){
+            console.log("🚀 ~ file: Dates.vue ~ line 4016 ~ endDate ~ data", data)
             this.finallyDisabled = true
             var valid = false
             const dataFinal = data
@@ -4055,6 +4066,7 @@ import mixinES from '../mixins/mixinES'
                                     branch: this.branch,
                                     userName:this.firstNameUser + " " + this.lastNameUser,
                                     userImage:localStorage.imageUser,
+                                    employeId:data.employe.id,
                                     detail:'Finalizó una cita con fecha: ' + dateFinal + ' y cliente: ' + data.client.name + " - ( " + data.client.email + " )",
                                     link: 'agendamiento?id=' + data._id
                                 }, this.configHeader)
@@ -4111,6 +4123,7 @@ import mixinES from '../mixins/mixinES'
                             branch: this.branch,
                             userName:this.firstNameUser + " " + this.lastNameUser,
                             userImage:localStorage.imageUser,
+                            employeId:data.employe.id,
                             detail:'Finalizó una cita con fecha: ' + dateFinal + ' y cliente: ' + data.client.name + " - ( " + data.client.email + " )",
                             link: 'agendamiento?id=' + data._id
                         },this.configHeader)
@@ -4198,7 +4211,7 @@ import mixinES from '../mixins/mixinES'
                                 userName:this.firstNameUser + " " + this.lastNameUser,
                                 userImage:localStorage.imageUser,
                                 employeId: res.data.data.employe.id,
-                                detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${new Date(res.data.data.start.split(" ")[0]).format('DD-MM-YYYY')} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
+                                detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${new Date(res.data.data.start.split(" ")[0]).split("-")[1] + "-" + new Date(res.data.data.start.split(" ")[0]).split("-")[0] + "-" + new Date(res.data.data.start.split(" ")[0]).split("-")[3]} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
                                 link: 'agendamiento'
                             }, this.configHeader)
                             .then(respo => {
@@ -4749,59 +4762,7 @@ import mixinES from '../mixins/mixinES'
                 }
             })
         },
-        endingDate(){
-            const id = this.endId
-            axios.post(endPoint.endpointTarget+'/citas/endDate/'+id, {
-                services:this.serviciosSelecionadosDates,
-                client:this.endClient,
-                employe:this.endEmploye,
-                design: this.designEndDate
-            })
-            .then(res => {
-                if (res.data.status == 'ok') {
-                    this.getDates();
-                    setTimeout(() => {
-                    if (this.employeByDate != 'Filtrar por empleado') {
-                        this.getCitasByEmploye()
-                    }
-                    }, 500);
-                    this.getClosed()
-                    this.$swal({
-                        type: 'success',
-                        title: 'Cita finalizada con éxito',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    this.dateModals.modal1 = false
-                    this.dateModals.modal3 = false
-                    this.designEndDate = ''
-                    this.serviciosSelecionadosDates = []
-                    this.endClient = ''
-                    this.endEmploye = ''
-                    this.designEndDate = ''
-                    $('.conteoServ').text('0')
-                    axios.post(endPoint.endpointTarget+'/notifications', {
-                        branch: this.branch,
-                        userName:this.firstNameUser + " " + this.lastNameUser,
-                        userImage:localStorage.imageUser,
-                        detail:'Finalizó una cita para el '+ data.start.split(" ")[0] + "con cliente: ( " + data.client.name + " ) - ( " + data.client.email + " )",
-                        link: 'agendamiento'
-                    }, this.configHeader)
-                    .then(res => {
-                        this.socket.emit('sendNotification', res.data.data)
-                    })   
-                }
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
-        },
+        
         selected(value){
             const selectArray = {
                 id: value.selected_item._id,
@@ -5216,7 +5177,6 @@ import mixinES from '../mixins/mixinES'
                         break
                     }
                 }
-                console.log(validateEmployeSelect)
                 if (validateEmployeSelect) {
                     this.registerDae.serviceSelectds[indexService].blocks[i].validator = 'unavailable'
                     this.$swal({

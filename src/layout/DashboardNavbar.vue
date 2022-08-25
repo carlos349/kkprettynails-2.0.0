@@ -217,7 +217,6 @@
       this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
     },
     created() {
-      console.log(localStorage.branchName, localStorage.branch)
       this.getNotifications()
       this.getBranches()
     },
@@ -245,12 +244,10 @@
           const decoded = jwtDecode(token)
           this.auth = decoded.access
           this.branch = localStorage.branch
-          console.log(this.branch)
           for (const branch of this.branches) {
             if (branch._id == this.branch) {
               this.branchName = branch.name
               localStorage.setItem('branchName', this.branchName)
-              console.log(localStorage.branchName, localStorage.branch)
               break
             }
           }
@@ -295,7 +292,6 @@
           localStorage.setItem('branch', value.key.split('/')[0])
           localStorage.setItem('branchName', value.key.split('/')[1])
           this.branch = value.key.split('/')[0]
-          console.log(this.branch)
           this.branchName = value.key.split('/')[1]
           EventBus.$emit('changeBranch'+router.app._route.path.toLowerCase(), router.app._route.path)
         }
