@@ -629,7 +629,7 @@
                                     <div class="separateService col-md-8">
                                         <div class="tab-content" id="pills-tabContent">
                                             <div v-for="category of categories" :key="category.name" class="tab-pane fade " :id="'v-pillsG-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                                <div class="row mt-2">
+                                                <div class="row mt-2 ml-3">
                                                     <template v-for="(service, index) of services">
                                                         <div :key="service.name" class="col-md-4 px-2" v-if="service.category == category.name && service.active == true">
                                                             <div class="card-service row mt-2" :id="'GcardS'+index">
