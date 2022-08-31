@@ -724,7 +724,7 @@
                                     </div>
                                 </template>
                                 
-                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente, false)" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true" v-on:click="deleteDate(selectedEvent._id,selectedEvent.client, false)" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Borrar</span>  
@@ -733,7 +733,7 @@
                                     </center>
                                 </div>
 
-                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true" v-on:click="deleteDate(selectedEvent._id,selectedEvent.cliente, true)" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true" v-on:click="deleteDate(selectedEvent._id,selectedEvent.client, true)" class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
                                             <span class="float-left">Cancelar</span>  
@@ -4219,7 +4219,7 @@ import mixinES from '../mixins/mixinES'
                                 userName:this.firstNameUser + " " + this.lastNameUser,
                                 userImage:localStorage.imageUser,
                                 employeId: res.data.data.employe.id,
-                                detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${new Date(res.data.data.start.split(" ")[0]).split("-")[1] + "-" + new Date(res.data.data.start.split(" ")[0]).split("-")[0] + "-" + new Date(res.data.data.start.split(" ")[0]).split("-")[3]} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
+                                detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${res.data.data.start.split(" ")[0].split("-")[1] + "-" + res.data.data.start.split(" ")[0].split("-")[0] + "-" + res.data.data.start.split(" ")[0].split("-")[3]} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
                                 link: 'agendamiento'
                             }, this.configHeader)
                             .then(respo => {
@@ -4227,11 +4227,12 @@ import mixinES from '../mixins/mixinES'
                             }) 
                         }
                     }).catch(err => {
-                        console.log(err)
+                        console.log("🚀 ~ file: Dates.vue ~ line 4230 ~ .then ~ err", err)
+                        
                         if (!err.response) {
                             this.$swal({
                                 icon: 'error',
-                                title: 'Error de conexión',
+                                title: 'Error de conexión1',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
