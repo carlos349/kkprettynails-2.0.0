@@ -127,7 +127,7 @@
                                     <div class="separateService col-md-8">
                                         <div class="tab-content" id="pills-tabContent">
                                             <div v-for="category of categories" :key="category.name" class="tab-pane fade " :id="'v-pillsG-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                                <div class="row mt-2">
+                                                <div class="row mt-2 ml-4">
                                                     <template v-for="(service, index) of services">
                                                         <div :key="service.name" class="col-md-4 px-2" v-if="service.category == category.name && service.active == true">
                                                             <div class="card-service row mt-2" :id="'GcardS'+index">
@@ -286,7 +286,7 @@
                                                     @search="handleSearchG"
                                                     @change="chooseClient">
                                                     <a-select-option v-for="d in clientsRegex" :key="d._id" :value="d._id">
-                                                        {{d.firstName}} {{d.lastName}}
+                                                        {{d.name}}
                                                     </a-select-option>
                                                 </a-select>
                                             </div>
@@ -699,12 +699,15 @@ import VueBootstrap4Table from 'vue-bootstrap4-table'
 import EventBus from '../components/EventBus'
 import jwtDecode from 'jwt-decode'
 import router from '../router'
+import locale from 'ant-design-vue/es/date-picker/locale/es_ES';
 import moment from 'moment'
 import flatPicker from "vue-flatpickr-component";
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'moment/locale/es';
 import vuescroll from 'vuescroll';
 moment.locale('es');
+import es_ES from 'ant-design-vue/lib/locale-provider/es_ES';
+
 
 import mixinES from '../mixins/mixinES'
 // COMPONENTS
@@ -723,6 +726,8 @@ export default {
         auth: [],
         idPedido:'',
         moment,
+        locale,
+        es_ES,
         totalText: 'Monto total por confirmar',
         identidadPedido:'',
         codePedido:'',

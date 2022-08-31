@@ -1,5 +1,5 @@
 <template >
-    <div>
+    <div v-if="loader">
         <base-header class="header pb-4 pt-2 pt-lg-4 d-flex align-items-center"
             style="min-height: 50px; background-image: url(img/theme/calendar.png); background-size: cover; background-position: center 75%">
             <!-- Mask -->
@@ -1676,6 +1676,7 @@ import mixinES from '../mixins/mixinES'
             modal6:false,
             modal7:false
         },
+        loader: true,
         finallyDisabled: false,
         categories: [],
         radio: {
@@ -1961,6 +1962,7 @@ import mixinES from '../mixins/mixinES'
                 this.posibleLenders = []
             }
             this.validHour = false
+            this.totalPrice = this.totalPrice - price
         },
         lessService(index, service, time, card, price, count){
             if (count > 0) {
@@ -2437,9 +2439,15 @@ import mixinES from '../mixins/mixinES'
                         localStorage.userToken = dates.data.token
                         this.spinningView = false
                         EventBus.$emit('pageLoaded', true)
+                        setTimeout(() => {
+                            this.loader = true
+                        }, 500);
                     }
                 }catch(err){
                     EventBus.$emit('pageLoaded', true)
+                    setTimeout(() => {
+                        this.loader = true
+                    }, 500);
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
@@ -5920,6 +5928,7 @@ import mixinES from '../mixins/mixinES'
         });
         EventBus.$on('changeBranch/agendamiento', (status) => {
             this.getBranch()
+            this.loader = false
         })
         EventBus.$on('notifyLink', status => {
             this.viewLink()
