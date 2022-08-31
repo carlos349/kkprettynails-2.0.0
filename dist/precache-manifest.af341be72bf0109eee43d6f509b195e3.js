@@ -1,7 +1,7 @@
 self.__precacheManifest = [
   {
-    "revision": "4524351b9c58adb85b5e1b32374347ab",
-    "url": "/img/theme/users.png"
+    "revision": "b37d2558404192e18ca66e0533e57cf1",
+    "url": "/popper.min.js"
   },
   {
     "revision": "6fb59a1b94cc43776f270e1de6622cf8",
@@ -24,8 +24,8 @@ self.__precacheManifest = [
     "url": "/img/theme/reportes.jpg"
   },
   {
-    "revision": "317263dc70b3a71b0c9f",
-    "url": "/js/chunk-6b932e4e.cc89ade7.js"
+    "revision": "e9e6f2a0d0353573af1e",
+    "url": "/js/chunk-6b932e4e.df4a51c0.js"
   },
   {
     "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
@@ -52,12 +52,12 @@ self.__precacheManifest = [
     "url": "/img/brand/syswa-isotipo.png"
   },
   {
-    "revision": "93929da7ae1722429c7e9d894761dc41",
-    "url": "/img/theme/syswa-gestion.png"
-  },
-  {
     "revision": "be997d5226b992ffad34816870c6b7aa",
     "url": "/img/theme/team-2-800x800.jpg"
+  },
+  {
+    "revision": "93929da7ae1722429c7e9d894761dc41",
+    "url": "/img/theme/syswa-gestion.png"
   },
   {
     "revision": "93929da7ae1722429c7e9d894761dc41",
@@ -68,7 +68,7 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "c5ae85cfdf897f26df381d3e42f8489b",
+    "revision": "b84381b1bf5d788068c826b75594a2d5",
     "url": "/index.html"
   },
   {
@@ -96,36 +96,36 @@ self.__precacheManifest = [
     "url": "/img/theme/sketch.jpg"
   },
   {
-    "revision": "c532f6f0176968caa6265864ee1abb35",
-    "url": "/img/theme/vue.jpg"
-  },
-  {
     "revision": "735ab4f94fbcd57074377afca324c813",
     "url": "/robots.txt"
+  },
+  {
+    "revision": "c532f6f0176968caa6265864ee1abb35",
+    "url": "/img/theme/vue.jpg"
   },
   {
     "revision": "c2da9acf4a2818e249a2ec94862a938d",
     "url": "/img/theme/branch.png"
   },
   {
-    "revision": "ced0f2c9d36acd10447db1f3b3339104",
-    "url": "/img/theme/employes.png"
-  },
-  {
     "revision": "c1cacccae0d09aa2a50d3240f8457f2c",
     "url": "/img/theme/employeReport.png"
+  },
+  {
+    "revision": "ced0f2c9d36acd10447db1f3b3339104",
+    "url": "/img/theme/employes.png"
   },
   {
     "revision": "ef90ef6ebf8cfa521445aea45be0f3d0",
     "url": "/img/theme/metrics.png"
   },
   {
-    "revision": "b37d2558404192e18ca66e0533e57cf1",
-    "url": "/popper.min.js"
+    "revision": "4524351b9c58adb85b5e1b32374347ab",
+    "url": "/img/theme/users.png"
   },
   {
-    "revision": "44174dd75e84a31cb08f",
-    "url": "/js/app.4971caef.js"
+    "revision": "e024c8862fc7567a8b7a",
+    "url": "/js/app.4e8dff85.js"
   },
   {
     "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
@@ -152,12 +152,12 @@ self.__precacheManifest = [
     "url": "/img/theme/store.png"
   },
   {
-    "revision": "50e42caa32cb0364bb83b0c3b79016cb",
-    "url": "/img/theme/sales.png"
-  },
-  {
     "revision": "e7be3ecd921efc88bbca5e090862eac7",
     "url": "/img/theme/profile.png"
+  },
+  {
+    "revision": "50e42caa32cb0364bb83b0c3b79016cb",
+    "url": "/img/theme/sales.png"
   },
   {
     "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
@@ -200,11 +200,11 @@ self.__precacheManifest = [
     "url": "/img/brand/syswa-gestion2.png"
   },
   {
-    "revision": "426439788ec5ba772cdf94057f6f4659",
-    "url": "/fonts/nucleo-icons.42643978.woff2"
+    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
+    "url": "/fonts/nucleo-icons.2569aaea.woff"
   },
   {
-    "revision": "44174dd75e84a31cb08f",
+    "revision": "e024c8862fc7567a8b7a",
     "url": "/css/app.82dde4ad.css"
   },
   {
@@ -220,8 +220,8 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.c1733565.eot"
   },
   {
-    "revision": "2569aaea6eaaf8cd210db7f2fa016743",
-    "url": "/fonts/nucleo-icons.2569aaea.woff"
+    "revision": "426439788ec5ba772cdf94057f6f4659",
+    "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
     "revision": "b19bbdd813f73aa193678e5a04d297d8",
@@ -236,7 +236,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-vendors.b568aebd.css"
   },
   {
-    "revision": "317263dc70b3a71b0c9f",
+    "revision": "e9e6f2a0d0353573af1e",
     "url": "/css/chunk-6b932e4e.97450e86.css"
   },
   {
