@@ -4214,12 +4214,13 @@ import mixinES from '../mixins/mixinES'
                             this.events = []
                             this.dateModals.modal1 = false
                             this.getDates();
+                            var splitD = res.data.data.start.split(" ")[0].split("-")
                             axios.post(endPoint.endpointTarget+'/notifications', {
                                 branch: this.branch,
                                 userName:this.firstNameUser + " " + this.lastNameUser,
                                 userImage:localStorage.imageUser,
                                 employeId: res.data.data.employe.id,
-                                detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${res.data.data.start.split(" ")[0].split("-")[1] + "-" + res.data.data.start.split(" ")[0].split("-")[0] + "-" + res.data.data.start.split(" ")[0].split("-")[3]} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
+                                detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${splitD[1]+ "-" + splitD[0] + "-" + splitD[2]} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
                                 link: 'agendamiento'
                             }, this.configHeader)
                             .then(respo => {
