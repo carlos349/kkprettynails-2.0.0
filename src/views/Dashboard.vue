@@ -499,13 +499,15 @@
         this.dateFilter = dateString
       },
       calculatedProjection(){
-        if (this.projection > 0) {
-          this.salesProjection = (this.totalSale / this.workDays) * (parseInt(this.projection))
-          this.serviceProjection = (this.totalServices / this.workDays ) * (parseInt(this.projection))
-          setTimeout(() => {
-            this.updateProjection()
-          }, 500);
-        }
+        setTimeout(() => {
+          if (this.projection > 0) {
+            this.salesProjection = (this.totalSale / this.workDays) * (parseInt(this.projection))
+            this.serviceProjection = (this.totalServices / this.workDays ) * (parseInt(this.projection))
+            setTimeout(() => {
+              this.updateProjection()
+            }, 500);
+          }
+        }, 5000);
       },
       async updateProjection(){
         try {
