@@ -19,14 +19,19 @@
                         <a-icon type="unordered-list" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Categorías
                     </base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('servicios', 'ingresar')" @click="validCreate(), clean()" type="success">
+                    <base-button class="float-right mt-7 mr-2" size="sm" v-if="validRoute('servicios', 'ingresar') && this.categories.length > 0" @click="validCreate(), clean()" type="success">
                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                         Nuevo
                     </base-button>
-                    <base-button class="float-right mt-7 mr-2" size="sm" v-else @click="modals.modal1 = true, clean()" type="success" disabled>
-                        <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
-                        Nuevo
-                    </base-button>
+                    <a-tooltip v-else placement="left">
+                        <template slot="title">
+                            <span>Debe crear primero una categoria.</span>
+                        </template>
+                        <base-button class="float-right mt-7 mr-2" size="sm" type="success" style="cursor: no-drop;">
+                            <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
+                            Nuevo
+                        </base-button>
+                    </a-tooltip>
                 </div>
             </div>
         </base-header>
