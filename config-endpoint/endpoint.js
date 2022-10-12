@@ -37,6 +37,6 @@ const dataQa = {
     title: "Syswa gestion"
 }
 
-const endPoint = dataPuentealto
+const endPoint = dataKK
 
 module.exports = endPoint

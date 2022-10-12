@@ -317,7 +317,7 @@
                                                                 <span style="color:red">Horarios ocupados</span>
                                                             </base-button>
                                                             <template v-for="employe of servicesSelect.employes" >
-                                                                <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
+                                                                <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name) && validAngela(employe.id)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
                                                             </template>
                                                         </base-dropdown>
                                                     </div>
@@ -4158,6 +4158,14 @@ import mixinES from '../mixins/mixinES'
                         })
                     }
                 })
+            }
+        },
+        validAngela(id){
+            const dateSelected = new Date(this.finalDate)
+            if (id == "6116b68328723d461421fde3" && dateSelected.getMonth() == 10 || dateSelected.getMonth() == 11 || dateSelected.getMonth() == 0) {
+                return false
+            }else{
+                return true
             }
         },
         deleteDate(id,cliente, validEmail){
