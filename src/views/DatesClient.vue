@@ -2806,7 +2806,7 @@
             },
             validAngela(id){
                 const dateSelected = new Date(this.finalDate)
-                if (id == "6116b68328723d461421fde3" && dateSelected.getMonth() == 10 || dateSelected.getMonth() == 11 || dateSelected.getMonth() == 0) {
+                if ((id == "6116b68328723d461421fde3") && (dateSelected.getMonth() == 10 || dateSelected.getMonth() == 11 || dateSelected.getMonth() == 0)) {
                     return false
                 }else{
                     return true
