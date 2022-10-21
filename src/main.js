@@ -115,7 +115,7 @@ Vue.use(VueCarousel);
 
 /* FONTS LIBRARY */
 library.add(faUserSecret, faCloudUploadAlt, faRedoAlt, faTimes, faTag, faPercent, faMoneyBillWave, faMoneyCheckAlt, faHandHoldingUsd, faUserPlus, faFolderPlus, faRedo, faUserEdit, faPager, faEdit, faTrash, faClipboard, faShoppingCart)
-
+document.title = endPoint.title;
 new Vue({
   router,
   render: h => h(App)

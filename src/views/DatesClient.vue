@@ -217,7 +217,7 @@
                                                                 <span style="color:red">Horarios ocupados</span>
                                                             </base-button>
                                                             <template v-for="employe of servicesSelect.employes" >
-                                                                <b :key="employe.name" v-if="employe.valid && verifyValidOnline(employe.id) && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
+                                                                <b :key="employe.name" v-if="employe.valid && verifyValidOnline(employe.id) && findDay(employe.days, employe.name) && validAngela(employe.id)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
                                                             </template>
                                                         </base-dropdown>
                                                     </div>
@@ -240,24 +240,26 @@
                                                         
                                                         </base-button>
                                                         <vue-custom-scrollbar class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="max-height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;background-color:#fff;">
-                                                            <div class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="block.hour">
-                                                                <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes, block.hour, index, indexService,'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
-                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                    <span>Disponible</span>
-                                                                </base-button>
-                                                                <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                    <span>Ocupado</span>
-                                                                </base-button>
-                                                                <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                    <span>Seleccionado</span>
-                                                                </base-button>
-                                                                <base-button style="cursor:not-allowed" v-else size="sm" disabled class="col-12" type="secondary">
-                                                                    <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                    <span>No seleccionable</span>
-                                                                </base-button>
-                                                            </div>
+                                                            <a-spin :spinning="load2">
+                                                                <div class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="block.hour">
+                                                                    <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes, block.hour, index, indexService,'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                        <span>Disponible</span>
+                                                                    </base-button>
+                                                                    <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                        <span>Ocupado</span>
+                                                                    </base-button>
+                                                                    <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                        <span>Seleccionado</span>
+                                                                    </base-button>
+                                                                    <base-button style="cursor:not-allowed" v-else size="sm" disabled class="col-12" type="secondary">
+                                                                        <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                                                        <span>No seleccionable</span>
+                                                                    </base-button>
+                                                                </div>
+                                                            </a-spin>
                                                         </vue-custom-scrollbar>
                                                     </div>
                                                 </div>   
@@ -368,7 +370,6 @@
                 <i class="ni ni-check-bold ni-5x text-success"></i>
                 <h2>¡Bienvenido(a) {{nameClient}}!</h2><br> 
                 <h4>Ya puedes agendar tu cita</h4><br>
-                <h4>{{dataMessageClient}}</h4><br>
                 <h5>¡Comparte tu link de referido y recibe descuento por cada recomendación!</h5>
             </div>
             <template class="p-3">
@@ -1038,6 +1039,7 @@
                         width: "40%"
                     }
                 ],
+                load2: false,
                 phoneData: null,                
                 registerUser: {
                     name: '',
@@ -1165,7 +1167,6 @@
                 blockToBlackList: [],
                 idForRefer:'',
                 nameClient:'',
-                dataMessageClient: '',
                 datesClient: []
             }
         },
@@ -1339,16 +1340,6 @@
                             pdf: 'danger'
                         }
                         this.idForRefer = findClient.data.data._id
-                        if (findClient.data.data.historical.length > 0) {
-                            var dataServices = ""
-                            for (const key in findClient.data.data.historical[0].items) {
-                                const item = findClient.data.data.historical[0].items[key]
-                                dataServices = key == 0 ? item.item.name : dataServices+', '+item.item.name
-                            }
-                            this.dataMessageClient = `Este es la informacion de su ultima atencion ${dataServices}`
-                        }else{
-                            this.dataMessageClient = ""
-                        }
                         try {
                             const verifyBlackList = await axios.post(endPoint.endpointTarget+'/clients/verifyBlackList', {
                                 clientId: findClient.data.data._id,
@@ -1970,6 +1961,7 @@
                 
             },
             insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg){
+                this.load2 = true
                 if (lender == 'Primera disponible') {
                     if (index == 0) {
                         for (let i = 0; i < this.registerDate.serviceSelectds.length; i++) {
@@ -2006,6 +1998,7 @@
                                 }, this.configHeader)
                                 .then(res => {
                                     this.readyChange = true
+                                    this.load2 = false
                                     this.registerDate.serviceSelectds[0].valid = true
                                     this.registerDate.serviceSelectds[0].blocks = res.data.data
                                     this.registerDate.block = res.data.data
@@ -2057,6 +2050,7 @@
                                 firstBlock: true
                             })
                             .then(res => {
+                                this.load2 = false
                                 this.registerDate.serviceSelectds[index].valid = true
                                 this.registerDate.serviceSelectds[index].blocks = res.data.data
                                 this.registerDate.serviceSelectds[index].blocksFirst = []
@@ -2080,6 +2074,7 @@
                                 firstBlock: true
                             })
                             .then(res => {
+                                this.load2 = false
                                 this.registerDate.serviceSelectds[index].valid = true
                                 this.registerDate.serviceSelectds[index].blocks = res.data.data
                                 this.registerDate.serviceSelectds[index].blocksFirst = []
@@ -2166,6 +2161,7 @@
                         }, this.configHeader)
                         .then(res => {
                             if (res.data.status == 'ok') {
+                                this.load2 = false
                                 this.registerDate.serviceSelectds[index].blocks = res.data.blockEmploye
                                 this.registerDate.serviceSelectds[index].blocksFirst = res.data.data
                                 this.registerDate.serviceSelectds[index].itFirst = false
@@ -2231,6 +2227,7 @@
                         }, this.configHeader)
                         .then(res => {
                             if (res.data.status == 'ok') {
+                                this.load2 = false
                                 this.registerDate.serviceSelectds[index].blocks = res.data.blockEmploye
                                 this.registerDate.serviceSelectds[index].blocksFirst = res.data.data
                                 this.registerDate.serviceSelectds[index].itFirst = false
@@ -2803,6 +2800,14 @@
                     }else{
                         return false
                     }
+                }else{
+                    return true
+                }
+            },
+            validAngela(id){
+                const dateSelected = new Date(this.finalDate)
+                if ((id == "6116b68328723d461421fde3" || id == "62a39b7d01ead640f5b8b31a") && (dateSelected.getMonth() == 10 || dateSelected.getMonth() == 11 || dateSelected.getMonth() == 0)) {
+                    return false
                 }else{
                     return true
                 }

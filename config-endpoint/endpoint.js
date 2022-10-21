@@ -4,14 +4,15 @@ const portClient = '3389'
 const endpointTarget = `http://${server}`
 const imgEndpoint = `${endpointTarget}/static/users/`
 
-const dataHouse = {
+const dataPuentealto = {
     imgEndpoint: imgEndpoint, 
-    portClient:portClient, 
-    database: 'house58-syswa',
-    siteRedirect: "",
-    endpointTarget:endpointTarget,
-    url: `http://house58.syswa.net/#`,
-    server:server 
+    portClient: portClient, 
+    database: 'mpuentealto-syswa',
+    siteRedirect: "https://www.mpuentealto.cl",
+    endpointTarget: endpointTarget,
+    url: `http://mpuentealto.syswa.net/#`,
+    server: server,
+    title: "Municipalidad de Puente Alto"
 }
 
 const dataKK = {
@@ -21,7 +22,8 @@ const dataKK = {
     siteRedirect: 'http://kkspa.cl',
     endpointTarget:endpointTarget,
     url: `http://kkspa.syswa.net/#`,
-    server:server 
+    server:server,
+    title: "KKSPA"
 }
 
 const dataQa = {
@@ -31,7 +33,8 @@ const dataQa = {
     siteRedirect: "",
     endpointTarget:endpointTarget,
     url: `http://syswagestionqa.syswa.net/#`,
-    server:server 
+    server:server,
+    title: "Syswa gestion"
 }
 
 const endPoint = dataKK

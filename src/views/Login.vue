@@ -126,6 +126,9 @@
                                         <a-select-option value="Peluqueria">
                                             Peluquería
                                         </a-select-option>
+                                        <a-select-option value="Servicios profesionales">
+                                            Servicios profesionales
+                                        </a-select-option>
                                     </a-select>
                                 </div>
                             </div>

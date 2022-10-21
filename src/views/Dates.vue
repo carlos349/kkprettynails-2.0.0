@@ -316,12 +316,12 @@
                             
                                 <div class="col-md-8">
                                     <a-spin :spinning="load1">
-                                    <vuescroll :ops="ops" class="w-100" style="height:45vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                    <vuescroll :ops="ops" class="w-100" style="height:55vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
                                     <div class="row mb-3">
                                         <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" :key="indexService">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <div class="py-1" style="background-color:#f8fcfd;">
+                                                    <div class="py-1">
                                                         <badge style="font-size:.7em !important" v-if="servicesSelect.employe != ''" type="secondary" class="mb-1 w-100">
                                                             <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
                                                             <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.name}} </span>
@@ -338,7 +338,7 @@
                                                                 <span style="color:red">Horarios ocupados</span>
                                                             </base-button>
                                                             <template v-for="employe of servicesSelect.employes" >
-                                                                <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
+                                                                <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name) && validAngela(employe.id)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
                                                             </template>
                                                         </base-dropdown>
                                                     </div>
@@ -348,7 +348,7 @@
                                                         <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 w-100">
                                                         <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> <br>  
                                                         </badge>
-                                                        <base-button v-on:click="openBlocks('block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
+                                                        <base-button v-on:click="openBlocks(indexService, 'Primera disponible', 'block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
                                                             <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i></span>
 
                                                             <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
@@ -361,24 +361,17 @@
                                                         </base-button>
                                                         <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
                                                             <a-spin :spinning="load2">
-                                                                    <div  class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="index">
+                                                                <template v-if="validateBlock(servicesSelect.blocks)">
+                                                                    <div class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="index">
                                                                         <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes , block.hour, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
                                                                             <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
                                                                             <span>Disponible</span>
                                                                         </base-button>
-                                                                        <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                            <span>Ocupado</span>
-                                                                        </base-button>
-                                                                        <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                            <span>Seleccionado</span>
-                                                                        </base-button>
-                                                                        <base-button v-else size="sm" disabled class="col-12" type="secondary">
-                                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                            <span>No seleccionable</span>
-                                                                        </base-button>
                                                                     </div>
+                                                                </template>
+                                                                <div v-else class="col-12 pt-2">
+                                                                    <h3>Día sin horas disponibles</h3>
+                                                                </div>
                                                             </a-spin>
                                                         </vuescroll>
                                                     </div>
@@ -4103,6 +4096,18 @@ import mixinES from '../mixins/mixinES'
                                 .then(res => {
                                     this.socket.emit('sendNotification', res.data.data)
                                 })   
+                            }else{
+                                this.$swal({
+                                    type: 'error',
+                                    icon: 'error',
+                                    title: 'Esta cita ya fue finalizada',
+                                    text: 'Hace pocos minutos se finalizo esta cita, no puede finalizarse de nuevo.',
+                                    showConfirmButton: true
+                                })
+                                this.dateModals.modal1 = false
+                                this.dateModals.modal3 = false
+                                this.finallyDisabled = false
+                                EventBus.$emit('reloadFinallyDates', 'reload')
                             }
                         }).catch(err => {
                             if (!err.response) {
@@ -4175,6 +4180,14 @@ import mixinES from '../mixins/mixinES'
                         })
                     }
                 })
+            }
+        },
+        validAngela(id){
+            const dateSelected = new Date(this.finalDate)
+            if ((id == "6116b68328723d461421fde3" || id == "62a39b7d01ead640f5b8b31a") && (dateSelected.getMonth() == 10 || dateSelected.getMonth() == 11 || dateSelected.getMonth() == 0)) {
+                return false
+            }else{
+                return true
             }
         },
         deleteDate(id,cliente, validEmail){
@@ -5167,6 +5180,16 @@ import mixinES from '../mixins/mixinES'
                 }
             })
         },
+        validateBlock(blocks){
+            var valid = false
+            for (const block of blocks) {
+                if (block.validator === true) {
+                    valid = true
+                    break
+                }
+            }
+            return valid
+        },
         selectBloqMulti(lenders, hora, i, indexService, open, check){
             var oldEmploye = ''
             oldEmploye = {
@@ -5445,7 +5468,7 @@ import mixinES from '../mixins/mixinES'
                                 this.registerDae.serviceSelectds[0].valid = true
                                 this.registerDae.serviceSelectds[0].blocks = res.data.data
                                 this.registerDae.block = res.data.data
-                                $('#block0').show('slow')
+                                // $('#block0').show('slow')
                             })
                         }).catch(err => {
                             if (!err.response) {
@@ -5682,9 +5705,9 @@ import mixinES from '../mixins/mixinES'
             const minutes = duration - (parseInt(duration / 60) * 60 )  + ' min'
             return hours+' '+minutes
         },
-        openBlocks(open,indexService){
+        openBlocks(indexService, firstEmploye, open){
             $('#'+open).toggle('slow')
-            
+            this.insertData(indexService, firstEmploye)
         },
         validateFirstStep() {
             window.scrollTo(0, 0);

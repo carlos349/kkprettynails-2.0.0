@@ -455,9 +455,9 @@
                                   class="input-group-alternative w-100 mb-4 mt-2" 
                                   default-value="Seleccione un cliente" size="large"
                                   :allowClear="true"
-                                  @search="searchClientRegex">
-                                  
-                                  <a-select-option v-for="client in clients" :key="client._id" @click="selectClient(client)" :value="client.firstName + ' ' + client.lastName + ' - ' + client.email">
+                                  @search="searchClientRegex"
+                                  @change="selectClient">
+                                  <a-select-option v-for="client in clients" :key="client._id" :value="client._id">
                                       {{client.name}}
                                   </a-select-option>
                               </a-select>
@@ -1440,8 +1440,20 @@
             }, 3000);
           }
         },
-        selectClient(value){
-          this.selectedClient = value
+        async selectClient(client){
+          try{
+            const value = await axios.get(`${endPoint.endpointTarget}/clients/findOne/${client}`, this.configHeader)
+            this.selectedClient = value.data.data
+          }catch(err){
+            if (!err.response) {
+                this.$swal({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+          }
         },
         async handleFileUpload(){
           this.validImage = false
