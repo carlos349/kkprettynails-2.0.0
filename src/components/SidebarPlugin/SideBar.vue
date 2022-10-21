@@ -16,8 +16,8 @@
             <slot name="mobile-right">
                 <ul class="nav align-items-center d-md-none">
                     <li class="nav-item dropdown">
-              <a v-on:click="validateNotifications()" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="ni ni-bell-55" :class="pxSep" style="font-size:18px;z-index:1;    border: 1px solid #172b4d;border-radius: 50%;padding: 6px;vertical-align: 7px;"></i>
+              <a v-on:click="validateNotifications()" class="nav-link" role="button" data-toggle="dropdown" shape="circle" aria-haspopup="true" aria-expanded="false">
+                <i class="ni ni-bell-55" :class="pxSep" style="font-size:18px;z-index:1;"></i>
                 <badge v-if="activeNotifications > 0" class="notifyNumber text-white" type="primary" style="font-size:14px;z-index:2;background-color: rgba(61, 141, 242, 1);">{{activeNotifications}}</badge>
               </a>
             <div style="z-index:10000; min-width: 350px; right: -100px;" class="dropdown-menu dDesteM  dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">

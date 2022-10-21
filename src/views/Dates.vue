@@ -45,7 +45,28 @@
                                 Bloqueos
                             </base-button>
 
-                            <base-dropdown :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mr-0 qloq" size="sm">
+                            
+
+                            <base-dropdown v-if="hideText == 'display:none'" :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-left mr-0 qloq" size="sm">
+                                <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                <a-icon type="filter" style="vertical-align:1px;font-size:1.3em;" />
+                                </base-button>
+                                <li v-on:click="getDatesByEmploye('Todos')">
+                                    <base-button class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
+                                    </base-button>
+                                </li>
+                                <li v-for="data in employeShow" :key="data._id"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
+                                    <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                    </base-button>
+                                    <base-button v-else class="dropdown-item" href="#">
+                                        <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
+                                    </base-button>
+                                </li>
+                            </base-dropdown>
+
+                            <base-dropdown v-else :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mr-0 qloq" size="sm">
                                 <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                         {{employeByDate}}
                                 </base-button>
@@ -4070,6 +4091,7 @@ import mixinES from '../mixins/mixinES'
                                 this.finallyDisabled = false
                                 var dateSplit = data.createdAt.split("T")[0].split("-")
                                 var dateFinal = dateSplit[1] + "-" + dateSplit[0] + "-" + dateSplit[2] 
+                                console.log("🚀 ~ file: Dates.vue ~ line 4094 ~ .then ~ dateFinal", dateFinal)
                                 axios.post(endPoint.endpointTarget+'/notifications', {
                                     branch: this.branch,
                                     userName:this.firstNameUser + " " + this.lastNameUser,
@@ -4126,7 +4148,7 @@ import mixinES from '../mixins/mixinES'
                         this.dateModals.modal3 = false
                         this.finallyDisabled = false
                         var dateSplit = data.createdAt.split("T")[0].split("-")
-                        var dateFinal = dateSplit[1] + "-" + dateSplit[0] + "-" + dateSplit[2] 
+                        var dateFinal = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0] 
                         axios.post(endPoint.endpointTarget+'/notifications', {
                             branch: this.branch,
                             userName:this.firstNameUser + " " + this.lastNameUser,
