@@ -1160,11 +1160,12 @@ export default {
                             dates.total = 0
                             for (const service of dates.services) {
                                 var total = 0
-                                for (const micro of service.microServiceSelect) {
-                                    total = total + micro.price
+                                if (service.microServiceSelect) {
+                                    for (const micro of service.microServiceSelect) {
+                                        total = total + micro.price
+                                    }
+                                    dates.total = dates.total + total + service.price
                                 }
-                                dates.total = dates.total + total + service.price
-                                
                             }
                         }
                         this.datesFinally = datesFinally.data.data
@@ -1172,6 +1173,7 @@ export default {
                         this.datesFinally = []
                     }
                 }catch(err){
+                    console.log(err)
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
