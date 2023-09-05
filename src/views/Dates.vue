@@ -6158,7 +6158,7 @@ export default {
                         }
                     }
                     if (element.title != 'Bloqueo') {
-                        Data.push({ Cliente: element.client.name + ' - ' + element.client.email, Empleado: element.employe.name, Servicio: element.services[0].name, 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
+                        Data.push({ Cliente: element.client.name + ' - ' + element.client.email + ' - ' + element.client.phone, Empleado: element.employe.name, Servicio: element.services[0].name, 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
                     }else{
                         Data.push({ Cliente: 'Cita de bloqueo', Empleado: element.employe.name, Servicio: "Cita de bloqueo", Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: 'Cita de bloqueo', Adicionales: 'Cita de bloqueo' })
                     }
