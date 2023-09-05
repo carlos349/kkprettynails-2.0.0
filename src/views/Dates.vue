@@ -6146,18 +6146,24 @@ export default {
                 console.log(this.events)
                 var Data = []
                 for (let index = 0; index < this.events.length; index++) {
+                    console.log("INDEX DEL FOR: ", index)
                     const element = this.events[index];
                     var dataMicro = ''
                     for (const key in element.microServices) {
                         const micro = element.microServices[key]
                         if (key == 0) {
-                            dataMicro = micro.name
+                            dataMicro = micro.name ? micro.name : ''
                         } else {
-                            dataMicro = dataMicro + ', ' + micro.name
+                            dataMicro = dataMicro + ', ' + micro.name ? micro.name : ''
                         }
                     }
+                    if (element.client.name && element.employe.name && element.services[0].name) {
+                        Data.push({ Cliente: element.client.name + ' - ' + element.client.email, Empleado: element.employe.name, Servicio: element.services[0].name, 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
+                    }else{
+                        Data.push({ Cliente: 'No aplica' + ' - ' + element.client.email, Empleado: 'No aplica', Servicio: "No aplica", 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
+                    }
 
-                    Data.push({ Cliente: element.client.name ? element.client.name : '' + ' - ' + element.client.email, Empleado: element.employe.name ? element.employe.name : '', Servicio: element.services[0].name ? element.services[0].name : '', 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
+                    
                 }
                 var Datos = XLSX.utils.json_to_sheet(Data)
                 var wb = XLSX.utils.book_new()
