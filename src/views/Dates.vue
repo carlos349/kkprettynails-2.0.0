@@ -1218,6 +1218,7 @@ import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
 import locale from 'ant-design-vue/es/date-picker/locale/es_ES';
 import moment from 'moment'
+import XLSX from 'xlsx'
 //Back - End 
 import jwtDecode from 'jwt-decode'
 import axios from 'axios'
@@ -2457,6 +2458,7 @@ import mixinES from '../mixins/mixinES'
                         setTimeout(() => {
                             this.loader = true
                         }, 500);
+                        this.generateExcel()
                     }
                 }catch(err){
                     EventBus.$emit('pageLoaded', true)
@@ -3475,7 +3477,7 @@ import mixinES from '../mixins/mixinES'
                     this.spinningView = false
                     this.filterOff = true
                 }, 500);
-                
+                this.generateExcel()
             }
             else{
                 this.events = []
@@ -3498,6 +3500,7 @@ import mixinES from '../mixins/mixinES'
                             this.filterOff = true
                             EventBus.$emit('pageLoaded', true)
                         }, 500);
+                        this.generateExcel()
                     }else{
                         this.$swal({
                             type: 'error',
@@ -5934,6 +5937,27 @@ import mixinES from '../mixins/mixinES'
             setTimeout(() => {
                 this.fixSearch = true
             }, 100);
+        },
+        generateExcel(){
+            console.log(this.events)
+            var Data = []
+            for (let index = 0; index < this.events.length; index++) {
+                const element = this.events[index];
+                var dataMicro = ''
+                for (const key in element.microServices) {
+                    const micro = element.microServices[key]
+                    if (key == 0) {
+                        dataMicro = micro.name
+                    }else{
+                        dataMicro = dataMicro + ', '+micro.name
+                    }
+                }
+                Data.push({Cliente: element.client.name+' - '+element.client.email, Empleado: element.employe.name, Servicio: element.services[0].name, 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
+            }
+            var Datos = XLSX.utils.json_to_sheet(Data) 
+            var wb = XLSX.utils.book_new() 
+            XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
+            XLSX.writeFile(wb, 'dates.xlsx') 
         },
         SelectMicro(index, indexM, microServices) { 
             if (this.registerDae.serviceSelectds[index].microServices[indexM].microService == 'Ninguno') {
