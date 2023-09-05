@@ -5,602 +5,782 @@
             <!-- Mask -->
             <span style="background-color:#172b4d !important" class="mask  opacity-7"></span>
             <!-- Header container -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="text-absolute mb-5 col-12">
-                            <center v-if="hideText == 'display:none'">
-                                <p style="margin-top:-10%" class="display-1 text-white mb-5 text-center mx-auto">Agenda</p>
-                            </center>
-                            
-                            <p v-else class="mb-0 display-2 text-white">Agenda</p>
-                            <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí podrás registrar, editar y visualizar tu agenda.</p>
-                        </div>
-                        <div class="mt-7">
-                            <template v-if="showCalendar">
-                                <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('schedule'), initialState()"  type="success">
-                                    <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
-                                </base-button>
-                                <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('schedule'), initialState()"  type="success">
-                                    <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                                    Agendar
-                                </base-button>
-                                
-                                <base-button  @click="generateExcel()"  type="success">
-                                    GENERAR EXCEL
-                                </base-button>
-                            </template> 
-                            <template v-else>
-                                <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('calendar'), initialState()"  type="success">
-                                    <a-icon type="calendar" style="vertical-align:1px;font-size:1.6em;" />
-                                </base-button>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-absolute mb-5 col-12">
+                        <center v-if="hideText == 'display:none'">
+                            <p style="margin-top:-10%" class="display-1 text-white mb-5 text-center mx-auto">Agenda</p>
+                        </center>
 
-                                <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('calendar'), initialState()"  type="success">
-                                    <a-icon type="calendar" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                                    Ver calendario
-                                </base-button>
-                            </template>
-                            <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
-                                <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                                
-                            </base-button> 
-                            <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="modals.modal3 = true, blokedBlock = true"  type="warning">
-                                <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
-                                Bloqueos
+                        <p v-else class="mb-0 display-2 text-white">Agenda</p>
+                        <p class="text-white" :style="hideText">Esta es la sección administrativa de agendamiento, aquí
+                            podrás registrar, editar y visualizar tu agenda.</p>
+                    </div>
+                    <div class="mt-7">
+                        <template v-if="showCalendar">
+                            <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm"
+                                :disabled="validRoute('agendamiento', 'agendar') ? false : true"
+                                @click="setView('schedule'), initialState()" type="success">
+                                <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
+                            </base-button>
+                            <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm"
+                                :disabled="validRoute('agendamiento', 'agendar') ? false : true"
+                                @click="setView('schedule'), initialState()" type="success">
+                                <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                                Agendar
                             </base-button>
 
-                            
+                            <base-button @click="generateExcel()" type="success">
+                                GENERAR EXCEL
+                            </base-button>
+                        </template>
+                        <template v-else>
+                            <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm"
+                                :disabled="validRoute('agendamiento', 'agendar') ? false : true"
+                                @click="setView('calendar'), initialState()" type="success">
+                                <a-icon type="calendar" style="vertical-align:1px;font-size:1.6em;" />
+                            </base-button>
 
-                            <base-dropdown v-if="hideText == 'display:none'" :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-left mr-0 qloq" size="sm">
-                                <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                            <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm"
+                                :disabled="validRoute('agendamiento', 'agendar') ? false : true"
+                                @click="setView('calendar'), initialState()" type="success">
+                                <a-icon type="calendar" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                                Ver calendario
+                            </base-button>
+                        </template>
+                        <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm"
+                            :disabled="validRoute('agendamiento', 'agendar') ? false : true"
+                            @click="modals.modal3 = true, blokedBlock = true" type="warning">
+                            <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+
+                        </base-button>
+                        <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm"
+                            :disabled="validRoute('agendamiento', 'agendar') ? false : true"
+                            @click="modals.modal3 = true, blokedBlock = true" type="warning">
+                            <a-icon type="issues-close" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
+                            Bloqueos
+                        </base-button>
+
+
+
+                        <base-dropdown v-if="hideText == 'display:none'"
+                            :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-left mr-0 qloq"
+                            size="sm">
+                            <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title"
+                                type="default" class="dropdown-toggle col-md-12 col-sm-6">
                                 <a-icon type="filter" style="vertical-align:1px;font-size:1.3em;" />
+                            </base-button>
+                            <li v-on:click="getDatesByEmploye('Todos')">
+                                <base-button class="dropdown-item" href="#">
+                                    <img class="avatar avatar-sm rounded-circle float-left"
+                                        src="https://www.w3schools.com/howto/img_avatar.png" />
+                                    <h4 class="mt-2 ml-4 pl-3">Todos</h4>
                                 </base-button>
-                                <li v-on:click="getDatesByEmploye('Todos')">
-                                    <base-button class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
-                                    </base-button>
-                                </li>
-                                <li v-for="data in employeShow" :key="data._id"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
-                                    <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                    </base-button>
-                                    <base-button v-else class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                    </base-button>
-                                </li>
-                            </base-dropdown>
+                            </li>
+                            <li v-for="data in employeShow" :key="data._id"
+                                v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
+                                <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                                    <img class="avatar avatar-sm rounded-circle float-left"
+                                        src="https://www.w3schools.com/howto/img_avatar.png" />
+                                    <h4 class="mt-2 ml-4 pl-3">{{ data.name }}</h4>
+                                </base-button>
+                                <base-button v-else class="dropdown-item" href="#">
+                                    <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />
+                                    <h4 class="mt-2 ml-4 pl-3">{{ data.name }}</h4>
+                                </base-button>
+                            </li>
+                        </base-dropdown>
 
-                            <base-dropdown v-else :disabled="validRoute('agendamiento', 'filtrar') ? false : true" class="float-right mr-0 qloq" size="sm">
-                                <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title" type="default" class="dropdown-toggle col-md-12 col-sm-6">
-                                        {{employeByDate}}
+                        <base-dropdown v-else :disabled="validRoute('agendamiento', 'filtrar') ? false : true"
+                            class="float-right mr-0 qloq" size="sm">
+                            <base-button :disabled="validRoute('agendamiento', 'filtrar') ? false : true" slot="title"
+                                type="default" class="dropdown-toggle col-md-12 col-sm-6">
+                                {{ employeByDate }}
+                            </base-button>
+                            <li v-on:click="getDatesByEmploye('Todos')">
+                                <base-button class="dropdown-item" href="#">
+                                    <img class="avatar avatar-sm rounded-circle float-left"
+                                        src="https://www.w3schools.com/howto/img_avatar.png" />
+                                    <h4 class="mt-2 ml-4 pl-3">Todos</h4>
                                 </base-button>
-                                <li v-on:click="getDatesByEmploye('Todos')">
-                                    <base-button class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">Todos</h4>
-                                    </base-button>
-                                </li>
-                                <li v-for="data in employeShow" :key="data._id"   v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
-                                    <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" src="https://www.w3schools.com/howto/img_avatar.png" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                    </base-button>
-                                    <base-button v-else class="dropdown-item" href="#">
-                                        <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />  <h4 class="mt-2 ml-4 pl-3">{{data.name}}</h4>
-                                    </base-button>
-                                </li>
-                            </base-dropdown>
-                        </div>
+                            </li>
+                            <li v-for="data in employeShow" :key="data._id"
+                                v-on:click="getDatesByEmploye(data._id, data.img, data.name)">
+                                <base-button v-if="data.img == 'no'" class="dropdown-item" href="#">
+                                    <img class="avatar avatar-sm rounded-circle float-left"
+                                        src="https://www.w3schools.com/howto/img_avatar.png" />
+                                    <h4 class="mt-2 ml-4 pl-3">{{ data.name }}</h4>
+                                </base-button>
+                                <base-button v-else class="dropdown-item" href="#">
+                                    <img class="avatar avatar-sm rounded-circle float-left" :src="data.img" />
+                                    <h4 class="mt-2 ml-4 pl-3">{{ data.name }}</h4>
+                                </base-button>
+                            </li>
+                        </base-dropdown>
                     </div>
                 </div>
+            </div>
         </base-header>
-        <modal :show.sync="modalsDialog.modal2"
-               :gradient="modalsDialog.type"
-               modal-classes="modal-danger modal-dialog-centered">
+        <modal :show.sync="modalsDialog.modal2" :gradient="modalsDialog.type"
+            modal-classes="modal-danger modal-dialog-centered">
             <div class="py-3 text-center">
                 <i :class="modalsDialog.icon"></i>
-                <h1 class="heading mt-5">{{modalsDialog.message}}</h1>
+                <h1 class="heading mt-5">{{ modalsDialog.message }}</h1>
             </div>
         </modal>
         <a-spin :spinning="spinningView">
-        <vue-custom-scrollbar v-if="showCalendar" class="calen" style="height:75vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
-            <vue-cal
-                class="calen"
-                :locale="localee"
-                :events="events"
-                :time-from="startCalendar"
-                :time-to="endCalendar"
-                :time-step="15"
-                active-view="month"
-                :disable-views="['years', 'year', 'week']" 
-                events-count-on-month-view
-                :split-days="splitDays"
-                @view-change="validatorLendersDaysSplit('view-change', $event)"
-                :hide-weekdays="hideDays"
-                :sticky-split-labels="stickySplitLabels"
-                :on-event-click="onEventClick"
-                :overlaps-per-time-step="true">
-                <template v-slot:split-label="{ split }">
-                    <a-button type="primary" shape="circle">
-                        {{setInitialsName(split.label)}} 
-                    </a-button>
-                </template>
-            </vue-cal>
-        </vue-custom-scrollbar>
-        <div v-else>
-            <card  type="secondary" shadow header-classes="bg-white" class="border-0 m-0 px-0">
-                
-                  <!-- WIZARD -->
-                <a-spin :spinning="spinningDate">
-                <form-wizard v-if="filterOff" ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88" @on-complete="register" error-color="#f5365c" back-button-text="Atrás" next-button-text="Siguiente" finish-button-text="¡Agendar!">
+            <vue-custom-scrollbar v-if="showCalendar" class="calen"
+                style="height:75vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
+                <vue-cal class="calen" :locale="localee" :events="events" :time-from="startCalendar" :time-to="endCalendar"
+                    :time-step="15" active-view="month" :disable-views="['years', 'year', 'week']"
+                    events-count-on-month-view :split-days="splitDays"
+                    @view-change="validatorLendersDaysSplit('view-change', $event)" :hide-weekdays="hideDays"
+                    :sticky-split-labels="stickySplitLabels" :on-event-click="onEventClick" :overlaps-per-time-step="true">
+                    <template v-slot:split-label="{ split }">
+                        <a-button type="primary" shape="circle">
+                            {{ setInitialsName(split.label) }}
+                        </a-button>
+                    </template>
+                </vue-cal>
+            </vue-custom-scrollbar>
+            <div v-else>
+                <card type="secondary" shadow header-classes="bg-white" class="border-0 m-0 px-0">
 
-                    <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
-                    <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
-                    
-                    <tab-content icon="ni ni-bullet-list-67"  title="Servicios" :before-change="validateFirstStep">
-                        <vuescroll :ops="ops" v-on:scroll="scroll()" class="width:100%;" :class="hideText == 'display:none' ? 'mobileForm' : ''">
-                            <template>
-                                <div class="text-muted text-center p-0 mt-1 pb-2">
-                                    Seleccione los servicios
-                                </div>
-                            </template>
-                            
-                            <div class="col-12">
-                                <center>
-                                    <base-button v-on:click="initialState()" type="secondary" class="text-default">
-                                        <font-awesome-icon class="mx-auto"  icon="redo-alt" />
-                                    </base-button>
-                                </center>
-                            </div>
-                            <div class="row p-0 mt-2">
-                                <div class="showDevice row col-md-12 pl-5">
-                                    <div style="width:auto;" class="mx-auto col-12">
-                                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                            <li v-for="(category, index) of categories" :key="index" class="nav-item responsiveItem" role="presentation">
-                                                <button class="categoryButton text-uppercase responsiveItem" :id="'cat'+index" data-toggle="pill" :href="'#v-pills-'+category._id" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click="selectCat('cat'+index)">{{category.name}}</button>
-                                            </li>
-                                        </ul>   
+                    <!-- WIZARD -->
+                    <a-spin :spinning="spinningDate">
+                        <form-wizard v-if="filterOff" ref="wizard" class="p-0 m-0 aja" :start-index="0" color="#214d88"
+                            @on-complete="register" error-color="#f5365c" back-button-text="Atrás"
+                            next-button-text="Siguiente" finish-button-text="¡Agendar!">
+
+                            <h2 v-if="registerDae.valid" slot="title">Datos de agendamiento </h2>
+                            <h2 v-else slot="title" class="text-danger">¡Debe completar los datos!</h2>
+
+                            <tab-content icon="ni ni-bullet-list-67" title="Servicios" :before-change="validateFirstStep">
+                                <vuescroll :ops="ops" v-on:scroll="scroll()" class="width:100%;"
+                                    :class="hideText == 'display:none' ? 'mobileForm' : ''">
+                                    <template>
+                                        <div class="text-muted text-center p-0 mt-1 pb-2">
+                                            Seleccione los servicios
+                                        </div>
+                                    </template>
+
+                                    <div class="col-12">
+                                        <center>
+                                            <base-button v-on:click="initialState()" type="secondary" class="text-default">
+                                                <font-awesome-icon class="mx-auto" icon="redo-alt" />
+                                            </base-button>
+                                        </center>
                                     </div>
-                                    <div class="col-md-8 col-12 separateService">
-                                        <h2 class="text-center">Servicios</h2>
-                                        <vuescroll :ops="ops"  v-on:scroll="scroll()" style="width:100%;height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                            <div class="tab-content" id="pills-tabContent">
-                                                <div v-for="category of categories" :key="category._id" class="tab-pane fade" :id="'v-pills-'+category._id" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                                    <div class="row pl-2">
-                                                        
-                                                        <template v-for="(service, index) of services" >
-                                                            <div :key="index" class="col-md-6 px-4" v-if="service.category == category.name && service.active == true">
-                                                                <div class="card-service row mt-2" :id="'cardS'+index">
-                                                                    <h3 class="name-service w-100 mb-0"> {{service.name}}</h3>
-                                                                    <div class="col-12 pl-0">
-                                                                        <img src="img/brand/calendar.png" alt="">
-                                                                    </div>
-                                                                    <p class="ml-1 mb-0 w-100" style="margin-top:-2px;">
-                                                                        <a-icon type="clock-circle" style="vertical-align:1.5px;" /> {{fixedHours(service.duration)}}
-                                                                    </p>
-                                                                    <p class="ml-1 w-100">{{service.additionalName}}</p> 
-                                                                    
-                                                                    <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
-                                                                        <div class="price-service ">$ {{formatPrice(service.price)}} </div> 
-                                                                    </div>
-                                                                    <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;margin-top:-5px;">
-                                                                        <div class="button-service-group">
-                                                                            <button class="button-service-left" v-on:click="lessService(index, service.name, service.duration, 'cardS'+index, service.price, countServices[index].count)"><i class="fa fa-minus" ></i></button>
-                                                                            <span class="span-button-service">{{countServices[index].count}}</span>
-                                                                            <button class="button-service-right" 
-                                                                            v-on:click="plusService(index, service.name, service._id, service.duration, service.commission, service.price, service.employes, service.discount, service.products)"
-                                                                            ><i class="fa fa-plus"></i></button>
-                                                                        </div> 
-                                                                    </div>  
-                                                                </div>
-                                                            </div>
-                                                        </template>
-                                                    </div>
-                                                </div>
+                                    <div class="row p-0 mt-2">
+                                        <div class="showDevice row col-md-12 pl-5">
+                                            <div style="width:auto;" class="mx-auto col-12">
+                                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                                    <li v-for="(category, index) of categories" :key="index"
+                                                        class="nav-item responsiveItem" role="presentation">
+                                                        <button class="categoryButton text-uppercase responsiveItem"
+                                                            :id="'cat' + index" data-toggle="pill"
+                                                            :href="'#v-pills-' + category._id" role="tab"
+                                                            aria-controls="v-pills-home" aria-selected="true"
+                                                            v-on:click="selectCat('cat' + index)">{{ category.name }}</button>
+                                                    </li>
+                                                </ul>
                                             </div>
-                                        </vuescroll>
-                                    </div> 
-                                    <div class="col-md-4 col-12 pt-0">
-                                        <h2 class="text-center" style="margin-top:-3px;">Servicios seleccionados</h2>
-                                        <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:30vh;overflow:hidden;overflow-x: hidden;">
-                                            <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
-                                                <div class="row pl-3">
-                                                    <template v-if="registerDae.serviceSelectds[0]">
-                                                        <div v-for="(service, index) in registerDae.serviceSelectds" :key="service._id+'asda'+index" class="w-100 px-4" >
-                                                            <div class="card-service row mt-2 mb-2" style="border-bottom: solid 8px #174c8e">
-                                                                <h3 class="name-service"> {{service.name}}</h3>
-                                                                <div class="col-12 pl-0">
-                                                                    <template v-if="ifMicro">
-                                                                        <a-tooltip placement="top">
-                                                                            <template slot="title">
-                                                                                <span>Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
-                                                                            </template>
-                                                                            <span class="ml-1 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
-                                                                            <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
-                                                                                <badge :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
-                                                                                    <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0">{{micro.microService}}</p>
-                                                                                </badge>
+                                            <div class="col-md-8 col-12 separateService">
+                                                <h2 class="text-center">Servicios</h2>
+                                                <vuescroll :ops="ops" v-on:scroll="scroll()"
+                                                    style="width:100%;height:30vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                                    <div class="tab-content" id="pills-tabContent">
+                                                        <div v-for="category of categories" :key="category._id"
+                                                            class="tab-pane fade" :id="'v-pills-' + category._id"
+                                                            role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                                            <div class="row pl-2">
+
+                                                                <template v-for="(service, index) of services">
+                                                                    <div :key="index" class="col-md-6 px-4"
+                                                                        v-if="service.category == category.name && service.active == true">
+                                                                        <div class="card-service row mt-2"
+                                                                            :id="'cardS' + index">
+                                                                            <h3 class="name-service w-100 mb-0">
+                                                                                {{ service.name }}</h3>
+                                                                            <div class="col-12 pl-0">
+                                                                                <img src="img/brand/calendar.png" alt="">
                                                                             </div>
-                                                                        </a-tooltip>
-                                                                    </template>
-                                                                    <img src="img/brand/calendar.png" alt="">
+                                                                            <p class="ml-1 mb-0 w-100"
+                                                                                style="margin-top:-2px;">
+                                                                                <a-icon type="clock-circle"
+                                                                                    style="vertical-align:1.5px;" />
+                                                                                {{ fixedHours(service.duration) }}
+                                                                            </p>
+                                                                            <p class="ml-1 w-100">{{ service.additionalName }}
+                                                                            </p>
+
+                                                                            <div class="col-md-6 col-sm-12 mt-2"
+                                                                                style="padding: 0px !important;padding-top: 5px !important;">
+                                                                                <div class="price-service ">$
+                                                                                    {{ formatPrice(service.price) }} </div>
+                                                                            </div>
+                                                                            <div class="col-md-6 col-sm-12 mt-2"
+                                                                                style="padding: 0px !important;margin-top:-5px;">
+                                                                                <div class="button-service-group">
+                                                                                    <button class="button-service-left"
+                                                                                        v-on:click="lessService(index, service.name, service.duration, 'cardS' + index, service.price, countServices[index].count)"><i
+                                                                                            class="fa fa-minus"></i></button>
+                                                                                    <span
+                                                                                        class="span-button-service">{{ countServices[index].count }}</span>
+                                                                                    <button class="button-service-right"
+                                                                                        v-on:click="plusService(index, service.name, service._id, service.duration, service.commission, service.price, service.employes, service.discount, service.products)"><i
+                                                                                            class="fa fa-plus"></i></button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </vuescroll>
+                                            </div>
+                                            <div class="col-md-4 col-12 pt-0">
+                                                <h2 class="text-center" style="margin-top:-3px;">Servicios seleccionados
+                                                </h2>
+                                                <vuescroll :ops="ops" v-on:scroll="scroll()"
+                                                    style="height:30vh;overflow:hidden;overflow-x: hidden;">
+                                                    <div class="tab-pane" role="tabpanel"
+                                                        aria-labelledby="v-pills-home-tab">
+                                                        <div class="row pl-3">
+                                                            <template v-if="registerDae.serviceSelectds[0]">
+                                                                <div v-for="(service, index) in registerDae.serviceSelectds"
+                                                                    :key="service._id + 'asda' + index" class="w-100 px-4">
+                                                                    <div class="card-service row mt-2 mb-2"
+                                                                        style="border-bottom: solid 8px #174c8e">
+                                                                        <h3 class="name-service"> {{ service.name }}</h3>
+                                                                        <div class="col-12 pl-0">
+                                                                            <template v-if="ifMicro">
+                                                                                <a-tooltip placement="top">
+                                                                                    <template slot="title">
+                                                                                        <span>Marque el adicional deseado,
+                                                                                            en caso de no aplicar marcar
+                                                                                            opción "NINGUNO" para poder
+                                                                                            avanzar.</span>
+                                                                                    </template>
+                                                                                    <span class="ml-1 mb-0 font-weight-bold"
+                                                                                        style="font-size: 1.2em;">Adicionales:
+                                                                                    </span>
+                                                                                    <div v-for="(micro, indexM) in service.microServices"
+                                                                                        :key="micro.microService"
+                                                                                        v-on:click="SelectMicro(index, indexM, micro)"
+                                                                                        style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
+                                                                                        <badge
+                                                                                            :type="micro.checked ? 'primary' : 'secondary'"
+                                                                                            class="text-default mb-1">
+                                                                                            <p style="font-size:1.2em;font-weight: bold;"
+                                                                                                class="fs-5 mb-0">
+                                                                                                {{ micro.microService }}</p>
+                                                                                        </badge>
+                                                                                    </div>
+                                                                                </a-tooltip>
+                                                                            </template>
+                                                                            <img src="img/brand/calendar.png" alt="">
+                                                                        </div>
+
+                                                                        <div class="col-md-6 col-sm-12 mt-2"
+                                                                            style="padding: 0px !important;padding-top: 5px !important;">
+                                                                            <div class="price-service ">$
+                                                                                {{ formatPrice(service.price) }}</div>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                
-                                                                <div class="col-md-6 col-sm-12 mt-2" style="padding: 0px !important;padding-top: 5px !important;">
-                                                                    <div class="price-service ">$ {{formatPrice(service.price)}}</div> 
+                                                            </template>
+                                                            <div v-else>
+                                                                <h2 class="text-center">No ha seleccionado ningún servicio.
+                                                                </h2>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </vuescroll>
+                                            </div>
+                                        </div>
+                                        <div class="showPhone col-md-12">
+                                            <base-dropdown class="w-100 mx-auto mb-3 styleDropdown">
+                                                <base-button
+                                                    style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;"
+                                                    slot="title" type="default" class="dropdown-toggle w-100">
+                                                    {{ CatSelected }}
+                                                </base-button>
+                                                <b v-for="category of categories" :key="category.name"
+                                                    v-on:click="selectCategoryPhone(category.name)"
+                                                    class="dropdown-item w-100" style="color:#fff;"> {{ category.name }} </b>
+                                            </base-dropdown>
+                                            <base-dropdown class="w-100 mx-auto styleDropdown" v-if="servicesPhoneShow">
+                                                <base-button
+                                                    style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;"
+                                                    slot="title" type="default" class="dropdown-toggle w-100">
+                                                    Servicios
+                                                </base-button>
+                                                <template v-for="(service, index) of servicesCat">
+                                                    <b :key="index" v-on:click="selectServicePhone(service._id)"
+                                                        v-if="service.active == true" class="dropdown-item w-100"
+                                                        style="color:#fff;"> {{ service.name }} </b>
+                                                </template>
+                                            </base-dropdown>
+
+                                            <template v-if="registerDae.serviceSelectds[0]">
+                                                <h2 class="mt-3 text-center">Servicios seleccionados</h2>
+                                                <hr>
+                                                <div v-for="(service, index) in registerDae.serviceSelectds"
+                                                    :key="service._id + 'asda' + index" class="w-100">
+                                                    <div class="card-service mt-4" style="border-bottom: solid 8px #174c8e">
+                                                        <h2 class="name-service"> {{ service.name }}</h2>
+                                                        <p class="ml-1 mb-0 w-100" style="margin-top:-8px;">
+                                                            <a-icon type="clock-circle" style="vertical-align:1.5px;" />
+                                                            {{ fixedHours(service.duration) }}<br>
+                                                            {{ service.additionalName }}
+                                                        </p>
+                                                        <div class="col-12 mt-2 p-0">
+                                                            <img style="z-index:0" src="img/brand/calendar.png" alt="">
+                                                            <template v-if="ifMicro">
+                                                                <a-tooltip placement="top">
+                                                                    <template slot="title">
+                                                                        <span>Haga click en los adicionales que desea para
+                                                                            este servicio. Se le sumara el costo al total
+                                                                            del servicio.</span>
+                                                                    </template>
+                                                                    <span class="ml-1 mt-2 mb-0 font-weight-bold"
+                                                                        style="font-size: 1.2em;">Adicionales: </span>
+                                                                    <br>
+                                                                    <div v-for="(micro, indexM) in service.microServices"
+                                                                        :key="micro.microService"
+                                                                        v-on:click="SelectMicro(index, indexM, micro)"
+                                                                        style="display: inline-block; cursor: pointer;margin-left: 4px;">
+                                                                        <badge style="z-index:100"
+                                                                            :type="micro.checked ? 'primary' : 'secondary'"
+                                                                            class="text-default mb-1">
+                                                                            <p style="font-size:1.3em;"
+                                                                                class="mb-0 text-default">
+                                                                                {{ micro.microService }}</p>
+                                                                        </badge>
+                                                                    </div>
+                                                                </a-tooltip>
+                                                            </template>
+                                                        </div>
+                                                        <div class="row p-1">
+                                                            <div class="col-8 mt-4 p-1">
+                                                                <div class="price-service w-100">$
+                                                                    {{ formatPrice(service.price) }}</div>
+                                                            </div>
+                                                            <div class="col-4 mt-4 p-1">
+                                                                <div style="border: solid 1px #174c8e;float:right;margin-right:5px;"
+                                                                    class="price-service w-50"><a-icon
+                                                                        style="vertical-align:1px;" type="close"
+                                                                        v-on:click="lessServicePhone(index, service.price)" />
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </template>
-                                                    <div v-else>
-                                                        <h2 class="text-center">No ha seleccionado ningún servicio.</h2>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </vuescroll>
-                                    </div>
-                                </div>
-                                <div class="showPhone col-md-12">
-                                    <base-dropdown class="w-100 mx-auto mb-3 styleDropdown">
-                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
-                                            {{CatSelected}}
-                                        </base-button>
-                                        <b v-for="category of categories" :key="category.name" v-on:click="selectCategoryPhone(category.name)" class="dropdown-item w-100" style="color:#fff;"> {{category.name}} </b>
-                                    </base-dropdown>
-                                    <base-dropdown class="w-100 mx-auto styleDropdown" v-if="servicesPhoneShow">
-                                        <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" slot="title" type="default" class="dropdown-toggle w-100">
-                                            Servicios 
-                                        </base-button>
-                                        <template v-for="(service, index) of servicesCat" >
-                                            <b :key="index" v-on:click="selectServicePhone(service._id)" v-if="service.active == true" class="dropdown-item w-100" style="color:#fff;"> {{service.name}} </b>
-                                        </template>
-                                    </base-dropdown>
-                                    
-                                    <template v-if="registerDae.serviceSelectds[0]">
-                                        <h2 class="mt-3 text-center">Servicios seleccionados</h2>
-                                        <hr>
-                                        <div v-for="(service, index) in registerDae.serviceSelectds" :key="service._id+'asda'+index" class="w-100" >
-                                            <div class="card-service mt-4" style="border-bottom: solid 8px #174c8e">
-                                                <h2 class="name-service"> {{service.name}}</h2>
-                                                <p class="ml-1 mb-0 w-100" style="margin-top:-8px;">
-                                                    <a-icon type="clock-circle" style="vertical-align:1.5px;" /> 
-                                                    {{fixedHours(service.duration)}}<br>
-                                                    {{service.additionalName}}
-                                                </p>
-                                                <div class="col-12 mt-2 p-0">
-                                                    <img style="z-index:0" src="img/brand/calendar.png" alt="">
-                                                    <template v-if="ifMicro">
-                                                        <a-tooltip placement="top">
-                                                            <template slot="title">
-                                                                <span>Haga click en los adicionales que desea para este servicio. Se le sumara el costo al total del servicio.</span>
-                                                            </template>
-                                                            <span class="ml-1 mt-2 mb-0 font-weight-bold" style="font-size: 1.2em;">Adicionales: </span>
-                                                            <br>
-                                                            <div v-for="(micro, indexM) in service.microServices" :key="micro.microService" v-on:click="SelectMicro(index, indexM, micro)" style="display: inline-block; cursor: pointer;margin-left: 4px;">
-                                                                <badge style="z-index:100" :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
-                                                                    <p style="font-size:1.3em;" class="mb-0 text-default">{{micro.microService}}</p>
-                                                                </badge>
-                                                            </div>
-                                                        </a-tooltip>
-                                                    </template>
-                                                </div>
-                                                <div class="row p-1">
-                                                    <div class="col-8 mt-4 p-1" >
-                                                        <div class="price-service w-100">$ {{formatPrice(service.price)}}</div> 
-                                                    </div>
-                                                    <div class="col-4 mt-4 p-1" >
-                                                        <div style="border: solid 1px #174c8e;float:right;margin-right:5px;" class="price-service w-50"><a-icon style="vertical-align:1px;" type="close" v-on:click="lessServicePhone(index, service.price)" /></div> 
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </vuescroll>
-                    </tab-content>
-                    
-                    <tab-content icon="ni ni-collection" title="Profesionales" :before-change="validateLastStep">
-                        <div class="row">
-                            <div class="col-md-4 col-sm-12 mx-auto mt-4">
-                                <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 mx-2 w-100">
-                                    <span style="font-family:Arial !important;color:#32325d;font-weight:600;" class="w-100">Seleccione fecha</span> 
-                                </badge>
-                                <base-input class="hideThisShit" :class="device() ? 'ifNoscreen' : 'ifscreen'">
-                                    <flat-picker slot-scope="{focus, blur}"
-                                        @on-change="openCalendar(), load1 = true"
-                                        @on-open="focus"
-                                        @on-close="blur"
-                                        :config="configDatePicker"
-                                        class="form-control datepicker"
-                                        v-model="registerDae.date"
-                                        placeholder="Seleccione una fecha">
-                                    </flat-picker>
-                                </base-input>
-                                
-                            </div>
-                            
-                                <div class="col-md-8">
-                                    <a-spin :spinning="load1">
-                                    <vuescroll :ops="ops" class="w-100" style="height:55vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                                    <div class="row mb-3">
-                                        <div class="col-12 text-center mt-2" v-for="(servicesSelect, indexService) of registerDae.serviceSelectds" :key="indexService">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="py-1">
-                                                        <badge style="font-size:.7em !important" v-if="servicesSelect.employe != ''" type="secondary" class="mb-1 w-100">
-                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span> <br>
-                                                            <span style="color:#32325d;font-weight:600;font-family:Arial !important;" >{{servicesSelect.name}} </span>
-                                                        </badge>
-                                                        <badge style="font-size:.7em !important" v-else type="default" class="mb-1"><span style="color:#32325d;font-weight:600;font-family:Arial !important;" >Seleccione prestador y horario</span></badge>
-                                                        <base-dropdown class="responsiveButtonsPercent styleDropdown">
-                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == true" slot="title" type="default" class="dropdown-toggle w-100">
-                                                                {{servicesSelect.employe}} 
-                                                            </base-button>
-                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == false" disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                                {{servicesSelect.employe}} 
-                                                            </base-button>
-                                                            <base-button style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" v-if="servicesSelect.valid == 'none'" disabled slot="title" type="default" class="dropdown-toggle w-100">
-                                                                <span style="color:red">Horarios ocupados</span>
-                                                            </base-button>
-                                                            <template v-for="employe of servicesSelect.employes" >
-                                                                <b :key="employe.name" v-if="employe.valid && findDay(employe.days, employe.name) && validAngela(employe.id)" class="dropdown-item w-100" style="color:#fff;" v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check'+indexService, servicesSelect.employes, employe.img)">{{employe.name}}  </b>
-                                                            </template>
-                                                        </base-dropdown>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 pb-2">
-                                                    <div class="py-1" style="background-color:#f8fcfd;">
-                                                        <badge type="secondary" style="font-size:.7em !important; margin-top:14px;" class="mb-1 w-100">
-                                                        <span style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios disponibles</span> <br>  
-                                                        </badge>
-                                                        <base-button v-on:click="openBlocks(indexService, 'Primera disponible', 'block'+indexService)" class="responsiveButtonsPercent" v-if="servicesSelect.valid == true" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" >
-                                                            <span v-if="servicesSelect.start != ''">{{servicesSelect.start}} / {{servicesSelect.end}} <i style="color:#2dce89;float:right;margin-top:6px;" :id="'check'+indexService" class="fa "></i></span>
-
-                                                            <span v-else>Seleccione una hora <i class="fa fa-angle-down" style="font-size:16px"></i> </span>
-                                                        </base-button>
-                                                        <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == 'none'" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
-                                                            <span style="color:red">Horarios ocupados</span>
-                                                        </base-button>
-                                                        <base-button class="responsiveButtonsPercent" v-if="servicesSelect.valid == false" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;" type="default" disabled>
-                                                        Seleccione una hora
-                                                        </base-button>
-                                                        <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent" :id="'block'+indexService" style="height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
-                                                            <a-spin :spinning="load2">
-                                                                <template v-if="validateBlock(servicesSelect.blocks)">
-                                                                    <div class="col-12" v-for="(block , index) of servicesSelect.blocks" :key="index">
-                                                                        <base-button v-if="block.validator == true" v-on:click="selectBloqMulti(block.employes , block.hour, index, indexService, 'block'+indexService, 'check'+indexService)" size="sm" class="col-12" type="success">
-                                                                            <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
-                                                                            <span>Disponible</span>
-                                                                        </base-button>
-                                                                    </div>
-                                                                </template>
-                                                                <div v-else class="col-12 pt-2">
-                                                                    <h3>Día sin horas disponibles</h3>
-                                                                </div>
-                                                            </a-spin>
-                                                        </vuescroll>
-                                                    </div>
-                                                </div>   
-                                            </div>
+                                            </template>
                                         </div>
                                     </div>
                                 </vuescroll>
-                                    </a-spin>
-                                </div>
-                            
-                            
-                            
-                        </div> 
-                    </tab-content>
-                    <tab-content title="Información" icon="fa fa-question-circle">
-                        <vue-custom-scrollbar v-on:scroll.native="fixClient()" class="w-100" style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                        <div class="row">
-                            <div class="col-md-8 col-sm-12" >
+                            </tab-content>
+
+                            <tab-content icon="ni ni-collection" title="Profesionales" :before-change="validateLastStep">
                                 <div class="row">
-                                    <div class="card-services-information col-lg-6" v-for="(data, index) in registerDae.serviceSelectds" :key="index" >
-                                        <div class="p-3">
-                                            <center>
-                                            <span class="mb-1 w-100" style="color:#000;font-weight:500;">Servicio {{index + 1}}</span> 
-                                            </center>
-                                            <base-button slot="title" type="secondary" :class="'w-100 '+'text-center '+'mb-1'" style="color:#1c2021;border:none;background-color: rgb(213, 218, 221)">
-                                                <badge class="mx-auto" type="default" style="background-color:#174c8e;"><span style="color:#fff;font-size:1.4em;text-transform:none;">{{data.name}}</span> </badge><br>
-                                                <span class="mx-auto" style="font-size:1.2em;">{{data.realEmploye}}</span> <br>
-                                                <template v-if="ifMicro">
-                                                    <span>
-                                                        Adicionales:
-                                                        <span v-for="micro in data.microServices" :key="micro.microService">
-                                                            <badge v-if="micro.checked" type="secondary" class="text-default mr-1">{{micro.microService}}</badge>
-                                                        </span>
-                                                    </span>
-                                                </template>
-                                                <div class="w-100">
-                                                    <div class="mx-auto">
-                                                        <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class="mt-3 ml-2">Desde</span>
-                                                        <span style="color:#000;font-weight:600;font-size:1.8em;">
-                                                            {{data.start}}
-                                                        </span>
-                                                        <span style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super" class=" mt-3">Hasta</span>
-                                                        <span style="color:#000;font-weight:600;font-size:1.8em;" class="">
-                                                            {{data.end}}
-                                                        </span>
+                                    <div class="col-md-4 col-sm-12 mx-auto mt-4">
+                                        <badge type="secondary" style="font-size:.7em !important; margin-top:14px;"
+                                            class="mb-1 mx-2 w-100">
+                                            <span style="font-family:Arial !important;color:#32325d;font-weight:600;"
+                                                class="w-100">Seleccione fecha</span>
+                                        </badge>
+                                        <base-input class="hideThisShit" :class="device() ? 'ifNoscreen' : 'ifscreen'">
+                                            <flat-picker slot-scope="{focus, blur}"
+                                                @on-change="openCalendar(), load1 = true" @on-open="focus" @on-close="blur"
+                                                :config="configDatePicker" class="form-control datepicker"
+                                                v-model="registerDae.date" placeholder="Seleccione una fecha">
+                                            </flat-picker>
+                                        </base-input>
+
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <a-spin :spinning="load1">
+                                            <vuescroll :ops="ops" class="w-100"
+                                                style="height:55vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                                <div class="row mb-3">
+                                                    <div class="col-12 text-center mt-2"
+                                                        v-for="(servicesSelect, indexService) of registerDae.serviceSelectds"
+                                                        :key="indexService">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="py-1">
+                                                                    <badge style="font-size:.7em !important"
+                                                                        v-if="servicesSelect.employe != ''" type="secondary"
+                                                                        class="mb-1 w-100">
+                                                                        <span
+                                                                            style="color:#32325d;font-weight:600;font-family:Arial !important;">Profesionales</span>
+                                                                        <br>
+                                                                        <span
+                                                                            style="color:#32325d;font-weight:600;font-family:Arial !important;">{{ servicesSelect.name }}
+                                                                        </span>
+                                                                    </badge>
+                                                                    <badge style="font-size:.7em !important" v-else
+                                                                        type="default" class="mb-1"><span
+                                                                            style="color:#32325d;font-weight:600;font-family:Arial !important;">Seleccione
+                                                                            prestador y horario</span></badge>
+                                                                    <base-dropdown
+                                                                        class="responsiveButtonsPercent styleDropdown">
+                                                                        <base-button
+                                                                            style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;"
+                                                                            v-if="servicesSelect.valid == true" slot="title"
+                                                                            type="default" class="dropdown-toggle w-100">
+                                                                            {{ servicesSelect.employe }}
+                                                                        </base-button>
+                                                                        <base-button
+                                                                            style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;"
+                                                                            v-if="servicesSelect.valid == false" disabled
+                                                                            slot="title" type="default"
+                                                                            class="dropdown-toggle w-100">
+                                                                            {{ servicesSelect.employe }}
+                                                                        </base-button>
+                                                                        <base-button
+                                                                            style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;"
+                                                                            v-if="servicesSelect.valid == 'none'" disabled
+                                                                            slot="title" type="default"
+                                                                            class="dropdown-toggle w-100">
+                                                                            <span style="color:red">Horarios ocupados</span>
+                                                                        </base-button>
+                                                                        <template
+                                                                            v-for="employe of servicesSelect.employes">
+                                                                            <b :key="employe.name"
+                                                                                v-if="employe.valid && findDay(employe.days, employe.name) && validAngela(employe.id)"
+                                                                                class="dropdown-item w-100"
+                                                                                style="color:#fff;"
+                                                                                v-on:click="insertData(indexService, employe.name, employe.days, employe.class, servicesSelect.duration, employe.id, 'check' + indexService, servicesSelect.employes, employe.img)">{{ employe.name }}
+                                                                            </b>
+                                                                        </template>
+                                                                    </base-dropdown>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 pb-2">
+                                                                <div class="py-1" style="background-color:#f8fcfd;">
+                                                                    <badge type="secondary"
+                                                                        style="font-size:.7em !important; margin-top:14px;"
+                                                                        class="mb-1 w-100">
+                                                                        <span
+                                                                            style="font-family:Arial !important;color:#32325d;font-weight:600;">Horarios
+                                                                            disponibles</span> <br>
+                                                                    </badge>
+                                                                    <base-button
+                                                                        v-on:click="openBlocks(indexService, 'Primera disponible', 'block' + indexService)"
+                                                                        class="responsiveButtonsPercent"
+                                                                        v-if="servicesSelect.valid == true"
+                                                                        style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;"
+                                                                        type="default">
+                                                                        <span
+                                                                            v-if="servicesSelect.start != ''">{{ servicesSelect.start }}
+                                                                            / {{ servicesSelect.end }} <i
+                                                                                style="color:#2dce89;float:right;margin-top:6px;"
+                                                                                :id="'check' + indexService"
+                                                                                class="fa "></i></span>
+
+                                                                        <span v-else>Seleccione una hora <i
+                                                                                class="fa fa-angle-down"
+                                                                                style="font-size:16px"></i> </span>
+                                                                    </base-button>
+                                                                    <base-button class="responsiveButtonsPercent"
+                                                                        v-if="servicesSelect.valid == 'none'"
+                                                                        style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;"
+                                                                        type="default" disabled>
+                                                                        <span style="color:red">Horarios ocupados</span>
+                                                                    </base-button>
+                                                                    <base-button class="responsiveButtonsPercent"
+                                                                        v-if="servicesSelect.valid == false"
+                                                                        style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;"
+                                                                        type="default" disabled>
+                                                                        Seleccione una hora
+                                                                    </base-button>
+                                                                    <vuescroll :ops="ops"
+                                                                        class="mx-auto responsiveButtonsPercent"
+                                                                        :id="'block' + indexService"
+                                                                        style="height:25vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden">
+                                                                        <a-spin :spinning="load2">
+                                                                            <template
+                                                                                v-if="validateBlock(servicesSelect.blocks)">
+                                                                                <div class="col-12"
+                                                                                    v-for="(block, index) of servicesSelect.blocks"
+                                                                                    :key="index">
+                                                                                    <base-button
+                                                                                        v-if="block.validator == true"
+                                                                                        v-on:click="selectBloqMulti(block.employes, block.hour, index, indexService, 'block' + indexService, 'check' + indexService)"
+                                                                                        size="sm" class="col-12"
+                                                                                        type="success">
+                                                                                        <badge
+                                                                                            style="font-size:1em !important"
+                                                                                            type="white"
+                                                                                            class="text-default col-5 float-left">
+                                                                                            {{ block.hour }}</badge>
+                                                                                        <span>Disponible</span>
+                                                                                    </base-button>
+                                                                                </div>
+                                                                            </template>
+                                                                            <div v-else class="col-12 pt-2">
+                                                                                <h3>Día sin horas disponibles</h3>
+                                                                            </div>
+                                                                        </a-spin>
+                                                                    </vuescroll>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </base-button>
+                                            </vuescroll>
+                                        </a-spin>
+                                    </div>
+
+
+
+                                </div>
+                            </tab-content>
+                            <tab-content title="Información" icon="fa fa-question-circle">
+                                <vue-custom-scrollbar v-on:scroll.native="fixClient()" class="w-100"
+                                    style="height:450px;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+                                    <div class="row">
+                                        <div class="col-md-8 col-sm-12">
+                                            <div class="row">
+                                                <div class="card-services-information col-lg-6"
+                                                    v-for="(data, index) in registerDae.serviceSelectds" :key="index">
+                                                    <div class="p-3">
+                                                        <center>
+                                                            <span class="mb-1 w-100"
+                                                                style="color:#000;font-weight:500;">Servicio {{ index +
+                                                                    1 }}</span>
+                                                        </center>
+                                                        <base-button slot="title" type="secondary"
+                                                            :class="'w-100 ' + 'text-center ' + 'mb-1'"
+                                                            style="color:#1c2021;border:none;background-color: rgb(213, 218, 221)">
+                                                            <badge class="mx-auto" type="default"
+                                                                style="background-color:#174c8e;"><span
+                                                                    style="color:#fff;font-size:1.4em;text-transform:none;">{{ data.name }}</span>
+                                                            </badge><br>
+                                                            <span class="mx-auto"
+                                                                style="font-size:1.2em;">{{ data.realEmploye }}</span> <br>
+                                                            <template v-if="ifMicro">
+                                                                <span>
+                                                                    Adicionales:
+                                                                    <span v-for="micro in data.microServices"
+                                                                        :key="micro.microService">
+                                                                        <badge v-if="micro.checked" type="secondary"
+                                                                            class="text-default mr-1">{{ micro.microService }}
+                                                                        </badge>
+                                                                    </span>
+                                                                </span>
+                                                            </template>
+                                                            <div class="w-100">
+                                                                <div class="mx-auto">
+                                                                    <span
+                                                                        style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super"
+                                                                        class="mt-3 ml-2">Desde</span>
+                                                                    <span
+                                                                        style="color:#000;font-weight:600;font-size:1.8em;">
+                                                                        {{ data.start }}
+                                                                    </span>
+                                                                    <span
+                                                                        style="color:#000;font-weight:600;font-size:.7em;text-transform:none;vertical-align:super"
+                                                                        class=" mt-3">Hasta</span>
+                                                                    <span
+                                                                        style="color:#000;font-weight:600;font-size:1.8em;"
+                                                                        class="">
+                                                                        {{ data.end }}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </base-button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-12 pt-5">
+                                            <center>
+                                                <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary"
+                                                    style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                                    Fecha: <strong>{{ registerDae.date }}</strong>
+                                                </base-button><br>
+                                                <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary"
+                                                    style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                                    Hora de inicio: <strong
+                                                        v-if="registerDae.serviceSelectds[0]">{{ registerDae.serviceSelectds[0].start }}</strong>
+                                                </base-button><br>
+                                                <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary"
+                                                    style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
+                                                    Total: <strong class="text-uppercase">$
+                                                        {{ formatPrice(totalPrice) }}</strong>
+                                                </base-button>
+                                            </center><br>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12 pt-5">
-                                <center>
-                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                    Fecha: <strong>{{registerDae.date}}</strong>
-                                    </base-button><br>
-                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                        Hora de inicio: <strong v-if="registerDae.serviceSelectds[0]">{{registerDae.serviceSelectds[0].start}}</strong>
-                                    </base-button><br>
-                                    <base-button class="mt-3 responsiveButtonsPercent mx-auto" type="secondary" style="border-radius:14px;background-color:#d5dadd;color:#1c2021;border:none;">
-                                        Total: <strong class="text-uppercase">$ {{formatPrice(totalPrice)}}</strong>
-                                    </base-button>
-                                </center><br>
-                            </div>
-                        </div>
-                        <template>
-                            <div class="text-muted text-center">
-                                Datos del cliente
-                            </div>
-                        </template>
-                        <center>
-                            <a-select
-                                v-if="inputClientDate"
-                                ref="clientSelect"
-                                :show-search="fixSearch"
-                                placeholder="Selecciona un cliente"
-                                class="mb-2"
-                                :class="hideText != 'display:none' ? 'w-50' : 'w-100'"
-                                :allowClear="true"
-                                option-filter-prop="children"
-                                @search="searchClientRegex"
-                                :filter-option="filterOption"
-                                @change="selectClient">
-                                <a-select-option v-on:click="selectClient('register')" class="text-success" value="register">
-                                    Registrar cliente
-                                </a-select-option>
-                                <a-select-option v-for="client in clients" :key="client._id" :value="client._id">
-                                    {{client.name}}
-                                </a-select-option>
-                            </a-select>
-                        </center>
-                        
-                        <div  class="row">
-                            <div class="col-md-3 aggendMin">
-                                <base-input v-on:keyup="validRegister()" placeholder="Nombre" v-model="dataClient.firstName" addon-left-icon="ni ni-circle-08"></base-input>
-                            </div>
-                            <div class="col-md-3 aggendMin">
-                                <base-input v-on:keyup="validRegister()" placeholder="Apellido" v-model="dataClient.lastName" addon-left-icon="ni ni-circle-08"></base-input>
-                            </div>
-                            <div class="col-md-6 aggendMin">
-                                <base-input v-on:keyup="validRegister()" placeholder="Correo" v-model="dataClient.email" addon-left-icon="ni ni-key-25"></base-input>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <VuePhoneNumberInput v-if="dataClient.valid && dataClient.phone" v-model="dataClient.phone.formatNational" @update="dataClient.phone = $event, validRegister()"
-                                    :default-phoner-number="dataClient.phone.nationalNumber"
-                                    :default-country-code="dataClient.phone.countryCode" 
-                                    :translations="{
-                                        countrySelectorLabel: 'Código de país',
-                                        countrySelectorError: 'Elije un país',
-                                        phoneNumberLabel: 'Número de teléfono',
-                                        example: 'Ejemplo :'
-                                    }"
-                                />
-                                <VuePhoneNumberInput v-else v-model="dataClient.phone.formatNational" @update="dataClient.phone = $event, validRegister()" :default-country-code="dataClient.phone.countryCode" :default-phoner-number="dataClient.phone.nationalNumber"
-                                :translations="{
-                                    countrySelectorLabel: 'Código de país',
-                                    countrySelectorError: 'Elije un país',
-                                    phoneNumberLabel: 'Número de teléfono',
-                                    example: 'Ejemplo :'
-                                }"/>
-                            </div>
-                            <div class="col-md-6">
-                                <base-input placeholder="Instagram" v-model="dataClient.instagram" addon-left-icon="ni ni-fat-add"></base-input>
-                            </div>
-                            <div class="col-md-3 col-sm-12">
-                                <base-checkbox v-model="dataClient.discount" class="mt-2">
-                                    Descuento de nuevo cliente
-                                </base-checkbox>
-                            </div>
-                            <div class="col-md-3 col-sm-12">
-                                <base-input addon-left-icon="ni ni-calendar-grid-58 w-100">
-                                    <flat-picker 
-                                            slot-scope="{focus, blur}"
-                                            @on-open="focus"
-                                            @on-close="blur"
-                                            @on-change="validRegister()"
-                                            :config="configDate"
-                                            class="form-control datepicker"
-                                            placeholder="Seleccione una fecha"
-                                            v-model="dataClient.birthday">
-                                    </flat-picker>
-                                </base-input>
-                            </div>
-                            <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
-                                <base-button size="sm" class="col-12 mt-2" type="secondary">
-                                    <span>Participación</span>
-                                    <badge type="default">{{dataClient.attends}}</badge>
-                                </base-button>
-                            </div>
-                            <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
-                                <base-button size="sm" class="col-12 mt-2" type="secondary">
-                                    <span>Recomendaciones</span>
-                                    <badge type="default">{{dataClient.recommendations}}</badge>
-                                </base-button>
-                            </div>
-                            <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
-                                <base-button size="sm" class="col-12 mt-2" type="secondary">
-                                    <span>Ultima atención</span>
-                                    <badge type="default">{{formatDate(dataClient.lastAttend)}}</badge>
-                                </base-button>
-                            </div>
-                            <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
-                                <base-button size="sm" class="col-12 mt-2" type="secondary">
-                                    <span>Cliente desde</span>
-                                    <badge type="default">{{formatDate(dataClient.createdAt)}}</badge>
-                                </base-button>
-                            </div>
-                            <div class="col-auto mx-auto mt-4">
-                                <base-button  type="default" v-on:click="clientEdit()" v-if="dataClient.valid && dataClient.valid2" class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
-                                
-                                <base-button  type="default"  v-if="dataClient.valid && dataClient.valid2 == false" disabled class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
-                                
-                                <base-button type="success" disabled v-if="dataClient.valid != true && dataClient.valid2 != true" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
-                                <base-button type="success" v-on:click="newClient()" v-if="dataClient.valid != true && dataClient.valid2" class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
-                            </div>
-                        </div>
-                        </vue-custom-scrollbar>
-                    </tab-content>
-                </form-wizard>
-                </a-spin>
-                <!-- END WIZARD -->
+                                    <template>
+                                        <div class="text-muted text-center">
+                                            Datos del cliente
+                                        </div>
+                                    </template>
+                                    <center>
+                                        <a-select v-if="inputClientDate" ref="clientSelect" :show-search="fixSearch"
+                                            placeholder="Selecciona un cliente" class="mb-2"
+                                            :class="hideText != 'display:none' ? 'w-50' : 'w-100'" :allowClear="true"
+                                            option-filter-prop="children" @search="searchClientRegex"
+                                            :filter-option="filterOption" @change="selectClient">
+                                            <a-select-option v-on:click="selectClient('register')" class="text-success"
+                                                value="register">
+                                                Registrar cliente
+                                            </a-select-option>
+                                            <a-select-option v-for="client in clients" :key="client._id"
+                                                :value="client._id">
+                                                {{ client.name }}
+                                            </a-select-option>
+                                        </a-select>
+                                    </center>
 
-            </card>
-        </div>
+                                    <div class="row">
+                                        <div class="col-md-3 aggendMin">
+                                            <base-input v-on:keyup="validRegister()" placeholder="Nombre"
+                                                v-model="dataClient.firstName"
+                                                addon-left-icon="ni ni-circle-08"></base-input>
+                                        </div>
+                                        <div class="col-md-3 aggendMin">
+                                            <base-input v-on:keyup="validRegister()" placeholder="Apellido"
+                                                v-model="dataClient.lastName"
+                                                addon-left-icon="ni ni-circle-08"></base-input>
+                                        </div>
+                                        <div class="col-md-6 aggendMin">
+                                            <base-input v-on:keyup="validRegister()" placeholder="Correo"
+                                                v-model="dataClient.email" addon-left-icon="ni ni-key-25"></base-input>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <VuePhoneNumberInput v-if="dataClient.valid && dataClient.phone"
+                                                v-model="dataClient.phone.formatNational"
+                                                @update="dataClient.phone = $event, validRegister()"
+                                                :default-phoner-number="dataClient.phone.nationalNumber"
+                                                :default-country-code="dataClient.phone.countryCode" :translations="{
+                                                    countrySelectorLabel: 'Código de país',
+                                                    countrySelectorError: 'Elije un país',
+                                                    phoneNumberLabel: 'Número de teléfono',
+                                                    example: 'Ejemplo :'
+                                                }" />
+                                            <VuePhoneNumberInput v-else v-model="dataClient.phone.formatNational"
+                                                @update="dataClient.phone = $event, validRegister()"
+                                                :default-country-code="dataClient.phone.countryCode"
+                                                :default-phoner-number="dataClient.phone.nationalNumber" :translations="{
+                                                    countrySelectorLabel: 'Código de país',
+                                                    countrySelectorError: 'Elije un país',
+                                                    phoneNumberLabel: 'Número de teléfono',
+                                                    example: 'Ejemplo :'
+                                                }" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <base-input placeholder="Instagram" v-model="dataClient.instagram"
+                                                addon-left-icon="ni ni-fat-add"></base-input>
+                                        </div>
+                                        <div class="col-md-3 col-sm-12">
+                                            <base-checkbox v-model="dataClient.discount" class="mt-2">
+                                                Descuento de nuevo cliente
+                                            </base-checkbox>
+                                        </div>
+                                        <div class="col-md-3 col-sm-12">
+                                            <base-input addon-left-icon="ni ni-calendar-grid-58 w-100">
+                                                <flat-picker slot-scope="{focus, blur}" @on-open="focus" @on-close="blur"
+                                                    @on-change="validRegister()" :config="configDate"
+                                                    class="form-control datepicker" placeholder="Seleccione una fecha"
+                                                    v-model="dataClient.birthday">
+                                                </flat-picker>
+                                            </base-input>
+                                        </div>
+                                        <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
+                                            <base-button size="sm" class="col-12 mt-2" type="secondary">
+                                                <span>Participación</span>
+                                                <badge type="default">{{ dataClient.attends }}</badge>
+                                            </base-button>
+                                        </div>
+                                        <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
+                                            <base-button size="sm" class="col-12 mt-2" type="secondary">
+                                                <span>Recomendaciones</span>
+                                                <badge type="default">{{ dataClient.recommendations }}</badge>
+                                            </base-button>
+                                        </div>
+                                        <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
+                                            <base-button size="sm" class="col-12 mt-2" type="secondary">
+                                                <span>Ultima atención</span>
+                                                <badge type="default">{{ formatDate(dataClient.lastAttend) }}</badge>
+                                            </base-button>
+                                        </div>
+                                        <div v-if="dataClient.valid" class="col-md-3 col-sm-12">
+                                            <base-button size="sm" class="col-12 mt-2" type="secondary">
+                                                <span>Cliente desde</span>
+                                                <badge type="default">{{ formatDate(dataClient.createdAt) }}</badge>
+                                            </base-button>
+                                        </div>
+                                        <div class="col-auto mx-auto mt-4">
+                                            <base-button type="default" v-on:click="clientEdit()"
+                                                v-if="dataClient.valid && dataClient.valid2" class="col-12 mb-5"
+                                                icon="fas fa-edit">Editar cliente</base-button>
+
+                                            <base-button type="default"
+                                                v-if="dataClient.valid && dataClient.valid2 == false" disabled
+                                                class="col-12 mb-5" icon="fas fa-edit">Editar cliente</base-button>
+
+                                            <base-button type="success" disabled
+                                                v-if="dataClient.valid != true && dataClient.valid2 != true"
+                                                class="col-12 mb-5" icon="fas fa-user-plus">Registrar cliente</base-button>
+                                            <base-button type="success" v-on:click="newClient()"
+                                                v-if="dataClient.valid != true && dataClient.valid2" class="col-12 mb-5"
+                                                icon="fas fa-user-plus">Registrar cliente</base-button>
+                                        </div>
+                                    </div>
+                                </vue-custom-scrollbar>
+                            </tab-content>
+                        </form-wizard>
+                    </a-spin>
+                    <!-- END WIZARD -->
+
+                </card>
+            </div>
         </a-spin>
-        <modal :show.sync="dateModals.modal1" style="z-index:1"
-               body-classes="p-0"
-               :header-classes="selectedEvent.class +  ' noBorder'"
-               modal-classes="modal-dialog-centered modal-lg">
+        <modal :show.sync="dateModals.modal1" style="z-index:1" body-classes="p-0"
+            :header-classes="selectedEvent.class + ' noBorder'" modal-classes="modal-dialog-centered modal-lg">
             <h5 slot="header" class="modal-title" id="modal-title-notification">
-                {{dateSplit(selectedEvent.createdAt)}} 
+                {{ dateSplit(selectedEvent.createdAt) }}
                 <span v-if="selectedEvent.typeCreation == 'Web'">(Web)</span>
-                <span v-else>(Sistema)</span></h5>   
-            <card type="secondary" shadow
-                  
-                  :body-classes="selectedEvent.class + ' noBorder'"
-                  style="border: none; border-radius:0"
-                  class="border-0 pt-0">
-                  <card shadow>
+                <span v-else>(Sistema)</span>
+            </h5>
+            <card type="secondary" shadow :body-classes="selectedEvent.class + ' noBorder'"
+                style="border: none; border-radius:0" class="border-0 pt-0">
+                <card shadow>
                     <div class="row mt-4">
-                        <div v-if="selectedEvent.employe" style="border-right:1px solid lightgray" class="col-md-6 pr-0 pl-1">
+                        <div v-if="selectedEvent.employe" style="border-right:1px solid lightgray"
+                            class="col-md-6 pr-0 pl-1">
                             <div class="row">
                                 <div class="col-3">
-                                    <a-avatar v-if="selectedEvent.employe.img == 'no' || selectedEvent.employe.img == ''" shape="square" size="large" src="img/theme/profile-default.png" />
+                                    <a-avatar v-if="selectedEvent.employe.img == 'no' || selectedEvent.employe.img == ''"
+                                        shape="square" size="large" src="img/theme/profile-default.png" />
                                     <a-avatar v-else shape="square" size="large" :src="selectedEvent.employe.img" />
                                 </div>
                                 <div class="col-9">
-                                    <span class="ml-2">{{selectedEvent.employe.name}}</span>
+                                    <span class="ml-2">{{ selectedEvent.employe.name }}</span>
                                 </div>
-                                
-                                
+
+
                             </div>
-                            
+
                         </div>
                         <div class="col-md-6">
                             <center>
-                                <base-button type="secondary"  >{{selectedEvent.title}}</base-button> 
+                                <base-button type="secondary">{{ selectedEvent.title }}</base-button>
                             </center>
-                        
+
                         </div>
                     </div>
-                  </card>
-                
+                </card>
+
                 <tabs fill class="flex-column flex-md-row">
                     <card shadow>
                         <tab-pane>
@@ -612,97 +792,119 @@
                             <a-tooltip placement="top">
                                 <template slot="title">
                                     <span v-if="selectedEvent.client">
-                                        {{selectedEvent.client.email}} 
+                                        {{ selectedEvent.client.email }}
                                         <span v-if="phoneDateSelect != ''">
-                                            - {{phoneDateSelect}}
+                                            - {{ phoneDateSelect }}
 
                                         </span>
                                     </span>
                                 </template>
                                 <base-button v-if="selectedEvent.client" class="mt-2 col-12" size="sm" type="secondary">
-                                    <span >Cliente:</span>
-                                    <badge style="font-size:0.8em !important" class="text-default" type="success">{{selectedEvent.client.name}}</badge>
+                                    <span>Cliente:</span>
+                                    <badge style="font-size:0.8em !important" class="text-default" type="success">
+                                        {{ selectedEvent.client.name }}</badge>
                                 </base-button>
                             </a-tooltip>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
-                                <span >Entrada:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.start)}}</badge>
-                                <span >Salida:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{dateSplitHours(selectedEvent.end)}}</badge>
+                                <span>Entrada:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">
+                                    {{ dateSplitHours(selectedEvent.start) }}</badge>
+                                <span>Salida:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">
+                                    {{ dateSplitHours(selectedEvent.end) }}</badge>
                             </base-button>
                             <base-button v-if="selectedEvent.typePay" class="mt-1 col-12" size="sm" type="secondary">
-                                <span >Tipo de pago:</span>
-                                <badge style="font-size:0.8em !important" class="text-default" type="success">{{selectedEvent.typePay}}</badge>
+                                <span>Tipo de pago:</span>
+                                <badge style="font-size:0.8em !important" class="text-default" type="success">
+                                    {{ selectedEvent.typePay }}</badge>
                             </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
-                                <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'first'" >
+                                <span class="text-success"
+                                    v-if="dateData.discount.discount == true && dateData.discount.type == 'first'">
                                     Lleva descuento (Primera atención)
                                     <i class="text-success p-1 ni ni-check-bold ni-1x aling-center"> </i>
                                 </span>
-                                <span class="text-success" v-if="dateData.discount.discount == true && dateData.discount.type == 'recomnd'" >
+                                <span class="text-success"
+                                    v-if="dateData.discount.discount == true && dateData.discount.type == 'recomnd'">
                                     Lleva descuento (Por recomendación)
                                     <i class="text-success p-1 ni ni-check-bold ni-1x aling-center"> </i>
                                 </span>
-                                <span class="text-danger" v-if="dateData.discount.discount == false && dateData.discount.type == 'none'" >
-                                    No lleva descuento 
+                                <span class="text-danger"
+                                    v-if="dateData.discount.discount == false && dateData.discount.type == 'none'">
+                                    No lleva descuento
                                     <i class="text-danger p-1 ni ni-fat-remove ni-1x aling-center"> </i>
                                 </span>
                             </base-button>
                             <base-button class="mt-1 col-12" size="sm" type="secondary">
-                                <span >Detalles:</span>
-                            </base-button> 
+                                <span>Detalles:</span>
+                            </base-button>
                             <base-input v-if="selectedEvent.extraData" alternative="">
-                                <textarea v-model="selectedEvent.extraData.details"  rows="4" class="form-control form-control-alternative" placeholder="Detalles..."></textarea>
+                                <textarea v-model="selectedEvent.extraData.details" rows="4"
+                                    class="form-control form-control-alternative" placeholder="Detalles..."></textarea>
                             </base-input>
                             <base-input v-else alternative="">
-                                <textarea v-model="selectedEvent.details"  rows="4" class="form-control form-control-alternative" placeholder="Detalles..."></textarea>
+                                <textarea v-model="selectedEvent.details" rows="4"
+                                    class="form-control form-control-alternative" placeholder="Detalles..."></textarea>
                             </base-input>
                             <center>
-                                <base-button v-on:click="editDateData()" outline size="sm" class="mx-auto col-4" type="default">
-                                    <span class="float-left">Editar</span>  
+                                <base-button v-on:click="editDateData()" outline size="sm" class="mx-auto col-4"
+                                    type="default">
+                                    <span class="float-left">Editar</span>
                                     <span style="margin-top:3px" class="fa fa-edit float-right"></span>
-                                </base-button> 
+                                </base-button>
                             </center>
                             <div v-if="selectedEvent.microServices && selectedEvent.microServices.length > 0">
                                 <dt class="mt-3 text-center">Servicios adicionales</dt>
                                 <a-tooltip v-for="micro of selectedEvent.microServices" :key="micro.name" placement="top">
                                     <template slot="title">
-                                        <span>Duración: {{micro.duration}} minutos</span> <br>
-                                        <span>Precio: $ {{formatPrice(micro.price)}}</span>
+                                        <span>Duración: {{ micro.duration }} minutos</span> <br>
+                                        <span>Precio: $ {{ formatPrice(micro.price) }}</span>
                                     </template>
-                                    <badge  style="font-size:0.85em; cursor:pointer" class="mt-1 ml-1 text-default" type="primary">{{micro.name}}</badge>
+                                    <badge style="font-size:0.85em; cursor:pointer" class="mt-1 ml-1 text-default"
+                                        type="primary">{{ micro.name }}</badge>
                                 </a-tooltip>
                             </div>
-                             
-                            
 
-                            <base-button v-if="selectedEvent.typepay == 'Transferencia'" class="mt-1 col-12" size="sm" type="default">
-                                <a :href="imgEndpoint+'/static/designs/'+selectedEvent.paypdf" target="_blank" download>Descargar comprobante</a>
+
+
+                            <base-button v-if="selectedEvent.typepay == 'Transferencia'" class="mt-1 col-12" size="sm"
+                                type="default">
+                                <a :href="imgEndpoint + '/static/designs/' + selectedEvent.paypdf" target="_blank"
+                                    download>Descargar comprobante</a>
                             </base-button>
-                            <hr/>
+                            <hr />
                             <template v-if="selectedEvent.imgDesign">
                                 <a-spin size="large" :spinning="loadImage">
-                                    <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <span v-if="selectedEvent.imgDesign.length >= 3"> (Máximo 3)</span></dt>
+                                    <dt class="text-center" style="margin-top:-10px;"><b>Imagen del diseño</b> <span
+                                            v-if="selectedEvent.imgDesign.length >= 3"> (Máximo 3)</span></dt>
                                     <div class="row mt-1" v-if="selectedEvent.imgDesign.length < 3">
                                         <label class="col-md-10" for="file">Seleccione imagen</label>
-                                        <input type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()" >
-                                        <button class="col-md-2 buttonUpload" v-on:click="uploadImageDesign(selectedEvent._id, selectedEvent)">
+                                        <input type="file" id="file" ref="file" multiple v-on:change="handleFileUpload()">
+                                        <button class="col-md-2 buttonUpload"
+                                            v-on:click="uploadImageDesign(selectedEvent._id, selectedEvent)">
                                             <i class="ni ni-send" style="font-size: 1.4em;'"></i>
                                         </button>
                                         <template v-if="nameFile != 'Seleccione imagen'">
-                                            <div v-for="(image, index) in nameFile.split(',')" :key="index" class="col-12 border border-3 p-2">
-                                                {{image}}
-                                                <i v-on:click="removeImage(index)" class="fa fa-times float-right mt-1 text-danger" style="font-size:1.4em;cursor:pointer;"></i>
+                                            <div v-for="(image, index) in nameFile.split(',')" :key="index"
+                                                class="col-12 border border-3 p-2">
+                                                {{ image }}
+                                                <i v-on:click="removeImage(index)"
+                                                    class="fa fa-times float-right mt-1 text-danger"
+                                                    style="font-size:1.4em;cursor:pointer;"></i>
                                             </div>
                                         </template>
                                     </div>
                                     <div v-if="selectedEvent.imgDesign.length > 0" class="row mt-1">
                                         <div class="col-md-12">
                                             <carousel :perPage="1" :autoplayHoverPause="true" :autoplay="true">
-                                                <slide v-for="(images, index) of selectedEvent.imgDesign" :key="index" class="imageHover">
-                                                    <img  class="w-100" style="height: 50vh !important;" :src="images" alt="">
+                                                <slide v-for="(images, index) of selectedEvent.imgDesign" :key="index"
+                                                    class="imageHover">
+                                                    <img class="w-100" style="height: 50vh !important;" :src="images"
+                                                        alt="">
                                                     <center>
-                                                        <base-button type="danger" class="mt-2" size="sm" v-on:click="deleteImage(selectedEvent.imgDesign, index, selectedEvent._id)">Eliminar imagen</base-button>
+                                                        <base-button type="danger" class="mt-2" size="sm"
+                                                            v-on:click="deleteImage(selectedEvent.imgDesign, index, selectedEvent._id)">Eliminar
+                                                            imagen</base-button>
                                                     </center>
                                                 </slide>
                                             </carousel>
@@ -721,61 +923,73 @@
                                     <template slot="title">
                                         <span v-if="editDisabled">No puedes editar una cita caducada</span>
                                     </template>
-                                    <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true" v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
+                                    <div v-if="validRoute('agendamiento', 'editar') && selectedEvent.process == true"
+                                        v-on:click="dataEdit()" class="col-md-6 mx-auto mt-2">
                                         <center>
-                                            <base-button :disabled="editDisabled" outline size="sm" class="mx-auto col-12" type="default">
-                                                <span class="float-left">Editar</span>  
+                                            <base-button :disabled="editDisabled" outline size="sm" class="mx-auto col-12"
+                                                type="default">
+                                                <span class="float-left">Editar</span>
                                                 <span style="margin-top:3px" class="fa fa-edit float-right"></span>
                                             </base-button>
                                         </center>
                                     </div>
                                 </a-tooltip>
                                 <template v-if="validRoute('agendamiento', 'finalizar')">
-                                    <div v-if="selectedEvent.process == true" v-on:click="dateModals.modal3 = true, plusMicroFinally()" class="col-md-6 mx-auto mt-2"><center>
+                                    <div v-if="selectedEvent.process == true"
+                                        v-on:click="dateModals.modal3 = true, plusMicroFinally()"
+                                        class="col-md-6 mx-auto mt-2">
+                                        <center>
 
-                                        <base-button outline size="sm" class="mx-auto col-12" type="default">
-                                            <span class="float-left">Finalizar</span>  
-                                            <span style="margin-top:3px" class="fa fa-check-square float-right"></span>
-                                        </base-button> 
-                                    </center>
+                                            <base-button outline size="sm" class="mx-auto col-12" type="default">
+                                                <span class="float-left">Finalizar</span>
+                                                <span style="margin-top:3px" class="fa fa-check-square float-right"></span>
+                                            </base-button>
+                                        </center>
                                     </div>
                                 </template>
-                                
-                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true" v-on:click="deleteDate(selectedEvent._id,selectedEvent.client, false)" class="col-md-6 mx-auto mt-2">
+
+                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true"
+                                    v-on:click="deleteDate(selectedEvent._id, selectedEvent.client, false)"
+                                    class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
-                                            <span class="float-left">Borrar</span>  
+                                            <span class="float-left">Borrar</span>
                                             <span style="margin-top:3px" class="fa fa-trash-alt float-right"></span>
-                                        </base-button> 
+                                        </base-button>
                                     </center>
                                 </div>
 
-                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true" v-on:click="deleteDate(selectedEvent._id,selectedEvent.client, true)" class="col-md-6 mx-auto mt-2">
+                                <div v-if="validRoute('agendamiento', 'eliminar') && selectedEvent.process == true"
+                                    v-on:click="deleteDate(selectedEvent._id, selectedEvent.client, true)"
+                                    class="col-md-6 mx-auto mt-2">
                                     <center>
                                         <base-button outline size="sm" class=" col-12 mx-auto" type="danger">
-                                            <span class="float-left">Cancelar</span>  
+                                            <span class="float-left">Cancelar</span>
                                             <span style="margin-top:3px" class="fa fa-trash-alt float-right"></span>
-                                        </base-button> 
+                                        </base-button>
                                     </center>
                                 </div>
 
                                 <div class="col-md-6 mx-auto mt-2">
                                     <center>
-                                        <div v-if="selectedEvent.process == true && validRoute('agendamiento', 'confirmacion')">
-                                            <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation" type="success" class="mx-auto col-12">
+                                        <div
+                                            v-if="selectedEvent.process == true && validRoute('agendamiento', 'confirmacion')">
+                                            <base-button size="sm" style="cursor:default" v-if="selectedEvent.confirmation"
+                                                type="success" class="mx-auto col-12">
                                                 <i style="margin-top:3px" class="ni ni-check-bold float-right"></i>
-                                                <span class="float-left">Confirmada</span> 
+                                                <span class="float-left">Confirmada</span>
                                             </base-button>
 
-                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary" v-on:click="sendConfirmation([selectedEvent], selectedEvent.client.name, selectedEvent.client.email, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.employe, selectedEvent, false, dateSplit2(selectedEvent.start),selectedEvent.start, selectedEvent.end )">
+                                            <base-button outline size="sm" v-else class="mx-auto col-12" type="primary"
+                                                v-on:click="sendConfirmation([selectedEvent], selectedEvent.client.name, selectedEvent.client.email, selectedEvent.start, selectedEvent.end, selectedEvent.services, selectedEvent.employe, selectedEvent, false, dateSplit2(selectedEvent.start), selectedEvent.start, selectedEvent.end)">
                                                 <i style="margin-top:3px" class="ni ni-send float-right"></i>
-                                                <span class="float-left">Confirmación</span>  
+                                                <span class="float-left">Confirmación</span>
                                             </base-button>
-                                        </div>   
+                                        </div>
                                     </center>
                                 </div>
                             </div>
-                            
+
                             <dt class="mt-4 text-center">Histórico de cliente </dt>
                             <vue-custom-scrollbar class="maxHeightHistorical">
                                 <a-config-provider :locale="es_ES">
@@ -785,68 +999,51 @@
                                             <h2>Este cliente no ha sido atendido aun</h2>
                                         </div>
                                     </template>
-                                    <a-table class="historicalClientTable" :scroll="{ x: true }" :columns="historyClientColumn" :data-source="dateData.history">
-                                        <div
-                                            slot="filterDropdown"
+                                    <a-table class="historicalClientTable" :scroll="{ x: true }"
+                                        :columns="historyClientColumn" :data-source="dateData.history">
+                                        <div slot="filterDropdown"
                                             slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                                            style="padding: 8px"
-                                            >
-                                            <a-input
-                                                v-ant-ref="c => (searchInput = c)"
-                                                :placeholder="`Buscar por nombre`"
+                                            style="padding: 8px">
+                                            <a-input v-ant-ref="c => (searchInput = c)" :placeholder="`Buscar por nombre`"
                                                 :value="selectedKeys[0]"
                                                 style="width: 188px; margin-bottom: 8px; display: block;"
                                                 @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                                                @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                                            />
-                                            <a-button
-                                                type="primary"
-                                                icon="search"
-                                                size="small"
+                                                @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)" />
+                                            <a-button type="primary" icon="search" size="small"
                                                 style="width: 90px; margin-right: 8px"
-                                                @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                                            >
+                                                @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)">
                                                 Buscar
                                             </a-button>
-                                            <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                                            <a-button size="small" style="width: 90px"
+                                                @click="() => handleReset(clearFilters)">
                                                 resetear
                                             </a-button>
                                         </div>
-                                        <a-icon
-                                            slot="filterIcon"
-                                            slot-scope="filtered"
-                                            type="search"
-                                            :style="{ color: filtered ? '#108ee9' : undefined }"
-                                        />
+                                        <a-icon slot="filterIcon" slot-scope="filtered" type="search"
+                                            :style="{ color: filtered ? '#108ee9' : undefined }" />
                                         <template slot="customRender" slot-scope="text, record, index, column">
                                             <span v-if="searchText && searchedColumn === column.dataIndex">
-                                                <template
-                                                v-for="(fragment, i) in text
+                                                <template v-for="(fragment, i) in text
                                                     .toString()
-                                                    .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
-                                                >
-                                                <mark
-                                                    v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                                                    :key="i"
-                                                    class="highlight"
-                                                    >{{ fragment }}</mark
-                                                >
-                                                <template v-else>{{ fragment }}</template>
+                                                    .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))">
+                                                    <mark v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                                                        :key="i" class="highlight">{{ fragment }}</mark>
+                                                    <template v-else>{{ fragment }}</template>
                                                 </template>
                                             </span>
                                             <template v-else>
                                                 {{ text }}
                                             </template>
                                         </template>
-                                        
+
                                         <template slot="date-format" slot-scope="record, column">
-                                            {{formatDate(column.createdAt)}}
+                                            {{ formatDate(column.createdAt) }}
                                         </template>
                                         <template slot="services" slot-scope="record">
-                                            <span v-for="(service, index) in record" :key="index">{{service.service}}</span>
+                                            <span v-for="(service, index) in record" :key="index">{{ service.service }}</span>
                                         </template>
                                         <template slot="total" slot-scope="record, column">
-                                            {{column.totals.total | formatPrice}}
+                                            {{ column.totals.total | formatPrice }}
                                         </template>
                                     </a-table>
                                 </a-config-provider>
@@ -867,25 +1064,24 @@
                                                     <h2>Este cliente no tiene notas registradas</h2>
                                                 </div>
                                             </template>
-                                            <a-table :scroll="getScreen" :loading="clientNotesState" :columns="notesClientColumn" :data-source="notesClient">
+                                            <a-table :scroll="getScreen" :loading="clientNotesState"
+                                                :columns="notesClientColumn" :data-source="notesClient">
                                                 <template slot="date-format" slot-scope="record, column">
-                                                    {{column.createdAt | formatDate}}
+                                                    {{ column.createdAt | formatDate }}
                                                 </template>
                                             </a-table>
                                         </a-config-provider>
                                     </vue-custom-scrollbar>
                                     <div>
                                         <h4>Ingresa nueva nota</h4>
-                                        <base-input alternative
-                                            type="text"
-                                            class="mb-2 pl-1"
-                                            placeholder="Creador de nota"
-                                            v-model="newNote.name"
-                                            addon-left-icon="ni ni-single-02">
+                                        <base-input alternative type="text" class="mb-2 pl-1" placeholder="Creador de nota"
+                                            v-model="newNote.name" addon-left-icon="ni ni-single-02">
                                         </base-input>
-                                        <a-textarea class="ml-1" v-model="newNote.note" placeholder="Ingrese texto de la nota"/>
+                                        <a-textarea class="ml-1" v-model="newNote.note"
+                                            placeholder="Ingrese texto de la nota" />
                                     </div>
-                                    <base-button class="float-right mt-3" size="sm" @click="newNoteInsert(selectedEvent.client.id)" type="primary">
+                                    <base-button class="float-right mt-3" size="sm"
+                                        @click="newNoteInsert(selectedEvent.client.id)" type="primary">
                                         <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.2em;" />
                                         Ingresar nota
                                     </base-button>
@@ -896,104 +1092,104 @@
                 </tabs>
             </card>
         </modal>
-        <modal :show.sync="dateModals.modal2"
-               body-classes="p-0"
-               modal-classes="modal-dialog-centered modal-lg">
-               <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
-            <card v-if="dataEditSend.start != ''" type="secondary" shadow
-                  header-classes="bg-white pb-5"
-                  body-classes="px-lg-5 py-lg-5"
-                  class="border-0">
+        <modal :show.sync="dateModals.modal2" body-classes="p-0" modal-classes="modal-dialog-centered modal-lg">
+            <h6 slot="header" class="modal-title" id="modal-title-default"></h6>
+            <card v-if="dataEditSend.start != ''" type="secondary" shadow header-classes="bg-white pb-5"
+                body-classes="px-lg-5 py-lg-5" class="border-0">
                 <div style="margin-top:-5% !important" class="text-center">
-                    <base-button type="primary" style="margin-top:-10%;margin-bottom:5%" :class="selectedEvent.class">{{selectedEvent.title}} <br> <i  class="fa fa-clock"></i> {{dataEditSend.start}} / {{dataEditSend.end}}</base-button>
+                    <base-button type="primary" style="margin-top:-10%;margin-bottom:5%"
+                        :class="selectedEvent.class">{{ selectedEvent.title }} <br> <i class="fa fa-clock"></i>
+                        {{ dataEditSend.start }} / {{ dataEditSend.end }}</base-button>
                 </div>
                 <dd v-if="dateData.fechaEditPick == ''" class="text-danger text-center">Debe seleccionar una fecha</dd>
                 <div class="col-12 mx-auto">
                     <base-input addon-left-icon="ni ni-calendar-grid-58">
-                        <flat-picker  slot-scope="{focus, blur}"
-                            @on-open="focus"
-                            @on-close="blur"
-                            @on-change="changeDateEdit()"
-                            :config="configDatePickerEdit"
-                            class="form-control datepicker"
-                            v-model="dataEditSend.date"
-                            placeholder="Seleccione una fecha">
+                        <flat-picker slot-scope="{focus, blur}" @on-open="focus" @on-close="blur"
+                            @on-change="changeDateEdit()" :config="configDatePickerEdit" class="form-control datepicker"
+                            v-model="dataEditSend.date" placeholder="Seleccione una fecha">
                         </flat-picker>
                     </base-input>
                 </div>
                 <center>
                     <div class="row col-12 p-0 m-0">
                         <div style="margin-top: -6px" class="col-md-2 col-3 p-0">
-                            <span class="minLess text-danger"> -{{minLessEdit}}</span>
+                            <span class="minLess text-danger"> -{{ minLessEdit }}</span>
                         </div>
                         <div class="col-md-4 col-3">
-                            <a-button v-on:click="changeMin(false)"  type="danger">
-                                <a-icon style="vertical-align: unset;" type="minus-circle" /> 
+                            <a-button v-on:click="changeMin(false)" type="danger">
+                                <a-icon style="vertical-align: unset;" type="minus-circle" />
                                 <span v-if="hideText != 'display:none'">Restar minutos</span>
                             </a-button>
                         </div>
                         <div class="col-md-4 col-3">
-                            <a-button v-on:click="changeMin(true)" class="text-white" style="background-color:#2dce89" type="success">
+                            <a-button v-on:click="changeMin(true)" class="text-white" style="background-color:#2dce89"
+                                type="success">
                                 <span v-if="hideText != 'display:none'">Agregar minutos</span>
                                 <a-icon style="vertical-align: unset;" type="plus-circle" />
                             </a-button>
                         </div>
                         <div style="margin-top: -8px" class="col-md-2 col-3 p-0">
-                             <span class="minAdd"> +{{minAddEdit}}</span>
+                            <span class="minAdd"> +{{ minAddEdit }}</span>
                         </div>
-                        
+
                     </div>
-                    <span class="minAdd text-default"> Duración: {{dataEditSend.duration}} Min</span>
+                    <span class="minAdd text-default"> Duración: {{ dataEditSend.duration }} Min</span>
                 </center>
                 <hr>
-                <a-select v-if="editSelectValid" class="col-12 mx-1" :default-value="dataEditSend.originalEmploye.name" >
-                    <a-select-option v-for="employe in dataEditSend.service.employes" :key="employe.name" @click="editEmployeDate(employe)" :value="employe.name">
-                        {{employe.name}}
+                <a-select v-if="editSelectValid" class="col-12 mx-1" :default-value="dataEditSend.originalEmploye.name">
+                    <a-select-option v-for="employe in dataEditSend.service.employes" :key="employe.name"
+                        @click="editEmployeDate(employe)" :value="employe.name">
+                        {{ employe.name }}
                     </a-select-option>
                 </a-select>
-                <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent noScroll col-12 mt-3" v-if="finalBlockEdit"  style="height:25vh; padding-right: 25px;">
+                <vuescroll :ops="ops" class="mx-auto responsiveButtonsPercent noScroll col-12 mt-3" v-if="finalBlockEdit"
+                    style="height:25vh; padding-right: 25px;">
                     <a-spin :spinning="spinningEdit">
                         <div class="col-12" v-for="block in finalBlockEdit" :key="block.hour">
-                            <base-button v-if="block.validator == true" v-on:click="selectBlockEdit(block.hour)" size="sm" class="col-12" type="success">
-                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                            <base-button v-if="block.validator == true" v-on:click="selectBlockEdit(block.hour)" size="sm"
+                                class="col-12" type="success">
+                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">
+                                    {{ block.hour }}</badge>
                                 <span>Disponible</span>
                             </base-button>
-                            <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12" type="danger">
-                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                            <base-button disabled v-else-if="block.validator == false" size="sm" class="col-12"
+                                type="danger">
+                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">
+                                    {{ block.hour }}</badge>
                                 <span>Ocupado</span>
                             </base-button>
                             <base-button v-else-if="block.validator == 'select'" size="sm" class="col-12" type="default">
-                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">
+                                    {{ block.hour }}</badge>
                                 <span>Seleccionado</span>
                             </base-button>
-                            <base-button v-else size="sm" style="cursor:not-allowed" disabled class="col-12" type="secondary">
-                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">{{block.hour}}</badge>
+                            <base-button v-else size="sm" style="cursor:not-allowed" disabled class="col-12"
+                                type="secondary">
+                                <badge style="font-size:1em !important" type="white" class="text-default col-5 float-left">
+                                    {{ block.hour }}</badge>
                                 <span>No seleccionable</span>
                             </base-button>
                         </div>
                     </a-spin>
-                    
+
                 </vuescroll>
                 <div class="text-center">
                     <base-button v-on:click="editDate()" class="mt-3" type="default">Editar</base-button>
                 </div>
             </card>
         </modal>
-        <modal :show.sync="dateModals.modal3" style="z-index:3"
-               modal-classes="modal-dialog-centered modal-xl">
-            <h5 slot="header" class="modal-title" id="modal-title-notification">Finalizar cita - {{dateSplit(selectedEvent.start)}}</h5>
+        <modal :show.sync="dateModals.modal3" style="z-index:3" modal-classes="modal-dialog-centered modal-xl">
+            <h5 slot="header" class="modal-title" id="modal-title-notification">Finalizar cita -
+                {{ dateSplit(selectedEvent.start) }}</h5>
             <div class="row">
                 <h4 class="w-100" style="margin-top:-10px;">Agregar mas servicios</h4>
                 <div class="w-100 mx-auto pb-2">
-                    <a-select
-                        show-search
-                        placeholder="Seleccione el servicio"
-                        option-filter-prop="children"
-                        class="w-50 thisSelect"
-                        :allowClear="true"
-                        :filter-option="filterOption">
-                        <a-select-option v-for="service of services" :key="service._id" v-on:click="plusServiceFinally(service.name, service.commission, service.price, service.discount, service.products)" :value="service._id">
-                            {{service.name}}
+                    <a-select show-search placeholder="Seleccione el servicio" option-filter-prop="children"
+                        class="w-50 thisSelect" :allowClear="true" :filter-option="filterOption">
+                        <a-select-option v-for="service of services" :key="service._id"
+                            v-on:click="plusServiceFinally(service.name, service.commission, service.price, service.discount, service.products)"
+                            :value="service._id">
+                            {{ service.name }}
                         </a-select-option>
                     </a-select>
                 </div>
@@ -1001,35 +1197,49 @@
                 <div class="col-12 p-1 mb-1">
                     <h4 class="w-100">Servicios actuales</h4>
 
-                    <vuescroll :ops="ops"  v-on:scroll="scroll()" style="height:40vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
-                        
-                        <div  class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                    <vuescroll :ops="ops" v-on:scroll="scroll()"
+                        style="height:40vh;overflow:hidden;overflow-x: hidden;overflow-y:hidden;">
+
+                        <div class="tab-pane" role="tabpanel" aria-labelledby="v-pills-home-tab">
                             <div class="row pl-3">
                                 <template>
-                                    <div v-for="(service, index) in selectedEvent.services" :key="index"  class="col-md-4 px-4" >
+                                    <div v-for="(service, index) in selectedEvent.services" :key="index"
+                                        class="col-md-4 px-4">
                                         <div class="card-service row mt-2" style="border-bottom: solid 8px #174c8e">
-                                            <h3 class="name-serviceF"> {{service.name}}</h3>
+                                            <h3 class="name-serviceF"> {{ service.name }}</h3>
                                             <div class="col-12 pl-0">
                                                 <template v-if="ifMicro">
                                                     <a-tooltip placement="top">
                                                         <template slot="title">
-                                                            <span v-if="hideText != 'display:none'">Marque el adicional deseado, en caso de no aplicar marcar opción "NINGUNO" para poder avanzar.</span>
+                                                            <span v-if="hideText != 'display:none'">Marque el adicional
+                                                                deseado, en caso de no aplicar marcar opción "NINGUNO" para
+                                                                poder avanzar.</span>
                                                         </template>
-                                                        <span class="ml-1 mb-0 font-weight-bold MicroF" style="font-size: 1.2em;">Adicionales: </span>
-                                                        <div v-for="(micro, indexM) in service.microServices" :key="indexM" v-on:click="SelectMicroFinally(index, micro, indexM)" style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
-                                                            <badge v-if="MALDITOVUE" :type="micro.checked ? 'primary' : 'secondary'" class="text-default mb-1">
-                                                                <p style="font-size:1.2em;font-weight: bold;" class="fs-5 mb-0 MF">{{micro.microService}}</p>
+                                                        <span class="ml-1 mb-0 font-weight-bold MicroF"
+                                                            style="font-size: 1.2em;">Adicionales: </span>
+                                                        <div v-for="(micro, indexM) in service.microServices" :key="indexM"
+                                                            v-on:click="SelectMicroFinally(index, micro, indexM)"
+                                                            style="display: inline-block; cursor: pointer;margin-left: 4px;margin-top:2px;">
+                                                            <badge v-if="MALDITOVUE"
+                                                                :type="micro.checked ? 'primary' : 'secondary'"
+                                                                class="text-default mb-1">
+                                                                <p style="font-size:1.2em;font-weight: bold;"
+                                                                    class="fs-5 mb-0 MF">{{ micro.microService }}</p>
                                                             </badge>
                                                         </div>
                                                     </a-tooltip>
                                                 </template>
                                                 <img src="img/brand/calendar.png" alt="">
                                             </div>
-                                            
-                                            <div class="col-md-12 col-sm-12 mt-2 row" style="padding: 0px !important;padding-top: 5px !important;">
-                                                <div class="price-service FPrice col-6 ml-3">$ {{formatPrice(service.price)}}</div>
-                                                <div class="col-2 float-right"> <a-icon style="font-size:1.7em;vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;"  @click="deleteServiceFinally(service.index)" type="delete" /> </div>
-                                                
+
+                                            <div class="col-md-12 col-sm-12 mt-2 row"
+                                                style="padding: 0px !important;padding-top: 5px !important;">
+                                                <div class="price-service FPrice col-6 ml-3">$
+                                                    {{ formatPrice(service.price) }}</div>
+                                                <div class="col-2 float-right"> <a-icon
+                                                        style="font-size:1.7em;vertical-align: 1.6px;cursor:pointer;background-color: #f5365c;padding: 3px;border-radius: 5px;color: white;"
+                                                        @click="deleteServiceFinally(service.index)" type="delete" /> </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -1037,145 +1247,138 @@
                             </div>
                         </div>
                     </vuescroll>
-                    
+
                 </div>
             </div>
             <div class="text-center">
-                <base-button v-on:click="endDate(selectedEvent)" :disabled="finallyDisabled" class="mt-3" type="default">Finalizar</base-button>
+                <base-button v-on:click="endDate(selectedEvent)" :disabled="finallyDisabled" class="mt-3"
+                    type="default">Finalizar</base-button>
             </div>
         </modal>
-        <a-modal v-model="modals.modal5" style="z-index:10000" :width="widthModals" title="Precio del microservicio" @cancel="changeMicroPrice" :closable="true">
+        <a-modal v-model="modals.modal5" style="z-index:10000" :width="widthModals" title="Precio del microservicio"
+            @cancel="changeMicroPrice" :closable="true">
             <template>
-                
-                <currency-input
-                    v-model="microPriceClick"
-                    locale="de"
-                    class="form-control w-100"
-                />
-            </template>
-            <template slot="footer">
-                <base-button type="warning" size="sm" :disabled="microPriceClick >= 0 || microPriceClick != '' ? false : true" v-on:click="changeMicroPrice()" class="my-2">Confirmar</base-button>
-            </template>
-        </a-modal>
-        <a-modal v-model="modals.modal3" title="Horarios bloqueados" :width="widthModals" :closable="true" >
-            <tabs  fill class="flex-column flex-md-row">
-                        <card shadow>
-                            <tab-pane>
-                                <span  slot="title">
-                                    Bloqueos individuales
-                                </span>
-                                <template>
-                                    <a-config-provider :locale="es_ES">
-                                        <template #renderEmpty>
-                                            <div style="text-align: center">
-                                                <a-icon type="warning" style="font-size: 20px" />
-                                                <h2>Sin bloqueos registrados</h2>
-                                            </div>
-                                        </template>
-                                        <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen" >
-                                            <div
-                                                slot="filterDropdown"
-                                                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                                                style="padding: 8px"
-                                                >
-                                                <a-input
-                                                    v-ant-ref="c => (searchInput = c)"
-                                                    :placeholder="`Buscar por ${column.title.toLowerCase()}`"
-                                                    :value="selectedKeys[0]"
-                                                    style="width: 188px; margin-bottom: 8px; display: block;"
-                                                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                                                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                                                />
-                                                <a-button
-                                                    type="primary"
-                                                    icon="search"
-                                                    size="small"
-                                                    style="width: 90px; margin-right: 8px"
-                                                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                                                >
-                                                    Buscar
-                                                </a-button>
-                                                <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
-                                                    Restablecer
-                                                </a-button>
-                                            </div>
-                                            <a-icon
-                                                slot="filterIcon"
-                                                slot-scope="filtered"
-                                                type="search"
-                                                :style="{ color: filtered ? '#108ee9' : undefined }"
-                                            />
-                                            <template slot="date-slot" slot-scope="record, column">
-                                                {{column.dateBlockings | formatDate}}
-                                            </template>
-                                            <template slot="delete-slot" slot-scope="record, column">
-                                                <base-button @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end, column.dateId)" size="sm" type="danger">
-                                                    <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
-                                                </base-button>
-                                            </template>
-                                        </a-table>
-                                    </a-config-provider> 
-                                </template>                             
-                            </tab-pane>
 
-                            <tab-pane>
-                                <span slot="title">
-                                    Bloqueos por día
-                                </span>
-                                <template>
-                                    <a-config-provider :locale="es_ES">
-                                        <template #renderEmpty>
-                                            <div style="text-align: center">
-                                                <a-icon type="warning" style="font-size: 20px" />
-                                                <h2>Sin bloqueos registrados</h2>
-                                            </div>
-                                        </template>
-                                        <a-table :columns="columnsForDay" :data-source="blockForDays" :scroll="getScreen" >
-                                            
-                                            <template slot="delete-slot" slot-scope="record, column">
-                                                
-                                                <base-button @click="deleteHourForDay(column.key)" size="sm" type="danger">
-                                                    <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
-                                                </base-button>
-                                            </template>
-                                        </a-table>
-                                    </a-config-provider> 
-                                </template>
-                            </tab-pane>
-                        </card>
-                    </tabs>
-            
+                <currency-input v-model="microPriceClick" locale="de" class="form-control w-100" />
+            </template>
             <template slot="footer">
-                <base-button @click="modals.modal3 = false, modals.modal6 = true ,Madeyour()" size="sm" type="warning">Bloquear día</base-button>
-                <base-button @click="modals.modal3 = false, modals.modal4 = true ,Madeyour()" size="sm" type="default">Bloquear horario</base-button>
+                <base-button type="warning" size="sm"
+                    :disabled="microPriceClick >= 0 || microPriceClick != '' ? false : true" v-on:click="changeMicroPrice()"
+                    class="my-2">Confirmar</base-button>
             </template>
         </a-modal>
-        <a-modal v-model="modals.modal4" title="Registrar bloqueo" :width="widthModals" :closable="true" >
+        <a-modal v-model="modals.modal3" title="Horarios bloqueados" :width="widthModals" :closable="true">
+            <tabs fill class="flex-column flex-md-row">
+                <card shadow>
+                    <tab-pane>
+                        <span slot="title">
+                            Bloqueos individuales
+                        </span>
+                        <template>
+                            <a-config-provider :locale="es_ES">
+                                <template #renderEmpty>
+                                    <div style="text-align: center">
+                                        <a-icon type="warning" style="font-size: 20px" />
+                                        <h2>Sin bloqueos registrados</h2>
+                                    </div>
+                                </template>
+                                <a-table :columns="columns" :data-source="datesBlocking" :scroll="getScreen">
+                                    <div slot="filterDropdown"
+                                        slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                                        style="padding: 8px">
+                                        <a-input v-ant-ref="c => (searchInput = c)"
+                                            :placeholder="`Buscar por ${column.title.toLowerCase()}`"
+                                            :value="selectedKeys[0]"
+                                            style="width: 188px; margin-bottom: 8px; display: block;"
+                                            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                                            @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)" />
+                                        <a-button type="primary" icon="search" size="small"
+                                            style="width: 90px; margin-right: 8px"
+                                            @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)">
+                                            Buscar
+                                        </a-button>
+                                        <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                                            Restablecer
+                                        </a-button>
+                                    </div>
+                                    <a-icon slot="filterIcon" slot-scope="filtered" type="search"
+                                        :style="{ color: filtered ? '#108ee9' : undefined }" />
+                                    <template slot="date-slot" slot-scope="record, column">
+                                        {{ column.dateBlockings | formatDate }}
+                                    </template>
+                                    <template slot="delete-slot" slot-scope="record, column">
+                                        <base-button
+                                            @click="deleteHour(column._id, column.employe, column.dateBlocking, column.start, column.end, column.dateId)"
+                                            size="sm" type="danger">
+                                            <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
+                                        </base-button>
+                                    </template>
+                                </a-table>
+                            </a-config-provider>
+                        </template>
+                    </tab-pane>
+
+                    <tab-pane>
+                        <span slot="title">
+                            Bloqueos por día
+                        </span>
+                        <template>
+                            <a-config-provider :locale="es_ES">
+                                <template #renderEmpty>
+                                    <div style="text-align: center">
+                                        <a-icon type="warning" style="font-size: 20px" />
+                                        <h2>Sin bloqueos registrados</h2>
+                                    </div>
+                                </template>
+                                <a-table :columns="columnsForDay" :data-source="blockForDays" :scroll="getScreen">
+
+                                    <template slot="delete-slot" slot-scope="record, column">
+
+                                        <base-button @click="deleteHourForDay(column.key)" size="sm" type="danger">
+                                            <a-icon type="close-circle" style="vertical-align:1px;font-size:1.6em;" />
+                                        </base-button>
+                                    </template>
+                                </a-table>
+                            </a-config-provider>
+                        </template>
+                    </tab-pane>
+                </card>
+            </tabs>
+
+            <template slot="footer">
+                <base-button @click="modals.modal3 = false, modals.modal6 = true, Madeyour()" size="sm"
+                    type="warning">Bloquear día</base-button>
+                <base-button @click="modals.modal3 = false, modals.modal4 = true, Madeyour()" size="sm"
+                    type="default">Bloquear horario</base-button>
+            </template>
+        </a-modal>
+        <a-modal v-model="modals.modal4" title="Registrar bloqueo" :width="widthModals" :closable="true">
             <template>
-                
+
                 <!-- <a-date-picker placeholder="Seleccione fecha" class="w-100 clearBlockingDate" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" /> -->
-                <label class="mt-2" for="employe">Empleado <span class="text-danger" v-if="blokedBlock == true">Necesitas seleccionar un empleado</span> </label>
-                <a-select class="w-100 clearBlockingEmploye" allowClear placeholder="Seleccione empleado" @change="validBlockeBlock">
-                    <a-select-option v-for="employe of employeShow" :key="employe._id" @click="selectEmployeHour(employe)" :value="employe._id">
-                        {{employe.name}}
+                <label class="mt-2" for="employe">Empleado <span class="text-danger" v-if="blokedBlock == true">Necesitas
+                        seleccionar un empleado</span> </label>
+                <a-select class="w-100 clearBlockingEmploye" allowClear placeholder="Seleccione empleado"
+                    @change="validBlockeBlock">
+                    <a-select-option v-for="employe of employeShow" :key="employe._id" @click="selectEmployeHour(employe)"
+                        :value="employe._id">
+                        {{ employe.name }}
                     </a-select-option>
                 </a-select>
                 <label for="date">Fecha</label>
-                <flat-picker 
-                    style="padding-top: 15px;padding-bottom: 15px;height:0"
-                    :config="configDatePickerBlocked"
-                    class="form-control clearBlockingDate"
-                    :disabled="blokedBlock"
-                    v-model="hourBlocking.dateBlocking"
+                <flat-picker style="padding-top: 15px;padding-bottom: 15px;height:0" :config="configDatePickerBlocked"
+                    class="form-control clearBlockingDate" :disabled="blokedBlock" v-model="hourBlocking.dateBlocking"
                     placeholder="Seleccione una fecha">
                 </flat-picker>
                 <label class="mt-2" for="time">Horarios</label><br>
                 <div class="row px-3">
                     <div class="col-6 px-1 pr-0">
-                        <a-time-picker class="w-100 clearBlockingTime" :disabled="blokedBlock" @change="selectStartHour" placeholder="Inicio de bloqueo" :minute-step="15" format="HH:mm" />
+                        <a-time-picker class="w-100 clearBlockingTime" :disabled="blokedBlock" @change="selectStartHour"
+                            placeholder="Inicio de bloqueo" :minute-step="15" format="HH:mm" />
                     </div>
                     <div class="col-6 px-1 pl-0">
-                        <a-time-picker class="w-100 clearBlockingTime" :disabled="blokedBlock" @change="selectEndHour" placeholder="Fin de bloqueo" :minute-step="15" format="HH:mm" />
+                        <a-time-picker class="w-100 clearBlockingTime" :disabled="blokedBlock" @change="selectEndHour"
+                            placeholder="Fin de bloqueo" :minute-step="15" format="HH:mm" />
                     </div>
                 </div>
             </template>
@@ -1183,22 +1386,19 @@
                 <base-button @click="blockingHour" size="sm" type="default" :disabled="disableButton">Bloquear</base-button>
             </template>
         </a-modal>
-        <a-modal v-model="modals.modal6" title="Registrar bloqueo de día" :width="widthModals" :closable="true" >
+        <a-modal v-model="modals.modal6" title="Registrar bloqueo de día" :width="widthModals" :closable="true">
             <template>
-                
+
                 <!-- <a-date-picker placeholder="Seleccione fecha" class="w-100 clearBlockingDate" @change="selectDateBlock" format="DD-MM-YYYY" :locale="locale" /> -->
-                
+
                 <label for="date">Seleccione un día especifico para bloquear</label>
-                <flat-picker 
-                    style="padding-top: 15px;padding-bottom: 15px;height:0"
-                    :config="configDatePickerBlockedForDays"
-                    class="form-control clearBlockingDate"
-                    v-model="dateBlockingForDay"
-                    placeholder="Seleccione un día">
+                <flat-picker style="padding-top: 15px;padding-bottom: 15px;height:0"
+                    :config="configDatePickerBlockedForDays" class="form-control clearBlockingDate"
+                    v-model="dateBlockingForDay" placeholder="Seleccione un día">
                 </flat-picker>
             </template>
             <template slot="footer">
-                <base-button @click="pushBlockedDay" size="sm" type="default" >Bloquear día</base-button>
+                <base-button @click="pushBlockedDay" size="sm" type="default">Bloquear día</base-button>
             </template>
         </a-modal>
     </div>
@@ -1211,7 +1411,7 @@ import 'vue-cal/dist/i18n/es.js'
 import VueBootstrap4Table from 'vue-bootstrap4-table'
 import flatPicker from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import {Spanish} from 'flatpickr/dist/l10n/es.js';
+import { Spanish } from 'flatpickr/dist/l10n/es.js';
 import vueCustomScrollbar from 'vue-custom-scrollbar'
 import vuescroll from 'vuescroll';
 import EventBus from '../components/EventBus'
@@ -1234,7 +1434,7 @@ import es_ES from 'ant-design-vue/lib/locale-provider/es_ES';
 import 'moment/locale/es';
 moment.locale('es');
 import mixinES from '../mixins/mixinES'
-  export default {
+export default {
     mixins: [mixinUserToken, mixinES, mixinHideText],
     components: {
         VueCal,
@@ -1248,240 +1448,240 @@ import mixinES from '../mixins/mixinES'
         BaseButton
     },
     data() {
-      return {
-        configHeader: {
-            headers:{
-                "x-database-connect": endPoint.database,
-                'x-access-token':localStorage.userToken
-            }
-        },
-        hourBlocking: {
-            dateBlocking: '',
-            employe: {},
-            start: '',
-            end: ''
-        },
-        blockForDays: [],
-        dateBlockingForDay: '',
-        es_ES,
-        spinningDate: false,
-        locale,
-        blokedBlock: true,
-        showCurrencyMicro:true,
-        datesBlocking: [],
-        minAddEdit:0,
-        minLessEdit:0,
-        moment,
-        disableButton: false,
-        phoneDateSelect: '',
-        prueba: 'primary',
-        imgEndpoint: endPoint.endpointTarget,
-        auth:[],
-        socket : io(endPoint.endpointTarget),
-        status: localStorage.getItem('status'),
-        countServices:[],
-        employes:[],
-        blockHour:[],
-        blockHourEdit:[],
-        finalDate:'',
-        idDatesBlocks:'',
-        readyChange: false,
-        validHour: false,
-        getDay: 0,
-        loading:false,
-        arrayLendersSelect: [],
-        registerDae: {
-            employeSelect: '',
-            date: '',
-            duration: 0,
-            restTime:'',
-            class: '',
-            client: '',
-            employeResTime: '',
-            serviceSelectds: [],
-            design:'nada',
-            start: '',
-            sort: '',
-            end: '',
-            valid: true
-        },
-        inputClientDate: true,
-        editDisabled: true,
-        blockCountValid:0,
-        blockCountArray:[],
-        radioDomingos:{
-            radio1:'rad1',
-            radio2:'rad2'
-        },
-        ifServices: false,
-        validWizard: false,
-        validSelectClient: false,
-        registerDate: {
-            services:[],
-            servicesShow:[],
-            employePerService:[],
-            employe:[],
-            employeSelect:"Seleccione un empleado",
-            employeClass:null,
-            employeResTime:null,
-            client:null,
-            duration:0,
-            design:null,
-            block:null,
-            start:null,
-            end:null,
-            sort:null,
-            date:null,
-            valid:true,
-            valid2:true,
-            valid3:false
-        },
-        ops:{
-            rail: {
-                background: '#01a99a',
-                opacity: 0,
-                size: '9px',
-                specifyBorderRadius: false,
-                gutterOfEnds: null,
-                gutterOfSide: '0px',
-                keepShow: false
-            },
-            bar: {
-                showDelay: 1500,
-                onlyShowBarOnScroll: true,
-                keepShow: false,
-                background: '#c1c1c1',
-                opacity: .5,
-                specifyBorderRadius: false,
-                minSize: 0,
-                size: '6px',
-                disable: false
-            },
-            scrollPanel: {
-                scrollingX: false,
-                scrollingY: true,
-            }
-        },
-        fixSearch: true,
-        searchText: '',
-        searchInput: null,
-        searchedColumn: '',
-        newNote: {
-            name: "",
-            note: ""
-        },
-        notesClient: [],
-        clientNotesState: false,
-        notesClientColumn: [
-            {
-                title: 'Fecha',
-                dataIndex: 'createdAt',
-                key: 'createdAt',
-                scopedSlots: { customRender: 'date-format' },
-                defaultSortOrder: 'descend',
-                sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-                ellipsis: true,
-            },
-            { 
-                title: 'Creador',
-                dataIndex: 'name',
-                key: 'name'
-            },
-            {
-                title: 'Nota',
-                dataIndex: 'note',
-                key: 'note',
-                width: '60%'
-            }
-        ],
-        historyClientColumn: [
-            {
-                title: 'Fecha',
-                dataIndex: 'createdAt',
-                fixed:'left',
-                key: 'createdAt',
-                scopedSlots: { customRender: 'date-format' },
-                defaultSortOrder: 'descend',
-                sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-                ellipsis: true,
-            },
-            {
-                title: 'Total',
-                dataIndex: 'total',
-                key: 'total',
-                ellipsis: true,
-                scopedSlots: { customRender: 'total' },
-                sorter: (a, b) => a.total - b.total,
-            }
-        ],
-        columns: [
-            { 
-                title: 'Fecha',
-                dataIndex: 'dateBlocking',
-                defaultSortOrder: 'descend',
-                sorter: (a, b) => new Date(a.dateBlocking).getTime() - new Date(b.dateBlocking).getTime(),
-                scopedSlots: { customRender: 'date-slot' } 
-            },
-            { 
-                title: 'Empleado',
-                dataIndex: 'employe.name',
-                sorter: (a, b) => {
-                     if (a.employe.name > b.employe.name) {
-                        return -1;
-                    }
-                    if (b.employe.name > a.employe.name) {
-                        return 1;
-                    }
-                    return 0;
-                },
-                sortDirections: ['descend', 'ascend'],
-                scopedSlots: {
-                    filterDropdown: 'filterDropdown',
-                    filterIcon: 'filterIcon',
-                    customRender: 'names-slot',
-                },
-                onFilter: (value, record) => record.employe.name.toString().toLowerCase().includes(value.toLowerCase()),
-                onFilterDropdownVisibleChange: visible => {
-                    if (visible) {
-                    setTimeout(() => {
-                        this.searchInput.focus();
-                    }, 0);
-                    }
+        return {
+            configHeader: {
+                headers: {
+                    "x-database-connect": endPoint.database,
+                    'x-access-token': localStorage.userToken
                 }
             },
-            { 
-                title: 'Desde',
-                dataIndex: 'start',
+            hourBlocking: {
+                dateBlocking: '',
+                employe: {},
+                start: '',
+                end: ''
             },
-            { 
-                title: 'Hasta',
-                dataIndex: 'end',
+            blockForDays: [],
+            dateBlockingForDay: '',
+            es_ES,
+            spinningDate: false,
+            locale,
+            blokedBlock: true,
+            showCurrencyMicro: true,
+            datesBlocking: [],
+            minAddEdit: 0,
+            minLessEdit: 0,
+            moment,
+            disableButton: false,
+            phoneDateSelect: '',
+            prueba: 'primary',
+            imgEndpoint: endPoint.endpointTarget,
+            auth: [],
+            socket: io(endPoint.endpointTarget),
+            status: localStorage.getItem('status'),
+            countServices: [],
+            employes: [],
+            blockHour: [],
+            blockHourEdit: [],
+            finalDate: '',
+            idDatesBlocks: '',
+            readyChange: false,
+            validHour: false,
+            getDay: 0,
+            loading: false,
+            arrayLendersSelect: [],
+            registerDae: {
+                employeSelect: '',
+                date: '',
+                duration: 0,
+                restTime: '',
+                class: '',
+                client: '',
+                employeResTime: '',
+                serviceSelectds: [],
+                design: 'nada',
+                start: '',
+                sort: '',
+                end: '',
+                valid: true
             },
-            { 
-                title: 'Eliminar',
-                dataIndex: '_id',
-                key: '_id',
-                scopedSlots: { customRender: 'delete-slot' } 
-            }
-        ],
-        columnsForDay: [
-            { 
-                title: 'Fecha',
-                dataIndex: 'date',
-                key: 'date',
-                sorter: (a, b) => new Date(a.dat).getTime() - new Date(b.dat).getTime(),
-                scopedSlots: { customRender: 'date-slot' } 
+            inputClientDate: true,
+            editDisabled: true,
+            blockCountValid: 0,
+            blockCountArray: [],
+            radioDomingos: {
+                radio1: 'rad1',
+                radio2: 'rad2'
             },
-            { 
-                title: 'Eliminar',
-                dataIndex: 'key',
-                key: 'key',
-                scopedSlots: { customRender: 'delete-slot' } 
-            }
-        ],
-        microPriceClick: 0,
-        microPriceIndex:'',
-        columnsDatesClosed: [{
+            ifServices: false,
+            validWizard: false,
+            validSelectClient: false,
+            registerDate: {
+                services: [],
+                servicesShow: [],
+                employePerService: [],
+                employe: [],
+                employeSelect: "Seleccione un empleado",
+                employeClass: null,
+                employeResTime: null,
+                client: null,
+                duration: 0,
+                design: null,
+                block: null,
+                start: null,
+                end: null,
+                sort: null,
+                date: null,
+                valid: true,
+                valid2: true,
+                valid3: false
+            },
+            ops: {
+                rail: {
+                    background: '#01a99a',
+                    opacity: 0,
+                    size: '9px',
+                    specifyBorderRadius: false,
+                    gutterOfEnds: null,
+                    gutterOfSide: '0px',
+                    keepShow: false
+                },
+                bar: {
+                    showDelay: 1500,
+                    onlyShowBarOnScroll: true,
+                    keepShow: false,
+                    background: '#c1c1c1',
+                    opacity: .5,
+                    specifyBorderRadius: false,
+                    minSize: 0,
+                    size: '6px',
+                    disable: false
+                },
+                scrollPanel: {
+                    scrollingX: false,
+                    scrollingY: true,
+                }
+            },
+            fixSearch: true,
+            searchText: '',
+            searchInput: null,
+            searchedColumn: '',
+            newNote: {
+                name: "",
+                note: ""
+            },
+            notesClient: [],
+            clientNotesState: false,
+            notesClientColumn: [
+                {
+                    title: 'Fecha',
+                    dataIndex: 'createdAt',
+                    key: 'createdAt',
+                    scopedSlots: { customRender: 'date-format' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                    ellipsis: true,
+                },
+                {
+                    title: 'Creador',
+                    dataIndex: 'name',
+                    key: 'name'
+                },
+                {
+                    title: 'Nota',
+                    dataIndex: 'note',
+                    key: 'note',
+                    width: '60%'
+                }
+            ],
+            historyClientColumn: [
+                {
+                    title: 'Fecha',
+                    dataIndex: 'createdAt',
+                    fixed: 'left',
+                    key: 'createdAt',
+                    scopedSlots: { customRender: 'date-format' },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+                    ellipsis: true,
+                },
+                {
+                    title: 'Total',
+                    dataIndex: 'total',
+                    key: 'total',
+                    ellipsis: true,
+                    scopedSlots: { customRender: 'total' },
+                    sorter: (a, b) => a.total - b.total,
+                }
+            ],
+            columns: [
+                {
+                    title: 'Fecha',
+                    dataIndex: 'dateBlocking',
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => new Date(a.dateBlocking).getTime() - new Date(b.dateBlocking).getTime(),
+                    scopedSlots: { customRender: 'date-slot' }
+                },
+                {
+                    title: 'Empleado',
+                    dataIndex: 'employe.name',
+                    sorter: (a, b) => {
+                        if (a.employe.name > b.employe.name) {
+                            return -1;
+                        }
+                        if (b.employe.name > a.employe.name) {
+                            return 1;
+                        }
+                        return 0;
+                    },
+                    sortDirections: ['descend', 'ascend'],
+                    scopedSlots: {
+                        filterDropdown: 'filterDropdown',
+                        filterIcon: 'filterIcon',
+                        customRender: 'names-slot',
+                    },
+                    onFilter: (value, record) => record.employe.name.toString().toLowerCase().includes(value.toLowerCase()),
+                    onFilterDropdownVisibleChange: visible => {
+                        if (visible) {
+                            setTimeout(() => {
+                                this.searchInput.focus();
+                            }, 0);
+                        }
+                    }
+                },
+                {
+                    title: 'Desde',
+                    dataIndex: 'start',
+                },
+                {
+                    title: 'Hasta',
+                    dataIndex: 'end',
+                },
+                {
+                    title: 'Eliminar',
+                    dataIndex: '_id',
+                    key: '_id',
+                    scopedSlots: { customRender: 'delete-slot' }
+                }
+            ],
+            columnsForDay: [
+                {
+                    title: 'Fecha',
+                    dataIndex: 'date',
+                    key: 'date',
+                    sorter: (a, b) => new Date(a.dat).getTime() - new Date(b.dat).getTime(),
+                    scopedSlots: { customRender: 'date-slot' }
+                },
+                {
+                    title: 'Eliminar',
+                    dataIndex: 'key',
+                    key: 'key',
+                    scopedSlots: { customRender: 'delete-slot' }
+                }
+            ],
+            microPriceClick: 0,
+            microPriceIndex: '',
+            columnsDatesClosed: [{
                 label: "Fecha",
                 name: "date",
                 slot_name: "format-date",
@@ -1502,281 +1702,281 @@ import mixinES from '../mixins/mixinES'
                 name: "total",
                 slot_name: "format-total",
             },
-        ],
-        configDatesClosed: {
-            card_title: "Tabla de finalizadas",
-            checkbox_rows: true,
-            rows_selectable : true,
-            highlight_row_hover_color:"rgba(238, 238, 238, 0.623)",
-            rows_selectable: true,
-            per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
-            show_refresh_button: false,
-            show_reset_button: false,  
-            selected_rows_info: false,
-            preservePageOnDataChange : true,
-            pagination_info : false,
-            pagination: false,
-            global_search: {
-                placeholder: "Busque el prestador",
-                visibility: false,
-                case_sensitive: false,
-                showClearButton: true,
-                searchOnPressEnter: false,
-                searchDebounceRate: 200,                      
+            ],
+            configDatesClosed: {
+                card_title: "Tabla de finalizadas",
+                checkbox_rows: true,
+                rows_selectable: true,
+                highlight_row_hover_color: "rgba(238, 238, 238, 0.623)",
+                rows_selectable: true,
+                per_page_options: [5, 10, 20, 30, 40, 50, 80, 100],
+                show_refresh_button: false,
+                show_reset_button: false,
+                selected_rows_info: false,
+                preservePageOnDataChange: true,
+                pagination_info: false,
+                pagination: false,
+                global_search: {
+                    placeholder: "Busque el prestador",
+                    visibility: false,
+                    case_sensitive: false,
+                    showClearButton: true,
+                    searchOnPressEnter: false,
+                    searchDebounceRate: 200,
+                },
             },
-        },
-        classes: {
-            table: "table-bordered table-striped"
-        },
-        articulo:'',
-        compradorArticulo:'',
-        medioPagoArticulo:'',
-        estadoArticulo:'',
-        idArticulo:'',
-        codeArticulo:'',
-        totalArticulo:'',
-        haveCode:false,
-        validHour: false,
-        totalPrice: 0,
-        modalsDialog: {
-            modal2: false,
-            type: '',
-            icon: '',
-            message: '', 
-        },
-        dataClient:{
-            firstName: '',
-            lastName: '',
-            email: '',
-            phone: {
-                "countryCode": "CL", 
-                "isValid": false, 
-                "phoneNumber": "", 
-                "countryCallingCode": "", 
-                "formattedNumber": "", 
-                "nationalNumber": "", 
-                "formatInternational": "", 
-                "formatNational": "", 
-                "uri": "", 
-                "e164": ""
+            classes: {
+                table: "table-bordered table-striped"
             },
-            instagram: '',
-            attends: '',
-            recommender: '',
-            recommendations: '',
-            birthday: '',
-            lastAttend: '',
-            historical: '',
-            createdAt: '',
-            idRecommender:'',
-            valid: false,
-            valid2: false
-        },
-        dateClient: {},
-        configDate: {
-            allowInput: true, 
-            altInput: true,
-            altFormat: 'd-m-Y',
-            dateFormat: 'm-d-Y'
-        },
-        dateMax:'',
-        configDatePicker: {
-            inline: true,
-            allowInput: false,
-            dateFormat: 'd-m-Y',
-            locale: Spanish, // locale for this instance only
-            minDate: new Date(),
-            "disable": []          
-        },
-        configDatePickerBlocked: {
-            allowInput: true,
-            dateFormat: 'd-m-Y',
-            locale: Spanish, // locale for this instance only
-            minDate: new Date(),
-            enable: [],
-            "disable": []         
-        },
-        configDatePickerBlockedForDays: {
-            allowInput: true,
-            dateFormat: 'd-m-Y',
-            locale: Spanish, // locale for this instance only
-            minDate: new Date(),
-            "disable": []         
-        },
-        loadImage: false,
-        configDatePickerEdit: {
-            allowInput: true,
-            altInput: true,
-            altFormat: 'd-m-Y',
-            dateFormat: 'm-d-Y',
-            locale: Spanish, // locale for this instance only
-            minDate: new Date(),
-            maxDate: '', 
-            "disable": [] 
-        },
-        socketValidator: true,
-        availableEmployesEdit:[],
-        blockFirstEdit:[],
-        validEditBlock:false,
-        finalBlockEdit:[],
-        dateData: {
-        history:[],
-        fixHours: true,
-        discount:{discount:false,type:'none'},
-        clientEdit: null,
-        fechaEdit: null,
-        startEdit: null,
-        endEdit: null,
-        lenderEdit: null,
-        classFinalEdit: null,
-        duracionEdit: null,
-        dateEditId: null,
-        resTimeFinalEdit:null,
-        fechaEditPick:null
-        },
-        selectedDates:{
-            client:'',
-            closedArray:[],
-            services:[],
-            clientSplit:'',
-            employes:'',
-            design:0,
-            comision:0,
-            totaLocal:0,
-            total:0,
-            discount:0,
-            discountSplit:[],
-            discountBetter:[],
-            employeDiscount:[],
-            endDatesId:[],
-            clientIds:[],
-            ifrecomend:0
-        },
-        employeByDate: 'Filtrar por empleado', 
-        clients:[],
-        closedDates:[],
-        employeShow:[],
-        services:[],
-        localee: 'es',
-        filter: false,
-        events: [],
-        lender:"",
-        imgLender:endPoint.imgEndpoint+localStorage.imageUser,
-        users:[],
-        img1:'',
-        img2:'',
-        design:'',
-        selectedEvent: {},
-        payCash:0,
-        payTransfer:0,
-        payOthers:0,
-        payDebit:0,
-        payCredit:0,
-        payOrder:0,
-        servicesFinish:[],
-        MALDITOVUE: true,
-        modals: {
-            modal1:false,
-            modal2: false,
-            modal3: false,
-            modal4: false,
-            modal5: false,
-            modal6: false,
-            message: "",
-            icon: '',
-            type:''
-        },
-        dateModals: {
-            modal1:false,
-            modal2:false,
-            modal3:false,
-            modal4:false,
-            modal5:false,
-            modal6:false,
-            modal7:false
-        },
-        loader: true,
-        finallyDisabled: false,
-        categories: [],
-        radio: {
-        radio1: "radio1",
-        radio2: "radio3"
-        },
-        spinningEdit: false,
-        CatSelected: 'Categorias',
-        endId:'',
-        endServices:[],
-        endClient: '',
-        endEmploye: '',
-        endId:'',
-        dataEditSend: {
-            date: "",
-            employe: {},
-            start: "",
-            end: "",
-            duration: "",
-            service: "",
-            idBlock: "",
-            isFirst: true,
-            _id: ""
-        },
-        serviciosSelecionadosDates:[],
-        endClient:[],
-        endEmploye:[],
-        designEndDate:0,
-        lengthClosedDates:0,
-        file: '',
-        nameFile:'Seleccione imagen',
-        lenders: [],
-        EndDateServices: [],
-        loadingEnds:true,
-        editSelectValid:true,
-        availableslenders: [],
-        columnsEndSelectedDates: [
-            
-            { title: 'Empleado', dataIndex: 'employe', key: 'employe' },
-            { title: 'Cliente', dataIndex: 'client', key: 'cliente' },
-            { title: 'Diseño', dataIndex: 'design', key: 'design', scopedSlots: { customRender: 'diseño' } },
-            
-            { title: 'Descuento', dataIndex: 'descuento', key: 'descuento', scopedSlots: { customRender: 'descuento' } },
-            { title: 'Total', dataIndex: 'total', key: 'total', scopedSlots: { customRender: 'total' } },
-        ],
-        stickySplitLabels: true,
-        minCellWidth: 400,
-        minSplitWidth: 0,
-        splitDays: [],
-        load1:false,
-        load2:false,
-        load3:false,
-        load4:false,
-        load5:false,
-        searchText: '',
-        searchedColumn: '',
-        delay:1500,
-        configHeader: {
-            headers: {
-                "x-database-connect": endPoint.database, 
-                "x-access-token": localStorage.userToken
-            }
-        },
-        employeForSearchEdit:'',
-        branch: '',
-        branchName: '',
-        ifMicro:false,
-        microServices:[],
-        configurations: {},
-        startCalendar: 0,
-        endCalendar: 0,
-        hideDays: [],
-        servicesCat: [],
-        serviceSelected: [],
-        servicesPhoneShow:false,
-        showCalendar: true,
-        filterOff: true,
-        spinningView: false
-      };
+            articulo: '',
+            compradorArticulo: '',
+            medioPagoArticulo: '',
+            estadoArticulo: '',
+            idArticulo: '',
+            codeArticulo: '',
+            totalArticulo: '',
+            haveCode: false,
+            validHour: false,
+            totalPrice: 0,
+            modalsDialog: {
+                modal2: false,
+                type: '',
+                icon: '',
+                message: '',
+            },
+            dataClient: {
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: {
+                    "countryCode": "CL",
+                    "isValid": false,
+                    "phoneNumber": "",
+                    "countryCallingCode": "",
+                    "formattedNumber": "",
+                    "nationalNumber": "",
+                    "formatInternational": "",
+                    "formatNational": "",
+                    "uri": "",
+                    "e164": ""
+                },
+                instagram: '',
+                attends: '',
+                recommender: '',
+                recommendations: '',
+                birthday: '',
+                lastAttend: '',
+                historical: '',
+                createdAt: '',
+                idRecommender: '',
+                valid: false,
+                valid2: false
+            },
+            dateClient: {},
+            configDate: {
+                allowInput: true,
+                altInput: true,
+                altFormat: 'd-m-Y',
+                dateFormat: 'm-d-Y'
+            },
+            dateMax: '',
+            configDatePicker: {
+                inline: true,
+                allowInput: false,
+                dateFormat: 'd-m-Y',
+                locale: Spanish, // locale for this instance only
+                minDate: new Date(),
+                "disable": []
+            },
+            configDatePickerBlocked: {
+                allowInput: true,
+                dateFormat: 'd-m-Y',
+                locale: Spanish, // locale for this instance only
+                minDate: new Date(),
+                enable: [],
+                "disable": []
+            },
+            configDatePickerBlockedForDays: {
+                allowInput: true,
+                dateFormat: 'd-m-Y',
+                locale: Spanish, // locale for this instance only
+                minDate: new Date(),
+                "disable": []
+            },
+            loadImage: false,
+            configDatePickerEdit: {
+                allowInput: true,
+                altInput: true,
+                altFormat: 'd-m-Y',
+                dateFormat: 'm-d-Y',
+                locale: Spanish, // locale for this instance only
+                minDate: new Date(),
+                maxDate: '',
+                "disable": []
+            },
+            socketValidator: true,
+            availableEmployesEdit: [],
+            blockFirstEdit: [],
+            validEditBlock: false,
+            finalBlockEdit: [],
+            dateData: {
+                history: [],
+                fixHours: true,
+                discount: { discount: false, type: 'none' },
+                clientEdit: null,
+                fechaEdit: null,
+                startEdit: null,
+                endEdit: null,
+                lenderEdit: null,
+                classFinalEdit: null,
+                duracionEdit: null,
+                dateEditId: null,
+                resTimeFinalEdit: null,
+                fechaEditPick: null
+            },
+            selectedDates: {
+                client: '',
+                closedArray: [],
+                services: [],
+                clientSplit: '',
+                employes: '',
+                design: 0,
+                comision: 0,
+                totaLocal: 0,
+                total: 0,
+                discount: 0,
+                discountSplit: [],
+                discountBetter: [],
+                employeDiscount: [],
+                endDatesId: [],
+                clientIds: [],
+                ifrecomend: 0
+            },
+            employeByDate: 'Filtrar por empleado',
+            clients: [],
+            closedDates: [],
+            employeShow: [],
+            services: [],
+            localee: 'es',
+            filter: false,
+            events: [],
+            lender: "",
+            imgLender: endPoint.imgEndpoint + localStorage.imageUser,
+            users: [],
+            img1: '',
+            img2: '',
+            design: '',
+            selectedEvent: {},
+            payCash: 0,
+            payTransfer: 0,
+            payOthers: 0,
+            payDebit: 0,
+            payCredit: 0,
+            payOrder: 0,
+            servicesFinish: [],
+            MALDITOVUE: true,
+            modals: {
+                modal1: false,
+                modal2: false,
+                modal3: false,
+                modal4: false,
+                modal5: false,
+                modal6: false,
+                message: "",
+                icon: '',
+                type: ''
+            },
+            dateModals: {
+                modal1: false,
+                modal2: false,
+                modal3: false,
+                modal4: false,
+                modal5: false,
+                modal6: false,
+                modal7: false
+            },
+            loader: true,
+            finallyDisabled: false,
+            categories: [],
+            radio: {
+                radio1: "radio1",
+                radio2: "radio3"
+            },
+            spinningEdit: false,
+            CatSelected: 'Categorias',
+            endId: '',
+            endServices: [],
+            endClient: '',
+            endEmploye: '',
+            endId: '',
+            dataEditSend: {
+                date: "",
+                employe: {},
+                start: "",
+                end: "",
+                duration: "",
+                service: "",
+                idBlock: "",
+                isFirst: true,
+                _id: ""
+            },
+            serviciosSelecionadosDates: [],
+            endClient: [],
+            endEmploye: [],
+            designEndDate: 0,
+            lengthClosedDates: 0,
+            file: '',
+            nameFile: 'Seleccione imagen',
+            lenders: [],
+            EndDateServices: [],
+            loadingEnds: true,
+            editSelectValid: true,
+            availableslenders: [],
+            columnsEndSelectedDates: [
+
+                { title: 'Empleado', dataIndex: 'employe', key: 'employe' },
+                { title: 'Cliente', dataIndex: 'client', key: 'cliente' },
+                { title: 'Diseño', dataIndex: 'design', key: 'design', scopedSlots: { customRender: 'diseño' } },
+
+                { title: 'Descuento', dataIndex: 'descuento', key: 'descuento', scopedSlots: { customRender: 'descuento' } },
+                { title: 'Total', dataIndex: 'total', key: 'total', scopedSlots: { customRender: 'total' } },
+            ],
+            stickySplitLabels: true,
+            minCellWidth: 400,
+            minSplitWidth: 0,
+            splitDays: [],
+            load1: false,
+            load2: false,
+            load3: false,
+            load4: false,
+            load5: false,
+            searchText: '',
+            searchedColumn: '',
+            delay: 1500,
+            configHeader: {
+                headers: {
+                    "x-database-connect": endPoint.database,
+                    "x-access-token": localStorage.userToken
+                }
+            },
+            employeForSearchEdit: '',
+            branch: '',
+            branchName: '',
+            ifMicro: false,
+            microServices: [],
+            configurations: {},
+            startCalendar: 0,
+            endCalendar: 0,
+            hideDays: [],
+            servicesCat: [],
+            serviceSelected: [],
+            servicesPhoneShow: false,
+            showCalendar: true,
+            filterOff: true,
+            spinningView: false
+        };
     },
-    created(){
+    created() {
         this.getToken()
         // this.validatorLender()
         // this.getClients()
@@ -1787,53 +1987,53 @@ import mixinES from '../mixins/mixinES'
         this.getUserData()
         // this.getClosed()
         // this.getCategories()
-        
+
     },
-    destroyed () {
+    destroyed() {
         window.removeEventListener('scroll', this.handleScroll);
     },
     methods: {
-        getToken(){
+        getToken() {
             const token = localStorage.userToken
-            const decoded = jwtDecode(token)  
+            const decoded = jwtDecode(token)
             this.auth = decoded.access
         },
-        selectDateBlock(date, dateString){
+        selectDateBlock(date, dateString) {
             this.hourBlocking.dateBlocking = dateString
         },
-        selectStartHour(value){
+        selectStartHour(value) {
             this.hourBlocking.start = moment(value).format("HH:mm")
         },
-        selectEndHour(value){
+        selectEndHour(value) {
             this.hourBlocking.end = moment(value).format("HH:mm")
         },
-        selectEmployeHour(employe){
+        selectEmployeHour(employe) {
             this.hourBlocking.employe = {
                 name: employe.name,
                 document: employe.document,
                 id: employe._id,
                 class: employe.class,
-                img:"no"
+                img: "no"
             }
             this.configDatePickerBlocked.enable = []
             for (let i = 0; i < employe.days.length; i++) {
                 const element = employe.days[i];
                 this.configDatePickerBlocked.enable.push(
-                    function(date) {
-                        return (date.getDay() === element.day );
-                    } 
-                )    
+                    function (date) {
+                        return (date.getDay() === element.day);
+                    }
+                )
             }
             this.blokedBlock = false
         },
-        setView(view){
+        setView(view) {
             if (view == 'calendar') {
                 this.spinningView = true
                 setTimeout(() => {
                     this.showCalendar = true
                     this.spinningView = false
                 }, 500);
-            }else{
+            } else {
                 this.spinningView = true
                 setTimeout(() => {
                     this.showCalendar = false
@@ -1841,17 +2041,17 @@ import mixinES from '../mixins/mixinES'
                 }, 500);
             }
         },
-        async getBlockingHours(){
+        async getBlockingHours() {
             try {
                 const getDeletes = await axios.get(`${endPoint.endpointTarget}/dates/deleteBlockingHours/${this.branch}`, this.configHeader)
                 try {
                     const blockHour = await axios.get(`${endPoint.endpointTarget}/dates/getBlockingHours/${this.branch}`, this.configHeader)
                     if (blockHour.data.status == 'ok') {
                         this.datesBlocking = blockHour.data.data
-                    }else{
+                    } else {
                         this.datesBlocking = []
                     }
-                }catch(err){
+                } catch (err) {
                     if (!err.response) {
                         console.log(err)
                         this.$swal({
@@ -1862,7 +2062,7 @@ import mixinES from '../mixins/mixinES'
                         })
                     }
                 }
-            }catch(err){
+            } catch (err) {
                 if (!err.response) {
                     console.log(err)
                     this.$swal({
@@ -1874,7 +2074,7 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        async selectCategoryPhone(name){
+        async selectCategoryPhone(name) {
             // for (let j = 0; j < this.serviceSelected.length; j++) {
             //     const element = this.serviceSelected[j];
             //     if (element.set == false) {
@@ -1885,7 +2085,7 @@ import mixinES from '../mixins/mixinES'
             this.servicesPhoneShow = false
             this.servicesCat = []
             try {
-                const services = await  axios.post(endPoint.endpointTarget+'/services/servicesByCategory', {
+                const services = await axios.post(endPoint.endpointTarget + '/services/servicesByCategory', {
                     name: name,
                     branch: this.branch
                 }, this.configHeader)
@@ -1893,7 +2093,7 @@ import mixinES from '../mixins/mixinES'
                     this.servicesPhoneShow = true
                     this.servicesCat = services.data.data
                     this.CatSelected = name
-                }else{
+                } else {
                     this.$swal({
                         icon: 'error',
                         title: 'Categoria sin servicios.',
@@ -1901,7 +2101,7 @@ import mixinES from '../mixins/mixinES'
                         timer: 2500
                     })
                 }
-            }catch (err){
+            } catch (err) {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -1912,29 +2112,29 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        validObject (){
+        validObject() {
             if (this.serviceSelected.length === 0) {
                 return false
-            }else{
+            } else {
                 return true
             }
         },
-        device(){
+        device() {
             if (screen.width < 768) {
                 this.configDatePicker.inline = true
                 return true
-            }else{
+            } else {
                 return false
             }
         },
-        async selectServicePhone(id){
+        async selectServicePhone(id) {
             try {
-                const service = await axios.get(endPoint.endpointTarget+'/services/getServiceInfo/'+id, this.configHeader)
+                const service = await axios.get(endPoint.endpointTarget + '/services/getServiceInfo/' + id, this.configHeader)
                 if (service.data.status == 'ok') {
                     service.data.data.set = false
                     this.serviceSelected.unshift(service.data.data)
                     this.plusServicePhone(new Date().getTime(), service.data.data.name, service.data.data._id, service.data.data.duration, service.data.data.commission, service.data.data.price, service.data.data.employes, service.data.data.discount, service.data.data.products, service.data.data.additionalName)
-                }else{
+                } else {
                     this.$swal({
                         icon: 'error',
                         title: 'Error técnico.',
@@ -1942,7 +2142,7 @@ import mixinES from '../mixins/mixinES'
                         timer: 2500
                     })
                 }
-            }catch(err){
+            } catch (err) {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -1953,26 +2153,26 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        plusServicePhone(index, service, id, duration, commission, price, employes, discount, products, additionalName){
+        plusServicePhone(index, service, id, duration, commission, price, employes, discount, products, additionalName) {
             this.ifServices = true
             for (const employe of employes) {
                 employe.valid = true
             }
-            var lendersName = [{name: 'Primera disponible', days: '', class: '', valid:true}, ...employes]
+            var lendersName = [{ name: 'Primera disponible', days: '', class: '', valid: true }, ...employes]
 
             if (this.ifMicro) {
-                var microsService = [{checked: false, duration: 0, microService: "Ninguno", price: 0, position: index}]
+                var microsService = [{ checked: false, duration: 0, microService: "Ninguno", price: 0, position: index }]
                 for (const micro of this.microServices) {
-                    microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
+                    microsService.push({ checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index })
                 }
-                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, additionalName: additionalName, microServices: microsService, microServiceSelect: [], products: products})
-            }else{
-                this.registerDae.serviceSelectds.push({employes: lendersName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, additionalName: additionalName, microServices: [], microServiceSelect: [], products: products})
+                this.registerDae.serviceSelectds.push({ employes: lendersName, commission: commission, duration: duration, price: price, start: '', end: '', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, additionalName: additionalName, microServices: microsService, microServiceSelect: [], products: products })
+            } else {
+                this.registerDae.serviceSelectds.push({ employes: lendersName, commission: commission, duration: duration, price: price, start: '', end: '', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, additionalName: additionalName, microServices: [], microServiceSelect: [], products: products })
             }
             this.totalPrice = this.totalPrice + price
             this.validHour = false
         },
-        lessServicePhone(index, price){
+        lessServicePhone(index, price) {
             this.registerDae.serviceSelectds.splice(index, 1)
             if (this.registerDae.serviceSelectds.length == 0) {
                 this.ifServices = false
@@ -1983,16 +2183,16 @@ import mixinES from '../mixins/mixinES'
             this.validHour = false
             this.totalPrice = this.totalPrice - price
         },
-        lessService(index, service, time, card, price, count){
+        lessService(index, service, time, card, price, count) {
             if (count > 0) {
                 if (this.countServices[index].count > 0) {
                     this.countServices[index].count--
                     if (this.countServices[index].count == 0) {
-                        $('#'+card).css({'border-bottom': 'solid 8px #e2e3de'})
+                        $('#' + card).css({ 'border-bottom': 'solid 8px #e2e3de' })
                     }
                 }
                 for (var i = 0; i < this.registerDae.serviceSelectds.length; i++) {
-                    if (this.registerDae.serviceSelectds[i].name == service ) {
+                    if (this.registerDae.serviceSelectds[i].name == service) {
                         this.registerDae.serviceSelectds.splice(i, 1)
                         break
                     }
@@ -2007,9 +2207,9 @@ import mixinES from '../mixins/mixinES'
                 this.totalPrice = this.totalPrice - price
             }
         },
-        async deleteHourForDay(key){
+        async deleteHourForDay(key) {
             try {
-                const blockHourForDay = await axios.post(endPoint.endpointTarget+'/configurations/deletehourforday', {
+                const blockHourForDay = await axios.post(endPoint.endpointTarget + '/configurations/deletehourforday', {
                     key: key
                 }, this.configHeader)
                 if (blockHourForDay) {
@@ -2034,7 +2234,7 @@ import mixinES from '../mixins/mixinES'
             clearFilters();
             this.searchText = '';
         },
-        async deleteHour(id, employe, dateBlocking, start, end, idDate){
+        async deleteHour(id, employe, dateBlocking, start, end, idDate) {
             try {
                 const blockHour = await axios.post(`${endPoint.endpointTarget}/dates/deleteBlockingHour`, {
                     id: id,
@@ -2046,53 +2246,53 @@ import mixinES from '../mixins/mixinES'
                     idDate: idDate
                 }, this.configHeader)
                 if (blockHour.data.status == 'ok') {
-                    axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+employe.id, this.configHeader)
-                    .then(res => {
-                        if(res.data.status == "ok"){
-                            axios.put(endPoint.endpointTarget+'/employes', {
-                                id:employe.id,
-                                firstName: res.data.data.firstName,
-                                document: res.data.data.document,
-                                lastName: res.data.data.lastName,
-                                days: res.data.data.days,
-                                validOnline: res.data.data.validOnline,
-                                branch: this.branch,
-                                validBlocked:true,
-                                dayValid: true
-                            }, this.configHeader)
-                            .then(res => {
-                                if(res.data.status == "employe edited"){
-                                    this.$swal({
-                                        icon: 'success',
-                                        title: 'Bloqueo eliminado con éxito',
-                                        showConfirmButton: false,
-                                        timer: 1500
+                    axios.get(endPoint.endpointTarget + '/employes/justonebyid/' + employe.id, this.configHeader)
+                        .then(res => {
+                            if (res.data.status == "ok") {
+                                axios.put(endPoint.endpointTarget + '/employes', {
+                                    id: employe.id,
+                                    firstName: res.data.data.firstName,
+                                    document: res.data.data.document,
+                                    lastName: res.data.data.lastName,
+                                    days: res.data.data.days,
+                                    validOnline: res.data.data.validOnline,
+                                    branch: this.branch,
+                                    validBlocked: true,
+                                    dayValid: true
+                                }, this.configHeader)
+                                    .then(res => {
+                                        if (res.data.status == "employe edited") {
+                                            this.$swal({
+                                                icon: 'success',
+                                                title: 'Bloqueo eliminado con éxito',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            this.getBlockingHours()
+                                        }
+                                    }).catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }
                                     })
-                                    this.getBlockingHours()
-                                }
-                            }).catch(err => {
-                                if (!err.response) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Error de conexión',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                }
-                            })
-                        }
-                    }).catch(err => {
-                        if (!err.response) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Error de conexión',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
-                    })
+                            }
+                        }).catch(err => {
+                            if (!err.response) {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Error de conexión',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }
+                        })
                 }
-            }catch(err){
+            } catch (err) {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -2103,14 +2303,14 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        async blockingHour(){
+        async blockingHour() {
             this.disableButton = true
-            if (this.hourBlocking.dateBlocking != '' && this.hourBlocking.employe.name && this.hourBlocking.start != '' &&  this.hourBlocking.end != '') {
+            if (this.hourBlocking.dateBlocking != '' && this.hourBlocking.employe.name && this.hourBlocking.start != '' && this.hourBlocking.end != '') {
                 var splitDate = this.hourBlocking.dateBlocking.split('-')
                 try {
-                    
-                    const generateLenders = await axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                        date: splitDate[1]+'-'+splitDate[0]+'-'+splitDate[2],
+
+                    const generateLenders = await axios.post(endPoint.endpointTarget + '/dates/availableslenders', {
+                        date: splitDate[1] + '-' + splitDate[0] + '-' + splitDate[2],
                         branch: this.branch
                     }, this.configHeader)
                     try {
@@ -2143,7 +2343,7 @@ import mixinES from '../mixins/mixinES'
                             $('.clearBlockingTime .ant-time-picker-clear').click()
                             $('.clearBlockingDate .ant-calendar-picker-clear').click()
                             $('.clearBlockingEmploye .ant-select-selection__clear').click()
-                        }else{
+                        } else {
                             this.$swal({
                                 icon: 'error',
                                 title: 'Bloqueo ocupado',
@@ -2153,7 +2353,7 @@ import mixinES from '../mixins/mixinES'
                             })
                             this.disableButton = false
                         }
-                    }catch(err){
+                    } catch (err) {
                         if (!err.response) {
                             this.$swal({
                                 icon: 'error',
@@ -2164,7 +2364,7 @@ import mixinES from '../mixins/mixinES'
                         }
                         this.disableButton = false
                     }
-                }catch(err){
+                } catch (err) {
                     if (!err.response) {
                         this.$swal({
                             icon: 'error',
@@ -2175,7 +2375,7 @@ import mixinES from '../mixins/mixinES'
                     }
                     this.disableButton = false
                 }
-            }else{
+            } else {
                 this.$swal({
                     icon: 'error',
                     title: 'Debe llenar todos los datos',
@@ -2185,7 +2385,7 @@ import mixinES from '../mixins/mixinES'
                 this.disableButton = false
             }
         },
-        getBranch(){
+        getBranch() {
             this.filterOff = false
             this.filter = false
             this.spinningView = true
@@ -2196,7 +2396,7 @@ import mixinES from '../mixins/mixinES'
                 this.spinningView = false
                 this.filterOff = true
             }, 500);
-            this.branchName = localStorage.branchName  
+            this.branchName = localStorage.branchName
             this.branch = localStorage.branch
             // this.getUsers()
             this.getConfiguration()
@@ -2207,26 +2407,26 @@ import mixinES from '../mixins/mixinES'
             this.getDates()
             this.getBlockingHours()
         },
-        getUserData(){
-            this.firstNameUser = localStorage.firstname  
+        getUserData() {
+            this.firstNameUser = localStorage.firstname
             this.lastNameUser = localStorage.lastname
             this.imgUser = localStorage.imgUser
             this.idUser = localStorage._id
         },
-        
-        async getMicroServices(){
+
+        async getMicroServices() {
             try {
-                const getMicro = await axios.get(endPoint.endpointTarget+'/configurations/getMicroservice/'+this.branch, this.configHeader)
+                const getMicro = await axios.get(endPoint.endpointTarget + '/configurations/getMicroservice/' + this.branch, this.configHeader)
                 if (getMicro.data.status == 'ok') {
                     this.microServices = getMicro.data.data
-                    for (const micro of this.microServices ) {
+                    for (const micro of this.microServices) {
                         micro.checked = false
                     }
                     this.ifMicro = true
-                }else{
+                } else {
                     this.ifMicro = false
                 }
-            }catch(err){
+            } catch (err) {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -2241,21 +2441,21 @@ import mixinES from '../mixins/mixinES'
             if (value != '') {
                 this.clients = []
                 try {
-                    const getClient = await axios.get(endPoint.endpointTarget+'/clients/regex/'+ value, this.configHeader)
+                    const getClient = await axios.get(endPoint.endpointTarget + '/clients/regex/' + value, this.configHeader)
                     if (getClient.data.status == 'ok') {
                         this.clients = getClient.data.data
                     }
-                }catch(err){
-                    
+                } catch (err) {
+
                 }
-            }else{
+            } else {
                 this.clients = []
             }
-            
+
         },
-        async getConfiguration(){
+        async getConfiguration() {
             try {
-                const getConfig = await axios.get(endPoint.endpointTarget+'/configurations/'+this.branch, this.configHeader)
+                const getConfig = await axios.get(endPoint.endpointTarget + '/configurations/' + this.branch, this.configHeader)
                 if (getConfig.data.status == 'ok') {
                     this.configurations = getConfig.data.data
                     var daysBlock = []
@@ -2267,18 +2467,18 @@ import mixinES from '../mixins/mixinES'
                     if (this.configurations.blockedDays) {
                         this.configurations.blockedDays.forEach((element, index) => {
                             var split = element.date.split("-")
-                            this.configurations.blockedDays[index].dat = split[1]+"-"+split[0]+"-"+split[2]
+                            this.configurations.blockedDays[index].dat = split[1] + "-" + split[0] + "-" + split[2]
                         });
 
                         this.blockForDays = this.configurations.blockedDays
-                        
+
                     }
-                    
+
                     this.hideDays = daysBlock
-                }else{
+                } else {
                     this.configurations = {}
                 }
-            }catch(err){
+            } catch (err) {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -2290,51 +2490,51 @@ import mixinES from '../mixins/mixinES'
             }
             this.configDatePicker.maxDate = new Date().setMonth(new Date().getMonth() + this.configurations.datesPolitics.limitTimeDate)
             const blockHours = this.configurations.blockHour
-            
+
             this.configDatePicker.disable = []
             this.configDatePickerEdit.disable = []
             this.configDatePickerBlocked.disable = []
             this.configDatePickerBlockedForDays.disable = []
 
             this.configDatePicker.disable.push(
-                function(date) {
+                function (date) {
                     return blockHours[date.getDay()].status == true ? false : true;
                 }
             )
             this.configDatePickerEdit.disable.push(
-                function(date) {
+                function (date) {
                     return blockHours[date.getDay()].status == true ? false : true;
                 }
             )
             this.configDatePickerBlocked.disable.push(
-                function(date) {
+                function (date) {
                     return blockHours[date.getDay()].status == true ? false : true;
                 }
             )
             this.configDatePickerBlockedForDays.disable.push(
-                function(date) {
+                function (date) {
                     return blockHours[date.getDay()].status == true ? false : true;
                 }
-            ) 
-                
-            
+            )
+
+
             this.blockForDays.forEach(element => {
                 this.configDatePicker.disable.push(element.date)
-                
-                this.configDatePickerEdit.disable.push(element.date.split("-")[1]+"-"+element.date.split("-")[0]+"-"+element.date.split("-")[2])
-                
+
+                this.configDatePickerEdit.disable.push(element.date.split("-")[1] + "-" + element.date.split("-")[0] + "-" + element.date.split("-")[2])
+
                 this.configDatePickerBlocked.disable.push(element.date)
                 this.configDatePickerBlockedForDays.disable.push(element.date)
-            }); 
+            });
         },
-        async pushBlockedDay(){
+        async pushBlockedDay() {
             if (this.dateBlockingForDay != '') {
                 try {
                     var dates = []
                     if (this.configurations.blockedDays) {
                         dates = this.configurations.blockedDays
-                    }  
-                    const pushDay = await axios.post(endPoint.endpointTarget+'/configurations/addBlockedday', {
+                    }
+                    const pushDay = await axios.post(endPoint.endpointTarget + '/configurations/addBlockedday', {
                         id: this.configurations._id,
                         dates: dates,
                         date: this.dateBlockingForDay
@@ -2350,7 +2550,7 @@ import mixinES from '../mixins/mixinES'
                         this.modals.modal6 = false
                         this.modals.modal3 = true
                         this.getConfiguration()
-                    }else{
+                    } else {
                         this.$swal({
                             icon: 'error',
                             title: 'Ya existe un bloqueo con este día',
@@ -2361,7 +2561,7 @@ import mixinES from '../mixins/mixinES'
                 } catch (error) {
                     console.log(error)
                 }
-            }else{
+            } else {
                 this.$swal({
                     icon: 'error',
                     title: 'Debe elegir una fecha',
@@ -2369,15 +2569,15 @@ import mixinES from '../mixins/mixinES'
                     timer: 1500
                 })
             }
-            
+
         },
-        validatorLendersDaysSplit(change, event){
+        validatorLendersDaysSplit(change, event) {
             this.splitDays = []
             if (event.view == 'day') {
                 var splitStart = this.configurations.blockHour[new Date(event.startDate).getDay()].start.split(':')
                 var splitEnd = this.configurations.blockHour[new Date(event.startDate).getDay()].end.split(':')
-                var start = parseFloat(splitStart[0]+splitStart[1]) * 0.60
-                var end = parseFloat(splitEnd[0]+splitEnd[1]) * 0.60
+                var start = parseFloat(splitStart[0] + splitStart[1]) * 0.60
+                var end = parseFloat(splitEnd[0] + splitEnd[1]) * 0.60
                 this.startCalendar = parseInt(splitStart[1]) == 30 ? start + 12 : start
                 this.endCalendar = end
                 for (let index = 0; index < this.employeShow.length; index++) {
@@ -2385,47 +2585,47 @@ import mixinES from '../mixins/mixinES'
                     for (let j = 0; j < event.events.length; j++) {
                         const element = event.events[j]
                         if (element.employe.id == name._id) {
-                            this.splitDays.push({id: name._id, class: name.class+'Split', label: name.name, img: name.img})
+                            this.splitDays.push({ id: name._id, class: name.class + 'Split', label: name.name, img: name.img })
                             break
                         }
                     }
                 }
             }
         },
-        validatorLender(){
+        validatorLender() {
             const token = localStorage.userToken
             const decoded = jwtDecode(token)
             const split = decoded.linkLender.split("/")
             this.lender = split[0]
             this.status = decoded.status
         },
-        handleScroll(event){
-            if (event.target.documentElement.scrollTop > 140){
+        handleScroll(event) {
+            if (event.target.documentElement.scrollTop > 140) {
                 $(".buttons").addClass("fixed-top")
             }
             else {
                 $(".buttons").removeClass("fixed-top")
             }
         },
-        validRoute(route, type){
+        validRoute(route, type) {
             for (let index = 0; index < this.auth.length; index++) {
                 const element = this.auth[index];
                 if (element.ruta == route) {
                     for (let i = 0; i < element.validaciones.length; i++) {
-                        if (type == element.validaciones[i]) { 
+                        if (type == element.validaciones[i]) {
                             return true
-                        } 
+                        }
                     }
                 }
-            } 
+            }
         },
-        async getNewDate(id){
+        async getNewDate(id) {
             if (this.validRoute('agendamiento', 'todas')) {
                 try {
-                    const date = await axios.get(endPoint.endpointTarget+'/dates/getNewDate/'+id, this.configHeader)
+                    const date = await axios.get(endPoint.endpointTarget + '/dates/getNewDate/' + id, this.configHeader)
                     this.events.push(date.data.data)
-                }catch(err){
-                    
+                } catch (err) {
+
                 }
             }
         },
@@ -2441,18 +2641,18 @@ import mixinES from '../mixins/mixinES'
                         title: 'No cuenta con permisos',
                         text: 'Para visualizar la agenda contacte a su supervisor'
                     })
-                }else{
+                } else {
                     try {
-                        const employe = await axios.get(endPoint.endpointTarget+'/employes/justonebyid/'+decoded.linkLender, this.configHeader)
-                        this.getDatesByEmploye(employe.data.data._id, decoded.userImage == '' ? 'no' : decoded.userImage, employe.data.data.firstName+' '+employe.data.data.lastName)
-                    }catch(err){
-                        
+                        const employe = await axios.get(endPoint.endpointTarget + '/employes/justonebyid/' + decoded.linkLender, this.configHeader)
+                        this.getDatesByEmploye(employe.data.data._id, decoded.userImage == '' ? 'no' : decoded.userImage, employe.data.data.firstName + ' ' + employe.data.data.lastName)
+                    } catch (err) {
+
                     }
                 }
-            }else{
+            } else {
                 this.events = []
                 try {
-                    const dates = await axios.get(endPoint.endpointTarget+'/dates/'+this.branch, this.configHeader)
+                    const dates = await axios.get(endPoint.endpointTarget + '/dates/' + this.branch, this.configHeader)
                     if (dates) {
                         this.events = dates.data.data
                         localStorage.userToken = dates.data.token
@@ -2463,7 +2663,7 @@ import mixinES from '../mixins/mixinES'
                         }, 500);
                         this.generateExcel()
                     }
-                }catch(err){
+                } catch (err) {
                     EventBus.$emit('pageLoaded', true)
                     setTimeout(() => {
                         this.loader = true
@@ -2479,16 +2679,16 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        viewLink(){
+        viewLink() {
             setTimeout(() => {
                 if (this.$route.query.id) {
-                    axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.$route.query.id, this.configHeader)
-                    .then(res => {
-                        this.onEventClick(res.data.data)
-                    })
+                    axios.get(endPoint.endpointTarget + '/dates/getDate/' + this.$route.query.id, this.configHeader)
+                        .then(res => {
+                            this.onEventClick(res.data.data)
+                        })
                 }
             }, 500);
-            
+
         },
         filterOption(input, option) {
             return (
@@ -2504,31 +2704,31 @@ import mixinES from '../mixins/mixinES'
             clearFilters();
             this.searchText = '';
         },
-        getEmployes(){
-  			axios.get(endPoint.endpointTarget+'/employes/UsersEmployes/'+this.branch, this.configHeader)
-  			.then(res => {
-                this.employeShow = res.data.data
-  			}).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
+        getEmployes() {
+            axios.get(endPoint.endpointTarget + '/employes/UsersEmployes/' + this.branch, this.configHeader)
+                .then(res => {
+                    this.employeShow = res.data.data
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        async getServices(){
+        async getServices() {
             try {
-                const services = await axios.get(endPoint.endpointTarget+'/services/'+this.branch, this.configHeader)
+                const services = await axios.get(endPoint.endpointTarget + '/services/' + this.branch, this.configHeader)
                 if (services.data.status == 'ok') {
-                    this.services = services.data.data 
-                    services.data.data.forEach(element => {this.countServices.push({count: 0})});
-                }else{
+                    this.services = services.data.data
+                    services.data.data.forEach(element => { this.countServices.push({ count: 0 }) });
+                } else {
                     this.services = []
                 }
-            }catch(err){
+            } catch (err) {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -2539,15 +2739,15 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        async getCategories(){
+        async getCategories() {
             try {
-                const categories = await axios.get(endPoint.endpointTarget+'/services/getCategories/'+this.branch, this.configHeader)
+                const categories = await axios.get(endPoint.endpointTarget + '/services/getCategories/' + this.branch, this.configHeader)
                 if (categories.data.status == 'ok') {
                     this.categories = categories.data.data
-                }else{
+                } else {
                     this.categories = []
                 }
-            }catch(err){
+            } catch (err) {
                 if (!err.response) {
                     this.$swal({
                         icon: 'error',
@@ -2558,7 +2758,7 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        formatPhone(){
+        formatPhone() {
             var number = this.dateClient.infoOne.replace(/[^\d]/g, '')
             if (number.length == 9) {
                 number = number.replace(/(\d{1})(\d{4})/, "$1-$2-");
@@ -2567,28 +2767,28 @@ import mixinES from '../mixins/mixinES'
             }
             this.dateClient.infoOne = number
         },
-        clientEdit(){
+        clientEdit() {
             var ifCheck = null
             var firstName = this.MaysPrimera(this.dataClient.firstName)
             var lastName = this.MaysPrimera(this.dataClient.lastName)
 
-            axios.put(endPoint.endpointTarget+'/clients/'+this.dataClient._id, {
+            axios.put(endPoint.endpointTarget + '/clients/' + this.dataClient._id, {
                 firstName: this.dataClient.firstName,
                 lastName: this.dataClient.lastName,
                 email: this.dataClient.email,
                 phone: this.dataClient.phone,
                 instagram: this.dataClient.instagram,
                 birthday: this.dataClient.birthday
-            },this.configHeader)
-            .then(res => {
-                if (res.data.status == 'update client') {
-                    this.$swal({
-							type: 'success',
+            }, this.configHeader)
+                .then(res => {
+                    if (res.data.status == 'update client') {
+                        this.$swal({
+                            type: 'success',
                             icon: 'success',
-							title: 'Cliente editado con éxito',
-							showConfirmButton: false,
-							timer: 1500
-						})
+                            title: 'Cliente editado con éxito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                         this.clients = []
                         this.inputClientDate = false
                         this.dataClient.firstName = ''
@@ -2601,81 +2801,81 @@ import mixinES from '../mixins/mixinES'
                         setTimeout(() => {
                             this.inputClientDate = true
                         }, 200);
-                    // setTimeout(() => {
-                    //     this.getClients();
-                    //     // EventBus.$emit('reloadClients', 'reload')
-                    // }, 1500);
-                }else{
-                    this.modals = {
-                        modal2: true,
-                        message: "El email ya existe",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
-                    }
-                    setTimeout(() => {
+                        // setTimeout(() => {
+                        //     this.getClients();
+                        //     // EventBus.$emit('reloadClients', 'reload')
+                        // }, 1500);
+                    } else {
                         this.modals = {
-                            modal1: true,
-                            modal2: false,
-                            modal3:false,
-                            message: "",
-                            icon: '',
-                            type: ''
+                            modal2: true,
+                            message: "El email ya existe",
+                            icon: 'ni ni-fat-remove ni-5x',
+                            type: 'danger'
                         }
-                    }, 1500);
-                }
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
+                        setTimeout(() => {
+                            this.modals = {
+                                modal1: true,
+                                modal2: false,
+                                modal3: false,
+                                message: "",
+                                icon: '',
+                                type: ''
+                            }
+                        }, 1500);
+                    }
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        selectCat(cat){
-            $('.categoryButton').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
-            $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
+        selectCat(cat) {
+            $('.categoryButton').css({ 'padding': '10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow': '0px 0px 0px 0px rgba(0,0,0,0)' })
+            $('#' + cat).css({ 'padding-top': '14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow': '0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow': '0px 9px 25px -7px rgba(0,0,0,0.75)' })
         },
-        selectCatFinally(cat){
-            $('.categoryButtonFinally').css({'padding':'10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow':'0px 0px 0px 0px rgba(0,0,0,0)'})
-            $('#'+cat).css({'padding-top':'14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow':'0px 9px 25px -7px rgba(0,0,0,0.75)'})
-        }, 
-        plusService(index, service, id, duration, commission, price, employes, discount, products){
+        selectCatFinally(cat) {
+            $('.categoryButtonFinally').css({ 'padding': '10px', 'background-color': '#d5dadd', 'color': '#434a54', 'box-shadow': '0px 0px 0px 0px rgba(0,0,0,0)' })
+            $('#' + cat).css({ 'padding-top': '14px', 'background-color': '#174c8e', 'color': '#fff', '-webkit-box-shadow': '0px 9px 25px -7px rgba(0,0,0,0.75)', 'box-shadow': '0px 9px 25px -7px rgba(0,0,0,0.75)' })
+        },
+        plusService(index, service, id, duration, commission, price, employes, discount, products) {
             this.ifServices = true
             this.countServices[index].count++
             this.registerDae.duration = this.registerDae.duration + parseFloat(duration)
             for (const employe of employes) {
                 employe.valid = true
             }
-            var employesName = [{name: 'Primera disponible', days: '', class: '', valid:true}, ...employes]
+            var employesName = [{ name: 'Primera disponible', days: '', class: '', valid: true }, ...employes]
             if (this.ifMicro) {
-                var microsService = [{checked: false, duration: 0, microService: "Ninguno", price: 0, position: index}]
+                var microsService = [{ checked: false, duration: 0, microService: "Ninguno", price: 0, position: index }]
                 for (const micro of this.microServices) {
-                    microsService.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index})
+                    microsService.push({ checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price, position: index })
                 }
-                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, microServices: microsService, microServiceSelect: [], products: products})
-            }else{
-                this.registerDae.serviceSelectds.push({employes: employesName, commission: commission, duration: duration, price: price, start: '', end:'', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, microServices: [], microServiceSelect: [], products: products})
+                this.registerDae.serviceSelectds.push({ employes: employesName, commission: commission, duration: duration, price: price, start: '', end: '', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, microServices: microsService, microServiceSelect: [], products: products })
+            } else {
+                this.registerDae.serviceSelectds.push({ employes: employesName, commission: commission, duration: duration, price: price, start: '', end: '', sort: 0, employe: 'Primero disponible', employeImg: '', realEmploye: '', valid: false, validAfter: false, discount: discount, itFirst: true, blocksFirst: [], id: '', blocks: [], name: service, service_id: id, microServices: [], microServiceSelect: [], products: products })
             }
             this.totalPrice = this.totalPrice + price
-            this.validHour = false  
+            this.validHour = false
         },
-        Madeyour(){
+        Madeyour() {
             $('.ant-select-selection__clear').click()
         },
-        plusMicroFinally(){
+        plusMicroFinally() {
             $('.thisSelect .ant-select-selection__clear').click()
             this.showCurrencyMicro = true
             this.selectedEvent.services[0].microServiceSelect = this.selectedEvent.microServices
             this.microPrice(this.selectedEvent.services, 0)
-            var microServices = [{checked: false, microService: "Ninguno"}]
+            var microServices = [{ checked: false, microService: "Ninguno" }]
             for (const micro of this.microServices) {
                 var valid = true
                 this.selectedEvent.services[0].microServiceSelect.forEach(element => {
                     if (element.name == micro.microService) {
-                        microServices.push({checked: true, duration: micro.duration, microService: micro.microService, price: micro.price})
+                        microServices.push({ checked: true, duration: micro.duration, microService: micro.microService, price: micro.price })
                         valid = false
                     }
                     if (element.name == 'Ninguno') {
@@ -2683,26 +2883,26 @@ import mixinES from '../mixins/mixinES'
                     }
                 });
                 if (valid) {
-                    microServices.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price})
+                    microServices.push({ checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price })
                 }
             }
             this.selectedEvent.services[0].microServices = microServices
         },
-        plusServiceFinally(name, commission, price, discount, products){
-            var microServices = [{checked: false, microService: "Ninguno"}]
+        plusServiceFinally(name, commission, price, discount, products) {
+            var microServices = [{ checked: false, microService: "Ninguno" }]
             for (const micro of this.microServices) {
-                microServices.push({checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price})
+                microServices.push({ checked: micro.checked, duration: micro.duration, microService: micro.microService, price: micro.price })
             }
-            this.selectedEvent.services.push({name: name, commission: commission, price: price, discount: discount, products: products, index:this.selectedEvent.services.length, microServices: microServices, microServiceSelect:[]})
+            this.selectedEvent.services.push({ name: name, commission: commission, price: price, discount: discount, products: products, index: this.selectedEvent.services.length, microServices: microServices, microServiceSelect: [] })
         },
-        deleteServiceFinally(i){
+        deleteServiceFinally(i) {
             if (this.selectedEvent.services.length > 1) {
                 this.selectedEvent.services.forEach((element, index) => {
                     if (i == element.index) {
                         this.selectedEvent.services.splice(index, 1)
                     }
-                }); 
-            }else{
+                });
+            } else {
                 this.$swal({
                     icon: 'error',
                     title: 'Debe haber al menos 1 servicio',
@@ -2712,17 +2912,17 @@ import mixinES from '../mixins/mixinES'
                 })
             }
         },
-        SelectMicroFinally(index, micro, indexM){
+        SelectMicroFinally(index, micro, indexM) {
             if (micro.microService == 'Ninguno') {
                 this.selectedEvent.services[index].microServices.forEach(element => {
                     element.checked = false
                 });
                 this.selectedEvent.services[index].microServices[0].checked = true
                 this.selectedEvent.services[index].microServiceSelect = []
-            }else{
+            } else {
                 if (this.selectedEvent.services[index].microServices[indexM].checked) {
                     this.selectedEvent.services[index].microServices[indexM].checked = false
-                }else{
+                } else {
                     this.selectedEvent.services[index].microServices[indexM].checked = true
                     this.selectedEvent.services[index].microServices[0].checked = false
                 }
@@ -2738,7 +2938,7 @@ import mixinES from '../mixins/mixinES'
                 if (valid) {
                     this.microPriceClick = micro.price
                     this.microPriceIndex = {
-                        name: micro.microService, 
+                        name: micro.microService,
                         duration: micro.duration,
                         index: index,
                     }
@@ -2749,25 +2949,25 @@ import mixinES from '../mixins/mixinES'
             this.MALDITOVUE = true
             this.microPrice(this.selectedEvent.services, index)
         },
-        changeMicroPrice(){
-            this.selectedEvent.services[this.microPriceIndex.index].microServiceSelect.push({name: this.microPriceIndex.name, duration: this.microPriceIndex.duration, price:this.microPriceClick})
+        changeMicroPrice() {
+            this.selectedEvent.services[this.microPriceIndex.index].microServiceSelect.push({ name: this.microPriceIndex.name, duration: this.microPriceIndex.duration, price: this.microPriceClick })
             this.modals.modal5 = false
         },
-        validateWizardOne(){
-            if (this.registerDate.services != '' && this.registerDate.design != false) { 
+        validateWizardOne() {
+            if (this.registerDate.services != '' && this.registerDate.design != false) {
                 this.registerDate.valid = true
                 for (let i = 0; i < this.registerDate.employePerService.length; i++) {
                     for (let c = 0; c < this.employes.length; c++) {
-                        if (this.employes[c]._id == this.registerDate.employePerService[i] ) {
-                        this.registerDate.employe.push(this.employes[c])
-                        }               
+                        if (this.employes[c]._id == this.registerDate.employePerService[i]) {
+                            this.registerDate.employe.push(this.employes[c])
+                        }
                     }
                 }
                 if (this.registerDate.design == 'si' && this.registerDate.valid3 == false) {
                     this.registerDate.duration = parseFloat(this.registerDate.duration) + 15
                     this.registerDate.valid3 = true
                 }
-                if (this.registerDate.design == 'no' && this.registerDate.valid3 ==true) {
+                if (this.registerDate.design == 'no' && this.registerDate.valid3 == true) {
                     this.registerDate.duration = parseFloat(this.registerDate.duration) - 15
                     this.registerDate.valid3 = false
                 }
@@ -2776,10 +2976,10 @@ import mixinES from '../mixins/mixinES'
                 this.img1 = ''
                 return true
             }
-            else{
+            else {
                 this.registerDate.valid = false
                 this.modals = {
-                    modal1:true,
+                    modal1: true,
                     modal2: true,
                     message: "¡Debe completar todos los datos!",
                     icon: 'ni ni-fat-remove ni-5x',
@@ -2787,28 +2987,28 @@ import mixinES from '../mixins/mixinES'
                 }
                 setTimeout(() => {
                     this.modals = {
-                        modal1:true,  
+                        modal1: true,
                         modal2: false,
                         message: '',
                         icon: '',
                         type: ''
                     }
-                }, 1500); 
+                }, 1500);
                 return false
-            } 
+            }
         },
-        validateWizardTwo(){
-            if (this.registerDate.client != null && this.registerDate.date != null) { 
+        validateWizardTwo() {
+            if (this.registerDate.client != null && this.registerDate.date != null) {
                 this.registerDate.valid = true
                 this.blockHour = []
                 this.registerDate.employeSelect = 'Seleccione un empleado'
                 this.img1 = ''
                 return true
             }
-            else{
+            else {
                 this.registerDate.valid = false
                 this.modals = {
-                    modal1:true,
+                    modal1: true,
                     modal2: true,
                     message: "¡Debe completar todos los datos!",
                     icon: 'ni ni-fat-remove ni-5x',
@@ -2816,66 +3016,66 @@ import mixinES from '../mixins/mixinES'
                 }
                 setTimeout(() => {
                     this.modals = {
-                        modal1:true,  
+                        modal1: true,
                         modal2: false,
                         message: '',
                         icon: '',
                         type: ''
                     }
-                }, 1500); 
+                }, 1500);
                 return false
-            } 
+            }
         },
-        validateWizardThree(){
-               if (this.registerDate.employeSelect != 'Seleccione un empleado' && this.registerDate.start != null) { 
-                   this.registerDate.valid = true
-                   return true
-               }
-               else{
-                   this.registerDate.valid = false
-                   this.modals = {
-                        modal1:true,
-                        modal2: true,
-                        message: "¡Debe completar todos los datos!",
-                        icon: 'ni ni-fat-remove ni-5x',
-                        type: 'danger'
+        validateWizardThree() {
+            if (this.registerDate.employeSelect != 'Seleccione un empleado' && this.registerDate.start != null) {
+                this.registerDate.valid = true
+                return true
+            }
+            else {
+                this.registerDate.valid = false
+                this.modals = {
+                    modal1: true,
+                    modal2: true,
+                    message: "¡Debe completar todos los datos!",
+                    icon: 'ni ni-fat-remove ni-5x',
+                    type: 'danger'
+                }
+                setTimeout(() => {
+                    this.modals = {
+                        modal1: true,
+                        modal2: false,
+                        message: '',
+                        icon: '',
+                        type: ''
                     }
-                    setTimeout(() => {
-                        this.modals = {
-                            modal1:true,  
-                            modal2: false,
-                            message: '',
-                            icon: '',
-                            type: ''
-                        }
-                    }, 1500); 
-                   return false
-               } 
+                }, 1500);
+                return false
+            }
         },
-        initialState(){
+        initialState() {
             $(".ant-select-selection__clear").click()
             this.modals.modal3 = false
             if (this.$refs.wizard) {
                 this.$refs.wizard.reset()
             }
-            
+
             this.registerDate = {
-                services:[],
-                servicesShow:[],
-                employePerService:[],
-                employe:[],
-                employeSelect:"Seleccione un empleado",
-                employeClass:null,
-                employeResTime:null,
-                client:null,
-                block:null,
-                duration:0,
-                design:false,
-                date:null,
-                sort:null,
-                valid:true,
-                valid2:true,
-                valid3:false
+                services: [],
+                servicesShow: [],
+                employePerService: [],
+                employe: [],
+                employeSelect: "Seleccione un empleado",
+                employeClass: null,
+                employeResTime: null,
+                client: null,
+                block: null,
+                duration: 0,
+                design: false,
+                date: null,
+                sort: null,
+                valid: true,
+                valid2: true,
+                valid3: false
             }
             this.readyChange = false
             this.validHour = false
@@ -2886,23 +3086,23 @@ import mixinES from '../mixins/mixinES'
                 employeSelect: '',
                 date: '',
                 duration: 0,
-                restTime:'',
+                restTime: '',
                 class: '',
                 employeResTime: '',
                 serviceSelectds: [],
-                design:'nada',
+                design: 'nada',
                 start: '',
                 sort: '',
                 end: '',
                 valid: true
             },
-            this.dateClient = {
-                name:'',
-                id:'',
-                phone:'',
-                email:''
-            }
-            this.dataClient ={
+                this.dateClient = {
+                    name: '',
+                    id: '',
+                    phone: '',
+                    email: ''
+                }
+            this.dataClient = {
                 firstName: '',
                 lastName: '',
                 email: '',
@@ -2915,7 +3115,7 @@ import mixinES from '../mixins/mixinES'
                 lastAttend: '',
                 historical: '',
                 createdAt: '',
-                idRecommender:'',
+                idRecommender: '',
                 valid: false,
                 valid2: false
             }
@@ -2926,7 +3126,7 @@ import mixinES from '../mixins/mixinES'
                 this.countServices[index].count = 0
             }
         },
-        changeMin(valid){
+        changeMin(valid) {
             setTimeout(() => {
                 this.spinningEdit = true
             }, 5);
@@ -2934,11 +3134,11 @@ import mixinES from '../mixins/mixinES'
                 if (this.minLessEdit > 0) {
                     this.minLessEdit = this.minLessEdit - 15
                     this.dataEditSend.duration = this.dataEditSend.duration + 15
-                }else{
+                } else {
                     this.minAddEdit = this.minAddEdit + 15
                     this.dataEditSend.duration = this.dataEditSend.duration + 15
                 }
-            }else{
+            } else {
                 if (this.dataEditSend.duration == 15) {
                     this.$swal({
                         type: 'error',
@@ -2947,68 +3147,68 @@ import mixinES from '../mixins/mixinES'
                         showConfirmButton: false,
                         timer: 1500
                     })
-                }else{
+                } else {
                     if (this.minAddEdit > 0) {
                         this.minAddEdit = this.minAddEdit - 15
                         this.dataEditSend.duration = this.dataEditSend.duration - 15
-                    }else{
+                    } else {
                         this.minLessEdit = this.minLessEdit + 15
                         this.dataEditSend.duration = this.dataEditSend.duration - 15
                     }
-                } 
+                }
             }
             setTimeout(() => {
                 this.searchBlockEdit()
             }, 500);
         },
-        editEmployeDate(value){
+        editEmployeDate(value) {
             this.dataEditSend.employe = value
             if (this.dataEditSend.employe.id == this.dataEditSend.originalEmploye.id) {
                 this.changeDateEdit()
-            }else{
+            } else {
                 this.searchBlockEdit()
             }
-            
+
         },
-        searchBlockEdit(){
+        searchBlockEdit() {
             setTimeout(() => {
                 this.spinningEdit = true
             }, 5);
-            
+
             this.blockFirstEdit.forEach(element => {
                 if (element.validator == 'select') {
                     element.validator = true
                 }
             });
-            axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+            axios.post(endPoint.endpointTarget + '/dates/editBlocksFirst', {
                 block: this.blockFirstEdit,
                 timedate: this.dataEditSend.duration,
                 employeSelect: this.dataEditSend.employe.id,
                 firstBlock: false
             })
-            .then(res => {
-                this.finalBlockEdit = res.data.blockEmploye
-                this.validEditBlock = true
-                setTimeout(() => {
-                    this.spinningEdit = false
-                }, 1000);
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
+                .then(res => {
+                    this.finalBlockEdit = res.data.blockEmploye
+                    this.validEditBlock = true
+                    setTimeout(() => {
+                        this.spinningEdit = false
+                    }, 1000);
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        async selectClient(client){
+        async selectClient(client) {
             console.log(client)
             if (client == 'register') {
                 this.dataClient.valid = false
                 this.dateClient.valid2 = false
-            }else{
+            } else {
                 const value = await axios.get(`${endPoint.endpointTarget}/clients/findOne/${client}`, this.configHeader)
                 this.dataClient.valid = true
                 this.dateClient.valid2 = false
@@ -3033,11 +3233,11 @@ import mixinES from '../mixins/mixinES'
                     lastAttend: value.data.data.lastAttend,
                     createdAt: value.data.data.createdAt,
                     valid: true,
-                    valid2: true 
+                    valid2: true
                 }
-            } 
+            }
         },
-        validRegister(){
+        validRegister() {
             if (this.dataClient.firstName.length == 1) {
                 this.dataClient.firstName = this.dataClient.firstName.toUpperCase()
             }
@@ -3049,31 +3249,31 @@ import mixinES from '../mixins/mixinES'
                     if (this.dataClient.email.split('@').length == 2) {
                         if (this.dataClient.email.split('@')[1].split('.').length >= 2) {
                             this.dataClient.valid2 = true
-                        }else{
+                        } else {
                             this.dataClient.valid2 = false
                         }
-                    }else{
+                    } else {
                         this.dataClient.valid2 = false
                     }
                 }
-                else{
+                else {
                     this.dataClient.valid2 = false
                 }
             }, 200);
-            
+
         },
         formatDate(date) {
             let dateFormat = new Date(date)
-			return dateFormat.getDate()+"-"+(dateFormat.getMonth() + 1)+"-"+dateFormat.getFullYear()+' ('+dateFormat.getHours()+":"+('0'+dateFormat.getMinutes()).slice(-2)+")"
+            return dateFormat.getDate() + "-" + (dateFormat.getMonth() + 1) + "-" + dateFormat.getFullYear() + ' (' + dateFormat.getHours() + ":" + ('0' + dateFormat.getMinutes()).slice(-2) + ")"
         },
         formatDatesGood(date) {
             let dateFormat = new Date(date)
-			return dateFormat.getDate()+"-"+dateFormat.getMonth()+"-"+dateFormat.getFullYear()
+            return dateFormat.getDate() + "-" + dateFormat.getMonth() + "-" + dateFormat.getFullYear()
         },
-        MaysPrimera(string){
-			return string.charAt(0).toUpperCase() + string.slice(1);
+        MaysPrimera(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
         },
-        selectEmploye(nombre,clase,restTime,img){
+        selectEmploye(nombre, clase, restTime, img) {
             this.registerDate.employeSelect = nombre
             this.registerDate.employeClass = clase
             this.registerDate.employeResTime = restTime
@@ -3085,31 +3285,31 @@ import mixinES from '../mixins/mixinES'
             }
             this.insertDate()
         },
-        insertDate(){
+        insertDate() {
             this.blockHour = []
-            axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
+            axios.post(endPoint.endpointTarget + '/citas/getBlocks', {
                 employe: this.registerDate.employeSelect,
                 date: this.registerDate.date,
                 time: this.registerDate.duration,
-                resTime:this.registerDate.employeResTime
+                resTime: this.registerDate.employeResTime
             })
-            .then(res => { this.blockHour = res.data })
-            .catch(err => { 
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-             })
+                .then(res => { this.blockHour = res.data })
+                .catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        sendConfirmationn(id, name, mail, start, end, services, lender){
+        sendConfirmationn(id, name, mail, start, end, services, lender) {
             this.$swal({
                 icon: 'info',
                 title: '¿Desea enviar confirmación?',
-                text: 'Correo del cliente '+mail,
+                text: 'Correo del cliente ' + mail,
                 type: 'info',
                 showCancelButton: true,
                 confirmButtonText: 'Sí',
@@ -3117,35 +3317,270 @@ import mixinES from '../mixins/mixinES'
                 showCloseButton: true,
                 showLoaderOnConfirm: true
             })
-            .then((result) => {
-                if(result.value) {
-                    const nameFormat = name
-                    const contactFormat = mail
-                    const startFormat = start
-                    const endFormat = end
-                    const dateFormat = this.finalDate
-                    
-                    axios.post(endPoint.endpointTarget+'/citas/sendConfirmation/'+id, {
-                        name: nameFormat,
-                        contact: contactFormat,
-                        start: startFormat,
-                        end: endFormat,
-                        date: dateFormat,
-                        service: services,
-                        lenders: lender,
-                        payment: 'No especificado'
-                    })
+                .then((result) => {
+                    if (result.value) {
+                        const nameFormat = name
+                        const contactFormat = mail
+                        const startFormat = start
+                        const endFormat = end
+                        const dateFormat = this.finalDate
+
+                        axios.post(endPoint.endpointTarget + '/citas/sendConfirmation/' + id, {
+                            name: nameFormat,
+                            contact: contactFormat,
+                            start: startFormat,
+                            end: endFormat,
+                            date: dateFormat,
+                            service: services,
+                            lenders: lender,
+                            payment: 'No especificado'
+                        })
+                            .then(res => {
+                                if (res.data.status == 'ok') {
+                                    this.$swal({
+                                        icon: 'success',
+                                        title: 'Envío exitoso!',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }
+                            })
+                            .catch(err => {
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }
+                            })
+                    } else {
+
+                    }
+                })
+        },
+        validBlockeBlock(value) {
+            this.blokedBlock = value == undefined ? true : false
+        },
+        register() {
+            this.spinningDate = true
+            if (this.dataClient.valid && this.validSelectClient) {
+                this.ifDisabled = true
+                var employeFinal = ''
+                var hourFinal = ''
+                for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                    const element = this.registerDae.serviceSelectds[index];
+                    if (index > 0) {
+                        employeFinal = employeFinal + ' - ' + element.realEmploye
+                        hourFinal = hourFinal + ' - ' + element.start + 'Hrs'
+                    } else {
+                        employeFinal = element.realEmploye
+                        hourFinal = element.start + 'Hrs'
+                    }
+                }
+                axios.post(endPoint.endpointTarget + '/dates/verifyDate', {
+                    dataDate: this.registerDae,
+                    date: this.finalDate,
+                    branch: this.branch
+                }, this.configHeader)
                     .then(res => {
-                        if (res.data.status == 'ok') {
+                        if (res.data.status == true) {
+                            this.spinningDate = false
                             this.$swal({
-                                icon: 'success',
-                                title: 'Envío exitoso!',
+                                icon: 'error',
+                                title: '¡Disculpe!',
+                                text: 'El horario fue tomado recientemente, vuelva a agendar su cita.',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
+                            this.$refs.wizard.prevTab()
+                            for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                                const element = this.registerDae.serviceSelectds[index];
+                                element.start = ''
+                                element.end = ''
+                                element.sort = ''
+                                element.class = ''
+                                element.blocks = []
+                                element.blocksFirst = []
+                                element.valid = false
+                                element.employe = 'Primera disponible'
+                                element.employeImg = ''
+                                element.employeId = ''
+                                element.realEmploye = 'Primera disponible'
+                            }
+                            this.validHour = false
+                            setTimeout(() => {
+                                axios.post(endPoint.endpointTarget + '/dates/availableslenders', {
+                                    date: this.finalDate,
+                                    branch: this.branch
+                                }, this.configHeader)
+                                    .then(res => {
+                                        this.getDay = res.data.day
+                                        this.availableslenders = res.data.array
+                                        axios.post(endPoint.endpointTarget + '/dates/blocksHoursFirst', {
+                                            date: this.finalDate,
+                                            employes: res.data.array,
+                                            timedate: this.registerDae.serviceSelectds[0].duration,
+                                            employesServices: this.registerDae.serviceSelectds[0].employes,
+                                            branch: this.branch
+                                        }, this.configHeader)
+                                            .then(res => {
+                                                this.readyChange = true
+                                                this.registerDae.serviceSelectds[0].valid = true
+                                                this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                                this.registerDae.block = res.data.data
+                                                $('#block0').toggle('slow')
+                                            })
+                                    })
+                            }, 200);
+                        } else {
+                            var blockEdit = []
+                            if (this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst.length > 0) {
+                                blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst
+                            } else {
+                                blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocks
+                            }
+                            if (this.file != '') {
+                                let formData = new FormData();
+                                formData.append('file', this.file)
+                                axios.post(endPoint.endpointTarget + '/citas/uploadPdf', formData, {
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data'
+                                    }
+                                }, this.configHeader)
+                                    .then(res => {
+                                        axios.post(endPoint.endpointTarget + '/dates/noOneLender', {
+                                            dataDate: this.registerDae,
+                                            branch: this.branch,
+                                            date: this.finalDate,
+                                            client: this.dateClient,
+                                            block: blockEdit,
+                                            blockId: this.idDatesBlocks,
+                                            typeCreation: 'system',
+                                            pdf: res.data.nameFile,
+                                            ifClient: true
+                                        }, this.configHeader)
+                                            .then(res => {
+                                                if (res.data.status == "ok") {
+                                                    this.spinningDate = false
+                                                    this.$swal({
+                                                        type: 'success',
+                                                        icon: 'success',
+                                                        title: 'Cita creada con éxito',
+                                                        showConfirmButton: false,
+                                                        timer: 1500
+                                                    })
+
+                                                    this.$refs.wizard.reset()
+                                                    setTimeout(() => {
+                                                        this.showCalendar = true
+                                                    }, 1000);
+                                                    $(".ant-select-selection__clear").click()
+                                                    var splitFinally = this.finalDate.split("-")
+                                                    this.finalDate = splitFinally[1] + "-" + splitFinally[0] + "-" + splitFinally[2]
+                                                    res.data.id.forEach(element => {
+                                                        axios.post(endPoint.endpointTarget + '/notifications', {
+                                                            userName: localStorage.firstname + " " + localStorage.lastname,
+                                                            userImage: localStorage.imageUser,
+                                                            employeId: element.employeId,
+                                                            detail: 'Creo cita a ' + this.dateClient.name + ' desde agendamiento (Sistema) ' + this.finalDate,
+                                                            branch: this.branch,
+                                                            link: 'agendamiento?id=' + element._id
+                                                        }, this.configHeader)
+                                                            .then(res => { })
+                                                    });
+                                                    this.initialState()
+
+                                                    this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal, this.registerDae, true)
+                                                    this.modals.modal2 = false
+                                                    this.finalDate = ''
+                                                    this.ifDisabled = false
+                                                    setTimeout(() => {
+                                                        this.socket.emit('sendNotification', "data")
+                                                    }, 3000);
+                                                }
+                                            }).catch(err => {
+                                                if (!err.response) {
+                                                    this.$swal({
+                                                        icon: 'error',
+                                                        title: 'Error de conexión',
+                                                        showConfirmButton: false,
+                                                        timer: 1500
+                                                    })
+                                                }
+                                            })
+                                    }).catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }
+                                    })
+                            } else {
+                                axios.post(endPoint.endpointTarget + '/dates/noOneLender', {
+                                    dataDate: this.registerDae,
+                                    branch: this.branch,
+                                    date: this.finalDate,
+                                    client: this.dateClient,
+                                    block: blockEdit,
+                                    blockId: this.idDatesBlocks,
+                                    typeCreation: 'system',
+                                    pdf: 'not',
+                                    ifClient: true
+                                }, this.configHeader)
+                                    .then(res => {
+                                        if (res.data.status == "ok") {
+                                            this.spinningDate = false
+                                            var splitFinally = this.finalDate.split("-")
+                                            this.finalDate = splitFinally[1] + "-" + splitFinally[0] + "-" + splitFinally[2]
+                                            this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae, true)
+                                            this.$swal({
+                                                type: 'success',
+                                                icon: 'success',
+                                                title: 'Cita creada con éxito',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            this.ifDisabled = false
+                                            this.$refs.wizard.reset()
+                                            res.data.id.forEach(element => {
+                                                axios.post(endPoint.endpointTarget + '/notifications', {
+                                                    userName: localStorage.firstname + " " + localStorage.lastname,
+                                                    userImage: localStorage.imageUser,
+                                                    employeId: element.employeId,
+                                                    detail: 'Creo cita a ' + this.dateClient.name + ' desde agendamiento (Sistema) ' + this.finalDate,
+                                                    branch: this.branch,
+                                                    link: 'agendamiento?id=' + element._id
+                                                }, this.configHeader)
+                                                    .then(res => { this.socket.emit('sendNotification', res.data.data) })
+                                            });
+
+
+                                            setTimeout(() => {
+                                                this.showCalendar = true
+
+                                            }, 1000);
+                                            this.initialState()
+                                            this.modals.modal2 = false
+                                        }
+                                    }).catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }
+                                    })
+                            }
                         }
-                    })
-                    .catch(err => {
+                    }).catch(err => {
+                        this.spinningDate = false
                         if (!err.response) {
                             this.$swal({
                                 icon: 'error',
@@ -3155,242 +3590,7 @@ import mixinES from '../mixins/mixinES'
                             })
                         }
                     })
-                }else{
-
-                }
-            })
-        },
-        validBlockeBlock(value){
-            this.blokedBlock = value == undefined ? true : false
-        },
-        register(){
-            this.spinningDate = true
-            if (this.dataClient.valid && this.validSelectClient) {
-                this.ifDisabled = true
-                var employeFinal = ''
-                var hourFinal = ''
-                for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                    const element = this.registerDae.serviceSelectds[index];
-                    if (index > 0){
-                        employeFinal = employeFinal+' - '+element.realEmploye
-                        hourFinal = hourFinal+' - '+element.start+'Hrs'
-                    }else{
-                        employeFinal = element.realEmploye
-                        hourFinal = element.start+'Hrs'
-                    }
-                }
-                axios.post(endPoint.endpointTarget+'/dates/verifyDate', {
-                    dataDate: this.registerDae,
-                    date: this.finalDate,
-                    branch: this.branch
-                }, this.configHeader)
-                .then(res => {
-                    if(res.data.status == true){
-                        this.spinningDate = false
-                        this.$swal({
-                            icon: 'error',
-                            title: '¡Disculpe!',
-                            text: 'El horario fue tomado recientemente, vuelva a agendar su cita.',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        this.$refs.wizard.prevTab()
-                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                            const element = this.registerDae.serviceSelectds[index];
-                            element.start = ''
-                            element.end = ''
-                            element.sort = ''
-                            element.class = ''
-                            element.blocks = []
-                            element.blocksFirst = []
-                            element.valid = false
-                            element.employe = 'Primera disponible'
-                            element.employeImg = ''
-                            element.employeId = ''
-                            element.realEmploye = 'Primera disponible'
-                        }
-                        this.validHour = false
-                        setTimeout(() => {
-                            axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                                date: this.finalDate,
-                                branch: this.branch
-                            }, this.configHeader)
-                            .then(res => {
-                                this.getDay = res.data.day
-                                this.availableslenders = res.data.array
-                                axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                    date: this.finalDate,
-                                    employes: res.data.array,
-                                    timedate: this.registerDae.serviceSelectds[0].duration,
-                                    employesServices: this.registerDae.serviceSelectds[0].employes,
-                                    branch: this.branch
-                                }, this.configHeader)
-                                .then(res => {
-                                    this.readyChange = true
-                                    this.registerDae.serviceSelectds[0].valid = true
-                                    this.registerDae.serviceSelectds[0].blocks = res.data.data
-                                    this.registerDae.block = res.data.data
-                                    $('#block0').toggle('slow')
-                                })
-                            })
-                        }, 200);
-                    }else{
-                        var blockEdit = []
-                        if (this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst.length > 0) {
-                            blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocksFirst
-                        }else{
-                            blockEdit = this.registerDae.serviceSelectds[this.registerDae.serviceSelectds.length - 1].blocks
-                        }
-                        if (this.file != '') {
-                            let formData = new FormData();
-                            formData.append('file', this.file)
-                            axios.post(endPoint.endpointTarget+'/citas/uploadPdf', formData, {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                }
-                            }, this.configHeader)
-                            .then(res => {
-                                axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
-                                    dataDate: this.registerDae,
-                                    branch: this.branch,
-                                    date: this.finalDate,
-                                    client: this.dateClient,
-                                    block: blockEdit,
-                                    blockId: this.idDatesBlocks,
-                                    typeCreation: 'system',
-                                    pdf: res.data.nameFile,
-                                    ifClient: true
-                                }, this.configHeader)
-                                .then(res => {
-                                    if (res.data.status == "ok") {
-                                        this.spinningDate = false
-                                        this.$swal({
-                                            type: 'success',
-                                            icon: 'success',
-                                            title: 'Cita creada con éxito',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                        
-                                        this.$refs.wizard.reset()
-                                        setTimeout(() => {
-                                            this.showCalendar = true
-                                        }, 1000);
-                                        $(".ant-select-selection__clear").click()
-                                        var splitFinally = this.finalDate.split("-")
-                                        this.finalDate = splitFinally[1]+"-"+splitFinally[0]+"-"+splitFinally[2]
-                                        res.data.id.forEach(element => {
-                                            axios.post(endPoint.endpointTarget+'/notifications', {
-                                                userName: localStorage.firstname + " " + localStorage.lastname,
-                                                userImage: localStorage.imageUser,
-                                                employeId: element.employeId,
-                                                detail: 'Creo cita a '+this.dateClient.name+' desde agendamiento (Sistema) '+this.finalDate,
-                                                branch: this.branch,
-                                                link: 'agendamiento?id=' + element._id
-                                            }, this.configHeader)
-                                            .then(res => {})
-                                        });
-                                        this.initialState()
-                                        
-                                        this.sendConfirmation(res.data.id, this.registerUser.name, this.registerUser.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDae.serviceSelectds, employeFinal,this.registerDae,true)
-                                        this.modals.modal2 = false
-                                        this.finalDate = ''
-                                        this.ifDisabled = false
-                                        setTimeout(() => {
-                                            this.socket.emit('sendNotification', "data")
-                                        }, 3000);
-                                    }    
-                                }).catch(err => {
-                                    if (!err.response) {
-                                        this.$swal({
-                                            icon: 'error',
-                                            title: 'Error de conexión',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        })
-                                    }
-                                })   
-                            }).catch(err => {
-                                if (!err.response) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Error de conexión',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                }
-                            })
-                        }else{
-                            axios.post(endPoint.endpointTarget+'/dates/noOneLender', {
-                                dataDate: this.registerDae,
-                                branch: this.branch,
-                                date: this.finalDate,
-                                client: this.dateClient,
-                                block: blockEdit,
-                                blockId: this.idDatesBlocks,
-                                typeCreation: 'system',
-                                pdf: 'not',
-                                ifClient: true
-                            }, this.configHeader)
-                            .then(res => {
-                                if (res.data.status == "ok") {
-                                    this.spinningDate = false
-                                    var splitFinally = this.finalDate.split("-")
-                                    this.finalDate = splitFinally[1]+"-"+splitFinally[0]+"-"+splitFinally[2]
-                                    this.sendConfirmation(res.data.id, this.dateClient.name, this.dateClient.email, hourFinal, this.registerDae.serviceSelectds[0].end, this.registerDate.serviceSelectds, employeFinal, this.registerDae, true)
-                                    this.$swal({
-                                        type: 'success',
-                                        icon: 'success',
-                                        title: 'Cita creada con éxito',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                    this.ifDisabled = false
-                                    this.$refs.wizard.reset()
-                                    res.data.id.forEach(element => {
-                                        axios.post(endPoint.endpointTarget+'/notifications', {
-                                            userName: localStorage.firstname + " " + localStorage.lastname,
-                                            userImage: localStorage.imageUser,
-                                            employeId: element.employeId,
-                                            detail: 'Creo cita a '+this.dateClient.name+' desde agendamiento (Sistema) '+this.finalDate,
-                                            branch: this.branch,
-                                            link: 'agendamiento?id=' + element._id
-                                        }, this.configHeader)
-                                        .then(res => {this.socket.emit('sendNotification', res.data.data)})
-                                    });
-
-                                    
-                                    setTimeout(() => {
-                                        this.showCalendar = true
-                                        
-                                    }, 1000);
-                                    this.initialState()
-                                    this.modals.modal2 = false
-                                }    
-                            }).catch(err => {
-                                if (!err.response) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Error de conexión',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                }
-                            })
-                        }
-                    }
-                }).catch(err => {
-                    this.spinningDate = false
-                    if (!err.response) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                }) 
-            }else{
+            } else {
                 this.spinningDate = false
                 this.$swal({
                     type: 'error',
@@ -3399,10 +3599,10 @@ import mixinES from '../mixins/mixinES'
                     showConfirmButton: false,
                     timer: 1500
                 })
-            }        
-                  
+            }
+
         },
-        newClient(){
+        newClient() {
             var ifCheck = null
             var firstName = this.MaysPrimera(this.dataClient.firstName)
             var lastName = this.MaysPrimera(this.dataClient.lastName)
@@ -3410,64 +3610,64 @@ import mixinES from '../mixins/mixinES'
             if (this.dataClient.discount) {
                 ifCheck = 0
             }
-            else{
+            else {
                 ifCheck = 1
             }
             var date = this.dataClient.birthday
             if (this.dataClient.birthday.split('-')[1]) {
                 var split = this.dataClient.birthday.split('-')
-                date = split[1]+'-'+split[0]+'-'+split[2]
+                date = split[1] + '-' + split[0] + '-' + split[2]
             }
             const phone = this.dataClient.phone
-            axios.post(endPoint.endpointTarget+'/clients', {
-                firstName:this.dataClient.firstName,
+            axios.post(endPoint.endpointTarget + '/clients', {
+                firstName: this.dataClient.firstName,
                 lastName: this.dataClient.lastName,
-                email:this.dataClient.email,
-                recommender:this.dataClient.recommender,
-                idRecomender:this.dataClient.idRecommender,
-                phone:this.dataClient.phone,
+                email: this.dataClient.email,
+                recommender: this.dataClient.recommender,
+                idRecomender: this.dataClient.idRecommender,
+                phone: this.dataClient.phone,
                 birthday: date,
-                instagram:this.dataClient.instagram,
+                instagram: this.dataClient.instagram,
                 ifCheck: ifCheck
             }, this.configHeader)
-            .then(res => {
-                if (res.data.status == 'client create') {
-                    this.$swal({
-                        type: 'success',
-                        icon: 'success',
-                        title: 'Se registro el cliente con éxito, ya puede continuar',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    this.dateClient = {
-                        name: res.data.data.firstName + ' ' + res.data.data.lastName,
-                        id: res.data.data._id,
-                        email: res.data.data.email,
-                        phone: res.data.data.phone
+                .then(res => {
+                    if (res.data.status == 'client create') {
+                        this.$swal({
+                            type: 'success',
+                            icon: 'success',
+                            title: 'Se registro el cliente con éxito, ya puede continuar',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.dateClient = {
+                            name: res.data.data.firstName + ' ' + res.data.data.lastName,
+                            id: res.data.data._id,
+                            email: res.data.data.email,
+                            phone: res.data.data.phone
+                        }
+                    } else {
+                        this.$swal({
+                            type: 'error',
+                            title: 'El cliente ya existe',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                     }
-                }else{
-                    this.$swal({
-                        type: 'error',
-                        title: 'El cliente ya existe',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        pruebaSe(){
+        pruebaSe() {
             $(".ant-select-selection__clear").click()
         },
-        getDatesByEmploye(id, img, name){
+        getDatesByEmploye(id, img, name) {
             this.filterOff = false
             this.spinningView = true
             if (id == "Todos") {
@@ -3482,7 +3682,7 @@ import mixinES from '../mixins/mixinES'
                 }, 500);
                 this.generateExcel()
             }
-            else{
+            else {
                 this.events = []
                 if (img != 'no') {
                     this.img2 = img
@@ -3490,57 +3690,57 @@ import mixinES from '../mixins/mixinES'
                 else {
                     this.img2 = "https://www.w3schools.com/howto/img_avatar.png"
                 }
-                axios.get(endPoint.endpointTarget+'/dates/getDatesbyemploye/'+ id, this.configHeader)
-                .then(res => {
-                    if (res.data.status == 'ok') {
-                        this.events = res.data.data
-                        localStorage.userToken = res.data.token
-                        this.spinningView = false
-                        this.showCalendar = false
-                        setTimeout(() => {
-                            this.showCalendar = true
+                axios.get(endPoint.endpointTarget + '/dates/getDatesbyemploye/' + id, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.events = res.data.data
+                            localStorage.userToken = res.data.token
                             this.spinningView = false
-                            this.filterOff = true
-                            EventBus.$emit('pageLoaded', true)
-                        }, 500);
-                        this.generateExcel()
-                    }else{
-                        this.$swal({
-                            type: 'error',
-                            icon: 'error',
-                            title: 'Empleado sin citas asignadas',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        this.spinningView = false
-                    }
-                    this.employeByDate = name
-                    this.filter = true
-                }).catch(err => {
-                    EventBus.$emit('pageLoaded', true)
-                    if (!err.response) {
-                        console.log(err)
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }else if (err.response.status == 401) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Session caducada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        setTimeout(() => {
-                            router.push("login")
-                        }, 1550);
-                    }
-                })
+                            this.showCalendar = false
+                            setTimeout(() => {
+                                this.showCalendar = true
+                                this.spinningView = false
+                                this.filterOff = true
+                                EventBus.$emit('pageLoaded', true)
+                            }, 500);
+                            this.generateExcel()
+                        } else {
+                            this.$swal({
+                                type: 'error',
+                                icon: 'error',
+                                title: 'Empleado sin citas asignadas',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.spinningView = false
+                        }
+                        this.employeByDate = name
+                        this.filter = true
+                    }).catch(err => {
+                        EventBus.$emit('pageLoaded', true)
+                        if (!err.response) {
+                            console.log(err)
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        } else if (err.response.status == 401) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Session caducada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            setTimeout(() => {
+                                router.push("login")
+                            }, 1550);
+                        }
+                    })
             }
         },
-        onEventClick(event){
+        onEventClick(event) {
             // this.configDatePickerEdit.minDate = ''
             this.selectedEvent = event
             var validB = true
@@ -3549,172 +3749,327 @@ import mixinES from '../mixins/mixinES'
                 validB = false
             }
 
-            if(validB){
+            if (validB) {
                 this.originalEmploye = this.selectedEvent.employe
                 var start = this.selectedEvent.start
-                axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.selectedEvent._id, this.configHeader)
-                .then(res => {
-                    this.selectedEvent.createdAt = res.data.data.createdAt
-                })
+                axios.get(endPoint.endpointTarget + '/dates/getDate/' + this.selectedEvent._id, this.configHeader)
+                    .then(res => {
+                        this.selectedEvent.createdAt = res.data.data.createdAt
+                    })
 
-                axios.get(endPoint.endpointTarget+'/users/getbylinklender/'+this.selectedEvent.employe.id, this.configHeader)
-                .then(res => {
-                    this.selectedEvent.employe.img = res.data.data
-                    
-                })
-                
-                
+                axios.get(endPoint.endpointTarget + '/users/getbylinklender/' + this.selectedEvent.employe.id, this.configHeader)
+                    .then(res => {
+                        this.selectedEvent.employe.img = res.data.data
+
+                    })
+
+
                 this.dateModals.modal1 = true
                 setTimeout(() => {
                     router.push("agendamiento")
                 }, 3000);
-                
+
                 if (new Date(this.selectedEvent.start).valueOf() < new Date().valueOf()) {
                     this.editDisabled = true
-                }else{
+                } else {
                     this.editDisabled = false
                 }
                 this.notesClient = []
-                axios.get(endPoint.endpointTarget+'/clients/findOne/'+this.selectedEvent.client.id, this.configHeader)
-                .then(res => {
-                    if (res.data.data.attends == 0) {
-                        this.dateData.discount.discount = true
-                        this.dateData.discount.type = 'first'
-                    }
-                    else if(res.data.data.recommendations > 0) {
-                        this.dateData.discount.discount = true
-                        this.dateData.discount.type = 'recomnd'
-                    }else{
-                        this.dateData.discount.discount = false
-                        this.dateData.discount.type = 'none'
-                    }
-                    this.phoneDateSelect = res.data.data.phone.formatInternational
-                    this.dateData.history = []
-                    this.dateData.history = res.data.data.historical
-                    if (res.data.data.clientNotes) {
-                        this.notesClient = res.data.data.clientNotes
-                    }
-                }).catch(err => {
-                    if (!err.response) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                })
+                axios.get(endPoint.endpointTarget + '/clients/findOne/' + this.selectedEvent.client.id, this.configHeader)
+                    .then(res => {
+                        if (res.data.data.attends == 0) {
+                            this.dateData.discount.discount = true
+                            this.dateData.discount.type = 'first'
+                        }
+                        else if (res.data.data.recommendations > 0) {
+                            this.dateData.discount.discount = true
+                            this.dateData.discount.type = 'recomnd'
+                        } else {
+                            this.dateData.discount.discount = false
+                            this.dateData.discount.type = 'none'
+                        }
+                        this.phoneDateSelect = res.data.data.phone.formatInternational
+                        this.dateData.history = []
+                        this.dateData.history = res.data.data.historical
+                        if (res.data.data.clientNotes) {
+                            this.notesClient = res.data.data.clientNotes
+                        }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
             }
         },
-        dateSplit(value){
+        dateSplit(value) {
             if (value) {
                 const date = new Date(value).format('DD MM YYYY')
-                
+
                 var formatDate = date.split(' ')
-                return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
+                return formatDate[0] + '-' + formatDate[1] + '-' + formatDate[2]
             }
-            
+
         },
-        dateSplit2(value){
+        dateSplit2(value) {
             const date = new Date(value).format('DD MM YYYY')
             var formatDate = date.split(' ')
-            return formatDate[0]+'-'+formatDate[1]+'-'+formatDate[2]
+            return formatDate[0] + '-' + formatDate[1] + '-' + formatDate[2]
         },
-        dateSplitHours(value){
+        dateSplitHours(value) {
             const date = new Date(value).format('DD-MM-YYYY HH:mm')
             var formatTime = date.split(' ')[1]
             return formatTime
         },
-        formatName(name){
+        formatName(name) {
             if (name) {
                 var sp = name.split(" / ")
                 return sp[0]
-            } 
+            }
         },
-        formatContact(contact){
+        formatContact(contact) {
             if (contact) {
                 var sp = contact.split(" / ")
                 if (sp[2]) {
-                    return sp[1]+' / '+sp[2]
-                }else{
+                    return sp[1] + ' / ' + sp[2]
+                } else {
                     return sp[1]
                 }
             }
         },
         formatPrice(value) {
-            let val = (value/1).toFixed(2).replace('.', ',')
+            let val = (value / 1).toFixed(2).replace('.', ',')
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         formatDateTwo(date) {
-            let dateFormat = new Date(date+' 10:00')
-            return (dateFormat.getMonth() + 1)+"-"+dateFormat.getDate()+"-"+dateFormat.getFullYear()
+            let dateFormat = new Date(date + ' 10:00')
+            return (dateFormat.getMonth() + 1) + "-" + dateFormat.getDate() + "-" + dateFormat.getFullYear()
         },
-        dataEdit(){
-            axios.get(endPoint.endpointTarget+'/dates/getDate/'+this.selectedEvent._id, this.configHeader)
-            .then(res => {
-                this.configDatePickerEdit.minDate = ""
-                this.dataEditSend = {
-                    date: this.$options.filters.formatDateEdit(res.data.data.createdAt),
-                    employe: res.data.data.employe,
-                    originalEmploye: res.data.data.employe,
-                    start: res.data.data.start.split(" ")[1],
-                    end: res.data.data.end.split(" ")[1],
-                    duration: res.data.data.duration,
-                    service: res.data.service,
-                    idBlock: "",
-                    isFirst: true,
-                    _id: this.selectedEvent._id
-                }
-                this.editSelectValid = false
-                setTimeout(() => {
-                    this.editSelectValid = true
-                }, 100);
-                this.dataEditSend.service.employes.forEach((element, i) => {
-                    if (element.name == 'Primera disponible') {
-                        this.dataEditSend.service.employes.splice(i, 1)
+        dataEdit() {
+            axios.get(endPoint.endpointTarget + '/dates/getDate/' + this.selectedEvent._id, this.configHeader)
+                .then(res => {
+                    this.configDatePickerEdit.minDate = ""
+                    this.dataEditSend = {
+                        date: this.$options.filters.formatDateEdit(res.data.data.createdAt),
+                        employe: res.data.data.employe,
+                        originalEmploye: res.data.data.employe,
+                        start: res.data.data.start.split(" ")[1],
+                        end: res.data.data.end.split(" ")[1],
+                        duration: res.data.data.duration,
+                        service: res.data.service,
+                        idBlock: "",
+                        isFirst: true,
+                        _id: this.selectedEvent._id
                     }
-                });
-                setTimeout(() => {
-                    axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                        date: this.dataEditSend.date,
-                        branch: this.branch
-                    }, this.configHeader)
-                    .then(res => {
-                        this.availableEmployesEdit = res.data.array
-                        axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
+                    this.editSelectValid = false
+                    setTimeout(() => {
+                        this.editSelectValid = true
+                    }, 100);
+                    this.dataEditSend.service.employes.forEach((element, i) => {
+                        if (element.name == 'Primera disponible') {
+                            this.dataEditSend.service.employes.splice(i, 1)
+                        }
+                    });
+                    setTimeout(() => {
+                        axios.post(endPoint.endpointTarget + '/dates/availableslenders', {
                             date: this.dataEditSend.date,
-                            employes: res.data.array,
-                            timedate: this.dataEditSend.duration,
-                            employesServices: this.dataEditSend.service.employes,
                             branch: this.branch
                         }, this.configHeader)
-                        .then(res => {
-                            this.blockFirstEdit = res.data.data
-                            this.dataEditSend.idBlock = res.data.id
-                            axios.post(endPoint.endpointTarget+'/dates/editdateblockbefore',{
-                                block: this.blockFirstEdit,
-                                originalEmploye: this.dataEditSend.originalEmploye.id,
-                                employe: this.dataEditSend.employe,
-                                start: this.dataEditSend.start,
-                                end: this.dataEditSend.end
-                            }, this.configHeader)
                             .then(res => {
-                                this.blockFirstEdit = res.data.data
-                                this.searchBlockEdit()
-                                this.minLessEdit = 0
-                                this.minAddEdit = 0
-                                this.dateModals.modal2 = true
-                                this.configDatePickerEdit.minDate = new Date()
+                                this.availableEmployesEdit = res.data.array
+                                axios.post(endPoint.endpointTarget + '/dates/blocksHoursFirst', {
+                                    date: this.dataEditSend.date,
+                                    employes: res.data.array,
+                                    timedate: this.dataEditSend.duration,
+                                    employesServices: this.dataEditSend.service.employes,
+                                    branch: this.branch
+                                }, this.configHeader)
+                                    .then(res => {
+                                        this.blockFirstEdit = res.data.data
+                                        this.dataEditSend.idBlock = res.data.id
+                                        axios.post(endPoint.endpointTarget + '/dates/editdateblockbefore', {
+                                            block: this.blockFirstEdit,
+                                            originalEmploye: this.dataEditSend.originalEmploye.id,
+                                            employe: this.dataEditSend.employe,
+                                            start: this.dataEditSend.start,
+                                            end: this.dataEditSend.end
+                                        }, this.configHeader)
+                                            .then(res => {
+                                                this.blockFirstEdit = res.data.data
+                                                this.searchBlockEdit()
+                                                this.minLessEdit = 0
+                                                this.minAddEdit = 0
+                                                this.dateModals.modal2 = true
+                                                this.configDatePickerEdit.minDate = new Date()
+                                            }).catch(err => {
+                                                if (!err.response) {
+                                                    this.$swal({
+                                                        icon: 'error',
+                                                        title: 'Error de conexión',
+                                                        showConfirmButton: false,
+                                                        timer: 1500
+                                                    })
+                                                }
+                                            })
+                                    }).catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }
+                                    })
                             }).catch(err => {
                                 if (!err.response) {
                                     this.$swal({
                                         icon: 'error',
-                                        title: 'Error de conexión',
+                                        title: 'Error de conexión6',
                                         showConfirmButton: false,
                                         timer: 1500
                                     })
                                 }
                             })
+                    }, 200);
+                }).catch(err => {
+
+                })
+        },
+        changeDateEdit() {
+            setTimeout(() => {
+                this.spinningEdit = true
+            }, 5);
+            setTimeout(() => {
+                const finalDate = this.dataEditSend.date
+                if (finalDate != '') {
+                    setTimeout(() => {
+                        axios.post(endPoint.endpointTarget + '/dates/availableslenders', {
+                            date: this.dataEditSend.date,
+                            branch: this.branch
+                        }, this.configHeader)
+                            .then(res => {
+                                this.availableEmployesEdit = res.data.array
+                                axios.post(endPoint.endpointTarget + '/dates/blocksHoursFirst', {
+                                    date: this.dataEditSend.date,
+                                    employes: res.data.array,
+                                    timedate: this.dataEditSend.duration,
+                                    employesServices: this.dataEditSend.service.employes,
+                                    branch: this.branch
+                                }, this.configHeader)
+                                    .then(res => {
+                                        if (new Date(finalDate).getMonth() == new Date(this.selectedEvent.createdAt).getMonth() && new Date(finalDate).getDate() == new Date(this.selectedEvent.createdAt).getDate()) {
+                                            this.blockFirstEdit = res.data.data
+                                            this.dataEditSend.idBlock = res.data.id
+                                            axios.post(endPoint.endpointTarget + '/dates/editdateblockbefore', {
+                                                block: this.blockFirstEdit,
+                                                originalEmploye: this.originalEmploye.id,
+                                                employe: this.dataEditSend.employe,
+                                                start: this.dataEditSend.start,
+                                                end: this.dataEditSend.end
+                                            }, this.configHeader)
+                                                .then(res => {
+                                                    this.blockFirstEdit = res.data.data
+                                                    this.searchBlockEdit()
+                                                }).catch(err => {
+                                                    if (!err.response) {
+                                                        this.$swal({
+                                                            icon: 'error',
+                                                            title: 'Error de conexión',
+                                                            showConfirmButton: false,
+                                                            timer: 1500
+                                                        })
+                                                    }
+                                                })
+                                        } else {
+                                            this.dataEditSend.idBlock = res.data.id
+                                            this.blockFirstEdit = res.data.data
+                                            this.blockFirstEdit.forEach(element => {
+                                                if (element.validator == 'select') {
+                                                    element.validator = true
+                                                }
+                                            })
+                                            axios.post(endPoint.endpointTarget + '/dates/editBlocksFirst', {
+                                                block: this.blockFirstEdit,
+                                                timedate: this.dataEditSend.duration,
+                                                employeSelect: this.dataEditSend.employe.id,
+                                                firstBlock: false
+                                            })
+                                                .then(res => {
+                                                    this.finalBlockEdit = res.data.blockEmploye
+                                                    this.validEditBlock = true
+                                                    this.searchBlockEdit()
+                                                }).catch(err => {
+                                                    if (!err.response) {
+                                                        this.$swal({
+                                                            icon: 'error',
+                                                            title: 'Error de conexión',
+                                                            showConfirmButton: false,
+                                                            timer: 1500
+                                                        })
+                                                    }
+                                                })
+                                        }
+
+                                    }).catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión1',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }
+                                    })
+                            }).catch(err => {
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión5',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }
+                            })
+                    }, 500);
+                }
+            }, 200);
+        },
+        selectEmployeEdit(name, date) {
+            const getDay = new Date(date + ' 10:00').getDay()
+            for (let index = 0; index < this.employes.length; index++) {
+                if (this.employes[index].nombre == name) {
+                    var rest = ''
+                    for (let j = 0; j < this.employes[index].days.length; j++) {
+                        const element = this.employes[index].days[j];
+                        if (element.day == getDay) {
+                            rest = element.hours[0] + '/' + element.hours[1]
+                        }
+                    }
+                    this.dateData.lenderEdit = this.employes[index].nombre
+                    this.dateData.classFinalEdit = this.employes[index].class
+                    this.dateData.resTimeFinalEdit = rest
+                    this.insertDateTwo()
+                    break
+                }
+            }
+        },
+        insertDateTwo() {
+            setTimeout(() => {
+                if (this.dateData.fechaEditPick != null) {
+                    this.blockHourEdit = []
+                    axios.post(endPoint.endpointTarget + '/citas/getBlocks', {
+                        employe: this.dateData.lenderEdit,
+                        date: this.dateData.fechaEditPick,
+                        time: this.dateData.duracionEdit,
+                        resTime: this.dateData.resTimeFinalEdit
+                    })
+                        .then(res => {
+                            this.blockHourEdit = res.data
                         }).catch(err => {
                             if (!err.response) {
                                 this.$swal({
@@ -3725,186 +4080,31 @@ import mixinES from '../mixins/mixinES'
                                 })
                             }
                         })
-                    }).catch(err => {
-                        if (!err.response) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Error de conexión6',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
+                }
+                else {
+                    this.blockHourEdit = []
+                    axios.post(endPoint.endpointTarget + '/citas/getBlocks', {
+                        employe: this.dateData.lenderEdit,
+                        date: this.dateData.fechaEdit,
+                        time: this.dateData.duracionEdit,
+                        resTime: this.dateData.resTimeFinalEdit
                     })
-                }, 200);
-            }).catch(err => {
-
-            })
-        },
-        changeDateEdit(){
-            setTimeout(() => {
-                this.spinningEdit = true
-            }, 5);
-            setTimeout(() => {
-                const finalDate = this.dataEditSend.date
-                if (finalDate != '') {
-                    setTimeout(() => {
-                        axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
-                            date: this.dataEditSend.date,
-                            branch: this.branch
-                        }, this.configHeader)
                         .then(res => {
-                            this.availableEmployesEdit = res.data.array
-                            axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                date: this.dataEditSend.date,
-                                employes: res.data.array,
-                                timedate: this.dataEditSend.duration,
-                                employesServices: this.dataEditSend.service.employes,
-                                branch: this.branch
-                            }, this.configHeader)
-                            .then(res => {
-                                if (new Date(finalDate).getMonth() == new Date(this.selectedEvent.createdAt).getMonth() && new Date(finalDate).getDate() == new Date(this.selectedEvent.createdAt).getDate()) {
-                                    this.blockFirstEdit = res.data.data
-                                    this.dataEditSend.idBlock = res.data.id
-                                    axios.post(endPoint.endpointTarget+'/dates/editdateblockbefore',{
-                                        block: this.blockFirstEdit,
-                                        originalEmploye: this.originalEmploye.id,
-                                        employe: this.dataEditSend.employe,
-                                        start: this.dataEditSend.start,
-                                        end: this.dataEditSend.end
-                                    }, this.configHeader)
-                                    .then(res => {
-                                        this.blockFirstEdit = res.data.data
-                                        this.searchBlockEdit()
-                                    }).catch(err => {
-                                        if (!err.response) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Error de conexión',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                        }
-                                    })
-                                }else{
-                                   this.dataEditSend.idBlock = res.data.id
-                                    this.blockFirstEdit = res.data.data
-                                    this.blockFirstEdit.forEach(element => {
-                                        if (element.validator == 'select') {
-                                            element.validator = true
-                                        }
-                                    })
-                                    axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
-                                        block: this.blockFirstEdit,
-                                        timedate: this.dataEditSend.duration,
-                                        employeSelect: this.dataEditSend.employe.id,
-                                        firstBlock: false
-                                    })
-                                    .then(res => {
-                                        this.finalBlockEdit = res.data.blockEmploye
-                                        this.validEditBlock = true
-                                        this.searchBlockEdit()
-                                    }).catch(err => {
-                                        if (!err.response) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Error de conexión',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                        }
-                                    }) 
-                                }
-                                
-                            }).catch(err => {
-                                if (!err.response) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Error de conexión1',
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    })
-                                }
-                            })
+                            this.blockHourEdit = res.data
                         }).catch(err => {
                             if (!err.response) {
                                 this.$swal({
                                     icon: 'error',
-                                    title: 'Error de conexión5',
+                                    title: 'Error de conexión',
                                     showConfirmButton: false,
                                     timer: 1500
                                 })
                             }
                         })
-                    }, 500);
                 }
             }, 200);
         },
-        selectEmployeEdit(name, date){
-            const getDay = new Date(date+' 10:00').getDay()
-            for (let index = 0; index < this.employes.length; index++) {
-                if (this.employes[index].nombre == name) {
-                    var rest = ''
-                    for (let j = 0; j < this.employes[index].days.length; j++) {
-                        const element = this.employes[index].days[j];
-                        if (element.day == getDay) {
-                            rest = element.hours[0]+'/'+element.hours[1]
-                        }
-                    }
-                    this.dateData.lenderEdit = this.employes[index].nombre
-                    this.dateData.classFinalEdit = this.employes[index].class
-                    this.dateData.resTimeFinalEdit = rest
-                    this.insertDateTwo()
-                    break
-                }
-            } 
-        },
-        insertDateTwo(){
-            setTimeout(() => {
-                if (this.dateData.fechaEditPick != null) {
-                    this.blockHourEdit = []
-                    axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
-                        employe: this.dateData.lenderEdit,
-                        date: this.dateData.fechaEditPick,
-                        time: this.dateData.duracionEdit,
-                        resTime:this.dateData.resTimeFinalEdit
-                    })
-                    .then(res => {
-                        this.blockHourEdit = res.data
-                    }).catch(err => {
-                        if (!err.response) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Error de conexión',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
-                    })
-                }
-                else {
-                    this.blockHourEdit = []
-                    axios.post(endPoint.endpointTarget+'/citas/getBlocks', {
-                        employe: this.dateData.lenderEdit,
-                        date: this.dateData.fechaEdit ,
-                        time: this.dateData.duracionEdit,
-                        resTime:this.dateData.resTimeFinalEdit
-                    })
-                    .then(res => {
-                        this.blockHourEdit = res.data
-                    }).catch(err => {
-                        if (!err.response) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Error de conexión',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
-                    })
-                } 
-            }, 200);
-        },
-        editDate(){
+        editDate() {
             var valid = false
             if (this.validEditBlock) {
                 this.finalBlockEdit.forEach(element => {
@@ -3921,92 +4121,92 @@ import mixinES from '../mixins/mixinES'
                         timer: 1500
                     })
                 }
-            }else{
+            } else {
                 valid = true
             }
-            if(valid){
-                axios.post(endPoint.endpointTarget+'/dates/editdate', {
+            if (valid) {
+                axios.post(endPoint.endpointTarget + '/dates/editdate', {
                     data: this.dataEditSend,
-                    blocks : this.blockFirstEdit
+                    blocks: this.blockFirstEdit
                 }, this.configHeader)
-                .then(res => {
-                    if (res.data.status == 'ok') {
-                        this.$swal({
-                            type: 'success',
-                            icon: 'success',
-                            title: 'Cita editada',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        
-                        var idArray = [{_id: this.dataEditSend._id}]
-                        this.dataEditSend.service.microServiceSelect = this.selectedEvent.microServices
-                        this.dataEditSend.service.start = this.dataEditSend.start
-                        this.dataEditSend.service.end = this.dataEditSend.end
-                        this.dataEditSend.service.employe = this.dataEditSend.employe.name
-                        this.dataEditSend.serviceSelectds = [this.dataEditSend.service]
-                        var split = this.dataEditSend.date.split("-")
-                        const dateNew = split[1]+"-"+split[0]+'-'+split[2]
-                        this.finalDate = ""
-                        setTimeout(() => {
-                            this.sendConfirmation(idArray, this.selectedEvent.client.name, this.selectedEvent.client.email, this.dataEditSend.start, this.dataEditSend.end, this.registerDate.serviceSelectds, this.dataEditSend.employe, this.dataEditSend, true, dateNew)
-                        }, 2000);
-                        axios.post(endPoint.endpointTarget+'/notifications', {
-                            branch: this.branch,
-                            userName: this.firstNameUser + " " + this.lastNameUser,
-                            userImage: localStorage.imageUser,
-                            employeId: this.dataEditSend.employe.id,
-                            detail:'Editó una cita con servicio: ' + this.dataEditSend.service.name + ' para el día '+ dateNew + ' con empleado: ' + this.dataEditSend.employe.name + ' y cliente: ' + this.selectedEvent.client.name,
-                            link: 'agendamiento?id=' + this.dataEditSend._id
-                        }, this.configHeader)
-                        .then(res => {
-                            this.socket.emit('sendNotification', res.data.data)
-                        }) 
-                        this.dateModals.modal2 = false
-                        this.dateModals.modal1 = false
-                        this.getDates()
-                    }else{
-                        this.$swal({
-                            type: 'error',
-                            icon: 'error',
-                            title: 'Problemas tecnicos',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                }).catch(err => {
-                    if (!err.response) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión editar',
-                            text: err,
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                })
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                type: 'success',
+                                icon: 'success',
+                                title: 'Cita editada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+
+                            var idArray = [{ _id: this.dataEditSend._id }]
+                            this.dataEditSend.service.microServiceSelect = this.selectedEvent.microServices
+                            this.dataEditSend.service.start = this.dataEditSend.start
+                            this.dataEditSend.service.end = this.dataEditSend.end
+                            this.dataEditSend.service.employe = this.dataEditSend.employe.name
+                            this.dataEditSend.serviceSelectds = [this.dataEditSend.service]
+                            var split = this.dataEditSend.date.split("-")
+                            const dateNew = split[1] + "-" + split[0] + '-' + split[2]
+                            this.finalDate = ""
+                            setTimeout(() => {
+                                this.sendConfirmation(idArray, this.selectedEvent.client.name, this.selectedEvent.client.email, this.dataEditSend.start, this.dataEditSend.end, this.registerDate.serviceSelectds, this.dataEditSend.employe, this.dataEditSend, true, dateNew)
+                            }, 2000);
+                            axios.post(endPoint.endpointTarget + '/notifications', {
+                                branch: this.branch,
+                                userName: this.firstNameUser + " " + this.lastNameUser,
+                                userImage: localStorage.imageUser,
+                                employeId: this.dataEditSend.employe.id,
+                                detail: 'Editó una cita con servicio: ' + this.dataEditSend.service.name + ' para el día ' + dateNew + ' con empleado: ' + this.dataEditSend.employe.name + ' y cliente: ' + this.selectedEvent.client.name,
+                                link: 'agendamiento?id=' + this.dataEditSend._id
+                            }, this.configHeader)
+                                .then(res => {
+                                    this.socket.emit('sendNotification', res.data.data)
+                                })
+                            this.dateModals.modal2 = false
+                            this.dateModals.modal1 = false
+                            this.getDates()
+                        } else {
+                            this.$swal({
+                                type: 'error',
+                                icon: 'error',
+                                title: 'Problemas tecnicos',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión editar',
+                                text: err,
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
             }
         },
-        initialDate(val){
+        initialDate(val) {
             this.$refs.table.$children[0].unSelectAllItems()
-            $('.desMarc').prop('checked' , false)
+            $('.desMarc').prop('checked', false)
             if (val == 1) {
                 this.selectedDates = {
-                    client:'',
-                    closedArray:[],
-                    services:[],
-                    clientSplit:'',
-                    employes:'',
-                    design:0,
-                    comision:0,
-                    totaLocal:0,
-                    total:0,
-                    discount:0,
-                    discountSplit:[],
-                    discountBetter:[],
-                    employeDiscount:[],
-                    endDatesId:[],
-                    clientIds:[]
+                    client: '',
+                    closedArray: [],
+                    services: [],
+                    clientSplit: '',
+                    employes: '',
+                    design: 0,
+                    comision: 0,
+                    totaLocal: 0,
+                    total: 0,
+                    discount: 0,
+                    discountSplit: [],
+                    discountBetter: [],
+                    employeDiscount: [],
+                    endDatesId: [],
+                    clientIds: []
                 }
                 this.payCash = 0
                 this.payTransfer = 0
@@ -4017,33 +4217,33 @@ import mixinES from '../mixins/mixinES'
                 this.haveCode == false
             }
             else {
-               this.selectedDates = {
-                    client:'',
-                    closedArray:[],
-                    services:[],
-                    clientSplit:'',
-                    employes:'',
-                    design:0,
-                    comision:0,
-                    totaLocal:0,
-                    total:0,
-                    discount:0,
-                    discountSplit:[],
-                    discountBetter:[],
-                    employeDiscount:[],
-                    endDatesId:[],
-                    clientIds:[]
+                this.selectedDates = {
+                    client: '',
+                    closedArray: [],
+                    services: [],
+                    clientSplit: '',
+                    employes: '',
+                    design: 0,
+                    comision: 0,
+                    totaLocal: 0,
+                    total: 0,
+                    discount: 0,
+                    discountSplit: [],
+                    discountBetter: [],
+                    employeDiscount: [],
+                    endDatesId: [],
+                    clientIds: []
                 }
                 this.closedDates = []
                 this.payCash = 0
                 this.payTransfer = 0
                 this.payOthers = 0
                 this.payDebit = 0
-                this.payCredit = 0 
+                this.payCredit = 0
             }
-            
+
         },
-        endDate(data){
+        endDate(data) {
             console.log("🚀 ~ file: Dates.vue ~ line 4016 ~ endDate ~ data", data)
             this.finallyDisabled = true
             var valid = false
@@ -4067,66 +4267,221 @@ import mixinES from '../mixins/mixinES'
                     showCloseButton: true,
                     showLoaderOnConfirm: true
                 })
-                .then((result) => {
-                    if(result.value) {
-                        axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
-                            service:dataFinal.services,
-                            client:dataFinal.client,
-                            branch:this.branch,
-                            employe: dataFinal.employe
-                        }, this.configHeader)
-                        .then(res => {
-                            if (res.data.status == 'ok') {
-                                this.$swal({
-                                    type: 'success',
-                                    icon: 'success',
-                                    title: 'Cita finalizada con éxito',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                                EventBus.$emit('reloadFinallyDates', 'reload') 
-                                this.dateModals.modal1 = false
-                                this.dateModals.modal3 = false
-                                this.finallyDisabled = false
-                                var dateSplit = data.createdAt.split("T")[0].split("-")
-                                var dateFinal = dateSplit[1] + "-" + dateSplit[0] + "-" + dateSplit[2] 
-                                console.log("🚀 ~ file: Dates.vue ~ line 4094 ~ .then ~ dateFinal", dateFinal)
-                                axios.post(endPoint.endpointTarget+'/notifications', {
-                                    branch: this.branch,
-                                    userName:this.firstNameUser + " " + this.lastNameUser,
-                                    userImage:localStorage.imageUser,
-                                    employeId:data.employe.id,
-                                    detail:'Finalizó una cita con fecha: ' + dateFinal + ' y cliente: ' + data.client.name + " - ( " + data.client.email + " )",
-                                    link: 'agendamiento?id=' + data._id
-                                }, this.configHeader)
+                    .then((result) => {
+                        if (result.value) {
+                            axios.post(endPoint.endpointTarget + '/dates/endDate/' + data._id, {
+                                service: dataFinal.services,
+                                client: dataFinal.client,
+                                branch: this.branch,
+                                employe: dataFinal.employe
+                            }, this.configHeader)
                                 .then(res => {
+                                    if (res.data.status == 'ok') {
+                                        this.$swal({
+                                            type: 'success',
+                                            icon: 'success',
+                                            title: 'Cita finalizada con éxito',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                        EventBus.$emit('reloadFinallyDates', 'reload')
+                                        this.dateModals.modal1 = false
+                                        this.dateModals.modal3 = false
+                                        this.finallyDisabled = false
+                                        var dateSplit = data.createdAt.split("T")[0].split("-")
+                                        var dateFinal = dateSplit[1] + "-" + dateSplit[0] + "-" + dateSplit[2]
+                                        console.log("🚀 ~ file: Dates.vue ~ line 4094 ~ .then ~ dateFinal", dateFinal)
+                                        axios.post(endPoint.endpointTarget + '/notifications', {
+                                            branch: this.branch,
+                                            userName: this.firstNameUser + " " + this.lastNameUser,
+                                            userImage: localStorage.imageUser,
+                                            employeId: data.employe.id,
+                                            detail: 'Finalizó una cita con fecha: ' + dateFinal + ' y cliente: ' + data.client.name + " - ( " + data.client.email + " )",
+                                            link: 'agendamiento?id=' + data._id
+                                        }, this.configHeader)
+                                            .then(res => {
+                                                this.socket.emit('sendNotification', res.data.data)
+                                            })
+                                    } else {
+                                        this.$swal({
+                                            type: 'error',
+                                            icon: 'error',
+                                            title: 'Esta cita ya fue finalizada',
+                                            text: 'Hace pocos minutos se finalizo esta cita, no puede finalizarse de nuevo.',
+                                            showConfirmButton: true
+                                        })
+                                        this.dateModals.modal1 = false
+                                        this.dateModals.modal3 = false
+                                        this.finallyDisabled = false
+                                        EventBus.$emit('reloadFinallyDates', 'reload')
+                                    }
+                                }).catch(err => {
+                                    if (!err.response) {
+                                        this.$swal({
+                                            icon: 'error',
+                                            title: 'Error de conexión',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                    }
+                                })
+                        }
+                        else {
+                            this.$swal({
+                                type: 'info',
+                                icon: 'info',
+                                title: 'Acción cancelada',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.finallyDisabled = false
+                        }
+                    })
+            } else {
+                axios.post(endPoint.endpointTarget + '/dates/endDate/' + data._id, {
+                    service: data.services,
+                    client: data.client,
+                    branch: this.branch,
+                    employe: data.employe,
+                    microServices: data.microServices
+                }, this.configHeader)
+                    .then(res => {
+                        if (res.data.status == 'ok') {
+                            this.$swal({
+                                type: 'success',
+                                icon: 'success',
+                                title: 'Cita finalizada con éxito',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            EventBus.$emit('reloadFinallyDates', 'reload')
+                            this.dateModals.modal1 = false
+                            this.dateModals.modal3 = false
+                            this.finallyDisabled = false
+                            var dateSplit = data.createdAt.split("T")[0].split("-")
+                            var dateFinal = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0]
+                            axios.post(endPoint.endpointTarget + '/notifications', {
+                                branch: this.branch,
+                                userName: this.firstNameUser + " " + this.lastNameUser,
+                                userImage: localStorage.imageUser,
+                                employeId: data.employe.id,
+                                detail: 'Finalizó una cita con fecha: ' + dateFinal + ' y cliente: ' + data.client.name + " - ( " + data.client.email + " )",
+                                link: 'agendamiento?id=' + data._id
+                            }, this.configHeader)
+                                .then(res => {
+                                    this.socketValidator = false
                                     this.socket.emit('sendNotification', res.data.data)
-                                })   
-                            }else{
-                                this.$swal({
-                                    type: 'error',
-                                    icon: 'error',
-                                    title: 'Esta cita ya fue finalizada',
-                                    text: 'Hace pocos minutos se finalizo esta cita, no puede finalizarse de nuevo.',
-                                    showConfirmButton: true
+                                    this.socketValidator = true
+                                }).catch(err => {
+                                    console.log(err)
                                 })
-                                this.dateModals.modal1 = false
-                                this.dateModals.modal3 = false
-                                this.finallyDisabled = false
-                                EventBus.$emit('reloadFinallyDates', 'reload')
-                            }
-                        }).catch(err => {
-                            if (!err.response) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Error de conexión',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                            }
-                        })
+                        }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
+            }
+        },
+        validAngela(id) {
+            const dateSelected = new Date(this.finalDate)
+            if ((id == "6116b68328723d461421fde3" || id == "62a39b7d01ead640f5b8b31a") && (dateSelected.getMonth() == 10 || dateSelected.getMonth() == 11 || dateSelected.getMonth() == 0)) {
+                return false
+            } else {
+                return true
+            }
+        },
+        deleteDate(id, cliente, validEmail) {
+            this.$swal({
+                icon: 'warning',
+                title: validEmail ? '¿Desea cancelar cita?' : '¿Desea eliminar cita?',
+                text: validEmail ? '¡Recuerda! Se procederá a cancelar del calendario y no se podrá revertir esta acción' : '¡Recuerda! Se procederá a eliminar del calendario y no se podrá revertir esta acción',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No, cancelar',
+                showCloseButton: true,
+                showLoaderOnConfirm: true
+            })
+                .then((result) => {
+                    if (result.value) {
+                        axios.delete(endPoint.endpointTarget + '/dates/' + id, this.configHeader)
+                            .then(res => {
+                                if (res.data.status == 'deleted') {
+                                    if (validEmail) {
+                                        var micro = ''
+                                        res.data.data.microServices.forEach((element, index) => {
+                                            if (res.data.data.microServices[index + 1]) {
+                                                micro = micro + element.name + ' - '
+                                            } else {
+                                                micro = micro + element.name
+                                            }
+                                        });
+                                        axios.post(endPoint.endpointTarget + '/mails/responseDate', {
+                                            client: res.data.data.content,
+                                            clientMail: res.data.data.client.email,
+                                            email: res.data.branchEmail,
+                                            branchName: res.data.branchName,
+                                            start: res.data.data.start.split(" ")[1],
+                                            end: res.data.data.end.split(" ")[1],
+                                            date: res.data.data.start.split(" ")[0],
+                                            employe: res.data.data.employe.name,
+                                            service: res.data.data.title,
+                                            micro: micro,
+                                            logo: res.data.logo,
+                                            confirmed: false,
+                                            system: true,
+                                            user: localStorage.firstname + ' ' + localStorage.lastname + ' (' + localStorage.email + ')'
+                                        }, this.configHeader)
+                                            .then(res => {
+                                            })
+                                            .catch(err => {
+                                                console.log(err)
+                                            })
+                                    }
+
+                                    this.$swal({
+                                        type: 'success',
+                                        icon: 'success',
+                                        title: 'Cita eliminada',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    this.events = []
+                                    this.dateModals.modal1 = false
+                                    this.getDates();
+                                    var splitD = res.data.data.start.split(" ")[0].split("-")
+                                    axios.post(endPoint.endpointTarget + '/notifications', {
+                                        branch: this.branch,
+                                        userName: this.firstNameUser + " " + this.lastNameUser,
+                                        userImage: localStorage.imageUser,
+                                        employeId: res.data.data.employe.id,
+                                        detail: `Eliminó la cita de ${res.data.data.client.name} para el dia: ${splitD[1] + "-" + splitD[0] + "-" + splitD[2]} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
+                                        link: 'agendamiento'
+                                    }, this.configHeader)
+                                        .then(respo => {
+                                            this.socket.emit('sendNotification', respo.data.data)
+                                        })
+                                }
+                            }).catch(err => {
+                                console.log("🚀 ~ file: Dates.vue ~ line 4230 ~ .then ~ err", err)
+
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión1',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }
+                            })
                     }
-                    else{
+                    else {
                         this.$swal({
                             type: 'info',
                             icon: 'info',
@@ -4134,47 +4489,14 @@ import mixinES from '../mixins/mixinES'
                             showConfirmButton: false,
                             timer: 1500
                         })
-                        this.finallyDisabled = false
                     }
                 })
-            }else {
-                axios.post(endPoint.endpointTarget+'/dates/endDate/'+data._id, {
-                    service:data.services,
-                    client:data.client,
-                    branch:this.branch,
-                    employe: data.employe,
-                    microServices: data.microServices
-                }, this.configHeader)
+        },
+        closeDate(id) {
+            axios.put(endPoint.endpointTarget + '/citas/closeDate/' + id)
                 .then(res => {
                     if (res.data.status == 'ok') {
-                        this.$swal({
-                            type: 'success',
-                            icon: 'success',
-                            title: 'Cita finalizada con éxito',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        EventBus.$emit('reloadFinallyDates', 'reload')
-                        this.dateModals.modal1 = false
-                        this.dateModals.modal3 = false
-                        this.finallyDisabled = false
-                        var dateSplit = data.createdAt.split("T")[0].split("-")
-                        var dateFinal = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0] 
-                        axios.post(endPoint.endpointTarget+'/notifications', {
-                            branch: this.branch,
-                            userName:this.firstNameUser + " " + this.lastNameUser,
-                            userImage:localStorage.imageUser,
-                            employeId:data.employe.id,
-                            detail:'Finalizó una cita con fecha: ' + dateFinal + ' y cliente: ' + data.client.name + " - ( " + data.client.email + " )",
-                            link: 'agendamiento?id=' + data._id
-                        },this.configHeader)
-                        .then(res => {
-                            this.socketValidator = false
-                            this.socket.emit('sendNotification', res.data.data)
-                            this.socketValidator = true
-                        }).catch(err => {
-                            console.log(err)
-                        })   
+                        this.selectedEvent.process = false
                     }
                 }).catch(err => {
                     if (!err.response) {
@@ -4186,132 +4508,10 @@ import mixinES from '../mixins/mixinES'
                         })
                     }
                 })
-            }
         },
-        validAngela(id){
-            const dateSelected = new Date(this.finalDate)
-            if ((id == "6116b68328723d461421fde3" || id == "62a39b7d01ead640f5b8b31a") && (dateSelected.getMonth() == 10 || dateSelected.getMonth() == 11 || dateSelected.getMonth() == 0)) {
-                return false
-            }else{
-                return true
-            }
-        },
-        deleteDate(id,cliente, validEmail){
-            this.$swal({
-                icon:'warning',
-                title: validEmail ? '¿Desea cancelar cita?' : '¿Desea eliminar cita?',
-                text: validEmail ? '¡Recuerda! Se procederá a cancelar del calendario y no se podrá revertir esta acción' : '¡Recuerda! Se procederá a eliminar del calendario y no se podrá revertir esta acción',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí',
-                cancelButtonText: 'No, cancelar',
-                showCloseButton: true,
-                showLoaderOnConfirm: true
-            })
-            .then((result) => {
-                if(result.value) {
-                    axios.delete(endPoint.endpointTarget+'/dates/' + id, this.configHeader)
-                    .then(res => {
-                        if(res.data.status == 'deleted'){
-                            if (validEmail) {
-                                var micro = ''
-                                res.data.data.microServices.forEach((element,index)=> {
-                                    if (res.data.data.microServices[index + 1]) {
-                                        micro = micro + element.name + ' - '
-                                    }else{
-                                        micro = micro + element.name
-                                    }
-                                });
-                                axios.post(endPoint.endpointTarget+'/mails/responseDate', {
-                                    client: res.data.data.content,
-                                    clientMail: res.data.data.client.email,
-                                    email: res.data.branchEmail,
-                                    branchName: res.data.branchName,
-                                    start: res.data.data.start.split(" ")[1],
-                                    end: res.data.data.end.split(" ")[1],
-                                    date: res.data.data.start.split(" ")[0],
-                                    employe: res.data.data.employe.name,
-                                    service: res.data.data.title,
-                                    micro: micro,
-                                    logo: res.data.logo,
-                                    confirmed: false,
-                                    system: true,
-                                    user: localStorage.firstname + ' ' + localStorage.lastname + ' (' + localStorage.email + ')'
-                                }, this.configHeader)
-                                .then(res => {
-                                })
-                                .catch(err => {
-                                    console.log(err)
-                                })
-                            }
-
-                            this.$swal({
-                                type: 'success',
-                                icon: 'success',
-                                title: 'Cita eliminada',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                            this.events = []
-                            this.dateModals.modal1 = false
-                            this.getDates();
-                            var splitD = res.data.data.start.split(" ")[0].split("-")
-                            axios.post(endPoint.endpointTarget+'/notifications', {
-                                branch: this.branch,
-                                userName:this.firstNameUser + " " + this.lastNameUser,
-                                userImage:localStorage.imageUser,
-                                employeId: res.data.data.employe.id,
-                                detail:`Eliminó la cita de ${res.data.data.client.name} para el dia: ${splitD[1]+ "-" + splitD[0] + "-" + splitD[2]} con empleado: ${res.data.data.employe.name} ( ${new Date().format('DD-MM-YYYY')} )`,
-                                link: 'agendamiento'
-                            }, this.configHeader)
-                            .then(respo => {
-                                this.socket.emit('sendNotification', respo.data.data)
-                            }) 
-                        }
-                    }).catch(err => {
-                        console.log("🚀 ~ file: Dates.vue ~ line 4230 ~ .then ~ err", err)
-                        
-                        if (!err.response) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Error de conexión1',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
-                    })
-                }
-                else{
-                    this.$swal({
-                        type: 'info',
-                        icon: 'info',
-                        title: 'Acción cancelada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            }) 
-        },
-        closeDate(id){
-            axios.put(endPoint.endpointTarget+'/citas/closeDate/'+id)
-            .then(res => {
-                if (res.data.status == 'ok') {
-                    this.selectedEvent.process = false
-                }
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
-        },
-        ProccessSelectedDates(){
-            this.dateModals.modal4 = false 
-            this.selectedDates.total = 0      
+        ProccessSelectedDates() {
+            this.dateModals.modal4 = false
+            this.selectedDates.total = 0
             for (let index = 0; index < this.selectedDates.closedArray.length; index++) {
                 this.selectedDates.closedArray[index].payCash = 0
                 this.selectedDates.closedArray[index].payTransfer = 0
@@ -4320,21 +4520,21 @@ import mixinES from '../mixins/mixinES'
                 this.selectedDates.closedArray[index].payDebit = 0
                 this.selectedDates.closedArray[index].payOrder = 0
                 this.selectedDates.closedArray[index].porqueSi = []
-                this.selectedDates.closedArray[index].porqueSi.push({NoEntendi:"Bueh"})
+                this.selectedDates.closedArray[index].porqueSi.push({ NoEntendi: "Bueh" })
                 const position = this.selectedDates.closedArray[index]
                 const des = parseFloat(this.selectedDates.closedArray[index].design) / parseFloat(2)
                 position.total = position.descuento > 0 ? position.total - (position.total / 100 * position.descuento) : position.total
                 position.totalLocal = position.descuento > 0 ? position.totalLocal - (position.totalLocal / 100 * position.descuento) + parseFloat(des) : parseFloat(position.totalLocal) + parseFloat(des)
-                position.ifrecomend= position.descuento == 15 ? 1 : 0
+                position.ifrecomend = position.descuento == 15 ? 1 : 0
                 position.comision = position.descuento > 0 ? position.comision - (position.comision / 100 * position.descuento) + parseFloat(des) : parseFloat(position.comision) + parseFloat(des)
             }
             for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
                 this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)
                 this.selectedDates.design = parseFloat(this.selectedDates.design) + this.selectedDates.closedArray[i].design
-            }  
+            }
             this.dateModals.modal5 = true
         },
-        hundredPorcent(tipo, index){
+        hundredPorcent(tipo, index) {
             var service = this.selectedDates.closedArray[index].services[0].servicio
             this.selectedDates.closedArray[index].services[0].servicio = " "
             if (tipo == "efectivo") {
@@ -4389,11 +4589,11 @@ import mixinES from '../mixins/mixinES'
                     this.selectedDates.closedArray[i].payOthers = 0
                     this.selectedDates.closedArray[i].payCredit = 0
                     this.selectedDates.closedArray[i].payDebit = 0
-                    this.selectedDates.closedArray[i].payCash = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                    this.selectedDates.closedArray[i].payCash = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)
                 }
                 $(".inputsVenta").removeClass("allSelected")
-                $("."+tipo).addClass("allSelected")
-                
+                $("." + tipo).addClass("allSelected")
+
             }
             if (tipo == "allTransferencia") {
                 for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
@@ -4402,11 +4602,11 @@ import mixinES from '../mixins/mixinES'
                     this.selectedDates.closedArray[i].payOthers = 0
                     this.selectedDates.closedArray[i].payCredit = 0
                     this.selectedDates.closedArray[i].payDebit = 0
-                    this.selectedDates.closedArray[i].payTransfer = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                    this.selectedDates.closedArray[i].payTransfer = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)
                 }
                 $(".inputsVenta").removeClass("allSelected")
-                $("."+tipo).addClass("allSelected")
-                
+                $("." + tipo).addClass("allSelected")
+
             }
             if (tipo == "allOthers") {
                 for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
@@ -4415,11 +4615,11 @@ import mixinES from '../mixins/mixinES'
                     this.selectedDates.closedArray[i].payOthers = 0
                     this.selectedDates.closedArray[i].payCredit = 0
                     this.selectedDates.closedArray[i].payDebit = 0
-                    this.selectedDates.closedArray[i].payOthers = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                    this.selectedDates.closedArray[i].payOthers = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)
                 }
                 $(".inputsVenta").removeClass("allSelected")
-                $("."+tipo).addClass("allSelected")
-                
+                $("." + tipo).addClass("allSelected")
+
             }
             if (tipo == "allCredit") {
                 for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
@@ -4428,11 +4628,11 @@ import mixinES from '../mixins/mixinES'
                     this.selectedDates.closedArray[i].payOthers = 0
                     this.selectedDates.closedArray[i].payCredit = 0
                     this.selectedDates.closedArray[i].payDebit = 0
-                    this.selectedDates.closedArray[i].payCredit = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                    this.selectedDates.closedArray[i].payCredit = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)
                 }
                 $(".inputsVenta").removeClass("allSelected")
-                $("."+tipo).addClass("allSelected")
-                
+                $("." + tipo).addClass("allSelected")
+
             }
             if (tipo == "allDebit") {
                 for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
@@ -4441,63 +4641,63 @@ import mixinES from '../mixins/mixinES'
                     this.selectedDates.closedArray[i].payOthers = 0
                     this.selectedDates.closedArray[i].payCredit = 0
                     this.selectedDates.closedArray[i].payDebit = 0
-                    this.selectedDates.closedArray[i].payDebit = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)  
+                    this.selectedDates.closedArray[i].payDebit = parseFloat(this.selectedDates.closedArray[i].total) - parseFloat(this.selectedDates.closedArray[i].payOrder)
                 }
                 $(".inputsVenta").removeClass("allSelected")
-                $("."+tipo).addClass("allSelected")
+                $("." + tipo).addClass("allSelected")
             }
             this.selectedDates.closedArray[index].services[0].servicio = service
         },
-        hundredMouseOver(tipo){
-			$("."+tipo).toggle()
-		},
-		hundredMouseNonOver(tipo){
-			$("."+tipo).toggle()
+        hundredMouseOver(tipo) {
+            $("." + tipo).toggle()
         },
-        findDay(days, lender){
+        hundredMouseNonOver(tipo) {
+            $("." + tipo).toggle()
+        },
+        findDay(days, lender) {
             if (lender != 'Primera disponible') {
                 if (days.length > 0) {
                     var entry = 0
                     for (let index = 0; index < days.length; index++) {
                         const element = days[index];
-                        if (element.day == this.getDay ) {
+                        if (element.day == this.getDay) {
                             entry = 1
                             return true
                             break
                         }
                     }
                     return false
-                }else{
+                } else {
                     return false
                 }
-            }else{
+            } else {
                 return true
             }
-            
+
         },
-        findDayEdit(days, date){
-            const getDay = new Date(date+' 10:00').getDay()
+        findDayEdit(days, date) {
+            const getDay = new Date(date + ' 10:00').getDay()
             if (days.length > 0) {
                 var entry = 0
                 for (let index = 0; index < days.length; index++) {
                     const element = days[index];
-                    if (element.day == getDay ) {
+                    if (element.day == getDay) {
                         entry = 1
                         return true
                         break
                     }
                 }
                 return false
-            }else{
+            } else {
                 return false
             }
         },
-        processSelected(){
+        processSelected() {
             let totalFormadePago = 0
             for (let e = 0; e < this.selectedDates.closedArray.length; e++) {
                 const element = this.selectedDates.closedArray[e];
                 if (element.payCash == '') {
-				    element.payCash = 0
+                    element.payCash = 0
                 }
                 if (element.payOthers == '') {
                     element.payOthers = 0
@@ -4514,69 +4714,69 @@ import mixinES from '../mixins/mixinES'
                 if (element.payOrder == '') {
                     element.payOrder = 0
                 }
-                totalFormadePago = parseFloat(totalFormadePago)+ parseFloat(element.payCash) + parseFloat(element.payOthers) + parseFloat(element.payTransfer) + parseFloat(element.payDebit) + parseFloat(element.payCredit) + parseFloat(element.payOrder)
+                totalFormadePago = parseFloat(totalFormadePago) + parseFloat(element.payCash) + parseFloat(element.payOthers) + parseFloat(element.payTransfer) + parseFloat(element.payDebit) + parseFloat(element.payCredit) + parseFloat(element.payOrder)
             }
-            
+
             if (this.selectedDates.discount == '') {
-            this.selectedDates.discount = 0
+                this.selectedDates.discount = 0
             }
             if (this.selectedDates.design == '') {
-            this.selectedDates.design = 0
+                this.selectedDates.design = 0
             }
-            
+
 
             if (this.selectedDates.total == totalFormadePago) {
-                axios.post(endPoint.endpointTarget+'/ventas/processEndDates', {
-                    arrayClosedDates:this.selectedDates.closedArray
+                axios.post(endPoint.endpointTarget + '/ventas/processEndDates', {
+                    arrayClosedDates: this.selectedDates.closedArray
                 })
-                .then(res => {
-                    if (res.data.status == "Venta registrada") {
-                        if (this.haveCode == true) {
-                            axios.get(endPoint.endpointTarget+'/pedidos/useCode/'+this.idArticulo)
-                            .then( res =>{})
-                            .catch(err => {
-                                if (!err.response) {
-                                    this.$swal({
-                                        icon: 'error',
-                                        title: 'Error de conexión',
-                                        showConfirmButton: false,
-                                        timer: 1500
+                    .then(res => {
+                        if (res.data.status == "Venta registrada") {
+                            if (this.haveCode == true) {
+                                axios.get(endPoint.endpointTarget + '/pedidos/useCode/' + this.idArticulo)
+                                    .then(res => { })
+                                    .catch(err => {
+                                        if (!err.response) {
+                                            this.$swal({
+                                                icon: 'error',
+                                                title: 'Error de conexión',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                        }
                                     })
-                                }
-                            })
-                        }
-                        this.initialDate()
-                        this.dateModals.modal5 = false
-                        this.modalsDialog = {
-                            modal2: true,
-                            message: "¡Venta procesada!",
-                            icon: 'ni ni-check-bold ni-5x',
-                            type: 'success'
-                        }
-                        
-                        this.getClosed()
-                        axios.post(endPoint.endpointTarget+'/notifications', {
-                            branch: this.branch,
-                            userName:this.firstNameUser + " " + this.lastNameUser,
-                            userImage:localStorage.imageUser,
-                            detail:'Procesó citas finalizadas',
-                            link: 'agendamiento'
-                        })
-                        .then(res => {
-                            this.socket.emit('sendNotification', res.data.data)
-                        })
-                        setTimeout(() => {
-                            this.modalsDialog = {
-                                modal2: false,
-                                message: "",
-                                icon: '',
-                                type: ''
                             }
-                        }, 1500);
-                    }
-                    else if(res.data.status == "no-cash"){
+                            this.initialDate()
                             this.dateModals.modal5 = false
-							this.modalsDialog = {
+                            this.modalsDialog = {
+                                modal2: true,
+                                message: "¡Venta procesada!",
+                                icon: 'ni ni-check-bold ni-5x',
+                                type: 'success'
+                            }
+
+                            this.getClosed()
+                            axios.post(endPoint.endpointTarget + '/notifications', {
+                                branch: this.branch,
+                                userName: this.firstNameUser + " " + this.lastNameUser,
+                                userImage: localStorage.imageUser,
+                                detail: 'Procesó citas finalizadas',
+                                link: 'agendamiento'
+                            })
+                                .then(res => {
+                                    this.socket.emit('sendNotification', res.data.data)
+                                })
+                            setTimeout(() => {
+                                this.modalsDialog = {
+                                    modal2: false,
+                                    message: "",
+                                    icon: '',
+                                    type: ''
+                                }
+                            }, 1500);
+                        }
+                        else if (res.data.status == "no-cash") {
+                            this.dateModals.modal5 = false
+                            this.modalsDialog = {
                                 modal2: true,
                                 message: "Primero debe registrar un fondo de caja",
                                 icon: 'ni ni-fat-remove ni-5x',
@@ -4591,19 +4791,19 @@ import mixinES from '../mixins/mixinES'
                                     type: ''
                                 }
                             }, 1500);
-						}
-                }).catch(err => {
-                    if (!err.response) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                })
+                        }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
             }
-            else{
+            else {
                 this.$swal({
                     type: 'error',
                     title: 'Total no coincide, asegurate de seleccionar bien los montos en cada servicio',
@@ -4627,15 +4827,15 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        async editDateData(){
+        async editDateData() {
             var details = ''
             if (this.selectedEvent.extraData) {
                 details = this.selectedEvent.extraData.details
-            }else{
+            } else {
                 details = this.selectedEvent.details
             }
-            try{
-                const editDate = await axios.post(endPoint.endpointTarget+'/dates/editDataDate',{
+            try {
+                const editDate = await axios.post(endPoint.endpointTarget + '/dates/editDataDate', {
                     id: this.selectedEvent._id,
                     details: details,
                 }, this.configHeader)
@@ -4652,12 +4852,12 @@ import mixinES from '../mixins/mixinES'
                     })
                     this.getDates()
                 }
-            }catch(err){
+            } catch (err) {
                 console.log(err)
             }
         },
-        microPrice(service, index){
-            
+        microPrice(service, index) {
+
             this.selectedEvent.services[index].microPrice = 0
             this.selectedEvent.services[index].microServiceSelect.forEach(element => {
                 this.selectedEvent.services[index].microPrice = parseFloat(this.selectedEvent.services[index].microPrice) + parseFloat(element.price)
@@ -4665,42 +4865,42 @@ import mixinES from '../mixins/mixinES'
             this.showCurrencyMicro = false
             this.showCurrencyMicro = true
         },
-        conteoServicioDate(esto, servicio, precio, comision, discount, index){
-            const conteo = $("#"+index+esto).text()
+        conteoServicioDate(esto, servicio, precio, comision, discount, index) {
+            const conteo = $("#" + index + esto).text()
             const conteoTotal = parseFloat(conteo) + 1
             let valid = true
-            $("#"+index+esto).text(conteoTotal)
-            const servicios = {'servicio': servicio, 'comision': comision, 'precio': precio, 'discount': discount}
+            $("#" + index + esto).text(conteoTotal)
+            const servicios = { 'servicio': servicio, 'comision': comision, 'precio': precio, 'discount': discount }
             this.serviciosSelecionadosDates.push(servicios)
-            this.EndDateServices.push({name: servicio, id: esto, index: index,valid: true})
+            this.EndDateServices.push({ name: servicio, id: esto, index: index, valid: true })
         },
-        discountServiceDate(esto, index, nombre, valid){
-            let conteo = $("#"+index+esto).text()
+        discountServiceDate(esto, index, nombre, valid) {
+            let conteo = $("#" + index + esto).text()
             let conteoTotal = conteo
             let forLenght = this.serviciosSelecionadosDates
             if (parseFloat(conteo) > 0) {
                 if (valid) {
-                   for (let d = 0; d < 20; d++) {
+                    for (let d = 0; d < 20; d++) {
                         for (let c = 0; c < forLenght.length; c++) {
                             if (this.serviciosSelecionadosDates[c].servicio == nombre) {
                                 this.serviciosSelecionadosDates.splice(c, 1)
                                 conteoTotal = parseFloat(conteoTotal) - 1
                             }
-                            
+
                         }
-                    } 
+                    }
                 }
-                else{
+                else {
                     for (let c = 0; c < forLenght.length; c++) {
                         if (this.serviciosSelecionadosDates[c].servicio == nombre) {
                             this.serviciosSelecionadosDates.splice(c, 1)
                             conteoTotal = parseFloat(conteoTotal) - 1
                             break
                         }
-                        
+
                     }
                 }
-                $("#"+index+esto).text(conteoTotal)
+                $("#" + index + esto).text(conteoTotal)
                 if (valid) {
                     for (let t = 0; t < 15; t++) {
                         for (let i = 0; i < this.EndDateServices.length; i++) {
@@ -4708,10 +4908,10 @@ import mixinES from '../mixins/mixinES'
                             if (element.name == nombre) {
                                 this.EndDateServices.splice(i, 1)
                             }
-                        } 
+                        }
                     }
                 }
-                else{
+                else {
                     for (let i = 0; i < this.EndDateServices.length; i++) {
                         const element = this.EndDateServices[i];
                         if (element.name == nombre) {
@@ -4722,13 +4922,13 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        removeImage(index){
+        removeImage(index) {
             // this.file.splice(index, 1)
             if (this.file.length > 1) {
                 var nameFiles = this.nameFile.split(',')
                 nameFiles.splice(index, 1)
                 for (const key in nameFiles) {
-                    this.nameFile = key == 0 ? nameFiles[key] : this.nameFile +','+nameFiles[key]
+                    this.nameFile = key == 0 ? nameFiles[key] : this.nameFile + ',' + nameFiles[key]
                 }
                 var array = []
                 for (const file of this.file) {
@@ -4736,85 +4936,85 @@ import mixinES from '../mixins/mixinES'
                 }
                 array.splice(index, 1)
                 this.file = array
-            }else{
+            } else {
                 this.file = []
                 this.nameFile = 'Seleccione imagen'
             }
         },
-        handleFileUpload(){
+        handleFileUpload() {
             const LengthImage = this.selectedEvent.imgDesign.length + this.$refs.file.files.length
             if (LengthImage > 3) {
-                
-            }else{
+
+            } else {
                 this.file = this.$refs.file.files
                 if (this.file.length == 3) {
-                    this.nameFile = this.file[0].name+', '+this.file[1].name+', '+this.file[2].name
-                }else if (this.file.length == 2) {
-                    this.nameFile = this.file[0].name+', '+this.file[1].name
-                }else{
+                    this.nameFile = this.file[0].name + ', ' + this.file[1].name + ', ' + this.file[2].name
+                } else if (this.file.length == 2) {
+                    this.nameFile = this.file[0].name + ', ' + this.file[1].name
+                } else {
                     this.nameFile = this.file[0].name
                 }
-            }            
+            }
         },
-        uploadImageDesign(id, event){
+        uploadImageDesign(id, event) {
             this.loadImage = true
             let formData = new FormData();
             for (let index = 0; index < this.file.length; index++) {
                 const element = this.file[index];
                 formData.append('image', this.file[index])
             }
-            
+
             formData.append('imagePrev', this.selectedEvent.imgDesign)
             const header = {
-                headers:{
+                headers: {
                     "x-database-connect": endPoint.database,
-                    'x-access-token':localStorage.userToken,
+                    'x-access-token': localStorage.userToken,
                     'Content-Type': 'multipart/form-data'
                 }
             }
-            axios.put(endPoint.endpointTarget+'/dates/uploadDesign/'+id, formData, header)
-            .then(res => {
-                if (res.data.status == 'ok') {
-                    this.loadImage = false
-                    this.selectedEvent.imgDesign = res.data.image
-                    this.selectedEvent.imageLength = res.data.image.length
-                    this.file = []
-                    this.nameFile = 'Seleccione imagen'
-                }
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
+            axios.put(endPoint.endpointTarget + '/dates/uploadDesign/' + id, formData, header)
+                .then(res => {
+                    if (res.data.status == 'ok') {
+                        this.loadImage = false
+                        this.selectedEvent.imgDesign = res.data.image
+                        this.selectedEvent.imageLength = res.data.image.length
+                        this.file = []
+                        this.nameFile = 'Seleccione imagen'
+                    }
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        deleteImage(images, index, id){
+        deleteImage(images, index, id) {
             this.loadImage = true
             images.splice(index, 1)
-            axios.put(endPoint.endpointTarget+'/dates/removeImage/'+id, {
+            axios.put(endPoint.endpointTarget + '/dates/removeImage/' + id, {
                 images: images
             }, this.configHeader)
-            .then(res => {
-                this.loadImage = false
-                this.selectedEvent.imgDesign = images
-                this.selectedEvent.imageLength = this.selectedEvent.imageLength - 1
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
+                .then(res => {
+                    this.loadImage = false
+                    this.selectedEvent.imgDesign = images
+                    this.selectedEvent.imageLength = this.selectedEvent.imageLength - 1
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        
-        selected(value){
+
+        selected(value) {
             const selectArray = {
                 id: value.selected_item._id,
                 services: value.selected_item.services,
@@ -4826,47 +5026,47 @@ import mixinES from '../mixins/mixinES'
                 total: value.selected_item.total,
                 descuento: value.selected_item.descuento,
                 date: value.selected_item.date,
-                ifrecomend:0,
+                ifrecomend: 0,
                 typeDiscount: 'Descuento'
             }
             if (selectArray.services[0].discount === false) {
                 const split = selectArray.client.split(' / ')
-                axios.get(endPoint.endpointTarget+'/clients/dataDiscount/' + split[1])
-                .then(res => {
-                    if (selectArray.services[0].discount == false) {
-                        if(res.data[0].birthday){
-                            var birthday = new Date(res.data[0].birthday).getMonth()
-                            var monthNow = new Date().getMonth()
-                            if (birthday == monthNow) {
-                                selectArray.descuento = 10
-                                selectArray.typeDiscount = 'Descuento por mes de cumpleaños'
-                            }else if (res.data[0].recomendaciones > 0) {
+                axios.get(endPoint.endpointTarget + '/clients/dataDiscount/' + split[1])
+                    .then(res => {
+                        if (selectArray.services[0].discount == false) {
+                            if (res.data[0].birthday) {
+                                var birthday = new Date(res.data[0].birthday).getMonth()
+                                var monthNow = new Date().getMonth()
+                                if (birthday == monthNow) {
+                                    selectArray.descuento = 10
+                                    selectArray.typeDiscount = 'Descuento por mes de cumpleaños'
+                                } else if (res.data[0].recomendaciones > 0) {
+                                    selectArray.descuento = 15
+                                    selectArray.typeDiscount = 'Descuento por recomendación'
+                                } else if (res.data[0].participacion == 0) {
+                                    selectArray.descuento = 10
+                                    selectArray.typeDiscount = 'Descuento por primera atención'
+                                }
+                            } else if (res.data[0].recomendaciones > 0) {
                                 selectArray.descuento = 15
                                 selectArray.typeDiscount = 'Descuento por recomendación'
-                            }else if (res.data[0].participacion == 0) {
+                            } else if (res.data[0].participacion == 0) {
                                 selectArray.descuento = 10
                                 selectArray.typeDiscount = 'Descuento por primera atención'
                             }
-                        }else if (res.data[0].recomendaciones > 0) {
-                            selectArray.descuento = 15
-                            selectArray.typeDiscount = 'Descuento por recomendación'
-                        }else if (res.data[0].participacion == 0) {
-                            selectArray.descuento = 10
-                            selectArray.typeDiscount = 'Descuento por primera atención'
                         }
-                    }
-                    this.selectedDates.closedArray.push(selectArray)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-            }else{
+                        this.selectedDates.closedArray.push(selectArray)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            } else {
                 selectArray.descuento = 0
                 this.selectedDates.closedArray.push(selectArray)
             }
         },
-        unSelected(value){
-        
+        unSelected(value) {
+
             for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
                 if (this.selectedDates.closedArray[i].id == value.unselected_item._id) {
                     this.selectedDates.closedArray.splice(i, 1)
@@ -4874,8 +5074,8 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        selectedAll(value){
-            
+        selectedAll(value) {
+
             var selectArray = {}
             for (let index = 0; index < value.selected_items.length; index++) {
                 selectArray = {
@@ -4893,38 +5093,38 @@ import mixinES from '../mixins/mixinES'
                 this.selectedDates.closedArray.push(selectArray)
             }
         },
-        unSelectedAll(value){
+        unSelectedAll(value) {
             this.selectedDates.closedArray = []
         },
-        processDate(id, type){
+        processDate(id, type) {
             EventBus.$emit('processDate', id)
             this.dateModals.modal1 = false
             setTimeout(() => {
                 $('#processButton').click()
             }, 500);
         },
-        scroll(){
-            
+        scroll() {
+
         },
         myFunction() {
-			var input, filter, table, tr, td, i, txtValue;
-			input = document.getElementById("myInput");
-			filter = input.value.toUpperCase();
-			table = document.getElementById("myTable");
-			tr = table.getElementsByTagName("tr");
-			for (i = 0; i < tr.length; i++) {
-			td = tr[i].getElementsByTagName("td")[0];
-			if (td) {
-				txtValue = td.textContent || td.innerText;
-				if (txtValue.toUpperCase().indexOf(filter) > -1) {
-				tr[i].style.display = "";
-				} else {
-				tr[i].style.display = "none";
-				}
-			}
-			}
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
         },
-        sendConfirmation(id, name, mail, start, end, services, lender, data, valid, date, startG, endG){
+        sendConfirmation(id, name, mail, start, end, services, lender, data, valid, date, startG, endG) {
             var startGood = new Date(startG).getHours() + ':' + (new Date(startG).getMinutes() == 0 ? '00' : new Date(startG).getMinutes())
             var endGood = new Date(endG).getHours() + ':' + (new Date(endG).getMinutes() == 0 ? '00' : new Date(endG).getMinutes())
             const nameFormat = name
@@ -4933,7 +5133,7 @@ import mixinES from '../mixins/mixinES'
             if (valid) {
                 dateFormat = this.finalDate == "" ? start : this.finalDate
                 servicesFinal = data.serviceSelectds
-            }else{
+            } else {
                 dateFormat = date
                 servicesFinal = data.services
                 servicesFinal[0].start = startGood
@@ -4941,7 +5141,7 @@ import mixinES from '../mixins/mixinES'
                 servicesFinal[0].employe = data.employe.name
             }
 
-            axios.post(endPoint.endpointTarget+'/mails/dateMail', {
+            axios.post(endPoint.endpointTarget + '/mails/dateMail', {
                 name: nameFormat,
                 branch: this.branchName,
                 branchId: this.branch,
@@ -4952,68 +5152,68 @@ import mixinES from '../mixins/mixinES'
                 servicesFinal: servicesFinal,
                 valid: valid
             }, this.configHeader)
-            .then(res => {
-                
-                if (valid == false) {
-                    this.$swal({
-                        icon: 'success',
-                        title: 'Correo enviado con éxito',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión confirm',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
+                .then(res => {
+
+                    if (valid == false) {
+                        this.$swal({
+                            icon: 'success',
+                            title: 'Correo enviado con éxito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión confirm',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        openCalendar(){
+        openCalendar() {
             this.registerDae.serviceSelectds[0].blocks = []
             this.registerDae.block = []
             setTimeout(() => {
-                      if (this.registerDae.date != "") {
-                        const split = this.registerDae.date.split('-')
-                        this.finalDate = split[1]+'-'+split[0]+'-'+split[2]
-                        const restDay = new Date(this.finalDate+' 10:00')
-                        this.getDay = restDay.getDay()
-                        
-                            if (this.readyChange) {
-                                for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
-                                    const element = this.registerDae.serviceSelectds[index];
-                                    element.start = ''
-                                    element.end = ''
-                                    element.sort = ''
-                                    element.class = ''
-                                    element.blocks = []
-                                    element.blocksFirst = []
-                                    element.valid = false
-                                    element.employe = 'Primera disponible'
-                                    element.employeImg = ''
-                                    element.employeId = ''
-                                    element.realEmploye = 'Primera disponible'
-                                }
-                                this.validHour = false
-                                setTimeout(() => {
-                                    axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                if (this.registerDae.date != "") {
+                    const split = this.registerDae.date.split('-')
+                    this.finalDate = split[1] + '-' + split[0] + '-' + split[2]
+                    const restDay = new Date(this.finalDate + ' 10:00')
+                    this.getDay = restDay.getDay()
+
+                    if (this.readyChange) {
+                        for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
+                            const element = this.registerDae.serviceSelectds[index];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.class = ''
+                            element.blocks = []
+                            element.blocksFirst = []
+                            element.valid = false
+                            element.employe = 'Primera disponible'
+                            element.employeImg = ''
+                            element.employeId = ''
+                            element.realEmploye = 'Primera disponible'
+                        }
+                        this.validHour = false
+                        setTimeout(() => {
+                            axios.post(endPoint.endpointTarget + '/dates/availableslenders', {
+                                date: this.finalDate,
+                                branch: this.branch
+                            }, this.configHeader)
+                                .then(res => {
+                                    this.getDay = res.data.day
+                                    this.availableslenders = res.data.array
+                                    axios.post(endPoint.endpointTarget + '/dates/blocksHoursFirst', {
                                         date: this.finalDate,
+                                        employes: res.data.array,
+                                        timedate: this.registerDae.serviceSelectds[0].duration,
+                                        employesServices: this.registerDae.serviceSelectds[0].employes,
                                         branch: this.branch
                                     }, this.configHeader)
-                                    .then(res => {
-                                        this.getDay = res.data.day
-                                        this.availableslenders = res.data.array
-                                        axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                            date: this.finalDate,
-                                            employes: res.data.array,
-                                            timedate: this.registerDae.serviceSelectds[0].duration,
-                                            employesServices: this.registerDae.serviceSelectds[0].employes,
-                                            branch: this.branch
-                                        }, this.configHeader)
                                         .then(res => {
                                             this.idDatesBlocks = res.data.id
                                             this.readyChange = true
@@ -5033,33 +5233,33 @@ import mixinES from '../mixins/mixinES'
                                                 })
                                             }
                                         })
-                                    }).catch(err => {
-                                        if (!err.response) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Error de conexión',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                        }
-                                    })
-                                }, 200); 
-                            }else{
-                                setTimeout(() => {
-                                    axios.post(endPoint.endpointTarget+'/dates/availableslenders', {
+                                }).catch(err => {
+                                    if (!err.response) {
+                                        this.$swal({
+                                            icon: 'error',
+                                            title: 'Error de conexión',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                    }
+                                })
+                        }, 200);
+                    } else {
+                        setTimeout(() => {
+                            axios.post(endPoint.endpointTarget + '/dates/availableslenders', {
+                                date: this.finalDate,
+                                branch: this.branch
+                            }, this.configHeader)
+                                .then(res => {
+                                    this.getDay = res.data.day
+                                    this.availableslenders = res.data.array
+                                    axios.post(endPoint.endpointTarget + '/dates/blocksHoursFirst', {
                                         date: this.finalDate,
+                                        employes: res.data.array,
+                                        timedate: this.registerDae.serviceSelectds[0].duration,
+                                        employesServices: this.registerDae.serviceSelectds[0].employes,
                                         branch: this.branch
                                     }, this.configHeader)
-                                    .then(res => {
-                                        this.getDay = res.data.day
-                                        this.availableslenders = res.data.array
-                                        axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                            date: this.finalDate,
-                                            employes: res.data.array,
-                                            timedate: this.registerDae.serviceSelectds[0].duration,
-                                            employesServices: this.registerDae.serviceSelectds[0].employes,
-                                            branch: this.branch
-                                        }, this.configHeader)
                                         .then(res => {
                                             this.idDatesBlocks = res.data.id
                                             this.readyChange = true
@@ -5077,27 +5277,27 @@ import mixinES from '../mixins/mixinES'
                                                 })
                                             }
                                         })
-                                    }).catch(err => {
-                                        if (!err.response) {
-                                            this.$swal({
-                                                icon: 'error',
-                                                title: 'Error de conexión3',
-                                                showConfirmButton: false,
-                                                timer: 1500
-                                            })
-                                        }
-                                    })
-                                }, 200); 
-                            }
-                        }
-                        setTimeout(() => {
-                            $('#block0').show('slow')
+                                }).catch(err => {
+                                    if (!err.response) {
+                                        this.$swal({
+                                            icon: 'error',
+                                            title: 'Error de conexión3',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                    }
+                                })
                         }, 200);
-                    }, 200);       
-            
+                    }
+                }
+                setTimeout(() => {
+                    $('#block0').show('slow')
+                }, 200);
+            }, 200);
+
         },
-        validMultiLender(index, lender, time, resTime, check){
-            $('#'+check).removeClass('fa-check')
+        validMultiLender(index, lender, time, resTime, check) {
+            $('#' + check).removeClass('fa-check')
             this.registerDae.employeSelect = ''
             this.validSchedule = false
             this.noOneLender = true
@@ -5105,13 +5305,13 @@ import mixinES from '../mixins/mixinES'
             for (let index = 0; index < resTime.length; index++) {
                 const element = resTime[index];
                 if (element.day == this.getDay) {
-                    rest = element.hours[0]+'/'+element.hours[1]
+                    rest = element.hours[0] + '/' + element.hours[1]
                 }
             }
             this.selectHourService(index, lender, time, rest)
         },
-        selectHourService(index, lender, time, resTime){
-            const finalTime =  this.registerDae.design == 'si' ? time + 15 : time
+        selectHourService(index, lender, time, resTime) {
+            const finalTime = this.registerDae.design == 'si' ? time + 15 : time
             this.registerDae.serviceSelectds[index].lenderSelectData = {
                 employe: lender,
                 date: this.finalDate,
@@ -5119,74 +5319,74 @@ import mixinES from '../mixins/mixinES'
                 resTime: resTime,
                 index: index
             }
-            axios.post(endPoint.endpointTarget+'/citas/getBlocks', this.registerDae.serviceSelectds[index].lenderSelectData)
-            .then(res => { 
-                if (this.registerDae.serviceSelectds[index].validAfter) {
-                    for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
-                        const element = this.registerDae.serviceSelectds[j];
-                        element.start = ''
-                        element.end = ''
-                        element.sort = ''
-                        element.realLender = ''
-                        element.blocks = []
-                        element.days = ''
-                        element.class = ''
-                        element.valid = false
-                        this.arrayLendersSelect = []
-                    } 
-                }
-                var editBlock = false
-                var indexEdit = 0
-                const q = index - 1 
-                for (let j = 0; j <= q; j++) {
-                    const element = this.registerDae.serviceSelectds[j];
-                    
-                    if (element.realLender == lender) {
-                        editBlock = true
-                        indexEdit = j
-                    }
-                }
-                if (editBlock) {
-                    
-                    this.registerDae.serviceSelectds[index].blocks = this.registerDae.serviceSelectds[indexEdit].blocks
-                    axios.post(endPoint.endpointTarget+'/citas/editBlocks', {
-                        array: this.registerDae.serviceSelectds[index].blocks,
-                        time: this.registerDae.serviceSelectds[index].lenderSelectData.time
-                    })
-                    .then(res => {
-                        this.arrayLendersSelect.push({index: index, lender: lender}) 
-                        this.registerDae.serviceSelectds[index].blocks = res.data
-                        this.registerDae.serviceSelectds[index].validAfter = true
-                    }).catch(err => {
-                        if (!err.response) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Error de conexión',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
+            axios.post(endPoint.endpointTarget + '/citas/getBlocks', this.registerDae.serviceSelectds[index].lenderSelectData)
+                .then(res => {
+                    if (this.registerDae.serviceSelectds[index].validAfter) {
+                        for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
+                            const element = this.registerDae.serviceSelectds[j];
+                            element.start = ''
+                            element.end = ''
+                            element.sort = ''
+                            element.realLender = ''
+                            element.blocks = []
+                            element.days = ''
+                            element.class = ''
+                            element.valid = false
+                            this.arrayLendersSelect = []
                         }
-                    })
-                }else{
-                    this.registerDae.serviceSelectds[index].blocks = res.data
-                    this.arrayLendersSelect.push({index: index, lender: lender}) 
-                   
-                    this.registerDae.serviceSelectds[index].validAfter = true
-                }
-                
-                
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
+                    }
+                    var editBlock = false
+                    var indexEdit = 0
+                    const q = index - 1
+                    for (let j = 0; j <= q; j++) {
+                        const element = this.registerDae.serviceSelectds[j];
+
+                        if (element.realLender == lender) {
+                            editBlock = true
+                            indexEdit = j
+                        }
+                    }
+                    if (editBlock) {
+
+                        this.registerDae.serviceSelectds[index].blocks = this.registerDae.serviceSelectds[indexEdit].blocks
+                        axios.post(endPoint.endpointTarget + '/citas/editBlocks', {
+                            array: this.registerDae.serviceSelectds[index].blocks,
+                            time: this.registerDae.serviceSelectds[index].lenderSelectData.time
+                        })
+                            .then(res => {
+                                this.arrayLendersSelect.push({ index: index, lender: lender })
+                                this.registerDae.serviceSelectds[index].blocks = res.data
+                                this.registerDae.serviceSelectds[index].validAfter = true
+                            }).catch(err => {
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }
+                            })
+                    } else {
+                        this.registerDae.serviceSelectds[index].blocks = res.data
+                        this.arrayLendersSelect.push({ index: index, lender: lender })
+
+                        this.registerDae.serviceSelectds[index].validAfter = true
+                    }
+
+
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        validateBlock(blocks){
+        validateBlock(blocks) {
             var valid = false
             for (const block of blocks) {
                 if (block.validator === true) {
@@ -5196,7 +5396,7 @@ import mixinES from '../mixins/mixinES'
             }
             return valid
         },
-        selectBloqMulti(lenders, hora, i, indexService, open, check){
+        selectBloqMulti(lenders, hora, i, indexService, open, check) {
             var oldEmploye = ''
             oldEmploye = {
                 name: this.registerDae.serviceSelectds[indexService].employe,
@@ -5220,11 +5420,11 @@ import mixinES from '../mixins/mixinES'
                 element.employeImg = ''
                 element.itFirst = true
             }
-        
+
             if (lenders) {
-                var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].hour.split(":") 
+                var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].hour.split(":")
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].hour
-                this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
+                this.registerDae.serviceSelectds[indexService].sort = sortSp[0] + sortSp[1]
                 var validateEmployeSelect = true
                 for (let j = 0; j < this.registerDae.serviceSelectds[indexService].blocks[i].employes.length; j++) {
                     const element = this.registerDae.serviceSelectds[indexService].blocks[i].employes[j];
@@ -5249,7 +5449,7 @@ import mixinES from '../mixins/mixinES'
                     return
                 }
                 setTimeout(() => {
-                    $('#'+open).toggle('slow')
+                    $('#' + open).toggle('slow')
                 }, 500);
                 var employeForBlock = {
                     name: this.registerDae.serviceSelectds[indexService].employe,
@@ -5258,7 +5458,7 @@ import mixinES from '../mixins/mixinES'
                     valid: false,
                     img: this.registerDae.serviceSelectds[indexService].employeImg
                 }
-                axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
+                axios.post(endPoint.endpointTarget + '/dates/selectDatesBlocks', {
                     date: this.finalDate,
                     timedate: this.registerDae.serviceSelectds[indexService].duration,
                     hour: this.registerDae.serviceSelectds[indexService].start,
@@ -5269,53 +5469,53 @@ import mixinES from '../mixins/mixinES'
                     ifFirstClick: this.registerDae.serviceSelectds[indexService].itFirst,
                     firstBlock: true
                 }, this.configHeader)
-                .then(res => {
-                    this.registerDae.serviceSelectds[indexService].blocks = res.data.data
-                    this.registerDae.serviceSelectds[indexService].itFirst = false
-                    this.registerDae.serviceSelectds[indexService].end = res.data.end
-                    const finalIndex = parseFloat(indexService) + parseFloat(1)
-                    if (this.registerDae.serviceSelectds[finalIndex]) {
-                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
-                            block: this.registerDae.serviceSelectds[indexService].blocks,
-                            timedate: this.registerDae.serviceSelectds[finalIndex].duration,
-                            employesServices: this.registerDae.serviceSelectds[finalIndex].employes,
-                            firstBlock: true
-                        })
-                        .then(res => {
-                            this.registerDae.serviceSelectds[finalIndex].valid = true
-                            this.registerDae.serviceSelectds[finalIndex].blocks = res.data.data
-                        }).catch(err => {
-                            if (!err.response) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Error de conexión',
-                                    showConfirmButton: false,
-                                    timer: 1500
+                    .then(res => {
+                        this.registerDae.serviceSelectds[indexService].blocks = res.data.data
+                        this.registerDae.serviceSelectds[indexService].itFirst = false
+                        this.registerDae.serviceSelectds[indexService].end = res.data.end
+                        const finalIndex = parseFloat(indexService) + parseFloat(1)
+                        if (this.registerDae.serviceSelectds[finalIndex]) {
+                            axios.post(endPoint.endpointTarget + '/dates/editBlocksFirst', {
+                                block: this.registerDae.serviceSelectds[indexService].blocks,
+                                timedate: this.registerDae.serviceSelectds[finalIndex].duration,
+                                employesServices: this.registerDae.serviceSelectds[finalIndex].employes,
+                                firstBlock: true
+                            })
+                                .then(res => {
+                                    this.registerDae.serviceSelectds[finalIndex].valid = true
+                                    this.registerDae.serviceSelectds[finalIndex].blocks = res.data.data
+                                }).catch(err => {
+                                    if (!err.response) {
+                                        this.$swal({
+                                            icon: 'error',
+                                            title: 'Error de conexión',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                    }
                                 })
-                            }
-                        })
-                    }else{
-                        this.validHour = true
-                    }
-                }).catch(err => {
-                    if (!err.response) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                })
-                
+                        } else {
+                            this.validHour = true
+                        }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
+
                 setTimeout(() => {
-                    $('#'+check).addClass('fa-check')
+                    $('#' + check).addClass('fa-check')
                 }, 500);
             }
-            else{
-                var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].hour.split(":") 
+            else {
+                var sortSp = this.registerDae.serviceSelectds[indexService].blocks[i].hour.split(":")
                 this.registerDae.serviceSelectds[indexService].start = this.registerDae.serviceSelectds[indexService].blocks[i].hour
-                this.registerDae.serviceSelectds[indexService].sort = sortSp[0]+sortSp[1]
+                this.registerDae.serviceSelectds[indexService].sort = sortSp[0] + sortSp[1]
                 var employeForBlock = {
                     name: this.registerDae.serviceSelectds[indexService].employe,
                     id: this.registerDae.serviceSelectds[indexService].employeId,
@@ -5323,7 +5523,7 @@ import mixinES from '../mixins/mixinES'
                     valid: false,
                     img: this.registerDae.serviceSelectds[indexService].employeImg
                 }
-                axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
+                axios.post(endPoint.endpointTarget + '/dates/selectDatesBlocks', {
                     date: this.finalDate,
                     timedate: this.registerDae.serviceSelectds[indexService].duration,
                     hour: this.registerDae.serviceSelectds[indexService].start,
@@ -5334,53 +5534,53 @@ import mixinES from '../mixins/mixinES'
                     ifFirstClick: this.registerDae.serviceSelectds[indexService].itFirst,
                     firstBlock: false
                 }, this.configHeader)
-                .then(res => {
-                    this.registerDae.serviceSelectds[indexService].blocks = res.data.data
-                    this.registerDae.serviceSelectds[indexService].blocksFirst = res.data.blockFirst
-                    this.registerDae.serviceSelectds[indexService].itFirst = false
-                    this.registerDae.serviceSelectds[indexService].end = res.data.end
-                    const finalIndex = parseFloat(indexService) + parseFloat(1)
-                    if (this.registerDae.serviceSelectds[finalIndex]) {
-                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
-                            block: res.data.blockFirst,
-                            timedate: this.registerDae.serviceSelectds[finalIndex].duration,
-                            employesServices: this.registerDae.serviceSelectds[finalIndex].employes,
-                            firstBlock: true
-                        })
-                        .then(res => {
-                            this.registerDae.serviceSelectds[finalIndex].valid = true
-                            this.registerDae.serviceSelectds[finalIndex].blocks = res.data.data
-                        }).catch(err => {
-                            if (!err.response) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Error de conexión',
-                                    showConfirmButton: false,
-                                    timer: 1500
+                    .then(res => {
+                        this.registerDae.serviceSelectds[indexService].blocks = res.data.data
+                        this.registerDae.serviceSelectds[indexService].blocksFirst = res.data.blockFirst
+                        this.registerDae.serviceSelectds[indexService].itFirst = false
+                        this.registerDae.serviceSelectds[indexService].end = res.data.end
+                        const finalIndex = parseFloat(indexService) + parseFloat(1)
+                        if (this.registerDae.serviceSelectds[finalIndex]) {
+                            axios.post(endPoint.endpointTarget + '/dates/editBlocksFirst', {
+                                block: res.data.blockFirst,
+                                timedate: this.registerDae.serviceSelectds[finalIndex].duration,
+                                employesServices: this.registerDae.serviceSelectds[finalIndex].employes,
+                                firstBlock: true
+                            })
+                                .then(res => {
+                                    this.registerDae.serviceSelectds[finalIndex].valid = true
+                                    this.registerDae.serviceSelectds[finalIndex].blocks = res.data.data
+                                }).catch(err => {
+                                    if (!err.response) {
+                                        this.$swal({
+                                            icon: 'error',
+                                            title: 'Error de conexión',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
+                                    }
                                 })
-                            }
-                        })
-                    }else{
-                        this.validHour = true
-                    }
-                }).catch(err => {
-                    if (!err.response) {
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Error de conexión',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                })
+                        } else {
+                            this.validHour = true
+                        }
+                    }).catch(err => {
+                        if (!err.response) {
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Error de conexión',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    })
                 setTimeout(() => {
-                    $('#'+check).addClass('fa-check')
+                    $('#' + check).addClass('fa-check')
                 }, 500);
             }
-            
+
         },
-        selectBlockEdit(hour){
-            axios.post(endPoint.endpointTarget+'/dates/selectDatesBlocks', {
+        selectBlockEdit(hour) {
+            axios.post(endPoint.endpointTarget + '/dates/selectDatesBlocks', {
                 date: this.dataEditSend.date,
                 timedate: this.dataEditSend.duration,
                 hour: hour,
@@ -5393,26 +5593,26 @@ import mixinES from '../mixins/mixinES'
                 ifFirstClick: this.dataEditSend.isFirst,
                 firstBlock: false
             }, this.configHeader)
-            .then(res => {
-                this.dataEditSend.isFirst = false
-                this.finalBlockEdit = res.data.data
-                this.blockFirstEdit = res.data.blockFirst
-                this.dataEditSend.start = hour
-                this.dataEditSend.end = res.data.end
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
+                .then(res => {
+                    this.dataEditSend.isFirst = false
+                    this.finalBlockEdit = res.data.data
+                    this.blockFirstEdit = res.data.blockFirst
+                    this.dataEditSend.start = hour
+                    this.dataEditSend.end = res.data.end
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
         },
-        newNoteInsert(id){
+        newNoteInsert(id) {
             this.clientNotesState = true
-            axios.post(endPoint.endpointTarget+'/clients/insertNotesToClient', {
+            axios.post(endPoint.endpointTarget + '/clients/insertNotesToClient', {
                 id: id,
                 note: {
                     name: this.newNote.name,
@@ -5420,21 +5620,21 @@ import mixinES from '../mixins/mixinES'
                     createdAt: new Date()
                 }
             }, this.configHeader)
-            .then(res => {
-                if (res.data.status == "ok") {
-                    axios.get(endPoint.endpointTarget+'/clients/getNotesClient/'+id, this.configHeader)
-                    .then(res => {
-                        if (res.data.status == "ok") {
-                            this.notesClient = res.data.notes
-                            this.clientNotesState = false
-                            this.newNote.note = ""
-                            this.newNote.name = ""
-                        }
-                    })
-                }
-            })
+                .then(res => {
+                    if (res.data.status == "ok") {
+                        axios.get(endPoint.endpointTarget + '/clients/getNotesClient/' + id, this.configHeader)
+                            .then(res => {
+                                if (res.data.status == "ok") {
+                                    this.notesClient = res.data.notes
+                                    this.clientNotesState = false
+                                    this.newNote.note = ""
+                                    this.newNote.name = ""
+                                }
+                            })
+                    }
+                })
         },
-        insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg){
+        insertData(index, lender, restTime, Class, duration, lendeId, check, lenders, lenderImg) {
             this.load2 = true
             if (lender == 'Primera disponible') {
                 if (index == 0) {
@@ -5454,40 +5654,40 @@ import mixinES from '../mixins/mixinES'
                     }
                     this.validHour = false
                     setTimeout(() => {
-                        axios.post(endPoint.endpointTarget+'/dates/availableslenders',{
+                        axios.post(endPoint.endpointTarget + '/dates/availableslenders', {
                             date: this.finalDate,
                             branch: this.branch
                         }, this.configHeader)
-                        .then(res => {
-                            this.getDay = res.data.day
-                            this.availableslenders = res.data.array
-                            axios.post(endPoint.endpointTarget+'/dates/blocksHoursFirst', {
-                                date: this.finalDate,
-                                employes: res.data.array,
-                                timedate: this.registerDae.serviceSelectds[0].duration,
-                                employesServices: this.registerDae.serviceSelectds[0].employes,
-                                branch: this.branch
-                            }, this.configHeader)
                             .then(res => {
-                                this.readyChange = true
-                                this.load2 = false
-                                this.registerDae.serviceSelectds[0].valid = true
-                                this.registerDae.serviceSelectds[0].blocks = res.data.data
-                                this.registerDae.block = res.data.data
-                                // $('#block0').show('slow')
+                                this.getDay = res.data.day
+                                this.availableslenders = res.data.array
+                                axios.post(endPoint.endpointTarget + '/dates/blocksHoursFirst', {
+                                    date: this.finalDate,
+                                    employes: res.data.array,
+                                    timedate: this.registerDae.serviceSelectds[0].duration,
+                                    employesServices: this.registerDae.serviceSelectds[0].employes,
+                                    branch: this.branch
+                                }, this.configHeader)
+                                    .then(res => {
+                                        this.readyChange = true
+                                        this.load2 = false
+                                        this.registerDae.serviceSelectds[0].valid = true
+                                        this.registerDae.serviceSelectds[0].blocks = res.data.data
+                                        this.registerDae.block = res.data.data
+                                        // $('#block0').show('slow')
+                                    })
+                            }).catch(err => {
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión 1',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }
                             })
-                        }).catch(err => {
-                            if (!err.response) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Error de conexión 1',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                            }
-                        })
                     }, 200);
-                }else{
+                } else {
                     for (let i = index; i < this.registerDae.serviceSelectds.length; i++) {
                         const element = this.registerDae.serviceSelectds[i];
                         element.start = ''
@@ -5504,56 +5704,56 @@ import mixinES from '../mixins/mixinES'
                     }
                     this.validHour = false
                     if (this.registerDae.serviceSelectds[index - 1].blocksFirst.length > 0) {
-                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                        axios.post(endPoint.endpointTarget + '/dates/editBlocksFirst', {
                             block: this.registerDae.serviceSelectds[index - 1].blocksFirst,
                             timedate: this.registerDae.serviceSelectds[index].duration,
                             employesServices: this.registerDae.serviceSelectds[index].employes,
                             firstBlock: true
                         })
-                        .then(res => {
-                            this.load2 = false
-                            this.registerDae.serviceSelectds[index].valid = true
-                            this.registerDae.serviceSelectds[index].blocks = res.data.data
-                            this.registerDae.serviceSelectds[index].blocksFirst = []
-                        }).catch(err => {
-                            if (!err.response) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Error de conexión',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                            }
-                        })
-                    }else{
-                        axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+                            .then(res => {
+                                this.load2 = false
+                                this.registerDae.serviceSelectds[index].valid = true
+                                this.registerDae.serviceSelectds[index].blocks = res.data.data
+                                this.registerDae.serviceSelectds[index].blocksFirst = []
+                            }).catch(err => {
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }
+                            })
+                    } else {
+                        axios.post(endPoint.endpointTarget + '/dates/editBlocksFirst', {
                             block: this.registerDae.serviceSelectds[index - 1].blocks,
                             timedate: this.registerDae.serviceSelectds[index].duration,
                             employesServices: this.registerDae.serviceSelectds[index].employes,
                             firstBlock: true
                         })
-                        .then(res => {
-                            this.load2 = false
-                            this.registerDae.serviceSelectds[index].valid = true
-                            this.registerDae.serviceSelectds[index].blocks = res.data.data
-                            this.registerDae.serviceSelectds[index].blocksFirst = []
-                        }).catch(err => {
-                            if (!err.response) {
-                                this.$swal({
-                                    icon: 'error',
-                                    title: 'Error de conexión',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                })
-                            }
-                        })
+                            .then(res => {
+                                this.load2 = false
+                                this.registerDae.serviceSelectds[index].valid = true
+                                this.registerDae.serviceSelectds[index].blocks = res.data.data
+                                this.registerDae.serviceSelectds[index].blocksFirst = []
+                            }).catch(err => {
+                                if (!err.response) {
+                                    this.$swal({
+                                        icon: 'error',
+                                        title: 'Error de conexión',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                }
+                            })
                     }
                 }
-            }else{
-                
+            } else {
+
                 for (let keyTwo = 0; keyTwo < this.registerDae.serviceSelectds[index].blocks.length; keyTwo++) {
                     const block = this.registerDae.serviceSelectds[index].blocks[keyTwo];
-                    if (block.validator == 'select' && block.employes){
+                    if (block.validator == 'select' && block.employes) {
                         block.validator = true
                         if (this.registerDae.serviceSelectds[index].blocks[keyTwo + 1]) {
                             if (this.registerDae.serviceSelectds[index].blocks[keyTwo + 1].validator == 'select') {
@@ -5601,8 +5801,8 @@ import mixinES from '../mixins/mixinES'
                     this.registerDae.serviceSelectds[index].class = Class
                     this.registerDae.serviceSelectds[index].itFirst = false
                     this.validHour = false
-                    
-                    axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+
+                    axios.post(endPoint.endpointTarget + '/dates/editBlocksFirst', {
                         block: this.registerDae.serviceSelectds[index].blocksFirst,
                         timedate: this.registerDae.serviceSelectds[index].duration,
                         employeSelect: lendeId,
@@ -5616,30 +5816,30 @@ import mixinES from '../mixins/mixinES'
                         },
                         firstBlock: false
                     }, this.configHeader)
-                    .then(res => {
-                        if (res.data.status == 'ok') {
-                            this.load2 = false
-                            this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
-                            this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
-                            this.registerDae.serviceSelectds[index].itFirst = false
-                            setTimeout(() => {
-                                $('#block'+index).show('slow')
-                            }, 500);
-                            setTimeout(() => {
-                                $('#check'+index).addClass('fa-check')
-                            }, 500);
-                        }
-                    }).catch(err => {
-                        if (!err.response) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Error de conexión',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
-                    })
-                }else{
+                        .then(res => {
+                            if (res.data.status == 'ok') {
+                                this.load2 = false
+                                this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
+                                this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
+                                this.registerDae.serviceSelectds[index].itFirst = false
+                                setTimeout(() => {
+                                    $('#block' + index).show('slow')
+                                }, 500);
+                                setTimeout(() => {
+                                    $('#check' + index).addClass('fa-check')
+                                }, 500);
+                            }
+                        }).catch(err => {
+                            if (!err.response) {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Error de conexión',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }
+                        })
+                } else {
                     for (let j = index + 1; j < this.registerDae.serviceSelectds.length; j++) {
                         const element = this.registerDae.serviceSelectds[j];
                         element.start = ''
@@ -5665,8 +5865,8 @@ import mixinES from '../mixins/mixinES'
                     this.registerDae.serviceSelectds[index].class = Class
                     this.registerDae.serviceSelectds[index].itFirst = false
                     this.validHour = false
-                    
-                    axios.post(endPoint.endpointTarget+'/dates/editBlocksFirst', {
+
+                    axios.post(endPoint.endpointTarget + '/dates/editBlocksFirst', {
                         block: this.registerDae.serviceSelectds[index].blocks,
                         timedate: this.registerDae.serviceSelectds[index].duration,
                         employeSelect: lendeId,
@@ -5680,39 +5880,39 @@ import mixinES from '../mixins/mixinES'
                         },
                         firstBlock: false
                     }, this.configHeader)
-                    .then(res => {
-                        if (res.data.status == 'ok') {
-                            this.load2 = false
-                            this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
-                            this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
-                            this.registerDae.serviceSelectds[index].itFirst = false
-                            setTimeout(() => {
-                                $('#block'+index).show('slow')
-                            }, 500);
-                            setTimeout(() => {
-                                $('#check'+index).addClass('fa-check')
-                            }, 500);
-                        }
-                    }).catch(err => {
-                        if (!err.response) {
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Error de conexión',
-                                showConfirmButton: false,
-                                timer: 1500
-                            })
-                        }
-                    })
+                        .then(res => {
+                            if (res.data.status == 'ok') {
+                                this.load2 = false
+                                this.registerDae.serviceSelectds[index].blocks = res.data.blockEmploye
+                                this.registerDae.serviceSelectds[index].blocksFirst = res.data.data
+                                this.registerDae.serviceSelectds[index].itFirst = false
+                                setTimeout(() => {
+                                    $('#block' + index).show('slow')
+                                }, 500);
+                                setTimeout(() => {
+                                    $('#check' + index).addClass('fa-check')
+                                }, 500);
+                            }
+                        }).catch(err => {
+                            if (!err.response) {
+                                this.$swal({
+                                    icon: 'error',
+                                    title: 'Error de conexión',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }
+                        })
                 }
             }
         },
-        fixedHours(duration){
+        fixedHours(duration) {
             const hours = parseInt(duration / 60) + ' hr'
-            const minutes = duration - (parseInt(duration / 60) * 60 )  + ' min'
-            return hours+' '+minutes
+            const minutes = duration - (parseInt(duration / 60) * 60) + ' min'
+            return hours + ' ' + minutes
         },
-        openBlocks(indexService, firstEmploye, open){
-            $('#'+open).toggle('slow')
+        openBlocks(indexService, firstEmploye, open) {
+            $('#' + open).toggle('slow')
             this.insertData(indexService, firstEmploye)
         },
         validateFirstStep() {
@@ -5728,25 +5928,25 @@ import mixinES from '../mixins/mixinES'
                     }
                     if (validMicro) {
                         validService = true
-                    }else{
+                    } else {
                         validService = false
                         break
                     }
                 }
-            }else{
+            } else {
                 validService = true
             }
             if (this.ifServices && validService) {
                 this.validWizard = true
                 for (let l = 0; l < 20; l++) {
-                    $('#block'+l).toggle('slow')
+                    $('#block' + l).toggle('slow')
                 }
-                if ( this.registerDae.date != '') {
+                if (this.registerDae.date != '') {
                     for (let index = 0; index < this.registerDae.serviceSelectds.length; index++) {
                         const element = this.registerDae.serviceSelectds[index];
                         if (element.valid == false) {
                             element.valid = true
-                            this.insertData(index, 'Primera disponible', '', '', element.duration, 'check'+index, element.lenders)
+                            this.insertData(index, 'Primera disponible', '', '', element.duration, 'check' + index, element.lenders)
                             break
                         }
                     }
@@ -5755,10 +5955,10 @@ import mixinES from '../mixins/mixinES'
                     setTimeout(() => {
                         this.openCalendar()
                     }, 1000);
-                    
+
                 }
                 return this.ifServices
-            }else{
+            } else {
                 this.$swal({
                     icon: 'error',
                     title: 'Seleccione adicional',
@@ -5769,13 +5969,13 @@ import mixinES from '../mixins/mixinES'
                 return false
             }
         },
-        setInitialsName(name){
+        setInitialsName(name) {
             if (name.split(" ").length >= 2) {
-                return name.split(" ")[0][0]+name.split(" ")[1][0]
-            }else{
+                return name.split(" ")[0][0] + name.split(" ")[1][0]
+            } else {
                 return name[0]
             }
-            
+
         },
         validateLastStep() {
 
@@ -5785,18 +5985,18 @@ import mixinES from '../mixins/mixinES'
                 for (const micro of this.registerDae.serviceSelectds) {
                     for (const selects of micro.microServices) {
                         if (selects.checked) {
-                            micro.microServiceSelect.push({name: selects.microService, duration: selects.duration, price: selects.price})
+                            micro.microServiceSelect.push({ name: selects.microService, duration: selects.duration, price: selects.price })
                         }
                     }
                 }
                 return this.validHour
-            }else{
+            } else {
                 this.validWizard = false
                 return this.validHour
-            }  
+            }
         },
-        changePrice(pos){
-            
+        changePrice(pos) {
+
             this.loading = true
             let discount = this.selectedDates.closedArray[pos].descuento
             this.selectedDates.closedArray[pos].comision = 0
@@ -5804,61 +6004,61 @@ import mixinES from '../mixins/mixinES'
             this.selectedDates.design = 0
             let design = this.selectedDates.closedArray[pos].design
             let comisionDesign = (parseFloat(design) / parseFloat(2))
-            
+
             this.selectedDates.closedArray[pos].total = 0
             this.selectedDates.total = 0
             for (let index = 0; index < this.selectedDates.closedArray[pos].services.length; index++) {
-                
+
                 if (!this.selectedDates.closedArray[pos].services[index].descuento) {
-                        
-                        if (discount == 0) {
-                            const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(this.selectedDates.closedArray[pos].services[index].precio)) / 100
-                            this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision) 
-                            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
-                        }
-                        else{
-                            const descuento = parseFloat(discount) / 100
-                        
-                            const porcentaje = 1 - parseFloat(descuento)
-                            
-                            const precioConDescuento = parseFloat(this.selectedDates.closedArray[pos].services[index].precio) * parseFloat(porcentaje)
-                            const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(precioConDescuento)) / 100
-                            this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision) 
-                    
-                            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(precioConDescuento)
-                        }
+
+                    if (discount == 0) {
+                        const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(this.selectedDates.closedArray[pos].services[index].precio)) / 100
+                        this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision)
+                        this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
+                    }
+                    else {
+                        const descuento = parseFloat(discount) / 100
+
+                        const porcentaje = 1 - parseFloat(descuento)
+
+                        const precioConDescuento = parseFloat(this.selectedDates.closedArray[pos].services[index].precio) * parseFloat(porcentaje)
+                        const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(precioConDescuento)) / 100
+                        this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision)
+
+                        this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(precioConDescuento)
+                    }
                 }
-                else{ 
+                else {
                     const comision = (parseFloat(this.selectedDates.closedArray[pos].services[index].comision) * parseFloat(this.selectedDates.closedArray[pos].services[index].precio)) / 100
-                    this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision) 
+                    this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comision)
                     this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(this.selectedDates.closedArray[pos].services[index].precio)
-                    
+
                 }
-                
-            } 
+
+            }
             this.selectedDates.closedArray[pos].comision = parseFloat(this.selectedDates.closedArray[pos].comision) + parseFloat(comisionDesign)
-            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(design)  
+            this.selectedDates.closedArray[pos].total = parseFloat(this.selectedDates.closedArray[pos].total) + parseFloat(design)
             this.selectedDates.closedArray[pos].totalLocal = parseFloat(this.selectedDates.closedArray[pos].total) - parseFloat(this.selectedDates.closedArray[pos].comision)
-            
+
             for (let i = 0; i < this.selectedDates.closedArray.length; i++) {
                 this.selectedDates.total = parseFloat(this.selectedDates.total) + parseFloat(this.selectedDates.closedArray[i].total)
                 this.selectedDates.design = parseFloat(this.selectedDates.design) + this.selectedDates.closedArray[i].design
             }
-            
-            
-            
+
+
+
             this.loading = false
         },
-        cleanDiscount(i){
+        cleanDiscount(i) {
             setTimeout(() => {
                 if (this.selectedDates.closedArray[i].descuento == 0) {
                     this.selectedDates.closedArray[i].descuento = ''
                 }
             }, 100);
-            
+
         },
-        noBlank(){
-            
+        noBlank() {
+
             if (this.loading == true) {
                 this.loading = false
             }
@@ -5868,102 +6068,108 @@ import mixinES from '../mixins/mixinES'
                 }
             }
         },
-        noCero(){
+        noCero() {
             this.loading = true
         },
-        discPerEmploye(employe){
+        discPerEmploye(employe) {
             let valid = true
             for (let index = 0; index < this.selectedDates.closedArray[employe].services.length; index++) {
-                if (this.selectedDates.closedArray[employe].services[index].discount == false ) {
+                if (this.selectedDates.closedArray[employe].services[index].discount == false) {
                     valid = false
                 }
-                
+
             }
             return valid
         },
-        validCode(){
-            axios.get(endPoint.endpointTarget+'/pedidos/validCode/'+this.codeArticulo)
-            .then( res =>{
-                if (res.data) {
-                    this.articulo = res.data.articulo
-                    this.estadoArticulo = res.data.estado
-                    this.idArticulo = res.data._id
-                    this.compradorArticulo = res.data.cliente
-                    this.medioPagoArticulo = res.data.tipoPago
-                    this.totalArticulo = res.data.total
-                    this.dateModals.modal7 = true
-                }
-                else{
-                    this.$swal({
-                        type: 'error',
-                        title: 'Código no existe',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            }).catch(err => {
-                if (!err.response) {
-                    this.$swal({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                }
-            })
-        },
-        verifyCode(){
-            this.$swal({
-					type: 'warning',
-					title: '¿Seguro que desea verificar el código?',
-					showConfirmButton: true,
-                    showCancelButton: true,
-                    confirmButtonColor: '#2dce89',
-                    cancelButtonColor: '#f5365c',
-                    confirmButtonText: 'Si',
-                    cancelButtonText: 'No'
-				}).then((result) => {
-                    if (result.value) {
-                            var remp = this.totalArticulo.replace('.', "")
-                            var remp1 = remp.replace(',00', "")
-                            var remp2 = remp1.replace('$ ', "")
-                            this.payOrder = remp2
-                            this.haveCode = true
-                            this.dateModals.modal6 = false
-                            this.dateModals.modal7 = false
-                            
+        validCode() {
+            axios.get(endPoint.endpointTarget + '/pedidos/validCode/' + this.codeArticulo)
+                .then(res => {
+                    if (res.data) {
+                        this.articulo = res.data.articulo
+                        this.estadoArticulo = res.data.estado
+                        this.idArticulo = res.data._id
+                        this.compradorArticulo = res.data.cliente
+                        this.medioPagoArticulo = res.data.tipoPago
+                        this.totalArticulo = res.data.total
+                        this.dateModals.modal7 = true
+                    }
+                    else {
+                        this.$swal({
+                            type: 'error',
+                            title: 'Código no existe',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }).catch(err => {
+                    if (!err.response) {
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                     }
                 })
         },
-        fixClient(){
+        verifyCode() {
+            this.$swal({
+                type: 'warning',
+                title: '¿Seguro que desea verificar el código?',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonColor: '#2dce89',
+                cancelButtonColor: '#f5365c',
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.value) {
+                    var remp = this.totalArticulo.replace('.', "")
+                    var remp1 = remp.replace(',00', "")
+                    var remp2 = remp1.replace('$ ', "")
+                    this.payOrder = remp2
+                    this.haveCode = true
+                    this.dateModals.modal6 = false
+                    this.dateModals.modal7 = false
+
+                }
+            })
+        },
+        fixClient() {
             this.fixSearch = false
             setTimeout(() => {
                 this.fixSearch = true
             }, 100);
         },
-        generateExcel(){
-            console.log(this.events)
-            var Data = []
-            for (let index = 0; index < this.events.length; index++) {
-                const element = this.events[index];
-                var dataMicro = ''
-                for (const key in element.microServices) {
-                    const micro = element.microServices[key]
-                    if (key == 0) {
-                        dataMicro = micro.name
-                    }else{
-                        dataMicro = dataMicro + ', '+micro.name
+        generateExcel() {
+            try {
+                console.log(this.events)
+                var Data = []
+                for (let index = 0; index < this.events.length; index++) {
+                    const element = this.events[index];
+                    var dataMicro = ''
+                    for (const key in element.microServices) {
+                        const micro = element.microServices[key]
+                        if (key == 0) {
+                            dataMicro = micro.name
+                        } else {
+                            dataMicro = dataMicro + ', ' + micro.name
+                        }
                     }
+
+                    Data.push({ Cliente: element.client.name ? element.client.name : '' + ' - ' + element.client.email, Empleado: element.employe.name ? element.employe.name : '', Servicio: element.services[0].name ? element.services[0].name : '', 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
                 }
-                
-                Data.push({Cliente: element.client.name ? element.client.name : ''+' - '+element.client.email, Empleado: element.employe.name ? element.employe.name : '', Servicio: element.services[0].name ? element.services[0].name : '', 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
+                var Datos = XLSX.utils.json_to_sheet(Data)
+                var wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, Datos, 'Datos')
+                XLSX.writeFile(wb, 'dates.xlsx')
+            } catch (error) {
+                console.log("AQUI EL ERROR:")
+                console.log(error)
             }
-            var Datos = XLSX.utils.json_to_sheet(Data) 
-            var wb = XLSX.utils.book_new() 
-            XLSX.utils.book_append_sheet(wb, Datos, 'Datos') 
-            XLSX.writeFile(wb, 'dates.xlsx') 
+
         },
-        SelectMicro(index, indexM, microServices) { 
+        SelectMicro(index, indexM, microServices) {
             if (this.registerDae.serviceSelectds[index].microServices[indexM].microService == 'Ninguno') {
                 this.registerDae.serviceSelectds[index].microServices.forEach(element => {
                     if (element.checked && element.microService != 'Ninguno') {
@@ -5972,11 +6178,11 @@ import mixinES from '../mixins/mixinES'
                     }
                 });
                 this.registerDae.serviceSelectds[index].microServices[0].checked = true
-            }else{
+            } else {
                 if (this.registerDae.serviceSelectds[index].microServices[indexM].checked) {
-                    this.registerDae.serviceSelectds[index].microServices[indexM].checked = false    
+                    this.registerDae.serviceSelectds[index].microServices[indexM].checked = false
                     this.registerDae.serviceSelectds[index].duration = parseFloat(this.registerDae.serviceSelectds[index].duration) - parseFloat(microServices.duration)
-                }else{
+                } else {
                     this.registerDae.serviceSelectds[index].microServices[0].checked = false
                     this.registerDae.serviceSelectds[index].microServices[indexM].checked = true
                     this.registerDae.serviceSelectds[index].duration = parseFloat(this.registerDae.serviceSelectds[index].duration) + parseFloat(microServices.duration)
@@ -5998,7 +6204,7 @@ import mixinES from '../mixins/mixinES'
             return screen.width < 780 ? '95%' : '50%'
         }
     },
-    mounted (){
+    mounted() {
         this.socket.on('notify', (data) => {
             if (data.link.search("agendamiento") >= 0) {
                 this.getDates()
@@ -6015,547 +6221,763 @@ import mixinES from '../mixins/mixinES'
     destroyed() {
         EventBus.$off('notifyLink');
     },
-  };
+};
 </script>
 <style>
-    .dropAgend .dropdown-menu{
-        width: 100%;
-        max-height: 30vh;
-        overflow:hidden;
-        overflow-x: hidden;
-        overflow-y:scroll;
-    }
-    .vuecal__flex .vuecal__menu{
-        color: #0a0a0a !important
-    }
-    .vuecal__arrow {
-        color: white;
-    }
-    .vuecal__menu {background-color:transparent;border: none !important;border-radius: 5px 5px 0 0; }
-    .vuecal__menu button{background-color:rgba(7, 7, 7, 0.116);outline: none}
-    .vuecal__menu li {border-bottom-color: #fff;color: #fff;}
-    .vuecal__menu li.active {background-color: rgba(255, 255, 255, 0.15);}
-    .vuecal__title-bar {background-color: #172b4d;color: #fff !important}
-    .vuecal__event-title{
-        font-size: 1.3em;
-        font-weight: 400;
-    }
-    .vuecal__event-time{
-        font-size: 1em;
-        font-weight: 600;
-    }
-    .vuecal__event-content{
-        font-size: 1.1em;
-        font-weight: 400;
-        font-style: italic;
-    }
-    .vuecal__title button{
-        color: white !important
-    }
-    .vuecal__split-days-headers{
-        height: 3em !important;
-    }
-    .day-split-header {
-        background-color: rgba(23, 43, 77, 0.7);
-    }
-    .vuecal__cell--selected{
-        z-index: 0 !important;
-    }
-    .vuecal__cell--selected .vuecal__cell-content{
-        z-index: 0 !important;
-    }
-    .vuecal__body{
-        background-color:white;
-    }
-    .vuecal__time-column .vuecal__time-cell{color:white;height:1vh;}
-    .vuecal__event{color:#fff;cursor:pointer;z-index: 0 !important;}
-    .vuecal__event:hover{
-        opacity: .8;
-    }
-    /* Dot indicator */
-    .vuecal__cell-events-count {
-        width: 19px;
-        min-width: 0;
-        height: 17px;
-        padding: 2px;
-        font-size: 12px;
-        background-color: #172b4d; 
-    }
-    .vuecal__header{background-color: rgba(238, 238, 238, 0.623);border-radius: 5px 5px 0 0;}
-    .vuecal__cell.today div .vuecal__cell-events-count, .vuecal__cell.current {background-color: #353535 !important;}
-    .vuecal:not(.vuecal--day-view) .vuecal__cell.selected {background-color: rgba(235, 255, 245, 0.4);}
-    .vuecal__cell.selected:before {border-color: rgba(66, 185, 131, 0.5);}
-    .vuecal__cell-date{color:#000;font-family: 'Raleway', sans-serif;
-    font-weight:400;}
-    .vuecal__heading span{color:#000;font-family: 'Raleway', sans-serif;
-    font-weight:400;}
-    .vuecal--green-theme .vuecal__title-bar {
-        background-color: #1F5673;
-    }
-    .vuecal__time-column .vuecal__time-cell{
-        color: #0F2027
-    }
-    .vuecal__event.lunch {
-        background: repeating-linear-gradient(45deg, #172b4d3b, #172b4d36 10px, #f2f2f2 10px, #f9fafb 15px);/* IE 10+ */
-        color: #172b4d;
-        font-size: 2.5em;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .vuecal__cell--today{
-        z-index: 0 !important;
-    }
-    .vuecal__event.lunch .vuecal__event-time {display: none;align-items: center;}
-    .vuecal__cell-split.class1Split {background-color: rgba(234, 197, 190, 0.1);}
-    .vuecal__cell-split.class2Split {background-color: rgb(188, 209, 255, 0.1);}
-    .vuecal__cell-split.class3Split {background-color: rgb(221, 239, 189, 0.1);}
-    .vuecal__cell-split.class4Split {background-color: rgb(205, 242, 226, 0.1);}
-    .vuecal__cell-split.class5Split {background-color: rgb(183, 232, 205, 0.1);}
-    .vuecal__cell-split.class6Split {background-color: rgb(192, 229, 221, 0.1);}
-    .vuecal__cell-split.class7Split {background-color: rgb(242, 230, 230, 0.1);}
-    .vuecal__cell-split.class8Split {background-color: rgb(255, 214, 214, 0.1);}
-    .vuecal__cell-split.class9Split {background-color: rgb(255, 209, 186, 0.1);}
-    .vuecal__cell-split.class10Split {background-color: rgb(255, 243, 181, 0.1);}
-    .classBlock {
-        background:#f5365c;
-        border: 1px solid #fff;
-        border-radius: 7px;
-        color: black;
-    }
-    .class0 {
-        background:rgb(196, 203, 202);
-        border: 1px solid #fff;
-        border-radius: 7px;
-        color: black;
-    }
-    .class1 {
-        background:rgb(145, 217, 109);
-        border: 1px solid #fff;
-        border-radius: 7px;
-        color: black;
-    }
-    .class2 {
-    background:rgb(19, 205, 205);
+.dropAgend .dropdown-menu {
+    width: 100%;
+    max-height: 30vh;
+    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class3 {
-    background:#FDE59B;
+.vuecal__flex .vuecal__menu {
+    color: #0a0a0a !important
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class4 {
-    background:#EBF5EE;
+.vuecal__arrow {
+    color: white;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class5 {
-    background:#8E9DB8;
+.vuecal__menu {
+    background-color: transparent;
+    border: none !important;
+    border-radius: 5px 5px 0 0;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class6 {
-    background:#ECDFD5;
+.vuecal__menu button {
+    background-color: rgba(7, 7, 7, 0.116);
+    outline: none
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class7 {
-    background:#F3FFD7;
+.vuecal__menu li {
+    border-bottom-color: #fff;
+    color: #fff;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class8 {
-    background:#BCB3B3;
+.vuecal__menu li.active {
+    background-color: rgba(255, 255, 255, 0.15);
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class9 {
-    background:#C8E4D2;
+.vuecal__title-bar {
+    background-color: #172b4d;
+    color: #fff !important
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class10 {
-    background:#E4EAC2;
+.vuecal__event-title {
+    font-size: 1.3em;
+    font-weight: 400;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class11 {
-    background:#E6EAEF;
+.vuecal__event-time {
+    font-size: 1em;
+    font-weight: 600;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class12 {
-    background:#A2A89F;
+.vuecal__event-content {
+    font-size: 1.1em;
+    font-weight: 400;
+    font-style: italic;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class13 {
-    background:#FDE59B;
+.vuecal__title button {
+    color: white !important
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class14 {
-    background:#FEDCAE;
+.vuecal__split-days-headers {
+    height: 3em !important;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class15 {
-    background:#95EEEB;
+.day-split-header {
+    background-color: rgba(23, 43, 77, 0.7);
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class16 {
-    background:#DED6CE;
+.vuecal__cell--selected {
+    z-index: 0 !important;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class17 {
-    background:#B8AEA3;
+.vuecal__cell--selected .vuecal__cell-content {
+    z-index: 0 !important;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class18 {
-    background:#E2DA78;
+.vuecal__body {
+    background-color: white;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class19 {
-    background:#92C8A4;
+.vuecal__time-column .vuecal__time-cell {
+    color: white;
+    height: 1vh;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class20 {
-    background:#FCEDD9;
+.vuecal__event {
+    color: #fff;
+    cursor: pointer;
+    z-index: 0 !important;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class21 {
-    background:#13CDCD;
+.vuecal__event:hover {
+    opacity: .8;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class22 {
-    background:#91D96D;
+/* Dot indicator */
+.vuecal__cell-events-count {
+    width: 19px;
+    min-width: 0;
+    height: 17px;
+    padding: 2px;
+    font-size: 12px;
+    background-color: #172b4d;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class23 {
-    background:#D0BEB3;
+.vuecal__header {
+    background-color: rgba(238, 238, 238, 0.623);
+    border-radius: 5px 5px 0 0;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class24 {
-    background:#FFF870;
+.vuecal__cell.today div .vuecal__cell-events-count,
+.vuecal__cell.current {
+    background-color: #353535 !important;
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class25 {
-    background:#78BC61;
+.vuecal:not(.vuecal--day-view) .vuecal__cell.selected {
+    background-color: rgba(235, 255, 245, 0.4);
+}
 
- color: black;
-border: 1px solid #fff;
-        border-radius: 7px;    }
-    .class26 {
-    background:#caf7e273;
-border: 1px solid #fff;
-        border-radius: 7px;
+.vuecal__cell.selected:before {
+    border-color: rgba(66, 185, 131, 0.5);
+}
+
+.vuecal__cell-date {
+    color: #000;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+}
+
+.vuecal__heading span {
+    color: #000;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+}
+
+.vuecal--green-theme .vuecal__title-bar {
+    background-color: #1F5673;
+}
+
+.vuecal__time-column .vuecal__time-cell {
+    color: #0F2027
+}
+
+.vuecal__event.lunch {
+    background: repeating-linear-gradient(45deg, #172b4d3b, #172b4d36 10px, #f2f2f2 10px, #f9fafb 15px);
+    /* IE 10+ */
+    color: #172b4d;
+    font-size: 2.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vuecal__cell--today {
+    z-index: 0 !important;
+}
+
+.vuecal__event.lunch .vuecal__event-time {
+    display: none;
+    align-items: center;
+}
+
+.vuecal__cell-split.class1Split {
+    background-color: rgba(234, 197, 190, 0.1);
+}
+
+.vuecal__cell-split.class2Split {
+    background-color: rgb(188, 209, 255, 0.1);
+}
+
+.vuecal__cell-split.class3Split {
+    background-color: rgb(221, 239, 189, 0.1);
+}
+
+.vuecal__cell-split.class4Split {
+    background-color: rgb(205, 242, 226, 0.1);
+}
+
+.vuecal__cell-split.class5Split {
+    background-color: rgb(183, 232, 205, 0.1);
+}
+
+.vuecal__cell-split.class6Split {
+    background-color: rgb(192, 229, 221, 0.1);
+}
+
+.vuecal__cell-split.class7Split {
+    background-color: rgb(242, 230, 230, 0.1);
+}
+
+.vuecal__cell-split.class8Split {
+    background-color: rgb(255, 214, 214, 0.1);
+}
+
+.vuecal__cell-split.class9Split {
+    background-color: rgb(255, 209, 186, 0.1);
+}
+
+.vuecal__cell-split.class10Split {
+    background-color: rgb(255, 243, 181, 0.1);
+}
+
+.classBlock {
+    background: #f5365c;
+    border: 1px solid #fff;
+    border-radius: 7px;
     color: black;
-    }
-    .class27 {
-    background:#6ea08b81;
-border: 1px solid #fff;
-        border-radius: 7px;
+}
+
+.class0 {
+    background: rgb(196, 203, 202);
+    border: 1px solid #fff;
+    border-radius: 7px;
     color: black;
-    }
-    .class28 {
-    background:#ebd8d07e;
-border: 1px solid #fff;
-        border-radius: 7px;
+}
+
+.class1 {
+    background: rgb(145, 217, 109);
+    border: 1px solid #fff;
+    border-radius: 7px;
     color: black;
-    }
-    .class29 {
-    background:#d3ab9e7e;
-border: 1px solid #fff;
-        border-radius: 7px;
+}
+
+.class2 {
+    background: rgb(19, 205, 205);
+
     color: black;
-    }
-    .class30 {
-    background:#caf7e280;
-border: 1px solid #fff;
-        border-radius: 7px;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class3 {
+    background: #FDE59B;
+
     color: black;
-    }
-    .cursor-pointer{
-        cursor: pointer;
-    }
-    .maxHeightHistorical{
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class4 {
+    background: #EBF5EE;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class5 {
+    background: #8E9DB8;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class6 {
+    background: #ECDFD5;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class7 {
+    background: #F3FFD7;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class8 {
+    background: #BCB3B3;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class9 {
+    background: #C8E4D2;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class10 {
+    background: #E4EAC2;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class11 {
+    background: #E6EAEF;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class12 {
+    background: #A2A89F;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class13 {
+    background: #FDE59B;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class14 {
+    background: #FEDCAE;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class15 {
+    background: #95EEEB;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class16 {
+    background: #DED6CE;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class17 {
+    background: #B8AEA3;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class18 {
+    background: #E2DA78;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class19 {
+    background: #92C8A4;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class20 {
+    background: #FCEDD9;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class21 {
+    background: #13CDCD;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class22 {
+    background: #91D96D;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class23 {
+    background: #D0BEB3;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class24 {
+    background: #FFF870;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class25 {
+    background: #78BC61;
+
+    color: black;
+    border: 1px solid #fff;
+    border-radius: 7px;
+}
+
+.class26 {
+    background: #caf7e273;
+    border: 1px solid #fff;
+    border-radius: 7px;
+    color: black;
+}
+
+.class27 {
+    background: #6ea08b81;
+    border: 1px solid #fff;
+    border-radius: 7px;
+    color: black;
+}
+
+.class28 {
+    background: #ebd8d07e;
+    border: 1px solid #fff;
+    border-radius: 7px;
+    color: black;
+}
+
+.class29 {
+    background: #d3ab9e7e;
+    border: 1px solid #fff;
+    border-radius: 7px;
+    color: black;
+}
+
+.class30 {
+    background: #caf7e280;
+    border: 1px solid #fff;
+    border-radius: 7px;
+    color: black;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.maxHeightHistorical {
     max-height: 150px;
     overflow: hidden;
     overflow-y: scroll;
-    }
-    .listDatesEnd{
-        max-height: 60vh;
-        height: auto;
-    }
-   
-    .vue-form-wizard .wizard-btn{
-        min-width: 100px !important;
-    }
-    .fixed-top{
-        margin-left:30%;
-    }
-    .fixed-top .drop{
-        flex: 0 0 30% !important;
-    }
-    .calen::-webkit-scrollbar {
-        width: 8px !important;     /* Tamaño del scroll en vertical */
-        height: 8px !important;    /* Tamaño del scroll en horizontal */
-        display: none !important;  /* Ocultar scroll */
-    }
-    .form-control{
-        color: #2F2F2F !important;
-    }
-    .inputFind{
-        padding: 2px 10px;
-        border:none;
-        border-radius: 5px;
-        margin-top:-5px;
-        font-size: .8rem;
-    }
-    #file {
-        width: 0.1px;
-        height: 0.1px;
-        opacity: 0;
-        overflow: hidden;
-        position: absolute;
-        z-index: -1;
-    }
-    label[for="file"] {
-        font-size: 12px;
-        font-weight: 600;
-        color: #0095ff;
-        border: solid 2px #e9ecef;
-        background-color: #fff;
-        display: inline-block;
-        transition: all .5s;
-        cursor: pointer;
-        padding: 8.1px !important;
-        text-decoration-line: underline;
-        text-transform: uppercase;
+}
+
+.listDatesEnd {
+    max-height: 60vh;
+    height: auto;
+}
+
+.vue-form-wizard .wizard-btn {
+    min-width: 100px !important;
+}
+
+.fixed-top {
+    margin-left: 30%;
+}
+
+.fixed-top .drop {
+    flex: 0 0 30% !important;
+}
+
+.calen::-webkit-scrollbar {
+    width: 8px !important;
+    /* Tamaño del scroll en vertical */
+    height: 8px !important;
+    /* Tamaño del scroll en horizontal */
+    display: none !important;
+    /* Ocultar scroll */
+}
+
+.form-control {
+    color: #2F2F2F !important;
+}
+
+.inputFind {
+    padding: 2px 10px;
+    border: none;
+    border-radius: 5px;
+    margin-top: -5px;
+    font-size: .8rem;
+}
+
+#file {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+label[for="file"] {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0095ff;
+    border: solid 2px #e9ecef;
+    background-color: #fff;
+    display: inline-block;
+    transition: all .5s;
+    cursor: pointer;
+    padding: 8.1px !important;
+    text-decoration-line: underline;
+    text-transform: uppercase;
+    width: 100%;
+    text-align: center;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.hoverDelete:hover {
+    opacity: .8;
+    cursor: pointer;
+}
+
+.buttonUpload {
+    border: none;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color: #fff;
+    background-color: #2dce89;
+    height: 37px !important;
+}
+
+.menuVerRedoAgenda {
+    transition: all 0.3s ease-out;
+    overflow: hidden;
+}
+
+.navSCodeAgenda {
+    cursor: pointer;
+    width: 18%;
+    top: -20%;
+    right: 82%;
+    z-index: 1;
+    border-bottom: 2px solid #0000005c;
+    background-color: white;
+    position: absolute;
+    border-radius: 5px 5px 0 0;
+}
+
+.borderOnly .modal-content {
+    border-radius: 0 0.4375rem 0.4375rem 0.4375rem !important;
+}
+
+.allSelected {
+    background-color: #263c59;
+}
+
+.ps__rail-y {
+    z-index: 10000000 !important;
+}
+
+.ps__thumb-y {
+    height: 44px !important;
+}
+
+.qloq button {
+    padding: 5px !important;
+    margin-right: 30px !important;
+}
+
+.none {
+    display: none;
+}
+
+.mobileForm {
+    height: 60vh !important;
+    overflow: hidden !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+}
+
+.minAdd {
+    font-size: 2em;
+    vertical-align: sub;
+    margin-left: 5px;
+    color: #2dce89;
+}
+
+.minLess {
+    font-size: 2em;
+    vertical-align: sub;
+    margin-right: 5px;
+}
+
+.wizard-tab-content {
+    padding-bottom: 10px;
+}
+
+.showPhone {
+    display: none;
+}
+
+@media only screen and (max-width: 468px) {
+    .styleDropdown .dropdown-menu {
         width: 100%;
-        text-align: center;
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-    }
-    .hoverDelete:hover{
-        opacity: .8;
-        cursor: pointer;
-    }
-    .buttonUpload{
-        border:none;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        color:#fff;
-        background-color: #2dce89;
-        height: 37px !important;
-    }
-    .menuVerRedoAgenda{
-	transition: all 0.3s ease-out;
-	overflow: hidden;
+        left: 0%;
     }
 
-    .navSCodeAgenda{
-        cursor: pointer;
-        width: 18%;
-        top: -20%;
-        right: 82%;
+    .styleDropdown .dropdown-item {
+        font-size: 0.600rem !important;
+    }
+
+    .name-service {
+        font-size: 1em;
         z-index: 1;
-        border-bottom: 2px solid #0000005c;
-        background-color: white;
-        position: absolute;
-        border-radius: 5px 5px 0 0;
+        max-width: 85%;
+        margin-bottom: 20px;
     }
-    .borderOnly .modal-content{
-        border-radius: 0 0.4375rem 0.4375rem 0.4375rem !important;
+
+    .card-service img {
+        top: -210px;
     }
-    .allSelected{
-        background-color: #263c59;
+
+    .responsiveItem {
+        width: 100%;
     }
-    .ps__rail-y{
-        z-index: 10000000 !important;
+
+    .borderImageBrand {
+        margin-left: 35%;
     }
-    .ps__thumb-y{
-        height: 44px !important;
+
+    .showDevice {
+        display: none !important;
     }
-    .qloq button{
-        padding: 5px !important;
-        margin-right: 30px !important;
+
+    .showPhone {
+        display: block;
     }
-    .none{
-        display: none;
+
+    .card-services-information {
+        padding: 0;
     }
-    .mobileForm{
-        height:60vh !important;
-        overflow:hidden !important;
-        overflow-x: hidden !important;
-        overflow-y:hidden !important;
+
+    .logoSyswaFooter {
+        height: 110px;
+        width: 180px
     }
-    .minAdd{
-        font-size: 2em;
-        vertical-align: sub;
-        margin-left: 5px;
-        color: #2dce89;
+
+    .flatpickr-calendar {
+        left: 0 !important;
     }
-    .minLess{
-        font-size: 2em;
-        vertical-align: sub;
-        margin-right: 5px;
-    } 
-    .wizard-tab-content{
-        padding-bottom: 10px;
+
+    .vue-form-wizard .wizard-btn {
+        min-width: 70px !important;
+        font-size: .65em;
     }
-    .showPhone{
-        display: none;
+}
+
+@media only screen and (max-width: 768px) {
+    .card-service {
+        margin-top: 10px;
     }
-    @media only screen and (max-width: 468px)
-    {
-        .styleDropdown .dropdown-menu{
-            width: 100%;
-            left: 0%;
-        }
-        .styleDropdown .dropdown-item{
-            font-size:0.600rem !important;
-        }
-        .name-service{
-            font-size: 1em;
-            z-index:1;
-            max-width: 85%;
-            margin-bottom:20px;
-        }
-        .card-service img{
-            top:-210px;
-        }
-        .responsiveItem{
-            width: 100%;
-        }
-        .borderImageBrand{
-            margin-left:35%;
-        }
-        .showDevice{
-            display: none !important;
-        }
-        .showPhone{
-            display: block;
-        }
-        .card-services-information {
-            padding: 0;
-        }
-        .logoSyswaFooter{
-            height:110px;
-            width:180px
-        }
-        .flatpickr-calendar {
-            left: 0 !important;
-        }
-        .vue-form-wizard .wizard-btn {
-            min-width: 70px !important;
-            font-size: .65em;
-        }
+
+    .responsiveButtonsPercent {
+        width: 100% !important;
     }
-    @media only screen and (max-width: 768px)
-    {
-        .card-service{
-            margin-top:10px;
-        }
-        .responsiveButtonsPercent{
-            width: 100% !important;
-        }
-        .wizard-btn{
-        min-width: 80px !important;  
-        }
-        .borderRight{
-            border:none;
-        }
-        .flatpickr-calendar {
-            left: 0 !important;
-        }
-        .vuecal__event-title{
-            font-size: 1em;
-        }
-        .vuecal__event-time{
-            font-size: 0.8em;
-        }
-        .vuecal__event-content{
-            font-size: 0.9em;
-        }
-        .day-split-header{
-            font-size: 0.8em;
-        }
-        .avatar-sm {
-            width: 26px;
-            height: 26px;
-            font-size: 0.875rem;
-            margin-top: -3px;
-            margin-left: 3px;
-        }
-        .name-serviceF {
-            font-size: 1.4em;
-            margin-bottom: 5px !important;
-        }
-        .MicroF{
-            font-size: 1em !important;
-        }
-        .MF{
-            font-size: 0.9em !important;
-        }
-        .FPrice{
-            font-size: 0.9em;
-        }
+
+    .wizard-btn {
+        min-width: 80px !important;
     }
-    .vue-form-wizard .wizard-tab-content{
-        padding: 0px !important;
+
+    .borderRight {
+        border: none;
     }
-    .wizard-btn{
-        margin-top: 20px;
+
+    .flatpickr-calendar {
+        left: 0 !important;
     }
-    .hideThisShit input{
-        display: none;
+
+    .vuecal__event-title {
+        font-size: 1em;
     }
-    .ifscreen .flatpickr-calendar.inline{
-        margin-left: 18% !important;
+
+    .vuecal__event-time {
+        font-size: 0.8em;
     }
-    .ifNoscreen .flatpickr-calendar.inline{
-        margin-left: -2% !important;
+
+    .vuecal__event-content {
+        font-size: 0.9em;
     }
-    .nav-pills .nav-link.active{
-        background-color: #172b4d !important;
+
+    .day-split-header {
+        font-size: 0.8em;
     }
-    .noBorder{
-        border: none  !important;
-        border-radius: 0;
+
+    .avatar-sm {
+        width: 26px;
+        height: 26px;
+        font-size: 0.875rem;
+        margin-top: -3px;
+        margin-left: 3px;
     }
-</style>
+
+    .name-serviceF {
+        font-size: 1.4em;
+        margin-bottom: 5px !important;
+    }
+
+    .MicroF {
+        font-size: 1em !important;
+    }
+
+    .MF {
+        font-size: 0.9em !important;
+    }
+
+    .FPrice {
+        font-size: 0.9em;
+    }
+}
+
+.vue-form-wizard .wizard-tab-content {
+    padding: 0px !important;
+}
+
+.wizard-btn {
+    margin-top: 20px;
+}
+
+.hideThisShit input {
+    display: none;
+}
+
+.ifscreen .flatpickr-calendar.inline {
+    margin-left: 18% !important;
+}
+
+.ifNoscreen .flatpickr-calendar.inline {
+    margin-left: -2% !important;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #172b4d !important;
+}
+
+.noBorder {
+    border: none !important;
+    border-radius: 0;
+}</style>
