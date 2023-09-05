@@ -792,7 +792,7 @@ export default {
             var Data = []
             for (let index = 0; index < this.clients.length; index++) {
                 const element = this.clients[index];
-                Data.push({Nombres: element.firstName +' '+ element.lastName, Email: element.email, 'Número de teléfono': element.phone ? element.phone.formatInternational : '', 'Instagram': element.instagram, Atenciones: element.attends, Recomendador: element.recommender, Recomendaciones: element.recommendations, 'Ultima atencion': this.$options.filters.formatDate(element.lastAttend), 'Fecha de nacimiento': formatDate(element.birthday), 'Cliente desde': this.$options.filters.formatDate(element.createdAt)})
+                Data.push({Nombres: element.firstName +' '+ element.lastName, Email: element.email, 'Número de teléfono': element.phone ? element.phone.formatInternational : '', 'Instagram': element.instagram, Atenciones: element.attends, Recomendador: element.recommender, Recomendaciones: element.recommendations, 'Ultima atencion': this.$options.filters.formatDate(element.lastAttend), 'Fecha de nacimiento': this.$options.filters.formatDate(element.birthday), 'Cliente desde': this.$options.filters.formatDate(element.createdAt)})
             }
             var Datos = XLSX.utils.json_to_sheet(Data) 
             var wb = XLSX.utils.book_new() 

@@ -20,10 +20,13 @@
                                 <base-button v-if="hideText == 'display:none'" class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('schedule'), initialState()"  type="success">
                                     <a-icon type="form" style="vertical-align:1px;font-size:1.6em;" />
                                 </base-button>
-
                                 <base-button v-else class="float-right mr-0 mb-1 ml-1" size="sm" :disabled="validRoute('agendamiento', 'agendar') ? false : true" @click="setView('schedule'), initialState()"  type="success">
                                     <a-icon type="form" class="mr-2" style="vertical-align:1px;font-size:1.6em;" />
                                     Agendar
+                                </base-button>
+                                
+                                <base-button  @click="generateExcel()"  type="success">
+                                    GENERAR EXCEL
                                 </base-button>
                             </template> 
                             <template v-else>
