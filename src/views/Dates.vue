@@ -5955,7 +5955,8 @@ import mixinES from '../mixins/mixinES'
                         dataMicro = dataMicro + ', '+micro.name
                     }
                 }
-                Data.push({Cliente: element.client.name+' - '+element.client.email, Empleado: element.employe.name, Servicio: element.services[0].name, 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
+                
+                Data.push({Cliente: element.client.name ? element.client.name : ''+' - '+element.client.email, Empleado: element.employe.name ? element.employe.name : '', Servicio: element.services[0].name ? element.services[0].name : '', 'precio del servicio': element.services[0].price, Fecha: element.createdAt.split('T')[0], Entrada: element.start.split(' ')[1], Salida: element.end.split(' ')[1], Confirmacion: element.confirmation ? 'Confirmada' : 'Sin confirmar', Adicionales: dataMicro })
             }
             var Datos = XLSX.utils.json_to_sheet(Data) 
             var wb = XLSX.utils.book_new() 

@@ -24,8 +24,8 @@ self.__precacheManifest = [
     "url": "/img/theme/reportes.jpg"
   },
   {
-    "revision": "a6c07e940530abc3cf53",
-    "url": "/js/chunk-6b932e4e.18d75ca5.js"
+    "revision": "a8367bd839de35d09bea",
+    "url": "/js/chunk-6b932e4e.0d93c564.js"
   },
   {
     "revision": "8b9bd173c568d23af78eb6ae16d04eb2",
@@ -68,7 +68,7 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.46abbc4a.svg"
   },
   {
-    "revision": "a843a5af233bd9fb82bc0edf813a8bee",
+    "revision": "be7b0389b4c31efa009e82b10f5d8fc3",
     "url": "/index.html"
   },
   {
@@ -124,16 +124,12 @@ self.__precacheManifest = [
     "url": "/img/theme/users.png"
   },
   {
-    "revision": "6ffb59d593123f86cc2b",
-    "url": "/js/app.b2bfdd16.js"
+    "revision": "7dee6fd5192d24d44a1f",
+    "url": "/js/app.891d8ef7.js"
   },
   {
     "revision": "0f4d13ea98e2a252cd4e76614cddce8e",
     "url": "/img/theme/box.png"
-  },
-  {
-    "revision": "84335294072f0ad513fc8614b54a428a",
-    "url": "/img/theme/calendar.png"
   },
   {
     "revision": "aecfb9f7f2f4c2448e898a5b281933b6",
@@ -144,6 +140,10 @@ self.__precacheManifest = [
     "url": "/img/theme/clients.png"
   },
   {
+    "revision": "84335294072f0ad513fc8614b54a428a",
+    "url": "/img/theme/calendar.png"
+  },
+  {
     "revision": "29e3026dd1091caff211c1761cb9d226",
     "url": "/img/theme/store.png"
   },
@@ -152,12 +152,12 @@ self.__precacheManifest = [
     "url": "/img/theme/shop.png"
   },
   {
-    "revision": "e7be3ecd921efc88bbca5e090862eac7",
-    "url": "/img/theme/profile.png"
-  },
-  {
     "revision": "50e42caa32cb0364bb83b0c3b79016cb",
     "url": "/img/theme/sales.png"
+  },
+  {
+    "revision": "e7be3ecd921efc88bbca5e090862eac7",
+    "url": "/img/theme/profile.png"
   },
   {
     "revision": "5af6fc4a13dbb054068d55056ff0c4fe",
@@ -204,7 +204,7 @@ self.__precacheManifest = [
     "url": "/fonts/nucleo-icons.42643978.woff2"
   },
   {
-    "revision": "6ffb59d593123f86cc2b",
+    "revision": "7dee6fd5192d24d44a1f",
     "url": "/css/app.82dde4ad.css"
   },
   {
@@ -236,7 +236,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-vendors.b568aebd.css"
   },
   {
-    "revision": "a6c07e940530abc3cf53",
+    "revision": "a8367bd839de35d09bea",
     "url": "/css/chunk-6b932e4e.97450e86.css"
   },
   {
